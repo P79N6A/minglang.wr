@@ -1,4 +1,4 @@
-package com.taobao.cun.crius.service;
+package com.taobao.cun.auge.service;
 
 /**
  * user service

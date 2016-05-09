@@ -1,8 +1,8 @@
-package com.taobao.cun.crius.service.impl;
+package com.taobao.cun.auge.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.taobao.cun.crius.service.UserService;
+import com.taobao.cun.auge.service.UserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
