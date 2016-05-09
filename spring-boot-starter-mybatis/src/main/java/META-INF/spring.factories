@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.aliexpress.boot.mybatis.MybatisAutoConfiguration,\
+com.aliexpress.boot.mybatis.MybatisMapperConfiguration
