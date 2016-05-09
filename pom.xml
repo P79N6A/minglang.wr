@@ -12,8 +12,6 @@
 	<modules>
 		<module>./station-bundle-impl</module>
 		<module>./station-bundle-bundle-test</module>
-		<module>./station-bundle-client</module>
-    <module>spring-boot-starter-mybatis</module>
   </modules>
 
 	<properties>
@@ -150,7 +148,7 @@
 				<version>${tomcat.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.aliyun.boot</groupId>
+				<groupId>com.cuntao.boot</groupId>
 				<artifactId>spring-boot-starter-mybatis</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
 			</dependency>

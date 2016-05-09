@@ -76,7 +76,7 @@
 		<!--<dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-mybatis</artifactId> 
 			</dependency> -->
 		<dependency>
-			<groupId>com.aliyun.boot</groupId>
+			<groupId>com.cuntao.boot</groupId>
 			<artifactId>spring-boot-starter-mybatis</artifactId>
 		</dependency>
 		<!--test -->
