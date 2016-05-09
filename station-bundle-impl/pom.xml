@@ -7,6 +7,19 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>station-bundle.impl</artifactId>
+	<properties>
+		<!-- MyBatis Generator -->
+		<!-- Java接口和实体类 -->
+		<targetJavaProject>${basedir}/src/main/java</targetJavaProject>
+		<targetMapperPackage>com.taobao.cun.auge.dal.mapper</targetMapperPackage>
+		<targetModelPackage>com.taobao.cun.auge.dal.domain</targetModelPackage>
+		<!-- XML生成路径 -->
+		<targetResourcesProject>${basedir}/src/main/resources</targetResourcesProject>
+		<targetXMLPackage>com.taobao.cun.auge.dal.mapper</targetXMLPackage>
+		<!-- 依赖版本 -->
+		<mapper.version>3.3.7</mapper.version>
+		<mysql.version>5.1.29</mysql.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -28,12 +41,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
-		</dependency>
- 			-->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+			</dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
@@ -130,11 +139,34 @@
 			<version>999-not-exist-v3</version>
 		</dependency>
 		<dependency>
-			<groupId>com.taobao.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-core</artifactId>
-			<version>7.0.59.1</version>
-			<scope>provided</scope>
+			<groupId>tk.mybatis</groupId>
+			<artifactId>mapper</artifactId>
 		</dependency>
 	</dependencies>
-	<build />
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<configuration>
+					<configurationFile>${basedir}/src/main/resources/generator/generatorConfig.xml</configurationFile>
+					<overwrite>true</overwrite>
+					<verbose>true</verbose>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>tk.mybatis</groupId>
+						<artifactId>mapper</artifactId>
+						<version>${mapper.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 </project>
