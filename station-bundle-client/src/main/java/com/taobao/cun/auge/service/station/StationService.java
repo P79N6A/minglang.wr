@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.service;
+package com.taobao.cun.auge.service.station;
 
 import com.taobao.cun.auge.station.domain.StationDTO;
 

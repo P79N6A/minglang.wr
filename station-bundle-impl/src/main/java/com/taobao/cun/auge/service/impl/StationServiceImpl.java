@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.taobao.cun.auge.conversion.StationConverter;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
-import com.taobao.cun.auge.service.StationService;
+import com.taobao.cun.auge.service.station.StationService;
 import com.taobao.cun.auge.station.domain.StationDTO;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
