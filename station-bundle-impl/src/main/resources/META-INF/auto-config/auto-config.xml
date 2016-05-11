@@ -13,8 +13,6 @@
 	</group>
 	
 	<script>
-		<generate template="biz-hsf-provide.xml.vm" destfile="spring-beans/biz-hsf-provide.xml" charset="GBK"></generate>
-		<generate template="biz-hsf-consumer.xml.vm" destfile="spring-beans/biz-hsf-consumer.xml" charset="GBK"></generate>
 		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK"/>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
 	</script>

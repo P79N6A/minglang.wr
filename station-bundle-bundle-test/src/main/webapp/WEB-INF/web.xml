@@ -18,7 +18,9 @@
 	<listener>
 		<listener-class>com.alibaba.alimonitor.jmonitor.plugin.web.JmonitorServletContextListener</listener-class>
 	</listener>
-	
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
 	<servlet>
 		<servlet-name>monitorServlet</servlet-name>
 		<servlet-class>com.taobao.cun.module.framework.bundle.monitor.MonitorServlet</servlet-class>

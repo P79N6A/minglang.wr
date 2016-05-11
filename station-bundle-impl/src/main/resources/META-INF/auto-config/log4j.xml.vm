@@ -56,11 +56,11 @@
     <!-- ===================================================================== -->
     <!--  以下是logger的定义                                                   -->
     <!-- ===================================================================== -->
-     <logger name="com.taobao.cun.crius" additivity="false">
+     <logger name="com.taobao.cun.auge" additivity="false">
         <level value="info"/>
         <appender-ref ref="PROJECT"/>
     </logger>
-      <logger name="com.taobao.cun.crius.Application" additivity="false">
+      <logger name="com.taobao.cun.auge.Application" additivity="false">
         <level value="info"/>
         <appender-ref ref="PROJECT"/>
         <appender-ref ref="CONSOLE"/>
