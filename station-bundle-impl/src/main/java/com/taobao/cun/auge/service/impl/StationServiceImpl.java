@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.service.impl;
 
+import javax.validation.Validator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.conversion.StationConverter;
@@ -24,8 +26,17 @@ public class StationServiceImpl implements StationService {
 	@Autowired
 	private StationConverter stationConverter;
 	
+	@Autowired
+	private Validator validator;
+	
 	@Override
 	public StationDTO getStation(Long id) {
+		TestBean bean = new TestBean();
+		try {
+			validator.validate(bean);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Station station = stationMapper.selectByPrimaryKey(id);
 		return stationConverter.toStationDTO(station);
 	}
