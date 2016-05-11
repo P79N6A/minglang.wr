@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.validation;
+package com.taobao.cun.auge.configuration;
 
 import javax.validation.Validator;
 
