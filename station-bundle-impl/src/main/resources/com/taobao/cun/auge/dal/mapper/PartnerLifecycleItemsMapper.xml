@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerLifecycleItemsMapper" >
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.PartnerLifecycleItems" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="partner_type" property="partnerType" jdbcType="VARCHAR" />
+    <result column="business_type" property="businessType" jdbcType="VARCHAR" />
+    <result column="settled_protocol" property="settledProtocol" jdbcType="VARCHAR" />
+    <result column="bond" property="bond" jdbcType="VARCHAR" />
+    <result column="quit_protocol" property="quitProtocol" jdbcType="VARCHAR" />
+    <result column="logistics_approve" property="logisticsApprove" jdbcType="VARCHAR" />
+    <result column="partner_instance_id" property="partnerInstanceId" jdbcType="BIGINT" />
+    <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+    <result column="current_step" property="currentStep" jdbcType="VARCHAR" />
+    <result column="role_approve" property="roleApprove" jdbcType="VARCHAR" />
+    <result column="confirm" property="confirm" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

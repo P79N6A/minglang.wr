@@ -26,7 +26,28 @@
 
         <javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}" type="XMLMAPPER" />
 
-        <table tableName="station" >
+        <table tableName="partner" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+        <table tableName="partner_station_rel" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+       <table tableName="account_money" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+                
+       <table tableName="crius_task_excute" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+         <table tableName="partner_lifecycle_items" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+         <table tableName="quit_station_apply" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>

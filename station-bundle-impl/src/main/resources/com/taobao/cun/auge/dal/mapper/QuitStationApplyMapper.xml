@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.taobao.cun.auge.dal.mapper.QuitStationApplyMapper" >
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.QuitStationApply" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="other_description" property="otherDescription" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="station_apply_id" property="stationApplyId" jdbcType="BIGINT" />
+    <result column="revocation_app_form_file_name" property="revocationAppFormFileName" jdbcType="VARCHAR" />
+    <result column="loan_prove_file_name" property="loanProveFileName" jdbcType="VARCHAR" />
+    <result column="approval_file_name" property="approvalFileName" jdbcType="VARCHAR" />
+    <result column="submitted_people_name" property="submittedPeopleName" jdbcType="VARCHAR" />
+    <result column="asset_type" property="assetType" jdbcType="VARCHAR" />
+    <result column="loan_has_close" property="loanHasClose" jdbcType="CHAR" />
+    <result column="partner_instance_id" property="partnerInstanceId" jdbcType="BIGINT" />
+  </resultMap>
+</mapper>
