@@ -193,7 +193,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>enforce-java8</id>
+						<id>enforce-java7</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
