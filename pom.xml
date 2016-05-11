@@ -200,8 +200,8 @@
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[1.8.0,)</version>
-									<message>** Projects must use Java 8 or later version</message>
+									<version>[1.7.0,)</version>
+									<message>** Projects must use Java 7 or later version</message>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
