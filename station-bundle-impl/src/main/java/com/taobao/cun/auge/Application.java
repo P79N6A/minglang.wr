@@ -16,27 +16,26 @@ import org.springframework.transaction.annotation.TransactionManagementConfigure
 import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 
 @SpringBootApplication
-@EnableTransactionManagement
 @EnableHSFProvider
-public class Application extends SpringBootServletInitializer implements TransactionManagementConfigurer{
+@EnableTransactionManagement
+public class Application extends SpringBootServletInitializer{
 
 	@Autowired
 	private DataSource dataSource;
 	
     public static void main(String[] args) {
-    	SpringApplication application = new SpringApplication(Application.class);
-    	application.run(args);
+    	try {
+    		SpringApplication application = new SpringApplication(Application.class);
+        	application.run(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
     }
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(Application.class);
-	}
-
-	@Bean
-	@Override
-	public PlatformTransactionManager annotationDrivenTransactionManager() {
-		 return new DataSourceTransactionManager(dataSource);
 	}
 
 

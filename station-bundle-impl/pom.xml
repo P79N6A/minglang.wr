@@ -147,9 +147,13 @@
 			<artifactId>mapstruct-jdk8</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.taobao.cun.module</groupId>
-  			  <artifactId>station-bundle-client</artifactId>
-			</dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-client</artifactId>
+		</dependency>
+		 <dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cuntaocenter-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

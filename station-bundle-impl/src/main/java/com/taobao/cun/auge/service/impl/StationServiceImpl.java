@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.service.impl;
 
+import java.util.List;
+
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,9 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.service.station.StationService;
 import com.taobao.cun.auge.station.domain.StationDTO;
+import com.taobao.cun.common.resultmodel.ResultModel;
+import com.taobao.cun.service.resource.AppResourceDto;
+import com.taobao.cun.service.resource.AppResourceService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -29,14 +34,13 @@ public class StationServiceImpl implements StationService {
 	@Autowired
 	private Validator validator;
 	
+	@Autowired
+	private AppResourceService appResourceService;
+	
 	@Override
 	public StationDTO getStation(Long id) {
-		TestBean bean = new TestBean();
-		try {
-			validator.validate(bean);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		//ResultModel<List<AppResourceDto>> resource = appResourceService.queryAppResourceList("tpv_audit_msg");
+	//	System.out.println(resource.getResult());
 		Station station = stationMapper.selectByPrimaryKey(id);
 		return stationConverter.toStationDTO(station);
 	}

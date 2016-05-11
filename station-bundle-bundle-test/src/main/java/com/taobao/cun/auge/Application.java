@@ -18,7 +18,7 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableHSFProvider
-public class Application extends SpringBootServletInitializer implements TransactionManagementConfigurer{
+public class Application extends SpringBootServletInitializer{
 
 	@Autowired
 	private DataSource dataSource;
@@ -33,11 +33,6 @@ public class Application extends SpringBootServletInitializer implements Transac
 		return builder.sources(Application.class);
 	}
 
-	@Bean
-	@Override
-	public PlatformTransactionManager annotationDrivenTransactionManager() {
-		 return new DataSourceTransactionManager(dataSource);
-	}
 
 
 }
