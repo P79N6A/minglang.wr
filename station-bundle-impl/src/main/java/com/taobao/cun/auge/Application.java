@@ -20,9 +20,6 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 @EnableTransactionManagement
 public class Application extends SpringBootServletInitializer{
 
-	@Autowired
-	private DataSource dataSource;
-	
     public static void main(String[] args) {
     	try {
     		SpringApplication application = new SpringApplication(Application.class);
