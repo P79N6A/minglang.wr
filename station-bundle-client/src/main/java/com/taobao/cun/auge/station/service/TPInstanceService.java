@@ -6,6 +6,7 @@ import java.util.Date;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.TPInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 合伙人实例服务
@@ -23,7 +24,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long tempPartnerStation(TPInstanceCondition condition);
+	public Long tempPartnerStation(TPInstanceCondition condition) throws AugeServiceException;
 
 	/**
 	 * 正式提交，人和村
@@ -31,7 +32,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long submitPartnerStation(TPInstanceCondition condition);
+	public Long submitPartnerStation(TPInstanceCondition condition) throws AugeServiceException;
 
 	/**
 	 * 正式提交，暂存的人和村
@@ -39,7 +40,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long submitTempPartnerStation(TPInstanceCondition condition);
+	public Long submitTempPartnerStation(TPInstanceCondition condition) throws AugeServiceException;
 
 	/**
 	 * 修改，人和村
@@ -47,7 +48,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public boolean updatePartnerStation(TPInstanceCondition condition);
+	public boolean updatePartnerStation(TPInstanceCondition condition) throws AugeServiceException;
 
 	/**
 	 * 删除合伙人实例
@@ -55,7 +56,7 @@ public interface TPInstanceService {
 	 * @param instanceId
 	 * @return
 	 */
-	public boolean deletePartnerStation(Long instanceId);
+	public boolean deletePartnerStation(Long instanceId) throws AugeServiceException;
 
 	/**
 	 * 签署入驻协议
@@ -63,7 +64,7 @@ public interface TPInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean signSettledProtocol(Long taobaoUserId);
+	public boolean signSettledProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议
@@ -71,7 +72,7 @@ public interface TPInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean signManageProtocol(Long taobaoUserId);
+	public boolean signManageProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 冻结保证金
@@ -80,22 +81,22 @@ public interface TPInstanceService {
 	 * @param frozenMoney
 	 * @return
 	 */
-	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney);
+	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney) throws AugeServiceException;
 
 	/**
 	 * 开业
 	 * 
 	 * @param partnerInstanceId
-	 *            合伙人实例id
+	 *      合伙人实例id
 	 * @param openDate
-	 *            开业时间
+	 *      开业时间
 	 * @param isImme
-	 *            是否立即开业
+	 *      是否立即开业
 	 * @param employeeId
-	 *            小二工号
+	 *      小二工号
 	 * @return
 	 */
-	public boolean openStation(Long partnerInstanceId, Date openDate, boolean isImme, String employeeId);
+	public boolean openStation(Long partnerInstanceId, Date openDate, boolean isImme, String employeeId) throws AugeServiceException;
 
 	/**
 	 * 合伙人申请退出
@@ -103,7 +104,7 @@ public interface TPInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean quitApplyByPartner(Long taobaoUserId);
+	public boolean quitApplyByPartner(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 小二审批合伙人申请退出
@@ -113,7 +114,7 @@ public interface TPInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public boolean approvePartnerQuitApply(Long partnerInstanceId, String employeeId, boolean isAgree);
+	public boolean approvePartnerQuitApply(Long partnerInstanceId, String employeeId, boolean isAgree) throws AugeServiceException;
 
 	/**
 	 * 小二申请停业
@@ -122,7 +123,7 @@ public interface TPInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean applyForcedClose(ForcedCloseCondition forcedCloseCondition, String employeeId);
+	public boolean applyForcedClose(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
 
 	/**
 	 * 小二申请撤点
@@ -131,7 +132,7 @@ public interface TPInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean quitApplyByEmployee(Long partnerInstanceId, String employeeId);
+	public boolean quitApplyByEmployee(Long partnerInstanceId, String employeeId) throws AugeServiceException;
 
 	/**
 	 * 详情，人和村。已脫敏
@@ -139,6 +140,6 @@ public interface TPInstanceService {
 	 * @param partnerStationId
 	 * @return
 	 */
-	public PartnerInstanceDto findSafedStationPartner(Long partnerStationId);
+	public PartnerInstanceDto findSafedStationPartner(Long partnerStationId) throws AugeServiceException;
 
 }
