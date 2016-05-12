@@ -19,6 +19,29 @@
                <encoding>UTF-8</encoding>
             </configuration>
          </plugin>
+         <plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<encoding>${project.build.sourceEncoding}</encoding>
+						<downloadSources>true</downloadSources>
+						<downloadJavadocs>false</downloadJavadocs>
+						<additionalBuildcommands>
+							<buildCommand>
+								<name>org.springframework.ide.eclipse.core.springbuilder</name>
+							</buildCommand>
+						</additionalBuildcommands>
+						<additionalConfig>
+							<file>
+								<name>.settings/org.eclipse.core.resources.prefs</name>
+								<content>
+	                  <![CDATA[eclipse.preferences.version=1${line.separator}encoding/<project>=UTF-8${line.separator}]]>
+								</content>
+							</file>
+						</additionalConfig>
+					</configuration>
+				</plugin>
       </plugins>
    </build>
 </project>
