@@ -56,5 +56,9 @@
         <table tableName="attachement" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
+        
+         <table tableName="station" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>

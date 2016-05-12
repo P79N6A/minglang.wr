@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.LogisticsStationMapper">
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.LogisticsStation">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="city_detail" jdbcType="VARCHAR" property="cityDetail" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="county_detail" jdbcType="VARCHAR" property="countyDetail" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="town_detail" jdbcType="VARCHAR" property="townDetail" />
+    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="village_detail" jdbcType="VARCHAR" property="villageDetail" />
+    <result column="cainiao_station_id" jdbcType="BIGINT" property="cainiaoStationId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="contact_name" jdbcType="VARCHAR" property="contactName" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="station_type" jdbcType="INTEGER" property="stationType" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="contact_mobile" jdbcType="VARCHAR" property="contactMobile" />
+    <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="feature" jdbcType="VARCHAR" property="feature" />
+    <result column="service_code" jdbcType="VARCHAR" property="serviceCode" />
+    <result column="managers" jdbcType="VARCHAR" property="managers" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="logistics_station_num" jdbcType="VARCHAR" property="logisticsStationNum" />
+  </resultMap>
+</mapper>

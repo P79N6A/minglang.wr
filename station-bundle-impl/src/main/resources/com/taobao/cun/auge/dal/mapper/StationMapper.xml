@@ -1,46 +1,46 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.taobao.cun.auge.dal.mapper.StationMapper" >
-  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.Station" >
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.StationMapper">
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.Station">
     <!--
       WARNING - @mbggenerated
     -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
-    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
-    <result column="creater" property="creater" jdbcType="VARCHAR" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="description" property="description" jdbcType="VARCHAR" />
-    <result column="alipay_account" property="alipayAccount" jdbcType="VARCHAR" />
-    <result column="taobao_nick" property="taobaoNick" jdbcType="VARCHAR" />
-    <result column="state" property="state" jdbcType="VARCHAR" />
-    <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
-    <result column="province" property="province" jdbcType="VARCHAR" />
-    <result column="city" property="city" jdbcType="VARCHAR" />
-    <result column="county" property="county" jdbcType="VARCHAR" />
-    <result column="town" property="town" jdbcType="VARCHAR" />
-    <result column="province_detail" property="provinceDetail" jdbcType="VARCHAR" />
-    <result column="city_detail" property="cityDetail" jdbcType="VARCHAR" />
-    <result column="county_detail" property="countyDetail" jdbcType="VARCHAR" />
-    <result column="town_detail" property="townDetail" jdbcType="VARCHAR" />
-    <result column="address" property="address" jdbcType="VARCHAR" />
-    <result column="apply_org" property="applyOrg" jdbcType="BIGINT" />
-    <result column="taobao_user_id" property="taobaoUserId" jdbcType="BIGINT" />
-    <result column="station_num" property="stationNum" jdbcType="VARCHAR" />
-    <result column="lng" property="lng" jdbcType="VARCHAR" />
-    <result column="lat" property="lat" jdbcType="VARCHAR" />
-    <result column="village" property="village" jdbcType="VARCHAR" />
-    <result column="village_detail" property="villageDetail" jdbcType="VARCHAR" />
-    <result column="covered" property="covered" jdbcType="VARCHAR" />
-    <result column="products" property="products" jdbcType="VARCHAR" />
-    <result column="logistics_state" property="logisticsState" jdbcType="VARCHAR" />
-    <result column="format" property="format" jdbcType="VARCHAR" />
-    <result column="area_type" property="areaType" jdbcType="VARCHAR" />
-    <result column="manager_id" property="managerId" jdbcType="VARCHAR" />
-    <result column="provider_id" property="providerId" jdbcType="BIGINT" />
-    <result column="feature" property="feature" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="fixed_type" property="fixedType" jdbcType="VARCHAR" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="alipay_account" jdbcType="VARCHAR" property="alipayAccount" />
+    <result column="taobao_nick" jdbcType="VARCHAR" property="taobaoNick" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+    <result column="city_detail" jdbcType="VARCHAR" property="cityDetail" />
+    <result column="county_detail" jdbcType="VARCHAR" property="countyDetail" />
+    <result column="town_detail" jdbcType="VARCHAR" property="townDetail" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="apply_org" jdbcType="BIGINT" property="applyOrg" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="station_num" jdbcType="VARCHAR" property="stationNum" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="village_detail" jdbcType="VARCHAR" property="villageDetail" />
+    <result column="covered" jdbcType="VARCHAR" property="covered" />
+    <result column="products" jdbcType="VARCHAR" property="products" />
+    <result column="logistics_state" jdbcType="VARCHAR" property="logisticsState" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <result column="area_type" jdbcType="VARCHAR" property="areaType" />
+    <result column="manager_id" jdbcType="VARCHAR" property="managerId" />
+    <result column="provider_id" jdbcType="BIGINT" property="providerId" />
+    <result column="feature" jdbcType="VARCHAR" property="feature" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
   </resultMap>
 </mapper>

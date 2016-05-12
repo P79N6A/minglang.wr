@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper">
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.LogisticsStationApply">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="is_deleted" jdbcType="VARCHAR" property="isDeleted" />
+    <result column="applier_station_id" jdbcType="BIGINT" property="applierStationId" />
+    <result column="province_id" jdbcType="BIGINT" property="provinceId" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city_id" jdbcType="BIGINT" property="cityId" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="county_id" jdbcType="BIGINT" property="countyId" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="town_id" jdbcType="BIGINT" property="townId" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="country_id" jdbcType="BIGINT" property="countryId" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="applier_name" jdbcType="VARCHAR" property="applierName" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="applier_taobao_user_id" jdbcType="BIGINT" property="applierTaobaoUserId" />
+    <result column="ctp_type" jdbcType="VARCHAR" property="ctpType" />
+    <result column="applier_org_id" jdbcType="BIGINT" property="applierOrgId" />
+    <result column="logistics_station_id" jdbcType="BIGINT" property="logisticsStationId" />
+    <result column="apply_status" jdbcType="VARCHAR" property="applyStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifer" jdbcType="VARCHAR" property="modifer" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+</mapper>

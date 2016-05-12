@@ -5,886 +5,886 @@ import javax.persistence.*;
 
 public class Station {
     /**
-     * Ö÷¼ü
+     * ä¸»é”®
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * ´´½¨Ê±¼ä
+     * åˆ›å»ºæ—¶é—´
      */
     @Column(name = "gmt_create")
     private Date gmtCreate;
 
     /**
-     * ĞŞ¸ÄÊ±¼ä
+     * ä¿®æ”¹æ—¶é—´
      */
     @Column(name = "gmt_modified")
     private Date gmtModified;
 
     /**
-     * ´´½¨ÈË
+     * åˆ›å»ºäºº
      */
     private String creater;
 
     /**
-     * ĞŞ¸ÄÈË
+     * ä¿®æ”¹äºº
      */
     private String modifier;
 
     /**
-     * ·şÎñÕ¾Ãû³Æ
+     * æœåŠ¡ç«™åç§°
      */
     private String name;
 
     /**
-     * ·şÎñÕ¾¼ò½é
+     * æœåŠ¡ç«™ç®€ä»‹
      */
     private String description;
 
     /**
-     * Ö§¸¶±¦ÕËºÅ
+     * æ”¯ä»˜å®è´¦å·
      */
     @Column(name = "alipay_account")
     private String alipayAccount;
 
     /**
-     * ¼¯ÍÅ»áÔ±nick
+     * é›†å›¢ä¼šå‘˜nick
      */
     @Column(name = "taobao_nick")
     private String taobaoNick;
 
     /**
-     * ·şÎñµã×´Ì¬
+     * æœåŠ¡ç‚¹çŠ¶æ€
      */
     private String state;
 
     /**
-     * ÊÇ·ñÉ¾³ı
+     * æ˜¯å¦åˆ é™¤
      */
     @Column(name = "is_deleted")
     private String isDeleted;
 
     /**
-     * Ê¡±àÂë
+     * çœç¼–ç 
      */
     private String province;
 
     /**
-     * ÊĞ±àÂë
+     * å¸‚ç¼–ç 
      */
     private String city;
 
     /**
-     * ÏØ/Çø±àÂë
+     * å¿/åŒºç¼–ç 
      */
     private String county;
 
     /**
-     * ÏçÕò±àÂë
+     * ä¹¡é•‡ç¼–ç 
      */
     private String town;
 
     /**
-     * Ê¡ÏêÏ¸
+     * çœè¯¦ç»†
      */
     @Column(name = "province_detail")
     private String provinceDetail;
 
     /**
-     * ÊĞÏêÏ¸
+     * å¸‚è¯¦ç»†
      */
     @Column(name = "city_detail")
     private String cityDetail;
 
     /**
-     * ÏØ/ÇøÏêÏ¸
+     * å¿/åŒºè¯¦ç»†
      */
     @Column(name = "county_detail")
     private String countyDetail;
 
     /**
-     * ÏçÕòÏêÏ¸
+     * ä¹¡é•‡è¯¦ç»†
      */
     @Column(name = "town_detail")
     private String townDetail;
 
     /**
-     * ÏêÏ¸µØÖ·
+     * è¯¦ç»†åœ°å€
      */
     private String address;
 
     /**
-     * ÉêÇë×éÖ¯
+     * ç”³è¯·ç»„ç»‡
      */
     @Column(name = "apply_org")
     private Long applyOrg;
 
     /**
-     * ÌÔ±¦ÓÃ»§id
+     * æ·˜å®ç”¨æˆ·id
      */
     @Column(name = "taobao_user_id")
     private Long taobaoUserId;
 
     /**
-     * ´åµã±àºÅ
+     * æ‘ç‚¹ç¼–å·
      */
     @Column(name = "station_num")
     private String stationNum;
 
     /**
-     * ¾­¶È
+     * ç»åº¦
      */
     private String lng;
 
     /**
-     * Î³¶È
+     * çº¬åº¦
      */
     private String lat;
 
     /**
-     * ´å/ÉçÇø±àºÅ
+     * æ‘/ç¤¾åŒºç¼–å·
      */
     private String village;
 
     /**
-     * ´å/ÉçÇøÃû³Æ
-ÏêÇé
+     * æ‘/ç¤¾åŒºåç§°
+è¯¦æƒ…
      */
     @Column(name = "village_detail")
     private String villageDetail;
 
     /**
-     * ¸²¸ÇÈË¿Ú
+     * è¦†ç›–äººå£
      */
     private String covered;
 
     /**
-     * ÌØÉ«Å©¸±²úÆ·
+     * ç‰¹è‰²å†œå‰¯äº§å“
      */
     private String products;
 
     /**
-     * ÎïÁ÷×´Ì¬
+     * ç‰©æµçŠ¶æ€
      */
     @Column(name = "logistics_state")
     private String logisticsState;
 
     /**
-     * Ä¿Ç°ÒµÌ¬
+     * ç›®å‰ä¸šæ€
      */
     private String format;
 
     /**
-     * ¹Ìµã£¬»òÕß²»¹Ìµã
+     * å›ºç‚¹ï¼Œæˆ–è€…ä¸å›ºç‚¹
      */
     @Column(name = "area_type")
     private String areaType;
 
     /**
-     * ¹ÜÀíÔ±user_id
+     * ç®¡ç†å‘˜user_id
      */
     @Column(name = "manager_id")
     private String managerId;
 
     /**
-     * ·şÎñÉÌid
+     * æœåŠ¡å•†id
      */
     @Column(name = "provider_id")
     private Long providerId;
 
     /**
-     * ÆäËûÌØĞÔ£¬ÓÃÓÚÀ©Õ¹·şÎñÕ¾ÊôĞÔ
+     * å…¶ä»–ç‰¹æ€§ï¼Œç”¨äºæ‰©å±•æœåŠ¡ç«™å±æ€§
      */
     private String feature;
 
     /**
-     * ĞÂµÄ·şÎñÕ¾×´Ì¬
+     * æ–°çš„æœåŠ¡ç«™çŠ¶æ€
      */
     private String status;
 
     /**
-     * ³¡µØ¹ÌµãÀàĞÍ GOV_FIXED Õş¸®¹Ìµã
+     * åœºåœ°å›ºç‚¹ç±»å‹ GOV_FIXED æ”¿åºœå›ºç‚¹
 TRIPARTITE_FIXED
-Èı·½¹Ìµã
+ä¸‰æ–¹å›ºç‚¹
      */
     @Column(name = "fixed_type")
     private String fixedType;
 
     /**
-     * »ñÈ¡Ö÷¼ü
+     * è·å–ä¸»é”®
      *
-     * @return id - Ö÷¼ü
+     * @return id - ä¸»é”®
      */
     public Long getId() {
         return id;
     }
 
     /**
-     * ÉèÖÃÖ÷¼ü
+     * è®¾ç½®ä¸»é”®
      *
-     * @param id Ö÷¼ü
+     * @param id ä¸»é”®
      */
     public void setId(Long id) {
         this.id = id;
     }
 
     /**
-     * »ñÈ¡´´½¨Ê±¼ä
+     * è·å–åˆ›å»ºæ—¶é—´
      *
-     * @return gmt_create - ´´½¨Ê±¼ä
+     * @return gmt_create - åˆ›å»ºæ—¶é—´
      */
     public Date getGmtCreate() {
         return gmtCreate;
     }
 
     /**
-     * ÉèÖÃ´´½¨Ê±¼ä
+     * è®¾ç½®åˆ›å»ºæ—¶é—´
      *
-     * @param gmtCreate ´´½¨Ê±¼ä
+     * @param gmtCreate åˆ›å»ºæ—¶é—´
      */
     public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
 
     /**
-     * »ñÈ¡ĞŞ¸ÄÊ±¼ä
+     * è·å–ä¿®æ”¹æ—¶é—´
      *
-     * @return gmt_modified - ĞŞ¸ÄÊ±¼ä
+     * @return gmt_modified - ä¿®æ”¹æ—¶é—´
      */
     public Date getGmtModified() {
         return gmtModified;
     }
 
     /**
-     * ÉèÖÃĞŞ¸ÄÊ±¼ä
+     * è®¾ç½®ä¿®æ”¹æ—¶é—´
      *
-     * @param gmtModified ĞŞ¸ÄÊ±¼ä
+     * @param gmtModified ä¿®æ”¹æ—¶é—´
      */
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
     }
 
     /**
-     * »ñÈ¡´´½¨ÈË
+     * è·å–åˆ›å»ºäºº
      *
-     * @return creater - ´´½¨ÈË
+     * @return creater - åˆ›å»ºäºº
      */
     public String getCreater() {
         return creater;
     }
 
     /**
-     * ÉèÖÃ´´½¨ÈË
+     * è®¾ç½®åˆ›å»ºäºº
      *
-     * @param creater ´´½¨ÈË
+     * @param creater åˆ›å»ºäºº
      */
     public void setCreater(String creater) {
         this.creater = creater;
     }
 
     /**
-     * »ñÈ¡ĞŞ¸ÄÈË
+     * è·å–ä¿®æ”¹äºº
      *
-     * @return modifier - ĞŞ¸ÄÈË
+     * @return modifier - ä¿®æ”¹äºº
      */
     public String getModifier() {
         return modifier;
     }
 
     /**
-     * ÉèÖÃĞŞ¸ÄÈË
+     * è®¾ç½®ä¿®æ”¹äºº
      *
-     * @param modifier ĞŞ¸ÄÈË
+     * @param modifier ä¿®æ”¹äºº
      */
     public void setModifier(String modifier) {
         this.modifier = modifier;
     }
 
     /**
-     * »ñÈ¡·şÎñÕ¾Ãû³Æ
+     * è·å–æœåŠ¡ç«™åç§°
      *
-     * @return name - ·şÎñÕ¾Ãû³Æ
+     * @return name - æœåŠ¡ç«™åç§°
      */
     public String getName() {
         return name;
     }
 
     /**
-     * ÉèÖÃ·şÎñÕ¾Ãû³Æ
+     * è®¾ç½®æœåŠ¡ç«™åç§°
      *
-     * @param name ·şÎñÕ¾Ãû³Æ
+     * @param name æœåŠ¡ç«™åç§°
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * »ñÈ¡·şÎñÕ¾¼ò½é
+     * è·å–æœåŠ¡ç«™ç®€ä»‹
      *
-     * @return description - ·şÎñÕ¾¼ò½é
+     * @return description - æœåŠ¡ç«™ç®€ä»‹
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * ÉèÖÃ·şÎñÕ¾¼ò½é
+     * è®¾ç½®æœåŠ¡ç«™ç®€ä»‹
      *
-     * @param description ·şÎñÕ¾¼ò½é
+     * @param description æœåŠ¡ç«™ç®€ä»‹
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     * »ñÈ¡Ö§¸¶±¦ÕËºÅ
+     * è·å–æ”¯ä»˜å®è´¦å·
      *
-     * @return alipay_account - Ö§¸¶±¦ÕËºÅ
+     * @return alipay_account - æ”¯ä»˜å®è´¦å·
      */
     public String getAlipayAccount() {
         return alipayAccount;
     }
 
     /**
-     * ÉèÖÃÖ§¸¶±¦ÕËºÅ
+     * è®¾ç½®æ”¯ä»˜å®è´¦å·
      *
-     * @param alipayAccount Ö§¸¶±¦ÕËºÅ
+     * @param alipayAccount æ”¯ä»˜å®è´¦å·
      */
     public void setAlipayAccount(String alipayAccount) {
         this.alipayAccount = alipayAccount;
     }
 
     /**
-     * »ñÈ¡¼¯ÍÅ»áÔ±nick
+     * è·å–é›†å›¢ä¼šå‘˜nick
      *
-     * @return taobao_nick - ¼¯ÍÅ»áÔ±nick
+     * @return taobao_nick - é›†å›¢ä¼šå‘˜nick
      */
     public String getTaobaoNick() {
         return taobaoNick;
     }
 
     /**
-     * ÉèÖÃ¼¯ÍÅ»áÔ±nick
+     * è®¾ç½®é›†å›¢ä¼šå‘˜nick
      *
-     * @param taobaoNick ¼¯ÍÅ»áÔ±nick
+     * @param taobaoNick é›†å›¢ä¼šå‘˜nick
      */
     public void setTaobaoNick(String taobaoNick) {
         this.taobaoNick = taobaoNick;
     }
 
     /**
-     * »ñÈ¡·şÎñµã×´Ì¬
+     * è·å–æœåŠ¡ç‚¹çŠ¶æ€
      *
-     * @return state - ·şÎñµã×´Ì¬
+     * @return state - æœåŠ¡ç‚¹çŠ¶æ€
      */
     public String getState() {
         return state;
     }
 
     /**
-     * ÉèÖÃ·şÎñµã×´Ì¬
+     * è®¾ç½®æœåŠ¡ç‚¹çŠ¶æ€
      *
-     * @param state ·şÎñµã×´Ì¬
+     * @param state æœåŠ¡ç‚¹çŠ¶æ€
      */
     public void setState(String state) {
         this.state = state;
     }
 
     /**
-     * »ñÈ¡ÊÇ·ñÉ¾³ı
+     * è·å–æ˜¯å¦åˆ é™¤
      *
-     * @return is_deleted - ÊÇ·ñÉ¾³ı
+     * @return is_deleted - æ˜¯å¦åˆ é™¤
      */
     public String getIsDeleted() {
         return isDeleted;
     }
 
     /**
-     * ÉèÖÃÊÇ·ñÉ¾³ı
+     * è®¾ç½®æ˜¯å¦åˆ é™¤
      *
-     * @param isDeleted ÊÇ·ñÉ¾³ı
+     * @param isDeleted æ˜¯å¦åˆ é™¤
      */
     public void setIsDeleted(String isDeleted) {
         this.isDeleted = isDeleted;
     }
 
     /**
-     * »ñÈ¡Ê¡±àÂë
+     * è·å–çœç¼–ç 
      *
-     * @return province - Ê¡±àÂë
+     * @return province - çœç¼–ç 
      */
     public String getProvince() {
         return province;
     }
 
     /**
-     * ÉèÖÃÊ¡±àÂë
+     * è®¾ç½®çœç¼–ç 
      *
-     * @param province Ê¡±àÂë
+     * @param province çœç¼–ç 
      */
     public void setProvince(String province) {
         this.province = province;
     }
 
     /**
-     * »ñÈ¡ÊĞ±àÂë
+     * è·å–å¸‚ç¼–ç 
      *
-     * @return city - ÊĞ±àÂë
+     * @return city - å¸‚ç¼–ç 
      */
     public String getCity() {
         return city;
     }
 
     /**
-     * ÉèÖÃÊĞ±àÂë
+     * è®¾ç½®å¸‚ç¼–ç 
      *
-     * @param city ÊĞ±àÂë
+     * @param city å¸‚ç¼–ç 
      */
     public void setCity(String city) {
         this.city = city;
     }
 
     /**
-     * »ñÈ¡ÏØ/Çø±àÂë
+     * è·å–å¿/åŒºç¼–ç 
      *
-     * @return county - ÏØ/Çø±àÂë
+     * @return county - å¿/åŒºç¼–ç 
      */
     public String getCounty() {
         return county;
     }
 
     /**
-     * ÉèÖÃÏØ/Çø±àÂë
+     * è®¾ç½®å¿/åŒºç¼–ç 
      *
-     * @param county ÏØ/Çø±àÂë
+     * @param county å¿/åŒºç¼–ç 
      */
     public void setCounty(String county) {
         this.county = county;
     }
 
     /**
-     * »ñÈ¡ÏçÕò±àÂë
+     * è·å–ä¹¡é•‡ç¼–ç 
      *
-     * @return town - ÏçÕò±àÂë
+     * @return town - ä¹¡é•‡ç¼–ç 
      */
     public String getTown() {
         return town;
     }
 
     /**
-     * ÉèÖÃÏçÕò±àÂë
+     * è®¾ç½®ä¹¡é•‡ç¼–ç 
      *
-     * @param town ÏçÕò±àÂë
+     * @param town ä¹¡é•‡ç¼–ç 
      */
     public void setTown(String town) {
         this.town = town;
     }
 
     /**
-     * »ñÈ¡Ê¡ÏêÏ¸
+     * è·å–çœè¯¦ç»†
      *
-     * @return province_detail - Ê¡ÏêÏ¸
+     * @return province_detail - çœè¯¦ç»†
      */
     public String getProvinceDetail() {
         return provinceDetail;
     }
 
     /**
-     * ÉèÖÃÊ¡ÏêÏ¸
+     * è®¾ç½®çœè¯¦ç»†
      *
-     * @param provinceDetail Ê¡ÏêÏ¸
+     * @param provinceDetail çœè¯¦ç»†
      */
     public void setProvinceDetail(String provinceDetail) {
         this.provinceDetail = provinceDetail;
     }
 
     /**
-     * »ñÈ¡ÊĞÏêÏ¸
+     * è·å–å¸‚è¯¦ç»†
      *
-     * @return city_detail - ÊĞÏêÏ¸
+     * @return city_detail - å¸‚è¯¦ç»†
      */
     public String getCityDetail() {
         return cityDetail;
     }
 
     /**
-     * ÉèÖÃÊĞÏêÏ¸
+     * è®¾ç½®å¸‚è¯¦ç»†
      *
-     * @param cityDetail ÊĞÏêÏ¸
+     * @param cityDetail å¸‚è¯¦ç»†
      */
     public void setCityDetail(String cityDetail) {
         this.cityDetail = cityDetail;
     }
 
     /**
-     * »ñÈ¡ÏØ/ÇøÏêÏ¸
+     * è·å–å¿/åŒºè¯¦ç»†
      *
-     * @return county_detail - ÏØ/ÇøÏêÏ¸
+     * @return county_detail - å¿/åŒºè¯¦ç»†
      */
     public String getCountyDetail() {
         return countyDetail;
     }
 
     /**
-     * ÉèÖÃÏØ/ÇøÏêÏ¸
+     * è®¾ç½®å¿/åŒºè¯¦ç»†
      *
-     * @param countyDetail ÏØ/ÇøÏêÏ¸
+     * @param countyDetail å¿/åŒºè¯¦ç»†
      */
     public void setCountyDetail(String countyDetail) {
         this.countyDetail = countyDetail;
     }
 
     /**
-     * »ñÈ¡ÏçÕòÏêÏ¸
+     * è·å–ä¹¡é•‡è¯¦ç»†
      *
-     * @return town_detail - ÏçÕòÏêÏ¸
+     * @return town_detail - ä¹¡é•‡è¯¦ç»†
      */
     public String getTownDetail() {
         return townDetail;
     }
 
     /**
-     * ÉèÖÃÏçÕòÏêÏ¸
+     * è®¾ç½®ä¹¡é•‡è¯¦ç»†
      *
-     * @param townDetail ÏçÕòÏêÏ¸
+     * @param townDetail ä¹¡é•‡è¯¦ç»†
      */
     public void setTownDetail(String townDetail) {
         this.townDetail = townDetail;
     }
 
     /**
-     * »ñÈ¡ÏêÏ¸µØÖ·
+     * è·å–è¯¦ç»†åœ°å€
      *
-     * @return address - ÏêÏ¸µØÖ·
+     * @return address - è¯¦ç»†åœ°å€
      */
     public String getAddress() {
         return address;
     }
 
     /**
-     * ÉèÖÃÏêÏ¸µØÖ·
+     * è®¾ç½®è¯¦ç»†åœ°å€
      *
-     * @param address ÏêÏ¸µØÖ·
+     * @param address è¯¦ç»†åœ°å€
      */
     public void setAddress(String address) {
         this.address = address;
     }
 
     /**
-     * »ñÈ¡ÉêÇë×éÖ¯
+     * è·å–ç”³è¯·ç»„ç»‡
      *
-     * @return apply_org - ÉêÇë×éÖ¯
+     * @return apply_org - ç”³è¯·ç»„ç»‡
      */
     public Long getApplyOrg() {
         return applyOrg;
     }
 
     /**
-     * ÉèÖÃÉêÇë×éÖ¯
+     * è®¾ç½®ç”³è¯·ç»„ç»‡
      *
-     * @param applyOrg ÉêÇë×éÖ¯
+     * @param applyOrg ç”³è¯·ç»„ç»‡
      */
     public void setApplyOrg(Long applyOrg) {
         this.applyOrg = applyOrg;
     }
 
     /**
-     * »ñÈ¡ÌÔ±¦ÓÃ»§id
+     * è·å–æ·˜å®ç”¨æˆ·id
      *
-     * @return taobao_user_id - ÌÔ±¦ÓÃ»§id
+     * @return taobao_user_id - æ·˜å®ç”¨æˆ·id
      */
     public Long getTaobaoUserId() {
         return taobaoUserId;
     }
 
     /**
-     * ÉèÖÃÌÔ±¦ÓÃ»§id
+     * è®¾ç½®æ·˜å®ç”¨æˆ·id
      *
-     * @param taobaoUserId ÌÔ±¦ÓÃ»§id
+     * @param taobaoUserId æ·˜å®ç”¨æˆ·id
      */
     public void setTaobaoUserId(Long taobaoUserId) {
         this.taobaoUserId = taobaoUserId;
     }
 
     /**
-     * »ñÈ¡´åµã±àºÅ
+     * è·å–æ‘ç‚¹ç¼–å·
      *
-     * @return station_num - ´åµã±àºÅ
+     * @return station_num - æ‘ç‚¹ç¼–å·
      */
     public String getStationNum() {
         return stationNum;
     }
 
     /**
-     * ÉèÖÃ´åµã±àºÅ
+     * è®¾ç½®æ‘ç‚¹ç¼–å·
      *
-     * @param stationNum ´åµã±àºÅ
+     * @param stationNum æ‘ç‚¹ç¼–å·
      */
     public void setStationNum(String stationNum) {
         this.stationNum = stationNum;
     }
 
     /**
-     * »ñÈ¡¾­¶È
+     * è·å–ç»åº¦
      *
-     * @return lng - ¾­¶È
+     * @return lng - ç»åº¦
      */
     public String getLng() {
         return lng;
     }
 
     /**
-     * ÉèÖÃ¾­¶È
+     * è®¾ç½®ç»åº¦
      *
-     * @param lng ¾­¶È
+     * @param lng ç»åº¦
      */
     public void setLng(String lng) {
         this.lng = lng;
     }
 
     /**
-     * »ñÈ¡Î³¶È
+     * è·å–çº¬åº¦
      *
-     * @return lat - Î³¶È
+     * @return lat - çº¬åº¦
      */
     public String getLat() {
         return lat;
     }
 
     /**
-     * ÉèÖÃÎ³¶È
+     * è®¾ç½®çº¬åº¦
      *
-     * @param lat Î³¶È
+     * @param lat çº¬åº¦
      */
     public void setLat(String lat) {
         this.lat = lat;
     }
 
     /**
-     * »ñÈ¡´å/ÉçÇø±àºÅ
+     * è·å–æ‘/ç¤¾åŒºç¼–å·
      *
-     * @return village - ´å/ÉçÇø±àºÅ
+     * @return village - æ‘/ç¤¾åŒºç¼–å·
      */
     public String getVillage() {
         return village;
     }
 
     /**
-     * ÉèÖÃ´å/ÉçÇø±àºÅ
+     * è®¾ç½®æ‘/ç¤¾åŒºç¼–å·
      *
-     * @param village ´å/ÉçÇø±àºÅ
+     * @param village æ‘/ç¤¾åŒºç¼–å·
      */
     public void setVillage(String village) {
         this.village = village;
     }
 
     /**
-     * »ñÈ¡´å/ÉçÇøÃû³Æ
-ÏêÇé
+     * è·å–æ‘/ç¤¾åŒºåç§°
+è¯¦æƒ…
      *
-     * @return village_detail - ´å/ÉçÇøÃû³Æ
-ÏêÇé
+     * @return village_detail - æ‘/ç¤¾åŒºåç§°
+è¯¦æƒ…
      */
     public String getVillageDetail() {
         return villageDetail;
     }
 
     /**
-     * ÉèÖÃ´å/ÉçÇøÃû³Æ
-ÏêÇé
+     * è®¾ç½®æ‘/ç¤¾åŒºåç§°
+è¯¦æƒ…
      *
-     * @param villageDetail ´å/ÉçÇøÃû³Æ
-ÏêÇé
+     * @param villageDetail æ‘/ç¤¾åŒºåç§°
+è¯¦æƒ…
      */
     public void setVillageDetail(String villageDetail) {
         this.villageDetail = villageDetail;
     }
 
     /**
-     * »ñÈ¡¸²¸ÇÈË¿Ú
+     * è·å–è¦†ç›–äººå£
      *
-     * @return covered - ¸²¸ÇÈË¿Ú
+     * @return covered - è¦†ç›–äººå£
      */
     public String getCovered() {
         return covered;
     }
 
     /**
-     * ÉèÖÃ¸²¸ÇÈË¿Ú
+     * è®¾ç½®è¦†ç›–äººå£
      *
-     * @param covered ¸²¸ÇÈË¿Ú
+     * @param covered è¦†ç›–äººå£
      */
     public void setCovered(String covered) {
         this.covered = covered;
     }
 
     /**
-     * »ñÈ¡ÌØÉ«Å©¸±²úÆ·
+     * è·å–ç‰¹è‰²å†œå‰¯äº§å“
      *
-     * @return products - ÌØÉ«Å©¸±²úÆ·
+     * @return products - ç‰¹è‰²å†œå‰¯äº§å“
      */
     public String getProducts() {
         return products;
     }
 
     /**
-     * ÉèÖÃÌØÉ«Å©¸±²úÆ·
+     * è®¾ç½®ç‰¹è‰²å†œå‰¯äº§å“
      *
-     * @param products ÌØÉ«Å©¸±²úÆ·
+     * @param products ç‰¹è‰²å†œå‰¯äº§å“
      */
     public void setProducts(String products) {
         this.products = products;
     }
 
     /**
-     * »ñÈ¡ÎïÁ÷×´Ì¬
+     * è·å–ç‰©æµçŠ¶æ€
      *
-     * @return logistics_state - ÎïÁ÷×´Ì¬
+     * @return logistics_state - ç‰©æµçŠ¶æ€
      */
     public String getLogisticsState() {
         return logisticsState;
     }
 
     /**
-     * ÉèÖÃÎïÁ÷×´Ì¬
+     * è®¾ç½®ç‰©æµçŠ¶æ€
      *
-     * @param logisticsState ÎïÁ÷×´Ì¬
+     * @param logisticsState ç‰©æµçŠ¶æ€
      */
     public void setLogisticsState(String logisticsState) {
         this.logisticsState = logisticsState;
     }
 
     /**
-     * »ñÈ¡Ä¿Ç°ÒµÌ¬
+     * è·å–ç›®å‰ä¸šæ€
      *
-     * @return format - Ä¿Ç°ÒµÌ¬
+     * @return format - ç›®å‰ä¸šæ€
      */
     public String getFormat() {
         return format;
     }
 
     /**
-     * ÉèÖÃÄ¿Ç°ÒµÌ¬
+     * è®¾ç½®ç›®å‰ä¸šæ€
      *
-     * @param format Ä¿Ç°ÒµÌ¬
+     * @param format ç›®å‰ä¸šæ€
      */
     public void setFormat(String format) {
         this.format = format;
     }
 
     /**
-     * »ñÈ¡¹Ìµã£¬»òÕß²»¹Ìµã
+     * è·å–å›ºç‚¹ï¼Œæˆ–è€…ä¸å›ºç‚¹
      *
-     * @return area_type - ¹Ìµã£¬»òÕß²»¹Ìµã
+     * @return area_type - å›ºç‚¹ï¼Œæˆ–è€…ä¸å›ºç‚¹
      */
     public String getAreaType() {
         return areaType;
     }
 
     /**
-     * ÉèÖÃ¹Ìµã£¬»òÕß²»¹Ìµã
+     * è®¾ç½®å›ºç‚¹ï¼Œæˆ–è€…ä¸å›ºç‚¹
      *
-     * @param areaType ¹Ìµã£¬»òÕß²»¹Ìµã
+     * @param areaType å›ºç‚¹ï¼Œæˆ–è€…ä¸å›ºç‚¹
      */
     public void setAreaType(String areaType) {
         this.areaType = areaType;
     }
 
     /**
-     * »ñÈ¡¹ÜÀíÔ±user_id
+     * è·å–ç®¡ç†å‘˜user_id
      *
-     * @return manager_id - ¹ÜÀíÔ±user_id
+     * @return manager_id - ç®¡ç†å‘˜user_id
      */
     public String getManagerId() {
         return managerId;
     }
 
     /**
-     * ÉèÖÃ¹ÜÀíÔ±user_id
+     * è®¾ç½®ç®¡ç†å‘˜user_id
      *
-     * @param managerId ¹ÜÀíÔ±user_id
+     * @param managerId ç®¡ç†å‘˜user_id
      */
     public void setManagerId(String managerId) {
         this.managerId = managerId;
     }
 
     /**
-     * »ñÈ¡·şÎñÉÌid
+     * è·å–æœåŠ¡å•†id
      *
-     * @return provider_id - ·şÎñÉÌid
+     * @return provider_id - æœåŠ¡å•†id
      */
     public Long getProviderId() {
         return providerId;
     }
 
     /**
-     * ÉèÖÃ·şÎñÉÌid
+     * è®¾ç½®æœåŠ¡å•†id
      *
-     * @param providerId ·şÎñÉÌid
+     * @param providerId æœåŠ¡å•†id
      */
     public void setProviderId(Long providerId) {
         this.providerId = providerId;
     }
 
     /**
-     * »ñÈ¡ÆäËûÌØĞÔ£¬ÓÃÓÚÀ©Õ¹·şÎñÕ¾ÊôĞÔ
+     * è·å–å…¶ä»–ç‰¹æ€§ï¼Œç”¨äºæ‰©å±•æœåŠ¡ç«™å±æ€§
      *
-     * @return feature - ÆäËûÌØĞÔ£¬ÓÃÓÚÀ©Õ¹·şÎñÕ¾ÊôĞÔ
+     * @return feature - å…¶ä»–ç‰¹æ€§ï¼Œç”¨äºæ‰©å±•æœåŠ¡ç«™å±æ€§
      */
     public String getFeature() {
         return feature;
     }
 
     /**
-     * ÉèÖÃÆäËûÌØĞÔ£¬ÓÃÓÚÀ©Õ¹·şÎñÕ¾ÊôĞÔ
+     * è®¾ç½®å…¶ä»–ç‰¹æ€§ï¼Œç”¨äºæ‰©å±•æœåŠ¡ç«™å±æ€§
      *
-     * @param feature ÆäËûÌØĞÔ£¬ÓÃÓÚÀ©Õ¹·şÎñÕ¾ÊôĞÔ
+     * @param feature å…¶ä»–ç‰¹æ€§ï¼Œç”¨äºæ‰©å±•æœåŠ¡ç«™å±æ€§
      */
     public void setFeature(String feature) {
         this.feature = feature;
     }
 
     /**
-     * »ñÈ¡ĞÂµÄ·şÎñÕ¾×´Ì¬
+     * è·å–æ–°çš„æœåŠ¡ç«™çŠ¶æ€
      *
-     * @return status - ĞÂµÄ·şÎñÕ¾×´Ì¬
+     * @return status - æ–°çš„æœåŠ¡ç«™çŠ¶æ€
      */
     public String getStatus() {
         return status;
     }
 
     /**
-     * ÉèÖÃĞÂµÄ·şÎñÕ¾×´Ì¬
+     * è®¾ç½®æ–°çš„æœåŠ¡ç«™çŠ¶æ€
      *
-     * @param status ĞÂµÄ·şÎñÕ¾×´Ì¬
+     * @param status æ–°çš„æœåŠ¡ç«™çŠ¶æ€
      */
     public void setStatus(String status) {
         this.status = status;
     }
 
     /**
-     * »ñÈ¡³¡µØ¹ÌµãÀàĞÍ GOV_FIXED Õş¸®¹Ìµã
+     * è·å–åœºåœ°å›ºç‚¹ç±»å‹ GOV_FIXED æ”¿åºœå›ºç‚¹
 TRIPARTITE_FIXED
-Èı·½¹Ìµã
+ä¸‰æ–¹å›ºç‚¹
      *
-     * @return fixed_type - ³¡µØ¹ÌµãÀàĞÍ GOV_FIXED Õş¸®¹Ìµã
+     * @return fixed_type - åœºåœ°å›ºç‚¹ç±»å‹ GOV_FIXED æ”¿åºœå›ºç‚¹
 TRIPARTITE_FIXED
-Èı·½¹Ìµã
+ä¸‰æ–¹å›ºç‚¹
      */
     public String getFixedType() {
         return fixedType;
     }
 
     /**
-     * ÉèÖÃ³¡µØ¹ÌµãÀàĞÍ GOV_FIXED Õş¸®¹Ìµã
+     * è®¾ç½®åœºåœ°å›ºç‚¹ç±»å‹ GOV_FIXED æ”¿åºœå›ºç‚¹
 TRIPARTITE_FIXED
-Èı·½¹Ìµã
+ä¸‰æ–¹å›ºç‚¹
      *
-     * @param fixedType ³¡µØ¹ÌµãÀàĞÍ GOV_FIXED Õş¸®¹Ìµã
+     * @param fixedType åœºåœ°å›ºç‚¹ç±»å‹ GOV_FIXED æ”¿åºœå›ºç‚¹
 TRIPARTITE_FIXED
-Èı·½¹Ìµã
+ä¸‰æ–¹å›ºç‚¹
      */
     public void setFixedType(String fixedType) {
         this.fixedType = fixedType;

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.StationApplyMapper">
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.StationApply">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="applier_name" jdbcType="VARCHAR" property="applierName" />
+    <result column="iden_num" jdbcType="VARCHAR" property="idenNum" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="covered" jdbcType="VARCHAR" property="covered" />
+    <result column="products" jdbcType="VARCHAR" property="products" />
+    <result column="logistics_state" jdbcType="VARCHAR" property="logisticsState" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <result column="alipay_account" jdbcType="VARCHAR" property="alipayAccount" />
+    <result column="taobao_nick" jdbcType="VARCHAR" property="taobaoNick" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="own_org_id" jdbcType="BIGINT" property="ownOrgId" />
+    <result column="service_begin_date" jdbcType="TIMESTAMP" property="serviceBeginDate" />
+    <result column="service_end_date" jdbcType="TIMESTAMP" property="serviceEndDate" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="version" jdbcType="BIGINT" property="version" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="city_detail" jdbcType="VARCHAR" property="cityDetail" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="county_detail" jdbcType="VARCHAR" property="countyDetail" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="town_detail" jdbcType="VARCHAR" property="townDetail" />
+    <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+    <result column="confirmed_time" jdbcType="TIMESTAMP" property="confirmedTime" />
+    <result column="protocol_confirming_step" jdbcType="VARCHAR" property="protocolConfirmingStep" />
+    <result column="frozen_time" jdbcType="TIMESTAMP" property="frozenTime" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="applier_type" jdbcType="VARCHAR" property="applierType" />
+    <result column="applier_id" jdbcType="VARCHAR" property="applierId" />
+    <result column="submitted_people_name" jdbcType="VARCHAR" property="submittedPeopleName" />
+    <result column="station_num" jdbcType="VARCHAR" property="stationNum" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="village_detail" jdbcType="VARCHAR" property="villageDetail" />
+    <result column="thaw_time" jdbcType="TIMESTAMP" property="thawTime" />
+    <result column="protocol_version" jdbcType="VARCHAR" property="protocolVersion" />
+    <result column="frozen_money" jdbcType="VARCHAR" property="frozenMoney" />
+    <result column="open_date" jdbcType="DATE" property="openDate" />
+    <result column="quit_protocol_version" jdbcType="VARCHAR" property="quitProtocolVersion" />
+    <result column="quit_type" jdbcType="VARCHAR" property="quitType" />
+    <result column="contact_date" jdbcType="TIMESTAMP" property="contactDate" />
+    <result column="customer_level" jdbcType="DOUBLE" property="customerLevel" />
+    <result column="area_type" jdbcType="VARCHAR" property="areaType" />
+    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
+    <result column="manage_protocol_version" jdbcType="VARCHAR" property="manageProtocolVersion" />
+    <result column="manage_protocol_confirmed" jdbcType="TIMESTAMP" property="manageProtocolConfirmed" />
+    <result column="operator_type" jdbcType="VARCHAR" property="operatorType" />
+    <result column="partner_station_id" jdbcType="BIGINT" property="partnerStationId" />
+    <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
+    <result column="village_flag" jdbcType="VARCHAR" property="villageFlag" />
+    <result column="place_flag" jdbcType="VARCHAR" property="placeFlag" />
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="management_type" jdbcType="VARCHAR" property="managementType" />
+  </resultMap>
+</mapper>
