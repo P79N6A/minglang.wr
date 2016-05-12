@@ -1,30 +1,30 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper" >
-  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.PartnerStationRel" >
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper">
+  <resultMap id="BaseResultMap" type="com.taobao.cun.auge.dal.domain.PartnerStationRel">
     <!--
       WARNING - @mbggenerated
     -->
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
-    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
-    <result column="creator" property="creator" jdbcType="VARCHAR" />
-    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
-    <result column="is_deleted" property="isDeleted" jdbcType="CHAR" />
-    <result column="station_id" property="stationId" jdbcType="BIGINT" />
-    <result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
-    <result column="service_begin_time" property="serviceBeginTime" jdbcType="TIMESTAMP" />
-    <result column="service_end_time" property="serviceEndTime" jdbcType="TIMESTAMP" />
-    <result column="partner_id" property="partnerId" jdbcType="BIGINT" />
-    <result column="parent_station_id" property="parentStationId" jdbcType="BIGINT" />
-    <result column="state" property="state" jdbcType="VARCHAR" />
-    <result column="applier_id" property="applierId" jdbcType="VARCHAR" />
-    <result column="bit" property="bit" jdbcType="INTEGER" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="open_date" property="openDate" jdbcType="TIMESTAMP" />
-    <result column="is_current" property="isCurrent" jdbcType="CHAR" />
-    <result column="applier_type" property="applierType" jdbcType="VARCHAR" />
-    <result column="close_type" property="closeType" jdbcType="VARCHAR" />
-    <result column="station_apply_id" property="stationApplyId" jdbcType="BIGINT" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="service_begin_time" jdbcType="TIMESTAMP" property="serviceBeginTime" />
+    <result column="service_end_time" jdbcType="TIMESTAMP" property="serviceEndTime" />
+    <result column="partner_id" jdbcType="BIGINT" property="partnerId" />
+    <result column="parent_station_id" jdbcType="BIGINT" property="parentStationId" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="applier_id" jdbcType="VARCHAR" property="applierId" />
+    <result column="bit" jdbcType="INTEGER" property="bit" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="open_date" jdbcType="TIMESTAMP" property="openDate" />
+    <result column="is_current" jdbcType="CHAR" property="isCurrent" />
+    <result column="applier_type" jdbcType="VARCHAR" property="applierType" />
+    <result column="close_type" jdbcType="VARCHAR" property="closeType" />
+    <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
   </resultMap>
 </mapper>
