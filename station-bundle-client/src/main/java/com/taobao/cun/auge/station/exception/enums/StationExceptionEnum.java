@@ -24,6 +24,5 @@ public class StationExceptionEnum extends CommonExceptionEnum {
     }
 
     public StationExceptionEnum() {
-
     }
 }
