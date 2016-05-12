@@ -19,6 +19,8 @@
                         userId="${jdbc.user}"
                         password="${jdbc.password}">
         </jdbcConnection>
+        
+
 
         <javaModelGenerator targetPackage="${targetModelPackage}" targetProject="${targetJavaProject}"/>
 
@@ -26,28 +28,32 @@
 
         <javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}" type="XMLMAPPER" />
 
-        <table tableName="partner" >
+        <table tableName="station_apply" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         
-        <table tableName="partner_station_rel" >
+        <table tableName="protocol" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         
-       <table tableName="account_money" >
+       <table tableName="partner_protocol_rel" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         
                 
-       <table tableName="crius_task_excute" >
+       <table tableName="county_station" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         
-         <table tableName="partner_lifecycle_items" >
+         <table tableName="logistics_station" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
         
-         <table tableName="quit_station_apply" >
+         <table tableName="logistics_station_apply" >
+          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        
+        <table tableName="attachement" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>
