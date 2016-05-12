@@ -1,8 +1,15 @@
 package com.taobao.cun.auge.station.condition;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import com.taobao.cun.auge.station.enums.LogisticsStateEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 public class StationCondition implements Serializable {
+
+	private static final long serialVersionUID = -5161645049551081998L;
 
 	// 村服务站id
 	private Long id;
@@ -14,10 +21,7 @@ public class StationCondition implements Serializable {
 	private Long providerId;
 
 	// 新的状态
-	private StationStateEnum status;
-
-	// 旧的状态
-	private OldStationStateEnum oldState;
+	private StationStatusEnum status;
 
 	// 村编号
 	private String stationNum;
@@ -26,7 +30,7 @@ public class StationCondition implements Serializable {
 	private String name;
 
 	// 经营地址
-	private AddressDto address;
+	private AddressCondition address;
 
 	// 目前业态
 	private String format;
@@ -41,7 +45,7 @@ public class StationCondition implements Serializable {
 	protected LogisticsStateEnum logisticsState;
 
 	// 现场照片附件
-	protected List<Attachement> attachements;
+	protected List<AttachementCondition> attachements;
 
 	// 描述
 	private String description;
@@ -79,20 +83,12 @@ public class StationCondition implements Serializable {
 		this.providerId = providerId;
 	}
 
-	public StationStateEnum getStatus() {
+	public StationStatusEnum getStatus() {
 		return status;
 	}
 
-	public void setStatus(StationStateEnum status) {
+	public void setStatus(StationStatusEnum status) {
 		this.status = status;
-	}
-
-	public OldStationStateEnum getOldState() {
-		return oldState;
-	}
-
-	public void setOldState(OldStationStateEnum oldState) {
-		this.oldState = oldState;
 	}
 
 	public String getStationNum() {
@@ -111,11 +107,11 @@ public class StationCondition implements Serializable {
 		this.name = name;
 	}
 
-	public AddressDto getAddress() {
+	public AddressCondition getAddress() {
 		return address;
 	}
 
-	public void setAddress(AddressDto address) {
+	public void setAddress(AddressCondition address) {
 		this.address = address;
 	}
 
@@ -151,11 +147,11 @@ public class StationCondition implements Serializable {
 		this.logisticsState = logisticsState;
 	}
 
-	public List<Attachement> getAttachements() {
+	public List<AttachementCondition> getAttachements() {
 		return attachements;
 	}
 
-	public void setAttachements(List<Attachement> attachements) {
+	public void setAttachements(List<AttachementCondition> attachements) {
 		this.attachements = attachements;
 	}
 
