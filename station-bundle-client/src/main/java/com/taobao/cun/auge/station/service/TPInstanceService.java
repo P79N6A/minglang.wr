@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
-import com.taobao.cun.auge.station.condition.PartnerStationCondition;
+import com.taobao.cun.auge.station.condition.TPInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
 /**
@@ -23,7 +23,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long tempPartnerStation(PartnerStationCondition condition);
+	public Long tempPartnerStation(TPInstanceCondition condition);
 
 	/**
 	 * 正式提交，人和村
@@ -31,7 +31,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long submitPartnerStation(PartnerStationCondition condition);
+	public Long submitPartnerStation(TPInstanceCondition condition);
 
 	/**
 	 * 正式提交，暂存的人和村
@@ -39,7 +39,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long submitTempPartnerStation(PartnerStationCondition condition);
+	public Long submitTempPartnerStation(TPInstanceCondition condition);
 
 	/**
 	 * 修改，人和村
@@ -47,7 +47,7 @@ public interface TPInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public boolean updatePartnerStation(PartnerStationCondition condition);
+	public boolean updatePartnerStation(TPInstanceCondition condition);
 
 	/**
 	 * 删除合伙人实例
