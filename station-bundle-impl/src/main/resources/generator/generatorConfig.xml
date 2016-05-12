@@ -28,36 +28,7 @@
 
         <javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}" type="XMLMAPPER" />
 
-        <table tableName="station_apply" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-        <table tableName="protocol" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-       <table tableName="partner_protocol_rel" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-                
-       <table tableName="county_station" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-         <table tableName="logistics_station" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-         <table tableName="logistics_station_apply" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-        <table tableName="attachement" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-         <table tableName="station" >
+        <table tableName="account_money" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>
