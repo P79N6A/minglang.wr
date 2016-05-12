@@ -9,7 +9,8 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.TPInstanceService;
-
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+@HSFProvider(serviceInterface = TPInstanceService.class)
 public class TPInstanceServiceImpl implements TPInstanceService {
 
 	@Override
