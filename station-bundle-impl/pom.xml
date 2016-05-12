@@ -19,6 +19,8 @@
 		<!-- 依赖版本 -->
 		<mapper.version>3.3.7</mapper.version>
 		<mysql.version>5.1.29</mysql.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
 	</properties>
 	<dependencies>
 		<dependency>
