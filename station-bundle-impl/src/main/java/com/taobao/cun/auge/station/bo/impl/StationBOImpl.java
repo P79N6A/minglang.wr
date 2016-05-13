@@ -24,5 +24,4 @@ public class StationBOImpl implements StationBO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }
