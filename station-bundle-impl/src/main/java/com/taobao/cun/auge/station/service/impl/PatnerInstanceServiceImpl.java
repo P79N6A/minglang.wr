@@ -12,13 +12,15 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
 
-public class DefaultPatnerInstanceServiceImpl implements PatnerInstanceService {
+public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PatnerInstanceService.class);
 	
@@ -26,7 +28,10 @@ public class DefaultPatnerInstanceServiceImpl implements PatnerInstanceService {
 	ProtocolBO protocolBO;
 	
 	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
+	PartnerInstanceBO partnerInstanceBO; 
+	
+	@Autowired
+	PartnerInstanceHandler partnerInstanceHandler;
 
 	@Override
 	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException {
@@ -143,5 +148,10 @@ public class DefaultPatnerInstanceServiceImpl implements PatnerInstanceService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		return partnerInstanceHandler.handleApplySettle(condition,partnerInstanceTypeEnum);
+ 	}
 
 }
