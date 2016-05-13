@@ -11,12 +11,13 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
@@ -102,8 +103,17 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			Long partnerInstanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId,PartnerInstanceStateEnum.SERVICING);
+			if(partnerInstanceId == null) {
+				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+			}
+			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
+			return false;
+		} catch (Exception e) {
+			logger.error("applyCloseByPartner.error.param:"+taobaoUserId,e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 	@Override
@@ -155,18 +165,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public PartnerInstanceDto querySafedInfo(Long partnerInstanceId) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public PartnerInstanceDto queryInfo(Long partnerInstanceId) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

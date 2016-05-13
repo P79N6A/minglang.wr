@@ -159,22 +159,6 @@ public interface PatnerInstanceService {
 	 */
 	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
 	
-
-	/**
-	 * 详情，人和村。已脫敏
-	 * 
-	 * @param partnerStationId
-	 * @return
-	 */
-	public PartnerInstanceDto querySafedInfo(Long partnerInstanceId) throws AugeServiceException;
-	
-	/**
-	 * 详情，人和村。没有脱敏
-	 * 
-	 * @param partnerStationId
-	 * @return
-	 */
-	public PartnerInstanceDto queryInfo(Long partnerInstanceId) throws AugeServiceException;
 	
 	/**
 	 * 申请入驻
@@ -183,4 +167,5 @@ public interface PatnerInstanceService {
 	 * @return
 	 */
 	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum) throws AugeServiceException;
+	
 }

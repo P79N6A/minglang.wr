@@ -18,9 +18,11 @@ public class CommonExceptionEnum implements Serializable {
     protected String desc;
 
     public static final CommonExceptionEnum PARAM_IS_NULL = new CommonExceptionEnum("PARAM_IS_NULL", "参数不能为空");
+    public static final CommonExceptionEnum SYSTEM_ERROR = new CommonExceptionEnum("system_error", "系统异常");
 
     static {
         mappings.put("PARAM_IS_NULL", PARAM_IS_NULL);
+        mappings.put("SYSTEM_ERROR", SYSTEM_ERROR);
     }
 
     public CommonExceptionEnum(String code, String desc) {
