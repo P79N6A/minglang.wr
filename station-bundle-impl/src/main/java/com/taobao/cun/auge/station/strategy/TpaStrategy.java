@@ -13,5 +13,11 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void validateExistServiceChildren(Long instanceId) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

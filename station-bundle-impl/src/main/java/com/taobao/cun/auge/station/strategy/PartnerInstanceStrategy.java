@@ -7,4 +7,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public interface PartnerInstanceStrategy {
 
 	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException;
+	
+	public void validateExistServiceChildren(Long instanceId)throws AugeServiceException ;
 }

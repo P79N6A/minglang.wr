@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
@@ -18,7 +17,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
@@ -35,9 +33,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
-	
-	@Autowired
-	PartnerBO partnerBO;
 
 	@Override
 	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException {
@@ -106,10 +101,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
-		Long partnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
-		if(partnerId == null) {
-			throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
-		}
+		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -13,12 +13,13 @@ import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 @Component
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceBO.class);
 
 	@Autowired
@@ -28,16 +29,20 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	PartnerStationRelMapper partnerStationRelMapper;
 
 	@Override
-	public Long findPartnerInstanceId(Long taobaoUserId) {
+	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum state) {
 		Partner partnerCondition = new Partner();
 		partnerCondition.setTaobaoUserId(taobaoUserId);
 		partnerCondition.setIsDeleted("n");
+		partnerCondition.setState(PartnerStateEnum.NORMAL.getCode());
 		Partner partner = partnerMapper.selectOne(partnerCondition);
 
 		PartnerStationRel relCondition = new PartnerStationRel();
 		relCondition.setPartnerId(partner.getId());
 		relCondition.setIsCurrent("y");
 		relCondition.setIsDeleted("n");
+		if (null != state) {
+			relCondition.setState(state.getCode());
+		}
 
 		PartnerStationRel rel = partnerStationRelMapper.selectOne(relCondition);
 
@@ -57,7 +62,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,String operator) throws Exception {
+	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
+			String operator) throws Exception {
 		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 
 		if (!preState.getCode().equals(partnerInstance.getState())) {
@@ -68,27 +74,33 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel updateInstance = new PartnerStationRel();
 		updateInstance.setId(instanceId);
 		updateInstance.setState(postState.getCode());
-		
-		beforeUpdate(updateInstance,operator);
+
+		beforeUpdate(updateInstance, operator);
 
 		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
-		
+
 	}
 
-	private PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException {
-		PartnerStationRel partnerInstance  = partnerStationRelMapper.selectByPrimaryKey(instanceId);
-		if(null == partnerInstance){
+	@Override
+	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException {
+		PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
+		if (null == partnerInstance) {
 			logger.error("partner instance is not exist.instance id " + instanceId);
 			throw new AugeServiceException(StationExceptionEnum.PARTNER_INSTANCE_NOT_EXIST);
 		}
 		return partnerInstance;
 	}
-	
-	
+
 	private static void beforeUpdate(PartnerStationRel partnerStationRel, String operator) {
 		Date now = new Date();
 		partnerStationRel.setGmtModified(now);
 		partnerStationRel.setModifier(operator);
+	}
+
+	@Override
+	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException {
+		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
+		return curPartnerInstance.getStationId();
 	}
 
 }
