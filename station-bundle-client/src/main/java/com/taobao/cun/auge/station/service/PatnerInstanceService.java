@@ -6,6 +6,7 @@ import java.util.Date;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -174,4 +175,12 @@ public interface PatnerInstanceService {
 	 * @return
 	 */
 	public PartnerInstanceDto queryInfo(Long partnerInstanceId) throws AugeServiceException;
+	
+	/**
+	 * 申请入驻
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum) throws AugeServiceException;
 }
