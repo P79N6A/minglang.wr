@@ -70,7 +70,7 @@ public interface PatnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean signSettledProtocol(Long taobaoUserId) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议
@@ -78,7 +78,7 @@ public interface PatnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean signManageProtocol(Long taobaoUserId) throws AugeServiceException;
+	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 冻结保证金
