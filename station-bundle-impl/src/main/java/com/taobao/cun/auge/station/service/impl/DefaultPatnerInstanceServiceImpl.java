@@ -4,49 +4,50 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
-import com.taobao.cun.auge.station.condition.TPInstanceCondition;
+import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
-import com.taobao.cun.auge.station.service.TPInstanceService;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-@HSFProvider(serviceInterface = TPInstanceService.class)
-public class TPInstanceServiceImpl implements TPInstanceService {
+import com.taobao.cun.auge.station.service.PatnerInstanceService;
+
+public class DefaultPatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	@Override
-	public Long tempPartnerStation(TPInstanceCondition condition)
-			throws AugeServiceException {
-		if (1==1) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_DUPLICATE.getCode(),StationExceptionEnum.STATION_NUM_IS_DUPLICATE.getDesc());
-		}
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Long submitPartnerStation(TPInstanceCondition condition)
+	public Long addTemp(PartnerInstanceCondition condition)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Long submitTempPartnerStation(TPInstanceCondition condition)
+	public Long updateTemp(PartnerInstanceCondition condition)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean updatePartnerStation(TPInstanceCondition condition)
+	public Long addSubmit(PartnerInstanceCondition condition)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long updateSubmit(PartnerInstanceCondition condition)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean update(PartnerInstanceCondition condition)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean deletePartnerStation(Long instanceId)
-			throws AugeServiceException {
+	public boolean delete(Long instanceId) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -80,38 +81,60 @@ public class TPInstanceServiceImpl implements TPInstanceService {
 	}
 
 	@Override
-	public boolean quitApplyByPartner(Long taobaoUserId)
+	public boolean applyCloseByPartner(Long taobaoUserId)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean approvePartnerQuitApply(Long partnerInstanceId,
-			String employeeId, boolean isAgree) throws AugeServiceException {
+	public boolean confirmClose(Long partnerInstanceId, String employeeId,
+			boolean isAgree) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean applyForcedClose(ForcedCloseCondition forcedCloseCondition,
+	public boolean applyCloseByEmployee(
+			ForcedCloseCondition forcedCloseCondition, String employeeId)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean auditClose(ForcedCloseCondition forcedCloseCondition,
 			String employeeId) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean quitApplyByEmployee(Long partnerInstanceId, String employeeId)
+	public boolean applyQuitByEmployee(Long partnerInstanceId, String employeeId)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public PartnerInstanceDto findSafedStationPartner(Long partnerStationId)
+	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition,
+			String employeeId) throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public PartnerInstanceDto querySafedInfo(Long partnerInstanceId)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public PartnerInstanceDto queryInfo(Long partnerInstanceId)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
