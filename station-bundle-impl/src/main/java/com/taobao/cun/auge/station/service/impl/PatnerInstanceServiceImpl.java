@@ -133,8 +133,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING,
 					PartnerInstanceStateEnum.CLOSING, employeeId);
 			// 更新村点状态为停业中
-			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
+			stationBO.changeState(instance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
 
 			// 通过事件，启动定时钟，启动停业流程
 			return true;
