@@ -24,13 +24,13 @@ import com.taobao.cun.auge.station.service.PatnerInstanceService;
 public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PatnerInstanceService.class);
-	
+
 	@Autowired
 	ProtocolBO protocolBO;
-	
+
 	@Autowired
-	PartnerInstanceBO partnerInstanceBO; 
-	
+	PartnerInstanceBO partnerInstanceBO;
+
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
 
@@ -73,8 +73,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException {
 		try {
-			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId);
-			protocolBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO,instanceId,ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
+			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
+			protocolBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
+					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
 			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
@@ -115,27 +116,26 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId)
 			throws AugeServiceException {
-		 try {
-			Long instanceId =  forcedCloseCondition.getInstanceId();
-			int count =  partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.SERVICING);
-	            if(count > 0){
-	            	logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
-					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
-	            }
-	            
-	            
-//	            partnerInstanceBO
-//	            
-//	            StationBO
-	            
-	            return true;
-	            
-	            // 定时钟，启动停业流程
-	            
-	        } catch (Exception e) {
-				logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
-				throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
+		try {
+			Long instanceId = forcedCloseCondition.getInstanceId();
+			int count = partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.SERVICING);
+			if (count > 0) {
+				logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
+				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 			}
+
+			// partnerInstanceBO
+			//
+			// StationBO
+
+			return true;
+
+			// 定时钟，启动停业流程
+
+		} catch (Exception e) {
+			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
+			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
+		}
 	}
 
 	@Override
@@ -170,8 +170,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		return partnerInstanceHandler.handleApplySettle(condition,partnerInstanceTypeEnum);
- 	}
+	public Long applySettle(PartnerInstanceCondition condition, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
+			throws AugeServiceException {
+		return partnerInstanceHandler.handleApplySettle(condition, partnerInstanceTypeEnum);
+	}
 
 }
