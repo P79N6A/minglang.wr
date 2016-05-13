@@ -12,7 +12,7 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long taobaoUserId);
+	public Long findPartnerInstanceId(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
 	
 	/**
 	 * 根据实例id查询村点id

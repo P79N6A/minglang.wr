@@ -79,7 +79,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException {
 		try {
-			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId);
+			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId,PartnerInstanceStateEnum.SETTLING);
 			protocolBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 		} catch (Exception e) {
