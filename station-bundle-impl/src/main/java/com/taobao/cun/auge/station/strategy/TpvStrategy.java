@@ -14,4 +14,10 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		return null;
 	}
 
+	@Override
+	public void validateExistServiceChildren(Long instanceId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

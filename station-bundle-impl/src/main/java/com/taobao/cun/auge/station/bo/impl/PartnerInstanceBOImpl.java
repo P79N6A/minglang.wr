@@ -74,8 +74,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
 		
 	}
-
-	private PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException {
+	
+	@Override
+	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException {
 		PartnerStationRel partnerInstance  = partnerStationRelMapper.selectByPrimaryKey(instanceId);
 		if(null == partnerInstance){
 			logger.error("partner instance is not exist.instance id " + instanceId);
@@ -89,6 +90,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		Date now = new Date();
 		partnerStationRel.setGmtModified(now);
 		partnerStationRel.setModifier(operator);
+	}
+
+	@Override
+	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException {
+		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
+		return curPartnerInstance.getStationId();
 	}
 
 }
