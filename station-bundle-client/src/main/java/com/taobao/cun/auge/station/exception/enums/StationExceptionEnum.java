@@ -11,11 +11,19 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 			"STATION_NUM_IS_DUPLICATE", "服务站编号重复");
 
 	public static final StationExceptionEnum SIGN_SETTLE_PROTOCOL_FAIL = new StationExceptionEnum(
-			"SIGN_SETTLE_PROTOCOL_FAIL", "签署入驻协议");
+			"SIGN_SETTLE_PROTOCOL_FAIL", "签署入驻协议失败");
+	
+	public static final StationExceptionEnum HAS_CHILDREN_TPA = new StationExceptionEnum(
+			"HAS_CHILDREN_TPA", "该合伙人下存在运营中的淘帮手");
+	
+	public static final StationExceptionEnum PARTNER_INSTANCE_NOT_EXIST = new StationExceptionEnum(
+			"PARTNER_INSTANCE_NOT_EXIST", "合伙人实例不存在");
 
 	static {
 		mappings.put("STATION_NUM_IS_DUPLICATE", STATION_NUM_IS_DUPLICATE);
 		mappings.put("SIGN_SETTLE_PROTOCOL_FAIL", SIGN_SETTLE_PROTOCOL_FAIL);
+		mappings.put("HAS_CHILDREN_TPA", HAS_CHILDREN_TPA);
+		mappings.put("PARTNER_INSTANCE_NOT_EXIST", PARTNER_INSTANCE_NOT_EXIST);
 	}
 
 	public StationExceptionEnum(String code, String desc) {

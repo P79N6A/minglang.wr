@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -109,8 +110,25 @@ public class DefaultPatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+		 try {
+			Long instanceId =  forcedCloseCondition.getInstanceId();
+			int count =  partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.SERVICING);
+	            if(count > 0){
+	            	logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
+					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+	            }
+	            
+	            
+	            partnerInstanceBO
+	            
+	            StationBO
+	            
+	            // 定时钟，启动停业流程
+	            
+	        } catch (Exception e) {
+				logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
+				throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
+			}
 	}
 
 	@Override
