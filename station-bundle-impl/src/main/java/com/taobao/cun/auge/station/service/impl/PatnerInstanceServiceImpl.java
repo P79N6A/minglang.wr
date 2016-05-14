@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +122,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		try {
+			
 			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstance(taobaoUserId,PartnerInstanceStateEnum.SERVICING);
 			if(partnerInstance == null) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
@@ -144,6 +147,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+	
 
 	@Override
 	public boolean confirmClose(Long partnerInstanceId, String employeeId, boolean isAgree)
@@ -154,7 +158,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistServiceChildren(
+			partnerInstanceHandler.validateExistValidChildren(
 					PartnerInstanceTypeEnum.valueof(partnerInstance.getType()),partnerInstanceId);
             
 			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(partnerInstance.getId(), PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.CONFIRM);
@@ -190,7 +194,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistServiceChildren(
+			partnerInstanceHandler.validateExistValidChildren(
 					PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
 
 			// 合伙人实例停业中

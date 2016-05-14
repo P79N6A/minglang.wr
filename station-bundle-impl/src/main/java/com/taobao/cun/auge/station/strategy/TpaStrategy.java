@@ -15,7 +15,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistServiceChildren(Long instanceId) {
+	public void validateExistValidChildren(Long instanceId) {
 		// TODO Auto-generated method stub
 		
 	}
