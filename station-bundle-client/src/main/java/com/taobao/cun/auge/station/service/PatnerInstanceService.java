@@ -5,10 +5,8 @@ import java.util.Date;
 
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-
 /**
  * 实例服务接口
  * @author quanzhu.wangqz
@@ -130,16 +128,16 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
+	public void applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
 	
 	/**
-	 * 审批停业
+	 * 审批小二停业申请
 	 * 
 	 * @param forcedCloseCondition
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean auditClose(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
+	public void auditClose(Long instanceId, String approver,boolean isAgree) throws Exception;
 
 	/**
 	 * 小二申请撤点

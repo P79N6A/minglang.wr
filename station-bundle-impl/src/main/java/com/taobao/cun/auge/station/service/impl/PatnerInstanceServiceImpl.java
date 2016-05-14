@@ -24,6 +24,8 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
+import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
+import com.taobao.cun.dto.permission.enums.PermissionNameEnum;
 
 public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
@@ -130,7 +132,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public boolean applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId)
+	public void applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId)
 			throws AugeServiceException {
 		try {
 			Long instanceId = forcedCloseCondition.getInstanceId();
@@ -148,7 +150,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			stationBO.changeState(instanceId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
 
 			// 通过事件，定时钟，启动停业流程
-			return true;
 
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
@@ -157,10 +158,28 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public boolean auditClose(ForcedCloseCondition forcedCloseCondition, String employeeId)
-			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+	public void auditClose(Long instanceId, String approver, boolean isAgree) throws Exception {
+		// Long applyId = stationQuitFlowDto.getTargetId();
+		// sendForcedClosureEvent(stationQuitFlowDto, context, applyId,
+		// PermissionNameEnum.BOPS_FORCE_QUIT_PROVINCE_AUDIT.getCode());
+
+		if (isAgree) {
+			// 合伙人实例已停业
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
+					approver);
+
+			// 村点已停业
+			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, approver);
+			// 去标
+//			sendForcedQuitAuditEvent(applyId, context);
+		} else {
+			// 合伙人实例已停业
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING,
+					approver);
+
+			// 村点已停业
+			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, approver);
+		}
 	}
 
 	@Override
