@@ -15,6 +15,7 @@ public final class DomainUtils {
 	private DomainUtils(){
 		
 	}
+	public static final String DEFAULT_OPERATOR = "system";
 
 	public static <T> T beforeInsert(T obj, String operator) {
 		try {

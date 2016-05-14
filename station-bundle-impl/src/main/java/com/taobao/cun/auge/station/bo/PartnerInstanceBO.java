@@ -15,6 +15,15 @@ public interface PartnerInstanceBO {
 	public Long findPartnerInstanceId(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
 	
 	/**
+	 * 根据taobaoUserId 查询合伙人实例表
+	 *
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public PartnerStationRel findPartnerInstance(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
+	
+	
+	/**
 	 * 根据实例id查询村点id
 	 * 
 	 * @param instanceId

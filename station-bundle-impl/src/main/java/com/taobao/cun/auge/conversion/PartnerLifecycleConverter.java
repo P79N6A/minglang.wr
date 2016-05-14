@@ -7,6 +7,9 @@ public  class PartnerLifecycleConverter {
 
 	public static PartnerLifecycleItems  ConvertDomain(PartnerLifecycleCondition life) {
 		PartnerLifecycleItems items = new PartnerLifecycleItems();
+		if (life.getLifecycleId() != null) {
+			items.setId(life.getLifecycleId());
+		}
 		if (life.getBond() != null) {
 			items.setBond(life.getBond().getCode());
 		}
