@@ -23,7 +23,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
 		PartnerLifecycleItems items = PartnerLifecycleConverter.ConvertDomain(lifecycle);
-		DomainUtils.beforeInsert(items, operator, PartnerLifecycleItems.class);
+		DomainUtils.beforeInsert(items, operator);
 		partnerLifecycleItemsMapper.insert(items);
 	}
 }

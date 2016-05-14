@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+
 /**
  * 添加domain默认参数工具类
  * 
@@ -12,14 +14,14 @@ import java.util.Date;
  */
 public class DomainUtils {
 
-	public static <T> T beforeInsert(T obj, String operator, Class<T> clazz) {
+	public static <T> T beforeInsert(T obj, String operator) {
 		try {
 			Date now = new Date();
-			Method m1 = clazz.getDeclaredMethod("setIsDeleted", String.class);
-			Method m2 = clazz.getDeclaredMethod("setGmtCreate", Date.class);
-			Method m3 = clazz.getDeclaredMethod("setGmtModified", Date.class);
-			Method m4 = clazz.getDeclaredMethod("setCreator", String.class);
-			Method m5 = clazz.getDeclaredMethod("setModifier", String.class);
+			Method m1 = obj.getClass().getDeclaredMethod("setIsDeleted", String.class);
+			Method m2 = obj.getClass().getDeclaredMethod("setGmtCreate", Date.class);
+			Method m3 = obj.getClass().getDeclaredMethod("setGmtModified", Date.class);
+			Method m4 = obj.getClass().getDeclaredMethod("setCreator", String.class);
+			Method m5 = obj.getClass().getDeclaredMethod("setModifier", String.class);
 
 			m1.invoke(obj, "n");
 			m2.invoke(obj, now);
@@ -35,11 +37,11 @@ public class DomainUtils {
 		return obj;
 	}
 	
-	public static <T> T beforeUpdate(T obj, String operator, Class<T> clazz) {
+	public static <T> T beforeUpdate(T obj, String operator) {
 		try {
 			Date now = new Date();
-			Method m3 = clazz.getDeclaredMethod("setGmtModified", Date.class);
-			Method m5 = clazz.getDeclaredMethod("setModifier", String.class);
+			Method m3 = obj.getClass().getDeclaredMethod("setGmtModified", Date.class);
+			Method m5 = obj.getClass().getDeclaredMethod("setModifier", String.class);
 
 			m3.invoke(obj, now);
 			m5.invoke(obj, operator);
@@ -52,13 +54,13 @@ public class DomainUtils {
 		return obj;
 	}
 	
-	public static <T> T beforeDelete(T obj, String operator, Class<T> clazz) {
+	public static <T> T beforeDelete(T obj, String operator) {
 		try {
 			Date now = new Date();
-			Method m1 = clazz.getDeclaredMethod("setIsDeleted", String.class);
-			Method m3 = clazz.getDeclaredMethod("setGmtModified", Date.class);
-			Method m5 = clazz.getDeclaredMethod("setModifier", String.class);
-
+			Method m1 = obj.getClass().getDeclaredMethod("setIsDeleted", String.class);
+			Method m3 = obj.getClass().getDeclaredMethod("setGmtModified", Date.class);
+			Method m5 = obj.getClass().getDeclaredMethod("setModifier", String.class);
+			
 			m1.invoke(obj, "y");
 			m3.invoke(obj, now);
 			m5.invoke(obj, operator);
@@ -72,7 +74,7 @@ public class DomainUtils {
 	}
 
 /*	public static void main(String[] args) {
-		PartnerLifecycleItems a = beforeUpdate(new PartnerLifecycleItems(), "aaa",PartnerLifecycleItems.class);
+		PartnerLifecycleItems a = beforeInsert(new PartnerLifecycleItems(), "aaa");
 		System.out.println(a.getIsDeleted());
 		System.out.println(a.getModifier());
 		System.out.println(a.getCreator());
