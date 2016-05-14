@@ -35,7 +35,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(condition, partnerInstanceTypeEnum);
 	}
 	
-	public void validateExistServiceChildren(PartnerInstanceTypeEnum partnerInstanceTypeEnum,Long instanceId)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).validateExistServiceChildren(instanceId);
+	public void validateExistValidChildren(PartnerInstanceTypeEnum partnerInstanceTypeEnum,Long instanceId)throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).validateExistValidChildren(instanceId);
 	}
 }
