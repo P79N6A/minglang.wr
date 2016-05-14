@@ -55,6 +55,19 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return null;
 	}
+	
+	@Override
+	public Long findPartnerInstanceId(Long stationApplyId) {
+		PartnerStationRel relCondition = new PartnerStationRel();
+		relCondition.setStationApplyId(stationApplyId);
+		relCondition.setIsDeleted("n");
+		PartnerStationRel rel = partnerStationRelMapper.selectOne(relCondition);
+		if (rel != null){
+			return rel.getId();
+		}
+		return null;
+		
+	}
 
 	@Override
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException {

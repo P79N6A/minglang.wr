@@ -7,37 +7,44 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public interface PartnerInstanceBO {
 
 	/**
+	 * 根据stationapplyId查询实例id
+	 * 
+	 * @param stationApplyId
+	 * @return
+	 */
+	public Long findPartnerInstanceId(Long stationApplyId);
+
+	/**
 	 * 根据taobaoUserId 查询合伙人实例表主键id
 	 *
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
-	
+	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表
 	 *
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstance(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
-	
-	
+	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+
 	/**
 	 * 根据实例id查询村点id
 	 * 
 	 * @param instanceId
 	 * @return
 	 */
-	public Long findStationIdByInstanceId(Long instanceId)throws AugeServiceException;
-	
+	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException;
+
 	/**
 	 * 根据合伙人实例id，查询实例
 	 * 
 	 * @param instanceId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstanceById(Long instanceId)throws AugeServiceException;
+	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException;
 
 	/**
 	 * 查询子合伙人数量

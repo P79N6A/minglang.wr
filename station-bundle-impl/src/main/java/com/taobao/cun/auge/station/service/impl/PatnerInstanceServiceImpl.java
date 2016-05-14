@@ -180,10 +180,12 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void auditClose(Long instanceId, String approver, boolean isAgree) throws Exception {
+	public void auditClose(Long stationApplyId, String approver, boolean isAgree) throws Exception {
 		// Long applyId = stationQuitFlowDto.getTargetId();
 		// sendForcedClosureEvent(stationQuitFlowDto, context, applyId,
 		// PermissionNameEnum.BOPS_FORCE_QUIT_PROVINCE_AUDIT.getCode());
+		
+		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 
 		if (isAgree) {
 			// 合伙人实例已停业

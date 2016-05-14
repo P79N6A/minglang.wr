@@ -137,7 +137,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void auditClose(Long instanceId, String approver,boolean isAgree) throws Exception;
+	public void auditClose(Long stationApplyId, String approver,boolean isAgree) throws Exception;
 
 	/**
 	 * 小二申请撤点
