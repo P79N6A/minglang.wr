@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -7,37 +9,44 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public interface PartnerInstanceBO {
 
 	/**
+	 * 根据stationapplyId查询实例id
+	 * 
+	 * @param stationApplyId
+	 * @return
+	 */
+	public Long findPartnerInstanceId(Long stationApplyId);
+
+	/**
 	 * 根据taobaoUserId 查询合伙人实例表主键id
 	 *
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
-	
+	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表
 	 *
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstance(Long taobaoUserId,PartnerInstanceStateEnum instanceState);
-	
-	
+	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+
 	/**
 	 * 根据实例id查询村点id
 	 * 
 	 * @param instanceId
 	 * @return
 	 */
-	public Long findStationIdByInstanceId(Long instanceId)throws AugeServiceException;
-	
+	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException;
+
 	/**
 	 * 根据合伙人实例id，查询实例
 	 * 
 	 * @param instanceId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstanceById(Long instanceId)throws AugeServiceException;
+	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException;
 
 	/**
 	 * 查询子合伙人数量
@@ -49,6 +58,9 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
+	
+	
+	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums)throws AugeServiceException;
 
 	/**
 	 * 状态流转
@@ -62,5 +74,13 @@ public interface PartnerInstanceBO {
 	 */
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
 			String operator) throws Exception;
+	
+	/**
+	 * 更新实例
+	 * 
+	 * @param instanceId
+	 * @param instance
+	 */
+	public void updatePartnerInstance(Long instanceId, PartnerStationRel instance,String operator);
 
 }
