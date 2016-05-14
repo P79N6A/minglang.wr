@@ -5,7 +5,7 @@ import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 
 public  class PartnerLifecycleConverter {
 
-	public static PartnerLifecycleItems  ConvertDomain(PartnerLifecycleCondition life) {
+	public static PartnerLifecycleItems  convertToDomain(PartnerLifecycleCondition life) {
 		PartnerLifecycleItems items = new PartnerLifecycleItems();
 		if (life.getLifecycleId() != null) {
 			items.setId(life.getLifecycleId());

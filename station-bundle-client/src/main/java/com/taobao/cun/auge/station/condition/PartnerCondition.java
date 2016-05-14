@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.condition;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class PartnerCondition implements Serializable{
 	
@@ -38,7 +37,7 @@ public class PartnerCondition implements Serializable{
 	private String description;
 
 	// 身份证照片附件
-	private List<AttachementCondition> attachements;
+	private AttachementCondition attachements;
 
 	public Long getId() {
 		return id;
@@ -120,11 +119,11 @@ public class PartnerCondition implements Serializable{
 		this.description = description;
 	}
 
-	public List<AttachementCondition> getAttachements() {
+	public AttachementCondition getAttachements() {
 		return attachements;
 	}
 
-	public void setAttachements(List<AttachementCondition> attachements) {
+	public void setAttachements(AttachementCondition attachements) {
 		this.attachements = attachements;
 	}	
 }

@@ -50,12 +50,12 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
 	@Autowired
 	StationBO stationBO;
 
 	@Override
 	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -167,12 +167,17 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			
 			if (isAgree) {
-				partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,employeeId);
+				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,employeeId);
+				//更新服务结束时间
+				PartnerStationRel instance= new PartnerStationRel();
+				instance.setServiceEndTime(new Date());
+				partnerInstanceBO.updatePartnerInstance(partnerInstanceId,instance,employeeId);
+				
 				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED,employeeId);
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 			}else {
-				partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, employeeId);
-				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
+				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, employeeId);
+				stationBO.changeState(partnerInstanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
 			}
 			partnerLifecycleBO.updateLifecycle(partnerLifecycle);

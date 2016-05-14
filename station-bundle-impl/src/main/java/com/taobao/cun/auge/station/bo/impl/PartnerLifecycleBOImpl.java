@@ -23,7 +23,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		if (lifecycle ==null){
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		PartnerLifecycleItems items = PartnerLifecycleConverter.ConvertDomain(lifecycle);
+		PartnerLifecycleItems items = PartnerLifecycleConverter.convertToDomain(lifecycle);
 		DomainUtils.beforeInsert(items, DomainUtils.DEFAULT_OPERATOR);
 		partnerLifecycleItemsMapper.insert(items);
 	}
@@ -32,7 +32,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		if (lifecycle ==null  || lifecycle.getLifecycleId() ==null){
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		PartnerLifecycleItems items = PartnerLifecycleConverter.ConvertDomain(lifecycle);
+		PartnerLifecycleItems items = PartnerLifecycleConverter.convertToDomain(lifecycle);
 		DomainUtils.beforeUpdate(items, DomainUtils.DEFAULT_OPERATOR);
 		partnerLifecycleItemsMapper.updateByPrimaryKey(items);
 	}
