@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.station.bo;
 
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -9,6 +12,37 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
  *
  */
 public interface PartnerLifecycleBO {
-
-	public void addLifecycle(PartnerLifecycleCondition partnerLifecycle,String operator)throws AugeServiceException;
+	
+	/**
+	 * 新增生命周期扩展数据
+	 * @param partnerLifecycle
+	 * @throws AugeServiceException
+	 */
+	public void addLifecycle(PartnerLifecycleCondition partnerLifecycle)throws AugeServiceException;
+	
+	/**
+	 * 更新生命周期扩展数据
+	 * @param lifecycle
+	 * @throws AugeServiceException
+	 */
+	public void updateLifecycle(PartnerLifecycleCondition lifecycle)throws AugeServiceException;
+	
+	/**
+	 * 获得当前生命周期扩展数据 主键id
+	 * @param instanceId
+	 * @param businessTypeEnum
+	 * @param stepEnum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long getLifecycleItemsId(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException;
+	/**
+	 * 获得当前生命周期扩展数据
+	 * @param instanceId
+	 * @param businessTypeEnum
+	 * @param stepEnum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException;
 }

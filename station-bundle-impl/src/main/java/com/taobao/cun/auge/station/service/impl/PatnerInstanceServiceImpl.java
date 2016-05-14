@@ -9,12 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -40,6 +46,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
 	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
 	@Autowired
 	StationBO stationBO;
 
@@ -112,12 +120,26 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		try {
-			Long partnerInstanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId,PartnerInstanceStateEnum.SERVICING);
-			if(partnerInstanceId == null) {
+			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstance(taobaoUserId,PartnerInstanceStateEnum.SERVICING);
+			if(partnerInstance == null) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
-			return false;
+			partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
+			// 村点停业中
+			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, String.valueOf(taobaoUserId));
+			//插入生命周期扩展表
+			PartnerLifecycleCondition partnerLifecycle = new PartnerLifecycleCondition();
+			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
+			partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+			partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.WAIT_CONFIRM);
+			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
+			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.CONFIRM);
+			partnerLifecycle.setPartnerInstanceId(partnerInstance.getId());
+			partnerLifecycleBO.addLifecycle(partnerLifecycle);
+			//插入停业协议
+			
+			//发送状态换砖 事件，接受事件里 1记录OPLOG日志  2短信推送
+			return true;
 		} catch (Exception e) {
 			logger.error("applyCloseByPartner.error.param:"+taobaoUserId,e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);

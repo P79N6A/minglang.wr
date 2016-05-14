@@ -26,9 +26,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Autowired
 	PartnerStationRelMapper partnerStationRelMapper;
-
+	
 	@Override
-	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum state) {
+	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
 		Partner partnerCondition = new Partner();
 		partnerCondition.setTaobaoUserId(taobaoUserId);
 		partnerCondition.setIsDeleted("n");
@@ -39,13 +39,21 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		relCondition.setPartnerId(partner.getId());
 		relCondition.setIsCurrent("y");
 		relCondition.setIsDeleted("n");
-		if (null != state) {
-			relCondition.setState(state.getCode());
+		if (null != instanceState) {
+			relCondition.setState(instanceState.getCode());
 		}
 
-		PartnerStationRel rel = partnerStationRelMapper.selectOne(relCondition);
-
-		return rel.getId();
+		return partnerStationRelMapper.selectOne(relCondition);
+		
+	}
+	
+	@Override
+	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum state) {
+		PartnerStationRel rel = findPartnerInstance(taobaoUserId,state);
+		if (rel != null){
+			return rel.getId();
+		}
+		return null;
 	}
 
 	@Override
