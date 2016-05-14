@@ -4,15 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
-
 /**
  * 添加domain默认参数工具类
  * 
  * @author quanzhu.wangqz
  *
  */
-public class DomainUtils {
+public final class DomainUtils {
+	
+	private DomainUtils(){
+		
+	}
 
 	public static <T> T beforeInsert(T obj, String operator) {
 		try {
