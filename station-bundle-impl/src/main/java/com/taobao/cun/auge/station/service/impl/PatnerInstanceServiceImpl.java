@@ -123,7 +123,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 			partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
-			// 村点停业中
 			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, String.valueOf(taobaoUserId));
 			//插入生命周期扩展表
 			PartnerLifecycleCondition partnerLifecycle = new PartnerLifecycleCondition();
@@ -134,9 +133,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.CONFIRM);
 			partnerLifecycle.setPartnerInstanceId(partnerInstance.getId());
 			partnerLifecycleBO.addLifecycle(partnerLifecycle);
-			//插入停业协议
+			//TODO:插入停业协议
 			
-			//发送状态换砖 事件，接受事件里 1记录OPLOG日志  2短信推送
+			//TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志  2短信推送 3 状态转换日志
 			return true;
 		} catch (Exception e) {
 			logger.error("applyCloseByPartner.error.param:"+taobaoUserId,e);
@@ -147,8 +146,38 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean confirmClose(Long partnerInstanceId, String employeeId, boolean isAgree)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			PartnerStationRel partnerInstance =  partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+			if(partnerInstance == null) {
+				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+			}
+			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+			partnerInstanceHandler.validateExistServiceChildren(
+					PartnerInstanceTypeEnum.valueof(partnerInstance.getType()),partnerInstanceId);
+            
+			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(partnerInstance.getId(), PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.CONFIRM);
+			PartnerLifecycleCondition partnerLifecycle = new PartnerLifecycleCondition();
+			partnerLifecycle.setLifecycleId(lifecycleId);
+			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			
+			if (isAgree) {
+				partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,employeeId);
+				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED,employeeId);
+				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
+			}else {
+				partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, employeeId);
+				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
+				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
+			}
+			partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+			//TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志  2短信推送 3 状态转换日志 4,去标
+			return true;
+		} catch (Exception e) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("partnerInstanceId:").append(partnerInstanceId).append(" employeeId:").append(employeeId).append(" isAgree:").append(isAgree);
+			logger.error("confirmClose.error.param:"+sb.toString(),e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 	@Override
