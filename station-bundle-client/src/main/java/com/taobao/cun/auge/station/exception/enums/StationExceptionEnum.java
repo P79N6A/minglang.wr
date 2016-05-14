@@ -19,11 +19,17 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 	public static final StationExceptionEnum PARTNER_INSTANCE_NOT_EXIST = new StationExceptionEnum(
 			"PARTNER_INSTANCE_NOT_EXIST", "合伙人实例不存在");
 	
+	public static final StationExceptionEnum STATION_APPLY_NOT_EXIST = new StationExceptionEnum(
+			"STATION_APPLY_NOT_EXIST", "申请单不存在");
+	
 	public static final StationExceptionEnum STATION_NOT_EXIST = new StationExceptionEnum(
 			"STATION_NOT_EXIST", "村点不存在");
 	
 	public static final StationExceptionEnum STATION_STATUS_CHANGED = new StationExceptionEnum(
 			"STATION_STATUS_CHANGED", "村点状态已变更");
+	
+	public static final StationExceptionEnum QUIT_STATION_APPLY_EXIST = new StationExceptionEnum(
+			"QUIT_STATION_APPLY_EXIST", "退出申请单已经存在");
 
 	static {
 		mappings.put("STATION_NUM_IS_DUPLICATE", STATION_NUM_IS_DUPLICATE);
@@ -32,6 +38,8 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_INSTANCE_NOT_EXIST", PARTNER_INSTANCE_NOT_EXIST);
 		mappings.put("STATION_NOT_EXIST", STATION_NOT_EXIST);
 		mappings.put("STATION_STATUS_CHANGED", STATION_STATUS_CHANGED);
+		mappings.put("STATION_APPLY_NOT_EXIST", STATION_APPLY_NOT_EXIST);
+		mappings.put("QUIT_STATION_APPLY_EXIST", QUIT_STATION_APPLY_EXIST);
 	}
 
 	public StationExceptionEnum(String code, String desc) {
