@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
@@ -146,7 +147,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean applyQuitByEmployee(Long partnerInstanceId, String employeeId) throws AugeServiceException;
+	public void applyQuitByEmployee(QuitStationApplyCondition quitApplyCondition,String employeeId) throws AugeServiceException;
 	
 	/**
 	 * 审批撤点

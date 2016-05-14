@@ -23,7 +23,7 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.entity.Example.Criteria;
 
-@Component
+@Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceBO.class);
