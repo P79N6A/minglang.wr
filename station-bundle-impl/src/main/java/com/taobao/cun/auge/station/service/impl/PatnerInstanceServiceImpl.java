@@ -123,6 +123,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 			partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
+			// 村点停业中
+			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, String.valueOf(taobaoUserId));
 			//插入生命周期扩展表
 			PartnerLifecycleCondition partnerLifecycle = new PartnerLifecycleCondition();
 			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
