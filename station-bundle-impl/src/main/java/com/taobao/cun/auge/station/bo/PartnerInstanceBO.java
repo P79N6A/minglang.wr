@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -56,6 +58,9 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
+	
+	
+	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums)throws AugeServiceException;
 
 	/**
 	 * 状态流转
@@ -69,5 +74,13 @@ public interface PartnerInstanceBO {
 	 */
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
 			String operator) throws Exception;
+	
+	/**
+	 * 更新实例
+	 * 
+	 * @param instanceId
+	 * @param instance
+	 */
+	public void updatePartnerInstance(Long instanceId, PartnerStationRel instance,String operator);
 
 }

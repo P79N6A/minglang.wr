@@ -191,6 +191,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
 					approver);
+			//更新服务结束时间
+			PartnerStationRel instance= new PartnerStationRel();
+			instance.setServiceEndTime(new Date());
+			partnerInstanceBO.updatePartnerInstance(instanceId,instance,approver);
 
 			// 村点已停业
 			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, approver);
