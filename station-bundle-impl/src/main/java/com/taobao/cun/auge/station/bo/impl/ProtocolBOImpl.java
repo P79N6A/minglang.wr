@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -55,7 +56,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 		partnerProtocolRelDO.setStartTime(startTime);
 		partnerProtocolRelDO.setEndTime(endTime);
 
-		beforeInsert(partnerProtocolRelDO, operator);
+		DomainUtils.beforeInsert(partnerProtocolRelDO, operator);
 
 		partnerProtocolRelMapper.insertSelective(partnerProtocolRelDO);
 	}
@@ -98,29 +99,6 @@ public class ProtocolBOImpl implements ProtocolBO {
 		return rel.getId();
 	}
 
-	private static void beforeInsert(PartnerProtocolRel partnerProtocolRel, String operator) {
-		Date now = new Date();
-
-		partnerProtocolRel.setGmtCreate(now);
-		partnerProtocolRel.setGmtModified(now);
-
-		partnerProtocolRel.setCreator(operator);
-		partnerProtocolRel.setModifier(operator);
-		partnerProtocolRel.setIsDeleted("n");
-	}
-
-	private static void beforeUpdate(PartnerProtocolRel partnerProtocolRel, String operator) {
-		Date now = new Date();
-		partnerProtocolRel.setGmtModified(now);
-		partnerProtocolRel.setModifier(operator);
-	}
-
-	public static void beforeDelete(PartnerProtocolRel partnerProtocolRel, String operator) {
-		Date now = new Date();
-		partnerProtocolRel.setGmtModified(now);
-		partnerProtocolRel.setModifier(operator);
-		partnerProtocolRel.setIsDeleted("y");
-	}
 
 	@Override
 	public void cancelProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId,
@@ -133,7 +111,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 		Long protocolId = findProtocolId(type);
 		partnerProtocolRelDO.setProtocolId(protocolId);
 
-		beforeDelete(partnerProtocolRelDO, operator);
+		DomainUtils.beforeDelete(partnerProtocolRelDO, operator);
 		partnerProtocolRelMapper.delete(partnerProtocolRelDO);
 	}
 

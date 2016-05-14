@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
@@ -22,6 +23,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
@@ -44,6 +46,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	@Autowired
+	StationBO stationBO;
+
 	@Override
 	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException {
 		// TODO Auto-generated method stub
@@ -149,19 +154,21 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			throws AugeServiceException {
 		try {
 			Long instanceId = forcedCloseCondition.getInstanceId();
-			int count = partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.SERVICING);
-			if (count > 0) {
-				logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
-				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
-			}
+			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			// partnerInstanceBO
-			//
-			// StationBO
+			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+			partnerInstanceHandler.validateExistServiceChildren(
+					PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
 
+			// 合伙人实例停业中
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING,
+					PartnerInstanceStateEnum.CLOSING, employeeId);
+
+			// 村点停业中
+			stationBO.changeState(instanceId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
+
+			// 通过事件，定时钟，启动停业流程
 			return true;
-
-			// 定时钟，启动停业流程
 
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
