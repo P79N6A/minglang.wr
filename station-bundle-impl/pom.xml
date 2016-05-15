@@ -20,7 +20,7 @@
 		<mapper.version>3.3.7</mapper.version>
 		<mysql.version>5.1.29</mysql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -152,18 +152,44 @@
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
-		 <dependency>
+		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaocenter-client</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.taobao.notify</groupId>
 			<artifactId>notify-tr-client</artifactId>
 		</dependency>
 		<dependency>
-			   <groupId>com.taobao.crius</groupId>
-			   <artifactId>bundle-model</artifactId>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>bundle-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-java-dsl</artifactId>
+			<version>1.1.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-integration</artifactId>
+			<version>1.4.0.M1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-stream</artifactId>
+			<version>2.0.7.RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.spring</groupId>
+			<artifactId>reactor-spring-context</artifactId>
+			<version>2.0.7.RELEASE</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

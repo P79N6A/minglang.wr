@@ -10,6 +10,19 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			  <groupId>com.taobao.hsf</groupId>
+			 <artifactId>hsf.app.spring</artifactId>
+			 <scope>provided</scope>
+			 <version>2.1.1.4</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
