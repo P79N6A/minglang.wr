@@ -46,8 +46,8 @@ public class ProcessListener implements MessageListener {
 
 		String msgType = strMessage.getMessageType();
 		// FIXME FHH 枚举未写
-		// 任务完成
-		if ("TASK_COMPLETED".equals(msgType)) {
+		// 监听流程实例结束
+		if ("PROC_INST_FINISH".equals(msgType)) {
 			String businessCode = ob.getString("businessCode");
 			String taskResult = ob.getString("result");
 			String approver = ob.getString("approver");
