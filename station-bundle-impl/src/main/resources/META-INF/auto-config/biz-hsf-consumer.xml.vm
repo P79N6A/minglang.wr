@@ -9,4 +9,13 @@
 	default-autowire="byName">
 
 	
+	<bean id="taobaoTradeOrderQueryService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean">
+        <property name="interfaceName">
+            <value>com.taobao.cun.service.trade.TaobaoTradeOrderQueryService</value>
+        </property>
+        <property name="version">
+            <value>${cuntao.taobaoTradeOrderQueryService.version}</value>
+        </property>
+    </bean> 
+    
 </beans>

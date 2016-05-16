@@ -7,7 +7,7 @@ import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 public class QuitStationApplyCondition implements Serializable {
 
 	private static final long serialVersionUID = -449672555158774209L;
-	private Long stationApplyId;
+	private Long instanceId;
 	private String state;
 	private String revocationAppFormFileName;
 	private String loanProveFileName;
@@ -17,13 +17,12 @@ public class QuitStationApplyCondition implements Serializable {
 	private AssertUseStateEnum assertUseState;
 	private String loanHasClose;
 
-
-	public Long getStationApplyId() {
-		return stationApplyId;
+	public Long getInstanceId() {
+		return instanceId;
 	}
 
-	public void setStationApplyId(Long stationApplyId) {
-		this.stationApplyId = stationApplyId;
+	public void setInstanceId(Long instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	public String getState() {
