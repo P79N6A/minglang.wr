@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
@@ -23,7 +24,7 @@ import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.util.CollectionUtil;
-
+@Component("emp360BO")
 public class Emp360BOImpl implements Emp360BO {
     public static final Logger logger = LoggerFactory.getLogger(Emp360BOImpl.class);
 
