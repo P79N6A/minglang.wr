@@ -202,6 +202,7 @@
         <dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>
 			<artifactId>event-client</artifactId>
