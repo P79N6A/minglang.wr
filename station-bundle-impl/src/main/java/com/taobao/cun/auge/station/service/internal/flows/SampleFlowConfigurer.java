@@ -25,7 +25,9 @@ public class SampleFlowConfigurer {
 		return IntegrationFlows.from(SampleInternalService.ADD_SAMPLE_CHANNEL)
 				//.transform("@sampleTransformer.transformStationInstance(payload)")
 				.handle("sampleTransformer","transformStationInstance")
+				.handle("beanName","method")
 				.handle("sampleRepository","save")
+				//.split().aggregate().filter(genericSelector)
 				//.<Station,Long>transform(station -> station.getId())
 				.get();
 	}
@@ -99,17 +101,17 @@ public class SampleFlowConfigurer {
 						.subscribe(s -> s.handle(m -> System.out.println("sub2"))))
 				.get();*/
 		
-		return IntegrationFlows.from(SampleInternalService.PUBLISH_SUBSCRIBE_SAMPLE_CHANNEL).handle(m -> System.out.println("main") ).get();
+		return IntegrationFlows.from(SampleInternalService.PUBLISH_SUBSCRIBE_SAMPLE_CHANNEL).handle(m -> System.out.println("main") ).channel("AAA").get();
 	}
 	
 	
 	@Bean
 	IntegrationFlow flowB() {
-	   return IntegrationFlows.from(SampleInternalService.PUBLISH_SUBSCRIBE_SAMPLE_CHANNEL).handle(m -> System.out.println("sub1") ).get();
+	   return IntegrationFlows.from("AAA").handle(m -> System.out.println("sub1") ).get();
 	}
 
 	@Bean
 	IntegrationFlow flowC() {
-	   return IntegrationFlows.from(SampleInternalService.PUBLISH_SUBSCRIBE_SAMPLE_CHANNEL).handle(m -> System.out.println("sub2")).get();
+	   return IntegrationFlows.from("AAA").handle(m -> System.out.println("sub2")).get();
 	}
 }

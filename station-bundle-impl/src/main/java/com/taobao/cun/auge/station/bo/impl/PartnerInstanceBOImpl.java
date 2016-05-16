@@ -156,4 +156,10 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		
 	}
 
+	@Override
+	public Long findStationApplyId(Long instanceId) {
+		PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
+		return partnerInstance.getStationApplyId();
+	}
+
 }

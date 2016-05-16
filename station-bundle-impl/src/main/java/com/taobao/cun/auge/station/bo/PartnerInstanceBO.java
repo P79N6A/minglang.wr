@@ -7,6 +7,13 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceBO {
+	
+	/**
+	 * 根据实例id，查询stationApplyid
+	 * @param instanceId
+	 * @return
+	 */
+	public Long findStationApplyId(Long instanceId);
 
 	/**
 	 * 根据stationapplyId查询实例id
@@ -59,7 +66,14 @@ public interface PartnerInstanceBO {
 	 */
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
 	
-	
+	/**
+	 * 查询子合伙人数量
+	 * 
+	 * @param instanceId
+	 * @param stateEnums
+	 * @return
+	 * @throws AugeServiceException
+	 */
 	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums)throws AugeServiceException;
 
 	/**
