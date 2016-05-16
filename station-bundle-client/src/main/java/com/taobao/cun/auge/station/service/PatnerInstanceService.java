@@ -156,7 +156,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
+	public void auditQuit(Long stationApplyId, String approver,boolean isAgree) throws Exception;
 	
 	
 	/**

@@ -49,12 +49,19 @@ public class ProcessListener implements MessageListener {
 		// 任务完成
 		if ("TASK_COMPLETED".equals(msgType)) {
 			String businessCode = ob.getString("businessCode");
+			String taskResult = ob.getString("result");
+			String approver = ob.getString("approver");
+			String stationApplyId = ob.getString("objectId");
 			if ("stationForcedClosure".equals(businessCode)) {
-				String taskResult = ob.getString("result");
-				String approver = ob.getString("approver");
-				String stationApplyId = ob.getString("objectId");
 				try {
 					patnerInstanceService.auditClose(Long.valueOf(stationApplyId), approver,
+							NodeActionEnum.AGREE.getCode().equals(taskResult));
+				} catch (Exception e) {
+					logger.error("监听审批停业流程失败。stationApplyId = " + stationApplyId);
+				}
+			}else if("stationQuitRecord".equals(businessCode)){
+				try {
+					patnerInstanceService.auditQuit(Long.valueOf(stationApplyId), approver,
 							NodeActionEnum.AGREE.getCode().equals(taskResult));
 				} catch (Exception e) {
 					logger.error("监听审批停业流程失败。stationApplyId = " + stationApplyId);

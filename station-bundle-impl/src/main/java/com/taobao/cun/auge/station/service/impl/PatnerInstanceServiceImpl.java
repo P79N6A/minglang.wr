@@ -386,9 +386,32 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+	public void auditQuit(Long stationApplyId, String approver, boolean isAgree) throws Exception {
+		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+		// 记录日志
+		// sendRecordEvent(stationQuitFlowDto,context,applyId,"大区管理员");
+		if (isAgree) {
+			// 提出任务
+			quitTasks();
+			// 退出村点日志记录
+			// sendQuitEvent(stationQuitFlowDto, context);
+		} else {
+			// 审核不同意，修改状态为已停业
+
+			// 合伙人实例已停业
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
+					approver);
+
+			// 村点已停业
+			stationBO.changeState(instanceId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, approver);
+
+			quitStationApplyBO.deleteQuitStationApply(instanceId, approver);
+		}
+		// tair清空缓存
+	}
+	
+	private void quitTasks(){
+		
 	}
 
 	@Override
