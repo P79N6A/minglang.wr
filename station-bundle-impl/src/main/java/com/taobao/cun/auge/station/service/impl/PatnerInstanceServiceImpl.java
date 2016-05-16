@@ -247,9 +247,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	@Override
 	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
-		// 记录日志事件
-		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter.convert(approveResultDto));
-		
+		// 记录审批日志
+		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event",
+				CuntaoFlowRecordEventConverter.convert(approveResultDto));
+
 		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 		String operator = "sys";
@@ -266,6 +267,11 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
 			// 去标事件
 			// sendForcedQuitAuditEvent(applyId, context);
+
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
+					.convert(stationApplyId, PartnerInstanceStateEnum.CLOSED, operator, operator));
+
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
@@ -273,6 +279,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 村点已停业
 			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
+
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
+					.convert(stationApplyId, PartnerInstanceStateEnum.SERVICING, operator, operator));
 		}
 	}
 
