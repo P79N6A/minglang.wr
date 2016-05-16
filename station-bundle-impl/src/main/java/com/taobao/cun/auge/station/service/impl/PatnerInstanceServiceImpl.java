@@ -1,10 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +22,15 @@ import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
+import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
+import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -42,6 +42,7 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
 import com.taobao.cun.common.exception.ServiceException;
 import com.taobao.cun.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
@@ -245,33 +246,33 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void auditClose(Long stationApplyId, String approver, boolean isAgree) throws Exception {
+	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
 		// 记录日志事件
-		// sendForcedClosureEvent(stationQuitFlowDto, context, applyId,
-		// PermissionNameEnum.BOPS_FORCE_QUIT_PROVINCE_AUDIT.getCode());
-
+		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter.convert(approveResultDto));
+		
+		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-
-		if (isAgree) {
+		String operator = "sys";
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
-					approver);
+					operator);
 			// 更新服务结束时间
 			PartnerStationRel instance = new PartnerStationRel();
 			instance.setServiceEndTime(new Date());
-			partnerInstanceBO.updatePartnerInstance(instanceId, instance, approver);
+			partnerInstanceBO.updatePartnerInstance(instanceId, instance, operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, approver);
+			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
 			// 去标事件
 			// sendForcedQuitAuditEvent(applyId, context);
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, approver);
+					PartnerInstanceStateEnum.SERVICING, operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, approver);
+			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
 		}
 	}
 
@@ -386,26 +387,37 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void auditQuit(Long stationApplyId, String approver, boolean isAgree) throws Exception {
+	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception {
+		String operator = "sys";
+		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-		// 记录日志
-		// sendRecordEvent(stationQuitFlowDto,context,applyId,"大区管理员");
-		if (isAgree) {
+
+		// 记录审批日志
+		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event",
+				CuntaoFlowRecordEventConverter.convert(approveResultDto));
+
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
 			// 提出任务
 			quitTasks();
-			// 退出村点日志记录
-			// sendQuitEvent(stationQuitFlowDto, context);
-		} else {
-			// 审核不同意，修改状态为已停业
 
+			// 记录状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
+					.convert(stationApplyId, PartnerInstanceStateEnum.QUIT, operator, operator));
+		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
-					approver);
+					operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, approver);
+			stationBO.changeState(instanceId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
 
-			quitStationApplyBO.deleteQuitStationApply(instanceId, approver);
+			// 删除退出申请单
+			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
+
+			// 记录状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
+					.convert(stationApplyId, PartnerInstanceStateEnum.CLOSED, operator, operator));
+
 		}
 		// tair清空缓存
 	}

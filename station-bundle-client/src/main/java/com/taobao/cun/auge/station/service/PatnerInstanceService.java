@@ -6,6 +6,7 @@ import java.util.Date;
 import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
+import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
@@ -138,7 +139,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void auditClose(Long stationApplyId, String approver,boolean isAgree) throws Exception;
+	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception;
 
 	/**
 	 * 小二申请撤点
@@ -156,7 +157,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void auditQuit(Long stationApplyId, String approver,boolean isAgree) throws Exception;
+	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception;
 	
 	
 	/**
