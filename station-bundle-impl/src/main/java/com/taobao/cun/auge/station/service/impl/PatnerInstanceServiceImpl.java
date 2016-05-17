@@ -23,6 +23,7 @@ import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
+import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -253,6 +254,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 		String operator = "sys";
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
 			// 合伙人实例已停业
@@ -264,25 +266,24 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerInstanceBO.updatePartnerInstance(instanceId, instance, operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
 			// 去标事件
 			// sendForcedQuitAuditEvent(applyId, context);
 
 			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
-					.convert(stationApplyId, PartnerInstanceStateEnum.CLOSED, operator, operator));
-
+			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
+					.convert(stationId, StationStatusEnum.CLOSED, operator, operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
 					PartnerInstanceStateEnum.SERVICING, operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
 
 			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
-					.convert(stationApplyId, PartnerInstanceStateEnum.SERVICING, operator, operator));
+			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
+					.convert(stationId, StationStatusEnum.SERVICING, operator, operator));
 		}
 	}
 
@@ -401,7 +402,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		String operator = "sys";
 		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-
+		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+		
 		// 记录审批日志
 		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event",
 				CuntaoFlowRecordEventConverter.convert(approveResultDto));
@@ -410,24 +412,23 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 提出任务
 			quitTasks();
 
-			// 记录状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
-					.convert(stationApplyId, PartnerInstanceStateEnum.QUIT, operator, operator));
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", StationStatusChangedEventConverter
+					.convert(stationId, StationStatusEnum.QUIT, operator, operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
 					operator);
 
 			// 村点已停业
-			stationBO.changeState(instanceId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
+			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
 
-			// 记录状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", CuntaoFlowRecordEventConverter
-					.convert(stationApplyId, PartnerInstanceStateEnum.CLOSED, operator, operator));
-
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", StationStatusChangedEventConverter
+					.convert(stationId, StationStatusEnum.CLOSED, operator, operator));
 		}
 		// tair清空缓存
 	}
