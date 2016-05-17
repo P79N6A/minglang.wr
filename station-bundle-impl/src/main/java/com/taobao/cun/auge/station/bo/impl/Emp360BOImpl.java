@@ -21,8 +21,7 @@ import com.alibaba.masterdata.client.model.result.ResultSupport;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
-import com.taobao.cun.common.exception.BusinessException;
-import com.taobao.cun.common.exception.ParamException;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.util.CollectionUtil;
 
 @Component("emp360BO")
@@ -35,10 +34,10 @@ public class Emp360BOImpl implements Emp360BO {
 	private String securityId;
 
 	@Override
-	public Map<String, EmpInfoDto> getEmpInfoByWorkNos(List<String> workNos) {
+	public Map<String, EmpInfoDto> getEmpInfoByWorkNos(List<String> workNos) throws AugeServiceException {
 		Map<String, EmpInfoDto> empInfoMap = new HashMap<String, EmpInfoDto>();
 		if (CollectionUtil.isEmpty(workNos)) {
-			throw new ParamException("workNos is null!");
+			throw new AugeServiceException("workNos is null!");
 		}
 		Map<String, String> workMap = new HashMap<String, String>();
 		for (String workNo : workNos) {
@@ -53,10 +52,10 @@ public class Emp360BOImpl implements Emp360BO {
 			ResultSupport<List<Emp360Info>> returnResult = employee360Service.getBatchEmpInfoList(empQuery);
 			logger.info("employee360Service.getBatchEmpInfoList query result  : {}", JSON.toJSON(returnResult));
 			if (returnResult == null || !returnResult.isSuccess()) {
-				throw new BusinessException("workNos is null!");
+				throw new AugeServiceException("workNos is null!");
 			}
 			if (CollectionUtil.isEmpty(returnResult.getResult())) {
-				throw new BusinessException("result is null!");
+				throw new AugeServiceException("result is null!");
 			}
 			for (Emp360Info emp360Info : returnResult.getResult()) {
 				if (emp360Info != null && StringUtil.isNotBlank(emp360Info.getWorkNo())) {
@@ -71,12 +70,12 @@ public class Emp360BOImpl implements Emp360BO {
 			}
 		} catch (MasterdataClientException e) {
 			logger.error("根据工号没有找到员工信息");
-			throw new BusinessException("根据工号没有找到员工信息!");
+			throw new AugeServiceException("根据工号没有找到员工信息!");
 		}
 		return empInfoMap;
 	}
 
-	public String getName(String workNo) {
+	public String getName(String workNo) throws AugeServiceException {
 		String name = "";
 		if (StringUtils.isNotEmpty(workNo)) {
 			List<String> workNoList = new ArrayList<String>();

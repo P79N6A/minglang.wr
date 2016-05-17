@@ -153,11 +153,6 @@
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.taobao.cun</groupId>
-			<artifactId>cuntaocenter-client</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>com.taobao.notify</groupId>
 			<artifactId>notify-tr-client</artifactId>
 		</dependency>
@@ -219,6 +214,10 @@
 		   <groupId>com.taobao.crius</groupId>
 		   <artifactId>bpm-client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.trade.platform</groupId>
+			<artifactId>tp-client-base</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

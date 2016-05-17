@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
+import com.taobao.cun.auge.station.dto.TaobaoNoEndTradeDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -42,11 +43,8 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
-import com.taobao.cun.common.exception.ServiceException;
-import com.taobao.cun.common.resultmodel.ResultModel;
+import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
-import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
-import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.refund.domain.RefundDO;
 
@@ -373,13 +371,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
     //FIXME FHH 调用了center的接口，后续需要迁移
-	private void validateTrade(StationApply stationApply) {
-		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(stationApply.getTaobaoUserId(),stationApply.getServiceEndDate());
-		if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
-		    throw new ServiceException(taobaoNoEndTradeDtoResultModel.getException());
-		}
+	private void validateTrade(StationApply stationApply) throws AugeServiceException {
+		TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoTradeOrderQueryService.findNoEndTradeOrders(stationApply.getTaobaoUserId(),stationApply.getServiceEndDate());
 
-		TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoNoEndTradeDtoResultModel.getResult();
 		taobaoNoEndTradeDto.getBatchQueryOrderInfoResultDO();
 		if (taobaoNoEndTradeDto.isExistsNoEndOrder()) {
 			StringBuilder build = new StringBuilder();
@@ -394,7 +388,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				build.append(refund.getAuctionTitle());
 				build.append("\n");
 			}
-		    throw new ServiceException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
+		    throw new AugeServiceException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 		}
 	}
 

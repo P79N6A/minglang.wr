@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		Example example = new Example(PartnerStationRel.class);
 		
 		Criteria criteria = example.createCriteria();
-		if(!com.taobao.cun.common.util.ListUtils.isEmpty(stateEnums)){
+		if(!CollectionUtils.isEmpty(stateEnums)){
 			List<String> states =  Lists.transform(stateEnums, new Function<PartnerInstanceStateEnum,String>(){
 				@Override
 				public String apply(PartnerInstanceStateEnum input) {

@@ -12,7 +12,7 @@ public class AugeServiceException extends Exception{
 	public AugeServiceException() {
 		super();
 	}
-
+	
 	public AugeServiceException(String message, Throwable cause) {
 		super(message, cause);
 	}
