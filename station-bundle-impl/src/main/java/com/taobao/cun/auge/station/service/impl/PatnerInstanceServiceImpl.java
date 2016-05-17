@@ -156,13 +156,14 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(partnerInstanceId)));
 		}else{//定时开业
-			
+			partnerInstanceBO.updateOpenDate(partnerInstanceId, openDate, employeeId);
 		}
 		
 		return false;
 	}
 	
 	private boolean checkKyPackage(){
+		//TODO:检查开业包
 		return true;
 	}
 
