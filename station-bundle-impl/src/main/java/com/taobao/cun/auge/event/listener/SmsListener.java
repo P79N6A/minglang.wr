@@ -2,12 +2,21 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.common.lang.StringUtil;
+import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.client.EventListener;
 
 public class SmsListener implements EventListener {
+	
+	@Autowired
+	PartnerBO partnerBO;
 
 	@Override
 	public void onMessage(Event event) {
@@ -16,8 +25,9 @@ public class SmsListener implements EventListener {
 
 		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
-
-		String mobile = "";
+		Long taobaoUserId = (Long) map.get("taobaoUserId");
+		
+		String mobile = findPartnerMobile(taobaoUserId);
 
 		// 由停业中，变更为已停业，去标,发短信
 		if (StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)) {
@@ -25,7 +35,27 @@ public class SmsListener implements EventListener {
 		}
 	}
 
+	/**
+	 * 查询合伙人手机号码
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	private String findPartnerMobile(Long taobaoUserId) {
+		try {
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+			return partner.getMobile();
+		} catch (AugeServiceException e) {
+			//FIXME FHH
+			
+			return "";
+		}
+	}
+
 	private void sms(String mobile, DingtalkTemplateEnum templateEnum) {
+		if(StringUtil.isEmpty(mobile)){
+			return;
+		}
 		// try {
 		// String content =
 		// appResourceQueryBo.appResValueFromTair(SMS_SEND_TYPE,

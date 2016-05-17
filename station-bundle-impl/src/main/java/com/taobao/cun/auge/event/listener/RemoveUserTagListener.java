@@ -11,7 +11,6 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayAccountTagDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
-import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
