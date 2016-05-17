@@ -10,14 +10,14 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 
 @Component("quitStationApplyBO")
 public class QuitStationApplyBOImpl implements QuitStationApplyBO {
-	
+
 	@Autowired
 	QuitStationApplyMapper quitStationApplyMapper;
 
 	@Override
-	public void saveQuitStationApply(QuitStationApply quitStationApply,String operator) {
+	public void saveQuitStationApply(QuitStationApply quitStationApply, String operator) {
 		DomainUtils.beforeInsert(quitStationApply, operator);
-		 quitStationApplyMapper.insertSelective(quitStationApply);
+		quitStationApplyMapper.insertSelective(quitStationApply);
 	}
 
 	@Override
@@ -25,8 +25,15 @@ public class QuitStationApplyBOImpl implements QuitStationApplyBO {
 		QuitStationApply record = new QuitStationApply();
 		record.setIsDeleted("n");
 		record.setPartnerInstanceId(instanceId);
-		
+
 		return quitStationApplyMapper.selectOne(record);
 	}
 
+	@Override
+	public void deleteQuitStationApply(Long instanceId, String operator) {
+		QuitStationApply record = new QuitStationApply();
+		record.setPartnerInstanceId(instanceId);
+		DomainUtils.beforeDelete(record, operator);
+		quitStationApplyMapper.delete(record);
+	}
 }

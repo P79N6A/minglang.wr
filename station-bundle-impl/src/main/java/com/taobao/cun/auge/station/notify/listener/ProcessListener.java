@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
-import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
 import com.taobao.notify.message.Message;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.MessageListener;
@@ -46,18 +47,31 @@ public class ProcessListener implements MessageListener {
 
 		String msgType = strMessage.getMessageType();
 		// FIXME FHH 枚举未写
-		// 任务完成
-		if ("TASK_COMPLETED".equals(msgType)) {
+		// 监听流程实例结束
+		if ("PROC_INST_FINISH".equals(msgType)) {
 			String businessCode = ob.getString("businessCode");
+			String resultCode = ob.getString("resultCode");
+			String objectId = ob.getString("objectId");
+			String remarks = ob.getString("remarks");
+			
+			ProcessApproveResultDto resultDto = new ProcessApproveResultDto();
+			
+			resultDto.setBusinessCode(businessCode);
+			resultDto.setObjectId(objectId);
+			resultDto.setResult(ProcessApproveResultEnum.valueof(resultCode));
+			resultDto.setRemarks(remarks);
+			
 			if ("stationForcedClosure".equals(businessCode)) {
-				String taskResult = ob.getString("result");
-				String approver = ob.getString("approver");
-				String stationApplyId = ob.getString("objectId");
 				try {
-					patnerInstanceService.auditClose(Long.valueOf(stationApplyId), approver,
-							NodeActionEnum.AGREE.getCode().equals(taskResult));
+					patnerInstanceService.auditClose(resultDto);
 				} catch (Exception e) {
-					logger.error("监听审批停业流程失败。stationApplyId = " + stationApplyId);
+					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
+				}
+			}else if("stationQuitRecord".equals(businessCode)){
+				try {
+					patnerInstanceService.auditQuit(resultDto);
+				} catch (Exception e) {
+					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 				}
 			}
 		} else if ("ACT_INST_START".equals(msgType)) {

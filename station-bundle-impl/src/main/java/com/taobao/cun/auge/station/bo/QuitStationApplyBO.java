@@ -20,4 +20,12 @@ public interface QuitStationApplyBO {
 	 * @return
 	 */
 	public QuitStationApply findQuitStationApply(Long instanceId);
+
+	/**
+	 * 删除退出申请单
+	 * 
+	 * @param instanceId
+	 */
+	public void deleteQuitStationApply(Long instanceId, String operator);
+	
 }
