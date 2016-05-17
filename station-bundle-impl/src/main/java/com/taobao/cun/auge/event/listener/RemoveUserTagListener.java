@@ -2,6 +2,8 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.crius.event.Event;
@@ -10,6 +12,9 @@ import com.taobao.cun.crius.event.client.EventListener;
 
 @EventSub("station-status-changed-event")
 public class RemoveUserTagListener implements EventListener {
+	
+	@Autowired
+	TaskExecuteService taskExecuteService;
 
 	@Override
 	public void onMessage(Event event) {
