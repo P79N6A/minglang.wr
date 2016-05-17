@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayAccountTagDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
+import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -32,27 +33,24 @@ public class RemoveUserTagListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-		System.out.println("a:" + event.getContent().toString() + event.getEventMeta().toString());
+		
 		Map<String, Object> map = event.getContent();
+		
 		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
+		
 		String operatorId = (String) map.get("operatorId");
 		Long taobaoUserId = (Long) map.get("taobaoUserId");
 		String stationId = "";
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
-
+		
 		// 由停业中，变更为已停业，去标,发短信
 		if (StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)) {
 			submitRemoveUserTagTasks(taobaoUserId, partnerType, operatorId);
-			sms();
 		} else if (StationStatusEnum.QUIT.equals(newStatus) && StationStatusEnum.QUITING.equals(oldStatus)) {
 			submitRemoveAlipayTagTask(taobaoUserId, operatorId);
 			submitRemoveLogisticsTask(stationId, operatorId);
 		}
-	}
-
-	private void sms() {
-
 	}
 
 	private void submitRemoveUserTagTasks(Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operatorId) {
