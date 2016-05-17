@@ -267,8 +267,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
-			// 去标事件
-			// sendForcedQuitAuditEvent(applyId, context);
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
@@ -293,7 +291,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		try {
 			Long instanceId = quitApplyCondition.getInstanceId();
 			Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
-
+			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+			
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 查询申请单，不存在会抛异常
@@ -330,10 +329,13 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 					employeeId);
 
 			// 村点退出中
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, employeeId);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, employeeId);
+			
+			
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
+					.convert(stationId, StationStatusEnum.QUITING, employeeId, employeeId));
 
-			// 退出任务
-			createQuitingTask();
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
 			// + quitStationApplyDto.getStationApplyId());
@@ -342,33 +344,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
 			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
 		}
-	}
-	
-	private void createQuitingTask(){
-//        // 创建退出村点任务流程
-//        StationQuitFlowDto stationQuitFlowDto = new StationQuitFlowDto();
-//        stationQuitFlowDto.setTargetId(quitStationApplyDto.getStationApplyId());
-//        stationQuitFlowDto.setOperatorWorkid(context.getWorkNo());
-//        stationQuitFlowDto.setType(CuntaoFlowTargetTypeEnum.STATION_QUIT.getCode());
-//        stationQuitFlowDto.setOrgId(String.valueOf(stationApplyDetailDto.getCuntaoOrg().getParentId()));
-//        
-//        //退出流程启动
-//		TaskVo task = new TaskVo();
-//		task.setBusinessNo(quitStationApplyDto.getStationApplyId().toString());
-//		task.setBeanName("stationQuitFlowBo");
-//		task.setMethodName("startQuitStationTask");
-//		task.setBusinessStepNo(1l);
-//		task.setBusinessType(BusinessTypeEnum.STATION_QUIT_FLOW_TASK);
-//		task.setBusinessStepDesc(BusinessTypeEnum.STATION_QUIT_FLOW_TASK.getValue());
-//		task.setOperator(context.getWorkNo());
-//        task.setParameter(stationQuitFlowDto);
-//		taskExecuteService.submitTask(task, false);
-//
-//        ResultModel<Long> resultModel = new ResultModel<Long>();
-//        resultModel.setSuccess(true);
-//        resultModel.setResult(quitStationApplyId);
-//
-//        return resultModel;
 	}
 
     //FIXME FHH 调用了center的接口，后续需要迁移
