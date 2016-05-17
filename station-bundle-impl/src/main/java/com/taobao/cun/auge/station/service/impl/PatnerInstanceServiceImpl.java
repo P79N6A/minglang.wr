@@ -12,6 +12,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.event.domain.EventConstant;
+import com.taobao.cun.auge.event.domain.StationStatusChangedEvent;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.dto.TaobaoNoEndTradeDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -243,6 +245,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		try {
 			Long instanceId = forcedCloseCondition.getInstanceId();
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			Long stationId = partnerStationRel.getStationId();
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 			partnerInstanceHandler.validateExistValidChildren(
@@ -253,11 +256,16 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 					PartnerInstanceStateEnum.CLOSING, employeeId);
 
 			// 村点停业中
-			stationBO.changeState(instanceId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
+			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
 
-			//FIXME FHH 通过事件，定时钟，启动停业流程
+			// 通过事件，定时钟，启动停业流程
+			StationStatusChangedEvent event = StationStatusChangedEventConverter.convert(StationStatusEnum.SERVICING,
+					StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),employeeId);
+			event.setRemark(null != forcedCloseCondition.getReason() ? forcedCloseCondition.getReason().getDesc() : "");
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 
 		} catch (Exception e) {
+			//FIXME FHH
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
 			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
 		}
@@ -284,8 +292,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
-			// 去标事件
-			// sendForcedQuitAuditEvent(applyId, context);
+			
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert( PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
@@ -293,6 +300,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			//去标，通过事件实现
 			//短信推送
 			//通知admin，合伙人退出。让他们监听村点状态变更事件
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
+					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
@@ -304,8 +313,11 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.CLOSING,PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
+		
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
+					StationStatusEnum.SERVICING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
 		}
-		}
+	}
 		
 
 	@Override
@@ -360,6 +372,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSED,
+					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),employeeId));
+			
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
 			// + quitStationApplyDto.getStationApplyId());
@@ -411,10 +426,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 村点已撤点
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
 			
-			// 提出任务
-			quitTasks();
-			
 			//取消物流站点，取消支付宝标示，
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
+					StationStatusEnum.QUIT, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
+			
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
@@ -428,15 +443,15 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-		}
 		
-	
+		
+			
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
+					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
+		}
 		// tair清空缓存
 	}
 	
-	private void quitTasks(){
-	}
-
 	@Override
 	public Long applySettle(PartnerInstanceCondition condition, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
 			throws AugeServiceException {

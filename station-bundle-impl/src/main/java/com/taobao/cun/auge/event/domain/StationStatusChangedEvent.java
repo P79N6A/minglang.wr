@@ -33,9 +33,9 @@ public class StationStatusChangedEvent implements Serializable {
 	
 	@EventField("操作人")
 	private String operatorId;
-
-	@EventField("操作类型")
-	private String operatorType;
+	
+	@EventField("备注")
+	private String remark;
 
 	public Long getStationId() {
 		return stationId;
@@ -94,11 +94,11 @@ public class StationStatusChangedEvent implements Serializable {
 		this.oldStatus = oldStatus;
 	}
 
-	public String getOperatorType() {
-		return operatorType;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setOperatorType(String operatorType) {
-		this.operatorType = operatorType;
-	}	
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 }

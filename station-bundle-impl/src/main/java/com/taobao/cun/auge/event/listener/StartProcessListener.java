@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -17,7 +18,7 @@ import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
-@EventSub("station-status-changed-event")
+@EventSub(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT)
 public class StartProcessListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
@@ -39,20 +40,20 @@ public class StartProcessListener implements EventListener {
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
 		String employeeId = (String) map.get("operatorId");
 		String stationId = (String) map.get("stationId");
-		String remarks = "";
+		String remark = (String) map.get("remark");
 		try {
 			Long parentOrgId = stationBO.getParentOrgId(Long.valueOf(stationId));
 			Long stationApplyId = partnerInstanceBO.findStationApplyIdByStationId(Long.valueOf(stationId));
 			if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
 				// 启动停业流程
-				startApproveProcess("tingyw", stationApplyId, employeeId, parentOrgId, remarks);
+				startApproveProcess("tingyw", stationApplyId, employeeId, parentOrgId, remark);
 			} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
 				// 启动退出流程
-				startApproveProcess("tuichu", stationApplyId, employeeId, parentOrgId, remarks);
+				startApproveProcess("tuichu", stationApplyId, employeeId, parentOrgId, remark);
 			}
 		} catch (Exception e) {
 			logger.error("启动审批流程失败。stationId=" + stationId + " employeeId =" + employeeId + "newStatus = " + newStatus.getDesc()
-					+ " oldStatus = " + oldStatus.getDesc() + " remarks = " + remarks,e);
+					+ " oldStatus = " + oldStatus.getDesc() + " remark = " + remark,e);
 		}
 	}
 

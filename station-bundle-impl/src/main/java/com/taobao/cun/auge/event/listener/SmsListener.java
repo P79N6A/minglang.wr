@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -13,7 +14,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
-@EventSub("station-status-changed-event")
+@EventSub(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT)
 public class SmsListener implements EventListener {
 	
 	@Autowired
