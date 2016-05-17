@@ -15,6 +15,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -112,12 +113,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
-			String operator) throws Exception {
+			String operator) throws AugeServiceException {
 		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 
 		if (!preState.getCode().equals(partnerInstance.getState())) {
 			logger.error("partner instance state is not " + preState.getDesc());
-			throw new Exception("partner instance state is not " + preState.getDesc());
+			throw new AugeServiceException("partner instance state is not " + preState.getDesc());
 		}
 
 		PartnerStationRel updateInstance = new PartnerStationRel();
@@ -160,6 +161,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public Long findStationApplyId(Long instanceId) {
 		PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
 		return partnerInstance.getStationApplyId();
+	}
+
+	@Override
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

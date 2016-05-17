@@ -59,12 +59,12 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public void updatePartner(PartnerCondition partnerCondition,String operator)
+	public void updatePartner(PartnerDto partnerDto,String operator)
 			throws AugeServiceException {
-		if (partnerCondition ==null || StringUtils.isEmpty(operator)){
+		if (partnerDto ==null || StringUtils.isEmpty(operator)){
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		if (partnerCondition.getId() == null){
+		if (partnerDto.getId() == null){
 			throw new AugeServiceException(PartnerExceptionEnum.ID_IS_NULL);
 		}
 		/*Partner partner = PartnerConverter.convertToDomain(partnerCondition);

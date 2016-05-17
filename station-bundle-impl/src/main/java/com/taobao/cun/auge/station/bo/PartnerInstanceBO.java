@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -87,7 +88,7 @@ public interface PartnerInstanceBO {
 	 *            后置状态
 	 */
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
-			String operator) throws Exception;
+			String operator) throws AugeServiceException;
 	
 	/**
 	 * 更新实例
@@ -96,5 +97,14 @@ public interface PartnerInstanceBO {
 	 * @param instance
 	 */
 	public void updatePartnerInstance(Long instanceId, PartnerStationRel instance,String operator);
+	
+	
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) throws AugeServiceException;
 
 }

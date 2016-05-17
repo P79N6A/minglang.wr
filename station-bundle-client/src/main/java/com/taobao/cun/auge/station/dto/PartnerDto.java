@@ -7,11 +7,16 @@ import javax.validation.constraints.NotNull;
 public class PartnerDto implements Serializable{
 
 	private static final long serialVersionUID = -6662885547380230732L;
-
+	
+	
+	/**
+	 *  合伙人id
+	 */
+	private Long id;
 	  /**
      * 姓名
      */
-	@NotNull(message="xxxx")
+	@NotNull
     private String name;
 
     /**
@@ -61,6 +66,14 @@ public class PartnerDto implements Serializable{
 
 	public String getName() {
 		return name;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public void setName(String name) {
