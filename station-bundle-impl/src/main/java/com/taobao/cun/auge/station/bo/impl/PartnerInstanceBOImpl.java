@@ -186,4 +186,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		DomainUtils.beforeUpdate(partnerStationRel, operator);
 		partnerStationRelMapper.updateByPrimaryKey(partnerStationRel);
 	}
+
+	@Override
+	public Long findStationApplyIdByStationId(Long stationId) {
+		
+		PartnerStationRel condition = new PartnerStationRel();
+		
+		condition.setIsDeleted("n");
+		condition.setStationId(stationId);
+		condition.setIsCurrent("y");
+		
+		PartnerStationRel partnerStationRel =  partnerStationRelMapper.selectOne(condition);
+		return partnerStationRel.getStationApplyId();
+	}
 }

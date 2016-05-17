@@ -11,8 +11,9 @@ import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.event.Event;
+import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
-
+@EventSub("station-status-changed-event")
 public class SmsListener implements EventListener {
 	
 	@Autowired
@@ -20,7 +21,6 @@ public class SmsListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-
 		Map<String, Object> map = event.getContent();
 
 		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");

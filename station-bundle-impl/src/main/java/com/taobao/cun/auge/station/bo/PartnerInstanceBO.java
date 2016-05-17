@@ -16,6 +16,13 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public Long findStationApplyId(Long instanceId);
+	
+	/**
+	 * 根据stationId查询stationAPPLYid
+	 * @param stationId
+	 * @return
+	 */
+	public Long findStationApplyIdByStationId(Long stationId);
 
 	/**
 	 * 根据stationapplyId查询实例id

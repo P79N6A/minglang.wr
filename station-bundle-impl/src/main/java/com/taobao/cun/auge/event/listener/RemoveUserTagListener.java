@@ -32,7 +32,6 @@ public class RemoveUserTagListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-		
 		Map<String, Object> map = event.getContent();
 		
 		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
@@ -40,7 +39,7 @@ public class RemoveUserTagListener implements EventListener {
 		
 		String operatorId = (String) map.get("operatorId");
 		Long taobaoUserId = (Long) map.get("taobaoUserId");
-		String stationId = "";
+		String stationId = (String)map.get("stationId");
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 		
 		// 由停业中，变更为已停业，去标,发短信
