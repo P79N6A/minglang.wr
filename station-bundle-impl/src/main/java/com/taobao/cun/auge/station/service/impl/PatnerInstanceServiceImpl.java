@@ -257,7 +257,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 村点停业中
 			stationBO.changeState(instanceId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
 
-			// 通过事件，定时钟，启动停业流程
+			//FIXME FHH 通过事件，定时钟，启动停业流程
 
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
@@ -292,6 +292,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert( PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 			
+			//去标，通过事件实现
+			//短信推送
+			//通知admin，合伙人退出。让他们监听村点状态变更事件
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
@@ -313,7 +316,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		try {
 			Long instanceId = quitApplyCondition.getInstanceId();
 			Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
-
+			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+			
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 查询申请单，不存在会抛异常
@@ -350,10 +354,14 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 					employeeId);
 
 			// 村点退出中
-			stationBO.changeState(instanceId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, employeeId);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, employeeId);
+			
+			//退出审批流程，由事件监听完成
+			
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+					.convert(PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
-			// 退出任务
-			createQuitingTask();
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
 			// + quitStationApplyDto.getStationApplyId());
@@ -362,33 +370,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
 			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
 		}
-	}
-	
-	private void createQuitingTask(){
-//        // 创建退出村点任务流程
-//        StationQuitFlowDto stationQuitFlowDto = new StationQuitFlowDto();
-//        stationQuitFlowDto.setTargetId(quitStationApplyDto.getStationApplyId());
-//        stationQuitFlowDto.setOperatorWorkid(context.getWorkNo());
-//        stationQuitFlowDto.setType(CuntaoFlowTargetTypeEnum.STATION_QUIT.getCode());
-//        stationQuitFlowDto.setOrgId(String.valueOf(stationApplyDetailDto.getCuntaoOrg().getParentId()));
-//        
-//        //退出流程启动
-//		TaskVo task = new TaskVo();
-//		task.setBusinessNo(quitStationApplyDto.getStationApplyId().toString());
-//		task.setBeanName("stationQuitFlowBo");
-//		task.setMethodName("startQuitStationTask");
-//		task.setBusinessStepNo(1l);
-//		task.setBusinessType(BusinessTypeEnum.STATION_QUIT_FLOW_TASK);
-//		task.setBusinessStepDesc(BusinessTypeEnum.STATION_QUIT_FLOW_TASK.getValue());
-//		task.setOperator(context.getWorkNo());
-//        task.setParameter(stationQuitFlowDto);
-//		taskExecuteService.submitTask(task, false);
-//
-//        ResultModel<Long> resultModel = new ResultModel<Long>();
-//        resultModel.setSuccess(true);
-//        resultModel.setResult(quitStationApplyId);
-//
-//        return resultModel;
 	}
 
     //FIXME FHH 调用了center的接口，后续需要迁移
@@ -429,8 +410,17 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				CuntaoFlowRecordEventConverter.convert(approveResultDto));
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
+			// 合伙人实例已退出
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
+					operator);
+
+			// 村点已撤点
+			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
+			
 			// 提出任务
 			quitTasks();
+			
+			//取消物流站点，取消支付宝标示，
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
