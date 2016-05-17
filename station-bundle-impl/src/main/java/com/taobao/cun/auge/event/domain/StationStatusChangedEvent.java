@@ -53,13 +53,6 @@ public class StationStatusChangedEvent implements Serializable {
 		this.operatorId = operatorId;
 	}
 
-	public StationStatusEnum getStatus() {
-		return status;
-	}
-
-	public void setStatus(StationStatusEnum status) {
-		this.status = status;
-	}
 
 	public Date getChangedTime() {
 		return changedTime;
