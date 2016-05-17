@@ -211,10 +211,10 @@
 			<groupId>com.taobao.metaq.final</groupId>
 			<artifactId>metaq-client</artifactId>
 		</dependency>
-		<!--dependency>
+		<dependency>
 		  <groupId>com.taobao.cun</groupId>
 		  <artifactId>cuntaochronus-client</artifactId>
-		</dependency-->
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

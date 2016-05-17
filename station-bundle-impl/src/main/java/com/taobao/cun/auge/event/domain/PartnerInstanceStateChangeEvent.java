@@ -1,26 +1,24 @@
-package com.taobao.cun.auge.event.domian;
-
-import java.util.Date;
+package com.taobao.cun.auge.event.domain;
 
 import com.taobao.cun.crius.event.annotation.EventDesc;
 import com.taobao.cun.crius.event.annotation.EventField;
 
 
 /**
- * 服务站状态变更事件
+ * 合伙人服务站实例状态变更事件
  * 会暴露给外部系统
- * 1.场景：开业包项目
+ * 1.场景：开业包
  * @author quanzhu.wangqz
  *
  */
-@EventDesc("服务站 ")
-public class StationEvent {
+@EventDesc("合伙人服务站实例")
+public class PartnerInstanceStateChangeEvent {
 	
 	@EventField("服务站id")
 	private Long stationId;
 	
-	@EventField("服务站状态")
-	private String state;
+	@EventField("服务站状态:")
+	private String partnerInstanceState;
 	
 	@EventField("生命周期状态,当服务站状态是入驻中，停业中，退出中时使用")
 	private String lifecycleState;
@@ -32,12 +30,12 @@ public class StationEvent {
 	private String taobaoNick;
 	
 	@EventField("合伙人类型:TP:合伙人  TPA:淘帮手  TPV：村拍档 ")
-	private String operatorType; //经营者类型  TP:合伙人  TPA:淘帮手  TPV：村拍档 
+	private String partnerType; //经营者类型  TP:合伙人  TPA:淘帮手  TPV：村拍档 
 	
 	@EventField("执行时间(yyyy-MM-dd HH:mm:ss)   提交 | 装修 | 开业 | 停业 | 退出 ")
 	private String execDate;   //执行时间   提交 | 装修 | 开业 | 停业 | 退出
 	
-	@EventField("村点对应组织id")
+	@EventField("服务站对应组织id")
 	private Long ownOrgId;   //对应的业务组织
 
 	public Long getStationId() {
@@ -48,12 +46,13 @@ public class StationEvent {
 		this.stationId = stationId;
 	}
 
-	public String getState() {
-		return state;
+
+	public String getLifecycleState() {
+		return lifecycleState;
 	}
 
-	public void setState(String state) {
-		this.state = state;
+	public void setLifecycleState(String lifecycleState) {
+		this.lifecycleState = lifecycleState;
 	}
 
 	public Long getTaobaoUserId() {
@@ -72,12 +71,12 @@ public class StationEvent {
 		this.taobaoNick = taobaoNick;
 	}
 
-	public String getOperatorType() {
-		return operatorType;
+	public String getPartnerType() {
+		return partnerType;
 	}
 
-	public void setOperatorType(String operatorType) {
-		this.operatorType = operatorType;
+	public void setPartnerType(String partnerType) {
+		this.partnerType = partnerType;
 	}
 
 	public String getExecDate() {
@@ -96,4 +95,11 @@ public class StationEvent {
 		this.ownOrgId = ownOrgId;
 	}
 
+	public String getPartnerInstanceState() {
+		return partnerInstanceState;
+	}
+
+	public void setPartnerInstanceState(String partnerInstanceState) {
+		this.partnerInstanceState = partnerInstanceState;
+	}
 }

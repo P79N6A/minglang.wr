@@ -11,6 +11,7 @@ import com.taobao.cun.auge.conversion.QuitStationApplyConverter;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.StationApply;
+import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -23,7 +24,7 @@ import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
-import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
+import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -249,7 +250,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
 		// 记录审批日志
-		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event",
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
 				CuntaoFlowRecordEventConverter.convert(approveResultDto));
 
 		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
@@ -269,10 +270,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
 			// 去标事件
 			// sendForcedQuitAuditEvent(applyId, context);
-
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
-					.convert(stationId, StationStatusEnum.CLOSED, operator, operator));
+			
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
@@ -280,11 +278,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
-
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("station-state-changed-event", StationStatusChangedEventConverter
-					.convert(stationId, StationStatusEnum.SERVICING, operator, operator));
 		}
+		// 记录村点状态变化
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+				.convert(partnerInstanceBO.getPartnerInstanceById(instanceId)));
 	}
 
 	@Override
@@ -405,16 +402,12 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 		
 		// 记录审批日志
-		EventDispatcher.getInstance().dispatch("cuntao-flow-record-event",
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
 				CuntaoFlowRecordEventConverter.convert(approveResultDto));
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
 			// 提出任务
 			quitTasks();
-
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", StationStatusChangedEventConverter
-					.convert(stationId, StationStatusEnum.QUIT, operator, operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
@@ -425,11 +418,11 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
-
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch("cuntao-flow-record-event", StationStatusChangedEventConverter
-					.convert(stationId, StationStatusEnum.CLOSED, operator, operator));
 		}
+		
+		// 记录村点状态变化
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+				.convert(partnerInstanceBO.getPartnerInstanceById(instanceId)));
 		// tair清空缓存
 	}
 	
