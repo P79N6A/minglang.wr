@@ -6,12 +6,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.integration.annotation.IntegrationComponentScan;
-import org.springframework.integration.config.EnableIntegration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.taobao.cun.auge.station.dto.SampleInstance;
-import com.taobao.cun.auge.station.service.SampleInternalService;
 import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 
 @SpringBootApplication
@@ -19,7 +15,7 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 @EnableTransactionManagement
 //@EnableIntegration
 //@IntegrationComponentScan("com.taobao.cun")
-//@ImportResource("classpath:event-client-context.xml")
+@ImportResource("classpath:event-client-context.xml")
 public class Application extends SpringBootServletInitializer{
 
     public static void main(String[] args) {

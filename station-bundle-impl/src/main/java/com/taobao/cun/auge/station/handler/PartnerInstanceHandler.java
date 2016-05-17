@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -14,6 +15,7 @@ import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
 
+@Component("PartnerInstanceHandler")
 public class PartnerInstanceHandler implements InitializingBean{
 	
 	@Autowired

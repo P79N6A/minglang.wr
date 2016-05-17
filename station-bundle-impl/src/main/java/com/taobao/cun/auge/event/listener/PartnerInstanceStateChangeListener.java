@@ -2,6 +2,8 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.crius.event.Event;
@@ -13,6 +15,8 @@ import com.taobao.cun.crius.event.client.EventListener;
  * @author quanzhu.wangqz
  *
  */
+
+@Component("partnerInstanceStateChangeListener")
 @EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
 public class PartnerInstanceStateChangeListener implements EventListener {
 
