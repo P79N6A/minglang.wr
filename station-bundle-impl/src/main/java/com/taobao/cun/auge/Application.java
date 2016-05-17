@@ -18,8 +18,8 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 @EnableHSFProvider
 @EnableTransactionManagement
 @EnableIntegration
-@IntegrationComponentScan
-@ImportResource("classpath:event-client-context.xml")
+@IntegrationComponentScan("com.taobao.cun")
+//@ImportResource("classpath:event-client-context.xml")
 public class Application extends SpringBootServletInitializer{
 
     public static void main(String[] args) {
