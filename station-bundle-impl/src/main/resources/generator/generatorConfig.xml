@@ -28,15 +28,8 @@
 
         <javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}" type="XMLMAPPER" />
 
-        <table tableName="partner_station_rel" >
+        <table tableName="app_resource" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
-        
-        <table tableName="quit_station_apply" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        
-        
-                
     </context>
 </generatorConfiguration>

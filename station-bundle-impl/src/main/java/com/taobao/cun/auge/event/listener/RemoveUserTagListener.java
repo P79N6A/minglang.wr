@@ -26,17 +26,24 @@ public class RemoveUserTagListener implements EventListener {
 	public void onMessage(Event event) {
 		System.out.println("a:" + event.getContent().toString() + event.getEventMeta().toString());
 		Map<String, Object> map = event.getContent();
-		StationStatusEnum status = (StationStatusEnum) map.get("status");
+		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
+		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
 		String operatorId = (String) map.get("operatorId");
 		Long taobaoUserId = (Long) map.get("taobaoUserId");
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 		
-		//监听已停业后，去标
-		if(StationStatusEnum.CLOSED.equals(status)){
+		//由停业中，变更为已停业，去标,发短信
+		if(StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)){
 			submitRemoveUserTagTasks( taobaoUserId,  partnerType, operatorId);
+			sms();
+		}else if(StationStatusEnum.QUIT.equals(newStatus) && StationStatusEnum.QUITING.equals(oldStatus)){
+//			submitRemoveAlipayTagTask(taskLists, businessNo);
 		}
 	}
-
+	
+	private void sms(){
+		
+	}
 	private void submitRemoveUserTagTasks(Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operatorId) {
 		UserTagDto userTagDto = new UserTagDto();
 
@@ -73,5 +80,49 @@ public class RemoveUserTagListener implements EventListener {
 		// 提交任务
 		taskExecuteService.submitTasks(taskLists);
 	}
+	
+//	private void submitRemoveLogisticsTask(String stationId,String operatorId){
+//		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+//		
+//		
+//		String businessNo = stationApplyId.toString();// getBusinessNo();
+//		//取消物流站点
+//		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+//		cainiaoTaskVo.setBusinessNo(businessNo);
+//		cainiaoTaskVo.setBeanName("caiNiaoBo");
+//		cainiaoTaskVo.setMethodName("closeStationInfo");
+//		cainiaoTaskVo.setBusinessStepNo(1l);
+//		cainiaoTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+//		cainiaoTaskVo.setBusinessStepDesc("closeStationInfo");
+//		cainiaoTaskVo.setOperator(operatorId);
+//		cainiaoTaskVo.setParameter(stationId);
+//		taskLists.add(cainiaoTaskVo);
+//
+//		// 提交任务
+//		taskExecuteService.submitTask(cainiaoTaskVo);
+//	}
+//
+//	private void submitRemoveAlipayTagTask(List<GeneralTaskDto> taskLists, String businessNo) {
+//		//取消支付宝标示
+//		GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
+//		dealStationTagTaskVo.setBusinessNo(businessNo);
+//		dealStationTagTaskVo.setBeanName("alipayAccountTagService");
+//		dealStationTagTaskVo.setMethodName("dealTag");
+//		dealStationTagTaskVo.setBusinessStepNo(1l);
+//		dealStationTagTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+//		dealStationTagTaskVo.setBusinessStepDesc("dealTag");
+//		dealStationTagTaskVo.setOperator(context.getAppId());
+//
+//		AlipayAccountTagDto alipayAccountTagDto = new AlipayAccountTagDto();
+//		alipayAccountTagDto.setTagName(AlipayAccountTagDto.ALIPAY_CUNTAO_TAG_NAME);
+//		alipayAccountTagDto.setBelongTo(AlipayAccountTagDto.ALIPAY_CUNTAO_BELONG_TO);
+//		alipayAccountTagDto.setTagValue(AlipayAccountTagDto.ALIPAY_TAG_VALUE_F);
+//		String accountNo = getAlipayAccountNo(stationApplyDO.getTaobaoUserId(), context.getAppId());
+//		if (StringUtils.isNotEmpty(accountNo)) {
+//			alipayAccountTagDto.setUserId(accountNo.substring(0,accountNo.length()-4));
+//		}
+//		dealStationTagTaskVo.setParameter(alipayAccountTagDto);
+//		taskLists.add(dealStationTagTaskVo);
+//	}
 
 }
