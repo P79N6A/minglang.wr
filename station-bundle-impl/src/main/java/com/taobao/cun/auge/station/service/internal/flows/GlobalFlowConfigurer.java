@@ -10,7 +10,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 
-@Configuration
+//@Configuration
 public class GlobalFlowConfigurer {
 	@Autowired
 	private Validator validator ;

@@ -16,7 +16,7 @@ import org.springframework.messaging.MessageChannel;
 import com.taobao.cun.auge.station.dto.SampleInstance;
 import com.taobao.cun.auge.station.service.SampleInternalService;
 
-@Configuration
+//@Configuration
 public class SampleFlowConfigurer {
 
 	@Bean
