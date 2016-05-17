@@ -42,6 +42,7 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
 import com.taobao.cun.common.exception.ServiceException;
 import com.taobao.cun.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
@@ -166,7 +167,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerLifecycle.setPartnerInstanceId(partnerInstance.getId());
 			partnerLifecycleBO.addLifecycle(partnerLifecycle);
 			//TODO:插入停业协议
-			
+			EventDispatcher.getInstance().dispatch("xxxxx", partnerLifecycle);
 			//TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志  2短信推送 3 状态转换日志
 			return true;
 		} catch (Exception e) {
@@ -388,6 +389,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean auditQuit(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException {
 		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

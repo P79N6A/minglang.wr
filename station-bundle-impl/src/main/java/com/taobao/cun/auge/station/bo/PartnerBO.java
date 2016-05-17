@@ -37,7 +37,7 @@ public interface PartnerBO {
 	 * @return 主键id
 	 * @throws AugeServiceException
 	 */
-	public void  updatePartner(PartnerCondition partnerCondition,String operator)  throws AugeServiceException;
+	public void  updatePartner(PartnerDto partnerDto,String operator)  throws AugeServiceException;
 	
 	/**
 	 * 根据主键查询partner
