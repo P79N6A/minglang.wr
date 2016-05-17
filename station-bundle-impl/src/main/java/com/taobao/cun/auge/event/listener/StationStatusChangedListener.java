@@ -1,21 +1,19 @@
 package com.taobao.cun.auge.event.listener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
-import com.taobao.cun.crius.common.dto.ContextDto;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 import com.taobao.cun.dto.flow.enums.CuntaoFlowOperateOpinionEnum;
 import com.taobao.cun.dto.flow.enums.CuntaoFlowTargetTypeEnum;
 import com.taobao.cun.dto.permission.enums.PermissionNameEnum;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 
 @EventSub("station-status-changed-event")
 public class StationStatusChangedListener implements EventListener {
@@ -33,19 +31,20 @@ public class StationStatusChangedListener implements EventListener {
 	}
 	
 	private void createQuitingTask(){
+		
+		String businessCode = "station-quit";
+		String stationApplyId ;
+		String operatorId ;
+		
+		String orgId;
+		String remarks;
+		
 //      // 创建退出村点任务流程
-		checkParam(stationQuitFlowDto);
-		ContextDto context = new ContextDto();
-		context.setLoginId(stationQuitFlowDto.getOperatorWorkid());
-        context.setOperatorName(emp360BO.getName(context.getLoginId()));
-        
-		Long applyId = stationQuitFlowDto.getTargetId();
 		Map<String,String> initData = new HashMap<String, String>();
-		initData.put("orgId", stationQuitFlowDto.getOrgId());
-		initData.put("remarks", stationQuitFlowDto.getRemarks());
+		initData.put("orgId", orgId);
+		initData.put("remarks", remarks);
 		com.taobao.cun.crius.common.resultmodel.ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
-				.startProcessInstance(stationQuitFlowDto.getType(),
-						String.valueOf(applyId), context.getLoginId(), initData);
+				.startProcessInstance(businessCode,stationApplyId, operatorId, initData);
 		String procId = null;
 		if(rm.isSuccess()){
 			procId = rm.getResult().getProcessInstanceId();

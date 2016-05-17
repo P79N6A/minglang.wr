@@ -22,7 +22,7 @@ public class StationStatusChangedEvent implements Serializable {
 	@EventField("新的状态")
 	private StationStatusEnum status;
 
-	@EventField("变更事件")
+	@EventField("变更时间")
 	private Date changedTime;
 	
 	@EventField("村点当前合伙人淘宝账号")
