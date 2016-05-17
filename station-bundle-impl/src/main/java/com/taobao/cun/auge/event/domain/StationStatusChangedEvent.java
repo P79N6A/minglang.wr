@@ -15,12 +15,12 @@ public class StationStatusChangedEvent implements Serializable {
 
 	@EventField("村点id")
 	private Long stationId;
-
-	@EventField("操作人")
-	private String operatorId;
-
+	
 	@EventField("新的状态")
-	private StationStatusEnum status;
+	private StationStatusEnum newStatus;
+	
+	@EventField("新的状态")
+	private StationStatusEnum oldStatus;
 
 	@EventField("变更时间")
 	private Date changedTime;
@@ -30,6 +30,12 @@ public class StationStatusChangedEvent implements Serializable {
 	
 	@EventField("村点当前合伙人类型")
 	private PartnerInstanceTypeEnum partnerType;
+	
+	@EventField("操作人")
+	private String operatorId;
+
+	@EventField("操作类型")
+	private String operatorType;
 
 	public Long getStationId() {
 		return stationId;
@@ -78,6 +84,28 @@ public class StationStatusChangedEvent implements Serializable {
 	public void setPartnerType(PartnerInstanceTypeEnum partnerType) {
 		this.partnerType = partnerType;
 	}
-	
-	
+
+	public StationStatusEnum getNewStatus() {
+		return newStatus;
+	}
+
+	public void setNewStatus(StationStatusEnum newStatus) {
+		this.newStatus = newStatus;
+	}
+
+	public StationStatusEnum getOldStatus() {
+		return oldStatus;
+	}
+
+	public void setOldStatus(StationStatusEnum oldStatus) {
+		this.oldStatus = oldStatus;
+	}
+
+	public String getOperatorType() {
+		return operatorType;
+	}
+
+	public void setOperatorType(String operatorType) {
+		this.operatorType = operatorType;
+	}	
 }
