@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 import tk.mybatis.mapper.entity.Example;
@@ -170,4 +172,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return null;
 	}
 
+	@Override
+	public void updateOpenDate(Long instanceId, Date openDate, String operator)
+			throws AugeServiceException {
+		if (null == instanceId|| openDate ==null || operator==null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		
+		PartnerStationRel partnerStationRel = new PartnerStationRel();
+		partnerStationRel.setId(instanceId);
+		partnerStationRel.setOpenDate(openDate);
+		DomainUtils.beforeUpdate(partnerStationRel, operator);
+		partnerStationRelMapper.updateByPrimaryKey(partnerStationRel);
+	}
 }

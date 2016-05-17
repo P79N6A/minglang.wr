@@ -145,8 +145,25 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Override
 	public boolean openStation(Long partnerInstanceId, Date openDate, boolean isImme, String employeeId)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
+		if (isImme) {//立即开业
+			//TODO:检查开业包
+			if (!checkKyPackage()) {
+				throw new AugeServiceException(StationExceptionEnum.KAYE_PACKAGE_NOT_EXIST);
+			}
+			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING, employeeId);
+			partnerInstanceBO.updateOpenDate(partnerInstanceId, openDate, employeeId);
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+					.convert(PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(partnerInstanceId)));
+		}else{//定时开业
+			
+		}
+		
 		return false;
+	}
+	
+	private boolean checkKyPackage(){
+		return true;
 	}
 
 	@Override
@@ -270,6 +287,9 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
 			// 去标事件
 			// sendForcedQuitAuditEvent(applyId, context);
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+					.convert( PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 			
 		} else {
 			// 合伙人实例已停业
@@ -278,11 +298,13 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
+			
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+					.convert(PartnerInstanceStateEnum.CLOSING,PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 		}
-		// 记录村点状态变化
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-				.convert(partnerInstanceBO.getPartnerInstanceById(instanceId)));
-	}
+		}
+		
 
 	@Override
 	public void applyQuitByEmployee(QuitStationApplyCondition quitApplyCondition, String employeeId)
@@ -418,11 +440,12 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+					.convert(PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 		}
 		
-		// 记录村点状态变化
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-				.convert(partnerInstanceBO.getPartnerInstanceById(instanceId)));
+	
 		// tair清空缓存
 	}
 	

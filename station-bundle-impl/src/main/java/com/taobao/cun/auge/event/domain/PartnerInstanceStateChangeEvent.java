@@ -17,7 +17,7 @@ public class PartnerInstanceStateChangeEvent {
 	@EventField("服务站id")
 	private Long stationId;
 	
-	@EventField("服务站状态:")
+	@EventField("当前合伙人实例状态")
 	private String partnerInstanceState;
 	
 	@EventField("生命周期状态,当服务站状态是入驻中，停业中，退出中时使用")
@@ -37,6 +37,9 @@ public class PartnerInstanceStateChangeEvent {
 	
 	@EventField("服务站对应组织id")
 	private Long ownOrgId;   //对应的业务组织
+	
+	@EventField("原始合伙人实例状态")
+	private String prePartnerInstanceState;
 
 	public Long getStationId() {
 		return stationId;
@@ -101,5 +104,13 @@ public class PartnerInstanceStateChangeEvent {
 
 	public void setPartnerInstanceState(String partnerInstanceState) {
 		this.partnerInstanceState = partnerInstanceState;
+	}
+
+	public String getPrePartnerInstanceState() {
+		return prePartnerInstanceState;
+	}
+
+	public void setPrePartnerInstanceState(String prePartnerInstanceState) {
+		this.prePartnerInstanceState = prePartnerInstanceState;
 	}
 }

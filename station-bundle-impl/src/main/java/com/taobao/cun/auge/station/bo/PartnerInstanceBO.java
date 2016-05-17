@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -106,5 +107,14 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
 	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) throws AugeServiceException;
+	
+	/**
+	 * 设置开业时间
+	 * @param instanceId
+	 * @param openDate
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+    public void updateOpenDate(Long instanceId,Date openDate,String operator) throws AugeServiceException;
 
 }
