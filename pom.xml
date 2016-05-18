@@ -260,6 +260,35 @@
 				<version>1.0.0</version>
 			</dependency>
 
+			<!-- uic -->
+			<dependency>
+				<groupId>com.taobao.common.uic.uic-common</groupId>
+				<artifactId>common-uic-common</artifactId>
+				<version>3.6.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.codehaus.jackson</groupId>
+						<artifactId>jackson-core-lgpl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.jackson</groupId>
+						<artifactId>jackson-mapper-lgpl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.timetunne</groupId>
+						<artifactId>timetunnel-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.common</groupId>
+						<artifactId>fulllinkstresstesting</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
 			<dependency>
 				<groupId>xml-apis</groupId>
 				<artifactId>xml-apis</artifactId>
