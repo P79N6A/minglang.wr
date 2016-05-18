@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.utils;
+package com.taobao.cun.auge.common.utils;
 
 import java.text.DecimalFormat;
 import org.apache.commons.lang.StringUtils;

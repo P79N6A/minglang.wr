@@ -24,12 +24,12 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.dto.AddressDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.utils.PositionUtil;
 
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
