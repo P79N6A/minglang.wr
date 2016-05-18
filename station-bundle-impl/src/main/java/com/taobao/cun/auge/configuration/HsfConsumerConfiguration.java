@@ -20,19 +20,19 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 
 	// chronus服务
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean taskExecuteService(@Value("${hsf.version.taskExecuteService}") String version) {
+	public HSFSpringConsumerBean taskExecuteService(@Value("${hsf.consumer.version.chronus.taskExecuteService}") String version) {
 		return getConsumerBean(TaskExecuteService.class, HSFGroup.HSF, version, 3000);
 	}
 
 	// crius服务
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean cuntaoWorkFlowService(@Value("${hsf.version.cuntaoWorkFlowService}") String version) {
+	public HSFSpringConsumerBean cuntaoWorkFlowService(@Value("${hsf.consumer.version.crius.cuntaoWorkFlowService}") String version) {
 		return getConsumerBean(CuntaoWorkFlowService.class, HSFGroup.HSF, version, 3000);
 	}
 
 	// auge服务
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean taobaoTradeOrderQueryService(@Value("${hsf.version.taobaoTradeOrderQueryService}") String version) {
+	public HSFSpringConsumerBean taobaoTradeOrderQueryService(@Value("${hsf.consumer.version.taobaoTradeOrderQueryService}") String version) {
 		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
 	}
 

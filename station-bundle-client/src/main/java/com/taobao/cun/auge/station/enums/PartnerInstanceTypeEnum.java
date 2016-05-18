@@ -4,8 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 合伙人实例表 类型枚举
+ * 
  * @author quanzhu.wangqz
  *
  */
@@ -13,14 +16,9 @@ public class PartnerInstanceTypeEnum implements Serializable {
 
 	private static final long serialVersionUID = 7138576667532117709L;
 
-	public static final PartnerInstanceTypeEnum TPA = new PartnerInstanceTypeEnum(
-			"TPA", "淘帮手");
-
-	public static final PartnerInstanceTypeEnum TP = new PartnerInstanceTypeEnum(
-			"TP", "合伙人");
-
-	public static final PartnerInstanceTypeEnum TPV = new PartnerInstanceTypeEnum(
-			"TPV", "村拍档");
+	public static final PartnerInstanceTypeEnum TP = new PartnerInstanceTypeEnum("TP", "合伙人", PartnerInstanceType.TP);
+	public static final PartnerInstanceTypeEnum TPA = new PartnerInstanceTypeEnum("TPA", "淘帮手", PartnerInstanceType.TPA);
+	public static final PartnerInstanceTypeEnum TPV = new PartnerInstanceTypeEnum("TPV", "村拍档", PartnerInstanceType.TPV);
 
 	private static final Map<String, PartnerInstanceTypeEnum> mappings = new HashMap<String, PartnerInstanceTypeEnum>();
 	static {
@@ -28,9 +26,12 @@ public class PartnerInstanceTypeEnum implements Serializable {
 		mappings.put("TP", TP);
 		mappings.put("TPV", TPV);
 	}
-
+	@NotNull
 	private String code;
+	@NotNull
 	private String desc;
+	@NotNull
+	private PartnerInstanceType type;
 
 	public String getCode() {
 		return code;
@@ -46,6 +47,14 @@ public class PartnerInstanceTypeEnum implements Serializable {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public PartnerInstanceType getType() {
+		return type;
+	}
+
+	public void setType(PartnerInstanceType type) {
+		this.type = type;
 	}
 
 	@Override
@@ -66,9 +75,10 @@ public class PartnerInstanceTypeEnum implements Serializable {
 		return objType.getCode().equals(this.getCode());
 	}
 
-	public PartnerInstanceTypeEnum(String code, String desc) {
+	public PartnerInstanceTypeEnum(String code, String desc, PartnerInstanceType type) {
 		this.code = code;
 		this.desc = desc;
+		this.type = type;
 	}
 
 	public static PartnerInstanceTypeEnum valueof(String code) {
@@ -81,4 +91,10 @@ public class PartnerInstanceTypeEnum implements Serializable {
 	private PartnerInstanceTypeEnum() {
 
 	}
+	
+	public enum PartnerInstanceType {
+		TP, TPA, TPV;
+	}
 }
+
+
