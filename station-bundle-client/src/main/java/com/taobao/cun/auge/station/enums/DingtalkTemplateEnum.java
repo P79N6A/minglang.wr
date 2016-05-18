@@ -31,7 +31,7 @@ public class DingtalkTemplateEnum implements Serializable {
 		this.code = code;
 		this.desc = desc;
 	}
-
+	//FIXME FHH code小写，和变量值不一样，valueof时返回null。历史人历史错误
 	public static final DingtalkTemplateEnum NODE_COMMIT = new DingtalkTemplateEnum("CunTaoNodeCommit", "提交创建村点");
 	public static final DingtalkTemplateEnum NODE_RECV = new DingtalkTemplateEnum("CunTaoNodeRecv", "保证金付款成功并进入装修中");
 	public static final DingtalkTemplateEnum NODE_OPEN = new DingtalkTemplateEnum("CuntaoNodeOpen", "开业（启动）");

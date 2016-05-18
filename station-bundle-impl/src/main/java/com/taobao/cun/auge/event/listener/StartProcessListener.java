@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -46,10 +47,10 @@ public class StartProcessListener implements EventListener {
 			Long stationApplyId = partnerInstanceBO.findStationApplyIdByStationId(Long.valueOf(stationId));
 			if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
 				// 启动停业流程
-				startApproveProcess("tingyw", stationApplyId, employeeId, parentOrgId, remark);
+				startApproveProcess(ProcessBusinessEnum.stationForcedClosure.getCode(), stationApplyId, employeeId, parentOrgId, remark);
 			} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
 				// 启动退出流程
-				startApproveProcess("tuichu", stationApplyId, employeeId, parentOrgId, remark);
+				startApproveProcess(ProcessBusinessEnum.stationQuitRecord.getCode(), stationApplyId, employeeId, parentOrgId, remark);
 			}
 		} catch (Exception e) {
 			logger.error("启动审批流程失败。stationId=" + stationId + " employeeId =" + employeeId + "newStatus = " + newStatus.getDesc()
