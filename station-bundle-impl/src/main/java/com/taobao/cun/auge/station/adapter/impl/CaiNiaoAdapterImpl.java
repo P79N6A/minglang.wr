@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.bo.impl;
+package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,16 +24,16 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.station.bo.CaiNiaoAdapterBO;
+import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.dto.AddressDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.utils.PositionUtil;
 
-public class CaiNiaoAdapterBOImpl implements CaiNiaoAdapterBO {
+public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
-	public static final Logger logger = LoggerFactory.getLogger(CaiNiaoAdapterBOImpl.class);
+	public static final Logger logger = LoggerFactory.getLogger(CaiNiaoAdapterImpl.class);
 	public static final String ADDRESS_SPLIT = "^^^";
   
 	@Resource
@@ -160,9 +160,9 @@ public class CaiNiaoAdapterBOImpl implements CaiNiaoAdapterBO {
 		AddStationUserRelParam param = new AddStationUserRelParam();
 		FeatureDTO feature = new FeatureDTO();
 		if (CaiNiaoStationDto.USERTYPE_TPA.equals(userType)) {
-			feature.put(CaiNiaoAdapterBO.PARTNER_ID, String.valueOf(dto.getTpTaobaoUserId()));
+			feature.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(dto.getTpTaobaoUserId()));
 		} else if (CaiNiaoStationDto.USERTYPE_TP.equals(userType)) {
-			feature.put(CaiNiaoAdapterBO.PARTNER_ID, String.valueOf(dto.getTaobaoUserId()));
+			feature.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(dto.getTaobaoUserId()));
 		}
 		param.setFeature(feature);
 		param.setReceiverMobile(dto.getMobile());
@@ -181,7 +181,7 @@ public class CaiNiaoAdapterBOImpl implements CaiNiaoAdapterBO {
 		cnStation.setContact(dto.getContact());
 		cnStation.setCtCode(dto.getStationNum());
 		FeatureDTO feature = new FeatureDTO();
-		feature.put(CaiNiaoAdapterBO.CUNTAO_CODE, dto.getStationNum());
+		feature.put(CaiNiaoAdapter.CUNTAO_CODE, dto.getStationNum());
 		cnStation.setFeature(feature);
 		// cnStation.setId(id);
 		cnStation.setLat(StringUtil.isEmpty(dto.getLat()) ? "0" : PositionUtil.converDown(dto.getLat()));
@@ -255,7 +255,7 @@ public class CaiNiaoAdapterBOImpl implements CaiNiaoAdapterBO {
 				throw new AugeServiceException("updateStationUserRel.res is false");
 			}
 			LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
-			featureMap.put(CaiNiaoAdapterBO.CUNTAO_CODE, station.getStationNum());
+			featureMap.put(CaiNiaoAdapter.CUNTAO_CODE, station.getStationNum());
 			this.updateStationFeatures(station.getStationId(), featureMap);
 			return true;
 		} catch (Exception e) {

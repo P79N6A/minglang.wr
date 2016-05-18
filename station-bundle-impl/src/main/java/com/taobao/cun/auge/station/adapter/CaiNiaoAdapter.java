@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.bo;
+package com.taobao.cun.auge.station.adapter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-public interface CaiNiaoAdapterBO {
+public interface CaiNiaoAdapter {
 	/**
 	 * 当前站点对应的村淘合伙人淘宝用户ID（合伙人自己或淘帮手对应的合伙人）
 	 */
