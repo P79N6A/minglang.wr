@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -18,7 +19,7 @@ import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
-
+@Component("startProcessListener")
 @EventSub(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT)
 public class StartProcessListener implements EventListener {
 

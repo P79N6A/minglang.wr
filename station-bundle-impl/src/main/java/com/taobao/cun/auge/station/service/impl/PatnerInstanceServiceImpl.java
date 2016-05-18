@@ -47,9 +47,15 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
 import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.refund.domain.RefundDO;
-
+/**
+ * 
+ * @author quanzhu.wangqz
+ *
+ */
+@HSFProvider(serviceInterface= PatnerInstanceService.class)
 public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PatnerInstanceService.class);
@@ -72,8 +78,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 	
-	@Autowired
-	QuitStationApplyConverter quitStationApplyConverter;
+	//@Autowired
+	//QuitStationApplyConverter quitStationApplyConverter;
 	
 	@Autowired
 	StationApplyBO stationApplyBO;

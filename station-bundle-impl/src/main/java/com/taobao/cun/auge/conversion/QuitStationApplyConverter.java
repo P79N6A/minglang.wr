@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 
-@Mapper( componentModel = "spring")
-@Component
+//@Mapper( componentModel = "spring")
+//@Component
 public interface QuitStationApplyConverter {
 
-	QuitStationApplyCondition toCondition(QuitStationApply quitStationApply);
+	//QuitStationApplyCondition toCondition(QuitStationApply quitStationApply);
 	
-	QuitStationApply toQuitStationApply(QuitStationApplyCondition condition);
+	//QuitStationApply toQuitStationApply(QuitStationApplyCondition condition);
 }

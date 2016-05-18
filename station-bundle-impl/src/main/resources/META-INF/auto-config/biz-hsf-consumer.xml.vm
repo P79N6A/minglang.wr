@@ -18,20 +18,6 @@
         </property>
     </bean> 
     
-    <bean id="employee360Service" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean">
-        <!--interfaceName必须配置[String]，为需要调用的服务的接口 -->
-        <property name="interfaceName">
-            <value>com.alibaba.masterdata.client.service.Employee360Service</value>
-        </property>
-        <!--version为可选配置[String]，含义为需要调用的服务的版本，默认为1.0.0 -->
-        <property name="version">
-            <value>${cuntao.employee360Service.version}</value>
-        </property>
-        <!--group为可选配置[String]，含义为需要调用的服务所在的组，默认为HSF -->
-        <property name="group">
-            <value>HSF</value>
-        </property>
-    </bean>
 	
 	<bean id="buyerQueryService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
         <property name="interfaceName">

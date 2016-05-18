@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo.impl;
 import org.apache.commons.lang.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.conversion.PartnerConverter;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -16,6 +17,7 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.validator.BeanValidator;
 
+@Component("partnerBO")
 public class PartnerBOImpl implements PartnerBO {
 	
 	@Autowired
