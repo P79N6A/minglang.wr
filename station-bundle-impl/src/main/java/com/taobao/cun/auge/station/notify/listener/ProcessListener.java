@@ -11,6 +11,8 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
+import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
 import com.taobao.notify.message.Message;
 import com.taobao.notify.message.StringMessage;
@@ -48,37 +50,41 @@ public class ProcessListener implements MessageListener {
 		logger.info("BpmNotifyRecieveImpl notify:" + ob.toJSONString());
 
 		String msgType = strMessage.getMessageType();
-		// FIXME FHH 枚举未写
 		// 监听流程实例结束
-		if ("PROC_INST_FINISH".equals(msgType)) {
+		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			String businessCode = ob.getString("businessCode");
 			String resultCode = ob.getString("resultCode");
 			String objectId = ob.getString("objectId");
 			String remarks = ob.getString("remarks");
-			
+
 			ProcessApproveResultDto resultDto = new ProcessApproveResultDto();
-			
+
 			resultDto.setBusinessCode(businessCode);
 			resultDto.setObjectId(objectId);
 			resultDto.setResult(ProcessApproveResultEnum.valueof(resultCode));
 			resultDto.setRemarks(remarks);
-			
-			if ("stationForcedClosure".equals(businessCode)) {
+
+			// 村点强制停业
+			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
 				try {
 					patnerInstanceService.auditClose(resultDto);
 				} catch (Exception e) {
 					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 				}
-			}else if("stationQuitRecord".equals(businessCode)){
+
+				// 村点退出
+			} else if ("stationQuitRecord".equals(businessCode)) {
 				try {
 					patnerInstanceService.auditQuit(resultDto);
 				} catch (Exception e) {
-					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
+					logger.error("监听审批退出流程失败。stationApplyId = " + objectId);
 				}
 			}
-		} else if ("ACT_INST_START".equals(msgType)) {
+			// 节点被激活
+		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
+			// 任务被激活
+		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 
 		}
 	}
-
 }

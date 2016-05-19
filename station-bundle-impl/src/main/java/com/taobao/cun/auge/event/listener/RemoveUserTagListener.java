@@ -43,18 +43,19 @@ public class RemoveUserTagListener implements EventListener {
 		String operatorId = (String) map.get("operatorId");
 		Long taobaoUserId = (Long) map.get("taobaoUserId");
 		String stationId = (String)map.get("stationId");
+		String taobaoNick = (String)map.get("taobaoNick");
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 		
 		// 由停业中，变更为已停业，去标,发短信
 		if (StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)) {
-			submitRemoveUserTagTasks(taobaoUserId, partnerType, operatorId);
+			submitRemoveUserTagTasks(taobaoUserId, taobaoNick,partnerType, operatorId);
 		} else if (StationStatusEnum.QUIT.equals(newStatus) && StationStatusEnum.QUITING.equals(oldStatus)) {
 			submitRemoveAlipayTagTask(taobaoUserId, operatorId);
 			submitRemoveLogisticsTask(stationId, operatorId);
 		}
 	}
 
-	private void submitRemoveUserTagTasks(Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operatorId) {
+	private void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick,PartnerInstanceTypeEnum partnerType, String operatorId) {
 		UserTagDto userTagDto = new UserTagDto();
 
 		userTagDto.setTaobaoUserId(taobaoUserId);
@@ -62,15 +63,14 @@ public class RemoveUserTagListener implements EventListener {
 
 		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
-		// FIXME FHH 去标的服务未写，businessType未定义
 		// uic去标
 		GeneralTaskDto task = new GeneralTaskDto();
 		task.setBusinessNo(String.valueOf(taobaoUserId));
-		task.setBeanName("uicBo");
+		task.setBeanName("uicTagService");
 		task.setMethodName("removeUserTag");
 		task.setBusinessStepNo(1l);
 		task.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
-		task.setBusinessStepDesc("removeUserTag");
+		task.setBusinessStepDesc("去uic标");
 		task.setOperator(operatorId);
 		task.setParameter(userTagDto);
 		taskLists.add(task);
@@ -78,13 +78,13 @@ public class RemoveUserTagListener implements EventListener {
 		// 旺旺去标
 		GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
 		wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
-		wangwangTaskVo.setBeanName("aliWangWangBO");
-		wangwangTaskVo.setMethodName("removeWangWangTag");
+		wangwangTaskVo.setBeanName("wangWangTagService");
+		wangwangTaskVo.setMethodName("removeWangWangTagByNick");
 		wangwangTaskVo.setBusinessStepNo(2l);
 		wangwangTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
-		wangwangTaskVo.setBusinessStepDesc("removeWangWangTag");
+		wangwangTaskVo.setBusinessStepDesc("去旺旺标");
 		wangwangTaskVo.setOperator(operatorId);
-		wangwangTaskVo.setParameter(userTagDto);
+		wangwangTaskVo.setParameter(taobaoNick);
 		taskLists.add(wangwangTaskVo);
 
 		// 提交任务
