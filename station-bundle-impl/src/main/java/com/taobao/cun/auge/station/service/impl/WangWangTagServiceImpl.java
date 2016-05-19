@@ -5,16 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.taobao.cun.auge.station.adapter.WangwangAdapter;
 import com.taobao.cun.auge.station.service.WangWangTagService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-@HSFProvider(serviceInterface= WangWangTagService.class)
-public class WangWangTagServiceImpl implements WangWangTagService{
+
+
+@HSFProvider(serviceInterface = WangWangTagService.class)
+public class WangWangTagServiceImpl implements WangWangTagService {
 
 	@Autowired
 	WangwangAdapter wangwangAdapter;
-	
+
 	@Override
 	public void addWangWangTagByNick(String taobaoNick) {
 		wangwangAdapter.addWangWangTagByNick(taobaoNick);
-		
+
 	}
 
 	@Override

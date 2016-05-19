@@ -15,7 +15,9 @@ import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@HSFProvider(serviceInterface= ProcessService.class)
 public class ProcessServiceImpl implements ProcessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
