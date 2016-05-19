@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="GB2312"?>
 <config description="自动配置">
-	
+
 	<group name="common">
 		<property name="app.name" defaultValue="default_app" description="rootAppender的日志级别" />
 		<property name="logging.root" defaultValue="/home/admin/output/logs/supplier/root.log" description="rootAppender的日志文件" />
@@ -10,10 +10,17 @@
 		<property name="spring.hsf.group" defaultValue="HSF" description="spring.hsf.group" />
 		<property name="spring.hsf.version" defaultValue="1.0.0.daily" description="spring.hsf.version" />
 		<property name="spring.hsf.timeout" defaultValue="3000" description="spring.hsf.timeout" />
+
+		<property name="hsf.consumer.version.uic.configservice" defaultValue="1.0.0.daily" description="uic版本" />
+		<property name="hsf.consumer.version.uic.security" defaultValue="1.0.0.daily" description="uic版本" />
+		<property name="hsf.consumer.version.uic.service" defaultValue="1.0.0.daily" description="uic版本" />
+
 	</group>
-	
+
 	<script>
-		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK"/>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
+		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK" />
+		<generate template="beans-hsf-uic-consumer.xml.vm" destfile="application/beans-hsf-uic-consumer.xml" charset="GBK"></generate>
+
 	</script>
 </config>

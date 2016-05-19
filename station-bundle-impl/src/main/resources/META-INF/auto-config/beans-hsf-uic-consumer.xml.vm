@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName">
+	<bean id="clientInfo" class="com.taobao.uic.common.util.ClientInfo">
+		<property name="appName" value="cuntao" />
+		<property name="email" value="chao.guoc@alibabal-inc.com" />
+	</bean>
+
+	<bean id="uicCacheManager" class="com.taobao.uic.common.cache.DefaultUICCacheService" init-method="init">
+		<property name="configServerVersion" value="${hsf.consumer.version.uic.configservice}" />
+		<property name="securityService">
+			<ref bean="securityService" />
+		</property>
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+	</bean>
+
+	<bean id="securityService" class="com.taobao.uic.security.service.impl.SecurityClient">
+		<property name="configServerVersion" value="${hsf.consumer.version.uic.security}"></property>
+	</bean>
+
+	<bean id="uicReadServiceClient" class="com.taobao.uic.common.service.userinfo.client.UicReadServiceClient">
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+		<property name="uicReadService">
+			<bean class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+				<property name="interfaceName" value="com.taobao.uic.common.service.userinfo.UicReadService" />
+				<property name="version" value="${hsf.consumer.version.uic.service}" />
+			</bean>
+		</property>
+		<property name="uicExtraReadServiceClient">
+			<ref local="uicExtraReadServiceClient" />
+		</property>
+		<property name="uicCacheService">
+			<ref local="uicCacheManager" />
+		</property>
+		<property name="securityService">
+			<ref bean="securityService" />
+		</property>
+	</bean>
+
+	<bean id="uicExtraReadService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+		<property name="interfaceName" value="com.taobao.uic.common.service.userinfo.UicExtraReadService" />
+		<property name="version" value="${hsf.consumer.version.uic.service}" />
+	</bean>
+	<bean id="uicExtraReadServiceClient" class="com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient">
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+		<property name="uicExtraReadService">
+			<ref local="uicExtraReadService" />
+		</property>
+		<property name="uicCacheService">
+			<ref local="uicCacheManager" />
+		</property>
+	</bean>
+
+	<bean id="uicDataServiceClient" class="com.taobao.uic.common.service.userdata.client.UicDataServiceClient">
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+		<property name="uicDataReadService">
+			<ref local="uicDataReadService" />
+		</property>
+
+		<property name="uicDataWriteService">
+			<ref local="uicDataWriteService" />
+		</property>
+
+		<property name="uicCacheService">
+			<ref local="uicCacheManager" />
+		</property>
+
+		<property name="securityService">
+			<ref local="securityService" />
+		</property>
+	</bean>
+
+	<bean id="uicDataReadService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+		<property name="interfaceName" value="com.taobao.uic.common.service.userdata.UicDataReadService" />
+		<property name="version" value="${hsf.consumer.version.uic.service}" />
+	</bean>
+
+	<bean id="uicDataWriteService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+		<property name="interfaceName" value="com.taobao.uic.common.service.userdata.UicDataWriteService" />
+		<property name="version" value="${hsf.consumer.version.uic.service}" />
+	</bean>
+
+	<bean id="uicTagWriteServiceClient" class="com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient">
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+		<property name="uicTagWriteService">
+			<bean class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+				<property name="interfaceName" value="com.taobao.uic.common.service.userinfo.UicTagWriteService" />
+				<property name="version" value="${hsf.consumer.version.uic.service}" />
+			</bean>
+		</property>
+	</bean>
+
+
+	<bean id="uicPaymentAccountReadService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
+		<property name="interfaceName" value="com.taobao.uic.common.service.userinfo.UicPaymentAccountReadService" />
+		<property name="version" value="${hsf.consumer.version.uic.service}" />
+	</bean>
+	<bean id="uicPaymentAccountReadServiceClient" class="com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient">
+		<property name="clientInfo">
+			<ref local="clientInfo" />
+		</property>
+		<property name="uicPaymentAccountReadService">
+			<ref local="uicPaymentAccountReadService" />
+		</property>
+		<property name="uicCacheService">
+			<ref local="uicCacheManager" />
+		</property>
+	</bean>
+
+</beans>
