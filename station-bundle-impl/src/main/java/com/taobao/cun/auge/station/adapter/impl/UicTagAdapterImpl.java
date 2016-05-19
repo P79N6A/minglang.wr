@@ -37,7 +37,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	private Long TPV_TAG = new Double(Math.pow(2, 25)).longValue();
 
 	public void addUserTag(UserTagDto userTagDto) {
-		BeanValidator.validateWithThrowable(userTagDto);
+//		BeanValidator.validateWithThrowable(userTagDto);
 		try {
 			Long taobaoUserId = userTagDto.getTaobaoUserId();
 			PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();
@@ -61,7 +61,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	}
 
 	public void removeUserTag(UserTagDto userTagDto) {
-		BeanValidator.validateWithThrowable(userTagDto);
+//		BeanValidator.validateWithThrowable(userTagDto);
 		try {
 			Long taobaoUserId = userTagDto.getTaobaoUserId();
 			PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();

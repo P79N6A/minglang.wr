@@ -21,6 +21,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean employee360Service(@Value("${hsf.consumer.version.employeeServiceVersion}") String version) {
 		return getConsumerBean(Employee360Service.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	//旺旺
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean hsf2icesrv(@Value("${hsf.consumer.version.hsf2icesrv}") String version) {
+		return getConsumerBean(com.taobao.wws.hsf2icesrv.class, HSFGroup.HSF, version, 3000);
+	}
 
 	// 菜鸟服务
 	@Bean(initMethod = "init")
