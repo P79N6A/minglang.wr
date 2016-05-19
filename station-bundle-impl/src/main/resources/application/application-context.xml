@@ -6,8 +6,6 @@
  <!--jmonitor-->
     <import resource="classpath*:/application/beans-jmonitor.xml"/>
 
-    <!--uic-->
-    <import resource="classpath*:/application/beans-hsf-uic-consumer.xml"/>
 
     <!--event-client-->
     <import resource="classpath*:/application/beans-event-client-context.xml"/>
