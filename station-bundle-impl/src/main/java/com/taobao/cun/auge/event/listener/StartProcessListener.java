@@ -11,6 +11,7 @@ import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
@@ -41,23 +42,44 @@ public class StartProcessListener implements EventListener {
 
 		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
-		String employeeId = (String) map.get("operatorId");
+		//可能是小二，也可能是TP商淘宝账号
+		String operatorId = (String) map.get("operatorId");
 		String stationId = (String) map.get("stationId");
+		String intanceId = (String) map.get("intanceId");
 		String remark = (String) map.get("remark");
+
+		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 		try {
+			// FIXME FHH 省长的orgId
 			Long parentOrgId = stationBO.getParentOrgId(Long.valueOf(stationId));
-			Long stationApplyId = partnerInstanceBO.findStationApplyIdByStationId(Long.valueOf(stationId));
+			Long stationApplyId = partnerInstanceBO.findStationApplyId(Long.valueOf(intanceId));
 			if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
-				// 启动停业流程
-				createStartApproveProcessTask(ProcessBusinessEnum.stationForcedClosure.getCode(), stationApplyId, employeeId,
-						parentOrgId, remark);
+
+				// 村拍档停业流程和合伙人、淘帮手不一样
+				if (PartnerInstanceTypeEnum.TPV.equals(partnerType)) {
+					// 启动停业流程
+					createStartApproveProcessTask(ProcessBusinessEnum.TPV_FORCED_CLOSURE, stationApplyId, operatorId,
+							parentOrgId, remark);
+				} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)
+						|| PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+					// 启动停业流程
+					createStartApproveProcessTask(ProcessBusinessEnum.stationForcedClosure, stationApplyId, operatorId,
+							parentOrgId, remark);
+				}
 			} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
-				// 启动退出流程
-				createStartApproveProcessTask(ProcessBusinessEnum.stationQuitRecord.getCode(), stationApplyId, employeeId,
-						parentOrgId, remark);
+				if (PartnerInstanceTypeEnum.TPV.equals(partnerType)) {
+					// 启动退出流程
+					createStartApproveProcessTask(ProcessBusinessEnum.TPV_QUIT, stationApplyId, operatorId, parentOrgId,
+							remark);
+				} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)
+						|| PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+					// 启动退出流程
+					createStartApproveProcessTask(ProcessBusinessEnum.stationQuitRecord, stationApplyId, operatorId,
+							parentOrgId, remark);
+				}
 			}
 		} catch (Exception e) {
-			logger.error("启动审批流程失败。stationId=" + stationId + " employeeId =" + employeeId + "newStatus = "
+			logger.error("启动审批流程失败。stationId=" + stationId + " operatorId =" + operatorId + "newStatus = "
 					+ newStatus.getDesc() + " oldStatus = " + oldStatus.getDesc() + " remark = " + remark, e);
 		}
 	}
@@ -65,15 +87,14 @@ public class StartProcessListener implements EventListener {
 	/**
 	 * 启动停业、退出流程审批流程
 	 */
-	private void createStartApproveProcessTask(String businessCode, Long businessId, String applierId, Long parentOrgId,
-			String remarks) {
-
+	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long businessId, String applierId,
+			Long parentOrgId, String remarks) {
 		StartProcessDto startProcessDto = new StartProcessDto();
 
 		startProcessDto.setRemarks(remarks);
 		startProcessDto.setParentOrgId(parentOrgId);
 		startProcessDto.setBusinessId(businessId);
-		startProcessDto.setBusinessCode(businessCode);
+		startProcessDto.setBusinessCode(business.getCode());
 		startProcessDto.setApplierId(applierId);
 		// 旺旺去标
 		GeneralTaskDto startProcessTask = new GeneralTaskDto();
