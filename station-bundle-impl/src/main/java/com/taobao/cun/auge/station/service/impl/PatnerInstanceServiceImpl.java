@@ -250,35 +250,29 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto)
-			throws AugeServiceException {
-		try {
-			Long instanceId = forcedCloseDto.getInstanceId();
-			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-			Long stationId = partnerStationRel.getStationId();
+	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
+		Long instanceId = forcedCloseDto.getInstanceId();
+		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Long stationId = partnerStationRel.getStationId();
 
-			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistValidChildren(
-					PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
+		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()),
+				instanceId);
 
-			// 合伙人实例停业中
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING,
-					PartnerInstanceStateEnum.CLOSING, forcedCloseDto.getOperator());
+		// 合伙人实例停业中
+		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING,
+				forcedCloseDto.getOperator());
 
-			// 村点停业中
-			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
+		// 村点停业中
+		stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
+				forcedCloseDto.getOperator());
 
-			// 通过事件，定时钟，启动停业流程
-			StationStatusChangedEvent event = StationStatusChangedEventConverter.convert(StationStatusEnum.SERVICING,
-					StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),forcedCloseDto.getOperator());
-			event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
-
-		} catch (Exception e) {
-			//FIXME FHH
-			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
-			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
-		}
+		// 通过事件，定时钟，启动停业流程
+		StationStatusChangedEvent event = StationStatusChangedEventConverter.convert(StationStatusEnum.SERVICING,
+				StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+				forcedCloseDto.getOperator());
+		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 	}
 
 	@Override
