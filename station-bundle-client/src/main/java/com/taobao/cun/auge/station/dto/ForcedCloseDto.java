@@ -7,18 +7,17 @@ import com.taobao.cun.auge.station.enums.StationForcedCloseReasonEnum;
 public class ForcedCloseDto extends BaseDto implements Serializable {
 
 	private static final long serialVersionUID = -2259932744519518324L;
-
 	// 合伙人实例id
-	private Long stationApplyId;
+	private Long instanceId;
 
 	private StationForcedCloseReasonEnum reason;
 
-	public Long getStationApplyId() {
-		return stationApplyId;
+	public Long getInstanceId() {
+		return instanceId;
 	}
 
-	public void setStationApplyId(Long stationApplyId) {
-		this.stationApplyId = stationApplyId;
+	public void setInstanceId(Long instanceId) {
+		this.instanceId = instanceId;
 	}
 
 	public StationForcedCloseReasonEnum getReason() {
