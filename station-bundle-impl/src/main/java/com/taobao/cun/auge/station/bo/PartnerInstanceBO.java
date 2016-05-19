@@ -123,5 +123,5 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
     public void updateOpenDate(Long instanceId,Date openDate,String operator) throws AugeServiceException;
-
+    
 }
