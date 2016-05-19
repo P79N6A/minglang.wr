@@ -1,10 +1,10 @@
-package com.taobao.cun.auge.station.condition;
+package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.StationForcedCloseReasonEnum;
 
-public class ForcedCloseCondition implements Serializable {
+public class ForcedCloseDto extends BaseDto implements Serializable {
 
 	private static final long serialVersionUID = -2259932744519518324L;
 	// 合伙人实例id
@@ -22,9 +22,5 @@ public class ForcedCloseCondition implements Serializable {
 
 	public StationForcedCloseReasonEnum getReason() {
 		return reason;
-	}
-
-	public void setReason(StationForcedCloseReasonEnum reason) {
-		this.reason = reason;
 	}
 }

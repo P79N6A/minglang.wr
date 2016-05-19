@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -25,7 +25,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	PartnerInstanceBO partnerInstanceBO;
 	
 	@Override
-	public Long applySettle(PartnerInstanceCondition condition, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
+	public Long applySettle(ApplySettleDto applySettleDto, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;

@@ -1,13 +1,14 @@
 package com.taobao.cun.auge.station.service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
-import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
-import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
+import com.taobao.cun.auge.station.dto.ApplySettleDto;
+import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
+import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
  * 实例服务接口
@@ -21,7 +22,7 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException;
+	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 	
 	/**
@@ -30,7 +31,7 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long updateTemp(PartnerInstanceCondition condition) throws AugeServiceException;
+	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 新增正式提交 人，服务站基础信息
@@ -38,7 +39,7 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long addSubmit(PartnerInstanceCondition condition) throws AugeServiceException;
+	public Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 	/**
 	 * 修改正式提交 人，服务站基础信息
@@ -46,7 +47,7 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long updateSubmit(PartnerInstanceCondition condition) throws AugeServiceException;
+	public Long updateSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 
 	/**
@@ -55,7 +56,7 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public boolean update(PartnerInstanceCondition condition) throws AugeServiceException;
+	public boolean update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 删除合伙人实例
@@ -103,7 +104,7 @@ public interface PatnerInstanceService {
 	 *      小二工号
 	 * @return
 	 */
-	public boolean openStation(Long partnerInstanceId, Date openDate, boolean isImme, String employeeId) throws AugeServiceException;
+	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException;
 
 	/**
 	 * 合伙人主动申请停业
@@ -121,7 +122,7 @@ public interface PatnerInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public boolean confirmClose(Long partnerInstanceId, String employeeId, boolean isAgree) throws AugeServiceException;
+	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
 
 	/**
 	 * 小二申请停业
@@ -130,7 +131,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId) throws AugeServiceException;
+	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
 	
 	/**
 	 * 审批小二停业申请
@@ -148,7 +149,7 @@ public interface PatnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyQuitByEmployee(QuitStationApplyCondition quitApplyCondition,String employeeId) throws AugeServiceException;
+	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto) throws AugeServiceException;
 	
 	/**
 	 * 审批撤点
@@ -166,6 +167,6 @@ public interface PatnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long applySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum) throws AugeServiceException;
+	public Long applySettle(ApplySettleDto applySettleDto) throws AugeServiceException;
 	
 }

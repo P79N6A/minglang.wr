@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.taobao.cun.auge.conversion.QuitStationApplyConverter;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.StationApply;
@@ -20,14 +19,17 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.condition.ForcedCloseCondition;
-import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
-import com.taobao.cun.auge.station.condition.QuitStationApplyCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
+import com.taobao.cun.auge.station.dto.ApplySettleDto;
+import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
+import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.TaobaoNoEndTradeDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -91,30 +93,30 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	Emp360BO emp360BO;
 
 	@Override
-	public Long addTemp(PartnerInstanceCondition condition) throws AugeServiceException {
+	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
 	}
 
 	@Override
-	public Long updateTemp(PartnerInstanceCondition condition) throws AugeServiceException {
+	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Long addSubmit(PartnerInstanceCondition condition) throws AugeServiceException {
+	public Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Long updateSubmit(PartnerInstanceCondition condition) throws AugeServiceException {
+	public Long updateSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean update(PartnerInstanceCondition condition) throws AugeServiceException {
+	public boolean update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -149,20 +151,19 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public boolean openStation(Long partnerInstanceId, Date openDate, boolean isImme, String employeeId)
-			throws AugeServiceException {
-		if (isImme) {//立即开业
+	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
+		if (openStationDto.isImme()) {//立即开业
 			//TODO:检查开业包
 			if (!checkKyPackage()) {
 				throw new AugeServiceException(StationExceptionEnum.KAYE_PACKAGE_NOT_EXIST);
 			}
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING, employeeId);
-			partnerInstanceBO.updateOpenDate(partnerInstanceId, openDate, employeeId);
+			partnerInstanceBO.changeState(openStationDto.getPartnerInstanceId(), PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING, openStationDto.getOperator());
+			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(), openStationDto.getOperator());
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(partnerInstanceId)));
+					.convert(PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId())));
 		}else{//定时开业
-			partnerInstanceBO.updateOpenDate(partnerInstanceId, openDate, employeeId);
+			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(), openStationDto.getOperator());
 		}
 		
 		return false;
@@ -204,10 +205,13 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	
 
 	@Override
-	public boolean confirmClose(Long partnerInstanceId, String employeeId, boolean isAgree)
-			throws AugeServiceException {
+	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
+		Long partnerInstanceId = confirmCloseDto.getPartnerInstanceId();
+		String employeeId= confirmCloseDto.getOperator();
+		boolean isAgree = confirmCloseDto.isAgree();
 		try {
-			PartnerStationRel partnerInstance =  partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+		
+			PartnerStationRel partnerInstance =  partnerInstanceBO.findPartnerInstanceById(confirmCloseDto.getPartnerInstanceId());
 			if(partnerInstance == null) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
@@ -246,10 +250,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void applyCloseByEmployee(ForcedCloseCondition forcedCloseCondition, String employeeId)
+	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto)
 			throws AugeServiceException {
 		try {
-			Long instanceId = forcedCloseCondition.getInstanceId();
+			Long instanceId = forcedCloseDto.getInstanceId();
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Long stationId = partnerStationRel.getStationId();
 
@@ -259,15 +263,15 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 
 			// 合伙人实例停业中
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING,
-					PartnerInstanceStateEnum.CLOSING, employeeId);
+					PartnerInstanceStateEnum.CLOSING, forcedCloseDto.getOperator());
 
 			// 村点停业中
-			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, employeeId);
+			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
 
 			// 通过事件，定时钟，启动停业流程
 			StationStatusChangedEvent event = StationStatusChangedEventConverter.convert(StationStatusEnum.SERVICING,
-					StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),employeeId);
-			event.setRemark(null != forcedCloseCondition.getReason() ? forcedCloseCondition.getReason().getDesc() : "");
+					StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),forcedCloseDto.getOperator());
+			event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 
 		} catch (Exception e) {
@@ -327,10 +331,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		
 
 	@Override
-	public void applyQuitByEmployee(QuitStationApplyCondition quitApplyCondition, String employeeId)
+	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto)
 			throws AugeServiceException {
 		try {
-			Long instanceId = quitApplyCondition.getInstanceId();
+			Long instanceId = quitStationApplyDto.getInstanceId();
 			Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 			
@@ -355,22 +359,22 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			quitStationApply = new QuitStationApply();
 			quitStationApply.setPartnerInstanceId(instanceId);
 			quitStationApply.setStationApplyId(stationApplyId);
-			quitStationApply.setRevocationAppFormFileName(quitApplyCondition.getRevocationAppFormFileName());
-			quitStationApply.setOtherDescription(quitApplyCondition.getOtherDescription());
-			quitStationApply.setAssetType(quitApplyCondition.getAssertUseState().getCode());
-			quitStationApply.setLoanHasClose(quitApplyCondition.getLoanHasClose());
+			quitStationApply.setRevocationAppFormFileName(quitStationApplyDto.getRevocationAppFormFileName());
+			quitStationApply.setOtherDescription(quitStationApplyDto.getOtherDescription());
+			quitStationApply.setAssetType(quitStationApplyDto.getAssertUseState().getCode());
+			quitStationApply.setLoanHasClose(quitStationApplyDto.getLoanHasClose());
 			// FIXME FHH 枚举
 			quitStationApply.setState("FINISHED");
-			quitStationApply.setSubmittedPeopleName(emp360BO.getName(employeeId));
+			quitStationApply.setSubmittedPeopleName(emp360BO.getName(quitStationApplyDto.getOperator()));
 
-			quitStationApplyBO.saveQuitStationApply(quitStationApply, employeeId);
+			quitStationApplyBO.saveQuitStationApply(quitStationApply, quitStationApplyDto.getOperator());
 
 			// 合伙人实例退出中
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,
-					employeeId);
+					quitStationApplyDto.getOperator());
 
 			// 村点退出中
-			stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, employeeId);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, quitStationApplyDto.getOperator());
 			
 			//退出审批流程，由事件监听完成
 			
@@ -379,7 +383,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 					.convert(PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSED,
-					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),employeeId));
+					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),quitStationApplyDto.getOperator()));
 			
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
@@ -459,9 +463,8 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 	
 	@Override
-	public Long applySettle(PartnerInstanceCondition condition, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
-			throws AugeServiceException {
-		return partnerInstanceHandler.handleApplySettle(condition, partnerInstanceTypeEnum);
+	public Long applySettle(ApplySettleDto applySettleDto) throws AugeServiceException {
+		return partnerInstanceHandler.handleApplySettle(applySettleDto, applySettleDto.getPartnerInstanceTypeEnum());
 	}
 
 }

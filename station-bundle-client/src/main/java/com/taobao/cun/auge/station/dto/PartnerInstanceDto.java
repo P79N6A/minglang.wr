@@ -6,7 +6,7 @@ import java.util.Date;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
-public class PartnerInstanceDto  implements Serializable {
+public class PartnerInstanceDto extends BaseDto implements Serializable {
 	
 	private static final long serialVersionUID = -3494792623384321459L;
 	

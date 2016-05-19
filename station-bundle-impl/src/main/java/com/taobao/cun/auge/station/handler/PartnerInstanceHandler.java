@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.strategy.PartnerInstanceStrategy;
@@ -33,8 +34,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
 	}
 	
-	public Long handleApplySettle(PartnerInstanceCondition condition,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(condition, partnerInstanceTypeEnum);
+	public Long handleApplySettle(ApplySettleDto applySettleDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(applySettleDto, partnerInstanceTypeEnum);
 	}
 	
 	public void validateExistValidChildren(PartnerInstanceTypeEnum partnerInstanceTypeEnum,Long instanceId)throws AugeServiceException {
