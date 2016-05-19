@@ -74,8 +74,5 @@ public class StartProcessListener implements EventListener {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = " + applier
 					+ " parentOrgId = " + parentOrgId + " remarks = " + remarks,rm.getException());
 		}
-		// FIXME FHH 邮件通知审批人，应该监听流程中心事件
-		// noticeNextOperator(PermissionNameEnum.BOPS_FORCE_QUIT_PROVINCE_AUDIT,
-		// applyId, context);
 	}
 }
