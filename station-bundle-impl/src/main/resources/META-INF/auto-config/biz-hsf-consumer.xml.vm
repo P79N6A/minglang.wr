@@ -9,31 +9,5 @@
 	default-autowire="byName">
 
 	
-	<bean id="taobaoTradeOrderQueryService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean">
-        <property name="interfaceName">
-            <value>com.taobao.cun.service.trade.TaobaoTradeOrderQueryService</value>
-        </property>
-        <property name="version">
-            <value>${cuntao.taobaoTradeOrderQueryService.version}</value>
-        </property>
-    </bean> 
-    
 	
-	<bean id="buyerQueryService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
-        <property name="interfaceName">
-            <value>com.taobao.trade.platform.api.query.BuyerQueryService</value>
-        </property>
-        <property name="version">
-            <value>${cuntao.center.taobao.buyerQueryService.version}</value>
-        </property>
-    </bean>
-    
-    <bean id="refundReadService" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="init">
-        <property name="interfaceName">
-            <value>com.taobao.refundplatform.client.read.RefundReadService</value>
-        </property>
-        <property name="version">
-            <value>${cuntao.center.taobao.refundReadService.version}</value>
-        </property>
-    </bean>
 </beans>
