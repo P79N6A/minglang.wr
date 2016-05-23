@@ -15,7 +15,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.enums.BusinessTypeEnum;
@@ -63,6 +62,13 @@ public class StartProcessListener implements EventListener {
 		}
 	}
 
+	/**
+	 * 
+	 * @param newStatus
+	 * @param oldStatus
+	 * @param partnerType
+	 * @return
+	 */
 	private ProcessBusinessEnum findBusinessType(StationStatusEnum newStatus, StationStatusEnum oldStatus,
 			PartnerInstanceTypeEnum partnerType) {
 		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
