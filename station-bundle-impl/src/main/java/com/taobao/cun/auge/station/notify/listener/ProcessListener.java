@@ -48,18 +48,12 @@ public class ProcessListener implements MessageListener {
 			String objectId = ob.getString("objectId");
 			String remarks = ob.getString("remarks");
 
-			ProcessApproveResultDto resultDto = new ProcessApproveResultDto();
-
-			resultDto.setBusinessCode(businessCode);
-			resultDto.setObjectId(objectId);
-			resultDto.setResult(ProcessApproveResultEnum.valueof(resultCode));
-			resultDto.setRemarks(remarks);
-
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)
 					|| ProcessBusinessEnum.TPV_FORCED_CLOSURE.getCode().equals(businessCode)) {
 				try {
-					processApproveResultProcessor.auditClose(resultDto);
+					Long stationApplyId = Long.valueOf(objectId);
+					processApproveResultProcessor.monitorCloseApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
 				} catch (Exception e) {
 					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 				}
@@ -67,7 +61,8 @@ public class ProcessListener implements MessageListener {
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
 					|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 				try {
-					processApproveResultProcessor.auditQuit(resultDto);
+					Long stationApplyId = Long.valueOf(objectId);
+					processApproveResultProcessor.monitorQuitApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
 				} catch (Exception e) {
 					logger.error("监听审批退出流程失败。stationApplyId = " + objectId);
 				}

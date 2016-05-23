@@ -10,10 +10,8 @@ import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
-import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -31,16 +29,11 @@ public class ProcessApproveResultProcessor {
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
-	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
+	public void monitorCloseApprove	(Long stationApplyId,ProcessApproveResultEnum approveResult) throws Exception {
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 		String operator = "sys";
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
 					operator);
@@ -82,17 +75,13 @@ public class ProcessApproveResultProcessor {
 		}
 	}
 
-	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception {
+	public void monitorQuitApprove(Long stationApplyId,ProcessApproveResultEnum approveResult) throws Exception {
 		String operator = "sys";
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
+		
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 合伙人实例已退出
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
 					operator);
