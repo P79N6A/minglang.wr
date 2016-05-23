@@ -5,6 +5,7 @@
 		<groupId>com.taobao.cun.module</groupId>
 		<artifactId>station-bundle.all</artifactId>
 		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>station-bundle-client</artifactId>
 	<version>${ague.station.client.version}</version>
@@ -49,4 +50,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>releases</id>
+			<url>http://mvnrepo.alibaba-inc.com/mvn/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<url>http://mvnrepo.alibaba-inc.com/mvn/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

@@ -29,7 +29,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
 		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
 			return ProcessBusinessEnum.stationForcedClosure;
-		}else if(ProcessTypeEnum.QUIT_PRO.equals(processType)){
+		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
 			return ProcessBusinessEnum.stationQuitRecord;
 		}
 		return null;

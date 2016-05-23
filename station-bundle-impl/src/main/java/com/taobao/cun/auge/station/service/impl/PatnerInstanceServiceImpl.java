@@ -275,19 +275,21 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void applyQuitByManager(QuitDto quitStationApplyDto)	throws AugeServiceException {
+	public void applyQuitByManager(QuitDto quitDto)	throws AugeServiceException {
 		try {
-			Long instanceId = quitStationApplyDto.getInstanceId();
-			String operator = quitStationApplyDto.getOperator();
+			Long instanceId = quitDto.getInstanceId();
+			String operator = quitDto.getOperator();
 			
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+			
+//			quitDto.
 
 			//校验申请退出的条件
 			validateQuitPreCondition(instance, partner);
 
 			//保存退出申请单
-			QuitStationApply quitStationApply = convert(quitStationApplyDto, instance);
+			QuitStationApply quitStationApply = convert(quitDto, instance);
 			quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
 			// 合伙人实例退出中
