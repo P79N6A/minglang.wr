@@ -31,7 +31,7 @@ import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -248,7 +248,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
+	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
 		Long instanceId = forcedCloseDto.getInstanceId();
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Long stationId = partnerStationRel.getStationId();
@@ -275,8 +275,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto)
-			throws AugeServiceException {
+	public void applyQuitByManager(QuitDto quitStationApplyDto)	throws AugeServiceException {
 		try {
 			Long instanceId = quitStationApplyDto.getInstanceId();
 			String operator = quitStationApplyDto.getOperator();
@@ -333,7 +332,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				instanceId);
 	}
 
-	private QuitStationApply convert(QuitStationApplyDto quitStationApplyDto, PartnerStationRel instance) throws AugeServiceException {
+	private QuitStationApply convert(QuitDto quitStationApplyDto, PartnerStationRel instance) throws AugeServiceException {
 		QuitStationApply quitStationApply;
 		quitStationApply = new QuitStationApply();
 		quitStationApply.setPartnerInstanceId(instance.getId());

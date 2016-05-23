@@ -8,7 +8,7 @@ import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
  * 实例服务接口
@@ -125,22 +125,22 @@ public interface PatnerInstanceService {
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
 
 	/**
-	 * 小二申请停业
+	 * 小二、TP商申请停业
 	 * 
 	 * @param forcedCloseCondition
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
+	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
 	
 	/**
-	 * 小二申请撤点
+	 * 小二、TP商申请撤点
 	 * 
 	 * @param forcedCloseCondition
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto) throws AugeServiceException;
+	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException;
 	
 	/**
 	 * 申请入驻
