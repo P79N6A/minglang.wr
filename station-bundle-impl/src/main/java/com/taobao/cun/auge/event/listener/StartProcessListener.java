@@ -11,6 +11,7 @@ import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -49,6 +50,7 @@ public class StartProcessListener implements EventListener {
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
 		// 可能是小二，也可能是TP商淘宝账号
 		String operatorId = (String) map.get("operatorId");
+		OperatorTypeEnum operatorType = (OperatorTypeEnum) map.get("OperatorType");
 		Long operatorOrgId = (Long) map.get("operatorOrgId");
 		String intanceId = (String) map.get("intanceId");
 		String remark = (String) map.get("remark");
