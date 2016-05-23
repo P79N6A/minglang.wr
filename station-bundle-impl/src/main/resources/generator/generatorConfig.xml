@@ -28,13 +28,7 @@
 
         <javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}" type="XMLMAPPER" />
 
-        <table tableName="cuntao_cainiao_station_rel" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        <table tableName="logistics_station" >
-          <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
-        </table>
-        <table tableName="logistics_station_apply" >
+        <table tableName="county_station" >
           <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>

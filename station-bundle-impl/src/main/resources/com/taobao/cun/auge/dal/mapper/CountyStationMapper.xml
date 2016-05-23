@@ -42,5 +42,6 @@
     <result column="logistics_operator" jdbcType="VARCHAR" property="logisticsOperator" />
     <result column="gmt_start_operation" jdbcType="TIMESTAMP" property="gmtStartOperation" />
     <result column="feature" jdbcType="VARCHAR" property="feature" />
+    <result column="temp_org_id" jdbcType="BIGINT" property="tempOrgId" />
   </resultMap>
 </mapper>

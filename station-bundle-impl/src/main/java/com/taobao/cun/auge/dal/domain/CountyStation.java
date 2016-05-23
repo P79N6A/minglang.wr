@@ -217,6 +217,12 @@ public class CountyStation {
     private String feature;
 
     /**
+     * 特战队临时组织ID
+     */
+    @Column(name = "temp_org_id")
+    private Long tempOrgId;
+
+    /**
      * 获取主键
      *
      * @return id - 主键
@@ -880,5 +886,23 @@ public class CountyStation {
      */
     public void setFeature(String feature) {
         this.feature = feature;
+    }
+
+    /**
+     * 获取特战队临时组织ID
+     *
+     * @return temp_org_id - 特战队临时组织ID
+     */
+    public Long getTempOrgId() {
+        return tempOrgId;
+    }
+
+    /**
+     * 设置特战队临时组织ID
+     *
+     * @param tempOrgId 特战队临时组织ID
+     */
+    public void setTempOrgId(Long tempOrgId) {
+        this.tempOrgId = tempOrgId;
     }
 }

@@ -188,15 +188,23 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public Long findStationApplyIdByStationId(Long stationId) {
-		
+	public Long findStationApplyIdByStationId(Long stationId) throws AugeServiceException {
+		PartnerStationRel partnerStationRel = findPartnerInstanceByStationId(stationId);
+		if (partnerStationRel != null) {
+			return partnerStationRel.getStationApplyId();
+		}
+		return null;
+	}
+
+	@Override
+	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
+		if (null == stationId) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
 		PartnerStationRel condition = new PartnerStationRel();
-		
 		condition.setIsDeleted("n");
 		condition.setStationId(stationId);
 		condition.setIsCurrent("y");
-		
-		PartnerStationRel partnerStationRel =  partnerStationRelMapper.selectOne(condition);
-		return partnerStationRel.getStationApplyId();
+		return partnerStationRelMapper.selectOne(condition);
 	}
 }
