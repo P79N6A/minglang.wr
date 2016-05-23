@@ -78,9 +78,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 	
-	//@Autowired
-	//QuitStationApplyConverter quitStationApplyConverter;
-	
 	@Autowired
 	StationApplyBO stationApplyBO;
 	
@@ -278,55 +275,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-		String operator = "sys";
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
-					operator);
-			// 更新服务结束时间
-			PartnerStationRel instance = new PartnerStationRel();
-			instance.setServiceEndTime(new Date());
-			partnerInstanceBO.updatePartnerInstance(instanceId, instance, operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
-			
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert( PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-			
-			//去标，通过事件实现
-			//短信推送
-			//通知admin，合伙人退出。让他们监听村点状态变更事件
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
-					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		} else {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
-			
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.CLOSING,PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-		
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
-					StationStatusEnum.SERVICING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		}
-	}
-		
-
-	@Override
 	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto)
 			throws AugeServiceException {
 		try {
@@ -398,49 +346,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		quitStationApply.setState("FINISHED");
 		quitStationApply.setSubmittedPeopleName(emp360BO.getName(quitStationApplyDto.getOperator()));
 		return quitStationApply;
-	}
-
-	@Override
-	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception {
-		String operator = "sys";
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-		
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
-			// 合伙人实例已退出
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
-					operator);
-
-			// 村点已撤点
-			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			
-			//取消物流站点，取消支付宝标示，
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
-					StationStatusEnum.QUIT, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-			
-		} else {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
-					operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
-
-			// 删除退出申请单
-			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-			
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
-					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		}
-		// tair清空缓存
 	}
 	
 	@Override

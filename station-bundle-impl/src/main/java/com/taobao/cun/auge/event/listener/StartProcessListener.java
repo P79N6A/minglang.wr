@@ -60,7 +60,7 @@ public class StartProcessListener implements EventListener {
 
 		ProcessBusinessEnum business = findBusinessType(newStatus, oldStatus, partnerType);
 		if (null != business) {
-			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorOrgId, remark);
+			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType,operatorOrgId, remark);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class StartProcessListener implements EventListener {
 	 * @param remarks
 	 *            备注
 	 */
-	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,
+	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,OperatorTypeEnum operatorType,
 			Long applierOrgId, String remarks) {
 		StartProcessDto startProcessDto = new StartProcessDto();
 
