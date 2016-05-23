@@ -76,7 +76,7 @@ public class StartProcessListener implements EventListener {
 		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
 			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.CLOSING_PRO);
 		} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
-			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUIT_PRO);
+			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUITING_PRO);
 		}
 
 		return null;

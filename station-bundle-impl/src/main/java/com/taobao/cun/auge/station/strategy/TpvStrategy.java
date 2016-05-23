@@ -29,7 +29,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
 		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
 			return ProcessBusinessEnum.TPV_FORCED_CLOSURE;
-		}else if(ProcessTypeEnum.QUIT_PRO.equals(processType)){
+		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
 			return ProcessBusinessEnum.TPV_QUIT;
 		}
 		return null;
