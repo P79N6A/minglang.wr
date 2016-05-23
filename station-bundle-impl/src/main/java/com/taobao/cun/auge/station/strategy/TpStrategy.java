@@ -50,8 +50,4 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		}
 		
 	}
-	
-	
-	
-
 }

@@ -22,5 +22,4 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

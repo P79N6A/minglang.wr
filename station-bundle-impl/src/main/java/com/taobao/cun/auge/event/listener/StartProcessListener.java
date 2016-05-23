@@ -51,7 +51,7 @@ public class StartProcessListener implements EventListener {
 
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 
-		Long parentOrgId = findApproveOrgId(stationId);
+		Long parentOrgId = findApplierOrgId(stationId);
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(Long.valueOf(intanceId));
 		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
 
@@ -81,35 +81,25 @@ public class StartProcessListener implements EventListener {
 	}
 
 	/**
-	 * 查询审批人所属orgid
-	 * 
-	 * @param stationId
-	 * @return
-	 */
-	// FIXME FHH 省长的orgId
-	private Long findApproveOrgId(String stationId) {
-		Long parentOrgId = 0l;
-		try {
-			parentOrgId = stationBO.getParentOrgId(Long.valueOf(stationId));
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AugeServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return parentOrgId;
-	}
-
-	/**
 	 * 启动停业、退出流程审批流程
+	 * 
+	 * @param business
+	 *            业务类型
+	 * @param stationApplyId
+	 *            业务主键
+	 * @param applierId
+	 *            申请人
+	 * @param applierOrgId
+	 *            申请人orgid
+	 * @param remarks
+	 *            备注
 	 */
 	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,
-			Long parentOrgId, String remarks) {
+			Long applierOrgId, String remarks) {
 		StartProcessDto startProcessDto = new StartProcessDto();
 
 		startProcessDto.setRemarks(remarks);
-		startProcessDto.setParentOrgId(parentOrgId);
+		startProcessDto.setParentOrgId(applierOrgId);
 		startProcessDto.setBusinessId(stationApplyId);
 		startProcessDto.setBusinessCode(business.getCode());
 		startProcessDto.setApplierId(applierId);

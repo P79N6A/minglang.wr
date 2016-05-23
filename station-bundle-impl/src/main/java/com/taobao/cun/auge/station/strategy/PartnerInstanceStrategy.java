@@ -9,4 +9,5 @@ public interface PartnerInstanceStrategy {
 	public Long applySettle(ApplySettleDto applySettleDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException;
 	
 	public void validateExistValidChildren(Long instanceId)throws AugeServiceException ;
+	
 }
