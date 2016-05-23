@@ -13,8 +13,10 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
+import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.enums.BusinessTypeEnum;
 import com.taobao.cun.chronus.service.TaskExecuteService;
@@ -27,6 +29,9 @@ import com.taobao.cun.crius.event.client.EventListener;
 public class StartProcessListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
+
+	@Autowired
+	PartnerInstanceHandler partnerInstanceHandler;
 
 	@Autowired
 	StationBO stationBO;
@@ -45,39 +50,28 @@ public class StartProcessListener implements EventListener {
 		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
 		// 可能是小二，也可能是TP商淘宝账号
 		String operatorId = (String) map.get("operatorId");
-		String stationId = (String) map.get("stationId");
+		Long operatorOrgId = (Long) map.get("operatorOrgId");
 		String intanceId = (String) map.get("intanceId");
 		String remark = (String) map.get("remark");
-
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 
-		Long parentOrgId = findApplierOrgId(stationId);
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(Long.valueOf(intanceId));
-		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
 
-			// 村拍档停业流程和合伙人、淘帮手不一样
-			if (PartnerInstanceTypeEnum.TPV.equals(partnerType)) {
-				// 启动停业流程
-				createStartApproveProcessTask(ProcessBusinessEnum.TPV_FORCED_CLOSURE, stationApplyId, operatorId,
-						parentOrgId, remark);
-			} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)
-					|| PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
-				// 启动停业流程
-				createStartApproveProcessTask(ProcessBusinessEnum.stationForcedClosure, stationApplyId, operatorId,
-						parentOrgId, remark);
-			}
-		} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
-			if (PartnerInstanceTypeEnum.TPV.equals(partnerType)) {
-				// 启动退出流程
-				createStartApproveProcessTask(ProcessBusinessEnum.TPV_QUIT, stationApplyId, operatorId, parentOrgId,
-						remark);
-			} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)
-					|| PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
-				// 启动退出流程
-				createStartApproveProcessTask(ProcessBusinessEnum.stationQuitRecord, stationApplyId, operatorId,
-						parentOrgId, remark);
-			}
+		ProcessBusinessEnum business = findBusinessType(newStatus, oldStatus, partnerType);
+		if (null != business) {
+			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorOrgId, remark);
 		}
+	}
+
+	private ProcessBusinessEnum findBusinessType(StationStatusEnum newStatus, StationStatusEnum oldStatus,
+			PartnerInstanceTypeEnum partnerType) {
+		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
+			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.CLOSING_PRO);
+		} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
+			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUIT_PRO);
+		}
+
+		return null;
 	}
 
 	/**

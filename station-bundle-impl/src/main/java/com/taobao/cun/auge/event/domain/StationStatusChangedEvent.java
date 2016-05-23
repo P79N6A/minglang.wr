@@ -37,6 +37,9 @@ public class StationStatusChangedEvent implements Serializable {
 	@EventField("操作人")
 	private String operatorId;
 	
+	@EventField("操作人所属村淘组织id")
+	private Long operatorOrgId;
+	
 	@EventField("备注")
 	private String remark;
 
@@ -112,6 +115,12 @@ public class StationStatusChangedEvent implements Serializable {
 	public void setInstanceId(Long instanceId) {
 		this.instanceId = instanceId;
 	}
-	
-	
+
+	public Long getOperatorOrgId() {
+		return operatorOrgId;
+	}
+
+	public void setOperatorOrgId(Long operatorOrgId) {
+		this.operatorOrgId = operatorOrgId;
+	}
 }

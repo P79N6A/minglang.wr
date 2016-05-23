@@ -272,6 +272,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				forcedCloseDto.getOperator());
 		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
+		event.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
 		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 	}
 

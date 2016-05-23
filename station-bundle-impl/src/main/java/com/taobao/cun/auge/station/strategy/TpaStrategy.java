@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
+import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("tpaStrategy")
@@ -21,5 +23,15 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	public void validateExistValidChildren(Long instanceId) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
+		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
+			return ProcessBusinessEnum.stationForcedClosure;
+		}else if(ProcessTypeEnum.QUIT_PRO.equals(processType)){
+			return ProcessBusinessEnum.stationQuitRecord;
+		}
+		return null;
 	}
 }
