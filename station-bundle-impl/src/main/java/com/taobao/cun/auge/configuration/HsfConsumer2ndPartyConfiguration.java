@@ -13,7 +13,6 @@ import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 @Configuration
-@ImportResource("classpath:beans-hsf-uic-consumer.xml")
 public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
 
 	// hr相关的第二方服务

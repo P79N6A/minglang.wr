@@ -19,19 +19,19 @@ import com.taobao.cun.auge.station.strategy.TpvStrategy;
 @Component("PartnerInstanceHandler")
 public class PartnerInstanceHandler implements InitializingBean{
 	
-//	@Autowired
-//	private TpaStrategy tpaStrategy;
-//	@Autowired
-//	private TpvStrategy tpvStrategy;
-//	@Autowired
-//	private TpStrategy tpStrategy;
+	@Autowired
+	private TpaStrategy tpaStrategy;
+	@Autowired
+	private TpvStrategy tpvStrategy;
+	@Autowired
+	private TpStrategy tpStrategy;
 	
 	Map<String,PartnerInstanceStrategy> strategy = new HashMap<String,PartnerInstanceStrategy>();
 	@Override
 	public void afterPropertiesSet() throws Exception {
-//		strategy.put(PartnerInstanceTypeEnum.TPA.getCode(), tpaStrategy);
-//		strategy.put(PartnerInstanceTypeEnum.TPV.getCode(), tpvStrategy);
-//		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TPA.getCode(), tpaStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TPV.getCode(), tpvStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
 	}
 	
 	public Long handleApplySettle(ApplySettleDto applySettleDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
