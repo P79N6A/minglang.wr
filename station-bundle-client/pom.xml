@@ -7,6 +7,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>station-bundle-client</artifactId>
+	<version>${ague.station.client.version}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

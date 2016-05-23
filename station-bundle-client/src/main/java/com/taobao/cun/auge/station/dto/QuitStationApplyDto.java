@@ -16,6 +16,10 @@ public class QuitStationApplyDto  extends BaseDto implements Serializable{
 	private String submittedPeopleName; // 撤点小二名称
 	private AssertUseStateEnum assertUseState;
 	private String loanHasClose;
+	
+	// 是，退出服务站，否，不退出服务站
+	private Boolean isQuitStation = Boolean.TRUE;
+	
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -87,5 +91,13 @@ public class QuitStationApplyDto  extends BaseDto implements Serializable{
 
 	public void setLoanHasClose(String loanHasClose) {
 		this.loanHasClose = loanHasClose;
+	}
+
+	public Boolean getIsQuitStation() {
+		return isQuitStation;
+	}
+
+	public void setIsQuitStation(Boolean isQuitStation) {
+		this.isQuitStation = isQuitStation;
 	}
 }
