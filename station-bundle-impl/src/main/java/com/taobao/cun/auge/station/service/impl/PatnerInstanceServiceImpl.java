@@ -436,8 +436,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-		
-		
 			
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
 					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
