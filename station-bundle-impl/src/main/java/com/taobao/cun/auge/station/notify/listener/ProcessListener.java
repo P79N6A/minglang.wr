@@ -56,14 +56,16 @@ public class ProcessListener implements MessageListener {
 			resultDto.setRemarks(remarks);
 
 			// 村点强制停业
-			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_FORCED_CLOSURE.getCode().equals(businessCode)) {
+			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)
+					|| ProcessBusinessEnum.TPV_FORCED_CLOSURE.getCode().equals(businessCode)) {
 				try {
 					processApproveResultProcessor.auditClose(resultDto);
 				} catch (Exception e) {
 					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 				}
 				// 村点退出
-			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
+			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
+					|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 				try {
 					processApproveResultProcessor.auditQuit(resultDto);
 				} catch (Exception e) {
