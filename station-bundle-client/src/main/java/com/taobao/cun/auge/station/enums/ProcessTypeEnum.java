@@ -13,13 +13,12 @@ public class ProcessTypeEnum implements Serializable {
 	private String code;
 	private String desc;
 
-	// 保证金
 	public static final ProcessTypeEnum CLOSING_PRO = new ProcessTypeEnum("CLOSING_PRO", "停业流程");
-	public static final ProcessTypeEnum QUIT_PRO = new ProcessTypeEnum("QUIT_PRO", "退出流程");
+	public static final ProcessTypeEnum QUITING_PRO = new ProcessTypeEnum("QUITING_PRO", "退出流程");
 
 	static {
 		mappings.put("CLOSING_PRO", CLOSING_PRO);
-		mappings.put("QUIT_PRO", QUIT_PRO);
+		mappings.put("QUITING_PRO", QUITING_PRO);
 	}
 
 	public ProcessTypeEnum(String code, String desc) {
