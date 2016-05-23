@@ -7,18 +7,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
-import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.domain.StationStatusChangedEvent;
 import com.taobao.cun.auge.station.bo.Emp360BO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.TradeBO;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -30,7 +32,6 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
-import com.taobao.cun.auge.station.dto.TaobaoNoEndTradeDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -47,11 +48,8 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PatnerInstanceService;
-import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.tc.domain.dataobject.OrderInfoTO;
-import com.taobao.tc.refund.domain.RefundDO;
 /**
  * 
  * @author quanzhu.wangqz
@@ -80,17 +78,17 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 	
-	//@Autowired
-	//QuitStationApplyConverter quitStationApplyConverter;
-	
 	@Autowired
 	StationApplyBO stationApplyBO;
 	
 	@Autowired
-	TaobaoTradeOrderQueryService taobaoTradeOrderQueryService;
+	Emp360BO emp360BO;
 	
 	@Autowired
-	Emp360BO emp360BO;
+	PartnerBO partnerBO;
+	
+	@Autowired
+	TradeBO tradeBO;
 
 	@Override
 	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -272,112 +270,41 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				forcedCloseDto.getOperator());
 		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
+		event.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
 		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 	}
-
-	@Override
-	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception {
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-		String operator = "sys";
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
-					operator);
-			// 更新服务结束时间
-			PartnerStationRel instance = new PartnerStationRel();
-			instance.setServiceEndTime(new Date());
-			partnerInstanceBO.updatePartnerInstance(instanceId, instance, operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);
-			
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert( PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-			
-			//去标，通过事件实现
-			//短信推送
-			//通知admin，合伙人退出。让他们监听村点状态变更事件
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
-					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		} else {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
-			
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.CLOSING,PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-		
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING,
-					StationStatusEnum.SERVICING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		}
-	}
-		
 
 	@Override
 	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto)
 			throws AugeServiceException {
 		try {
 			Long instanceId = quitStationApplyDto.getInstanceId();
-			Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
-			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+			String operator = quitStationApplyDto.getOperator();
 			
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 
-			// 查询申请单，不存在会抛异常
-			StationApply stationApply = stationApplyBO.findStationApplyById(stationApplyId);
+			//校验申请退出的条件
+			validateQuitPreCondition(instance, partner);
 
-			// 校验是否已经存在退出申请单
-			QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
-			if (quitStationApply != null) {
-				throw new AugeServiceException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST);
-			}
-
-			// 校验是否存在未结束的订单
-			validateTrade(stationApply);
-
-			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(instance.getType()),
-					instanceId);
-
-			quitStationApply = new QuitStationApply();
-			quitStationApply.setPartnerInstanceId(instanceId);
-			quitStationApply.setStationApplyId(stationApplyId);
-			quitStationApply.setRevocationAppFormFileName(quitStationApplyDto.getRevocationAppFormFileName());
-			quitStationApply.setOtherDescription(quitStationApplyDto.getOtherDescription());
-			quitStationApply.setAssetType(quitStationApplyDto.getAssertUseState().getCode());
-			quitStationApply.setLoanHasClose(quitStationApplyDto.getLoanHasClose());
-			// FIXME FHH 枚举
-			quitStationApply.setState("FINISHED");
-			quitStationApply.setSubmittedPeopleName(emp360BO.getName(quitStationApplyDto.getOperator()));
-
-			quitStationApplyBO.saveQuitStationApply(quitStationApply, quitStationApplyDto.getOperator());
+			//保存退出申请单
+			QuitStationApply quitStationApply = convert(quitStationApplyDto, instance);
+			quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
 			// 合伙人实例退出中
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,
-					quitStationApplyDto.getOperator());
+					operator);
 
 			// 村点退出中
-			stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, quitStationApplyDto.getOperator());
+			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
 			
 			//退出审批流程，由事件监听完成
-			
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSED,
-					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),quitStationApplyDto.getOperator()));
+					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
 			
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
@@ -389,71 +316,36 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 		}
 	}
 
-    //FIXME FHH 调用了center的接口，后续需要迁移
-	private void validateTrade(StationApply stationApply) throws AugeServiceException {
-		TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoTradeOrderQueryService.findNoEndTradeOrders(stationApply.getTaobaoUserId(),stationApply.getServiceEndDate());
-
-		taobaoNoEndTradeDto.getBatchQueryOrderInfoResultDO();
-		if (taobaoNoEndTradeDto.isExistsNoEndOrder()) {
-			StringBuilder build = new StringBuilder();
-			for(OrderInfoTO info : taobaoNoEndTradeDto.getBatchQueryOrderInfoResultDO().getOrderList()){
-				build.append(info.getBizOrderDO().getBizOrderId());
-				build.append(info.getBizOrderDO().getAuctionTitle());
-				build.append("\n");
-			}
-			for(RefundDO refund : taobaoNoEndTradeDto.getBatchRefundResultDO().getRefundList()){
-				build.append("退款中:\n");
-				build.append(refund.getBizOrderId());
-				build.append(refund.getAuctionTitle());
-				build.append("\n");
-			}
-		    throw new AugeServiceException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
+	private void validateQuitPreCondition(PartnerStationRel instance, Partner partner)
+			throws AugeServiceException {
+		Long instanceId = instance.getId();
+		// 校验是否已经存在退出申请单
+		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
+		if (quitStationApply != null) {
+			throw new AugeServiceException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST);
 		}
+
+		// 校验是否存在未结束的订单
+		tradeBO.validateNoEndTradeOrders(partner.getTaobaoUserId(),instance.getServiceEndTime());
+
+		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(instance.getType()),
+				instanceId);
 	}
 
-	@Override
-	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception {
-		String operator = "sys";
-		Long stationApplyId = Long.valueOf(approveResultDto.getObjectId());
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-		
-		// 记录审批日志
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_FLOW_RECORD_EVENT,
-				CuntaoFlowRecordEventConverter.convert(approveResultDto));
-
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResultDto.getResult())) {
-			// 合伙人实例已退出
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
-					operator);
-
-			// 村点已撤点
-			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			
-			//取消物流站点，取消支付宝标示，
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
-					StationStatusEnum.QUIT, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-			
-		} else {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
-					operator);
-
-			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
-
-			// 删除退出申请单
-			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,partnerInstanceBO.getPartnerInstanceById(instanceId)));
-		
-		
-			
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING,
-					StationStatusEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-		}
-		// tair清空缓存
+	private QuitStationApply convert(QuitStationApplyDto quitStationApplyDto, PartnerStationRel instance) throws AugeServiceException {
+		QuitStationApply quitStationApply;
+		quitStationApply = new QuitStationApply();
+		quitStationApply.setPartnerInstanceId(instance.getId());
+		quitStationApply.setStationApplyId(instance.getStationApplyId());
+		quitStationApply.setRevocationAppFormFileName(quitStationApplyDto.getRevocationAppFormFileName());
+		quitStationApply.setOtherDescription(quitStationApplyDto.getOtherDescription());
+		quitStationApply.setAssetType(quitStationApplyDto.getAssertUseState().getCode());
+		quitStationApply.setLoanHasClose(quitStationApplyDto.getLoanHasClose());
+		// FIXME FHH 枚举
+		quitStationApply.setState("FINISHED");
+		quitStationApply.setSubmittedPeopleName(emp360BO.getName(quitStationApplyDto.getOperator()));
+		return quitStationApply;
 	}
 	
 	@Override

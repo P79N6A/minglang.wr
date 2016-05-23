@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="GB2312"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
-<!--
-  - Log4j配置文件。
-  -
-  - 请使用专用的XML编辑器编辑此文件，以确保其符合log4j.dtd。
-  -
-  - @author Michael Zhou
- -->
+
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-    <!-- ===================================================================== -->
-    <!--  以下是appender的定义                                                 -->
-    <!-- ===================================================================== -->
+  
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<layout class="org.apache.log4j.PatternLayout">
 		<param name="ConversionPattern" value="%d %-5p %c{2} - %m%n"/>
@@ -51,11 +43,6 @@
 	<appender name="JmonitorAppender" class="com.alibaba.alimonitor.jmonitor.plugin.log4j.JMonitorLog4jAppender">
 </appender>
 
-
-
-    <!-- ===================================================================== -->
-    <!--  以下是logger的定义                                                   -->
-    <!-- ===================================================================== -->
      <logger name="com.taobao.cun.auge" additivity="false">
         <level value="info"/>
         <appender-ref ref="PROJECT"/>

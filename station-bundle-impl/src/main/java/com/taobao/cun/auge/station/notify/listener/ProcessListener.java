@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
-import com.taobao.cun.auge.station.service.PatnerInstanceService;
 import com.taobao.notify.message.Message;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.MessageListener;
@@ -25,13 +22,7 @@ public class ProcessListener implements MessageListener {
 	private static final Logger logger = LoggerFactory.getLogger(ProcessListener.class);
 
 	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
-
-	@Autowired
-	StationBO stationBO;
-
-	@Autowired
-	PatnerInstanceService patnerInstanceService;
+	ProcessApproveResultProcessor processApproveResultProcessor;
 
 	@Override
 	public void receiveMessage(Message message, MessageStatus status) {
@@ -57,25 +48,21 @@ public class ProcessListener implements MessageListener {
 			String objectId = ob.getString("objectId");
 			String remarks = ob.getString("remarks");
 
-			ProcessApproveResultDto resultDto = new ProcessApproveResultDto();
-
-			resultDto.setBusinessCode(businessCode);
-			resultDto.setObjectId(objectId);
-			resultDto.setResult(ProcessApproveResultEnum.valueof(resultCode));
-			resultDto.setRemarks(remarks);
-
 			// 村点强制停业
-			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
+			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)
+					|| ProcessBusinessEnum.TPV_FORCED_CLOSURE.getCode().equals(businessCode)) {
 				try {
-					patnerInstanceService.auditClose(resultDto);
+					Long stationApplyId = Long.valueOf(objectId);
+					processApproveResultProcessor.monitorCloseApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
 				} catch (Exception e) {
 					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 				}
-
 				// 村点退出
-			} else if ("stationQuitRecord".equals(businessCode)) {
+			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
+					|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 				try {
-					patnerInstanceService.auditQuit(resultDto);
+					Long stationApplyId = Long.valueOf(objectId);
+					processApproveResultProcessor.monitorQuitApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
 				} catch (Exception e) {
 					logger.error("监听审批退出流程失败。stationApplyId = " + objectId);
 				}

@@ -12,6 +12,8 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
+import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
@@ -51,7 +53,13 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		
 	}
 	
-	
-	
-
+	@Override
+	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
+		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
+			return ProcessBusinessEnum.stationForcedClosure;
+		}else if(ProcessTypeEnum.QUIT_PRO.equals(processType)){
+			return ProcessBusinessEnum.stationQuitRecord;
+		}
+		return null;
+	}
 }

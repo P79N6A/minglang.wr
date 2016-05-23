@@ -134,15 +134,6 @@ public interface PatnerInstanceService {
 	public void applyCloseByEmployee(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
 	
 	/**
-	 * 审批小二停业申请
-	 * 
-	 * @param forcedCloseCondition
-	 * @param employeeId
-	 * @return
-	 */
-	public void auditClose(ProcessApproveResultDto approveResultDto) throws Exception;
-
-	/**
 	 * 小二申请撤点
 	 * 
 	 * @param forcedCloseCondition
@@ -150,16 +141,6 @@ public interface PatnerInstanceService {
 	 * @return
 	 */
 	public void applyQuitByEmployee(QuitStationApplyDto quitStationApplyDto) throws AugeServiceException;
-	
-	/**
-	 * 审批撤点
-	 * 
-	 * @param forcedCloseCondition
-	 * @param employeeId
-	 * @return
-	 */
-	public void auditQuit(ProcessApproveResultDto approveResultDto) throws Exception;
-	
 	
 	/**
 	 * 申请入驻

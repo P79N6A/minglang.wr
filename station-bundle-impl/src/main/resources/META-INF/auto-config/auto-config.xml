@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="GB2312"?>
 <config description="自动配置">
-	
+
 	<group name="common">
-		<property name="app.name" defaultValue="default_app" description="rootAppender的日志级别" />
-		<property name="logging.root" defaultValue="/home/admin/output/logs/supplier/root.log" description="rootAppender的日志文件" />
+		<property name="app.name" defaultValue="station-bundle" description="rootAppender的日志级别" />
+		<property name="app.work" defaultValue="/home/admin" description="应用程序的工作目录" />
+
+		<property name="logging.root" defaultValue="${app.work}/cuntao/logs" description="rootAppender的日志文件" />
 		<property name="spring.tddl.app" defaultValue="B2B_CRM_CUNTAO_APP" description="rootAppender的日志文件" />
 		<property name="spring.tair.uri" defaultValue="diamond:///market1-daily?namespace" description="rootAppender的日志文件" />
 		<property name="spring.tair.namespace" defaultValue="776" description="rootAppender的日志文件" />
 		<property name="spring.hsf.group" defaultValue="HSF" description="spring.hsf.group" />
 		<property name="spring.hsf.version" defaultValue="1.0.0.daily" description="spring.hsf.version" />
 		<property name="spring.hsf.timeout" defaultValue="3000" description="spring.hsf.timeout" />
+
+		<property name="hsf.consumer.version.cainiao.countyDomainWriteService" defaultValue="1.0.0.daily"
+			description="cainiao-version" />
+		<property name="hsf.consumer.version.cainiao.stationWriteService" defaultValue="1.0.0.daily" description="cainiao-version" />
+		<property name="hsf.consumer.version.cainiao.stationUserWriteService" defaultValue="1.0.0.daily" description="cainiao-version" />
+
+		<property name="hsf.consumer.version.employeeServiceVersion" defaultValue="1.0.0.daily" description="hr-version" />
+		<property name="hsf.consumer.version.hsf2icesrv" defaultValue="1.0.0.daily" description="wangwang-tag-version" />
+		<property name="hsf.consumer.version.chronus.taskExecuteService" defaultValue="1.0.0.daily" description="chronus-task-version" />
+
+		<property name="hsf.consumer.version.crius.cuntaoWorkFlowService" defaultValue="1.0.0.daily" description="crius-version" />
+
+
+
 	</group>
-	
+
 	<script>
-		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK"/>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
+		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK" />
+
 	</script>
 </config>

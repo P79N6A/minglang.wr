@@ -14,6 +14,8 @@ public class ProcessBusinessEnum implements Serializable {
 	private String desc;
 
 	//FIXME 历史原因，没有办法大写，否则需要数据订正，适配已经内外已经存在的流程参数
+	public static final ProcessBusinessEnum TPV_FORCED_CLOSURE = new ProcessBusinessEnum("TPV_FORCED_CLOSURE","村拍档强制停业");
+	public static final ProcessBusinessEnum TPV_QUIT = new ProcessBusinessEnum("TPV_QUIT","村拍档退出");
 	public static final ProcessBusinessEnum stationForcedClosure = new ProcessBusinessEnum("stationForcedClosure","村点强制清退");
 	public static final ProcessBusinessEnum stationQuitRecord = new ProcessBusinessEnum("stationQuitRecord", "村点退出");
 

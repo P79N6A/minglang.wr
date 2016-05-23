@@ -12,6 +12,9 @@ import com.taobao.cun.crius.event.annotation.EventField;
 public class StationStatusChangedEvent implements Serializable {
 
 	private static final long serialVersionUID = 3410023449786716039L;
+	
+	@EventField("合伙人实例id")
+	private Long instanceId;
 
 	@EventField("村点id")
 	private Long stationId;
@@ -33,6 +36,9 @@ public class StationStatusChangedEvent implements Serializable {
 	
 	@EventField("操作人")
 	private String operatorId;
+	
+	@EventField("操作人所属村淘组织id")
+	private Long operatorOrgId;
 	
 	@EventField("备注")
 	private String remark;
@@ -100,5 +106,21 @@ public class StationStatusChangedEvent implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public Long getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(Long instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	public Long getOperatorOrgId() {
+		return operatorOrgId;
+	}
+
+	public void setOperatorOrgId(Long operatorOrgId) {
+		this.operatorOrgId = operatorOrgId;
 	}
 }
