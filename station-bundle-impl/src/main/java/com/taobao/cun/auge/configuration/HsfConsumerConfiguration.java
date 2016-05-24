@@ -10,6 +10,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteServ
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -37,6 +38,13 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 			@Value("${hsf.consumer.version.taobaoTradeOrderQueryService}") String version) {
 		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean messageService(
+			@Value("${hsf.consumer.version.auge.messageService}") String version) {
+		return getConsumerBean(MessageService.class, HSFGroup.HSF, version, 3000);
+	}
+	
 
 	// cuntaocenter服务
 	@Bean(initMethod = "init")
