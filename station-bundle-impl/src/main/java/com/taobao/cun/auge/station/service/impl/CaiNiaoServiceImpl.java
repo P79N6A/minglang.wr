@@ -21,12 +21,13 @@ import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.dto.SyncCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
-import com.taobao.cun.crius.partner.enums.PartnerTypeEnum;
 
 public class CaiNiaoServiceImpl implements CaiNiaoService {
 
@@ -44,12 +45,12 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	PartnerBO partnerBO;
 	 
 	@Override
-	public void addCainiaoStation(SyncCainiaoStationDto syncCainiaoStationDto)
+	public void addCainiaoStation(SyncAddCainiaoStationDto  syncAddCainiaoStationDto)
 			throws AugeServiceException {
-		if (syncCainiaoStationDto == null || syncCainiaoStationDto.getPartnerInstanceId() ==null) {
+		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() ==null) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		Long partnerInstanceId = syncCainiaoStationDto.getPartnerInstanceId();
+		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
 		try {
 			logger.info("CaiNiaoServiceImpl addCainiaoStation partnerInstanceId : {" + partnerInstanceId + "}");
 			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
@@ -61,9 +62,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			//同步菜鸟
 			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
 			
-			//如果是淘帮手、只同步菜鸟建立与合伙人关联关系。针对1.0降级的，还是作为合伙人逻辑走
-			if (PartnerTypeEnum.TPA.getCode().equals(instanceDto.getOperatorType())
-					&& instanceDto.getParentStationId() != null) {
+			if (!syncAddCainiaoStationDto.isAddStation()) {//只增加关系
 				CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(instanceDto.getParentStationId(), CuntaoCainiaoStationRelTypeEnum.STATION);
 				if(rel != null){
 					caiNiaoStationDto.setStationId(rel.getCainiaoStationId());
@@ -74,10 +73,9 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
                 Partner parentParner = partnerBO.getPartnerById(parentPartnerRel.getPartnerId());
                 caiNiaoStationDto.setTpTaobaoUserId(parentParner.getTaobaoUserId());
 		        
-                caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, PartnerTypeEnum.TPA.getCode());
+                caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, instanceDto.getType().getCode());
 			}else{
-				//如果是合伙人才同步菜鸟建立站点及关联关系
-				//TODO 同步村代购点信息
+				//同步菜鸟建立站点及关联关系
 				Long caiNiaostationId =caiNiaoAdapter.addStation(caiNiaoStationDto);
 				if (caiNiaostationId == null) {
 				    logger.error("caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
@@ -165,14 +163,31 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	@Override
-	public void updateCainiaoStation(SyncCainiaoStationDto syncCainiaoStationDto)
+	public void updateCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
+		
 		
 	}
+	
+	/*public static AddressDto convertToStationAddress(StationApplyDO stationApplyDO) {
+		AddressDto stationAddress = new AddressDto();
+        stationAddress.setProvince(stationApplyDO.getProvince());
+        stationAddress.setProvinceDetail(stationApplyDO.getProvinceDetail());
+        stationAddress.setCity(stationApplyDO.getCity());
+        stationAddress.setCityDetail(stationApplyDO.getCityDetail());
+        stationAddress.setCounty(stationApplyDO.getCounty());
+        stationAddress.setCountyDetail(stationApplyDO.getCountyDetail());
+        stationAddress.setTown(stationApplyDO.getTown());
+        stationAddress.setTownDetail(stationApplyDO.getTownDetail());
+        stationAddress.setVillage(stationApplyDO.getVillage());
+        stationAddress.setVillageDetail(stationApplyDO.getVillageDetail());
+        stationAddress.setAddress(stationApplyDO.getAddressDetail());
+        return stationAddress;
+    }*/
+	
 
 	@Override
-	public void deleteCainiaoStation(SyncCainiaoStationDto syncCainiaoStationDto)
+	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto syncCainiaoStationDto)
 			throws AugeServiceException {
 		if (syncCainiaoStationDto == null || syncCainiaoStationDto.getPartnerInstanceId() ==null) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
