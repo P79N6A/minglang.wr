@@ -25,4 +25,5 @@ public class SyncModifyCainiaoStationDto extends BaseDto implements Serializable
 		this.partnerInstanceId = partnerInstanceId;
 	}
 
+
 }

@@ -194,8 +194,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			logger.error(error, e);
 			throw new RuntimeException(error, e);
 		}
+
 	}
 	
+
 	private Long getCainiaoStationId (Long stationId) throws AugeServiceException{
 		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 		if(rel != null){
@@ -219,7 +221,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
         stationAddress.setAddress(stationDto.getAddress());
         return stationAddress;
     }
-	
+
 
 	@Override
 	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto syncCainiaoStationDto)
