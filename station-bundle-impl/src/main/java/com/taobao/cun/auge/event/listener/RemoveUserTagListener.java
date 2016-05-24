@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.dto.AlipayAccountTagDto;
+import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -119,18 +119,18 @@ public class RemoveUserTagListener implements EventListener {
 			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
 			dealStationTagTaskVo.setOperator(operator);
 
-			AlipayAccountTagDto alipayAccountTagDto = new AlipayAccountTagDto();
-			alipayAccountTagDto.setTagName(AlipayAccountTagDto.ALIPAY_CUNTAO_TAG_NAME);
-			alipayAccountTagDto.setBelongTo(AlipayAccountTagDto.ALIPAY_CUNTAO_BELONG_TO);
-			alipayAccountTagDto.setTagValue(AlipayAccountTagDto.ALIPAY_TAG_VALUE_F);
+			AlipayTagDto AlipayTagDto = new AlipayTagDto();
+			AlipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
+			AlipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
+			AlipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 
 			String accountNo = partner.getAlipayAccount();
 			if (StringUtils.isNotEmpty(accountNo)) {
-				alipayAccountTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
+				AlipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			}
-			dealStationTagTaskVo.setParameter(alipayAccountTagDto);
+			dealStationTagTaskVo.setParameter(AlipayTagDto);
 
 			// 提交任务
 			taskExecuteService.submitTask(dealStationTagTaskVo);
