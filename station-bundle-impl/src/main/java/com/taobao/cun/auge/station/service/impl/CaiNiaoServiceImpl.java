@@ -112,18 +112,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
          param.setStationName(stationName);
          param.setAlipayAccount(partnerDto.getAlipayAccount());
 
-         AddressDto stationAddress = new AddressDto();
-         stationAddress.setProvince(stationDto.getProvince());
-         stationAddress.setProvinceDetail(stationDto.getProvinceDetail());
-         stationAddress.setCity(stationDto.getCity());
-         stationAddress.setCityDetail(stationDto.getCityDetail());
-         stationAddress.setCounty(stationDto.getCounty());
-         stationAddress.setCountyDetail(stationDto.getCountyDetail());
-         stationAddress.setTown(stationDto.getTown());
-         stationAddress.setTownDetail(stationDto.getTownDetail());
-         stationAddress.setVillage(stationDto.getVillage());
-         stationAddress.setVillageDetail(stationDto.getVillageDetail());
-         stationAddress.setAddress(stationDto.getAddress());
+         AddressDto stationAddress = convertToStationAddress(stationDto);
          param.setStationAddress(stationAddress);
 
          param.setContact(partnerDto.getName());
@@ -165,25 +154,71 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void updateCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto)
 			throws AugeServiceException {
-		
-		
+		if (syncModifyCainiaoStationDto == null || syncModifyCainiaoStationDto.getPartnerInstanceId() ==null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long partnerInstanceId = syncModifyCainiaoStationDto.getPartnerInstanceId();
+		try {
+			logger.info("CaiNiaoServiceImpl updateCainiaoStation partnerInstanceId : {" + partnerInstanceId + "}");
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+			if (instanceDto == null) {
+				String error =  getErrorMessage("updateCainiaoStation",String.valueOf(partnerInstanceId),"PartnerInstance is null");
+				logger.error(error);
+				throw new AugeServiceException(error);
+			}
+			//同步菜鸟
+			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
+			
+			Long cainiaoStationId =getCainiaoStationId(instanceDto.getStationDto().getId());
+			
+			if (cainiaoStationId== null) {
+    			if (instanceDto.getParentStationId() == null ) {
+    				String error =  getErrorMessage("updateCainiaoStation",String.valueOf(partnerInstanceId),"ParentStationId is null");
+    				logger.error(error);
+    				throw new AugeServiceException(error);
+    			}
+				Long cainiaoSId = getCainiaoStationId(instanceDto.getParentStationId());
+				if (cainiaoSId == null) {
+					String error =  getErrorMessage("updateCainiaoStation",String.valueOf(partnerInstanceId),"ParentStationId no cainiaostation");
+    				logger.error(error);
+    				throw new AugeServiceException(error);
+				}
+				caiNiaoStationDto.setStationId(cainiaoSId);
+				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
+            }else {
+	            // 同步菜鸟接口
+            	caiNiaoAdapter.modifyStation(caiNiaoStationDto);
+            }
+		} catch (Exception e) {
+			String error =  getErrorMessage("updateCainiaoStation",String.valueOf(partnerInstanceId),e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
 	}
 	
-	/*public static AddressDto convertToStationAddress(StationApplyDO stationApplyDO) {
+	private Long getCainiaoStationId (Long stationId) throws AugeServiceException{
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+		if(rel != null){
+			return rel.getCainiaoStationId();
+		}
+		return null;
+	}
+	
+	public static AddressDto convertToStationAddress(StationDto stationDto) {
 		AddressDto stationAddress = new AddressDto();
-        stationAddress.setProvince(stationApplyDO.getProvince());
-        stationAddress.setProvinceDetail(stationApplyDO.getProvinceDetail());
-        stationAddress.setCity(stationApplyDO.getCity());
-        stationAddress.setCityDetail(stationApplyDO.getCityDetail());
-        stationAddress.setCounty(stationApplyDO.getCounty());
-        stationAddress.setCountyDetail(stationApplyDO.getCountyDetail());
-        stationAddress.setTown(stationApplyDO.getTown());
-        stationAddress.setTownDetail(stationApplyDO.getTownDetail());
-        stationAddress.setVillage(stationApplyDO.getVillage());
-        stationAddress.setVillageDetail(stationApplyDO.getVillageDetail());
-        stationAddress.setAddress(stationApplyDO.getAddressDetail());
+        stationAddress.setProvince(stationDto.getProvince());
+        stationAddress.setProvinceDetail(stationDto.getProvinceDetail());
+        stationAddress.setCity(stationDto.getCity());
+        stationAddress.setCityDetail(stationDto.getCityDetail());
+        stationAddress.setCounty(stationDto.getCounty());
+        stationAddress.setCountyDetail(stationDto.getCountyDetail());
+        stationAddress.setTown(stationDto.getTown());
+        stationAddress.setTownDetail(stationDto.getTownDetail());
+        stationAddress.setVillage(stationDto.getVillage());
+        stationAddress.setVillageDetail(stationDto.getVillageDetail());
+        stationAddress.setAddress(stationDto.getAddress());
         return stationAddress;
-    }*/
+    }
 	
 
 	@Override

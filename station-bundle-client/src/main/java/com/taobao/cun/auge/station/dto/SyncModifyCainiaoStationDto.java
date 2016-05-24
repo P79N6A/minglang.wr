@@ -16,11 +16,6 @@ public class SyncModifyCainiaoStationDto extends BaseDto implements Serializable
 	 */
 	private Long partnerInstanceId;
 	
-	/**
-	 * 是否同步修改物流站，是true,修改物流站和关系 
-	 * 如果是false,修改关系
-	 */
-	private boolean isModifyStation;
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -29,15 +24,5 @@ public class SyncModifyCainiaoStationDto extends BaseDto implements Serializable
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
 	}
-
-	public boolean isModifyStation() {
-		return isModifyStation;
-	}
-
-	public void setModifyStation(boolean isModifyStation) {
-		this.isModifyStation = isModifyStation;
-	}
-
-
 
 }
