@@ -3,11 +3,11 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 
 /**
- * 同步菜鸟物流站dto
+ * 同步修改菜鸟物流站dto
  * @author quanzhu.wangqz
  *
  */
-public class SyncCainiaoStationDto extends BaseDto implements Serializable {
+public class SyncModifyCainiaoStationDto extends BaseDto implements Serializable {
 
 	private static final long serialVersionUID = -6630188995042897116L;
 	
@@ -17,9 +17,10 @@ public class SyncCainiaoStationDto extends BaseDto implements Serializable {
 	private Long partnerInstanceId;
 	
 	/**
-	 * 是否同步删除物流站，默认是true, 如果是false,菜鸟需要提供修改接口，解决
+	 * 是否同步修改物流站，是true,修改物流站和关系 
+	 * 如果是false,修改关系
 	 */
-	private boolean isDeleteCainiaoStation = true;
+	private boolean isModifyStation;
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -29,12 +30,14 @@ public class SyncCainiaoStationDto extends BaseDto implements Serializable {
 		this.partnerInstanceId = partnerInstanceId;
 	}
 
-	public boolean isDeleteCainiaoStation() {
-		return isDeleteCainiaoStation;
+	public boolean isModifyStation() {
+		return isModifyStation;
 	}
 
-	public void setDeleteCainiaoStation(boolean isDeleteCainiaoStation) {
-		this.isDeleteCainiaoStation = isDeleteCainiaoStation;
+	public void setModifyStation(boolean isModifyStation) {
+		this.isModifyStation = isModifyStation;
 	}
+
+
 
 }

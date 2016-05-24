@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service;
 
-import com.taobao.cun.auge.station.dto.SyncCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -14,17 +16,17 @@ public interface CaiNiaoService {
 	 * @param addStationDto
 	 * @throws AugeServiceException
 	 */
-	public void addCainiaoStation(SyncCainiaoStationDto  syncCainiaoStationDto) throws AugeServiceException;
+	public void addCainiaoStation(SyncAddCainiaoStationDto  syncAddCainiaoStationDto) throws AugeServiceException;
 	/**
 	 * 修改同步
 	 * @param udpateStationDto
 	 * @throws AugeServiceException
 	 */
-	public void updateCainiaoStation(SyncCainiaoStationDto  syncCainiaoStationDto) throws AugeServiceException;
+	public void updateCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto) throws AugeServiceException;
 	/**
 	 * 删除同步
 	 * @param deleteStationDto
 	 * @throws AugeServiceException
 	 */
-	public void deleteCainiaoStation(SyncCainiaoStationDto  syncCainiaoStationDto) throws AugeServiceException;
+	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto  syncDeleteCainiaoStationDto) throws AugeServiceException;
 }
