@@ -23,4 +23,9 @@ public class ForcedCloseDto extends BaseDto implements Serializable {
 	public StationForcedCloseReasonEnum getReason() {
 		return reason;
 	}
+
+	public void setReason(StationForcedCloseReasonEnum reason) {
+		this.reason = reason;
+	}
+
 }
