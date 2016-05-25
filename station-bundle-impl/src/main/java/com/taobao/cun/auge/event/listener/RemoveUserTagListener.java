@@ -2,7 +2,6 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
@@ -40,23 +40,22 @@ public class RemoveUserTagListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-		Map<String, Object> map = event.getContent();
+		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
-		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
-		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
+		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
+		String operatorId = stateChangeEvent.getOperator();
+		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
+		Long instanceId = stateChangeEvent.getPartnerInstanceId();
+		String taobaoNick = stateChangeEvent.getTaobaoNick();
+		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
 
-		String operatorId = (String) map.get("operatorId");
-		Long taobaoUserId = (Long) map.get("taobaoUserId");
-		String stationId = (String) map.get("stationId");
-		String taobaoNick = (String) map.get("taobaoNick");
-		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
-
-		// 由停业中，变更为已停业，去标,发短信
-		if (StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)) {
+		// 已停业，去标
+		if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
-		} else if (StationStatusEnum.QUIT.equals(newStatus) && StationStatusEnum.QUITING.equals(oldStatus)) {
+			// 已退出
+		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
 			submitRemoveAlipayTagTask(taobaoUserId, operatorId);
-			submitRemoveLogisticsTask(stationId, operatorId);
+			submitRemoveLogisticsTask(instanceId, operatorId);
 		}
 	}
 
@@ -97,20 +96,20 @@ public class RemoveUserTagListener implements EventListener {
 		taskExecuteService.submitTasks(taskLists);
 	}
 
-	private void submitRemoveLogisticsTask(String instanceId, String operatorId) {
+	private void submitRemoveLogisticsTask(Long instanceId, String operatorId) {
 		// 取消物流站点
 		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
-		cainiaoTaskVo.setBusinessNo(instanceId);
+		cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 		cainiaoTaskVo.setBeanName("caiNiaoService");
 		cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 		cainiaoTaskVo.setBusinessStepNo(1l);
 		cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 		cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
 		cainiaoTaskVo.setOperator(operatorId);
-		
-		SyncDeleteCainiaoStationDto  syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+
+		SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
 		syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
-		
+
 		cainiaoTaskVo.setParameter(syncDeleteCainiaoStationDto);
 
 		// 提交任务
