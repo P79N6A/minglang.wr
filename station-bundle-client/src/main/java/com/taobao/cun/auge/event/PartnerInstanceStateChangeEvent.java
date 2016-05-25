@@ -3,6 +3,7 @@ package com.taobao.cun.auge.event;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.crius.event.annotation.EventField;
 
 /**
  * 合伙人服务站实例状态变更事件
@@ -52,6 +53,11 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	 * 服务站对应组织id
 	 */
 	private Long ownOrgId;
+
+	/**
+	 * 备注
+	 */
+	private String remark;
 
 	public Long getStationId() {
 		return stationId;
@@ -115,5 +121,13 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

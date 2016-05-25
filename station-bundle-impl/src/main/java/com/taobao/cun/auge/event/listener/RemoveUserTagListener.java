@@ -61,62 +61,73 @@ public class RemoveUserTagListener implements EventListener {
 
 	private void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType,
 			String operatorId) {
-		UserTagDto userTagDto = new UserTagDto();
+		try {
+			UserTagDto userTagDto = new UserTagDto();
 
-		userTagDto.setTaobaoUserId(taobaoUserId);
-		userTagDto.setPartnerType(partnerType);
+			userTagDto.setTaobaoUserId(taobaoUserId);
+			userTagDto.setPartnerType(partnerType);
 
-		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
-		// uic去标
-		GeneralTaskDto task = new GeneralTaskDto();
-		task.setBusinessNo(String.valueOf(taobaoUserId));
-		task.setBeanName("uicTagService");
-		task.setMethodName("removeUserTag");
-		task.setBusinessStepNo(1l);
-		task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-		task.setBusinessStepDesc("去uic标");
-		task.setOperator(operatorId);
-		task.setParameter(userTagDto);
-		taskLists.add(task);
+			// uic去标
+			GeneralTaskDto task = new GeneralTaskDto();
+			task.setBusinessNo(String.valueOf(taobaoUserId));
+			task.setBeanName("uicTagService");
+			task.setMethodName("removeUserTag");
+			task.setBusinessStepNo(1l);
+			task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			task.setBusinessStepDesc("去uic标");
+			task.setOperator(operatorId);
+			task.setParameter(userTagDto);
+			taskLists.add(task);
 
-		// 旺旺去标
-		GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
-		wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
-		wangwangTaskVo.setBeanName("wangWangTagService");
-		wangwangTaskVo.setMethodName("removeWangWangTagByNick");
-		wangwangTaskVo.setBusinessStepNo(2l);
-		wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-		wangwangTaskVo.setBusinessStepDesc("去旺旺标");
-		wangwangTaskVo.setOperator(operatorId);
-		wangwangTaskVo.setParameter(taobaoNick);
-		taskLists.add(wangwangTaskVo);
+			// 旺旺去标
+			GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
+			wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
+			wangwangTaskVo.setBeanName("wangWangTagService");
+			wangwangTaskVo.setMethodName("removeWangWangTagByNick");
+			wangwangTaskVo.setBusinessStepNo(2l);
+			wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			wangwangTaskVo.setBusinessStepDesc("去旺旺标");
+			wangwangTaskVo.setOperator(operatorId);
+			wangwangTaskVo.setParameter(taobaoNick);
+			taskLists.add(wangwangTaskVo);
 
-		// 提交任务
-		taskExecuteService.submitTasks(taskLists);
+			// 提交任务
+			taskExecuteService.submitTasks(taskLists);
+		} catch (Exception e) {
+			logger.error("Failed to submit remove user tag task. taobaoUserId=" + taobaoUserId + " operatorId = "
+					+ operatorId, e);
+		}
 	}
 
 	private void submitRemoveLogisticsTask(Long instanceId, String operatorId) {
-		// 取消物流站点
-		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
-		cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
-		cainiaoTaskVo.setBeanName("caiNiaoService");
-		cainiaoTaskVo.setMethodName("deleteCainiaoStation");
-		cainiaoTaskVo.setBusinessStepNo(1l);
-		cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-		cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
-		cainiaoTaskVo.setOperator(operatorId);
+		try {
+			// 取消物流站点
+			// FIXME FHH 待完成
+			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
+			cainiaoTaskVo.setBeanName("caiNiaoService");
+			cainiaoTaskVo.setMethodName("deleteCainiaoStation");
+			cainiaoTaskVo.setBusinessStepNo(1l);
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
+			cainiaoTaskVo.setOperator(operatorId);
 
-		SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
-		syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+			SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+			syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
 
-		cainiaoTaskVo.setParameter(syncDeleteCainiaoStationDto);
+			cainiaoTaskVo.setParameter(syncDeleteCainiaoStationDto);
 
-		// 提交任务
-		taskExecuteService.submitTask(cainiaoTaskVo);
+			// 提交任务
+			taskExecuteService.submitTask(cainiaoTaskVo);
+		} catch (Exception e) {
+			logger.error("Failed to submit remove logistics station task. instanceId=" + instanceId + " operatorId = "
+					+ operatorId, e);
+		}
 	}
 
-	private void submitRemoveAlipayTagTask(Long taobaoUserId, String operator) {
+	private void submitRemoveAlipayTagTask(Long taobaoUserId, String operatorId) {
 		try {
 			// 取消支付宝标示
 			GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
@@ -126,7 +137,7 @@ public class RemoveUserTagListener implements EventListener {
 			dealStationTagTaskVo.setBusinessStepNo(1l);
 			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
-			dealStationTagTaskVo.setOperator(operator);
+			dealStationTagTaskVo.setOperator(operatorId);
 
 			AlipayTagDto AlipayTagDto = new AlipayTagDto();
 			AlipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
@@ -144,7 +155,7 @@ public class RemoveUserTagListener implements EventListener {
 			// 提交任务
 			taskExecuteService.submitTask(dealStationTagTaskVo);
 		} catch (AugeServiceException e) {
-			logger.error("提交取消支付宝标示任务失败。taobaoUserId=" + taobaoUserId);
+			logger.error("提交取消支付宝标示任务失败。taobaoUserId=" + taobaoUserId + " operatorId = " + operatorId, e);
 		}
 	}
 }
