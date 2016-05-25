@@ -49,7 +49,8 @@ public class SmsListener implements EventListener {
 		String operatorId = stateChangeEvent.getOperator();
 
 		// 由停业中，变更为已停业，去标,发短信
-		sms(taobaoUserId, findPartnerMobile(taobaoUserId), findSmsTemplate(stateChangeEnum), operatorId);
+		String partnerMobile = findPartnerMobile(taobaoUserId);
+		sms(taobaoUserId, partnerMobile, findSmsTemplate(stateChangeEnum), operatorId);
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
