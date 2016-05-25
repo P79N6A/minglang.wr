@@ -75,7 +75,7 @@ public class RemoveUserTagListener implements EventListener {
 		task.setBeanName("uicTagService");
 		task.setMethodName("removeUserTag");
 		task.setBusinessStepNo(1l);
-		task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM);
+		task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 		task.setBusinessStepDesc("去uic标");
 		task.setOperator(operatorId);
 		task.setParameter(userTagDto);
