@@ -23,6 +23,11 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	 * 服务站id
 	 */
 	private Long stationId;
+	
+	/**
+	 * 服务站名称
+	 */
+	private String stationName;
 
 	/**
 	 * 当前合伙人淘宝userId
@@ -129,4 +134,13 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
+	public String getStationName() {
+		return stationName;
+	}
+
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+
 }
