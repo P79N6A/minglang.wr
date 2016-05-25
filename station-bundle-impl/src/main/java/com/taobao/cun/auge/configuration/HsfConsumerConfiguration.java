@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
-import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
-import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
-import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 
@@ -53,4 +50,10 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(AlipayAccountTagService.class, HSFGroup.HSF, version, 3000);
 	}
 
+	//crius服务
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean cuntaoUicReadService(
+			@Value("${hsf.consumer.version.crius.cuntaoUicReadService}") String version) {
+		return getConsumerBean(CuntaoUicReadService.class, HSFGroup.HSF, version, 3000);
+	}
 }

@@ -217,6 +217,10 @@
 			<artifactId>bpm-client</artifactId>
 		</dependency>
 		<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>biz-client</artifactId>
+			</dependency>
+		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
 		</dependency>
