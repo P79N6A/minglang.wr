@@ -25,7 +25,7 @@ public interface AttachementBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public Long deleteAttachement(AttachementDeleteDto attachementDeleteDto) throws AugeServiceException;
+	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto) throws AugeServiceException;
 	
 
 }
