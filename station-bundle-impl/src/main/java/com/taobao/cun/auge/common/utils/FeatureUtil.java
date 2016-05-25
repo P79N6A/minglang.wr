@@ -5,10 +5,14 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public final class FeatureUtil {
 
@@ -160,5 +164,26 @@ public final class FeatureUtil {
 		Map<String,String> aaa= new HashMap<String,String>();
 		aaa.put("bbb", "ccc");
 		System.out.println(FeatureUtil.toString(aaa));
+		List<AttachementDO> longList=Lists.newArrayList(new AttachementDO());
+		List<String> pFsIds = Lists.transform(longList, new Function<AttachementDO, String>() {
+			@Override
+			public String apply(AttachementDO input) {
+				return input.getFsId();
+			}
+		});
+		Collections.sort(Lists.newArrayList(pFsIds));
 	}
+}
+
+class AttachementDO{
+	private String fsId;
+
+	public String getFsId() {
+		return fsId;
+	}
+
+	public void setFsId(String fsId) {
+		this.fsId = fsId;
+	}
+	
 }

@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.adapter;
 
-
+import com.taobao.cun.auge.station.dto.AlipayTagDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface AlipayTagAdapter {
 	
@@ -9,5 +10,5 @@ public interface AlipayTagAdapter {
 	 * @param alipayAccountTagDto
 	 * @return
 	 */
-//	public AlipayAccountTagDto dealTag(AlipayAccountTagDto alipayAccountTagDto);
+	public boolean dealTag(AlipayTagDto alipayTagDto) throws AugeServiceException;
 }

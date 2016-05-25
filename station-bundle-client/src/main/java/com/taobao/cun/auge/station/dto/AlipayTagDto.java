@@ -2,7 +2,7 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
-public class AlipayAccountTagDto implements Serializable {
+public class AlipayTagDto implements Serializable {
 	
 	private static final long serialVersionUID = 5395448073340249490L;
 	
