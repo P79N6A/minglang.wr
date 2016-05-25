@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.bo.impl;
+package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,15 +19,15 @@ import com.alibaba.masterdata.client.model.dataobj.Emp360Info;
 import com.alibaba.masterdata.client.model.query.EmpQuery;
 import com.alibaba.masterdata.client.model.result.ResultSupport;
 import com.alibaba.masterdata.client.service.Employee360Service;
-import com.taobao.cun.auge.station.bo.Emp360BO;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.util.CollectionUtil;
 
-@Component("emp360BO")
-public class Emp360BOImpl implements Emp360BO {
+@Component("emp360Adapter")
+public class Emp360AdapterImpl implements Emp360Adapter {
 
-	public static final Logger logger = LoggerFactory.getLogger(Emp360BO.class);
+	public static final Logger logger = LoggerFactory.getLogger(Emp360Adapter.class);
 
 	@Resource
 	private Employee360Service employee360Service;
@@ -44,7 +44,7 @@ public class Emp360BOImpl implements Emp360BO {
 			workMap.put(workNo.replaceFirst("^0+", ""), workNo);
 		}
 		EmpQuery empQuery = new EmpQuery();
-		empQuery.setClientId(Emp360BO.HR_HSF_APP_NAME);
+		empQuery.setClientId(Emp360Adapter.HR_HSF_APP_NAME);
 		empQuery.setSecret(securityId);
 		empQuery.setWorkNoList(workNos);
 		try {

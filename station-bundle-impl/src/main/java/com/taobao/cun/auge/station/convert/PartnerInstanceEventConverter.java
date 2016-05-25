@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
 /**
@@ -17,7 +18,7 @@ public final class PartnerInstanceEventConverter {
 	}
 	
 	public static PartnerInstanceStateChangeEvent convert(PartnerInstanceStateChangeEnum stateChangeEnum,
-			PartnerInstanceDto partnerInstanceDto) {
+			PartnerInstanceDto partnerInstanceDto,OperatorDto operator) {
 		
 		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
 		
@@ -29,6 +30,10 @@ public final class PartnerInstanceEventConverter {
 		event.setExecDate(com.taobao.cun.auge.common.utils.DateUtil.formatTime(new Date()));
 		
 		event.setStateChangeEnum(stateChangeEnum);
+		
+		event.setOperator(operator.getOperator());
+		event.setOperatorOrgId(operator.getOperatorOrgId());
+		event.setOperatorType(operator.getOperatorType());
 		
 		return event;
 	}

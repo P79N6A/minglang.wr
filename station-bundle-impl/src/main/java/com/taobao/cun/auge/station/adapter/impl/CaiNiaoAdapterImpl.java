@@ -26,7 +26,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
-import com.taobao.cun.auge.station.bo.Emp360BO;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.AddressDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -43,7 +43,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Resource
 	private StationUserWriteService stationUserWriteService;
 	@Resource
-	private Emp360BO emp360BO;
+	private Emp360Adapter emp360Adapter;
 
 
 	@Override
