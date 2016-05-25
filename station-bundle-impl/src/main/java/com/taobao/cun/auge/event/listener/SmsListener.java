@@ -48,20 +48,27 @@ public class SmsListener implements EventListener {
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String operatorId = stateChangeEvent.getOperator();
 
-		// 由停业中，变更为已停业，去标,发短信
 		String partnerMobile = findPartnerMobile(taobaoUserId);
 		sms(taobaoUserId, partnerMobile, findSmsTemplate(stateChangeEnum), operatorId);
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
-		// 已停业
-		if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
+		// 正式提交后，入驻中，发短信
+		if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
+			return DingtalkTemplateEnum.NODE_COMMIT;
+		} // 正式提交后，装修中，发短信
+		else if (PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)) {
+			return DingtalkTemplateEnum.NODE_RECV;
+		} // 正式提交后，服务中，发短信
+		else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
+			return DingtalkTemplateEnum.NODE_OPEN;
+		} // 申请停业,发短信
+		else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
+			return DingtalkTemplateEnum.NODE_LEAVE_APPLY;
+		} // 由停业中，变更为已停业,发短信
+		else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			return DingtalkTemplateEnum.NODE_LEAVE;
 		}
-		// else if(){
-		//
-		// }
-
 		throw new IllegalArgumentException("没有找到短信模板。stateChangeEnum=" + stateChangeEnum.getDescription());
 	}
 
@@ -81,8 +88,17 @@ public class SmsListener implements EventListener {
 		}
 	}
 
+	/**
+	 * 发短信
+	 * 
+	 * @param taobaoUserId
+	 * @param mobile
+	 * @param dingTalkType
+	 * @param operatorId
+	 */
 	private void sms(Long taobaoUserId, String mobile, DingtalkTemplateEnum dingTalkType, String operatorId) {
 		if (StringUtil.isEmpty(mobile)) {
+			logger.error("合伙人手机号码为空。taobaoUserId=" + taobaoUserId);
 			return;
 		}
 
@@ -107,7 +123,8 @@ public class SmsListener implements EventListener {
 			task.setParameter(smsDto);
 			taskExecuteService.submitTask(task);
 		} catch (Exception e) {
-			logger.error("dingtalkHelper execute error!" + " dingTalkType.getCode():" + dingTalkType.getCode());
+			logger.error("Failed to send sms. dingTalkType.getCode()=" + dingTalkType.getCode() + " taobaouserid = "
+					+ taobaoUserId, e);
 		}
 	}
 
