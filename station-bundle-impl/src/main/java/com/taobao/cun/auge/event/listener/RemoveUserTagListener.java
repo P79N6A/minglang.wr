@@ -18,9 +18,9 @@ import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
-import com.taobao.cun.chronus.enums.BusinessTypeEnum;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
@@ -75,7 +75,7 @@ public class RemoveUserTagListener implements EventListener {
 		task.setBeanName("uicTagService");
 		task.setMethodName("removeUserTag");
 		task.setBusinessStepNo(1l);
-		task.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+		task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM);
 		task.setBusinessStepDesc("去uic标");
 		task.setOperator(operatorId);
 		task.setParameter(userTagDto);
@@ -87,7 +87,7 @@ public class RemoveUserTagListener implements EventListener {
 		wangwangTaskVo.setBeanName("wangWangTagService");
 		wangwangTaskVo.setMethodName("removeWangWangTagByNick");
 		wangwangTaskVo.setBusinessStepNo(2l);
-		wangwangTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+		wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 		wangwangTaskVo.setBusinessStepDesc("去旺旺标");
 		wangwangTaskVo.setOperator(operatorId);
 		wangwangTaskVo.setParameter(taobaoNick);
@@ -104,7 +104,7 @@ public class RemoveUserTagListener implements EventListener {
 		cainiaoTaskVo.setBeanName("caiNiaoService");
 		cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 		cainiaoTaskVo.setBusinessStepNo(1l);
-		cainiaoTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+		cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 		cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
 		cainiaoTaskVo.setOperator(operatorId);
 		
@@ -125,7 +125,7 @@ public class RemoveUserTagListener implements EventListener {
 			dealStationTagTaskVo.setBeanName("alipayTagService");
 			dealStationTagTaskVo.setMethodName("dealTag");
 			dealStationTagTaskVo.setBusinessStepNo(1l);
-			dealStationTagTaskVo.setBusinessType(BusinessTypeEnum.STATION_QUITE_CONFIRM);
+			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
 			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
 			dealStationTagTaskVo.setOperator(operator);
 
