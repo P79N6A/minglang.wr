@@ -17,7 +17,7 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
-@HSFProvider(serviceInterface= ProcessService.class)
+@HSFProvider(serviceInterface = ProcessService.class)
 public class ProcessServiceImpl implements ProcessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
@@ -36,22 +36,21 @@ public class ProcessServiceImpl implements ProcessService {
 	 */
 	@Override
 	public void startApproveProcess(StartProcessDto startProcessDto) {
-		 String businessCode = startProcessDto.getBusinessCode();
-		 Long businessId = startProcessDto.getBusinessId();
-		 String applierId = startProcessDto.getApplierId();
-		 Long parentOrgId =startProcessDto.getParentOrgId();
-		 String remarks =startProcessDto.getRemarks();
-		
-		
+		String businessCode = startProcessDto.getBusinessCode();
+		Long businessId = startProcessDto.getBusinessId();
+		String applierId = startProcessDto.getApplierId();
+		Long applierOrgId = startProcessDto.getApplierOrgId();
+		String remarks = startProcessDto.getRemarks();
+
 		// // 创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>();
-		initData.put("orgId", String.valueOf(parentOrgId));
+		initData.put("orgId", String.valueOf(applierOrgId));
 		initData.put("remarks", remarks);
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, initData);
 		if (!rm.isSuccess()) {
-			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = " + applierId
-					+ " parentOrgId = " + parentOrgId + " remarks = " + remarks, rm.getException());
+			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
+					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());
 		}
 	}
 }

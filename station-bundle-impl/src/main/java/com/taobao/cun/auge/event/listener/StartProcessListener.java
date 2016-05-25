@@ -54,13 +54,14 @@ public class StartProcessListener implements EventListener {
 		Long operatorOrgId = (Long) map.get("operatorOrgId");
 		String intanceId = (String) map.get("intanceId");
 		String remark = (String) map.get("remark");
+
 		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
 
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(Long.valueOf(intanceId));
 
 		ProcessBusinessEnum business = findBusinessType(newStatus, oldStatus, partnerType);
 		if (null != business) {
-			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType,operatorOrgId, remark);
+			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType, operatorOrgId, remark);
 		}
 	}
 
@@ -78,7 +79,8 @@ public class StartProcessListener implements EventListener {
 		} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
 			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUITING_PRO);
 		}
-
+		logger.warn("没有找到相应的流程businessCode.oldStatus=" + oldStatus.getCode() + " newStatus=" + newStatus.getCode()
+				+ " partnerType=" + partnerType.getCode());
 		return null;
 	}
 
@@ -96,27 +98,33 @@ public class StartProcessListener implements EventListener {
 	 * @param remarks
 	 *            备注
 	 */
-	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,OperatorTypeEnum operatorType,
-			Long applierOrgId, String remarks) {
-		StartProcessDto startProcessDto = new StartProcessDto();
+	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,
+			OperatorTypeEnum operatorType, Long applierOrgId, String remarks) {
+		try {
 
-		startProcessDto.setRemarks(remarks);
-		startProcessDto.setParentOrgId(applierOrgId);
-		startProcessDto.setBusinessId(stationApplyId);
-		startProcessDto.setBusinessCode(business.getCode());
-		startProcessDto.setApplierId(applierId);
-		// 旺旺去标
-		GeneralTaskDto startProcessTask = new GeneralTaskDto();
-		startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
-		startProcessTask.setBusinessStepNo(1l);
-		startProcessTask.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-		startProcessTask.setBusinessStepDesc("启动审批流程");
-		startProcessTask.setBeanName("processService");
-		startProcessTask.setMethodName("startApproveProcess");
-		startProcessTask.setOperator(applierId);
-		startProcessTask.setParameter(startProcessDto);
+			StartProcessDto startProcessDto = new StartProcessDto();
 
-		// 提交任务
-		taskExecuteService.submitTask(startProcessTask);
+			startProcessDto.setRemarks(remarks);
+			startProcessDto.setApplierOrgId(applierOrgId);
+			startProcessDto.setBusinessId(stationApplyId);
+			startProcessDto.setBusinessCode(business.getCode());
+			startProcessDto.setApplierId(applierId);
+			// 旺旺去标
+			GeneralTaskDto startProcessTask = new GeneralTaskDto();
+			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
+			startProcessTask.setBusinessStepNo(1l);
+			startProcessTask.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			startProcessTask.setBusinessStepDesc("启动审批流程");
+			startProcessTask.setBeanName("processService");
+			startProcessTask.setMethodName("startApproveProcess");
+			startProcessTask.setOperator(applierId);
+			startProcessTask.setParameter(startProcessDto);
+
+			// 提交任务
+			taskExecuteService.submitTask(startProcessTask);
+		} catch (Exception e) {
+			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
+					+ " applierId=" + applierId + " operatorType=" + operatorType.getCode(),e);
+		}
 	}
 }
