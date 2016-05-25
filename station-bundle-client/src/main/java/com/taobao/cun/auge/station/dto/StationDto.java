@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -155,12 +156,12 @@ public class StationDto extends BaseDto implements Serializable{
 
     /**
      * 场地固点类型 GOV_FIXED 政府固点
-TRIPARTITE_FIXED
-三方固点
+	 *	TRIPARTITE_FIXED 三方固点
      */
     private String fixedType;
     
     
+    private List<AttachementDto> attachements;
 
 	public Long getId() {
 		return id;
@@ -392,5 +393,13 @@ TRIPARTITE_FIXED
 
 	public void setFixedType(String fixedType) {
 		this.fixedType = fixedType;
+	}
+
+	public List<AttachementDto> getAttachements() {
+		return attachements;
+	}
+
+	public void setAttachements(List<AttachementDto> attachements) {
+		this.attachements = attachements;
 	}
 }

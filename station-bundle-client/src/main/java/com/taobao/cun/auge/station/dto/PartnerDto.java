@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -62,6 +63,8 @@ public class PartnerDto extends BaseDto implements Serializable{
      * 状态：temp:暂存，normal:正常
      */
     private String state;
+    
+    private List<AttachementDto> attachements;
 
 	public String getName() {
 		return name;
@@ -149,6 +152,14 @@ public class PartnerDto extends BaseDto implements Serializable{
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public List<AttachementDto> getAttachements() {
+		return attachements;
+	}
+
+	public void setAttachements(List<AttachementDto> attachements) {
+		this.attachements = attachements;
 	}
 
 }

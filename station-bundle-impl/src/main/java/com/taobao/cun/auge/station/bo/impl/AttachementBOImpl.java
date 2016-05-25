@@ -31,7 +31,7 @@ public class AttachementBOImpl implements AttachementBO {
 	}
 
 	@Override
-	public Long deleteAttachement(AttachementDeleteDto attachementDeleteDto)
+	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(attachementDeleteDto);
 		ValidateUtils.notNull(attachementDeleteDto.getObjectId());
@@ -49,7 +49,6 @@ public class AttachementBOImpl implements AttachementBO {
 			criteria.andCondition("attachementTypeId", attachementDeleteDto.getAttachementTypeId().getCode());
 		}
 		attachementMapper.updateByExampleSelective(attachement, example);
-		return null;
 	}
 	
 	private Attachement convertToDomain(AttachementDto attachementDto) {
