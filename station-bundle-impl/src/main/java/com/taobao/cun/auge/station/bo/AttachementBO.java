@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
+import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -10,7 +11,21 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
  */
 public interface AttachementBO {
 	
-	public Long addAttachement(AttachementDto attachementDto)   throws AugeServiceException;
+	/**
+	 * 新增附件
+	 * @param attachementDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long addAttachement(AttachementDto attachementDto) throws AugeServiceException;
+	
+	/**
+	 * 删除附件
+	 * @param attachementDeleteDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long deleteAttachement(AttachementDeleteDto attachementDeleteDto) throws AugeServiceException;
 	
 
 }
