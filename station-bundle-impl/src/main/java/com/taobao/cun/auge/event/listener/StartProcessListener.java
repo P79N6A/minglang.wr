@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -44,22 +46,21 @@ public class StartProcessListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-		Map<String, Object> map = event.getContent();
+		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
-		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
-		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
+		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		// 可能是小二，也可能是TP商淘宝账号
-		String operatorId = (String) map.get("operatorId");
-		OperatorTypeEnum operatorType = (OperatorTypeEnum) map.get("OperatorType");
-		Long operatorOrgId = (Long) map.get("operatorOrgId");
-		String intanceId = (String) map.get("intanceId");
-		String remark = (String) map.get("remark");
+		String operatorId = stateChangeEvent.getOperator();
+		OperatorTypeEnum operatorType = stateChangeEvent.getOperatorType();
+		Long operatorOrgId = stateChangeEvent.getOperatorOrgId();
+		Long instanceId = stateChangeEvent.getPartnerInstanceId();
+		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
+		String remark = stateChangeEvent.getRemark();
 
-		PartnerInstanceTypeEnum partnerType = (PartnerInstanceTypeEnum) map.get("partnerType");
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(Long.valueOf(intanceId));
-
-		ProcessBusinessEnum business = findBusinessType(newStatus, oldStatus, partnerType);
+		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
 		if (null != business) {
 			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType, operatorOrgId, remark);
 		}
@@ -67,21 +68,23 @@ public class StartProcessListener implements EventListener {
 
 	/**
 	 * 
-	 * @param newStatus
-	 * @param oldStatus
+	 * @param changedState
 	 * @param partnerType
 	 * @return
 	 */
-	private ProcessBusinessEnum findBusinessType(StationStatusEnum newStatus, StationStatusEnum oldStatus,
+	private ProcessBusinessEnum findBusinessType(PartnerInstanceStateChangeEnum changedState,
 			PartnerInstanceTypeEnum partnerType) {
-		if (StationStatusEnum.CLOSING.equals(newStatus) && StationStatusEnum.SERVICING.equals(oldStatus)) {
+		// 停业申请
+		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(changedState)) {
 			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.CLOSING_PRO);
-		} else if (StationStatusEnum.QUITING.equals(newStatus) && StationStatusEnum.CLOSED.equals(oldStatus)) {
+			// 退出申请
+		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(changedState)) {
 			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUITING_PRO);
 		}
-		logger.warn("没有找到相应的流程businessCode.oldStatus=" + oldStatus.getCode() + " newStatus=" + newStatus.getCode()
-				+ " partnerType=" + partnerType.getCode());
-		return null;
+		String msg = "没有找到相应的流程businessCode.changedState=" + changedState.getDescription() + " partnerType="
+				+ partnerType.getCode();
+		logger.warn(msg);
+		throw new IllegalArgumentException(msg);
 	}
 
 	/**
@@ -109,7 +112,7 @@ public class StartProcessListener implements EventListener {
 			startProcessDto.setBusinessId(stationApplyId);
 			startProcessDto.setBusinessCode(business.getCode());
 			startProcessDto.setApplierId(applierId);
-			// 旺旺去标
+			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
 			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
 			startProcessTask.setBusinessStepNo(1l);
@@ -124,7 +127,7 @@ public class StartProcessListener implements EventListener {
 			taskExecuteService.submitTask(startProcessTask);
 		} catch (Exception e) {
 			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
-					+ " applierId=" + applierId + " operatorType=" + operatorType.getCode(),e);
+					+ " applierId=" + applierId + " operatorType=" + operatorType.getCode(), e);
 		}
 	}
 }

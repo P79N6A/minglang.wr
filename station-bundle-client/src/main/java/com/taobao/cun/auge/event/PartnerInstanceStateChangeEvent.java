@@ -2,6 +2,7 @@ package com.taobao.cun.auge.event;
 
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.dto.OperatorDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
 /**
  * 合伙人服务站实例状态变更事件
@@ -40,7 +41,7 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	/**
 	 * 合伙人类型:TP:合伙人 TPA:淘帮手 TPV：村拍档
 	 */
-	private String partnerType;
+	private PartnerInstanceTypeEnum partnerType;
 
 	/**
 	 * 执行时间(yyyy-MM-dd HH:mm:ss) 提交 | 装修 | 开业 | 停业 | 退出
@@ -51,6 +52,11 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	 * 服务站对应组织id
 	 */
 	private Long ownOrgId;
+
+	/**
+	 * 备注
+	 */
+	private String remark;
 
 	public Long getStationId() {
 		return stationId;
@@ -76,11 +82,11 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 		this.taobaoNick = taobaoNick;
 	}
 
-	public String getPartnerType() {
+	public PartnerInstanceTypeEnum getPartnerType() {
 		return partnerType;
 	}
 
-	public void setPartnerType(String partnerType) {
+	public void setPartnerType(PartnerInstanceTypeEnum partnerType) {
 		this.partnerType = partnerType;
 	}
 
@@ -114,5 +120,13 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 }

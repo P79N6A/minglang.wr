@@ -11,8 +11,8 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
-import com.taobao.cun.auge.event.domain.StationStatusChangedEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -25,7 +25,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TradeBO;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -286,12 +285,11 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 				forcedCloseDto.getOperator());
 
 		// 通过事件，定时钟，启动停业流程
-		StationStatusChangedEvent event = StationStatusChangedEventConverter.convert(StationStatusEnum.SERVICING,
-				StationStatusEnum.CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
-				forcedCloseDto.getOperator());
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter
+				.convert(PartnerInstanceStateChangeEnum.START_CLOSING,partnerInstanceBO.getPartnerInstanceById(instanceId));
 		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
 		event.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
-		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 
 	@Override
@@ -303,8 +301,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			
-//			quitDto.
-
 			//校验申请退出的条件
 			validateQuitPreCondition(instance, partner);
 
@@ -324,9 +320,6 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
 					.convert(PartnerInstanceStateChangeEnum.START_QUITTING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSED,
-					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-			
 			// 失效tair
 			// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
 			// + quitStationApplyDto.getStationApplyId());
