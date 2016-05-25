@@ -5,13 +5,13 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -38,9 +38,11 @@ public class ProcessApproveResultProcessor {
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
 					operator);
 			// 更新服务结束时间
-			PartnerStationRel instance = new PartnerStationRel();
+			PartnerInstanceDto instance = new PartnerInstanceDto();
 			instance.setServiceEndTime(new Date());
-			partnerInstanceBO.updatePartnerInstance(instanceId, instance, operator);
+			instance.setId(instanceId);
+			instance.setOperator(operator);
+			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator);

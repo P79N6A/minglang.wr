@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 /**
  * 
@@ -17,7 +19,7 @@ public class BaseDto implements Serializable {
 
 	private Long operatorOrgId;
 
-	private OperatorTypeEnum OperatorType;
+	private OperatorTypeEnum operatorType;
 
 	public String getOperator() {
 		return operator;
@@ -36,23 +38,29 @@ public class BaseDto implements Serializable {
 	}
 
 	public OperatorTypeEnum getOperatorType() {
-		return OperatorType;
+		return operatorType;
 	}
 
 	public void setOperatorType(OperatorTypeEnum operatorType) {
-		OperatorType = operatorType;
+		this.operatorType = operatorType;
 	}
 
-	public boolean validateOperator() {
-		return operator == null || operator.length() == 0;
+	public void validateOperator() throws AugeServiceException{
+		if (operator == null || operator.length() == 0) {
+			throw new AugeServiceException(CommonExceptionEnum.OPERATOR_IS_NULL);
+		}
 	}
 
-	public boolean validateOperatorType() {
-		return OperatorType == null;
+	public void validateOperatorType() throws AugeServiceException{
+		if (operatorType == null) {
+			throw new AugeServiceException(CommonExceptionEnum.OPERATORTYPE_IS_NULL);
+		}
 	}
 
-	public boolean validateOperatorOrgId() {
-		return operatorOrgId == null || operatorOrgId <= 0l;
+	public void validateOperatorOrgId() throws AugeServiceException{
+		if (operatorOrgId == null || operatorOrgId < 0L) {
+			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
+		}
 	}
 }
 	

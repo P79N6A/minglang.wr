@@ -45,12 +45,9 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public Long addPartner(PartnerDto partnerDto,String operator)
+	public Long addPartner(PartnerDto partnerDto)
 			throws AugeServiceException {
 		BeanValidator.validateWithThrowable(partnerDto);
-		if (partnerDto ==null || StringUtils.isEmpty(operator)){
-			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
-		}
 		PartnerConverter converter = Mappers.getMapper(PartnerConverter.class);
 		/*//Partner partner = PartnerConverter.convertToDomain(partnerCondition);
 		partner.setState(PartnerStateEnum.TEMP.getCode());
@@ -61,14 +58,8 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public void updatePartner(PartnerDto partnerDto,String operator)
+	public void updatePartner(PartnerDto partnerDto)
 			throws AugeServiceException {
-		if (partnerDto ==null || StringUtils.isEmpty(operator)){
-			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
-		}
-		if (partnerDto.getId() == null){
-			throw new AugeServiceException(PartnerExceptionEnum.ID_IS_NULL);
-		}
 		/*Partner partner = PartnerConverter.convertToDomain(partnerCondition);
 		DomainUtils.beforeUpdate(partner, operator);
 		partnerMapper.updateByPrimaryKey(partner);*/

@@ -84,6 +84,9 @@ public class PartnerInstanceDto extends BaseDto implements Serializable {
     
     private StationDto stationDto;
 	private PartnerDto partnerDto;
+	
+	private Long stationId;
+	private Long partnerId;
 	private PartnerLifecycleDto partnerLifecycleDto;
 	
 	
@@ -189,6 +192,18 @@ public class PartnerInstanceDto extends BaseDto implements Serializable {
 	}
 	public void setType(PartnerInstanceTypeEnum type) {
 		this.type = type;
+	}
+	public Long getStationId() {
+		return stationId;
+	}
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
+	public Long getPartnerId() {
+		return partnerId;
+	}
+	public void setPartnerId(Long partnerId) {
+		this.partnerId = partnerId;
 	}
 
 

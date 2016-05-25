@@ -151,13 +151,16 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public void updatePartnerInstance(Long instanceId, PartnerStationRel instance,String operator) {
-		instance.setId(instanceId);
-
-		DomainUtils.beforeUpdate(instance, operator);
-
-		partnerStationRelMapper.updateByPrimaryKeySelective(instance);
+	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		PartnerStationRel rel =convertToDomain(partnerInstanceDto);
+		DomainUtils.beforeUpdate(rel, partnerInstanceDto.getOperator());
+		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
 		
+	}
+	
+	private PartnerStationRel convertToDomain (PartnerInstanceDto partnerInstanceDto) {
+		PartnerStationRel rel =new PartnerStationRel();
+		return rel;
 	}
 
 	@Override
@@ -206,5 +209,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		condition.setStationId(stationId);
 		condition.setIsCurrent("y");
 		return partnerStationRelMapper.selectOne(condition);
+	}
+
+	@Override
+	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
+		return null;
 	}
 }

@@ -111,7 +111,7 @@ public interface PartnerInstanceBO {
 	 * @param instanceId
 	 * @param instance
 	 */
-	public void updatePartnerInstance(Long instanceId, PartnerStationRel instance,String operator);
+	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 	
 	/**
@@ -130,5 +130,7 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
     public void updateOpenDate(Long instanceId,Date openDate,String operator) throws AugeServiceException;
+    
+    public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
     
 }

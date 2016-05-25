@@ -17,21 +17,13 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
  */
 public interface PatnerInstanceService {
 	/**
-	 * 新增暂存 人，服务站基础信息
+	 * 暂存 人，服务站基础信息
 	 * 
 	 * @param condition
 	 * @return
 	 */
-	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
-	
-	/**
-	 * 修改暂存 人，服务站基础信息
-	 * 
-	 * @param condition
-	 * @return
-	 */
-	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 新增正式提交 人，服务站基础信息
@@ -64,7 +56,7 @@ public interface PatnerInstanceService {
 	 * @param instanceId
 	 * @return
 	 */
-	public boolean delete(Long instanceId) throws AugeServiceException;
+	public boolean delete(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 签署入驻协议

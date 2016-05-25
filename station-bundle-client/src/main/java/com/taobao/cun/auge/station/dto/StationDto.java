@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
-public class StationDto  implements Serializable{
+public class StationDto extends BaseDto implements Serializable{
 
 	private static final long serialVersionUID = 5611747398839067505L;
 	

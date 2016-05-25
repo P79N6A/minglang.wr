@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by haihu.fhh on 2016/5/4.
- */
 public class CommonExceptionEnum implements Serializable {
 
 	protected static final Map<String, CommonExceptionEnum> mappings = new HashMap<String, CommonExceptionEnum>();
@@ -18,11 +15,17 @@ public class CommonExceptionEnum implements Serializable {
     protected String desc;
 
     public static final CommonExceptionEnum PARAM_IS_NULL = new CommonExceptionEnum("PARAM_IS_NULL", "参数不能为空");
-    public static final CommonExceptionEnum SYSTEM_ERROR = new CommonExceptionEnum("system_error", "系统异常");
+    public static final CommonExceptionEnum SYSTEM_ERROR = new CommonExceptionEnum("SYSTEM_ERROR", "系统异常");
+    public static final CommonExceptionEnum OPERATOR_IS_NULL = new CommonExceptionEnum("OPERATOR_IS_NULL", "操作人不能为空");
+    public static final CommonExceptionEnum OPERATORTYPE_IS_NULL = new CommonExceptionEnum("OPERATORTYPE_IS_NULL", "操作人类型不能为空");
+    public static final CommonExceptionEnum OPERATORORGID_IS_NULL = new CommonExceptionEnum("OPERATORORGID_IS_NULL", "操作人组织不能为空");
 
     static {
         mappings.put("PARAM_IS_NULL", PARAM_IS_NULL);
         mappings.put("SYSTEM_ERROR", SYSTEM_ERROR);
+        mappings.put("OPERATOR_IS_NULL", OPERATOR_IS_NULL);
+        mappings.put("OPERATORTYPE_IS_NULL", OPERATORTYPE_IS_NULL);
+        mappings.put("OPERATORORGID_IS_NULL", OPERATORORGID_IS_NULL);
     }
 
     public CommonExceptionEnum(String code, String desc) {

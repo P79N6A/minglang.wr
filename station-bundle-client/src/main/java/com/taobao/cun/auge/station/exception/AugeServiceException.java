@@ -2,7 +2,7 @@ package com.taobao.cun.auge.station.exception;
 
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
-public class AugeServiceException extends Exception{
+public class AugeServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = -6479393095526687858L;
 

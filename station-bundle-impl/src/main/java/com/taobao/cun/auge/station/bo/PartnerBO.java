@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.station.condition.PartnerCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -29,7 +28,7 @@ public interface PartnerBO {
 	 * @return 主键id
 	 * @throws AugeServiceException
 	 */
-	public Long  addPartner(PartnerDto partnerDto,String operator)  throws AugeServiceException;
+	public Long  addPartner(PartnerDto partnerDto)  throws AugeServiceException;
 	
 	/**
 	 * 修改
@@ -37,7 +36,7 @@ public interface PartnerBO {
 	 * @return 主键id
 	 * @throws AugeServiceException
 	 */
-	public void  updatePartner(PartnerDto partnerDto,String operator)  throws AugeServiceException;
+	public void  updatePartner(PartnerDto partnerDto)  throws AugeServiceException;
 	
 	/**
 	 * 根据主键查询partner

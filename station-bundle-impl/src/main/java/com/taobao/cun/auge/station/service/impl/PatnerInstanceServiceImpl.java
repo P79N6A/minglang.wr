@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -22,7 +23,6 @@ import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TradeBO;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
-import com.taobao.cun.auge.station.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.StationStatusChangedEventConverter;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
@@ -30,7 +30,6 @@ import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -38,7 +37,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -91,19 +89,35 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	TradeBO tradeBO;
 
 	@Override
-	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		return null;
-	}
-
-	@Override
-	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
+	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		ValidateUtils.notNull(partnerInstanceDto);
+		Long instanceId = partnerInstanceDto.getId();
+		if (instanceId == null) {//新增
+			Long stationId = stationBO.addStation(partnerInstanceDto.getStationDto());
+			Long partnerId = partnerBO.addPartner(partnerInstanceDto.getPartnerDto());
+			partnerInstanceDto.setStationId(stationId);
+			partnerInstanceDto.setPartnerId(partnerId);
+			instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
+			//TODO:新增附件
+		}else {//修改
+			ValidateUtils.notNull(partnerInstanceDto.getStationDto());
+			ValidateUtils.notNull(partnerInstanceDto.getStationDto().getId());
+			ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
+			ValidateUtils.notNull(partnerInstanceDto.getPartnerDto().getId());
+			stationBO.updateStation(partnerInstanceDto.getStationDto());
+			partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
+			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+			//TODO:修改附件
+		}
+		return instanceId;
 	}
 
 	@Override
 	public Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		// TODO Auto-generated method stub
+		ValidateUtils.notNull(partnerInstanceDto);
+		stationBO.addStation(partnerInstanceDto.getStationDto());
+		partnerBO.addPartner(partnerInstanceDto.getPartnerDto());
+		//instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 		return null;
 	}
 
@@ -120,8 +134,10 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 	}
 
 	@Override
-	public boolean delete(Long instanceId) throws AugeServiceException {
-		// TODO Auto-generated method stub
+	public boolean delete(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		if (partnerInstanceDto == null ) {
+			
+		}
 		return false;
 	}
 
@@ -225,9 +241,12 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			if (isAgree) {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,employeeId);
 				//更新服务结束时间
-				PartnerStationRel instance= new PartnerStationRel();
+				// 更新服务结束时间
+				PartnerInstanceDto instance = new PartnerInstanceDto();
 				instance.setServiceEndTime(new Date());
-				partnerInstanceBO.updatePartnerInstance(partnerInstanceId,instance,employeeId);
+				instance.setId(partnerInstanceId);
+				instance.setOperator(employeeId);
+				partnerInstanceBO.updatePartnerStationRel(instance);
 				
 				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED,employeeId);
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
