@@ -25,7 +25,7 @@ public final class PartnerInstanceEventConverter {
 		event.setTaobaoUserId(partnerInstanceDto.getPartnerDto().getTaobaoUserId());
 		event.setTaobaoNick(partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		event.setOwnOrgId(partnerInstanceDto.getStationDto().getApplyOrg());
-		event.setPartnerType(partnerInstanceDto.getType().getCode());
+		event.setPartnerType(partnerInstanceDto.getType());
 		event.setExecDate(com.taobao.cun.auge.common.utils.DateUtil.formatTime(new Date()));
 		
 		event.setStateChangeEnum(stateChangeEnum);
