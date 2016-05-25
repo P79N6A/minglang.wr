@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.service;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-public interface PatnerInstanceQueryService {
+public interface PartnerInstanceQueryService {
 
 	/**
 	 * 详情，人和村。没有脱敏

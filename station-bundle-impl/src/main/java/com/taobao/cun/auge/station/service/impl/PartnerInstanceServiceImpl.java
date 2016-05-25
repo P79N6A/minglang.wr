@@ -45,7 +45,7 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
-import com.taobao.cun.auge.station.service.PatnerInstanceService;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -54,10 +54,10 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  *
  */
-@HSFProvider(serviceInterface = PatnerInstanceService.class)
-public class PatnerInstanceServiceImpl implements PatnerInstanceService {
+@HSFProvider(serviceInterface = PartnerInstanceService.class)
+public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
-	private static final Logger logger = LoggerFactory.getLogger(PatnerInstanceService.class);
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
 
 	@Autowired
 	ProtocolBO protocolBO;

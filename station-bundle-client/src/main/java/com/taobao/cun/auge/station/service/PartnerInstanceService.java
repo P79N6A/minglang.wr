@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
  * @author quanzhu.wangqz
  *
  */
-public interface PatnerInstanceService {
+public interface PartnerInstanceService {
 	/**
 	 * 暂存 人，服务站基础信息
 	 * 
