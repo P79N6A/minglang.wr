@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.event.domain.EventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -49,8 +50,7 @@ public class ProcessApproveResultProcessor {
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateEnum.CLOSING,
-							PartnerInstanceStateEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId)));
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			// 去标，通过事件实现
 			// 短信推送
@@ -68,8 +68,7 @@ public class ProcessApproveResultProcessor {
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateEnum.CLOSING,
-							PartnerInstanceStateEnum.SERVICING, partnerInstanceBO.getPartnerInstanceById(instanceId)));
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT,
 					StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSING, StationStatusEnum.SERVICING,
@@ -108,8 +107,8 @@ public class ProcessApproveResultProcessor {
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateEnum.QUITING,
-							PartnerInstanceStateEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId)));
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
+							 partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT,
 					StationStatusChangedEventConverter.convert(StationStatusEnum.QUITING, StationStatusEnum.CLOSED,

@@ -10,7 +10,7 @@ import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
  * @author quanzhu.wangqz
  *
  */
-public class AttachementDto  extends BaseDto implements Serializable{
+public class AttachementDto  extends OperatorDto implements Serializable{
 
 	private static final long serialVersionUID = -2236478973303620397L;
 	

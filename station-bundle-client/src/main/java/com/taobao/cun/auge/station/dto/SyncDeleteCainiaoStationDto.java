@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author quanzhu.wangqz
  *
  */
-public class SyncDeleteCainiaoStationDto extends BaseDto implements Serializable {
+public class SyncDeleteCainiaoStationDto extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = -6630188995042897116L;
 	

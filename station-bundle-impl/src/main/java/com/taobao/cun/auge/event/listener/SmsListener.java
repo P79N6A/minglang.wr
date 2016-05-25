@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.event.listener;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +7,13 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
@@ -36,24 +35,33 @@ public class SmsListener implements EventListener {
 
 	@Autowired
 	TaskExecuteService taskExecuteService;
+
 	@Autowired
 	AppResourceBO appResourceBO;
 
 	@Override
 	public void onMessage(Event event) {
-		Map<String, Object> map = event.getContent();
+		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
-		StationStatusEnum newStatus = (StationStatusEnum) map.get("newStatus");
-		StationStatusEnum oldStatus = (StationStatusEnum) map.get("oldStatus");
-		Long taobaoUserId = (Long) map.get("taobaoUserId");
-		String operatorId = (String) map.get("operatorId");
+		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 
-		String mobile = findPartnerMobile(taobaoUserId);
+		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
+		String operatorId = stateChangeEvent.getOperator();
 
 		// 由停业中，变更为已停业，去标,发短信
-		if (StationStatusEnum.CLOSED.equals(newStatus) && StationStatusEnum.CLOSING.equals(oldStatus)) {
-			sms(taobaoUserId, mobile, DingtalkTemplateEnum.NODE_LEAVE, operatorId);
+		sms(taobaoUserId, findPartnerMobile(taobaoUserId), findSmsTemplate(stateChangeEnum), operatorId);
+	}
+
+	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
+		// 已停业
+		if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
+			return DingtalkTemplateEnum.NODE_LEAVE;
 		}
+		// else if(){
+		//
+		// }
+
+		throw new IllegalArgumentException("没有找到短信模板。stateChangeEnum=" + stateChangeEnum.getDescription());
 	}
 
 	/**

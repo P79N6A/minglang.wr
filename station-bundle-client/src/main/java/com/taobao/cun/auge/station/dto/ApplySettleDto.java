@@ -9,7 +9,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
  * @author quanzhu.wangqz
  *
  */
-public class ApplySettleDto  extends BaseDto implements Serializable {
+public class ApplySettleDto  extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 4878635616874042880L;
 	

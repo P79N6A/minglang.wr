@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.domain.StationStatusChangedEvent;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.Emp360BO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -175,7 +176,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(), openStationDto.getOperator());
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId())));
+					.convert(PartnerInstanceStateChangeEnum.START_SERVICING,partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId())));
 		}else{//定时开业
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(), openStationDto.getOperator());
 		}
@@ -321,7 +322,7 @@ public class PatnerInstanceServiceImpl implements PatnerInstanceService {
 			//退出审批流程，由事件监听完成
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convert(PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
+					.convert(PartnerInstanceStateChangeEnum.START_QUITTING,partnerInstanceBO.getPartnerInstanceById(instanceId)));
 
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, StationStatusChangedEventConverter.convert(StationStatusEnum.CLOSED,
 					StationStatusEnum.QUITING, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));

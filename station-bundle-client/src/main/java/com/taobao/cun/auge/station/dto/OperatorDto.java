@@ -11,7 +11,7 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
  * @author quanzhu.wangqz
  * 
  */
-public class BaseDto implements Serializable {
+public class OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 2739466182498801975L;
 

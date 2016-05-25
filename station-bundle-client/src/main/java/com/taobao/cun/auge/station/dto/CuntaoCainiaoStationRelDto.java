@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 
-public class CuntaoCainiaoStationRelDto  extends BaseDto implements Serializable  {
+public class CuntaoCainiaoStationRelDto  extends OperatorDto implements Serializable  {
 
 	private static final long serialVersionUID = 4896621717590920987L;
 

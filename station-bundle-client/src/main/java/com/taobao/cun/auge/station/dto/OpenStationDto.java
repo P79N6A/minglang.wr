@@ -8,7 +8,7 @@ import java.util.Date;
  * @author quanzhu.wangqz
  *
  */
-public class OpenStationDto  extends BaseDto implements Serializable {
+public class OpenStationDto  extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 8125007573364622437L;
 	

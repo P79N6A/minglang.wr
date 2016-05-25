@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.StationForcedCloseReasonEnum;
 
-public class ForcedCloseDto extends BaseDto implements Serializable {
+public class ForcedCloseDto extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = -2259932744519518324L;
 	// 合伙人实例id

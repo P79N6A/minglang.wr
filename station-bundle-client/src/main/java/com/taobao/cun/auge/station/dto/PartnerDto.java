@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-public class PartnerDto extends BaseDto implements Serializable{
+public class PartnerDto extends OperatorDto implements Serializable{
 
 	private static final long serialVersionUID = -6662885547380230732L;
 	

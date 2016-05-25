@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.mapper.AppResourceMapper;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
-import com.taobao.cun.auge.station.bo.AppResourceDO;
 
 @Component("appResourceBO")
 public class AppResourceBOImpl implements AppResourceBO {

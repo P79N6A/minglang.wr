@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author quanzhu.wangqz
  *
  */
-public class ConfirmCloseDto extends BaseDto implements Serializable {
+public class ConfirmCloseDto extends OperatorDto implements Serializable {
 	
 	private static final long serialVersionUID = 3650367624943113498L;
 	/**

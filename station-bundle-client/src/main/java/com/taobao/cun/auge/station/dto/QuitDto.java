@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 
-public class QuitDto  extends BaseDto implements Serializable{
+public class QuitDto  extends OperatorDto implements Serializable{
 
 	private static final long serialVersionUID = -449672555158774209L;
 	private Long instanceId;
