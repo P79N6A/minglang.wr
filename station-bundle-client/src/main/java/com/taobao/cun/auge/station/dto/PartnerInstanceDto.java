@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
@@ -65,7 +67,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
     /**
      * 是否是当前人
      */
-    private String isCurrent;
+    private PartnerInstanceIsCurrentEnum isCurrent;
 
     /**
      * 申请人类型，buc，还是havana
@@ -75,7 +77,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
     /**
      * 停业类型：合伙人主动退出，还是小二主动清退
      */
-    private String closeType;
+    private PartnerInstanceCloseTypeEnum closeType;
 
     /**
      * station_aply表主键，供数据迁移使用
@@ -145,24 +147,14 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	public void setOpenDate(Date openDate) {
 		this.openDate = openDate;
 	}
-	public String getIsCurrent() {
-		return isCurrent;
-	}
-	public void setIsCurrent(String isCurrent) {
-		this.isCurrent = isCurrent;
-	}
+	
 	public String getApplierType() {
 		return applierType;
 	}
 	public void setApplierType(String applierType) {
 		this.applierType = applierType;
 	}
-	public String getCloseType() {
-		return closeType;
-	}
-	public void setCloseType(String closeType) {
-		this.closeType = closeType;
-	}
+	
 	public Long getStationApplyId() {
 		return stationApplyId;
 	}
@@ -205,6 +197,18 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	public void setPartnerId(Long partnerId) {
 		this.partnerId = partnerId;
 	}
-
+	public PartnerInstanceIsCurrentEnum getIsCurrent() {
+		return isCurrent;
+	}
+	public void setIsCurrent(PartnerInstanceIsCurrentEnum isCurrent) {
+		this.isCurrent = isCurrent;
+	}
+	public PartnerInstanceCloseTypeEnum getCloseType() {
+		return closeType;
+	}
+	public void setCloseType(PartnerInstanceCloseTypeEnum closeType) {
+		this.closeType = closeType;
+	}
+	
 
 }

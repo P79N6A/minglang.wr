@@ -42,6 +42,7 @@ import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -133,6 +134,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerInstanceDto.setStationId(stationId);
 			partnerInstanceDto.setPartnerId(partnerId);
+			partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 			instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 		} else {// 修改
 			ValidateUtils.notNull(partnerInstanceDto.getStationDto());
