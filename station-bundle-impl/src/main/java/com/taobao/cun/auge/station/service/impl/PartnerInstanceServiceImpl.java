@@ -338,6 +338,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// TODO:插入停业协议
 			EventDispatcher.getInstance().dispatch("xxxxx", partnerLifecycle);
 			// TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志 2短信推送 3 状态转换日志
+			
+			OperatorDto operator = new OperatorDto();
+			operator.setOperator(String.valueOf(taobaoUserId));
+			operator.setOperatorType(OperatorTypeEnum.HAVANA);
+
+			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
+					PartnerInstanceStateChangeEnum.START_CLOSING,
+					partnerInstanceBO.getPartnerInstanceById(partnerInstance.getId()), operator);
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			return true;
 		} catch (Exception e) {
 			logger.error("applyCloseByPartner.error.param:" + taobaoUserId, e);
@@ -381,12 +390,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED,
 						employeeId);
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
+				
+				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED,
+						partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), confirmCloseDto);
+				EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
 			} else {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING,
 						PartnerInstanceStateEnum.SERVICING, employeeId);
 				stationBO.changeState(partnerInstanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING,
 						employeeId);
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
+				
+				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
+						partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), confirmCloseDto);
+				EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
 			}
 			partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 			// TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志 2短信推送 3 状态转换日志 4,去标
@@ -460,9 +477,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		// 退出审批流程，由事件监听完成
 		// 记录村点状态变化
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
-						partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto));
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
+				partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
 
 		// 失效tair
 		// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
