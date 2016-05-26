@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.enums;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,6 +94,20 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		if (code == null)
 			return null;
 		return mappings.get(code);
+	}
+	
+	/**
+	 * 有效的下一级合伙人状态
+	 * 
+	 * @return
+	 */
+	public static List<PartnerInstanceStateEnum>  getValidChildPartnersStatus(){
+		ArrayList<PartnerInstanceStateEnum > listValidStatus = new ArrayList<PartnerInstanceStateEnum >();
+		listValidStatus.add(PartnerInstanceStateEnum.TEMP);
+		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
+		return listValidStatus;
 	}
 
 	@SuppressWarnings("unused")

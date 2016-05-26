@@ -110,6 +110,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		criteria.andEqualTo("parentStationId", parentStationId);
 		criteria.andEqualTo("isDeleted", "n");
+		//排除自己
+		criteria.andNotEqualTo("type", curPartnerInstance.getType());
 		
 		return partnerStationRelMapper.selectByExample(example).size();
 	}
