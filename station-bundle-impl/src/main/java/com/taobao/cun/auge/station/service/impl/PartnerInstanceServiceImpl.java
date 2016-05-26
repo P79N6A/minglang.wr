@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -15,6 +16,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -29,8 +31,10 @@ import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -82,6 +86,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	Emp360Adapter emp360Adapter;
+	
+	@Autowired
+	UicReadAdapter uicReadAdapter;
 
 	@Autowired
 	PartnerBO partnerBO;
@@ -312,6 +319,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException {
+		
+		buildOperatorName(quitDto);
+		
 		Long instanceId = quitDto.getInstanceId();
 		String operator = quitDto.getOperator();
 
@@ -322,7 +332,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		validateQuitPreCondition(instance, partner);
 
 		// 保存退出申请单
-		QuitStationApply quitStationApply = convert(quitDto, instance);
+		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance);
 		quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
 		// 合伙人实例退出中
@@ -358,19 +368,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(instance.getType()),
 				instanceId);
 	}
-
-	private QuitStationApply convert(QuitDto quitDto, PartnerStationRel instance) throws AugeServiceException {
-		QuitStationApply quitStationApply = new QuitStationApply();
-		quitStationApply.setPartnerInstanceId(instance.getId());
-		quitStationApply.setStationApplyId(instance.getStationApplyId());
-		quitStationApply.setRevocationAppFormFileName(quitDto.getRevocationAppFormFileName());
-		quitStationApply.setOtherDescription(quitDto.getOtherDescription());
-		quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
-		quitStationApply.setLoanHasClose(quitDto.getLoanHasClose());
-		// FIXME FHH 枚举
-		quitStationApply.setState("FINISHED");
-		quitStationApply.setSubmittedPeopleName(emp360Adapter.getName(quitDto.getOperator()));
-		return quitStationApply;
+	
+	private void buildOperatorName(OperatorDto operatorDto){
+		String operator = operatorDto.getOperator();
+		OperatorTypeEnum type = operatorDto.getOperatorType();
+		
+		//小二工号
+		if(OperatorTypeEnum.BUC.equals(type)){
+			operatorDto.setOperatorName(emp360Adapter.getName(operator)); 
+		}else if(OperatorTypeEnum.HAVANA.equals(type)){
+			operatorDto.setOperatorName(uicReadAdapter.findTaobaoName(operator)); 
+		}
 	}
 
 	@Override
