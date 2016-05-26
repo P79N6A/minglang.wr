@@ -87,7 +87,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	Emp360Adapter emp360Adapter;
-	
+
 	@Autowired
 	UicReadAdapter uicReadAdapter;
 
@@ -95,7 +95,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	PartnerBO partnerBO;
 
 	@Autowired
-	TradeAdapter tradeBO;
+	TradeAdapter tradeAdapter;
 
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -188,7 +188,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_SERVICING,
-							partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId()),openStationDto));
+							partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId()),
+							openStationDto));
 		} else {// 定时开业
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 					openStationDto.getOperator());
@@ -291,9 +292,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
-		//参数校验
+		// 参数校验
 		BeanValidator.validateWithThrowable(forcedCloseDto);
-		
+
 		Long instanceId = forcedCloseDto.getInstanceId();
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Long stationId = partnerStationRel.getStationId();
@@ -323,9 +324,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException {
-		//参数校验
+		// 参数校验
 		BeanValidator.validateWithThrowable(quitDto);
-		
+
 		Long instanceId = quitDto.getInstanceId();
 		String operator = quitDto.getOperator();
 
@@ -336,7 +337,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		validateQuitPreCondition(instance, partner);
 
 		// 保存退出申请单
-		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance,buildOperatorName(quitDto));
+		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance,
+				buildOperatorName(quitDto));
 		quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
 		// 合伙人实例退出中
@@ -366,22 +368,22 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 
 		// 校验是否存在未结束的订单
-		tradeBO.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
+		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
 
 		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(instance.getType()),
 				instanceId);
 	}
-	
-	private String buildOperatorName(OperatorDto operatorDto){
+
+	private String buildOperatorName(OperatorDto operatorDto) {
 		String operator = operatorDto.getOperator();
 		OperatorTypeEnum type = operatorDto.getOperatorType();
-		
-		//小二工号
-		if(OperatorTypeEnum.BUC.equals(type)){
-			return emp360Adapter.getName(operator); 
-		}else if(OperatorTypeEnum.HAVANA.equals(type)){
-			return uicReadAdapter.findTaobaoName(operator); 
+
+		// 小二工号
+		if (OperatorTypeEnum.BUC.equals(type)) {
+			return emp360Adapter.getName(operator);
+		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
+			return uicReadAdapter.findTaobaoName(operator);
 		}
 		return "";
 	}

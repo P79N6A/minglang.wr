@@ -20,7 +20,6 @@ public class TradeAdapterImpl implements TradeAdapter {
 	TaobaoTradeOrderQueryService taobaoTradeOrderQueryService;
 
 	@Override
-	// FIXME FHH 调用了center的接口，后续需要迁移
 	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeServiceException {
 		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
         if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {

@@ -58,9 +58,7 @@ public class StartProcessListener implements EventListener {
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 
 		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
-		if (null != business) {
-			createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType, operatorOrgId, remark);
-		}
+		createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType, operatorOrgId, remark);
 	}
 
 	/**
