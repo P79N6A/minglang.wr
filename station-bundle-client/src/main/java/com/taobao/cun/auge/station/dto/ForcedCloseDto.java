@@ -1,13 +1,15 @@
 package com.taobao.cun.auge.station.dto;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.station.enums.StationForcedCloseReasonEnum;
 
-public class ForcedCloseDto extends OperatorDto implements Serializable {
+public class ForcedCloseDto extends OperatorDto {
 
 	private static final long serialVersionUID = -2259932744519518324L;
+	
 	// 合伙人实例id
+	@NotNull(message="instanceId not null")
 	private Long instanceId;
 
 	private StationForcedCloseReasonEnum reason;

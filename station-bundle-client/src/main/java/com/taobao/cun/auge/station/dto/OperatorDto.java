@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -15,12 +17,13 @@ public class OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 2739466182498801975L;
 
+	@NotNull(message="operator not null")
 	private String operator;
 
-	private String operatorName;
-
+	@NotNull(message="operatorOrgId not null")
 	private Long operatorOrgId;
 
+	@NotNull(message="operatorType not null")
 	private OperatorTypeEnum operatorType;
 
 	public String getOperator() {
@@ -45,14 +48,6 @@ public class OperatorDto implements Serializable {
 
 	public void setOperatorType(OperatorTypeEnum operatorType) {
 		this.operatorType = operatorType;
-	}
-
-	public String getOperatorName() {
-		return operatorName;
-	}
-
-	public void setOperatorName(String operatorName) {
-		this.operatorName = operatorName;
 	}
 
 	public void validateOperator() throws AugeServiceException {

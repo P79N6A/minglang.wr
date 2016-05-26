@@ -1,20 +1,28 @@
 package com.taobao.cun.auge.station.dto;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 
-public class QuitDto  extends OperatorDto implements Serializable{
+public class QuitDto  extends OperatorDto{
 
 	private static final long serialVersionUID = -449672555158774209L;
+	
+	@NotNull(message="instanceId not null")
 	private Long instanceId;
+	
 	private String state;
+	
 	private String revocationAppFormFileName;
+	
 	private String loanProveFileName;
+	
 	private String approvalFileName;
+	
 	private String otherDescription;
-	private String submittedPeopleName; // 撤点小二名称
+	
 	private AssertUseStateEnum assertUseState;
+	
 	private String loanHasClose;
 	
 	// 是，退出服务站，否，不退出服务站
@@ -67,14 +75,6 @@ public class QuitDto  extends OperatorDto implements Serializable{
 
 	public void setOtherDescription(String otherDescription) {
 		this.otherDescription = otherDescription;
-	}
-
-	public String getSubmittedPeopleName() {
-		return submittedPeopleName;
-	}
-
-	public void setSubmittedPeopleName(String submittedPeopleName) {
-		this.submittedPeopleName = submittedPeopleName;
 	}
 
 	public AssertUseStateEnum getAssertUseState() {
