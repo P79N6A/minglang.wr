@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+
 public class PartnerDto extends OperatorDto implements Serializable{
 
 	private static final long serialVersionUID = -6662885547380230732L;
@@ -52,7 +55,7 @@ public class PartnerDto extends OperatorDto implements Serializable{
     /**
      * 经营类型全职： fulltime 兼职：partime
      */
-    private String businessType;
+    private PartnerBusinessTypeEnum businessType;
 
     /**
      * 现状描述
@@ -62,7 +65,7 @@ public class PartnerDto extends OperatorDto implements Serializable{
     /**
      * 状态：temp:暂存，normal:正常
      */
-    private String state;
+    private PartnerStateEnum state;
     
     private List<AttachementDto> attachements;
 
@@ -130,14 +133,6 @@ public class PartnerDto extends OperatorDto implements Serializable{
 		this.email = email;
 	}
 
-	public String getBusinessType() {
-		return businessType;
-	}
-
-	public void setBusinessType(String businessType) {
-		this.businessType = businessType;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -146,13 +141,6 @@ public class PartnerDto extends OperatorDto implements Serializable{
 		this.description = description;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
 
 	public List<AttachementDto> getAttachements() {
 		return attachements;
@@ -160,6 +148,22 @@ public class PartnerDto extends OperatorDto implements Serializable{
 
 	public void setAttachements(List<AttachementDto> attachements) {
 		this.attachements = attachements;
+	}
+
+	public PartnerBusinessTypeEnum getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(PartnerBusinessTypeEnum businessType) {
+		this.businessType = businessType;
+	}
+
+	public PartnerStateEnum getState() {
+		return state;
+	}
+
+	public void setState(PartnerStateEnum state) {
+		this.state = state;
 	}
 
 }

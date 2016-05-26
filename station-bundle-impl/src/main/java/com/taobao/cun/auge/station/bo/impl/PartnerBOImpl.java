@@ -1,20 +1,14 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.conversion.PartnerConverter;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.condition.PartnerCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.validator.BeanValidator;
 
 @Component("partnerBO")
@@ -48,7 +42,7 @@ public class PartnerBOImpl implements PartnerBO {
 	public Long addPartner(PartnerDto partnerDto)
 			throws AugeServiceException {
 		BeanValidator.validateWithThrowable(partnerDto);
-		PartnerConverter converter = Mappers.getMapper(PartnerConverter.class);
+	    //PartnerConverter converter = Mappers.getMapper(PartnerConverter.class);
 		/*//Partner partner = PartnerConverter.convertToDomain(partnerCondition);
 		partner.setState(PartnerStateEnum.TEMP.getCode());
 		DomainUtils.beforeInsert(partner, operator);

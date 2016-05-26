@@ -1,11 +1,12 @@
-package com.taobao.cun.auge.conversion;
+package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 
-public  class PartnerLifecycleConverter {
+public class PartnerLifecycleConverter {
 
-	public static PartnerLifecycleItems  convertToDomain(PartnerLifecycleCondition life) {
+	public static PartnerLifecycleItems convertToDomain(
+			PartnerLifecycleCondition life) {
 		PartnerLifecycleItems items = new PartnerLifecycleItems();
 		if (life.getLifecycleId() != null) {
 			items.setId(life.getLifecycleId());
@@ -31,13 +32,13 @@ public  class PartnerLifecycleConverter {
 		if (life.getPartnerType() != null) {
 			items.setPartnerType(life.getPartnerType().getCode());
 		}
-		if(life.getQuitProtocol() != null) {
+		if (life.getQuitProtocol() != null) {
 			items.setQuitProtocol(life.getQuitProtocol().getCode());
 		}
-		if(life.getRoleApprove() != null) {
+		if (life.getRoleApprove() != null) {
 			items.setRoleApprove(life.getRoleApprove().getCode());
 		}
-		if(life.getSettledProtocol() != null) {
+		if (life.getSettledProtocol() != null) {
 			items.setSettledProtocol(life.getSettledProtocol().getCode());
 		}
 		return items;
