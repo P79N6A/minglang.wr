@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
-import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -18,14 +18,14 @@ public interface PartnerLifecycleBO {
 	 * @param partnerLifecycle
 	 * @throws AugeServiceException
 	 */
-	public void addLifecycle(PartnerLifecycleCondition partnerLifecycle)throws AugeServiceException;
+	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto)throws AugeServiceException;
 	
 	/**
 	 * 更新生命周期扩展数据
 	 * @param lifecycle
 	 * @throws AugeServiceException
 	 */
-	public void updateLifecycle(PartnerLifecycleCondition lifecycle)throws AugeServiceException;
+	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto)throws AugeServiceException;
 	
 	/**
 	 * 获得当前生命周期扩展数据 主键id

@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.condition;
+package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 

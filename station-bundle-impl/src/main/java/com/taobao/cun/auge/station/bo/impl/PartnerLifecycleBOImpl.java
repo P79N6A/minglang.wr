@@ -7,8 +7,8 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.mapper.PartnerLifecycleItemsMapper;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -21,20 +21,20 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	PartnerLifecycleItemsMapper partnerLifecycleItemsMapper;
 	
 	@Override
-	public void addLifecycle(PartnerLifecycleCondition lifecycle) throws AugeServiceException{
-		if (lifecycle ==null){
+	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException{
+		if (partnerLifecycleDto ==null){
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		PartnerLifecycleItems items = PartnerLifecycleConverter.convertToDomain(lifecycle);
+		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
 		DomainUtils.beforeInsert(items, DomainUtils.DEFAULT_OPERATOR);
 		partnerLifecycleItemsMapper.insert(items);
 	}
 	
-	public void updateLifecycle(PartnerLifecycleCondition lifecycle)throws AugeServiceException{
-		if (lifecycle ==null  || lifecycle.getLifecycleId() ==null){
+	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto)throws AugeServiceException{
+		if (partnerLifecycleDto ==null  || partnerLifecycleDto.getLifecycleId() ==null){
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		PartnerLifecycleItems items = PartnerLifecycleConverter.convertToDomain(lifecycle);
+		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
 		DomainUtils.beforeUpdate(items, DomainUtils.DEFAULT_OPERATOR);
 		partnerLifecycleItemsMapper.updateByPrimaryKey(items);
 	}

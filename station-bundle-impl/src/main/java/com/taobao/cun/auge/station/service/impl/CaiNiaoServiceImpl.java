@@ -119,8 +119,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
          param.setMobile(partnerDto.getMobile());
          param.setLoginId(partnerDto.getTaobaoNick());
          param.setTaobaoUserId(partnerDto.getTaobaoUserId());
-         param.setLng(stationDto.getLng());
-         param.setLat(stationDto.getLat());
+         param.setLng(stationDto.getStationAddressDto().getLng());
+         param.setLat(stationDto.getStationAddressDto().getLat());
          param.setApplierId(instanceDto.getApplierId());
          
          param.setParentId(getCountyCainiaoStationId(stationDto.getApplyOrg()));
@@ -208,17 +208,17 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	
 	public static AddressDto convertToStationAddress(StationDto stationDto) {
 		AddressDto stationAddress = new AddressDto();
-        stationAddress.setProvince(stationDto.getProvince());
-        stationAddress.setProvinceDetail(stationDto.getProvinceDetail());
-        stationAddress.setCity(stationDto.getCity());
-        stationAddress.setCityDetail(stationDto.getCityDetail());
-        stationAddress.setCounty(stationDto.getCounty());
-        stationAddress.setCountyDetail(stationDto.getCountyDetail());
-        stationAddress.setTown(stationDto.getTown());
-        stationAddress.setTownDetail(stationDto.getTownDetail());
-        stationAddress.setVillage(stationDto.getVillage());
-        stationAddress.setVillageDetail(stationDto.getVillageDetail());
-        stationAddress.setAddress(stationDto.getAddress());
+        stationAddress.setProvince(stationDto.getStationAddressDto().getProvince());
+        stationAddress.setProvinceDetail(stationDto.getStationAddressDto().getProvinceDetail());
+        stationAddress.setCity(stationDto.getStationAddressDto().getCity());
+        stationAddress.setCityDetail(stationDto.getStationAddressDto().getCityDetail());
+        stationAddress.setCounty(stationDto.getStationAddressDto().getCounty());
+        stationAddress.setCountyDetail(stationDto.getStationAddressDto().getCountyDetail());
+        stationAddress.setTown(stationDto.getStationAddressDto().getTown());
+        stationAddress.setTownDetail(stationDto.getStationAddressDto().getTownDetail());
+        stationAddress.setVillage(stationDto.getStationAddressDto().getVillage());
+        stationAddress.setVillageDetail(stationDto.getStationAddressDto().getVillageDetail());
+        stationAddress.setAddress(stationDto.getStationAddressDto().getAddress());
         return stationAddress;
     }
 

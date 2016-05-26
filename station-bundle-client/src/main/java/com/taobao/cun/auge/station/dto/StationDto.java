@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 public class StationDto extends OperatorDto implements Serializable{
@@ -29,54 +30,7 @@ public class StationDto extends OperatorDto implements Serializable{
     /**
      * 服务点状态
      */
-    private String state;
-
-
-
-    /**
-     * 省编码
-     */
-    private String province;
-
-    /**
-     * 市编码
-     */
-    private String city;
-
-    /**
-     * 县/区编码
-     */
-    private String county;
-
-    /**
-     * 乡镇编码
-     */
-    private String town;
-
-    /**
-     * 省详细
-     */
-    private String provinceDetail;
-
-    /**
-     * 市详细
-     */
-    private String cityDetail;
-
-    /**
-     * 县/区详细
-     */
-    private String countyDetail;
-
-    /**
-     * 乡镇详细
-     */
-    private String townDetail;
-
-    /**
-     * 详细地址
-     */
-    private String address;
+    private StationStatusEnum state;
 
     /**
      * 申请组织
@@ -88,26 +42,6 @@ public class StationDto extends OperatorDto implements Serializable{
      */
     private String stationNum;
 
-    /**
-     * 经度
-     */
-    private String lng;
-
-    /**
-     * 纬度
-     */
-    private String lat;
-
-    /**
-     * 村/社区编号
-     */
-    private String village;
-
-    /**
-     * 村/社区名称
-详情
-     */
-    private String villageDetail;
 
     /**
      * 覆盖人口
@@ -158,10 +92,18 @@ public class StationDto extends OperatorDto implements Serializable{
      * 场地固点类型 GOV_FIXED 政府固点
 	 *	TRIPARTITE_FIXED 三方固点
      */
-    private String fixedType;
+    private StationFixedTypeEnum fixedType;
     
     
+    /**
+     * 服务站相关附件
+     */
     private List<AttachementDto> attachements;
+    
+    /**
+     * 服务站地址相关信息
+     */
+    private StationAddressDto  stationAddressDto;
 
 	public Long getId() {
 		return id;
@@ -187,86 +129,6 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.description = description;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getCounty() {
-		return county;
-	}
-
-	public void setCounty(String county) {
-		this.county = county;
-	}
-
-	public String getTown() {
-		return town;
-	}
-
-	public void setTown(String town) {
-		this.town = town;
-	}
-
-	public String getProvinceDetail() {
-		return provinceDetail;
-	}
-
-	public void setProvinceDetail(String provinceDetail) {
-		this.provinceDetail = provinceDetail;
-	}
-
-	public String getCityDetail() {
-		return cityDetail;
-	}
-
-	public void setCityDetail(String cityDetail) {
-		this.cityDetail = cityDetail;
-	}
-
-	public String getCountyDetail() {
-		return countyDetail;
-	}
-
-	public void setCountyDetail(String countyDetail) {
-		this.countyDetail = countyDetail;
-	}
-
-	public String getTownDetail() {
-		return townDetail;
-	}
-
-	public void setTownDetail(String townDetail) {
-		this.townDetail = townDetail;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 	public Long getApplyOrg() {
 		return applyOrg;
 	}
@@ -281,38 +143,6 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setStationNum(String stationNum) {
 		this.stationNum = stationNum;
-	}
-
-	public String getLng() {
-		return lng;
-	}
-
-	public void setLng(String lng) {
-		this.lng = lng;
-	}
-
-	public String getLat() {
-		return lat;
-	}
-
-	public void setLat(String lat) {
-		this.lat = lat;
-	}
-
-	public String getVillage() {
-		return village;
-	}
-
-	public void setVillage(String village) {
-		this.village = village;
-	}
-
-	public String getVillageDetail() {
-		return villageDetail;
-	}
-
-	public void setVillageDetail(String villageDetail) {
-		this.villageDetail = villageDetail;
 	}
 
 	public String getCovered() {
@@ -387,19 +217,35 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.status = status;
 	}
 
-	public String getFixedType() {
-		return fixedType;
-	}
-
-	public void setFixedType(String fixedType) {
-		this.fixedType = fixedType;
-	}
-
 	public List<AttachementDto> getAttachements() {
 		return attachements;
 	}
 
 	public void setAttachements(List<AttachementDto> attachements) {
 		this.attachements = attachements;
+	}
+
+	public StationAddressDto getStationAddressDto() {
+		return stationAddressDto;
+	}
+
+	public void setStationAddressDto(StationAddressDto stationAddressDto) {
+		this.stationAddressDto = stationAddressDto;
+	}
+
+	public StationFixedTypeEnum getFixedType() {
+		return fixedType;
+	}
+
+	public void setFixedType(StationFixedTypeEnum fixedType) {
+		this.fixedType = fixedType;
+	}
+
+	public StationStatusEnum getState() {
+		return state;
+	}
+
+	public void setState(StationStatusEnum state) {
+		this.state = state;
 	}
 }

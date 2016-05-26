@@ -15,7 +15,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 public class PartnerLifecycleDto  implements Serializable {
 
 	private static final long serialVersionUID = -9216881285970436173L;
-
+	
+	/**
+	 * 主键id
+	 */
+	private Long LifecycleId;
 	/**
      * 合伙人类型
      */
@@ -148,6 +152,14 @@ public class PartnerLifecycleDto  implements Serializable {
 
 	public void setConfirm(PartnerLifecycleConfirmEnum confirm) {
 		this.confirm = confirm;
+	}
+
+	public Long getLifecycleId() {
+		return LifecycleId;
+	}
+
+	public void setLifecycleId(Long lifecycleId) {
+		LifecycleId = lifecycleId;
 	}
 
 }
