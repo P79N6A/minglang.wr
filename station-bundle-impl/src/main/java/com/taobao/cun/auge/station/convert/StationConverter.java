@@ -11,11 +11,11 @@ import com.taobao.cun.auge.station.dto.StationDto;
  */
 public class StationConverter {
 
-	public StationDto toStationDto(Station station) {
+	public static StationDto toStationDto(Station station) {
 		return null;
 	}
 	
-	public Station toStation(StationDto stationDto) {
+	public static Station toStation(StationDto stationDto) {
 		Station station = new Station();
 		
 		StationAddressDto address = stationDto.getStationAddressDto();

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 public class StationDto extends OperatorDto implements Serializable{
@@ -30,7 +31,7 @@ public class StationDto extends OperatorDto implements Serializable{
     /**
      * 服务点状态
      */
-    private StationStatusEnum state;
+    private StationStateEnum state;
 
     /**
      * 申请组织
@@ -241,11 +242,11 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.fixedType = fixedType;
 	}
 
-	public StationStatusEnum getState() {
+	public StationStateEnum getState() {
 		return state;
 	}
 
-	public void setState(StationStatusEnum state) {
+	public void setState(StationStateEnum state) {
 		this.state = state;
 	}
 }
