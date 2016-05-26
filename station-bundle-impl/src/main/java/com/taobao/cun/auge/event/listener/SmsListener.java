@@ -23,7 +23,7 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("smsListener")
-@EventSub(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT)
+@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
 public class SmsListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsListener.class);
