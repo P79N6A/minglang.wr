@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.adapter;
 
 public interface UicReadAdapter {
-	public String findTaobaoName(String taobaoUserId)throws Exception;
+	
+	public String findTaobaoName(String taobaoUserId);
+	
 }

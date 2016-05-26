@@ -17,6 +17,8 @@ public class OperatorDto implements Serializable {
 
 	private String operator;
 
+	private String operatorName;
+
 	private Long operatorOrgId;
 
 	private OperatorTypeEnum operatorType;
@@ -28,7 +30,7 @@ public class OperatorDto implements Serializable {
 	public void setOperator(String operator) {
 		this.operator = operator;
 	}
-	
+
 	public Long getOperatorOrgId() {
 		return operatorOrgId;
 	}
@@ -45,22 +47,29 @@ public class OperatorDto implements Serializable {
 		this.operatorType = operatorType;
 	}
 
-	public void validateOperator() throws AugeServiceException{
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
+
+	public void validateOperator() throws AugeServiceException {
 		if (operator == null || operator.length() == 0) {
 			throw new AugeServiceException(CommonExceptionEnum.OPERATOR_IS_NULL);
 		}
 	}
 
-	public void validateOperatorType() throws AugeServiceException{
+	public void validateOperatorType() throws AugeServiceException {
 		if (operatorType == null) {
 			throw new AugeServiceException(CommonExceptionEnum.OPERATORTYPE_IS_NULL);
 		}
 	}
 
-	public void validateOperatorOrgId() throws AugeServiceException{
+	public void validateOperatorOrgId() throws AugeServiceException {
 		if (operatorOrgId == null || operatorOrgId < 0L) {
 			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
 		}
 	}
 }
-	

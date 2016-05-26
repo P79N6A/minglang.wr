@@ -12,14 +12,12 @@ public class UicReadAdapterImpl implements UicReadAdapter{
 	CuntaoUicReadService cuntaoUicReadService;
 
 	@Override
-	public String findTaobaoName(String taobaoUserId) throws Exception {
+	public String findTaobaoName(String taobaoUserId)  {
 		ResultModel<String> result = cuntaoUicReadService.findTaobaoName(taobaoUserId);
 		
 		if(null != result && result.isSuccess()){
 			return result.getResult();
 		}
-		throw new Exception("DDD");
+		return "";
 	}
-	
-	
 }
