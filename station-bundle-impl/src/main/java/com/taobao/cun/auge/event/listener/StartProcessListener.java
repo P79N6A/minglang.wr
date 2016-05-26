@@ -24,7 +24,7 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("startProcessListener")
-@EventSub(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT)
+@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
 public class StartProcessListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
