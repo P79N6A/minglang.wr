@@ -54,6 +54,7 @@ public class RemoveUserTagListener implements EventListener {
 			submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 已退出
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
+			//FIXME FHH是否要保持事务
 			submitRemoveAlipayTagTask(taobaoUserId, operatorId);
 			submitRemoveLogisticsTask(instanceId, operatorId);
 		}
@@ -139,18 +140,18 @@ public class RemoveUserTagListener implements EventListener {
 			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
 			dealStationTagTaskVo.setOperator(operatorId);
 
-			AlipayTagDto AlipayTagDto = new AlipayTagDto();
-			AlipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
-			AlipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
-			AlipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
+			AlipayTagDto alipayTagDto = new AlipayTagDto();
+			alipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
+			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
+			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 
 			String accountNo = partner.getAlipayAccount();
 			if (StringUtils.isNotEmpty(accountNo)) {
-				AlipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
+				alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			}
-			dealStationTagTaskVo.setParameter(AlipayTagDto);
+			dealStationTagTaskVo.setParameter(alipayTagDto);
 
 			// 提交任务
 			taskExecuteService.submitTask(dealStationTagTaskVo);

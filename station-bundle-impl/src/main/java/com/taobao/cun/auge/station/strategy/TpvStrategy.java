@@ -21,7 +21,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 
 	@Override
 	public void validateExistValidChildren(Long instanceId) {
-		// TODO Auto-generated method stub
 		
 	}
 	

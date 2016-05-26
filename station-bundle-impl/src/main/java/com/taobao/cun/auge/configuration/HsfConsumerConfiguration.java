@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.cun.auge.msg.service.MessageService;
-import com.taobao.cun.auge.station.service.TaobaoTradeOrderQueryService;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
+import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 
 @Configuration
@@ -29,10 +29,10 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(CuntaoWorkFlowService.class, HSFGroup.HSF, version, 3000);
 	}
 
-	// auge服务
+	// cuntaocenter服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean taobaoTradeOrderQueryService(
-			@Value("${hsf.consumer.version.taobaoTradeOrderQueryService}") String version) {
+			@Value("${hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService}") String version) {
 		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
 	}
 	

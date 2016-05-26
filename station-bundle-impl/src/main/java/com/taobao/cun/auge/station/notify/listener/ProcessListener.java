@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
@@ -51,27 +50,49 @@ public class ProcessListener implements MessageListener {
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)
 					|| ProcessBusinessEnum.TPV_FORCED_CLOSURE.getCode().equals(businessCode)) {
-				try {
-					Long stationApplyId = Long.valueOf(objectId);
-					processApproveResultProcessor.monitorCloseApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
-				} catch (Exception e) {
-					logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
-				}
+				processCloseApproveResult(resultCode, objectId);
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
 					|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
-				try {
-					Long stationApplyId = Long.valueOf(objectId);
-					processApproveResultProcessor.monitorQuitApprove(stationApplyId,ProcessApproveResultEnum.valueof(resultCode));
-				} catch (Exception e) {
-					logger.error("监听审批退出流程失败。stationApplyId = " + objectId);
-				}
+				processQuitApproveResult(resultCode, objectId);
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
 			// 任务被激活
 		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 
+		}
+	}
+
+	/**
+	 * 监听停业审批结果
+	 * 
+	 * @param resultCode
+	 * @param objectId
+	 */
+	private void processQuitApproveResult(String resultCode, String objectId) {
+		try {
+			Long stationApplyId = Long.valueOf(objectId);
+			processApproveResultProcessor.monitorQuitApprove(stationApplyId,
+					ProcessApproveResultEnum.valueof(resultCode));
+		} catch (Exception e) {
+			logger.error("监听审批退出流程失败。stationApplyId = " + objectId);
+		}
+	}
+
+	/**
+	 * 监听退出审批结果
+	 * 
+	 * @param resultCode
+	 * @param objectId
+	 */
+	private void processCloseApproveResult(String resultCode, String objectId) {
+		try {
+			Long stationApplyId = Long.valueOf(objectId);
+			processApproveResultProcessor.monitorCloseApprove(stationApplyId,
+					ProcessApproveResultEnum.valueof(resultCode));
+		} catch (Exception e) {
+			logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 		}
 	}
 }

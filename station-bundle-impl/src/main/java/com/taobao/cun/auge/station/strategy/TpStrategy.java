@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.station.strategy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +29,14 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public static List<PartnerInstanceStateEnum>  getValidChildPartnersStatus(){
-		ArrayList<PartnerInstanceStateEnum > listValidStatus = new ArrayList<PartnerInstanceStateEnum >();
-		listValidStatus.add(PartnerInstanceStateEnum.TEMP);
-		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
-		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
-		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
-		return listValidStatus;
-	}	
-	
 
 	@Override
 	public void validateExistValidChildren(Long instanceId) throws AugeServiceException {
-		int count = partnerInstanceBO.findChildPartners(instanceId, getValidChildPartnersStatus());
+		int count = partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.getValidChildPartnersStatus());
 		if (count > 0) {
 			logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
 			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 		}
-		
 	}
 	
 	@Override
