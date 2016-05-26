@@ -26,7 +26,7 @@ public interface PartnerInstanceService {
 	
 
 	/**
-	 * 新增正式提交 人，服务站基础信息
+	 * 新增正式提交 人，服务站基础信息 
 	 * 
 	 * @param condition
 	 * @return

@@ -66,6 +66,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
  * 
+ * 合伙人实例服务接口
  * @author quanzhu.wangqz
  *
  */
@@ -115,11 +116,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto);
 		Long instanceId = partnerInstanceDto.getId();
 		if (instanceId == null) {// 新增
-			
 			StationDto stationDto = partnerInstanceDto.getStationDto();
 			stationDto.setState(StationStateEnum.INVALID);
 			stationDto.setStatus(StationStatusEnum.TEMP);
+			
 			Long stationId = stationBO.addStation(stationDto);
+			
 			List<AttachementDto> stationAttachementDtoList = stationDto.getAttachements();
 			if (CollectionUtils.isNotEmpty(stationAttachementDtoList)) {
 				attachementBO.addAttachementBatch(stationAttachementDtoList, stationId, AttachementBizTypeEnum.CRIUS_STATION);
@@ -127,13 +129,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 			partnerDto.setState(PartnerStateEnum.TEMP);
+			
 			Long partnerId = partnerBO.addPartner(partnerDto);
+			
 			List<AttachementDto> partnerAttachementDtoList = partnerDto.getAttachements();
 			if (CollectionUtils.isNotEmpty(partnerAttachementDtoList)) {
 				attachementBO.addAttachementBatch(partnerAttachementDtoList, partnerId, AttachementBizTypeEnum.PARTNER);
 			}
 			partnerInstanceDto.setStationId(stationId);
 			partnerInstanceDto.setPartnerId(partnerId);
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
 			partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 			instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 		} else {// 修改
@@ -141,23 +146,100 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			ValidateUtils.notNull(partnerInstanceDto.getStationDto().getId());
 			ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 			ValidateUtils.notNull(partnerInstanceDto.getPartnerDto().getId());
-			stationBO.updateStation(partnerInstanceDto.getStationDto());
+			StationDto stationDto = partnerInstanceDto.getStationDto();
+			
+			stationBO.updateStation(stationDto);
+
+			attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), 
+					partnerInstanceDto.getStationDto().getId(), AttachementBizTypeEnum.CRIUS_STATION);
+			
 			partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
+			
+			attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), 
+					partnerInstanceDto.getPartnerDto().getId(), AttachementBizTypeEnum.PARTNER);
+			
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
-			// TODO:修改附件
 		}
 		return instanceId;
 	}
+	
 
 	@Override
 	public Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
-		stationBO.addStation(partnerInstanceDto.getStationDto());
-		partnerBO.addPartner(partnerInstanceDto.getPartnerDto());
-		// instanceId =
-		// partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
-		return null;
+		StationDto stationDto = partnerInstanceDto.getStationDto();
+		stationDto.setState(StationStateEnum.INVALID);
+		stationDto.setStatus(StationStatusEnum.NEW);
+		
+		Long stationId = stationBO.addStation(stationDto);
+		
+		List<AttachementDto> stationAttachementDtoList = stationDto.getAttachements();
+		if (CollectionUtils.isNotEmpty(stationAttachementDtoList)) {
+			attachementBO.addAttachementBatch(stationAttachementDtoList, stationId, AttachementBizTypeEnum.CRIUS_STATION);
+		}
+		
+		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		partnerDto.setState(PartnerStateEnum.TEMP);
+		
+		Long partnerId = partnerBO.addPartner(partnerDto);
+		
+		List<AttachementDto> partnerAttachementDtoList = partnerDto.getAttachements();
+		if (CollectionUtils.isNotEmpty(partnerAttachementDtoList)) {
+			attachementBO.addAttachementBatch(partnerAttachementDtoList, partnerId, AttachementBizTypeEnum.PARTNER);
+		}
+		partnerInstanceDto.setStationId(stationId);
+		partnerInstanceDto.setPartnerId(partnerId);
+		partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
+		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+		Long instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
+		return instanceId;
 	}
+	
+	/*private void validate(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		ValidateUtils.notNull(partnerInstanceDto);
+		StationDto stationDto = partnerInstanceDto.getStationDto();
+		ValidateUtils.notNull(stationDto);
+		if(StringUtil.isBlank(stationDto.getName())){
+			throw new BusinessException(StationApplyExceptionConstants.STATION_NAME_REQUIRED_EXCEPTION);
+		}
+		String stationName = "";
+		if (StringUtil.isNotBlank(sacDto.getAddress().getCountyDetail())){
+			stationName+=sacDto.getAddress().getCountyDetail();
+		}
+		stationName+=sacDto.getName();
+		try {
+			if(stationName.getBytes("UTF-8").length>64){
+                throw new BusinessException(StationApplyExceptionConstants.CAINIAO_STATION_NAME_LENGTH_EXCEPTION);
+            }
+		} catch (UnsupportedEncodingException e) {
+            logger.error(e);
+		}
+		if(StringUtil.isBlank(sacDto.getLoginId())){
+			throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_LOGINID_REQUIRED_EXCEPTION);
+		}
+		if(StringUtil.isBlank(sacDto.getAlipayAccount())){
+			throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_ALIPAYACCOUNT_REQUIRED_EXCEPTION);
+		}
+		if(StringUtil.isBlank(sacDto.getIdenNum())){
+			throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_IDENNUM_REQUIRED_EXCEPTION);
+		}
+		if(StringUtil.isBlank(sacDto.getApplierName())){
+			throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_PERSON_NAME_REQUIRED_EXCEPTION);
+		}
+		ResultModel<PaymentAccountDto>  rm = paymentAccountQueryService.queryStationMemberPaymentAccountByNick(sacDto.getLoginId(), context);
+		if(rm.isSuccess()){
+			PaymentAccountDto paDto = rm.getResult();
+			if(!sacDto.getAlipayAccount().equals(paDto.getAlipayId())){
+				throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_ALIPAYACCOUNT_NOTEQUAL_EXCEPTION);
+			}
+			if(!sacDto.getApplierName().equals(paDto.getFullName()) || !sacDto.getIdenNum().equals(paDto.getIdCardNumber())){
+				throw new BusinessException(StationApplyExceptionConstants.STATION_APPLY_PERSION_INFO_NOTEQUAL_EXCEPTION);
+			}
+			return paDto.getTaobaoUserId();
+		}else{
+			throw new SystemException(rm.getException());
+		}
+	}*/
 
 	@Override
 	public Long updateSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {

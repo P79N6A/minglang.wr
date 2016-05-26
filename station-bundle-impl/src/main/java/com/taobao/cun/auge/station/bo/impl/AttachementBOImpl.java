@@ -81,4 +81,18 @@ public class AttachementBOImpl implements AttachementBO {
 			}
 		}
 	}
+
+	@Override
+	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
+			Long objectId, AttachementBizTypeEnum bizTypeEnum)
+			throws AugeServiceException {
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(bizTypeEnum);
+		AttachementDeleteDto attachementDeleteDto = new AttachementDeleteDto();
+		attachementDeleteDto.setObjectId(objectId);
+		attachementDeleteDto.setBizType(bizTypeEnum);
+		deleteAttachement(attachementDeleteDto);
+		
+		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum);
+	}
 }

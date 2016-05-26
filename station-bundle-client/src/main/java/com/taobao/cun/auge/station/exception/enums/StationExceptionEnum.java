@@ -33,6 +33,17 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 	
 	public static final StationExceptionEnum KAYE_PACKAGE_NOT_EXIST = new StationExceptionEnum(
 			"KAYE_PACKAGE_NOT_EXIST", "必须存在开业包");
+	
+	public static final StationExceptionEnum STATION_NAME_IS_NULL = new StationExceptionEnum(
+			"STATION_NAME_IS_NULL", "服务点名称不能为空");
+	
+	public static final StationExceptionEnum CAINIAO_STATION_NAME_TOO_LENGTH = new StationExceptionEnum(
+			"CAINIAO_STATION_NAME_TOO_LENGTH", "村服务点名称超过了菜鸟驿站要求的长度");
+	
+	public static final StationExceptionEnum STATION_NUM_IS_NULL = new StationExceptionEnum(
+			"STATION_NUM_IS_NULL", "村点编号不能为空");
+	
+	
 
 	static {
 		mappings.put("STATION_NUM_IS_DUPLICATE", STATION_NUM_IS_DUPLICATE);
@@ -44,6 +55,9 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 		mappings.put("STATION_APPLY_NOT_EXIST", STATION_APPLY_NOT_EXIST);
 		mappings.put("QUIT_STATION_APPLY_EXIST", QUIT_STATION_APPLY_EXIST);
 		mappings.put("KAYE_PACKAGE_NOT_EXIST", KAYE_PACKAGE_NOT_EXIST);
+		mappings.put("STATION_NAME_IS_NULL", STATION_NAME_IS_NULL);
+		mappings.put("CAINIAO_STATION_NAME_TOO_LENGTH", CAINIAO_STATION_NAME_TOO_LENGTH);
+		mappings.put("STATION_NUM_IS_NULL", STATION_NUM_IS_NULL);
 	}
 
 	public StationExceptionEnum(String code, String desc) {
