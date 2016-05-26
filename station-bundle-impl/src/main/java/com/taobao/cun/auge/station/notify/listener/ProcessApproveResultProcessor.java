@@ -31,18 +31,24 @@ public class ProcessApproveResultProcessor {
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
-	public void monitorCloseApprove	(Long stationApplyId,ProcessApproveResultEnum approveResult) throws Exception {
+	/**
+	 * 处理停业审批结果
+	 * 
+	 * @param stationApplyId
+	 * @param approveResult
+	 * @throws Exception
+	 */
+	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-		
+
 		OperatorDto operator = new OperatorDto();
 		String operatorId = "sys";
 		operator.setOperator(operatorId);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
-		
+
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 合伙人实例已停业
-		
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
 					operatorId);
 			// 更新服务结束时间
@@ -60,7 +66,8 @@ public class ProcessApproveResultProcessor {
 			// 短信推送
 			// 通知admin，合伙人退出。让他们监听村点状态变更事件
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED,
+							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
@@ -71,16 +78,24 @@ public class ProcessApproveResultProcessor {
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
+							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		}
 	}
 
-	public void monitorQuitApprove(Long stationApplyId,ProcessApproveResultEnum approveResult) throws Exception {
+	/**
+	 * 处理退出审批结果
+	 * 
+	 * @param stationApplyId
+	 * @param approveResult
+	 * @throws Exception
+	 */
+	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		OperatorDto operator = new OperatorDto();
 		String operatorId = "sys";
 		operator.setOperator(operatorId);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
-		
+
 		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 
@@ -95,8 +110,7 @@ public class ProcessApproveResultProcessor {
 			// 取消物流站点，取消支付宝标示，
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUIT,
-							 partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
-
+							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
@@ -110,7 +124,7 @@ public class ProcessApproveResultProcessor {
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
-							 partnerInstanceBO.getPartnerInstanceById(instanceId),operator));
+							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		}
 		// tair清空缓存
 	}
