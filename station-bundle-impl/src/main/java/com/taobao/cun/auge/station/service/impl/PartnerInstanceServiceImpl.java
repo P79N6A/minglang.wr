@@ -15,6 +15,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -23,7 +24,6 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.TradeBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
@@ -32,7 +32,6 @@ import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
@@ -96,7 +95,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	PartnerBO partnerBO;
 
 	@Autowired
-	TradeBO tradeBO;
+	TradeAdapter tradeBO;
 
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
