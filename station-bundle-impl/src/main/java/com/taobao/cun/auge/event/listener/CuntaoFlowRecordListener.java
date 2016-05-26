@@ -1,41 +1,92 @@
 package com.taobao.cun.auge.event.listener;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.common.lang.StringUtil;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
+import com.taobao.cun.auge.dal.mapper.CuntaoFlowRecordMapper;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
 @EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
-public class CuntaoFlowRecordListener implements EventListener{
+public class CuntaoFlowRecordListener implements EventListener {
+
+	@Autowired
+	CuntaoFlowRecordMapper cuntaoFlowRecordMapper;
+
+	@Autowired
+	Emp360Adapter emp360Adapter;
+
+	@Autowired
+	UicReadAdapter uicReadAdapter;
 
 	@Override
 	public void onMessage(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long stationId = stateChangeEvent.getStationId();
-		
-		
-//		// 正式提交后，入驻中，发短信
-//				if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
-//					return DingtalkTemplateEnum.NODE_COMMIT;
-//				} // 正式提交后，装修中，发短信
-//				else if (PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)) {
-//					return DingtalkTemplateEnum.NODE_RECV;
-//				} // 正式提交后，服务中，发短信
-//				else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
-//					return DingtalkTemplateEnum.NODE_OPEN;
-//				} // 申请停业,发短信
-//				else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
-//					return DingtalkTemplateEnum.NODE_LEAVE_APPLY;
-//				} // 由停业中，变更为已停业,发短信
-//				else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
-//					return DingtalkTemplateEnum.NODE_LEAVE;
-//				}
+		String operator = stateChangeEvent.getOperator();
+		OperatorTypeEnum operatorType = stateChangeEvent.getOperatorType();
+
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+
+		cuntaoFlowRecord.setTargetId(stationId);
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle(stateChangeEnum.getDescription());
+		cuntaoFlowRecord.setOperatorName(buildOperatorName(operator, operatorType));
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
+
+		cuntaoFlowRecordMapper.insertSelective(cuntaoFlowRecord);
 	}
 
+	private String buildRecordContent(PartnerInstanceStateChangeEvent stateChangeEvent) {
+		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
+
+		if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.SETTLING_REFUSED.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
+			return stateChangeEvent.getRemark();
+		} else if (PartnerInstanceStateChangeEnum.CLOSING_REFUSED.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.QUITTING_REFUSED.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
+			return "";
+		}
+		return "";
+	}
+
+	private String buildOperatorName(String operator, OperatorTypeEnum type) {
+		// 小二工号
+		if (OperatorTypeEnum.BUC.equals(type)) {
+			return emp360Adapter.getName(operator);
+		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
+			return uicReadAdapter.findTaobaoName(operator);
+		}
+		return operator;
+	}
 }

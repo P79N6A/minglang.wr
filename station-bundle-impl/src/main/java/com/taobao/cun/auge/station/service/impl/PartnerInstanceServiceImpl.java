@@ -378,9 +378,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		// 退出审批流程，由事件监听完成
 		// 记录村点状态变化
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
-						partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto));
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
+				partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
 
 		// 失效tair
 		// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
