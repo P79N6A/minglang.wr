@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -27,6 +26,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.TradeBO;
 import com.taobao.cun.auge.station.condition.PartnerLifecycleCondition;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -50,6 +50,7 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -290,6 +291,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
+		//参数校验
+		BeanValidator.validateWithThrowable(forcedCloseDto);
+		
 		Long instanceId = forcedCloseDto.getInstanceId();
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Long stationId = partnerStationRel.getStationId();
@@ -319,8 +323,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException {
-		
-		buildOperatorName(quitDto);
+		//参数校验
+		BeanValidator.validateWithThrowable(quitDto);
 		
 		Long instanceId = quitDto.getInstanceId();
 		String operator = quitDto.getOperator();
@@ -332,7 +336,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		validateQuitPreCondition(instance, partner);
 
 		// 保存退出申请单
-		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance);
+		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance,buildOperatorName(quitDto));
 		quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
 		// 合伙人实例退出中
@@ -369,16 +373,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				instanceId);
 	}
 	
-	private void buildOperatorName(OperatorDto operatorDto){
+	private String buildOperatorName(OperatorDto operatorDto){
 		String operator = operatorDto.getOperator();
 		OperatorTypeEnum type = operatorDto.getOperatorType();
 		
 		//小二工号
 		if(OperatorTypeEnum.BUC.equals(type)){
-			operatorDto.setOperatorName(emp360Adapter.getName(operator)); 
+			return emp360Adapter.getName(operator); 
 		}else if(OperatorTypeEnum.HAVANA.equals(type)){
-			operatorDto.setOperatorName(uicReadAdapter.findTaobaoName(operator)); 
+			return uicReadAdapter.findTaobaoName(operator); 
 		}
+		return "";
 	}
 
 	@Override
