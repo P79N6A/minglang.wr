@@ -5,7 +5,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.mapper.CuntaoFlowRecordMapper;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
