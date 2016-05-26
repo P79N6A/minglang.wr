@@ -2,7 +2,9 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -27,13 +30,17 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.ApplySettleDto;
+import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.OperatorDto;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -41,8 +48,10 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -96,18 +105,35 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	TradeAdapter tradeAdapter;
-
+	
+	@Autowired
+	AttachementBO attachementBO;
+	
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
 		Long instanceId = partnerInstanceDto.getId();
 		if (instanceId == null) {// 新增
-			Long stationId = stationBO.addStation(partnerInstanceDto.getStationDto());
-			Long partnerId = partnerBO.addPartner(partnerInstanceDto.getPartnerDto());
+			
+			StationDto stationDto = partnerInstanceDto.getStationDto();
+			stationDto.setState(StationStateEnum.INVALID);
+			stationDto.setStatus(StationStatusEnum.TEMP);
+			Long stationId = stationBO.addStation(stationDto);
+			List<AttachementDto> stationAttachementDtoList = stationDto.getAttachements();
+			if (CollectionUtils.isNotEmpty(stationAttachementDtoList)) {
+				attachementBO.addAttachementBatch(stationAttachementDtoList, stationId, AttachementBizTypeEnum.CRIUS_STATION);
+			}
+			
+			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+			partnerDto.setState(PartnerStateEnum.TEMP);
+			Long partnerId = partnerBO.addPartner(partnerDto);
+			List<AttachementDto> partnerAttachementDtoList = partnerDto.getAttachements();
+			if (CollectionUtils.isNotEmpty(partnerAttachementDtoList)) {
+				attachementBO.addAttachementBatch(partnerAttachementDtoList, partnerId, AttachementBizTypeEnum.PARTNER);
+			}
 			partnerInstanceDto.setStationId(stationId);
 			partnerInstanceDto.setPartnerId(partnerId);
 			instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
-			// TODO:新增附件
 		} else {// 修改
 			ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 			ValidateUtils.notNull(partnerInstanceDto.getStationDto().getId());

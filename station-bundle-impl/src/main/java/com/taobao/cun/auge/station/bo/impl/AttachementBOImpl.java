@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import com.taobao.cun.auge.dal.mapper.AttachementMapper;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("attachementBO")
@@ -63,4 +66,19 @@ public class AttachementBOImpl implements AttachementBO {
 		return attachement;
 	}
 
+	@Override
+	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
+			Long objectId, AttachementBizTypeEnum bizTypeEnum)
+			throws AugeServiceException {
+		ValidateUtils.notNull(attachementDtoList);
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(bizTypeEnum);
+		if (attachementDtoList.size() > 0) {
+			for (AttachementDto attachementDto:attachementDtoList) {
+				attachementDto.setObjectId(objectId);
+				attachementDto.setBizType(bizTypeEnum);
+				addAttachement(attachementDto);
+			}
+		}
+	}
 }

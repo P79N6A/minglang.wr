@@ -1,7 +1,10 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -26,6 +29,15 @@ public interface AttachementBO {
 	 * @throws AugeServiceException
 	 */
 	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto) throws AugeServiceException;
+	
+	/**
+	 * 批量新增附件
+	 * @param attachementDto
+	 * @param objectId
+	 * @param bizTypeEnum
+	 * @throws AugeServiceException
+	 */
+	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
 	
 
 }

@@ -4,18 +4,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProcessApproveResultEnum implements Serializable {
+/**
+ * 
+ * @author quanzhu.wangqz
+ *
+ */
+public class StationStateEnum implements Serializable {
 
-	private static final long serialVersionUID = 2593451750753952572L;
+	private static final long serialVersionUID = -6688380187765631177L;
 	
-	public static final ProcessApproveResultEnum APPROVE_PASS = new ProcessApproveResultEnum("APPROVE_PASS", "审批通过");
-	public static final ProcessApproveResultEnum APPROVE_REFUSE = new ProcessApproveResultEnum("APPROVE_REFUSE", "审批不通过 ");
-
-	private static final Map<String, ProcessApproveResultEnum> mappings = new HashMap<String, ProcessApproveResultEnum>();
-
+	public static final StationStateEnum NORMAL = new StationStateEnum(
+			"NORMAL", "正常");
+	public static final StationStateEnum INVALID = new StationStateEnum(
+			"INVALID", "失效");
+	
+	public static final Map<String, StationStateEnum> mappings = new HashMap<String, StationStateEnum>();
+	
 	static {
-		mappings.put("APPROVE_PASS", APPROVE_PASS);
-		mappings.put("APPROVE_REFUSE", APPROVE_REFUSE);
+		mappings.put("NORMAL", NORMAL);
+		mappings.put("INVALID", INVALID);
 	}
 
 	private String code;
@@ -49,25 +56,25 @@ public class ProcessApproveResultEnum implements Serializable {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (!(obj instanceof ProcessApproveResultEnum))
+		if (!(obj instanceof StationStateEnum))
 			return false;
-		ProcessApproveResultEnum objType = (ProcessApproveResultEnum) obj;
+		StationStateEnum objType = (StationStateEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
 
-	public ProcessApproveResultEnum(String code, String desc) {
+	public StationStateEnum(String code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}
 
-	public static ProcessApproveResultEnum valueof(String code) {
+	public static StationStateEnum valueof(String code) {
 		if (code == null)
 			return null;
 		return mappings.get(code);
 	}
 
 	@SuppressWarnings("unused")
-	private ProcessApproveResultEnum() {
+	private StationStateEnum() {
 
 	}
 }

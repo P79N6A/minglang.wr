@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.enums.PartnerStateEnum;
  */
 public class PartnerConverter {
 
-	public PartnerDto toPartnerDto(Partner partner) {
+	public static PartnerDto toPartnerDto(Partner partner) {
 		if (partner == null) {
 			return null;
 		}
@@ -42,7 +42,7 @@ public class PartnerConverter {
 		return partnerDto;
 	}
 
-	public Partner toParnter(PartnerDto parnterDto) {
+	public static Partner toParnter(PartnerDto parnterDto) {
 		if (parnterDto == null) {
 			return null;
 		}
@@ -68,7 +68,7 @@ public class PartnerConverter {
 		return partner;
 	}
 
-	public List<PartnerDto> toPartnerDtos(List<Partner> partner) {
+	public static List<PartnerDto> toPartnerDtos(List<Partner> partner) {
 		if (partner == null) {
 			return null;
 		}
@@ -81,7 +81,7 @@ public class PartnerConverter {
 		return list;
 	}
 
-	public List<Partner> toPartners(List<PartnerDto> partner) {
+	public static List<Partner> toPartners(List<PartnerDto> partner) {
 		if (partner == null) {
 			return null;
 		}

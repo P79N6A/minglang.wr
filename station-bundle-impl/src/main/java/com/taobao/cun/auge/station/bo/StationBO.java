@@ -5,6 +5,11 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
+/**
+ *服务站表基础服务
+ * @author quanzhu.wangqz
+ *
+ */
 public interface StationBO {
 	/**
 	 * 根据服务站id查询村点
@@ -14,15 +19,6 @@ public interface StationBO {
 	 * @throws AugeServiceException
 	 */
 	public Station getStationById(Long stationId) throws AugeServiceException;
-
-	/**
-	 * 根据stationId,查询村点所属组织id
-	 * 
-	 * @param stationId
-	 * @return
-	 * @throws AugeServiceException
-	 */
-	public Long getParentOrgId(Long stationId) throws AugeServiceException;
 
 	/**
 	 * 根据服务站编号查询村点
@@ -45,7 +41,7 @@ public interface StationBO {
 	/**
 	 * 新增服务站
 	 * @param stationDto
-	 * @return
+	 * @return 主键
 	 * @throws AugeServiceException
 	 */
 	public Long addStation(StationDto stationDto) throws AugeServiceException;
@@ -56,6 +52,6 @@ public interface StationBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public Long updateStation(StationDto stationDto) throws AugeServiceException;
+	public void updateStation(StationDto stationDto) throws AugeServiceException;
 
 }
