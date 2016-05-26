@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -37,27 +36,6 @@ public class CuntaoFlowRecordListener implements EventListener{
 //				else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 //					return DingtalkTemplateEnum.NODE_LEAVE;
 //				}
-	}
-
-}
-=======
-package com.taobao.cun.auge.event.listener;
-
-import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.event.domain.EventConstant;
-import com.taobao.cun.crius.event.Event;
-import com.taobao.cun.crius.event.annotation.EventSub;
-import com.taobao.cun.crius.event.client.EventListener;
-
-@Component("cuntaoFlowRecordListener")
-@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
-public class CuntaoFlowRecordListener implements EventListener{
-
-	@Override
-	public void onMessage(Event arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
