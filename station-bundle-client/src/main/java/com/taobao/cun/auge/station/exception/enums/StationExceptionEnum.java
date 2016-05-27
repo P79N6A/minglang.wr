@@ -41,7 +41,9 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 			"CAINIAO_STATION_NAME_TOO_LENGTH", "村服务点名称超过了菜鸟驿站要求的长度");
 	
 	public static final StationExceptionEnum STATION_NUM_IS_NULL = new StationExceptionEnum(
-			"STATION_NUM_IS_NULL", "村点编号不能为空");
+			"STATION_NUM_IS_NULL", "服务站编号不能为空");
+	public static final StationExceptionEnum STATION_ADDRESS_IS_NULL = new StationExceptionEnum(
+			"STATION_ADDRESS_IS_NULL", "服务站地址不能为空");
 	
 	
 

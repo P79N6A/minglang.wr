@@ -6,9 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.ApplySettleDto;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -23,11 +29,24 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
+	
 	@Override
-	public Long applySettle(ApplySettleDto applySettleDto, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
+	public Long applySettle(PartnerInstanceDto partnerInstanceDto, PartnerInstanceTypeEnum partnerInstanceTypeEnum)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		//构建入驻生命周期
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
+		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
+		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
+		partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
+		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
+		return partnerInstanceDto.getId();
 	}
 
 	@Override
