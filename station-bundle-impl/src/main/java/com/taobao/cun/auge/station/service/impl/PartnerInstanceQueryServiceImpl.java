@@ -38,11 +38,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Override
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition) {
-		PageHelper.startPage(1, 10);
-		Page<PartnerInstance> page = partnerStationRelMapper.findPartnerInstances();
-		PageDto<PartnerInstanceDto> result = PageDtoUtil.convert(page, PartnerInstanceConverter.convert(page));
+		try {
+			PageHelper.startPage(1, 10);
+			Page<PartnerInstance> page = partnerStationRelMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+			PageDto<PartnerInstanceDto> result = PageDtoUtil.convert(page, PartnerInstanceConverter.convert(page));
 
-		return result;
+			return result;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

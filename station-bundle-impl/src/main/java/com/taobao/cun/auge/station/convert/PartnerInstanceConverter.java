@@ -6,9 +6,12 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
+import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -22,8 +25,60 @@ import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 public final class PartnerInstanceConverter {
+
 	private PartnerInstanceConverter() {
 
+	}
+
+	public static PartnerInstanceExample convert(PartnerInstancePageCondition condition) {
+		PartnerInstanceExample example = new PartnerInstanceExample();
+
+		if (null == condition) {
+			return example;
+		}
+
+		if (StringUtil.isNotBlank(condition.getStationNum())) {
+			example.setStationNum(condition.getStationNum());
+		}
+		if (StringUtil.isNotBlank(condition.getStationName())) {
+			example.setStationName(condition.getStationName());
+		}
+		if (StringUtil.isNotBlank(condition.getManagerId())) {
+			example.setManagerId(condition.getManagerId());
+		}
+		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
+			example.setProviderId(condition.getProviderId());
+		}
+		Address address = condition.getAddress();
+		if (null != address) {
+			example.setProvince(address.getProvince());
+			example.setCity(address.getCity());
+			example.setCounty(address.getCounty());
+			example.setTown(address.getTown());
+		}
+
+		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
+			example.setTaobaoNick(condition.getTaobaoNick());
+		}
+		if (null != condition.getPartnerInstanceState()
+				&& StringUtil.isNotBlank(condition.getPartnerInstanceState().getCode())) {
+			example.setPartnerState(condition.getPartnerInstanceState().getCode());
+		}
+
+		// if (null != condition.getPartnerType()) {
+		// example.setPartnerType(condition.getPartnerType().getCode());
+		// }
+
+		if (StringUtil.isNotBlank(condition.getPartnerType())) {
+			example.setPartnerType(condition.getPartnerType());
+		}
+
+		if (StringUtil.isNotBlank(condition.getPartnerName())) {
+			example.setPartnerName(condition.getPartnerName());
+		}
+		example.setOrgIds(condition.getOrgIds());
+
+		return example;
 	}
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
@@ -69,7 +124,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
 		instanceDto.setPartnerLifecycleDto(null);
 
-		return null;
+		return instanceDto;
 	}
 
 	private static StationDto convertStationDto(PartnerInstance instance) {
