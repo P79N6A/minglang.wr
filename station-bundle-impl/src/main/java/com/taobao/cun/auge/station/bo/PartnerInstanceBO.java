@@ -130,7 +130,20 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
     public void updateOpenDate(Long instanceId,Date openDate,String operator) throws AugeServiceException;
-    
+    /**
+     * 新增实例关系
+     * @param partnerInstanceDto
+     * @return
+     * @throws AugeServiceException
+     */
     public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
+    
+    /**
+     * 检查taobaouserid 是否可以入驻
+     * @param taobaoUserId
+     * @return
+     * @throws AugeServiceException
+     */
+    public boolean checkSettleQualification(Long taobaoUserId) throws AugeServiceException;
     
 }

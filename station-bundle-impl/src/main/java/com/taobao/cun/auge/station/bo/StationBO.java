@@ -53,5 +53,16 @@ public interface StationBO {
 	 * @throws AugeServiceException
 	 */
 	public void updateStation(StationDto stationDto) throws AugeServiceException;
+	
+	/**
+	 * 检查服务站编号使用已经使用
+	 * 
+	 * @param stationNum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public int getStationCountByStationNum(String stationNum) throws AugeServiceException;
+	
+	
 
 }

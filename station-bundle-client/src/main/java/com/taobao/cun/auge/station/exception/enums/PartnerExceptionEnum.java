@@ -26,10 +26,12 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 			"PARTNER_NAME_IS_NULL", "申请人姓名不能为空");
 	public static final PartnerExceptionEnum PARTNER_ALIPAYACCOUNT_NOTEQUAL = new PartnerExceptionEnum(
 			"PARTNER_ALIPAYACCOUNT_NOTEQUAL", "您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对");
-	public static final PartnerExceptionEnum PARTNER__PERSION_INFO_NOTEQUAL = new PartnerExceptionEnum(
-			"PARTNER__PERSION_INFO_NOTEQUAL", "目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
+	public static final PartnerExceptionEnum PARTNER_PERSION_INFO_NOTEQUAL = new PartnerExceptionEnum(
+			"PARTNER_PERSION_INFO_NOTEQUAL", "目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
 	
-
+	public static final PartnerExceptionEnum PARTNER_TAOBAOUSERID_HAS_USED = new PartnerExceptionEnum(
+			"PARTNER_TAOBAOUSERID_HAS_USED", "该账号已经存在活动的加盟申请");
+	
 
 	static {
 		mappings.put("NO_RECORD", NO_RECORD);
@@ -39,7 +41,8 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_ALIPAYACCOUNT_IS_NULL", PARTNER_ALIPAYACCOUNT_IS_NULL);
 		mappings.put("PARTNER_NAME_IS_NULL", PARTNER_NAME_IS_NULL);
 		mappings.put("PARTNER_ALIPAYACCOUNT_NOTEQUAL", PARTNER_ALIPAYACCOUNT_NOTEQUAL);
-		mappings.put("PARTNER__PERSION_INFO_NOTEQUAL", PARTNER__PERSION_INFO_NOTEQUAL);
+		mappings.put("PARTNER_PERSION_INFO_NOTEQUAL", PARTNER_PERSION_INFO_NOTEQUAL);
+		mappings.put("PARTNER_TAOBAOUSERID_HAS_USED", PARTNER_TAOBAOUSERID_HAS_USED);
 	}
 
 	public PartnerExceptionEnum(String code, String desc) {

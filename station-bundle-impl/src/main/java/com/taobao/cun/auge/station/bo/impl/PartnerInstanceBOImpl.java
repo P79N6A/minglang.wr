@@ -9,23 +9,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
+
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.Attachement;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
-
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.entity.Example.Criteria;
+import com.taobao.pandora.util.StringUtils;
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -37,6 +43,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Autowired
 	PartnerStationRelMapper partnerStationRelMapper;
+	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Override
 	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
@@ -217,5 +226,42 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		return null;
+	}
+
+	@Override
+	public boolean checkSettleQualification(Long taobaoUserId)
+			throws AugeServiceException {
+		Partner partnerCondition = new Partner();
+		partnerCondition.setTaobaoUserId(taobaoUserId);
+		partnerCondition.setIsDeleted("n");
+		partnerCondition.setState(PartnerStateEnum.NORMAL.getCode());
+		Partner partner = partnerMapper.selectOne(partnerCondition);
+		if (partner == null || partner.getId() ==null) {
+			return true;
+		}
+		
+		Example example = new Example(PartnerStationRel.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andCondition("isDeleted","n");
+		criteria.andCondition("partnerId",partner.getId());
+		criteria.andIn("state", PartnerInstanceStateEnum.unReSettlableStatusCodeList());
+		List<PartnerStationRel> instatnceList  = partnerStationRelMapper.selectByExample(example);
+		
+		if (CollectionUtils.isEmpty(instatnceList)) {
+			return true;
+		}
+		for (PartnerStationRel rel: instatnceList) {
+			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(),rel.getState())) {
+				return false;
+			}else {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
+				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(),item.getCurrentStep())) {
+					continue;
+				}
+				return false;
+			}
+			
+		}
+		return true;
 	}
 }
