@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,10 +71,9 @@ public class AttachementBOImpl implements AttachementBO {
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum)
 			throws AugeServiceException {
-		ValidateUtils.notNull(attachementDtoList);
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
-		if (attachementDtoList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(attachementDtoList)) {
 			for (AttachementDto attachementDto:attachementDtoList) {
 				attachementDto.setObjectId(objectId);
 				attachementDto.setBizType(bizTypeEnum);
