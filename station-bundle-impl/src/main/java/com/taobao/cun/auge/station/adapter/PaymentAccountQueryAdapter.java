@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.adapter;
 
 import com.taobao.cun.auge.station.dto.OperatorDto;
-import com.taobao.cun.dto.uic.PaymentAccountDto;
+import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 
 public interface PaymentAccountQueryAdapter {
 	
