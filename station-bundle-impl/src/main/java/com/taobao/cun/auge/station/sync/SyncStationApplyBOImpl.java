@@ -1,284 +1,386 @@
 package com.taobao.cun.auge.station.sync;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.utils.FeatureUtil;
+import com.taobao.cun.auge.dal.domain.AccountMoney;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Protocol;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationApply;
+import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerLifecycleItemsMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationCategoryEnum;
+import com.taobao.cun.auge.station.enums.TargetTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
+import com.taobao.util.CollectionUtil;
+import com.taobao.vipserver.client.utils.CollectionUtils;
 
-
+import tk.mybatis.mapper.entity.Example;
 
 @Component("syncStationApplyBO")
-public class SyncStationApplyBOImpl implements SyncStationApplyBO{
-	
+public class SyncStationApplyBOImpl implements SyncStationApplyBO {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final String ERROR_MSG = "SYNC_BACK_TO_STATIONAPPLY_ERROR";
+
 	@Autowired
 	StationApplyMapper stationApplyMapper;
-	
 	@Autowired
-	ProtocolBO protocolBO;
+	PartnerMapper partnerMapper;
+	@Autowired
+	PartnerStationRelMapper partnerStationRelMapper;
+	@Autowired
+	PartnerLifecycleItemsMapper partnerLifecycleItemsMapper;
+	@Autowired
+	StationMapper stationMapper;
+	@Autowired
+	AccountMoneyMapper accountMoneyMapper;
+	@Autowired
+	PartnerProtocolRelMapper partnerProtocolRelMapper;
+	@Autowired
+	ProtocolMapper protocolMapper;
 
-	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
-
-	@Autowired
-	PartnerInstanceHandler partnerInstanceHandler;
-	
-	@Autowired
-	PartnerLifecycleBO partnerLifecycleBO;
-	
-	@Autowired
-	StationBO stationBO;
-	
-	@Autowired
-	QuitStationApplyBO quitStationApplyBO;
-	
-	@Autowired
-	PartnerBO partnerBO;
-	
-	
 	@Override
-	public Long syncTemp(Long partnerInstanceId) throws AugeServiceException {
-		PartnerStationRel  instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
-		if (instance ==null || PartnerInstanceTypeEnum.TPV.equals(instance.getType())) {
+	public StationApply addStationApply(Long partnerInstanceId) throws AugeServiceException {
+		try {
+			StationApply stationApply = buildStationApply(partnerInstanceId, SyncStationApplyEnum.ADD);
+			stationApply.setVersion(0l);
+			// stationApply.setCustomerLevel(customerLevel);
+			logger.info("sync add to station_apply : {}", JSON.toJSONString(stationApply));
+			stationApplyMapper.insert(stationApply);
+
+			// 更新instance的station_apply_id字段
+			PartnerStationRel instance = new PartnerStationRel();
+			instance.setId(partnerInstanceId);
+			instance.setStationApplyId(stationApply.getId());
+			instance.setGmtModified(new Date());
+			partnerStationRelMapper.updateByPrimaryKeySelective(instance);
+			logger.info("sync add success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
+
+			return stationApply;
+		} catch (Exception e) {
+			logger.error(ERROR_MSG + ": addStationApply", e);
 			return null;
 		}
-		Station station = stationBO.getStationById(instance.getStationId());
-		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
-		Long stationAppyId= instance.getStationApplyId();
-		StationApply stationApply = bulidStationApply(station,partner,instance,null);
-		if (stationAppyId == null) {//新增
-			stationApplyMapper.insert(stationApply);
-		}else {//修改
-			stationApply.setId(stationAppyId);
+	}
+
+	@Override
+	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType) throws AugeServiceException {
+		try {
+			if (null == updateType) {
+				updateType = SyncStationApplyEnum.ALL;
+			}
+			StationApply stationApply = buildStationApply(partnerInstanceId, updateType);
+			logger.info("sync upate to station_apply {} : {}", updateType, JSON.toJSONString(stationApply));
 			stationApplyMapper.updateByPrimaryKey(stationApply);
+		} catch (Exception e) {
+			logger.error(ERROR_MSG + ": updateStationApply", e);
 		}
-		return stationAppyId;
 	}
-	
-	private StationApply bulidStationApply(Station station,Partner partner,PartnerStationRel instance,
+
+	private StationApply buildStationApply(Long partnerInstanceId, SyncStationApplyEnum buildType) {
+		StationApply stationApply = new StationApply();
+		if (null == partnerInstanceId || partnerInstanceId == 0l) {
+			throw new IllegalArgumentException("partnerInstanceId can not be null");
+		}
+		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
+		if (buildType != SyncStationApplyEnum.ADD) {
+			if (null == instance.getStationApplyId()) {
+				throw new AugeServiceException("[update]instance's station_apply_id is null, instance_id = " + partnerInstanceId);
+			}
+			stationApply.setId(instance.getStationApplyId());
+			if (null == stationApplyMapper.selectByPrimaryKey(instance.getStationApplyId())) {
+				throw new AugeServiceException("[update]station_apply not exists, instance_id = " + partnerInstanceId);
+			}
+		}
+
+		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
+		Partner partner = partnerMapper.selectByPrimaryKey(instance.getPartnerId());
+		Example example = new Example(PartnerLifecycleItems.class);
+		example.createCriteria().andNotEqualTo("current_step", "end").andEqualTo("partnerInstanceId", instance.getId())
+				.andEqualTo("businessType", instance.getState());
+
+		List<PartnerLifecycleItems> partnerLifecycleItemsList = partnerLifecycleItemsMapper.selectByExample(example);
+		PartnerLifecycleItems partnerLifecycleItems = CollectionUtil.isEmpty(partnerLifecycleItemsList) ? null
+				: partnerLifecycleItemsList.iterator().next();
+
+		// 设置状态
+		String stationApplySate = convertInstanceState2StationApplyState(instance.getType(), instance.getState(), partnerLifecycleItems);
+		stationApply.setState(stationApplySate);
+
+		switch (buildType) {
+		case STATE:
+			break;
+		case ADD:
+			buildBaseInfo(stationApply, instance, station, partner);
+			break;
+		case BASE:
+			buildBaseInfo(stationApply, instance, station, partner);
+			break;
+		case ALL:
+			buildBaseInfo(stationApply, instance, station, partner);
+			buildProtocolAndMoneyInfo(stationApply, instance, station, partner);
+			break;
+		}
+		return stationApply;
+	}
+
+	private void buildProtocolAndMoneyInfo(StationApply stationApply, PartnerStationRel instance, Station station, Partner partner) {
+
+		/**
+		 * account_money相关信息
+		 * 
+		 * thaw_time,frozen_time,frozen_money
+		 */
+		AccountMoney param = new AccountMoney();
+		param.setObjectId(instance.getId());
+		param.setType(AccountMoneyTypeEnum.PARTNER_BOND.getCode());
+		param.setTargetType(TargetTypeEnum.PARTNER_INSTANCE.getCode());
+		List<AccountMoney> list = accountMoneyMapper.select(param);
+		if (!CollectionUtils.isEmpty(list)) {
+			AccountMoney accountMoney = list.iterator().next();
+			stationApply.setFrozenTime(accountMoney.getFrozenTime());
+			stationApply.setFrozenMoney(String.valueOf(accountMoney.getMoney().doubleValue()));
+			stationApply.setThawTime(accountMoney.getThawTime());
+		}
+
+		/**
+		 * protocol相关信息
+		 * 
+		 * confirmed_time ,protocol_version ,quit_protocol_version,
+		 * manage_protocol_version,manage_protocol_confirmed
+		 */
+
+		List<ProtocolTypeEnum> protocolTypeList = Lists.newArrayList(ProtocolTypeEnum.SETTLE_PRO, ProtocolTypeEnum.MANAGE_PRO,
+				ProtocolTypeEnum.PARTNER_QUIT_PRO);
+		List<Protocol> pList = protocolMapper.selectAll();
+
+		for (ProtocolTypeEnum p : protocolTypeList) {
+			Protocol protocol = null;
+			for (Protocol item : pList) {
+				if (p.getCode().equals(item.getType())) {
+					protocol = item;
+					break;
+				}
+			}
+			if (protocol == null) {
+				throw new AugeServiceException("protocol not exists : " + p.getCode());
+			}
+			PartnerProtocolRel relParam = new PartnerProtocolRel();
+			relParam.setTargetType(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode());
+			relParam.setProtocolId(protocol.getId());
+			relParam.setObjectId(instance.getId());
+			List<PartnerProtocolRel> prList = partnerProtocolRelMapper.select(relParam);
+			if (CollectionUtils.isEmpty(prList)) {
+				continue;
+			}
+			PartnerProtocolRel rel = prList.iterator().next();
+			if (ProtocolTypeEnum.SETTLE_PRO.equals(p)) {
+				stationApply.setConfirmedTime(rel.getConfirmTime());
+				stationApply.setProtocolVersion(String.valueOf(protocol.getVersion()));
+			} else if (ProtocolTypeEnum.MANAGE_PRO.equals(p)) {
+				stationApply.setManageProtocolConfirmed(rel.getConfirmTime());
+				stationApply.setManageProtocolVersion(String.valueOf(protocol.getVersion()));
+			} else if (ProtocolTypeEnum.PARTNER_QUIT_PRO.equals(String.valueOf(protocol.getVersion()))) {
+				stationApply.setQuitProtocolVersion(String.valueOf(protocol.getVersion()));
+			}
+
+		}
+
+		// protocol_confirming_step
+		// customer_level,contact_date
+		// submitted_people_name
+
+	}
+
+	/**
+	 * 设置instance、partner、stationx逆袭到station_apply
+	 * 
+	 * @param stationApply
+	 * @param instance
+	 * @param station
+	 * @param partner
+	 */
+	private void buildBaseInfo(StationApply stationApply, PartnerStationRel instance, Station station, Partner partner) {
+
+		// 村点信息
+		stationApply.setName(station.getName());
+		stationApply.setCovered(station.getCovered());
+		stationApply.setProducts(station.getProducts());
+		stationApply.setLogisticsState(station.getLogisticsState());
+		stationApply.setDescription(station.getDescription());
+		stationApply.setFormat(station.getFormat());
+		stationApply.setOwnOrgId(station.getApplyOrg());
+		stationApply.setStationNum(station.getStationNum());
+		stationApply.setAreaType(station.getAreaType());
+		stationApply.setFixedType(station.getFixedType());
+
+		stationApply.setProvince(station.getProvince());
+		stationApply.setProvinceDetail(station.getProvinceDetail());
+		stationApply.setCity(station.getCity());
+		stationApply.setCityDetail(station.getCityDetail());
+		stationApply.setCounty(station.getCounty());
+		stationApply.setCountyDetail(station.getCountyDetail());
+		stationApply.setTown(station.getTown());
+		stationApply.setTownDetail(station.getTownDetail());
+		stationApply.setAddressDetail(station.getAddress());
+		stationApply.setLat(station.getLat());
+		stationApply.setLng(station.getLng());
+		stationApply.setVillage(station.getVillage());
+		stationApply.setVillageDetail(station.getVillageDetail());
+		stationApply.setCreator(station.getCreater());
+		stationApply.setModifier(station.getModifier());
+
+		String feature = station.getFeature();
+		if (StringUtils.isNotBlank(feature)) {
+			Map<String, String> featureMap = FeatureUtil.toMap(feature);
+			stationApply.setVillageFlag(featureMap.get("villageFlag"));
+			stationApply.setPlaceFlag(featureMap.get("placeFlag"));
+			// station里存的是code，station_apply存的是中文描述
+			stationApply.setCategory(changeStationCategoryCode2Value(featureMap.get("category")));
+			stationApply.setManagementType(featureMap.get("managementType"));
+		}
+
+		// 人员信息
+		stationApply.setTaobaoUserId(partner.getTaobaoUserId());
+		stationApply.setTaobaoNick(partner.getTaobaoNick());
+		stationApply.setEmail(partner.getEmail());
+		stationApply.setAlipayAccount(partner.getAlipayAccount());
+		stationApply.setIdenNum(partner.getIdenNum());
+		stationApply.setMobile(partner.getMobile());
+		stationApply.setBusinessType(partner.getBusinessType());
+		stationApply.setApplierName(partner.getName());
+
+		// 实例信息
+		stationApply.setServiceBeginDate(instance.getServiceBeginTime());
+		stationApply.setServiceEndDate(instance.getServiceEndTime());
+		stationApply.setApplyTime(instance.getApplyTime());
+		stationApply.setApplierType(instance.getApplierType());
+		stationApply.setApplierId(instance.getApplierId());
+		stationApply.setOpenDate(instance.getOpenDate());
+		stationApply.setOperatorType(instance.getType());
+
+		stationApply.setPartnerStationId(instance.getParentStationId());
+		stationApply.setQuitType(instance.getCloseType());
+		// 设置station_id
+		String instanceState = instance.getState();
+		if (!PartnerInstanceStateEnum.TEMP.getCode().equals(instanceState)
+				&& !PartnerInstanceStateEnum.SETTLING.getCode().equals(instanceState)
+				&& !PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instanceState)) {
+			stationApply.setStationId(instance.getStationId());
+		}
+
+	}
+
+	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
 			PartnerLifecycleItems PartnerLifecycle) {
-			StationApply stationApply = new StationApply(); 
-			//村点信息
-			stationApply.setName(station.getName());
-			stationApply.setCovered(station.getCovered());
-			stationApply.setProducts(station.getProducts());
-			stationApply.setLogisticsState(station.getLogisticsState());
-			stationApply.setDescription(station.getDescription());
-			stationApply.setFormat(station.getFormat());
-			stationApply.setOwnOrgId(station.getApplyOrg());
-			stationApply.setStationNum(station.getStationNum());
-			stationApply.setAreaType(station.getAreaType());
-			stationApply.setFixedType(station.getFixedType());
+		if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.TEMP.getCode();
+		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
+			// if (PartnerLifecycle != null) {
+			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
+				if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+					return StationApplyStateEnum.TPA_TEMP.getCode();
+				}
+			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.equals(PartnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.SUMITTED.getCode();
+			} else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.CONFIRMED.getCode();
+			}
+			// }
+		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.TPA_AUDIT_FAIL.getCode();
+		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.DECORATING.getCode();
+		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
+			if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+				return StationApplyStateEnum.TPA_SERVICING.getCode();
+			} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)) {
+				return StationApplyStateEnum.SERVICING.getCode();
+			}
+		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT_APPLYING.getCode();
+		} else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
+		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
+			if (PartnerLifecycle != null) {
+				if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
+					return StationApplyStateEnum.QUITAUDITING.getCode();
+				} else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
+					return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
+				}
+			}
+		} else if (PartnerInstanceStateEnum.QUIT.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT.getCode();
+		}
+		return null;
 
-			stationApply.setProvince(station.getProvince());
-			stationApply.setProvinceDetail(station.getProvinceDetail());
-			stationApply.setCity(station.getCity());
-			stationApply.setCityDetail(station.getCityDetail());
-			stationApply.setCounty(station.getCounty());
-			stationApply.setCountyDetail(station.getCountyDetail());
-			stationApply.setTown(station.getTown());
-	        stationApply.setTownDetail(station.getTownDetail());
-	        stationApply.setAddressDetail(station.getAddress());
-	        stationApply.setLat(station.getLat());
-	        stationApply.setLng(station.getLng());
-	        stationApply.setVillage(station.getVillage());
-	        stationApply.setVillageDetail(station.getVillageDetail());
-	        stationApply.setCreator(station.getCreater());
-	        stationApply.setModifier(station.getModifier());
-	        
-	        //人员信息
-	        stationApply.setTaobaoUserId(partner.getTaobaoUserId());
-	        stationApply.setTaobaoNick(partner.getTaobaoNick());
-	        stationApply.setEmail(partner.getEmail());
-	        stationApply.setAlipayAccount(partner.getAlipayAccount());
-	        stationApply.setIdenNum(partner.getIdenNum());
-	        stationApply.setMobile(partner.getMobile());
-	        stationApply.setBusinessType(partner.getBusinessType());
-	        stationApply.setApplierName(partner.getName());
-	        
-	        //实例信息
-	        stationApply.setServiceBeginDate(instance.getServiceBeginTime());
-	        stationApply.setServiceEndDate(instance.getServiceEndTime());
-	        stationApply.setApplyTime(instance.getApplyTime());
-	        stationApply.setApplierType(instance.getApplierType());
-	        stationApply.setApplierId(instance.getApplierId());
-	        stationApply.setOpenDate(instance.getOpenDate());
-	        stationApply.setOperatorType(instance.getType());
-
-	        stationApply.setPartnerStationId(instance.getParentStationId());
-	        stationApply.setQuitType(instance.getCloseType());
-	        
-	        //状态
-	        convertInstanceState2StationApplyState(instance.getType(),instance.getState(),PartnerLifecycle);
-	        
-	        return stationApply;
-	}
-	
-	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,PartnerLifecycleItems PartnerLifecycle) {
-        if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
-           return StationApplyStateEnum.TEMP.getCode();
-        } else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
-        	if (PartnerLifecycle != null) {
-        		if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
-        			if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
-        				 return StationApplyStateEnum.TPA_TEMP.getCode();
-        			}
-        		}else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.equals(PartnerLifecycle.getCurrentStep())) {
-        			return StationApplyStateEnum.SUMITTED.getCode();
-        		}else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
-        			return StationApplyStateEnum.CONFIRMED.getCode();
-        		}
-        	}
-        }else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)) {
-        	return StationApplyStateEnum.TPA_AUDIT_FAIL.getCode();
-        }else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
-        	return StationApplyStateEnum.DECORATING.getCode();
-        }else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
-        	if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
-        		return StationApplyStateEnum.TPA_SERVICING.getCode();
-        	}else if(PartnerInstanceTypeEnum.TP.equals(partnerType)) {
-        		return StationApplyStateEnum.SERVICING.getCode();
-        	}
-        }else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
-        	return StationApplyStateEnum.QUIT_APPLYING.getCode();
-        }else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instatnceState)) {
-        	return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
-        }else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
-        	if (PartnerLifecycle != null) {
-        		if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
-        		return StationApplyStateEnum.QUITAUDITING.getCode();
-        		}else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
-        			return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
-        		}
-        	}
-        }else if (PartnerInstanceStateEnum.QUIT.getCode().equals(instatnceState)) {
-        	return StationApplyStateEnum.QUIT.getCode();
-        }
-        return null;
-        
-    }
-
-	@Override
-	public void syncTPATemp(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
 	}
 
-	@Override
-	public void syncTPATempAduitNotPass(Long partnerInstanceId)throws AugeServiceException {
-		syncTemp(partnerInstanceId);
-		
+	private static String changeStationCategoryCode2Value(String code) {
+		if (code == null) {
+			return null;
+		}
+		if (StationCategoryEnum.ZONGHE.getCode().equals(code)) {
+			return StationCategoryEnum.ZONGHE.getDesc();
+		}
+		if (StationCategoryEnum.NONGZI.getCode().equals(code)) {
+			return StationCategoryEnum.NONGZI.getDesc();
+		}
+		if (StationCategoryEnum.JIADIAN.getCode().equals(code)) {
+			return StationCategoryEnum.JIADIAN.getDesc();
+		}
+		if (StationCategoryEnum.SANCSHUMA.getCode().equals(code)) {
+			return StationCategoryEnum.SANCSHUMA.getDesc();
+		}
+		if (StationCategoryEnum.QIMOPEI.getCode().equals(code)) {
+			return StationCategoryEnum.QIMOPEI.getDesc();
+		}
+		if (StationCategoryEnum.JIAZHUANG.getCode().equals(code)) {
+			return StationCategoryEnum.JIAZHUANG.getDesc();
+		}
+		if (StationCategoryEnum.FUZHUANG.getCode().equals(code)) {
+			return StationCategoryEnum.FUZHUANG.getDesc();
+		}
+		if (StationCategoryEnum.MUYING.getCode().equals(code)) {
+			return StationCategoryEnum.MUYING.getDesc();
+		}
+		if (StationCategoryEnum.RIBAI.getCode().equals(code)) {
+			return StationCategoryEnum.RIBAI.getDesc();
+		}
+		if (StationCategoryEnum.CANYIN.getCode().equals(code)) {
+			return StationCategoryEnum.CANYIN.getDesc();
+		}
+		if (StationCategoryEnum.QITA.getCode().equals(code)) {
+			return StationCategoryEnum.QITA.getDesc();
+		}
+		return null;
 	}
 
-	@Override
-	public void syncTPDegrade(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncSumitted(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void synctempSubmit(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncConfirm(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncfreeze(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncModify(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncForcedClosure(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncClosing(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncForcedClosureAudit(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncCloseConfirm(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncQuiting(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncQuitingAudit(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncHasthaw(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncDecorating(Long partnerInstanceId)throws AugeServiceException {
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncServicing(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-
-	@Override
-	public void syncDelete(Long partnerInstanceId) throws AugeServiceException{
-		syncTemp(partnerInstanceId);
-		
-	}
-	
 }

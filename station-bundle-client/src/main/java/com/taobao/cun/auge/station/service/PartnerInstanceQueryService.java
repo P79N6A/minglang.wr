@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.dto.PageDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -12,7 +14,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PartnerInstanceDto queryInfo(Long partnerInstanceId) throws AugeServiceException;
-	
+
 	/**
 	 * 详情，人和村。已脫敏
 	 * 
@@ -22,4 +24,7 @@ public interface PartnerInstanceQueryService {
 	public PartnerInstanceDto querySafedInfo(Long partnerInstanceId) throws AugeServiceException;
 	
 	
+
+	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
+
 }
