@@ -27,4 +27,74 @@
     <result column="close_type" jdbcType="VARCHAR" property="closeType" />
     <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
   </resultMap>
+  
+  <resultMap id="PartnerInstanceMap" type="com.taobao.cun.auge.dal.domain.PartnerInstance">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
+    <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="is_deleted" jdbcType="CHAR" property="isDeleted" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="service_begin_time" jdbcType="TIMESTAMP" property="serviceBeginTime" />
+    <result column="service_end_time" jdbcType="TIMESTAMP" property="serviceEndTime" />
+    <result column="partner_id" jdbcType="BIGINT" property="partnerId" />
+    <result column="parent_station_id" jdbcType="BIGINT" property="parentStationId" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="applier_id" jdbcType="VARCHAR" property="applierId" />
+    <result column="bit" jdbcType="INTEGER" property="bit" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="open_date" jdbcType="TIMESTAMP" property="openDate" />
+    <result column="is_current" jdbcType="CHAR" property="isCurrent" />
+    <result column="applier_type" jdbcType="VARCHAR" property="applierType" />
+    <result column="close_type" jdbcType="VARCHAR" property="closeType" />
+    <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
+    
+    <!-- pepole -->
+     <result column="partner_name" jdbcType="VARCHAR" property="partnerName" />
+    <result column="alipay_account" jdbcType="VARCHAR" property="alipayAccount" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="taobao_nick" jdbcType="VARCHAR" property="taobaoNick" />
+    <result column="iden_num" jdbcType="VARCHAR" property="idenNum" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
+    <result column="partner_description" jdbcType="VARCHAR" property="partnerDescription" />
+    <result column="partner_state" jdbcType="VARCHAR" property="partnerState" />
+    
+    
+    <!-- station -->
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_description" jdbcType="VARCHAR" property="stationDescription" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+    <result column="city_detail" jdbcType="VARCHAR" property="cityDetail" />
+    <result column="county_detail" jdbcType="VARCHAR" property="countyDetail" />
+    <result column="town_detail" jdbcType="VARCHAR" property="townDetail" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="apply_org" jdbcType="BIGINT" property="applyOrg" />
+    <result column="taobao_user_id" jdbcType="BIGINT" property="taobaoUserId" />
+    <result column="station_num" jdbcType="VARCHAR" property="stationNum" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="village_detail" jdbcType="VARCHAR" property="villageDetail" />
+    <result column="covered" jdbcType="VARCHAR" property="covered" />
+    <result column="products" jdbcType="VARCHAR" property="products" />
+    <result column="logistics_state" jdbcType="VARCHAR" property="logisticsState" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <result column="area_type" jdbcType="VARCHAR" property="areaType" />
+    <result column="manager_id" jdbcType="VARCHAR" property="managerId" />
+    <result column="provider_id" jdbcType="BIGINT" property="providerId" />
+    <result column="feature" jdbcType="VARCHAR" property="feature" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
+  </resultMap>
 </mapper>

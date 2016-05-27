@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.station.enums.LogisticsStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
@@ -30,7 +31,7 @@ public class StationCondition implements Serializable {
 	private String name;
 
 	// 经营地址
-	private AddressCondition address;
+	private Address address;
 
 	// 目前业态
 	private String format;
@@ -107,11 +108,11 @@ public class StationCondition implements Serializable {
 		this.name = name;
 	}
 
-	public AddressCondition getAddress() {
+	public Address getAddress() {
 		return address;
 	}
 
-	public void setAddress(AddressCondition address) {
+	public void setAddress(Address address) {
 		this.address = address;
 	}
 
