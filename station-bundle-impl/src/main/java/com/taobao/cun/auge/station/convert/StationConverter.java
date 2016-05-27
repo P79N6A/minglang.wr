@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.convert;
 
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.station.dto.StationAddressDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 
 /**
@@ -18,7 +18,7 @@ public class StationConverter {
 	public static Station toStation(StationDto stationDto) {
 		Station station = new Station();
 		
-		StationAddressDto address = stationDto.getStationAddressDto();
+		Address address = stationDto.getAddress();
 		if (address != null) {
 			station.setProvince(address.getProvince());
 			station.setProvinceDetail(address.getProvinceDetail());
@@ -30,7 +30,7 @@ public class StationConverter {
 			station.setTownDetail(address.getTownDetail());
 			station.setVillage(address.getVillage());
 			station.setVillageDetail(address.getVillageDetail());
-			station.setAddress(address.getAddress());
+			station.setAddress(address.getAddressDetail());
 			station.setLat(address.getLat());
 			station.setLng(address.getLng());
 		}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -104,7 +105,7 @@ public class StationDto extends OperatorDto implements Serializable{
     /**
      * 服务站地址相关信息
      */
-    private StationAddressDto  stationAddressDto;
+    private Address  address;
 
 	public Long getId() {
 		return id;
@@ -226,12 +227,12 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.attachements = attachements;
 	}
 
-	public StationAddressDto getStationAddressDto() {
-		return stationAddressDto;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setStationAddressDto(StationAddressDto stationAddressDto) {
-		this.stationAddressDto = stationAddressDto;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	public StationFixedTypeEnum getFixedType() {

@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
+import com.taobao.cun.auge.common.Address;
+
 public class CaiNiaoStationDto implements Serializable {
 
 	private static final long serialVersionUID = 4477536541676182134L;
@@ -28,7 +30,7 @@ public class CaiNiaoStationDto implements Serializable {
 	/**
 	 * 站点地址信息
 	 */
-	private AddressDto stationAddress;
+	private Address stationAddress;
 
 	private String alipayAccount;
 	private String contact;
@@ -37,24 +39,13 @@ public class CaiNiaoStationDto implements Serializable {
 
 	private String loginId;
 	private Long taobaoUserId;
-	/**
-	 * 经度
-	 */
-	private String lat;
 
-	/**
-	 * 纬度
-	 */
-	private String lng;
 
 	private String modifier;
 
 	private Integer stationType;
 
 	private Integer inventoryNum;
-
-	private String village;
-	private String villageDetail;
 
 	/**
 	 * 站点编号
@@ -68,21 +59,6 @@ public class CaiNiaoStationDto implements Serializable {
 
 	private String applierId;
 
-	public String getVillage() {
-		return village;
-	}
-
-	public void setVillage(String village) {
-		this.village = village;
-	}
-
-	public String getVillageDetail() {
-		return villageDetail;
-	}
-
-	public void setVillageDetail(String villageDetail) {
-		this.villageDetail = villageDetail;
-	}
 
 	public String getStationName() {
 		return stationName;
@@ -92,28 +68,13 @@ public class CaiNiaoStationDto implements Serializable {
 		this.stationName = stationName;
 	}
 
-	public AddressDto getStationAddress() {
+
+	public Address getStationAddress() {
 		return stationAddress;
 	}
 
-	public void setStationAddress(AddressDto stationAddress) {
+	public void setStationAddress(Address stationAddress) {
 		this.stationAddress = stationAddress;
-	}
-
-	public String getLat() {
-		return lat;
-	}
-
-	public void setLat(String lat) {
-		this.lat = lat;
-	}
-
-	public String getLng() {
-		return lng;
-	}
-
-	public void setLng(String lng) {
-		this.lng = lng;
 	}
 
 	public String getAlipayAccount() {

@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,10 +23,10 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
-import com.taobao.cun.auge.station.dto.AddressDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -69,25 +68,35 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private AddCountyDomainParam buildAddCountyDomainParam(CaiNiaoStationDto dto) {
 		AddCountyDomainParam county = new AddCountyDomainParam();
 		county.setContact(dto.getContact());
-		county.setLat(StringUtils.isEmpty(dto.getLat())? "0":PositionUtil.converDown(dto.getLat()));
-		county.setLng(StringUtils.isEmpty(dto.getLng())? "0":PositionUtil.converDown(dto.getLng()));
 		county.setMobile(dto.getMobile());
 		county.setName(dto.getStationName());
 		county.setTelephone(dto.getTelephone());
 		
-		Map<String,Long> addressMap = getAddressCodeMap(dto.getStationAddress());
-		county.setProvinceId(addressMap.get("provinceId"));
-		county.setCityId(addressMap.get("cityId"));
-		county.setCountyId(addressMap.get("countyId"));
-		county.setTownId(addressMap.get("townId"));
-		county.setAddress(getAddress(dto.getStationAddress()));
-		
+		Address cainaioStationAddress = dto.getStationAddress();
+		if (cainaioStationAddress != null) {
+			if (StringUtil.isNotEmpty(cainaioStationAddress.getProvince())){
+				county.setProvinceId(Long.parseLong(cainaioStationAddress.getProvince()));
+			}
+			
+			if (StringUtil.isNotEmpty(cainaioStationAddress.getCity())){
+				county.setCityId(Long.parseLong(cainaioStationAddress.getCity()));
+			}
+			if (StringUtil.isNotEmpty(cainaioStationAddress.getCounty())){
+				county.setCountyId(Long.parseLong(cainaioStationAddress.getCounty()));
+			}
+			if (StringUtil.isNotEmpty(cainaioStationAddress.getTown())){
+				county.setTownId(Long.parseLong(cainaioStationAddress.getTown()));
+			}
+			county.setLat(StringUtils.isEmpty(cainaioStationAddress.getLat())? "0":PositionUtil.converDown(cainaioStationAddress.getLat()));
+			county.setLng(StringUtils.isEmpty(cainaioStationAddress.getLng())? "0":PositionUtil.converDown(cainaioStationAddress.getLng()));
+			county.setAddress(getAddress(cainaioStationAddress));
+		}
 		// 县运营中心 同步多个物流人账号,县运营中心，物流操作人，更新，采用邮件方式通知菜鸟，不再通过API方式，因此loginId可能为null
 		//county.setWangwangs(getWangWangSets(dto.getLoginId()));
 		return county;
 	}
 	
-	private  String getAddress(AddressDto stationAddress) {
+	private  String getAddress(Address stationAddress) {
 		 StringBuilder address = new StringBuilder();
 		 if (stationAddress != null) {
 			  address.append(stationAddress.getProvinceDetail()).append(ADDRESS_SPLIT)
@@ -97,36 +106,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
               .append(ADDRESS_SPLIT)
               .append(StringUtil.isBlank(stationAddress.getTownDetail()) ? " " : stationAddress.getTownDetail())
               .append(ADDRESS_SPLIT)
-              .append(StringUtil.isBlank(stationAddress.getAddress()) ? " " : stationAddress.getAddress());
+              .append(StringUtil.isBlank(stationAddress.getAddressDetail()) ? " " : stationAddress.getAddressDetail());
 		 }
          return address.toString();
-	}
-	
-	private Map<String,Long> getAddressCodeMap(AddressDto stationAddress) {
-		Map<String,Long> res = new HashMap<String,Long>();
-		Long provinceId =null;
-		Long cityId =null;
-		Long countyId =null;
-		Long townId =null;
-		if (null != stationAddress) {
-			if (StringUtil.isNotEmpty(stationAddress.getProvince())){
-				provinceId = Long.parseLong(stationAddress.getProvince());
-			}
-			if (StringUtil.isNotEmpty(stationAddress.getCity())){
-				cityId = Long.parseLong(stationAddress.getCity());
-			}
-			if (StringUtil.isNotEmpty(stationAddress.getCounty())){
-				countyId=Long.parseLong(stationAddress.getCounty());
-			}
-			if (StringUtil.isNotEmpty(stationAddress.getTown())){
-				townId=Long.parseLong(stationAddress.getTown());
-			}
-		}
-		res.put("provinceId", provinceId);
-		res.put("cityId", cityId);
-		res.put("countyId", countyId);
-		res.put("townId", townId);
-		return res;
 	}
 
 	@Override
@@ -184,24 +166,36 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		feature.put(CaiNiaoAdapter.CUNTAO_CODE, dto.getStationNum());
 		cnStation.setFeature(feature);
 		// cnStation.setId(id);
-		cnStation.setLat(StringUtil.isEmpty(dto.getLat()) ? "0" : PositionUtil.converDown(dto.getLat()));
-		cnStation.setLng(StringUtil.isEmpty(dto.getLng()) ? "0" : PositionUtil.converDown(dto.getLng()));
 		cnStation.setMobile(dto.getMobile());
 		cnStation.setName(dto.getStationName());
 		cnStation.setPhone(dto.getTelephone());
 		cnStation.setWangwang(dto.getLoginId());
 		// cnStation.setZipCode(zipCode);
 		
-		Map<String,Long> addressMap = getAddressCodeMap(dto.getStationAddress());
-		cnStation.setProvinceId(addressMap.get("provinceId"));
-		cnStation.setCityId(addressMap.get("cityId"));
-		cnStation.setCountyId(addressMap.get("countyId"));
-		cnStation.setTownId(addressMap.get("townId"));
-		//cnStation.setAreaCode(addressMap.get("countyId").toString());
-		if (dto.getStationAddress() != null && StringUtil.isNotEmpty(dto.getStationAddress().getVillage())) {
-			cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
+		Address stationAddress = dto.getStationAddress();
+		if (stationAddress != null) {
+			if (StringUtil.isNotEmpty(stationAddress.getProvince())){
+				cnStation.setProvinceId(Long.parseLong(stationAddress.getProvince()));
+			}
+			
+			if (StringUtil.isNotEmpty(stationAddress.getCity())){
+				cnStation.setCityId(Long.parseLong(stationAddress.getCity()));
+			}
+			if (StringUtil.isNotEmpty(stationAddress.getCounty())){
+				cnStation.setCountyId(Long.parseLong(stationAddress.getCounty()));
+			}
+			if (StringUtil.isNotEmpty(stationAddress.getTown())){
+				cnStation.setTownId(Long.parseLong(stationAddress.getTown()));
+			}
+			
+			cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
+			cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
+			//cnStation.setAreaCode(addressMap.get("countyId").toString());
+			if (stationAddress != null && StringUtil.isNotEmpty(stationAddress.getVillage())) {
+				cnStation.setCountryId(Long.parseLong(stationAddress.getVillage()));
+			}
+			cnStation.setAddress(getAddress(stationAddress));
 		}
-		cnStation.setAddress(getAddress(dto.getStationAddress()));
 		cnStation.setStationOpenTime(new Date());
 		return cnStation;
 	}
@@ -275,19 +269,29 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		//feature.add(CUNTAO_CODE, dto.getStationNum());
 		//cnStation.setFeature(feature);
 		cnStation.setId(dto.getStationId());
-		cnStation.setLat(StringUtil.isEmpty(dto.getLat()) ? "0" : PositionUtil.converDown(dto.getLat()));
-		cnStation.setLng(StringUtil.isEmpty(dto.getLng()) ? "0" : PositionUtil.converDown(dto.getLng()));
 		cnStation.setMobile(dto.getMobile());
 		cnStation.setName(dto.getStationName());
 		cnStation.setPhone(dto.getTelephone());
 		cnStation.setWangwang(dto.getLoginId());
 		// cnStation.setZipCode(zipCode); 没有
-		if (dto.getStationAddress() != null) {
-			Map<String,Long> addressMap = getAddressCodeMap(dto.getStationAddress());
-			cnStation.setProvinceId(addressMap.get("provinceId"));
-			cnStation.setCityId(addressMap.get("cityId"));
-			cnStation.setCountyId(addressMap.get("countyId"));
-			cnStation.setTownId(addressMap.get("townId"));
+		Address stationAddress = dto.getStationAddress();
+		if (stationAddress != null) {
+			if (StringUtil.isNotEmpty(stationAddress.getProvince())){
+				cnStation.setProvinceId(Long.parseLong(stationAddress.getProvince()));
+			}
+			
+			if (StringUtil.isNotEmpty(stationAddress.getCity())){
+				cnStation.setCityId(Long.parseLong(stationAddress.getCity()));
+			}
+			if (StringUtil.isNotEmpty(stationAddress.getCounty())){
+				cnStation.setCountyId(Long.parseLong(stationAddress.getCounty()));
+			}
+			if (StringUtil.isNotEmpty(stationAddress.getTown())){
+				cnStation.setTownId(Long.parseLong(stationAddress.getTown()));
+			}
+			
+			cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
+			cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
 			//cnStation.setAreaCode(addressMap.get("countyId"));
 			if (dto.getStationAddress() != null && StringUtil.isNotEmpty(dto.getStationAddress().getVillage())) {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
