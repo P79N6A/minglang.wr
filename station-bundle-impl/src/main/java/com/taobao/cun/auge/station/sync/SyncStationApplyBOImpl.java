@@ -93,8 +93,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 	@Override
 	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType) throws AugeServiceException {
 		try {
-			if (null == updateType) {
-				updateType = SyncStationApplyEnum.ALL;
+			if (null == updateType || SyncStationApplyEnum.ADD == updateType) {
+				throw new IllegalArgumentException("invalid param");
 			}
 			StationApply stationApply = buildStationApply(partnerInstanceId, updateType);
 			logger.info("sync upate to station_apply {} : {}", updateType, JSON.toJSONString(stationApply));

@@ -26,6 +26,8 @@
 
 		<property name="hsf.consumer.version.cuntaocenter.alipayAccountTagService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
+		<property name="hsf.consumer.version.cuntaocenter.paymentAccountQueryService" defaultValue="1.0.0.daily"
+			description="cuntaocenter-version" />
 
 
 
