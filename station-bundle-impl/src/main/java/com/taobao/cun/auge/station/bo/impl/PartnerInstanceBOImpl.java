@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.entity.Example.Criteria;
-
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.github.pagehelper.PageHelper;
@@ -20,19 +17,22 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.pandora.util.StringUtils;
+
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -48,22 +48,28 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
 	
+	@Autowired
+	PartnerBO partnerBO;
+	
 	@Override
 	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
-		Partner partnerCondition = new Partner();
-		partnerCondition.setTaobaoUserId(taobaoUserId);
-		partnerCondition.setIsDeleted("n");
-		partnerCondition.setState(PartnerStateEnum.NORMAL.getCode());
-		Partner partner = partnerMapper.selectOne(partnerCondition);
+		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 
-		PartnerStationRel relCondition = new PartnerStationRel();
-		relCondition.setPartnerId(partner.getId());
-		relCondition.setIsCurrent("y");
-		relCondition.setIsDeleted("n");
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		
+		Criteria criteria=	example.createCriteria();
+		
+		criteria.andPartnerIdEqualTo(partner.getId());
+		criteria.andIsCurrentEqualTo("y");
+		criteria.andIsDeletedEqualTo("n");
 		if (null != instanceState) {
-			relCondition.setState(instanceState.getCode());
+			criteria.andStateEqualTo(instanceState.getCode());
 		}
-		return partnerStationRelMapper.selectOne(relCondition);
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(instances)){
+			return null;
+		}
+		return instances.get(0);
 		
 	}
 	
@@ -78,15 +84,19 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	
 	@Override
 	public Long findPartnerInstanceId(Long stationApplyId) {
-		PartnerStationRel relCondition = new PartnerStationRel();
-		relCondition.setStationApplyId(stationApplyId);
-		relCondition.setIsDeleted("n");
-		PartnerStationRel rel = partnerStationRelMapper.selectOne(relCondition);
-		if (rel != null){
-			return rel.getId();
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationApplyIdEqualTo(stationApplyId);
+		criteria.andIsDeletedEqualTo("n");
+
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(instances)) {
+			return null;
 		}
-		return null;
-		
+		return instances.get(0).getId();
+
 	}
 
 	@Override
@@ -94,11 +104,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
-		PartnerStationRel relCondition = new PartnerStationRel();
-		relCondition.setParentStationId(parentStationId);
-		relCondition.setIsDeleted("n");
-		relCondition.setState(state.getCode());
-		return partnerStationRelMapper.selectCount(relCondition);
+		
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andParentStationIdEqualTo(parentStationId);
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStateEqualTo(state.getCode());
+		
+		return partnerStationRelMapper.countByExample(example);
 	}
 	
 	@Override
@@ -106,7 +122,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
-		Example example = new Example(PartnerStationRel.class);
+		PartnerStationRelExample example = new PartnerStationRelExample();
 		
 		Criteria criteria = example.createCriteria();
 		if(!CollectionUtils.isEmpty(stateEnums)){
@@ -116,14 +132,16 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 					return input.getCode();
 				}
 			});
-			criteria.andIn("state", states);
+			criteria.andStateIn(states);
 		}
-		criteria.andEqualTo("parentStationId", parentStationId);
-		criteria.andEqualTo("isDeleted", "n");
+
+		criteria.andParentStationIdEqualTo(parentStationId);
+		criteria.andIsDeletedEqualTo("n");
+
 		//排除自己
-		criteria.andNotEqualTo("type", curPartnerInstance.getType());
+		criteria.andTypeNotEqualTo(curPartnerInstance.getType());
 		
-		return partnerStationRelMapper.selectByExample(example).size();
+		return partnerStationRelMapper.countByExample(example);
 	}
 
 	@Override
@@ -218,12 +236,36 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (null == stationId) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
-		PartnerStationRel condition = new PartnerStationRel();
-		condition.setIsDeleted("n");
-		condition.setStationId(stationId);
-		condition.setIsCurrent("y");
-		return partnerStationRelMapper.selectOne(condition);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsCurrentEqualTo("y");
+		criteria.andIsDeletedEqualTo("n");
+		
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(instances)) {
+			return null;
+		}
+		return instances.get(0);
 	}
+	
+	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId,List<String> states) throws AugeServiceException {
+		if (null == partnerId) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andPartnerIdEqualTo(partnerId);
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStateIn(states);
+		
+		return partnerStationRelMapper.selectByExample(example);
+	}
+	
 
 	@Override
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)
@@ -234,21 +276,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Override
 	public boolean checkSettleQualification(Long taobaoUserId)
 			throws AugeServiceException {
-		Partner partnerCondition = new Partner();
-		partnerCondition.setTaobaoUserId(taobaoUserId);
-		partnerCondition.setIsDeleted("n");
-		partnerCondition.setState(PartnerStateEnum.NORMAL.getCode());
-		Partner partner = partnerMapper.selectOne(partnerCondition);
+		Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if (partner == null || partner.getId() ==null) {
 			return true;
 		}
 		
-		Example example = new Example(PartnerStationRel.class);
-		Criteria criteria = example.createCriteria();
-		criteria.andCondition("isDeleted","n");
-		criteria.andCondition("partnerId",partner.getId());
-		criteria.andIn("state", PartnerInstanceStateEnum.unReSettlableStatusCodeList());
-		List<PartnerStationRel> instatnceList  = partnerStationRelMapper.selectByExample(example);
+		List<PartnerStationRel> instatnceList  = findPartnerInstanceByPartnerId(partner.getId(),PartnerInstanceStateEnum.unReSettlableStatusCodeList());
 		
 		if (CollectionUtils.isEmpty(instatnceList)) {
 			return true;
@@ -282,11 +315,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (fetchNum < 0) {
 			return null;
 		}
-		Example example = new Example(PartnerStationRel.class);
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
 		Criteria criteria = example.createCriteria();
-		criteria.andCondition("isDeleted","n");
-		criteria.andLessThanOrEqualTo("openDate", new Date());
-		criteria.andCondition("state",PartnerInstanceStateEnum.DECORATING.getCode());
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andOpenDateLessThanOrEqualTo(new Date());
+		criteria.andStateEqualTo(PartnerInstanceStateEnum.DECORATING.getCode());
+		
+		
 		PageHelper.startPage(1, fetchNum);
 		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(resList)) {

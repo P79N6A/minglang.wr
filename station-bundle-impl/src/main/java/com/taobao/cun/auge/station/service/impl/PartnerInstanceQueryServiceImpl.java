@@ -17,7 +17,7 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -43,7 +43,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
 	
 	@Autowired
-	PartnerStationRelMapper partnerStationRelMapper;
+	PartnerStationRelExtMapper partnerStationRelExtMapper;
 	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
@@ -106,7 +106,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			//FIXME FHH 方便测试，暂时写死
 			PageHelper.startPage(1, 10);
-			Page<PartnerInstance> page = partnerStationRelMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
 			PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 
 			return result;
