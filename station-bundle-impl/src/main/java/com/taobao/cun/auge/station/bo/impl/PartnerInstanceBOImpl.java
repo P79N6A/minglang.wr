@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,8 +15,8 @@ import tk.mybatis.mapper.entity.Example.Criteria;
 
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.dal.domain.Attachement;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -190,12 +191,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Override
 	public void updateOpenDate(Long instanceId, Date openDate, String operator)
 			throws AugeServiceException {
-		if (null == instanceId|| openDate ==null || operator==null) {
+		if (null == instanceId|| operator==null) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
+		PartnerStationRel partnerStationRel = partnerStationRelMapper.selectByPrimaryKey(instanceId);
+		if (partnerStationRel ==null) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
 		
-		PartnerStationRel partnerStationRel = new PartnerStationRel();
-		partnerStationRel.setId(instanceId);
 		partnerStationRel.setOpenDate(openDate);
 		DomainUtils.beforeUpdate(partnerStationRel, operator);
 		partnerStationRelMapper.updateByPrimaryKey(partnerStationRel);
@@ -272,5 +275,27 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		rel.setId(instanceId);
 		DomainUtils.beforeDelete(rel, operator);
 		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
+	}
+
+	@Override
+	public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException {
+		if (fetchNum < 0) {
+			return null;
+		}
+		Example example = new Example(PartnerStationRel.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andCondition("isDeleted","n");
+		criteria.andLessThanOrEqualTo("openDate", new Date());
+		criteria.andCondition("state",PartnerInstanceStateEnum.DECORATING.getCode());
+		PageHelper.startPage(1, fetchNum);
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(resList)) {
+			return null;
+		}
+		 List<Long> instanceIdList = new ArrayList<Long>();
+		for (PartnerStationRel rel : resList) {
+			instanceIdList.add(rel.getId());
+		}
+		return instanceIdList;
 	}
 }

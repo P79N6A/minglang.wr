@@ -79,7 +79,7 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException;
-
+	
 	/**
 	 * 合伙人主动申请停业
 	 * 
@@ -123,5 +123,11 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	/**
+	 * 检查有没有开业包，要调用外部接口  到时候要写适配器封装外部接口 先定义在这里
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean checkKyPackage() throws AugeServiceException;
 	
 }

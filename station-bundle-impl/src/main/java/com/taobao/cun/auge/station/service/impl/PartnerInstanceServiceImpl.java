@@ -120,6 +120,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
+	@Autowired
+	
 	
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -447,6 +449,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
+		ValidateUtils.validateParam(openStationDto);
+		ValidateUtils.notNull(openStationDto.getPartnerInstanceId());
+		ValidateUtils.notNull(openStationDto.getOpenDate());
+		ValidateUtils.notNull(openStationDto.isImme());
 		if (openStationDto.isImme()) {// 立即开业
 			// TODO:检查开业包
 			if (!checkKyPackage()) {
@@ -469,6 +475,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		return false;
 	}
 
+	@Override
 	public boolean checkKyPackage() {
 		// TODO:检查开业包
 		return true;
@@ -521,6 +528,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
+		ValidateUtils.validateParam(confirmCloseDto);
 		Long partnerInstanceId = confirmCloseDto.getPartnerInstanceId();
 		String employeeId = confirmCloseDto.getOperator();
 		boolean isAgree = confirmCloseDto.isAgree();
