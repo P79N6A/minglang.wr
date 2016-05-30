@@ -116,4 +116,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		}
 	}
 
+	@Override
+	public Long findPartnerInstanceId(Long stationApplyId) {
+		return partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+	}
+
 }
