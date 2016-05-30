@@ -469,7 +469,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		return false;
 	}
 
-	private boolean checkKyPackage() {
+	public boolean checkKyPackage() {
 		// TODO:检查开业包
 		return true;
 	}

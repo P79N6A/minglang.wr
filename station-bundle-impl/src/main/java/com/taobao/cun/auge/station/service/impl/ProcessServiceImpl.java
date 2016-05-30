@@ -11,8 +11,10 @@ import com.taobao.cun.auge.event.listener.StartProcessListener;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -38,16 +40,19 @@ public class ProcessServiceImpl implements ProcessService {
 	public void startApproveProcess(StartProcessDto startProcessDto) {
 		String businessCode = startProcessDto.getBusinessCode();
 		Long businessId = startProcessDto.getBusinessId();
-		String applierId = startProcessDto.getApplierId();
-		Long applierOrgId = startProcessDto.getApplierOrgId();
 		String remarks = startProcessDto.getRemarks();
+
+
+		String applierId = startProcessDto.getOperator();
+		Long applierOrgId = startProcessDto.getOperatorOrgId();
+		OperatorTypeEnum operatorType = startProcessDto.getOperatorType();
 
 		// // 创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(applierOrgId));
 		initData.put("remarks", remarks);
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
-				String.valueOf(businessId), applierId, initData);
+				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
 					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());

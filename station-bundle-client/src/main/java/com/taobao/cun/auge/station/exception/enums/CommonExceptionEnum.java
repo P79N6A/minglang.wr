@@ -15,6 +15,7 @@ public class CommonExceptionEnum implements Serializable {
     protected String desc;
 
     public static final CommonExceptionEnum PARAM_IS_NULL = new CommonExceptionEnum("PARAM_IS_NULL", "参数不能为空");
+    public static final CommonExceptionEnum RECORD_IS_NULL = new CommonExceptionEnum("RECORD_IS_NULL", "查询不到数据");
     public static final CommonExceptionEnum SYSTEM_ERROR = new CommonExceptionEnum("SYSTEM_ERROR", "系统异常");
     public static final CommonExceptionEnum OPERATOR_IS_NULL = new CommonExceptionEnum("OPERATOR_IS_NULL", "操作人不能为空");
     public static final CommonExceptionEnum OPERATORTYPE_IS_NULL = new CommonExceptionEnum("OPERATORTYPE_IS_NULL", "操作人类型不能为空");
@@ -22,6 +23,7 @@ public class CommonExceptionEnum implements Serializable {
 
     static {
         mappings.put("PARAM_IS_NULL", PARAM_IS_NULL);
+        mappings.put("RECORD_IS_NULL", RECORD_IS_NULL);
         mappings.put("SYSTEM_ERROR", SYSTEM_ERROR);
         mappings.put("OPERATOR_IS_NULL", OPERATOR_IS_NULL);
         mappings.put("OPERATORTYPE_IS_NULL", OPERATORTYPE_IS_NULL);

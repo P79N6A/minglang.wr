@@ -10,6 +10,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -109,7 +110,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setServiceEndTime(instance.getServiceEndTime());
 		instanceDto.setParentStationId(instance.getParentStationId());
 
-		instanceDto.setState(PartnerInstanceStateEnum.valueof(instance.getPartnerState()));
+		instanceDto.setState(PartnerInstanceStateEnum.valueof(instance.getState()));
 		instanceDto.setBit(instance.getBit());
 		instanceDto.setOpenDate(instance.getOpenDate());
 		instanceDto.setApplierType(instance.getApplierType());
@@ -124,6 +125,35 @@ public final class PartnerInstanceConverter {
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
 		instanceDto.setPartnerLifecycleDto(null);
 
+		return instanceDto;
+	}
+	
+	public static PartnerInstanceDto convert(PartnerStationRel psRel) {
+		if (null == psRel) {
+			return null;
+		}
+
+		PartnerInstanceDto instanceDto = new PartnerInstanceDto();
+
+		instanceDto.setId(psRel.getId());
+		instanceDto.setApplierId(psRel.getApplierId());
+		instanceDto.setApplyTime(psRel.getApplyTime());
+		instanceDto.setServiceBeginTime(psRel.getServiceBeginTime());
+		instanceDto.setServiceEndTime(psRel.getServiceEndTime());
+		instanceDto.setParentStationId(psRel.getParentStationId());
+
+		instanceDto.setState(PartnerInstanceStateEnum.valueof(psRel.getState()));
+		instanceDto.setBit(psRel.getBit());
+		instanceDto.setOpenDate(psRel.getOpenDate());
+		instanceDto.setApplierType(psRel.getApplierType());
+		instanceDto.setStationApplyId(psRel.getStationApplyId());
+		instanceDto.setType(PartnerInstanceTypeEnum.valueof(psRel.getType()));
+		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
+		
+		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(psRel.getCloseType()));
+
+		instanceDto.setStationId(psRel.getStationId());
+		instanceDto.setPartnerId(psRel.getPartnerId());
 		return instanceDto;
 	}
 

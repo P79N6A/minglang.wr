@@ -48,5 +48,14 @@ public interface AttachementBO {
 	 */
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
 	
+	/**
+	 * 查询附件
+	 * @param objectId
+	 * @param bizTypeEnum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<AttachementDto>  selectAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
+	
 
 }

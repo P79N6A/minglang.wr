@@ -153,4 +153,5 @@ public interface PartnerInstanceBO {
      */
     public void deletePartnerStationRel(Long instanceId,String operator) throws AugeServiceException;
     
+    
 }
