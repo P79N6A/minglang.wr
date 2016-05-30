@@ -124,7 +124,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
-	@Autowired
 	
 	
 	@Override

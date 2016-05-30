@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
@@ -15,7 +16,7 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-
+@Component("partnerProtocolRelBO")
 public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO{
 	
 	@Autowired
