@@ -14,11 +14,15 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
+import com.taobao.cun.auge.dal.domain.AccountMoneyExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
+import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Protocol;
+import com.taobao.cun.auge.dal.domain.ProtocolExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
@@ -41,8 +45,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
-
-import tk.mybatis.mapper.entity.Example;
 
 @Component("syncStationApplyBO")
 public class SyncStationApplyBOImpl implements SyncStationApplyBO {
@@ -122,10 +124,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
 		Partner partner = partnerMapper.selectByPrimaryKey(instance.getPartnerId());
-		Example example = new Example(PartnerLifecycleItems.class);
-		example.createCriteria().andNotEqualTo("currentStep", "end").andEqualTo("partnerInstanceId", instance.getId())
-				.andEqualTo("businessType", instance.getState());
-
+		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
+		example.createCriteria().andCurrentStepNotEqualTo("end").andPartnerInstanceIdEqualTo(instance.getId()).andBusinessTypeEqualTo(instance.getState());
 		List<PartnerLifecycleItems> partnerLifecycleItemsList = partnerLifecycleItemsMapper.selectByExample(example);
 		PartnerLifecycleItems partnerLifecycleItems = CollectionUtil.isEmpty(partnerLifecycleItemsList) ? null
 				: partnerLifecycleItemsList.iterator().next();
@@ -158,11 +158,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		 * 
 		 * thaw_time,frozen_time,frozen_money
 		 */
-		AccountMoney param = new AccountMoney();
-		param.setObjectId(instance.getId());
-		param.setType(AccountMoneyTypeEnum.PARTNER_BOND.getCode());
-		param.setTargetType(TargetTypeEnum.PARTNER_INSTANCE.getCode());
-		List<AccountMoney> list = accountMoneyMapper.select(param);
+		AccountMoneyExample example = new AccountMoneyExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andObjectIdEqualTo(instance.getId()).andTypeEqualTo(AccountMoneyTypeEnum.PARTNER_BOND.getCode()).andTargetTypeEqualTo(TargetTypeEnum.PARTNER_INSTANCE.getCode());
+		List<AccountMoney> list = accountMoneyMapper.selectByExample(example);
 		if (!CollectionUtils.isEmpty(list)) {
 			AccountMoney accountMoney = list.iterator().next();
 			stationApply.setFrozenTime(accountMoney.getFrozenTime());
@@ -179,7 +177,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 		List<ProtocolTypeEnum> protocolTypeList = Lists.newArrayList(ProtocolTypeEnum.SETTLE_PRO, ProtocolTypeEnum.MANAGE_PRO,
 				ProtocolTypeEnum.PARTNER_QUIT_PRO);
-		List<Protocol> pList = protocolMapper.selectAll();
+		ProtocolExample pExample = new ProtocolExample();
+		pExample.createCriteria().andIsDeletedEqualTo("n");
+		List<Protocol> pList = protocolMapper.selectByExample(pExample);
 
 		for (ProtocolTypeEnum p : protocolTypeList) {
 			Protocol protocol = null;
@@ -192,11 +192,10 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			if (protocol == null) {
 				throw new AugeServiceException("protocol not exists : " + p.getCode());
 			}
-			PartnerProtocolRel relParam = new PartnerProtocolRel();
-			relParam.setTargetType(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode());
-			relParam.setProtocolId(protocol.getId());
-			relParam.setObjectId(instance.getId());
-			List<PartnerProtocolRel> prList = partnerProtocolRelMapper.select(relParam);
+			PartnerProtocolRelExample relExample = new PartnerProtocolRelExample();
+			relExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode()).andProtocolIdEqualTo(protocol.getId()).andObjectIdEqualTo(instance.getId());
+			
+			List<PartnerProtocolRel> prList = partnerProtocolRelMapper.selectByExample(relExample);
 			if (CollectionUtils.isEmpty(prList)) {
 				continue;
 			}
