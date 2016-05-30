@@ -6,12 +6,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.entity.Example.Criteria;
+
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Attachement;
+import com.taobao.cun.auge.dal.domain.AttachementExample;
+import com.taobao.cun.auge.dal.domain.AttachementExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AttachementMapper;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.convert.AttachementConverter;
@@ -45,13 +46,14 @@ public class AttachementBOImpl implements AttachementBO {
 		Attachement attachement = new Attachement();
 		DomainUtils.beforeDelete(attachement, attachementDeleteDto.getOperator());
 		
-		Example example = new Example(Attachement.class);
+		AttachementExample example = new AttachementExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andCondition("isDeleted","n");
-		criteria.andCondition("objectId",attachementDeleteDto.getObjectId());
-		criteria.andCondition("bizType",attachementDeleteDto.getBizType().getCode());
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andObjectIdEqualTo(attachementDeleteDto.getObjectId());
+		criteria.andBizTypeEqualTo(attachementDeleteDto.getBizType().getCode());
+
 		if (attachementDeleteDto.getAttachementTypeId() != null) {
-			criteria.andCondition("attachementTypeId", attachementDeleteDto.getAttachementTypeId().getCode());
+			criteria.andAttachementTypeIdEqualTo(attachementDeleteDto.getAttachementTypeId().getCode());
 		}
 		attachementMapper.updateByExampleSelective(attachement, example);
 	}
@@ -91,10 +93,13 @@ public class AttachementBOImpl implements AttachementBO {
 			AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
-		Attachement record = new Attachement();
-		record.setBizType(bizTypeEnum.getCode());
-		record.setObjectId(objectId);
-		List<Attachement> attList = attachementMapper.select(record);
+
+		AttachementExample example = new AttachementExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andObjectIdEqualTo(objectId);
+		criteria.andBizTypeEqualTo(bizTypeEnum.getCode());
+		List<Attachement> attList = attachementMapper.selectByExample(example);
 		return AttachementConverter.toAttachementDtos(attList);
 	}
 }

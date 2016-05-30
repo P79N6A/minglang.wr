@@ -8,12 +8,16 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationExample;
+import com.taobao.cun.auge.dal.domain.StationExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -27,28 +31,29 @@ public class StationBOImpl implements StationBO {
 
 	@Override
 	public Station getStationById(Long stationId) throws AugeServiceException {
-		ValidateUtils.notNull(stationId, CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(stationId);
 		return stationMapper.selectByPrimaryKey(stationId);
 	}
 
 	@Override
 	public Station getStationByStationNum(String stationNum)
 			throws AugeServiceException {
-		ValidateUtils.notNull(stationNum, CommonExceptionEnum.PARAM_IS_NULL);
-		Station record = new Station();
-		record.setStationNum(stationNum);
-		record.setIsDeleted("n");
-		return stationMapper.selectOne(record);
+		ValidateUtils.notNull(stationNum);
+		StationExample example = new StationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStationNumEqualTo(stationNum);
+		return ResultUtils.selectOne(stationMapper.selectByExample(example));
 	}
 
 	@Override
 	public void changeState(Long stationId, StationStatusEnum preStatus,
 			StationStatusEnum postStatus, String operator)
 			throws AugeServiceException {
-		ValidateUtils.notNull(stationId, CommonExceptionEnum.PARAM_IS_NULL);
-		ValidateUtils.notNull(preStatus, CommonExceptionEnum.PARAM_IS_NULL);
-		ValidateUtils.notNull(postStatus, CommonExceptionEnum.PARAM_IS_NULL);
-		ValidateUtils.notNull(operator, CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(stationId);
+		ValidateUtils.notNull(preStatus);
+		ValidateUtils.notNull(postStatus);
+		ValidateUtils.notNull(operator);
 		Station station = getStationById(stationId);
 		if (!StringUtils.equals(preStatus.getCode(), station.getStatus())){
 			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_EXIST);
@@ -62,7 +67,7 @@ public class StationBOImpl implements StationBO {
 
 	@Override
 	public Long addStation(StationDto stationDto) throws AugeServiceException {
-		ValidateUtils.notNull(stationDto, CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(stationDto);
 		Station record = StationConverter.toStation(stationDto);
 		DomainUtils.beforeInsert(record, stationDto.getOperator());
 		stationMapper.insert(record);
@@ -71,8 +76,8 @@ public class StationBOImpl implements StationBO {
 
 	@Override
 	public void updateStation(StationDto stationDto) throws AugeServiceException {
-		ValidateUtils.notNull(stationDto, CommonExceptionEnum.PARAM_IS_NULL);
-		ValidateUtils.notNull(stationDto.getId(), CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(stationDto);
+		ValidateUtils.notNull(stationDto.getId());
 		Station oldRecord = getStationById(stationDto.getId());
 		if (oldRecord == null) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_EXIST);
@@ -99,10 +104,12 @@ public class StationBOImpl implements StationBO {
 	@Override
 	public int getStationCountByStationNum(String stationNum)
 			throws AugeServiceException {
-		Station record = new Station();
-		record.setStationNum(stationNum);
-		record.setIsDeleted("n");
-		return stationMapper.selectCount(record);
+		ValidateUtils.notNull(stationNum);
+		StationExample example = new StationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStationNumEqualTo(stationNum);
+		return ResultUtils.selectCount(stationMapper.selectByExample(example));
 	}
 	
 	@Override

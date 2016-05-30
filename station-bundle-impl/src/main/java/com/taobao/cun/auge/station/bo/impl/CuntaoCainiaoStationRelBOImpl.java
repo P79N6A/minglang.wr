@@ -1,12 +1,18 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import tk.mybatis.mapper.entity.Example;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRelExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.CuntaoCainiaoStationRelMapper;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
@@ -22,11 +28,14 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 	@Override
 	public CuntaoCainiaoStationRel queryCuntaoCainiaoStationRel(
 			Long objectId, CuntaoCainiaoStationRelTypeEnum type) throws AugeServiceException {
-		CuntaoCainiaoStationRel  param = new CuntaoCainiaoStationRel();
-		param.setObjectId(objectId);
-		param.setType(type.getCode());
-		param.setIsDeleted("n");
-		return cuntaoCainiaoStationRelMapper.selectOne(param);
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(type);
+		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andObjectIdEqualTo(objectId);
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTypeEqualTo(type.getCode());
+		return ResultUtils.selectOne(cuntaoCainiaoStationRelMapper.selectByExample(example));
 	}
 
 	@Override
@@ -34,9 +43,14 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 			throws AugeServiceException {
 		CuntaoCainiaoStationRel  param = new CuntaoCainiaoStationRel();
 		DomainUtils.beforeDelete(param, DomainUtils.DEFAULT_OPERATOR);
-		Example example = new Example(CuntaoCainiaoStationRel.class);
-		example.createCriteria().andCondition("objectId", objectId).andCondition("type",type.getCode()).andCondition("isDeleted","n");
+		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andObjectIdEqualTo(objectId);
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTypeEqualTo(type.getCode());
 		return cuntaoCainiaoStationRelMapper.updateByExampleSelective(param, example);
+		
+		
 	}
 
 	@Override

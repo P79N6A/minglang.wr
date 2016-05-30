@@ -1,12 +1,16 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.PartnerExample;
+import com.taobao.cun.auge.dal.domain.PartnerExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
@@ -25,16 +29,19 @@ public class PartnerBOImpl implements PartnerBO {
 	@Override
 	public Partner getNormalPartnerByTaobaoUserId(Long taobaoUserId)
 			throws AugeServiceException {
-		Partner partnerCondition = new Partner();
-		partnerCondition.setTaobaoUserId(taobaoUserId);
-		partnerCondition.setIsDeleted("n");
-		partnerCondition.setState(PartnerStateEnum.NORMAL.getCode());
-		return partnerMapper.selectOne(partnerCondition);
+		ValidateUtils.notNull(taobaoUserId);
+		PartnerExample example = new PartnerExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andStateEqualTo(PartnerStateEnum.NORMAL.getCode());
+		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
 	}
 
 	@Override
 	public Long getNormalPartnerIdByTaobaoUserId(Long taobaoUserId)
 			throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
 		Partner partner = getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if (partner != null) {
 			return partner.getId();
@@ -45,7 +52,7 @@ public class PartnerBOImpl implements PartnerBO {
 	@Override
 	public Long addPartner(PartnerDto partnerDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(partnerDto, CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(partnerDto);
 		Partner record = PartnerConverter.toParnter(partnerDto);
 		DomainUtils.beforeInsert(record, partnerDto.getOperator());
 		partnerMapper.insert(record);
@@ -55,8 +62,8 @@ public class PartnerBOImpl implements PartnerBO {
 	@Override
 	public void updatePartner(PartnerDto partnerDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(partnerDto, CommonExceptionEnum.PARAM_IS_NULL);
-		ValidateUtils.notNull(partnerDto.getId(), CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(partnerDto);
+		ValidateUtils.notNull(partnerDto.getId());
 		Partner record = PartnerConverter.toParnter(partnerDto);
 		DomainUtils.beforeUpdate(record, partnerDto.getOperator());
 		partnerMapper.updateByPrimaryKey(record);
@@ -64,7 +71,7 @@ public class PartnerBOImpl implements PartnerBO {
 
 	@Override
 	public Partner getPartnerById(Long partnerId) throws AugeServiceException {
-		ValidateUtils.notNull(partnerId, CommonExceptionEnum.PARAM_IS_NULL);
+		ValidateUtils.notNull(partnerId);
 		return partnerMapper.selectByPrimaryKey(partnerId);
 	}
 
