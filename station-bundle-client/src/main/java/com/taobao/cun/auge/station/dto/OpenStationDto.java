@@ -25,7 +25,7 @@ public class OpenStationDto  extends OperatorDto implements Serializable {
 	/**
 	 *是否立即开业
 	 */
-	private boolean isImme;
+	private Boolean isImme;
 	
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -39,10 +39,10 @@ public class OpenStationDto  extends OperatorDto implements Serializable {
 	public void setOpenDate(Date openDate) {
 		this.openDate = openDate;
 	}
-	public boolean isImme() {
+	public Boolean isImme() {
 		return isImme;
 	}
-	public void setImme(boolean isImme) {
+	public void setImme(Boolean isImme) {
 		this.isImme = isImme;
 	}
 }

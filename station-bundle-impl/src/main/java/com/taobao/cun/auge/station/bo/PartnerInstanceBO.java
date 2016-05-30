@@ -153,4 +153,13 @@ public interface PartnerInstanceBO {
      */
     public void deletePartnerStationRel(Long instanceId,String operator) throws AugeServiceException;
     
+    
+    /**
+     * 获得待开业数据
+     * @param fetchNum
+     * @return
+     * @throws AugeServiceException
+     */
+    public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException;
+    
 }
