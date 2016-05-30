@@ -109,6 +109,26 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
 		return listValidStatus;
 	}
+	
+	/**
+	 *不能再次入驻的 实例状态
+	 * 
+	 * 
+	 * @return
+	 */
+	public static List<String>  unReSettlableStatusCodeList(){
+		List<String > listValidStatus = new ArrayList<String >();
+		listValidStatus.add(PartnerInstanceStateEnum.SETTLING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.DECORATING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.QUITING.getCode());
+		return listValidStatus;
+	}
+	
+	
+	
 
 	@SuppressWarnings("unused")
 	private PartnerInstanceStateEnum() {

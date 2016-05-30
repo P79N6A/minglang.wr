@@ -67,4 +67,10 @@ public class OperatorDto implements Serializable {
 			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
 		}
 	}
+	
+	public void copyOperatorDto(OperatorDto source) {
+		this.setOperator(source.getOperator());
+		this.setOperatorOrgId(source.getOperatorOrgId());
+		this.setOperatorType(source.getOperatorType());
+	} 
 }

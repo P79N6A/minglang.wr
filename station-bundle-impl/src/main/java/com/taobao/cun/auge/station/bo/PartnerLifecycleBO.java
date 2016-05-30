@@ -45,4 +45,13 @@ public interface PartnerLifecycleBO {
 	 * @throws AugeServiceException
 	 */
 	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException;
+	
+	/**
+	 *  获得当前生命周期扩展数据
+	 * @param instanceId
+	 * @param businessTypeEnum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum) throws AugeServiceException; 
 }

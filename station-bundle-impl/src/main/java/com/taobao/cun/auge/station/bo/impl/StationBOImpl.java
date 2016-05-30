@@ -95,4 +95,13 @@ public class StationBOImpl implements StationBO {
 		DomainUtils.beforeUpdate(record, stationDto.getOperator());
 		stationMaper.updateByPrimaryKey(record);
 	}
+
+	@Override
+	public int getStationCountByStationNum(String stationNum)
+			throws AugeServiceException {
+		Station record = new Station();
+		record.setStationNum(stationNum);
+		record.setIsDeleted("n");
+		return stationMaper.selectCount(record);
+	}
 }

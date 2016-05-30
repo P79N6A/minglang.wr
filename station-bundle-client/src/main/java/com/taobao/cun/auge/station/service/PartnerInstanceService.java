@@ -23,24 +23,7 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
-	
-
-	/**
-	 * 新增正式提交 人，服务站基础信息 
-	 * 
-	 * @param condition
-	 * @return
-	 */
-	public Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
-	
-	/**
-	 * 修改正式提交 人，服务站基础信息
-	 * 
-	 * @param condition
-	 * @return
-	 */
-	public Long updateSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
-	
+		
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中，已停业等）有效合伙人状态下
@@ -140,6 +123,6 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long applySettle(ApplySettleDto applySettleDto) throws AugeServiceException;
+	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 }

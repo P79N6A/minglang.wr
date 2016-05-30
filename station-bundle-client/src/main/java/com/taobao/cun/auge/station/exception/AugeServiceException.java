@@ -47,5 +47,10 @@ public class AugeServiceException extends RuntimeException {
 	public void setExceptionCode(String exceptionCode) {
 		this.exceptionCode = exceptionCode;
 	}
+	
+	@Override
+	public String toString(){
+		return "exceptionCode: "+getExceptionCode() + "message: " + getMessage();
+	}
 
 }

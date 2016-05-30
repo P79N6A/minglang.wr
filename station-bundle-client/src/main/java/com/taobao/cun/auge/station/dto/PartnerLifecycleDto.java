@@ -11,8 +11,12 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-
-public class PartnerLifecycleDto  implements Serializable {
+/**
+ * 合伙人生命周期 dto
+ * @author quanzhu.wangqz
+ *
+ */
+public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = -9216881285970436173L;
 	

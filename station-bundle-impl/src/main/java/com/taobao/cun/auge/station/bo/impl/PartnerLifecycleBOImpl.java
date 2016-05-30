@@ -1,7 +1,13 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -56,5 +62,26 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		items.setBusinessType(businessTypeEnum.getCode());
 		items.setCurrentStep(stepEnum.getCode());
 		return partnerLifecycleItemsMapper.selectOne(items);
+	}
+
+	@Override
+	public PartnerLifecycleItems getLifecycleItems(Long instanceId,
+			PartnerLifecycleBusinessTypeEnum businessTypeEnum)
+			throws AugeServiceException {
+		if (instanceId ==null  || businessTypeEnum == null){
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		
+		Example example = new Example(PartnerLifecycleItems.class);
+		Criteria criteria = example.createCriteria();
+		criteria.andCondition("isDeleted","n");
+		criteria.andCondition("instanceId",instanceId);
+		criteria.andCondition("businessType",businessTypeEnum.getCode());
+		criteria.andNotEqualTo("currentStep", PartnerLifecycleCurrentStepEnum.END.getCode());
+		List<PartnerLifecycleItems> resList = partnerLifecycleItemsMapper.selectByExample(example);
+		if (CollectionUtils.isNotEmpty(resList)) {
+			return resList.get(0);
+		}
+		return null;
 	}
 }
