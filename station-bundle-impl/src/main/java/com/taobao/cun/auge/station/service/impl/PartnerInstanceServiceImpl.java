@@ -30,6 +30,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
@@ -84,6 +85,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	ProtocolBO protocolBO;
+	
+	@Autowired
+	PartnerProtocolRelBO partnerProtocolRelBO;
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
@@ -428,7 +432,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException {
 		try {
 			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
-			protocolBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
+			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);

@@ -14,8 +14,8 @@ import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
-import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
