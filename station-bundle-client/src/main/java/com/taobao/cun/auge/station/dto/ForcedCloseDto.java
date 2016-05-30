@@ -14,6 +14,8 @@ public class ForcedCloseDto extends OperatorDto {
 	private Long instanceId;
 
 	private StationForcedCloseReasonEnum reason;
+	
+	private String remarks;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -31,4 +33,11 @@ public class ForcedCloseDto extends OperatorDto {
 		this.reason = reason;
 	}
 
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 }
