@@ -23,12 +23,12 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 public class StationBOImpl implements StationBO {
 
 	@Autowired
-	StationMapper stationMaper;
+	StationMapper stationMapper;
 
 	@Override
 	public Station getStationById(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId, CommonExceptionEnum.PARAM_IS_NULL);
-		return stationMaper.selectByPrimaryKey(stationId);
+		return stationMapper.selectByPrimaryKey(stationId);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class StationBOImpl implements StationBO {
 		Station record = new Station();
 		record.setStationNum(stationNum);
 		record.setIsDeleted("n");
-		return stationMaper.selectOne(record);
+		return stationMapper.selectOne(record);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class StationBOImpl implements StationBO {
 		record.setId(stationId);
 		record.setStatus(postStatus.getCode());
 		DomainUtils.beforeUpdate(record, operator);
-		stationMaper.updateByPrimaryKey(record);
+		stationMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class StationBOImpl implements StationBO {
 		ValidateUtils.notNull(stationDto, CommonExceptionEnum.PARAM_IS_NULL);
 		Station record = StationConverter.toStation(stationDto);
 		DomainUtils.beforeInsert(record, stationDto.getOperator());
-		stationMaper.insert(record);
+		stationMapper.insert(record);
 		return record.getId();
 	}
 
@@ -93,7 +93,7 @@ public class StationBOImpl implements StationBO {
 		}
 		
 		DomainUtils.beforeUpdate(record, stationDto.getOperator());
-		stationMaper.updateByPrimaryKey(record);
+		stationMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
@@ -102,6 +102,15 @@ public class StationBOImpl implements StationBO {
 		Station record = new Station();
 		record.setStationNum(stationNum);
 		record.setIsDeleted("n");
-		return stationMaper.selectCount(record);
+		return stationMapper.selectCount(record);
+	}
+	
+	@Override
+	public void deleteStation(Long stationId,String operator)
+			throws AugeServiceException {
+		Station rel = new Station();
+		rel.setId(stationId);
+		DomainUtils.beforeDelete(rel, operator);
+		stationMapper.updateByPrimaryKeySelective(rel);
 	}
 }

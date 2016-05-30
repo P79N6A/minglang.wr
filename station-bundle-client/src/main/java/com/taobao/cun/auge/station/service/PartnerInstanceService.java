@@ -2,12 +2,11 @@ package com.taobao.cun.auge.station.service;
 
 import java.math.BigDecimal;
 
-import com.taobao.cun.auge.station.dto.ApplySettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.ProcessApproveResultDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
@@ -39,7 +38,7 @@ public interface PartnerInstanceService {
 	 * @param instanceId
 	 * @return
 	 */
-	public boolean delete(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException;
 
 	/**
 	 * 签署入驻协议

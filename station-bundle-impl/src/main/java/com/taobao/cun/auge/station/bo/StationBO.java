@@ -63,6 +63,12 @@ public interface StationBO {
 	 */
 	public int getStationCountByStationNum(String stationNum) throws AugeServiceException;
 	
+	/**
+	 * 删除服务站
+	 * @param stationId
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void deleteStation(Long stationId, String operator) throws AugeServiceException;
 	
-
 }

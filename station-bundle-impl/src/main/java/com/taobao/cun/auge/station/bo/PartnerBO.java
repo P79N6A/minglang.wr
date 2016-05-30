@@ -46,4 +46,12 @@ public interface PartnerBO {
 	 */
 	public Partner getPartnerById(Long id) throws AugeServiceException;
 	
+	/**
+	 * 删除合伙人表
+	 * @param partnerId
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void deletePartner(Long partnerId,String operator) throws AugeServiceException;
+	
 }

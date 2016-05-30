@@ -264,4 +264,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return true;
 	}
+
+	@Override
+	public void deletePartnerStationRel(Long instanceId,String operator)
+			throws AugeServiceException {
+		PartnerStationRel rel = new PartnerStationRel();
+		rel.setId(instanceId);
+		DomainUtils.beforeDelete(rel, operator);
+		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
+	}
 }

@@ -146,4 +146,11 @@ public interface PartnerInstanceBO {
      */
     public boolean checkSettleQualification(Long taobaoUserId) throws AugeServiceException;
     
+    /**
+     * 删除关系表数据
+     * @param instanceId
+     * @throws AugeServiceException
+     */
+    public void deletePartnerStationRel(Long instanceId,String operator) throws AugeServiceException;
+    
 }

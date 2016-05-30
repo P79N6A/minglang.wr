@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
@@ -65,5 +66,14 @@ public class PartnerBOImpl implements PartnerBO {
 	public Partner getPartnerById(Long partnerId) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId, CommonExceptionEnum.PARAM_IS_NULL);
 		return partnerMapper.selectByPrimaryKey(partnerId);
+	}
+
+	@Override
+	public void deletePartner(Long partnerId, String operator)
+			throws AugeServiceException {
+		Partner rel = new Partner();
+		rel.setId(partnerId);
+		DomainUtils.beforeDelete(rel, operator);
+		partnerMapper.updateByPrimaryKeySelective(rel);
 	}
 }
