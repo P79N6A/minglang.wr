@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
+import com.taobao.cun.auge.common.OperatorDto;
+
 /**
  * 实例删除dto
  * @author quanzhu.wangqz

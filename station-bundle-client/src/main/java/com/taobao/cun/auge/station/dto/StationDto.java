@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;

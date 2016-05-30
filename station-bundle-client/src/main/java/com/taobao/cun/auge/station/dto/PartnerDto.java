@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 

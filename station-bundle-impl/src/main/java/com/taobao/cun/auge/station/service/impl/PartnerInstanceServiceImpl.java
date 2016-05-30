@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -38,7 +39,6 @@ import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
-import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;

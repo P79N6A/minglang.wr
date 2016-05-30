@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
+import com.taobao.cun.auge.common.OperatorDto;
+
 /**
  * 停业确认dto
  * @author quanzhu.wangqz

@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
-import com.taobao.cun.auge.station.dto.OperatorDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.resultmodel.ResultModel;

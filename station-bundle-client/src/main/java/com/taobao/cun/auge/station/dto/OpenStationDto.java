@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.taobao.cun.auge.common.OperatorDto;
+
 /**
  * 开业村点dto
  * @author quanzhu.wangqz
