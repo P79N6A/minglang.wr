@@ -235,9 +235,15 @@
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaocenter-client</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.taobao.security</groupId>
 			<artifactId>security</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cuntaoar.shared.scene</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

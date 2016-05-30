@@ -11,7 +11,6 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -46,20 +45,17 @@ public class StartProcessListener implements EventListener {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
-		// 可能是小二，也可能是TP商淘宝账号
-		String operatorId = stateChangeEvent.getOperator();
-		OperatorTypeEnum operatorType = stateChangeEvent.getOperatorType();
-		Long operatorOrgId = stateChangeEvent.getOperatorOrgId();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
-		String remark = stateChangeEvent.getRemark();
 
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 
 		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
-		createStartApproveProcessTask(business, stationApplyId, operatorId, operatorType, operatorOrgId, remark);
+		createStartApproveProcessTask(business, stationApplyId,stateChangeEvent);
 	}
+
+
 
 	/**
 	 * 
@@ -81,7 +77,7 @@ public class StartProcessListener implements EventListener {
 		logger.warn(msg);
 		throw new IllegalArgumentException(msg);
 	}
-
+	
 	/**
 	 * 启动停业、退出流程审批流程
 	 * 
@@ -96,17 +92,20 @@ public class StartProcessListener implements EventListener {
 	 * @param remarks
 	 *            备注
 	 */
-	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, String applierId,
-			OperatorTypeEnum operatorType, Long applierOrgId, String remarks) {
+	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, PartnerInstanceStateChangeEvent stateChangeEvent) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
 
-			startProcessDto.setRemarks(remarks);
-			startProcessDto.setApplierOrgId(applierOrgId);
+			startProcessDto.setRemarks(stateChangeEvent.getRemark());
 			startProcessDto.setBusinessId(stationApplyId);
 			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.setApplierId(applierId);
+
+			startProcessDto.setOperator(stateChangeEvent.getOperator());
+			startProcessDto.setOperatorOrgId(stateChangeEvent.getOperatorOrgId());
+			startProcessDto.setOperatorType(stateChangeEvent.getOperatorType());
+			
+			
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
 			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
@@ -115,14 +114,14 @@ public class StartProcessListener implements EventListener {
 			startProcessTask.setBusinessStepDesc("启动审批流程");
 			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
-			startProcessTask.setOperator(applierId);
+			startProcessTask.setOperator(stateChangeEvent.getOperator());
 			startProcessTask.setParameter(startProcessDto);
 
 			// 提交任务
 			taskExecuteService.submitTask(startProcessTask);
 		} catch (Exception e) {
 			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
-					+ " applierId=" + applierId + " operatorType=" + operatorType.getCode(), e);
+					+ " applierId=" + stateChangeEvent.getOperator() + " operatorType=" + stateChangeEvent.getOperatorType().getCode(), e);
 		}
 	}
 }

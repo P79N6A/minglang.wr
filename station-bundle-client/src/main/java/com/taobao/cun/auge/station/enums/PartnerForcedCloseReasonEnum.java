@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StationForcedCloseReasonEnum implements Serializable {
-
-	private static final long serialVersionUID = 7917664329231212153L;
+public class PartnerForcedCloseReasonEnum implements Serializable {
 	
-	public static final StationForcedCloseReasonEnum ASSESS_FAIL = new StationForcedCloseReasonEnum("ASSESS_FAIL  ",
+	private static final long serialVersionUID = 3969120375620371099L;
+	
+	public static final PartnerForcedCloseReasonEnum ASSESS_FAIL = new PartnerForcedCloseReasonEnum("ASSESS_FAIL  ",
 			"考核不达标");
-	public static final StationForcedCloseReasonEnum CHEAT = new StationForcedCloseReasonEnum("CHEAT", "涉嫌欺诈");
-	public static final StationForcedCloseReasonEnum OTHER = new StationForcedCloseReasonEnum("OTHER", "其它原因");
+	public static final PartnerForcedCloseReasonEnum CHEAT = new PartnerForcedCloseReasonEnum("CHEAT", "涉嫌欺诈");
+	public static final PartnerForcedCloseReasonEnum OTHER = new PartnerForcedCloseReasonEnum("OTHER", "其它原因");
 	
-	public static final Map<String, StationForcedCloseReasonEnum> mappings = new HashMap<String, StationForcedCloseReasonEnum>();
+	public static final Map<String, PartnerForcedCloseReasonEnum> mappings = new HashMap<String, PartnerForcedCloseReasonEnum>();
 
 	static {
 		mappings.put("ASSESS_FAIL", ASSESS_FAIL);
@@ -52,25 +52,25 @@ public class StationForcedCloseReasonEnum implements Serializable {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (!(obj instanceof StationForcedCloseReasonEnum))
+		if (!(obj instanceof PartnerForcedCloseReasonEnum))
 			return false;
-		StationForcedCloseReasonEnum objType = (StationForcedCloseReasonEnum) obj;
+		PartnerForcedCloseReasonEnum objType = (PartnerForcedCloseReasonEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
 
-	public StationForcedCloseReasonEnum(String code, String desc) {
+	public PartnerForcedCloseReasonEnum(String code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}
 
-	public static StationForcedCloseReasonEnum valueof(String code) {
+	public static PartnerForcedCloseReasonEnum valueof(String code) {
 		if (code == null)
 			return null;
 		return mappings.get(code);
 	}
 
 	@SuppressWarnings("unused")
-	private StationForcedCloseReasonEnum() {
+	private PartnerForcedCloseReasonEnum() {
 
 	}
 }

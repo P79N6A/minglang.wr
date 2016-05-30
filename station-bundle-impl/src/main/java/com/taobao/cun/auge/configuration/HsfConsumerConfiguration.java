@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
+import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -62,5 +64,19 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean cuntaoUicReadService(
 			@Value("${hsf.consumer.version.crius.cuntaoUicReadService}") String version) {
 		return getConsumerBean(CuntaoUicReadService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	//admin服务
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean partnerLifecycleCallbackService(
+			@Value("${hsf.consumer.version.admin.partnerLifecycleCallbackService}") String version) {
+		return getConsumerBean(PartnerLifecycleCallbackService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	//admin服务
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean stationLifecycleCallbackService(
+			@Value("${hsf.consumer.version.admin.stationLifecycleCallbackService}") String version) {
+		return getConsumerBean(StationLifecycleCallbackService.class, HSFGroup.HSF, version, 3000);
 	}
 }

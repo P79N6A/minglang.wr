@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.station.service;
 
-
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
@@ -15,9 +14,16 @@ public interface PartnerInstanceQueryService {
 	 * @param partnerStationId
 	 * @return
 	 */
-	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;	
-	
+	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
 
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
+
+	/**
+	 * 根据stationapplyId查询合伙人实例id
+	 * 
+	 * @param stationApplyId
+	 * @return
+	 */
+	public Long findPartnerInstanceId(Long stationApplyId);
 
 }
