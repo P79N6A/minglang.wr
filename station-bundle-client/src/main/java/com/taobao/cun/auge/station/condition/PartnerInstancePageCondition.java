@@ -3,7 +3,6 @@ package com.taobao.cun.auge.station.condition;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
 public class PartnerInstancePageCondition extends PageQuery {
 

@@ -1,13 +1,15 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PageDto;
@@ -18,9 +20,9 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
-
-	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
+	
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
+	
 	@Autowired
 	PartnerStationRelMapper partnerStationRelMapper;
 
@@ -39,13 +41,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition) {
 		try {
+			//FIXME FHH 方便测试，暂时写死
 			PageHelper.startPage(1, 10);
 			Page<PartnerInstance> page = partnerStationRelMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
-			PageDto<PartnerInstanceDto> result = PageDtoUtil.convert(page, PartnerInstanceConverter.convert(page));
+			PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 
 			return result;
 		} catch (Exception e) {
-			return null;
+			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
+			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
 		}
 	}
 
