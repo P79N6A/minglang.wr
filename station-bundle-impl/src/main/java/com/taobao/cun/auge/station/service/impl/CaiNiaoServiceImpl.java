@@ -15,7 +15,6 @@ import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.AddressDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -112,15 +111,12 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
          param.setStationName(stationName);
          param.setAlipayAccount(partnerDto.getAlipayAccount());
 
-         AddressDto stationAddress = convertToStationAddress(stationDto);
-         param.setStationAddress(stationAddress);
+         param.setStationAddress(stationDto.getAddress());
 
          param.setContact(partnerDto.getName());
          param.setMobile(partnerDto.getMobile());
          param.setLoginId(partnerDto.getTaobaoNick());
          param.setTaobaoUserId(partnerDto.getTaobaoUserId());
-         param.setLng(stationDto.getStationAddressDto().getLng());
-         param.setLat(stationDto.getStationAddressDto().getLat());
          param.setApplierId(instanceDto.getApplierId());
          
          param.setParentId(getCountyCainiaoStationId(stationDto.getApplyOrg()));
@@ -206,23 +202,6 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		return null;
 	}
 	
-	public static AddressDto convertToStationAddress(StationDto stationDto) {
-		AddressDto stationAddress = new AddressDto();
-        stationAddress.setProvince(stationDto.getStationAddressDto().getProvince());
-        stationAddress.setProvinceDetail(stationDto.getStationAddressDto().getProvinceDetail());
-        stationAddress.setCity(stationDto.getStationAddressDto().getCity());
-        stationAddress.setCityDetail(stationDto.getStationAddressDto().getCityDetail());
-        stationAddress.setCounty(stationDto.getStationAddressDto().getCounty());
-        stationAddress.setCountyDetail(stationDto.getStationAddressDto().getCountyDetail());
-        stationAddress.setTown(stationDto.getStationAddressDto().getTown());
-        stationAddress.setTownDetail(stationDto.getStationAddressDto().getTownDetail());
-        stationAddress.setVillage(stationDto.getStationAddressDto().getVillage());
-        stationAddress.setVillageDetail(stationDto.getStationAddressDto().getVillageDetail());
-        stationAddress.setAddress(stationDto.getStationAddressDto().getAddress());
-        return stationAddress;
-    }
-
-
 	@Override
 	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto syncCainiaoStationDto)
 			throws AugeServiceException {

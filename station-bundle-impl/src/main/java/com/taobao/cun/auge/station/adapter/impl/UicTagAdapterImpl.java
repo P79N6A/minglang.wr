@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeUicTagException;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.ExtraUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
@@ -19,6 +20,7 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 
 @Component
+@HSFProvider(serviceInterface=UicTagAdapter.class)
 public class UicTagAdapterImpl implements UicTagAdapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(UicTagAdapterImpl.class);
@@ -37,7 +39,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	private Long TPV_TAG = new Double(Math.pow(2, 25)).longValue();
 
 	public void addUserTag(UserTagDto userTagDto) {
-//		BeanValidator.validateWithThrowable(userTagDto);
+		BeanValidator.validateWithThrowable(userTagDto);
 		try {
 			Long taobaoUserId = userTagDto.getTaobaoUserId();
 			PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();

@@ -3,11 +3,13 @@ package com.taobao.cun.auge.validator;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.google.common.collect.Lists;
 
@@ -19,35 +21,44 @@ import com.google.common.collect.Lists;
  */
 @Component
 public class BeanValidator {
+
+	private static Validator staticValidator;
 	@Autowired
-	private static Validator validator;
-	
+	private Validator validator;
+
+	@PostConstruct
+	public void init() {
+		BeanValidator.staticValidator = validator;
+	}
+
 	/**
 	 * 校验Bean，返回校验错误，如果返回的list为空，则表示没有错误
+	 * 
 	 * @param object
 	 * @param groups
 	 * @return
 	 */
 	public static <T> ValidateResult validate(T object, Class<?>... groups) {
 		List<String> errors = Lists.newArrayList();
-		
-		Set<ConstraintViolation<T>> set = validator.validate(object, groups);
-		for(ConstraintViolation<T> c : set){
+
+		Set<ConstraintViolation<T>> set = staticValidator.validate(object, groups);
+		for (ConstraintViolation<T> c : set) {
 			errors.add(c.getMessage());
 		}
 		return new ValidateResult(object.getClass().getCanonicalName(), errors);
 	}
-	
+
 	/**
 	 * 将校验结果以异常方式抛出
+	 * 
 	 * @param object
 	 * @param groups
 	 * @throws BeanValidateException
 	 */
-	public static <T> void validateWithThrowable(T object, Class<?>... groups)throws BeanValidateException{
+	public static <T> void validateWithThrowable(T object, Class<?>... groups) throws BeanValidateException {
 		ValidateResult validateResult = validate(object, groups);
-		
-		if(validateResult.hasError()){
+
+		if (validateResult.hasError()) {
 			throw new BeanValidateException(validateResult.getClassName(), validateResult.getErrors());
 		}
 	}
