@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -44,7 +45,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
-import com.taobao.cun.auge.station.dto.StationAddressDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
@@ -261,13 +261,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if(StringUtils.isBlank(stationDto.getName())){
 			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
-		StationAddressDto addressDto = stationDto.getStationAddressDto();
-		if(addressDto==null){
+		Address address = stationDto.getAddress();
+		if(address==null){
 			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
 		}
 		String stationName = "";
-		if (StringUtils.isNotBlank(addressDto.getCountyDetail())){
-			stationName+=addressDto.getCountyDetail();
+		if (StringUtils.isNotBlank(address.getCountyDetail())){
+			stationName+=address.getCountyDetail();
 		}
 		stationName+=stationDto.getName();
 		try {
