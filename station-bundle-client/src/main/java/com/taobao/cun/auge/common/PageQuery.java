@@ -1,8 +1,6 @@
 package com.taobao.cun.auge.common;
 
-import java.io.Serializable;
-
-public class PageQuery implements Serializable {
+public class PageQuery extends OperatorDto {
 	
 	private static final long serialVersionUID = 6995476690515605998L;
 
