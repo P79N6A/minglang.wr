@@ -12,6 +12,8 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 
 	public static final StationExceptionEnum SIGN_SETTLE_PROTOCOL_FAIL = new StationExceptionEnum(
 			"SIGN_SETTLE_PROTOCOL_FAIL", "签署入驻协议失败");
+	public static final StationExceptionEnum SIGN_MANAGE_PROTOCOL_FAIL = new StationExceptionEnum(
+			"SIGN_MANAGE_PROTOCOL_FAIL", "签署管理协议失败");
 	
 	public static final StationExceptionEnum HAS_CHILDREN_TPA = new StationExceptionEnum(
 			"HAS_CHILDREN_TPA", "该合伙人下存在运营中的淘帮手");
@@ -58,6 +60,7 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 	static {
 		mappings.put("STATION_NUM_IS_DUPLICATE", STATION_NUM_IS_DUPLICATE);
 		mappings.put("SIGN_SETTLE_PROTOCOL_FAIL", SIGN_SETTLE_PROTOCOL_FAIL);
+		mappings.put("SIGN_MANAGE_PROTOCOL_FAIL", SIGN_MANAGE_PROTOCOL_FAIL);
 		mappings.put("HAS_CHILDREN_TPA", HAS_CHILDREN_TPA);
 		mappings.put("PARTNER_INSTANCE_NOT_EXIST", PARTNER_INSTANCE_NOT_EXIST);
 		mappings.put("STATION_NOT_EXIST", STATION_NOT_EXIST);
