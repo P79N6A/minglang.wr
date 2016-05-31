@@ -20,11 +20,14 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -51,6 +54,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	
 	@Autowired
 	PartnerBO partnerBO;
+	
+	@Autowired
+	StationBO stationBO;
 	
 	@Override
 	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
@@ -201,10 +207,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)
-			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)throws AugeServiceException {
+		PartnerStationRel psRel = findPartnerInstanceById(instanceId);
+		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+		Station station = stationBO.getStationById(psRel.getStationId());
+		
+		return PartnerInstanceConverter.convert(psRel, station, partner);
 	}
 
 	@Override
