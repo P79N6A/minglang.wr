@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
@@ -25,12 +26,15 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.util.CollectionUtil;
 
 @Component("emp360Adapter")
+
 public class Emp360AdapterImpl implements Emp360Adapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(Emp360Adapter.class);
 
 	@Resource
 	private Employee360Service employee360Service;
+	
+	@Value("${hr.security.key}")
 	private String securityId;
 
 	@Override

@@ -137,7 +137,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		
 		Criteria criteria = example.createCriteria();
-		if(!CollectionUtils.isEmpty(stateEnums)){
+		if(CollectionUtils.isNotEmpty(stateEnums)){
 			List<String> states =  Lists.transform(stateEnums, new Function<PartnerInstanceStateEnum,String>(){
 				@Override
 				public String apply(PartnerInstanceStateEnum input) {
