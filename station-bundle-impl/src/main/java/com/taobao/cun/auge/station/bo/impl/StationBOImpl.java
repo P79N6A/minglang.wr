@@ -98,7 +98,7 @@ public class StationBOImpl implements StationBO {
 		}
 		
 		DomainUtils.beforeUpdate(record, stationDto.getOperator());
-		stationMapper.updateByPrimaryKey(record);
+		stationMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
