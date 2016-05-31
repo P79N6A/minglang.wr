@@ -639,13 +639,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				operator);
 
 		// 村点退出中
-		stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
+		if (quitDto.getIsQuitStation()) {
+			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING,
+					operator);
+		}
 
 		// 退出审批流程，由事件监听完成
 		// 记录村点状态变化
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
-				partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
+				PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+				quitDto);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		// 失效tair
 		// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
