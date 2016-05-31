@@ -54,4 +54,6 @@ public interface PartnerLifecycleBO {
 	 * @throws AugeServiceException
 	 */
 	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum) throws AugeServiceException; 
+	
+	public void deleteLifecycleItems(Long instanceId,String operator) throws AugeServiceException; 
 }

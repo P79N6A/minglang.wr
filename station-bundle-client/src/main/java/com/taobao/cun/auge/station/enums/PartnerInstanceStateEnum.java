@@ -20,7 +20,7 @@ public class PartnerInstanceStateEnum  implements Serializable {
 	// 入驻中
 	public static final PartnerInstanceStateEnum SETTLING  = new PartnerInstanceStateEnum("SETTLING", "入驻中");
 	// 入驻失败
-	public static final PartnerInstanceStateEnum SETTLE_FAIL  = new PartnerInstanceStateEnum("SETTLE_FAIL ", "入驻失败");
+	public static final PartnerInstanceStateEnum SETTLE_FAIL  = new PartnerInstanceStateEnum("SETTLE_FAIL", "入驻失败");
 	// 装修中
 	public static final PartnerInstanceStateEnum DECORATING = new PartnerInstanceStateEnum("DECORATING", "装修中");
 	// 服务中

@@ -115,6 +115,7 @@ public class StationBOImpl implements StationBO {
 	@Override
 	public void deleteStation(Long stationId,String operator)
 			throws AugeServiceException {
+		ValidateUtils.notNull(stationId);
 		Station rel = new Station();
 		rel.setId(stationId);
 		DomainUtils.beforeDelete(rel, operator);

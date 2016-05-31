@@ -27,4 +27,6 @@ public interface PartnerInstanceScheduleService {
 	 * @throws AugeServiceException
 	 */
 	public Boolean openStation(Long instanceId) throws AugeServiceException;
+	
+	
 }

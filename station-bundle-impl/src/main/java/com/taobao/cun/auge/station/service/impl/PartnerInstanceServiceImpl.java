@@ -408,23 +408,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(instanceId);
 		
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_TO_TEMP);
+		if (rel==null || StringUtils.isEmpty(rel.getType())) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
-		Long stationId =  rel.getStationId();
-		Station station = stationBO.getStationById(stationId);
-		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_TO_TEMP);
-		}
-		
-		Long partnerId =  rel.getPartnerId();
-		Partner partner = partnerBO.getPartnerById(partnerId);
-		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_TO_TEMP);
-		}
-		partnerInstanceBO.deletePartnerStationRel(instanceId, partnerInstanceDeleteDto.getOperator());
-		stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
-		partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+		partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 	}
 
 	@Override
