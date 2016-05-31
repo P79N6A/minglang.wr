@@ -49,6 +49,7 @@ import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -605,7 +606,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				forcedCloseDto);
-		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
+		
+		event.setRemark(PartnerForcedCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
+				? forcedCloseDto.getRemarks() : forcedCloseDto.getReason().getDesc());
 
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
