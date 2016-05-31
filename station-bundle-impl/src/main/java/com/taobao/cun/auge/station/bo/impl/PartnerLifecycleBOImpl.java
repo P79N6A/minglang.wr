@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample.Criteria;
