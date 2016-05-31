@@ -12,14 +12,18 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
  * 服务站表dto转换
+ * 
  * @author quanzhu.wangqz
  *
  */
 public class StationConverter {
 
 	public static StationDto toStationDto(Station station) {
+		if (null == station) {
+			return null;
+		}
 		StationDto stationDto = new StationDto();
-		
+
 		Address address = new Address();
 		address.setProvince(station.getProvince());
 		address.setProvinceDetail(station.getProvinceDetail());
@@ -34,8 +38,7 @@ public class StationConverter {
 		address.setAddressDetail(station.getAddress());
 		address.setLat(station.getLat());
 		address.setLng(station.getLng());
-		
-		
+
 		stationDto.setApplyOrg(station.getApplyOrg());
 		stationDto.setAreaType(station.getAreaType());
 		stationDto.setCovered(station.getCovered());
@@ -53,10 +56,10 @@ public class StationConverter {
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
 		return stationDto;
 	}
-	
+
 	public static Station toStation(StationDto stationDto) {
 		Station station = new Station();
-		
+
 		Address address = stationDto.getAddress();
 		if (address != null) {
 			station.setProvince(address.getProvince());
@@ -92,8 +95,8 @@ public class StationConverter {
 		station.setStatus(stationDto.getStatus().getCode());
 		return station;
 	}
-	
-	public static List<StationDto> toPartnerDtos(List<Station> stations) {
+
+	public static List<StationDto> toStationDtos(List<Station> stations) {
 		if (stations == null) {
 			return null;
 		}
@@ -106,7 +109,7 @@ public class StationConverter {
 		return list;
 	}
 
-	public static List<Station> toPartners(List<StationDto> stationDtos) {
+	public static List<Station> toStations(List<StationDto> stationDtos) {
 		if (stationDtos == null) {
 			return null;
 		}
