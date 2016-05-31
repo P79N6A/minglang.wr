@@ -1,10 +1,13 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import java.lang.Long;
 
 /**
  * 生命周期扩展表 服务

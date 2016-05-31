@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -22,6 +25,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -36,7 +40,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.pandora.util.StringUtils;
-
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -57,6 +60,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	
 	@Autowired
 	StationBO stationBO;
+	@Autowired
+	PartnerStationRelExtMapper partnerStationRelExtMapper;
 	
 	@Override
 	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
@@ -338,5 +343,27 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			instanceIdList.add(rel.getId());
 		}
 		return instanceIdList;
+	}
+
+	@Override
+	public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException {
+		if (fetchNum < 0) {
+			return null;
+		}
+		
+		Map<String,Object> param =new HashMap<String,Object>();
+		param.put("partnerState", PartnerInstanceStateEnum.QUITING.getCode());
+		param.put("currentStep", PartnerLifecycleCurrentStepEnum.BOND.getCode());
+		param.put("businessType", PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);// 30天前的数据
+		
+		param.put("serviceEndTime", calendar.getTime());
+		
+		PageHelper.startPage(1, fetchNum);
+		 List<Long> instanceIdList =  partnerStationRelExtMapper.getWaitThawMoney(param);
+		 return instanceIdList;
 	}
 }

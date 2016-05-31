@@ -162,4 +162,12 @@ public interface PartnerInstanceBO {
      */
     public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException;
     
+    /**
+     * 获得待解冻保证金数据
+     * @param fetchNum
+     * @return
+     * @throws AugeServiceException
+     */
+    public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException;
+    
 }

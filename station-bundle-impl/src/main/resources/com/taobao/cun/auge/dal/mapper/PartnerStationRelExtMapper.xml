@@ -171,4 +171,18 @@
 			and p.name = #{partnerName,jdbcType=VARCHAR}
 		</if>
    </sql>
+   <select id="getWaitThawMoney" resultType="java.lang.Long" parameterType="java.util.Map" >
+   <![CDATA[
+   		select psr.id from partner_station_rel psr,partner_lifecycle_items pli
+		where psr.is_deleted= 'n' 
+		and pli.is_deleted= 'n' 
+		and psr.partner_id = p.id 
+		and psr.id = pli.partner_instance_id 
+		and psr.state =#{partnerState,jdbcType=VARCHAR}
+		and pli.current_step =#{currentStep,jdbcType=VARCHAR}
+		and pli.business_type = #{businessType,jdbcType=VARCHAR}
+		
+		and psr.service_end_time <= #{serviceEndTime,jdbcType=TIMESTAMP}
+	 ]]>
+   </select>
 </mapper>

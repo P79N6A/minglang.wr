@@ -29,4 +29,21 @@ public interface PartnerInstanceScheduleService {
 	public Boolean openStation(Long instanceId) throws AugeServiceException;
 	
 	
+	/**
+	 * 获得待解冻保证金数据
+	 * @param fetchNum
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<Long>  getWaitThawMoneyList(int fetchNum) throws AugeServiceException;
+	
+	/**
+	 * 解冻保证金
+	 * @param thawMoneyDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Boolean thawMoney(Long instanceId) throws AugeServiceException;
+	
+	
 }
