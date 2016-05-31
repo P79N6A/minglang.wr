@@ -9,8 +9,10 @@ import org.apache.commons.collections.CollectionUtils;
 import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -156,6 +158,21 @@ public final class PartnerInstanceConverter {
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		return instanceDto;
 	}
+	
+	public static PartnerInstanceDto convert(PartnerStationRel psRel, Station station, Partner partner) {
+		PartnerInstanceDto instanceDto = convert(psRel);
+
+		if (null != instanceDto) {
+			StationDto stationDto = StationConverter.toStationDto(station);
+			instanceDto.setStationDto(stationDto);
+
+			PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+			instanceDto.setPartnerDto(partnerDto);
+		}
+
+		return instanceDto;
+	}
+	
 
 	private static StationDto convertStationDto(PartnerInstance instance) {
 		if (null == instance) {
