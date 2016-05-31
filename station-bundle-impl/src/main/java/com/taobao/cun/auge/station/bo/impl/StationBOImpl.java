@@ -62,7 +62,7 @@ public class StationBOImpl implements StationBO {
 		record.setId(stationId);
 		record.setStatus(postStatus.getCode());
 		DomainUtils.beforeUpdate(record, operator);
-		stationMapper.updateByPrimaryKey(record);
+		stationMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class StationBOImpl implements StationBO {
 		}
 		
 		DomainUtils.beforeUpdate(record, stationDto.getOperator());
-		stationMapper.updateByPrimaryKey(record);
+		stationMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override

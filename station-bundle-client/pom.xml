@@ -35,10 +35,6 @@
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
         </dependency>
-		<dependency>
-			<groupId>com.cuntao.boot</groupId>
-			<artifactId>spring-boot-starter-mybatis</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
