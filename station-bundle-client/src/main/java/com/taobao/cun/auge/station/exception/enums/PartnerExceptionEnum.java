@@ -32,8 +32,8 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_TAOBAOUSERID_HAS_USED = new PartnerExceptionEnum(
 			"PARTNER_TAOBAOUSERID_HAS_USED", "该账号已经存在活动的加盟申请");
 	
-	public static final PartnerExceptionEnum PARTNER_DELETE_TO_TEMP = new PartnerExceptionEnum(
-			"PARTNER_DELETE_TO_TEMP", "只能删除暂存数据");
+	public static final PartnerExceptionEnum PARTNER_DELETE_FAIL = new PartnerExceptionEnum(
+			"PARTNER_DELETE_FAIL", "当前状态合伙人信息不能删除");
 	
 	
 
@@ -47,7 +47,7 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_ALIPAYACCOUNT_NOTEQUAL", PARTNER_ALIPAYACCOUNT_NOTEQUAL);
 		mappings.put("PARTNER_PERSION_INFO_NOTEQUAL", PARTNER_PERSION_INFO_NOTEQUAL);
 		mappings.put("PARTNER_TAOBAOUSERID_HAS_USED", PARTNER_TAOBAOUSERID_HAS_USED);
-		mappings.put("PARTNER_DELETE_TO_TEMP", PARTNER_DELETE_TO_TEMP);
+		mappings.put("PARTNER_DELETE_FAIL", PARTNER_DELETE_FAIL);
 	}
 
 	public PartnerExceptionEnum(String code, String desc) {

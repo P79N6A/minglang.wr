@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
-import com.taobao.cun.auge.dal.mapper.CuntaoFlowRecordMapper;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.crius.event.Event;
@@ -23,7 +23,7 @@ import com.taobao.cun.crius.event.client.EventListener;
 public class CuntaoFlowRecordListener implements EventListener {
 
 	@Autowired
-	CuntaoFlowRecordMapper cuntaoFlowRecordMapper;
+	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 
 	@Autowired
 	Emp360Adapter emp360Adapter;
@@ -39,17 +39,19 @@ public class CuntaoFlowRecordListener implements EventListener {
 		String operator = stateChangeEvent.getOperator();
 		OperatorTypeEnum operatorType = stateChangeEvent.getOperatorType();
 
+		String buildOperatorName = buildOperatorName(operator, operatorType);
+		
 		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-
+		
 		cuntaoFlowRecord.setTargetId(stationId);
 		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
 		cuntaoFlowRecord.setNodeTitle(stateChangeEnum.getDescription());
-		cuntaoFlowRecord.setOperatorName(buildOperatorName(operator, operatorType));
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
-
-		cuntaoFlowRecordMapper.insertSelective(cuntaoFlowRecord);
+		
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 	}
 
 	private String buildRecordContent(PartnerInstanceStateChangeEvent stateChangeEvent) {

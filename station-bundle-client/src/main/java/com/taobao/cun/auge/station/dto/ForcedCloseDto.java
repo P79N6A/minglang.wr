@@ -13,6 +13,7 @@ public class ForcedCloseDto extends OperatorDto {
 	@NotNull(message="instanceId not null")
 	private Long instanceId;
 
+	@NotNull(message="PartnerForcedCloseReasonEnum not null")
 	private PartnerForcedCloseReasonEnum reason;
 	
 	private String remarks;

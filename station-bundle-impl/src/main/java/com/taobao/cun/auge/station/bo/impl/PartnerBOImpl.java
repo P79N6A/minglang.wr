@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +15,6 @@ import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 @Component("partnerBO")
 public class PartnerBOImpl implements PartnerBO {
@@ -78,6 +75,7 @@ public class PartnerBOImpl implements PartnerBO {
 	@Override
 	public void deletePartner(Long partnerId, String operator)
 			throws AugeServiceException {
+		ValidateUtils.notNull(partnerId);
 		Partner rel = new Partner();
 		rel.setId(partnerId);
 		DomainUtils.beforeDelete(rel, operator);

@@ -49,6 +49,7 @@ import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -408,23 +409,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(instanceId);
 		
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_TO_TEMP);
+		if (rel==null || StringUtils.isEmpty(rel.getType())) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
-		Long stationId =  rel.getStationId();
-		Station station = stationBO.getStationById(stationId);
-		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_TO_TEMP);
-		}
-		
-		Long partnerId =  rel.getPartnerId();
-		Partner partner = partnerBO.getPartnerById(partnerId);
-		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_TO_TEMP);
-		}
-		partnerInstanceBO.deletePartnerStationRel(instanceId, partnerInstanceDeleteDto.getOperator());
-		stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
-		partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+		partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 	}
 
 	@Override
@@ -618,7 +606,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				forcedCloseDto);
-		event.setRemark(null != forcedCloseDto.getReason() ? forcedCloseDto.getReason().getDesc() : "");
+		
+		event.setRemark(PartnerForcedCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
+				? forcedCloseDto.getRemarks() : forcedCloseDto.getReason().getDesc());
 
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
@@ -649,13 +639,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				operator);
 
 		// 村点退出中
-		stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
+		if (quitDto.getIsQuitStation()) {
+			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING,
+					operator);
+		}
 
 		// 退出审批流程，由事件监听完成
 		// 记录村点状态变化
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_QUITTING,
-				partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
+				PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+				quitDto);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		// 失效tair
 		// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE

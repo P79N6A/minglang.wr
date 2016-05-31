@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample.Criteria;
@@ -75,14 +76,27 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		}
 
 		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
-
 		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-
 		criteria.andPartnerInstanceIdEqualTo(instanceId);
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andBusinessTypeEqualTo(businessTypeEnum.getCode());
 		criteria.andCurrentStepEqualTo(PartnerLifecycleCurrentStepEnum.END.getCode());
 		return ResultUtils.selectOne(partnerLifecycleItemsMapper.selectByExample(example));
+	}
+
+	@Override
+	public void deleteLifecycleItems(Long instanceId, String operator)
+			throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operator);
+		PartnerLifecycleItems record = new PartnerLifecycleItems();
+		DomainUtils.beforeDelete(record, operator);
+		
+		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andPartnerInstanceIdEqualTo(instanceId);
+		criteria.andIsDeletedEqualTo("n");
+		
+		partnerLifecycleItemsMapper.updateByExampleSelective(record, example);
 	}
 }

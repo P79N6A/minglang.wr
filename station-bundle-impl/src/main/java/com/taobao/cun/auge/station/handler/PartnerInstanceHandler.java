@@ -7,6 +7,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -36,7 +38,11 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	public Long handleApplySettle(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto, partnerInstanceTypeEnum);
+		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto);
+	}
+	
+	public void handleDelete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel)throws AugeServiceException {
+		strategy.get(rel.getType()).delete(partnerInstanceDeleteDto, rel);
 	}
 	
 	public void validateExistValidChildren(PartnerInstanceTypeEnum partnerInstanceTypeEnum,Long instanceId)throws AugeServiceException {

@@ -14,16 +14,20 @@ import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -50,6 +54,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	
 	@Autowired
 	PartnerBO partnerBO;
+	
+	@Autowired
+	StationBO stationBO;
 	
 	@Override
 	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
@@ -125,7 +132,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		
 		Criteria criteria = example.createCriteria();
-		if(!CollectionUtils.isEmpty(stateEnums)){
+		if(CollectionUtils.isNotEmpty(stateEnums)){
 			List<String> states =  Lists.transform(stateEnums, new Function<PartnerInstanceStateEnum,String>(){
 				@Override
 				public String apply(PartnerInstanceStateEnum input) {
@@ -200,18 +207,19 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)
-			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)throws AugeServiceException {
+		PartnerStationRel psRel = findPartnerInstanceById(instanceId);
+		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+		Station station = stationBO.getStationById(psRel.getStationId());
+		
+		return PartnerInstanceConverter.convert(psRel, station, partner);
 	}
 
 	@Override
 	public void updateOpenDate(Long instanceId, Date openDate, String operator)
 			throws AugeServiceException {
-		if (null == instanceId|| operator==null) {
-			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
-		}
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operator);
 		PartnerStationRel partnerStationRel = partnerStationRelMapper.selectByPrimaryKey(instanceId);
 		if (partnerStationRel ==null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
@@ -233,9 +241,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
-		if (null == stationId) {
-			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
-		}
+		ValidateUtils.notNull(stationId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();
@@ -252,9 +258,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId,List<String> states) throws AugeServiceException {
-		if (null == partnerId) {
-			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
-		}
+		ValidateUtils.notNull(partnerId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();
