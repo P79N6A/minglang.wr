@@ -22,6 +22,7 @@ public final class PartnerInstanceEventConverter {
 		
 		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
 		
+		event.setPartnerInstanceId(partnerInstanceDto.getId());
 		event.setStationId(partnerInstanceDto.getStationDto().getId());
 		event.setStationName(partnerInstanceDto.getStationDto().getName());
 		event.setOwnOrgId(partnerInstanceDto.getStationDto().getApplyOrg());
