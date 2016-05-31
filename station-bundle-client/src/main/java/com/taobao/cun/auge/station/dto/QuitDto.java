@@ -5,30 +5,33 @@ import javax.validation.constraints.NotNull;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 
-public class QuitDto  extends OperatorDto{
+public class QuitDto extends OperatorDto {
 
 	private static final long serialVersionUID = -449672555158774209L;
-	
-	@NotNull(message="instanceId not null")
+
+	@NotNull(message = "instanceId not null")
 	private Long instanceId;
-	
-	private String state;
-	
+
+	// 线下申请邮件、表格附件名称
 	private String revocationAppFormFileName;
-	
+
+	// 审批文件名称
+	private String approvalFileName;
+
+	// 撤点说明
+	private String otherDescription;
+
+	// 资产使用情况
+	private AssertUseStateEnum assertUseState;
+
+	// 贷款证明文件
 	private String loanProveFileName;
 	
-	private String approvalFileName;
-	
-	private String otherDescription;
-	
-	private AssertUseStateEnum assertUseState;
-	
-	private String loanHasClose;
-	
+	// 贷款是否结清
+	private boolean loanHasClose;
+
 	// 是，退出服务站，否，不退出服务站
 	private Boolean isQuitStation = Boolean.TRUE;
-	
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -36,14 +39,6 @@ public class QuitDto  extends OperatorDto{
 
 	public void setInstanceId(Long instanceId) {
 		this.instanceId = instanceId;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
 	}
 
 	public String getRevocationAppFormFileName() {
@@ -86,11 +81,11 @@ public class QuitDto  extends OperatorDto{
 		this.assertUseState = assertUseState;
 	}
 
-	public String getLoanHasClose() {
+	public boolean isLoanHasClose() {
 		return loanHasClose;
 	}
 
-	public void setLoanHasClose(String loanHasClose) {
+	public void setLoanHasClose(boolean loanHasClose) {
 		this.loanHasClose = loanHasClose;
 	}
 

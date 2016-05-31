@@ -49,7 +49,11 @@ public class SmsListener implements EventListener {
 		String operatorId = stateChangeEvent.getOperator();
 
 		String partnerMobile = findPartnerMobile(taobaoUserId);
-		sms(taobaoUserId, partnerMobile, findSmsTemplate(stateChangeEnum), operatorId);
+		DingtalkTemplateEnum findSmsTemplate = findSmsTemplate(stateChangeEnum);
+		if (null == findSmsTemplate) {
+			return;
+		}
+		sms(taobaoUserId, partnerMobile, findSmsTemplate, operatorId);
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
@@ -69,7 +73,7 @@ public class SmsListener implements EventListener {
 		else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			return DingtalkTemplateEnum.NODE_LEAVE;
 		}
-		throw new IllegalArgumentException("没有找到短信模板。stateChangeEnum=" + stateChangeEnum.getDescription());
+		return null;
 	}
 
 	/**
