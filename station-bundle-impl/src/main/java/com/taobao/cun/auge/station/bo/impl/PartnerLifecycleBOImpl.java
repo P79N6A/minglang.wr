@@ -40,7 +40,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	
 		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
 		DomainUtils.beforeUpdate(items, DomainUtils.DEFAULT_OPERATOR);
-		partnerLifecycleItemsMapper.updateByPrimaryKey(items);
+		partnerLifecycleItemsMapper.updateByPrimaryKeySelective(items);
 	}
 
 	public Long getLifecycleItemsId(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,

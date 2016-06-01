@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -40,6 +41,11 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public Long handleApplySettle(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
 		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto);
 	}
+	
+	public void handleQuit(PartnerInstanceQuitDto partnerInstanceQuitDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).quit(partnerInstanceQuitDto);
+	}
+	
 	
 	public void handleDelete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel)throws AugeServiceException {
 		strategy.get(rel.getType()).delete(partnerInstanceDeleteDto, rel);

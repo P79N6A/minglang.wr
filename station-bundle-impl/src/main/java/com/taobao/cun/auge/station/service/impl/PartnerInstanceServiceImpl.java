@@ -45,6 +45,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
@@ -744,6 +745,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
 		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(type, instanceId));
+	}
+
+	@Override
+	public void quitPartnerInstance(
+			PartnerInstanceQuitDto partnerInstanceQuitDto)
+			throws AugeServiceException {
+		ValidateUtils.notNull(partnerInstanceQuitDto);
+		Long instanceId = partnerInstanceQuitDto.getInstanceId();
+		ValidateUtils.notNull(instanceId);
+		
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (rel==null || StringUtils.isEmpty(rel.getType())) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
+		partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
 	}
 
 }
