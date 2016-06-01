@@ -47,7 +47,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议

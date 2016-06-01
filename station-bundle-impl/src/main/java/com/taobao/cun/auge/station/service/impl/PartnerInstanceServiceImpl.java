@@ -28,6 +28,7 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -39,6 +40,7 @@ import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
@@ -50,6 +52,9 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
@@ -128,6 +133,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
+	
+	@Autowired
+	AccountMoneyBO accountMoneyBO;
 	
 	
 	@Override
@@ -423,17 +431,32 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException {
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException {
 		try {
 			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
+			
+			addWaitFrozenMoney(instanceId,taobaoUserId,waitFrozenMoney);
+			
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		} catch (Exception e) {
 			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
 			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
 		}
+	}
+	
+	private void addWaitFrozenMoney(Long instanceId,Long taobaoUserId,Double waitFrozenMoney) {
+		AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
+		accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
+		accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
+		accountMoneyDto.setObjectId(instanceId);
+		accountMoneyDto.setState(AccountMoneyStateEnum.WAIT_FROZEN);
+		accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
+		accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
+		accountMoneyBO.addAccountMoney(accountMoneyDto);
 	}
 
 	@Override
