@@ -1,11 +1,9 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
-import java.util.Map;
-
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
@@ -20,7 +18,7 @@ import com.taobao.cun.service.alipay.AlipayAccountTagService;
 public class AlipayTagAdapterImpl implements AlipayTagAdapter {
 
 	private static final Logger logger = LoggerFactory.getLogger(AlipayTagAdapterImpl.class);
-
+	@Autowired
 	private AlipayAccountTagService alipayAccountTagService;
 
 	@Override

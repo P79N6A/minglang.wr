@@ -451,7 +451,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney) throws AugeServiceException {
-		// TODO Auto-generated method stub
+		
 		
 		// 同步station_apply
 //		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
