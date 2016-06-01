@@ -433,7 +433,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException {
 		try {
-			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
+			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 			
@@ -462,7 +462,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException {
 		try {
-			Long instanceId = partnerInstanceBO.findPartnerInstanceId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
+			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.MANAGE_PRO, instanceId,
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 			// 同步station_apply
@@ -521,7 +521,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		try {
-			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstance(taobaoUserId,
+			PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
 					PartnerInstanceStateEnum.SERVICING);
 			if (partnerInstance == null) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);

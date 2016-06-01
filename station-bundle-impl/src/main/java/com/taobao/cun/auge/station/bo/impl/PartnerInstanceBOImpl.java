@@ -64,19 +64,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
 	
 	@Override
-	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
-		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-
+	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		ValidateUtils.notNull(instanceState);
 		PartnerStationRelExample example = new PartnerStationRelExample();
-		
 		Criteria criteria=	example.createCriteria();
-		
-		criteria.andPartnerIdEqualTo(partner.getId());
-		criteria.andIsCurrentEqualTo("y");
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andIsDeletedEqualTo("n");
-		if (null != instanceState) {
-			criteria.andStateEqualTo(instanceState.getCode());
-		}
+		criteria.andStateEqualTo(instanceState.getCode());
 		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(instances)){
 			return null;
@@ -86,8 +81,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum state) {
-		PartnerStationRel rel = findPartnerInstance(taobaoUserId,state);
+	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException {
+		PartnerStationRel rel = getPartnerInstanceByTaobaoUserId(taobaoUserId,instanceState);
 		if (rel != null){
 			return rel.getId();
 		}
@@ -95,7 +90,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public Long findPartnerInstanceId(Long stationApplyId) {
+	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException {
+		ValidateUtils.notNull(stationApplyId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();

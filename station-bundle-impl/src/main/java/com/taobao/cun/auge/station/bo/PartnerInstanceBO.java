@@ -37,7 +37,7 @@ public interface PartnerInstanceBO {
 	 * @param stationApplyId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long stationApplyId);
+	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException;
 
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表主键id
@@ -45,7 +45,7 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException;
 
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表
@@ -53,7 +53,7 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstance(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
+	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException;
 
 	/**
 	 * 根据实例id查询村点id

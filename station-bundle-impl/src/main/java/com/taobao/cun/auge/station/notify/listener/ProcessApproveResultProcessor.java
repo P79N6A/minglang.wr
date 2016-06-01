@@ -39,7 +39,7 @@ public class ProcessApproveResultProcessor {
 	 * @throws Exception
 	 */
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 
 		OperatorDto operator = new OperatorDto();
@@ -96,7 +96,7 @@ public class ProcessApproveResultProcessor {
 		operator.setOperator(operatorId);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
-		Long instanceId = partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {

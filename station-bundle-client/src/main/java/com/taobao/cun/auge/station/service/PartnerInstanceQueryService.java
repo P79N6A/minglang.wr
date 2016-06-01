@@ -24,6 +24,6 @@ public interface PartnerInstanceQueryService {
 	 * @param stationApplyId
 	 * @return
 	 */
-	public Long findPartnerInstanceId(Long stationApplyId);
+	public Long getPartnerInstanceId(Long stationApplyId);
 
 }
