@@ -30,16 +30,16 @@
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily"
+		<property name="hsf.consumer.version.cuntaocenter.alipayStandardBailService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-		<property name="hsf.consumer.version.crius.cuntaoUicReadService" defaultValue="1.0.0.daily"
-			description="cuntaocenter-version" />
+
+		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily" description="cuntaocenter-version" />
+		<property name="hsf.consumer.version.crius.cuntaoUicReadService" defaultValue="1.0.0.daily" description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.admin.partnerLifecycleCallbackService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.admin.stationLifecycleCallbackService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-		<property name="hr.security.key" defaultValue="a36f3e7c-7187-4cc8-bbf9-0810c11ea2ed"
-			description="hr.security.key" />	
+		<property name="hr.security.key" defaultValue="a36f3e7c-7187-4cc8-bbf9-0810c11ea2ed" description="hr.security.key" />
 
 	</group>
 
