@@ -14,12 +14,15 @@ public class AccountMoneyStateEnum implements Serializable {
 
     private String code;
     private String desc;
-
+    
+    public static final AccountMoneyStateEnum WAIT_FROZEN  = new AccountMoneyStateEnum("WAIT_FROZEN", "待冻结");
+    
     public static final AccountMoneyStateEnum HAS_FROZEN = new AccountMoneyStateEnum("HAS_FROZEN", "已冻结");
     public static final AccountMoneyStateEnum HAS_THAW = new AccountMoneyStateEnum("HAS_THAW", "已解冻");
 
 
     static {
+    	mappings.put("WAIT_FROZEN", WAIT_FROZEN);
         mappings.put("HAS_FROZEN", HAS_FROZEN);
         mappings.put("HAS_THAW", HAS_THAW);
     }

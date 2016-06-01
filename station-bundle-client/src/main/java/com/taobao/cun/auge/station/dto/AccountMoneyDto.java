@@ -18,10 +18,6 @@ public class AccountMoneyDto  extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 5957229362759722926L;
 
-	/**
-	 * 主键
-	 */
-    private Long id;
 
     /**
      * 淘宝userid
@@ -68,13 +64,6 @@ public class AccountMoneyDto  extends OperatorDto implements Serializable {
      */
     private String alipayAccount;
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getTaobaoUserId() {
 		return taobaoUserId;

@@ -26,7 +26,7 @@ public interface AccountMoneyBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public Long updateAccountMoney(AccountMoneyDto accountMoneyDto)  throws AugeServiceException;
+	public Long updateAccountMoneyByObjectId(AccountMoneyDto accountMoneyDto)  throws AugeServiceException;
 	
 	/**
 	 * 查询
