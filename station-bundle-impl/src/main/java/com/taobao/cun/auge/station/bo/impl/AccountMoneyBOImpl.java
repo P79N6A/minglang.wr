@@ -17,7 +17,8 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 	@Override
 	public Long addAccountMoney(AccountMoneyDto accountMoneyDto)
 			throws AugeServiceException {
-		accountMoneyMapper.
+		return null;
+		//accountMoneyMapper.
 	}
 
 	@Override
