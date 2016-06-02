@@ -61,6 +61,9 @@ public class StationBOImpl implements StationBO {
 		Station record = new Station();
 		record.setId(stationId);
 		record.setStatus(postStatus.getCode());
+		if(StationStatusEnum.QUIT.equals(postStatus)){
+			record.setState("INVALID");
+		}
 		DomainUtils.beforeUpdate(record, operator);
 		stationMapper.updateByPrimaryKeySelective(record);
 	}

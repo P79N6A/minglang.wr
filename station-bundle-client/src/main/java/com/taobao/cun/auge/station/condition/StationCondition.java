@@ -19,7 +19,7 @@ public class StationCondition extends OperatorDto implements Serializable {
 	private Long id;
 	
 	/**
-	 * 是否需要村点信息
+	 * 是否需要村点附件信息
 	 */
 	private Boolean needAttachementInfo = Boolean.TRUE;
 

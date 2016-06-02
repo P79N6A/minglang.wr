@@ -16,6 +16,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -61,6 +62,7 @@ import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -432,6 +434,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		ValidateUtils.notNull(waitFrozenMoney);
 		try {
 			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
@@ -439,11 +443,25 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			addWaitFrozenMoney(instanceId,taobaoUserId,waitFrozenMoney);
 			
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+					PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+			if (items != null) {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
+				param.setLifecycleId(items.getId());
+				partnerLifecycleBO.updateLifecycle(param);
+			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-		} catch (Exception e) {
-			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
-			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId),augeException.toString());
+			logger.error(error,augeException);
+			throw augeException;
+		}catch (Exception e) {
+			String error = getErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(StationExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 	
@@ -461,15 +479,26 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
 		try {
-			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
-			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.MANAGE_PRO, instanceId,
+			PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			
+			if (partnerStationRel == null) {
+				throw new AugeServiceException(StationExceptionEnum.SIGN_MANAGE_PROTOCOL_FAIL);
+			}
+			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.MANAGE_PRO, partnerStationRel.getId(),
 					ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
+			
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-		} catch (Exception e) {
-			logger.error(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL.getDesc(), e);
-			throw new AugeServiceException(StationExceptionEnum.SIGN_SETTLE_PROTOCOL_FAIL);
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerStationRel.getId());
+		}catch (AugeServiceException augeException) {
+			String error = getErrorMessage("signManageProtocol", String.valueOf(taobaoUserId),augeException.toString());
+			logger.error(error,augeException);
+			throw augeException;
+		}catch (Exception e) {
+			String error = getErrorMessage("signManageProtocol", String.valueOf(taobaoUserId),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 
@@ -771,9 +800,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public void quitPartnerInstance(
-			PartnerInstanceQuitDto partnerInstanceQuitDto)
-			throws AugeServiceException {
+	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceQuitDto);
 		Long instanceId = partnerInstanceQuitDto.getInstanceId();
 		ValidateUtils.notNull(instanceId);
