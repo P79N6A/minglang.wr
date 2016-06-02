@@ -110,7 +110,7 @@ public class StartProcessListener implements EventListener {
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
 			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
 			startProcessTask.setBusinessStepNo(1l);
-			startProcessTask.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			startProcessTask.setBusinessType(business.getCode());
 			startProcessTask.setBusinessStepDesc("启动审批流程");
 			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
