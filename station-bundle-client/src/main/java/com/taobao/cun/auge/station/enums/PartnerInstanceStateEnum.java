@@ -112,7 +112,7 @@ public class PartnerInstanceStateEnum  implements Serializable {
 	
 	/**
 	 *不能再次入驻的 实例状态
-	 * 
+	 * quiting中，待保证金冻结的子状态除外
 	 * 
 	 * @return
 	 */
