@@ -16,10 +16,25 @@ public interface PartnerInstanceQueryService {
 	 */
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
 
+	/**
+	 * 
+	 * @param pageCondition
+	 * @return
+	 */
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
 
 	/**
-	 * 根据stationapplyId查询合伙人实例id
+	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(推出待解冻除外)]
+	 * 的合伙人实例
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId);
+
+	/**
+	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
 	 * 
 	 * @param stationApplyId
 	 * @return
