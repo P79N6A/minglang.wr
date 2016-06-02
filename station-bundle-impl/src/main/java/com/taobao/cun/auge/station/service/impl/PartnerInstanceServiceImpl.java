@@ -230,7 +230,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private Long addSubmit(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		try {
 			ValidateUtils.notNull(partnerInstanceDto);
-			Long taobaoUserId = validate(partnerInstanceDto);
+			Long taobaoUserId = validateSettlable(partnerInstanceDto);
 			StationDto stationDto = partnerInstanceDto.getStationDto();
 			//判断服务站编号是否使用中
 			checkStationNumDuplicate(null,stationDto.getStationNum());
@@ -275,7 +275,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
     }    
 	
-	private Long validate(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	private Long validateSettlable(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
@@ -339,8 +339,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 		//判断淘宝账号是否使用中
-		boolean checkTaobaoUserId = partnerInstanceBO.checkSettleQualification(paDto.getTaobaoUserId());
-		if (!checkTaobaoUserId) {
+		PartnerStationRel existPartnerInstance = partnerInstanceBO.getActivePartnerInstance(paDto.getTaobaoUserId());
+		if (null != existPartnerInstance) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_TAOBAOUSERID_HAS_USED);
 		}
 		return paDto.getTaobaoUserId();
@@ -369,7 +369,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		try {
 			ValidateUtils.notNull(partnerInstanceDto);
 			ValidateUtils.notNull(partnerInstanceDto.getId());
-			Long taobaoUserId = validate(partnerInstanceDto);
+			Long taobaoUserId = validateSettlable(partnerInstanceDto);
 			Long instanceId = partnerInstanceDto.getId();
 			
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);

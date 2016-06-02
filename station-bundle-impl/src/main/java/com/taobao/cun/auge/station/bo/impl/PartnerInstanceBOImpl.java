@@ -51,44 +51,45 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Autowired
 	PartnerStationRelMapper partnerStationRelMapper;
-	
+
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
-	
+
 	@Autowired
 	PartnerBO partnerBO;
-	
+
 	@Autowired
 	StationBO stationBO;
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
-	
+
 	@Override
-	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException {
+	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
+			throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(instanceState);
 		PartnerStationRelExample example = new PartnerStationRelExample();
-		Criteria criteria=	example.createCriteria();
+		Criteria criteria = example.createCriteria();
 		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStateEqualTo(instanceState.getCode());
 		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
-		if(CollectionUtils.isEmpty(instances)){
+		if (CollectionUtils.isEmpty(instances)) {
 			return null;
 		}
 		return instances.get(0);
-		
+
 	}
-	
+
 	@Override
 	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException {
-		PartnerStationRel rel = getPartnerInstanceByTaobaoUserId(taobaoUserId,instanceState);
-		if (rel != null){
+		PartnerStationRel rel = getPartnerInstanceByTaobaoUserId(taobaoUserId, instanceState);
+		if (rel != null) {
 			return rel.getId();
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException {
 		ValidateUtils.notNull(stationApplyId);
@@ -112,8 +113,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
-		
-		
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();
@@ -121,20 +120,20 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andParentStationIdEqualTo(parentStationId);
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStateEqualTo(state.getCode());
-		
+
 		return partnerStationRelMapper.countByExample(example);
 	}
-	
+
 	@Override
 	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
 		PartnerStationRelExample example = new PartnerStationRelExample();
-		
+
 		Criteria criteria = example.createCriteria();
-		if(CollectionUtils.isNotEmpty(stateEnums)){
-			List<String> states =  Lists.transform(stateEnums, new Function<PartnerInstanceStateEnum,String>(){
+		if (CollectionUtils.isNotEmpty(stateEnums)) {
+			List<String> states = Lists.transform(stateEnums, new Function<PartnerInstanceStateEnum, String>() {
 				@Override
 				public String apply(PartnerInstanceStateEnum input) {
 					return input.getCode();
@@ -146,15 +145,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andParentStationIdEqualTo(parentStationId);
 		criteria.andIsDeletedEqualTo("n");
 
-		//排除自己
+		// 排除自己
 		criteria.andTypeNotEqualTo(curPartnerInstance.getType());
-		
+
 		return partnerStationRelMapper.countByExample(example);
 	}
 
 	@Override
-	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
-			String operator) throws AugeServiceException {
+	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
+			throws AugeServiceException {
 		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 
 		if (!preState.getCode().equals(partnerInstance.getState())) {
@@ -192,14 +191,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
-		PartnerStationRel rel =convertToDomain(partnerInstanceDto);
+		PartnerStationRel rel = convertToDomain(partnerInstanceDto);
 		DomainUtils.beforeUpdate(rel, partnerInstanceDto.getOperator());
 		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
-		
+
 	}
-	
-	private PartnerStationRel convertToDomain (PartnerInstanceDto partnerInstanceDto) {
-		PartnerStationRel rel =new PartnerStationRel();
+
+	private PartnerStationRel convertToDomain(PartnerInstanceDto partnerInstanceDto) {
+		PartnerStationRel rel = new PartnerStationRel();
 		return rel;
 	}
 
@@ -210,24 +209,23 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerInstanceDto getPartnerInstanceById(Long instanceId)throws AugeServiceException {
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) throws AugeServiceException {
 		PartnerStationRel psRel = findPartnerInstanceById(instanceId);
 		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
 		Station station = stationBO.getStationById(psRel.getStationId());
-		
+
 		return PartnerInstanceConverter.convert(psRel, station, partner);
 	}
 
 	@Override
-	public void updateOpenDate(Long instanceId, Date openDate, String operator)
-			throws AugeServiceException {
+	public void updateOpenDate(Long instanceId, Date openDate, String operator) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(operator);
 		PartnerStationRel partnerStationRel = partnerStationRelMapper.selectByPrimaryKey(instanceId);
-		if (partnerStationRel ==null) {
+		if (partnerStationRel == null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
-		
+
 		partnerStationRel.setOpenDate(openDate);
 		DomainUtils.beforeUpdate(partnerStationRel, operator);
 		partnerStationRelMapper.updateByPrimaryKey(partnerStationRel);
@@ -252,15 +250,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andStationIdEqualTo(stationId);
 		criteria.andIsCurrentEqualTo("y");
 		criteria.andIsDeletedEqualTo("n");
-		
+
 		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(instances)) {
 			return null;
 		}
 		return instances.get(0);
 	}
-	
-	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId,List<String> states) throws AugeServiceException {
+
+	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -269,48 +267,45 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andPartnerIdEqualTo(partnerId);
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStateIn(states);
-		
+
 		return partnerStationRelMapper.selectByExample(example);
 	}
-	
 
 	@Override
-	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto)
-			throws AugeServiceException {
+	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
 	}
 
 	@Override
-	public boolean checkSettleQualification(Long taobaoUserId)
-			throws AugeServiceException {
-		Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-		if (partner == null || partner.getId() ==null) {
+	public boolean checkSettleQualification(Long taobaoUserId) throws AugeServiceException {
+		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+		if (partner == null || partner.getId() == null) {
 			return true;
 		}
-		
-		List<PartnerStationRel> instatnceList  = findPartnerInstanceByPartnerId(partner.getId(),PartnerInstanceStateEnum.unReSettlableStatusCodeList());
-		
+
+		List<PartnerStationRel> instatnceList = findPartnerInstanceByPartnerId(partner.getId(),
+				PartnerInstanceStateEnum.unReSettlableStatusCodeList());
+
 		if (CollectionUtils.isEmpty(instatnceList)) {
 			return true;
 		}
-		for (PartnerStationRel rel: instatnceList) {
-			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(),rel.getState())) {
+		for (PartnerStationRel rel : instatnceList) {
+			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
 				return false;
-			}else {
+			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(),item.getCurrentStep())) {
+				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
 					continue;
 				}
 				return false;
 			}
-			
+
 		}
 		return true;
 	}
 
 	@Override
-	public void deletePartnerStationRel(Long instanceId,String operator)
-			throws AugeServiceException {
+	public void deletePartnerStationRel(Long instanceId, String operator) throws AugeServiceException {
 		PartnerStationRel rel = new PartnerStationRel();
 		rel.setId(instanceId);
 		DomainUtils.beforeDelete(rel, operator);
@@ -322,21 +317,20 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (fetchNum < 0) {
 			return null;
 		}
-		
+
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andOpenDateLessThanOrEqualTo(new Date());
 		criteria.andStateEqualTo(PartnerInstanceStateEnum.DECORATING.getCode());
-		
-		
+
 		PageHelper.startPage(1, fetchNum);
 		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(resList)) {
 			return null;
 		}
-		 List<Long> instanceIdList = new ArrayList<Long>();
+		List<Long> instanceIdList = new ArrayList<Long>();
 		for (PartnerStationRel rel : resList) {
 			instanceIdList.add(rel.getId());
 		}
@@ -348,20 +342,44 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (fetchNum < 0) {
 			return null;
 		}
-		
-		Map<String,Object> param =new HashMap<String,Object>();
+
+		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("partnerState", PartnerInstanceStateEnum.QUITING.getCode());
 		param.put("currentStep", PartnerLifecycleCurrentStepEnum.BOND.getCode());
 		param.put("businessType", PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
-		
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);// 30天前的数据
-		
+
 		param.put("serviceEndTime", calendar.getTime());
-		
+
 		PageHelper.startPage(1, fetchNum);
-		 List<Long> instanceIdList =  partnerStationRelExtMapper.getWaitThawMoney(param);
-		 return instanceIdList;
+		List<Long> instanceIdList = partnerStationRelExtMapper.getWaitThawMoney(param);
+		return instanceIdList;
+	}
+
+	@Override
+	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId) {
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId)
+				.andStateIn(PartnerInstanceStateEnum.unReSettlableStatusCodeList());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(resList)) {
+			return null;
+		}
+		for (PartnerStationRel rel : resList) {
+			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
+				return rel;
+			} else {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
+				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
+					continue;
+				}
+				return rel;
+			}
+
+		}
+		return null;
 	}
 }
