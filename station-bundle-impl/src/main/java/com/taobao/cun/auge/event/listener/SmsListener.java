@@ -7,12 +7,14 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -32,6 +34,8 @@ public class SmsListener implements EventListener {
 
 	@Autowired
 	PartnerBO partnerBO;
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
 	TaskExecuteService taskExecuteService;
@@ -49,11 +53,7 @@ public class SmsListener implements EventListener {
 		String operatorId = stateChangeEvent.getOperator();
 
 		String partnerMobile = findPartnerMobile(taobaoUserId);
-		DingtalkTemplateEnum findSmsTemplate = findSmsTemplate(stateChangeEnum);
-		if (null == findSmsTemplate) {
-			return;
-		}
-		sms(taobaoUserId, partnerMobile, findSmsTemplate, operatorId);
+		sms(taobaoUserId, partnerMobile, findSmsTemplate(stateChangeEnum), operatorId);
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
@@ -73,7 +73,7 @@ public class SmsListener implements EventListener {
 		else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			return DingtalkTemplateEnum.NODE_LEAVE;
 		}
-		return null;
+		throw new IllegalArgumentException("没有找到短信模板。stateChangeEnum=" + stateChangeEnum.getDescription());
 	}
 
 	/**
@@ -84,7 +84,8 @@ public class SmsListener implements EventListener {
 	 */
 	private String findPartnerMobile(Long taobaoUserId) {
 		try {
-			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			return partner.getMobile();
 		} catch (AugeServiceException e) {
 			logger.error("查询合伙人手机号码失败。taobaoUserId=" + taobaoUserId);
@@ -127,8 +128,7 @@ public class SmsListener implements EventListener {
 			task.setParameter(smsDto);
 			taskExecuteService.submitTask(task);
 		} catch (Exception e) {
-			logger.error("Failed to send sms. dingTalkType.getCode()=" + dingTalkType.getCode() + " taobaouserid = "
-					+ taobaoUserId, e);
+			logger.error("Failed to send sms. dingTalkType.getCode()=" + dingTalkType.getCode() + " taobaouserid = " + taobaoUserId, e);
 		}
 	}
 
