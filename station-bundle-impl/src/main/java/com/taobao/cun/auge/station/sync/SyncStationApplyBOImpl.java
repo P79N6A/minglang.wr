@@ -101,7 +101,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			}
 			StationApply stationApply = buildStationApply(partnerInstanceId, updateType);
 			logger.info("sync upate to station_apply {} : {}", updateType, JSON.toJSONString(stationApply));
-			stationApplyMapper.updateByPrimaryKey(stationApply);
+			stationApplyMapper.updateByPrimaryKeySelective(stationApply);
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + ": updateStationApply", e);
 		}
