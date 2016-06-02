@@ -14,7 +14,6 @@ import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
-import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.service.TaskExecuteService;
@@ -111,7 +110,7 @@ public class StartProcessListener implements EventListener {
 			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
 			startProcessTask.setBusinessStepNo(1l);
 			startProcessTask.setBusinessType(business.getCode());
-			startProcessTask.setBusinessStepDesc("启动审批流程");
+			startProcessTask.setBusinessStepDesc(business.getDesc());
 			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
 			startProcessTask.setOperator(stateChangeEvent.getOperator());
