@@ -33,6 +33,7 @@ import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
+import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -125,7 +126,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
 		Partner partner = partnerMapper.selectByPrimaryKey(instance.getPartnerId());
 		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
-		example.createCriteria().andCurrentStepNotEqualTo("end").andPartnerInstanceIdEqualTo(instance.getId()).andBusinessTypeEqualTo(instance.getState());
+		example.createCriteria().andCurrentStepNotEqualTo("end").andPartnerInstanceIdEqualTo(instance.getId())
+				.andBusinessTypeEqualTo(instance.getState());
 		List<PartnerLifecycleItems> partnerLifecycleItemsList = partnerLifecycleItemsMapper.selectByExample(example);
 		PartnerLifecycleItems partnerLifecycleItems = CollectionUtil.isEmpty(partnerLifecycleItemsList) ? null
 				: partnerLifecycleItemsList.iterator().next();
@@ -135,23 +137,27 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		stationApply.setState(stationApplySate);
 
 		switch (buildType) {
-		case STATE:
+		case UPDATE_STATE:
+			break;
+		case DELETE:
+			stationApply.setIsDeleted("y");
 			break;
 		case ADD:
 			buildBaseInfo(stationApply, instance, station, partner);
 			break;
-		case BASE:
+		case UPDATE_BASE:
 			buildBaseInfo(stationApply, instance, station, partner);
 			break;
-		case ALL:
+		case UPDATE_ALL:
 			buildBaseInfo(stationApply, instance, station, partner);
-			buildProtocolAndMoneyInfo(stationApply, instance, station, partner);
+			buildProtocolAndMoneyInfo(stationApply, instance, station, partner, partnerLifecycleItems);
 			break;
 		}
 		return stationApply;
 	}
 
-	private void buildProtocolAndMoneyInfo(StationApply stationApply, PartnerStationRel instance, Station station, Partner partner) {
+	private void buildProtocolAndMoneyInfo(StationApply stationApply, PartnerStationRel instance, Station station, Partner partner,
+			PartnerLifecycleItems partnerLifecycleItems) {
 
 		/**
 		 * account_money相关信息
@@ -159,7 +165,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		 * thaw_time,frozen_time,frozen_money
 		 */
 		AccountMoneyExample example = new AccountMoneyExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andObjectIdEqualTo(instance.getId()).andTypeEqualTo(AccountMoneyTypeEnum.PARTNER_BOND.getCode()).andTargetTypeEqualTo(TargetTypeEnum.PARTNER_INSTANCE.getCode());
+		example.createCriteria().andIsDeletedEqualTo("n").andObjectIdEqualTo(instance.getId())
+				.andTypeEqualTo(AccountMoneyTypeEnum.PARTNER_BOND.getCode())
+				.andTargetTypeEqualTo(TargetTypeEnum.PARTNER_INSTANCE.getCode());
 		List<AccountMoney> list = accountMoneyMapper.selectByExample(example);
 		if (!CollectionUtils.isEmpty(list)) {
 			AccountMoney accountMoney = list.iterator().next();
@@ -193,8 +201,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				throw new AugeServiceException("protocol not exists : " + p.getCode());
 			}
 			PartnerProtocolRelExample relExample = new PartnerProtocolRelExample();
-			relExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode()).andProtocolIdEqualTo(protocol.getId()).andObjectIdEqualTo(instance.getId());
-			
+			relExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode())
+					.andProtocolIdEqualTo(protocol.getId()).andObjectIdEqualTo(instance.getId());
+
 			List<PartnerProtocolRel> prList = partnerProtocolRelMapper.selectByExample(relExample);
 			if (CollectionUtils.isEmpty(prList)) {
 				continue;
@@ -212,7 +221,18 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 		}
 
-		// protocol_confirming_step
+		// lifecycle,protocol_confirming_step
+		if(null != partnerLifecycleItems && PartnerInstanceStateEnum.SETTLING.getCode().equals(partnerLifecycleItems.getBusinessType())){
+			if(PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycleItems.getCurrentStep())){
+				stationApply.setProtocolConfirmingStep("CONFIRMED");
+			}
+		}
+		
+		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState()) || PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())){
+			stationApply.setProtocolConfirmingStep("FROZEN");
+		}
+
+		
 		// customer_level,contact_date
 		// submitted_people_name
 

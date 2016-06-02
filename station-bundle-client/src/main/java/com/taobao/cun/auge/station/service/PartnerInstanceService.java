@@ -7,6 +7,7 @@ import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
@@ -46,7 +47,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public void signSettledProtocol(Long taobaoUserId) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议
@@ -129,5 +130,13 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public boolean checkKyPackage() throws AugeServiceException;
+	
+	/**
+	 * 正式退出
+	 * @param partnerInstanceQuitDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException;
 	
 }

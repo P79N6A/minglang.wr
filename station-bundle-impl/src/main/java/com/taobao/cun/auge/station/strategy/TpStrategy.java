@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -15,6 +17,7 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -47,6 +50,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	
 	@Autowired
 	PartnerBO partnerBO;
+	
 	
 	@Override
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto)
@@ -111,5 +115,33 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		}
 		
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
+	}
+
+	@Override
+	public void quit(PartnerInstanceQuitDto partnerInstanceQuitDto)
+			throws AugeServiceException {
+		ValidateUtils.validateParam(partnerInstanceQuitDto);
+		ValidateUtils.notNull(partnerInstanceQuitDto.getInstanceId());
+	    Long instanceId = partnerInstanceQuitDto.getInstanceId();
+		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, 
+				PartnerInstanceStateEnum.QUIT, partnerInstanceQuitDto.getOperator());
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.BOND);
+		if (items != null) {
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setBond(PartnerLifecycleBondEnum.HAS_THAW);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
+		}
+		if(partnerInstanceQuitDto.getIsQuitStation()) {
+			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+			Station station = stationBO.getStationById(stationId);
+			if (station != null) {
+				if (StringUtils.equals(StationStatusEnum.QUITING.getCode(), station.getStatus())) {
+					stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceQuitDto.getOperator());
+				}
+			}
+		}
 	}
 }

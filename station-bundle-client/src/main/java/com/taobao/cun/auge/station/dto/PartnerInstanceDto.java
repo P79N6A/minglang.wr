@@ -82,6 +82,8 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * station_aply表主键，供数据迁移使用
 	 */
 	private Long stationApplyId;
+	
+	private Long taobaoUserId;
 
 
 	private Long stationId;
@@ -241,6 +243,14 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setCloseType(PartnerInstanceCloseTypeEnum closeType) {
 		this.closeType = closeType;
+	}
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
 	}
 
 }

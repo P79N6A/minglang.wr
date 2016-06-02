@@ -39,12 +39,12 @@ import com.taobao.security.util.SensitiveDataUtil;
 
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
-	
+
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
-	
+
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 	@Autowired
@@ -62,35 +62,33 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		if (psRel == null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
-		PartnerInstanceDto insDto= PartnerInstanceConverter.convert(psRel);
+		PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
 		if (condition.getNeedPartnerInfo()) {
 			Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
 			PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 			if (condition.getNeedDesensitization()) {
 				setSafedInfo(partnerDto);
 			}
-			partnerDto.setAttachements(attachementBO.selectAttachementList(partner.getId(),AttachementBizTypeEnum.PARTNER));
+			partnerDto.setAttachements(attachementBO.selectAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 			insDto.setPartnerDto(partnerDto);
 		}
-		
+
 		if (condition.getNeedStationInfo()) {
 			Station station = stationBO.getStationById(insDto.getStationId());
 			StationDto stationDto = StationConverter.toStationDto(station);
-			stationDto.setAttachements(attachementBO.selectAttachementList(stationDto.getId(),AttachementBizTypeEnum.CRIUS_STATION));
+			stationDto.setAttachements(attachementBO.selectAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 			insDto.setStationDto(stationDto);
 		}
 		return insDto;
 	}
-	
+
 	private void setSafedInfo(PartnerDto partnerDto) {
 		if (partnerDto != null) {
 			if (StringUtils.isNotBlank(partnerDto.getAlipayAccount())) {
-				partnerDto
-						.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
+				partnerDto.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
 			}
 			if (StringUtils.isNotBlank(partnerDto.getName())) {
-				partnerDto.setName(SensitiveDataUtil.customizeHide(partnerDto.getName(),
-						0, partnerDto.getName().length() - 1, 1));
+				partnerDto.setName(SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
 			}
 			if (StringUtil.isNotBlank(partnerDto.getIdenNum())) {
 				partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
@@ -98,15 +96,16 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			if (StringUtil.isNotBlank(partnerDto.getTaobaoNick())) {
 				partnerDto.setTaobaoNick(SensitiveDataUtil.taobaoNickHide(partnerDto.getTaobaoNick()));
 			}
-		} 
+		}
 	}
 
 	@Override
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition) {
 		try {
-			//FIXME FHH 方便测试，暂时写死
+			// FIXME FHH 方便测试，暂时写死
 			PageHelper.startPage(1, 10);
-			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+			Page<PartnerInstance> page = partnerStationRelExtMapper
+					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
 			PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 
 			return result;
@@ -117,8 +116,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public Long findPartnerInstanceId(Long stationApplyId) {
-		return partnerInstanceBO.findPartnerInstanceId(stationApplyId);
+	public Long getPartnerInstanceId(Long stationApplyId) {
+		return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
+	}
+
+	@Override
+	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) {
+		return null;
+//				partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 	}
 
 }

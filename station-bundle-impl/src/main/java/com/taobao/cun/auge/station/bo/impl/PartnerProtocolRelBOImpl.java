@@ -16,32 +16,35 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+
 @Component("partnerProtocolRelBO")
-public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO{
-	
+public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
+
 	@Autowired
 	PartnerProtocolRelMapper partnerProtocolRelMapper;
-	
+
 	@Autowired
 	PartnerMapper partnerMapper;
 
 	@Autowired
 	PartnerStationRelMapper partnerStationRelMapper;
-	
+
 	@Autowired
 	ProtocolBO protocolBO;
 
 	@Override
-	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId,
-			ProtocolTargetBizTypeEnum bizType) {
+	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId, ProtocolTargetBizTypeEnum bizType) {
 		Date now = new Date();
 		signProtocol(businessId, taobaoUserId, type, now, now, null, String.valueOf(taobaoUserId),
 				ProtocolTargetBizTypeEnum.PARTNER_INSTANCE);
 	}
 
-	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime,
-			Date endTime, String operator, ProtocolTargetBizTypeEnum targetType) {
+	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
+			String operator, ProtocolTargetBizTypeEnum targetType) {
 		Long protocolId = protocolBO.findProtocolId(type);
+		if (null == protocolId) {
+			throw new RuntimeException("protocol not exists: " + type);
+		}
 
 		PartnerProtocolRel partnerProtocolRelDO = new PartnerProtocolRel();
 
@@ -57,26 +60,23 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO{
 
 		partnerProtocolRelMapper.insertSelective(partnerProtocolRelDO);
 	}
-	
-	
+
 	@Override
-	public void cancelProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId,
-			ProtocolTargetBizTypeEnum bizType, String operator) {
+	public void cancelProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId, ProtocolTargetBizTypeEnum bizType,
+			String operator) {
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
-		
+
 		Criteria criteria = example.createCriteria();
-		
+
 		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andTargetTypeEqualTo(bizType.getCode());
 		criteria.andObjectIdEqualTo(businessId);
-		
 
 		Long protocolId = protocolBO.findProtocolId(type);
 		criteria.andProtocolIdEqualTo(protocolId);
 
 		DomainUtils.beforeDelete(example, operator);
-		
-		
+
 		partnerProtocolRelMapper.deleteByExample(example);
 	}
 }

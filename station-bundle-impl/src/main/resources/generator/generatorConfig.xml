@@ -23,7 +23,7 @@
 
 		<javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}"
 			type="XMLMAPPER" />
-
+<!-- 
 		<table tableName="account_money" enableCountByExample="true" enableUpdateByExample="true"
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
@@ -100,6 +100,16 @@
 			enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
+		 -->
+	    <table tableName="station" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true"
+			enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+			<table tableName="partner_station_rel" enableCountByExample="true" enableUpdateByExample="true"
+			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+
 
 
 	</context>

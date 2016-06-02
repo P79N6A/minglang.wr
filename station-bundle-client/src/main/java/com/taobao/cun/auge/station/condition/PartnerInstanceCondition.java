@@ -6,29 +6,30 @@ import com.taobao.cun.auge.common.OperatorDto;
 
 /**
  * 查询实例条件
+ * 
  * @author quanzhu.wangqz
  *
  */
-public class PartnerInstanceCondition extends OperatorDto implements Serializable{
+public class PartnerInstanceCondition extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 9015126136586505699L;
-	
+
 	private Long instanceId;
-	
+
 	/**
 	 * 是否需要村点信息
 	 */
-	private Boolean needStationInfo = Boolean.TRUE;
-	
+	private Boolean needStationInfo = Boolean.FALSE;
+
 	/**
 	 * 是否需要合伙人信息
 	 */
-	private Boolean needPartnerInfo = Boolean.TRUE;
-	
+	private Boolean needPartnerInfo = Boolean.FALSE;
+
 	/**
 	 * 是否需要脱敏
 	 */
-	private Boolean needDesensitization = Boolean.TRUE;
+	private Boolean needDesensitization = Boolean.FALSE;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -61,4 +62,14 @@ public class PartnerInstanceCondition extends OperatorDto implements Serializabl
 	public void setNeedDesensitization(Boolean needDesensitization) {
 		this.needDesensitization = needDesensitization;
 	}
+
+	public PartnerInstanceCondition() {
+	}
+
+	public PartnerInstanceCondition(boolean needStationInfo, boolean needPartnerInfo, boolean needDesensitization) {
+		this.needStationInfo = needStationInfo;
+		this.needPartnerInfo = needPartnerInfo;
+		this.needDesensitization = needDesensitization;
+	}
+
 }
