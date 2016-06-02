@@ -67,6 +67,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -88,7 +89,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  *
  */
-@HSFProvider(serviceInterface = PartnerInstanceService.class)
+@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion ="1.0.0.daily.fhh")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -664,6 +665,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 村点停业中
 		stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 				forcedCloseDto.getOperator());
+		
+		//添加停业生命周期记录
+		addClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
 
 		// 通过事件，定时钟，启动停业流程
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
@@ -680,6 +684,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 		// tair
+	}
+
+	private void addClosingLifecycle(ForcedCloseDto forcedCloseDto, Long instanceId, PartnerStationRel partnerStationRel) {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(instanceId);
+		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+
+		itemsDO.setOperator(forcedCloseDto.getOperator());
+		itemsDO.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		itemsDO.setOperatorType(forcedCloseDto.getOperatorType());
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
 	@Override
