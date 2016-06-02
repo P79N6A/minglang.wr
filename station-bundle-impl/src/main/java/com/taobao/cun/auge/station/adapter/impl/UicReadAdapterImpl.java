@@ -7,7 +7,7 @@ import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
 
-@Component
+@Component("uicReadAdapter")
 public class UicReadAdapterImpl implements UicReadAdapter{
 
 	@Autowired

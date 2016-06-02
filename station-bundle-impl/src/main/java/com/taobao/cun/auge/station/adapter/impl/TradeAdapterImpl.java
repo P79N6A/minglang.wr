@@ -13,7 +13,7 @@ import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.refund.domain.RefundDO;
 
-@Component
+@Component("tradeAdapter")
 public class TradeAdapterImpl implements TradeAdapter {
 
 	@Autowired

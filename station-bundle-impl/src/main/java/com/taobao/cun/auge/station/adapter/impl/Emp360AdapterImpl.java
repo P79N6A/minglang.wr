@@ -26,7 +26,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.util.CollectionUtil;
 
 @Component("emp360Adapter")
-
 public class Emp360AdapterImpl implements Emp360Adapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(Emp360Adapter.class);

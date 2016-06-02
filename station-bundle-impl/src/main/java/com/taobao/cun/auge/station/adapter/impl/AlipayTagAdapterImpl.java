@@ -14,7 +14,7 @@ import com.taobao.cun.common.resultmodel.ResultModel;
 import com.taobao.cun.dto.alipay.AlipayAccountTagDto;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 
-@Component
+@Component("alipayTagAdapter")
 public class AlipayTagAdapterImpl implements AlipayTagAdapter {
 
 	private static final Logger logger = LoggerFactory.getLogger(AlipayTagAdapterImpl.class);
