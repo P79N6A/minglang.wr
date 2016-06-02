@@ -327,13 +327,13 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			return StationApplyStateEnum.TEMP.getCode();
 		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
 			// if (PartnerLifecycle != null) {
-			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
-				if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
 					return StationApplyStateEnum.TPA_TEMP.getCode();
 				}
-			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.equals(PartnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.getCode().equals(PartnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.SUMITTED.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(PartnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.CONFIRMED.getCode();
 			}
 			// }
@@ -342,9 +342,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
 			return StationApplyStateEnum.DECORATING.getCode();
 		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
-			if (PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+			if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
 				return StationApplyStateEnum.TPA_SERVICING.getCode();
-			} else if (PartnerInstanceTypeEnum.TP.equals(partnerType)) {
+			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType)) {
 				return StationApplyStateEnum.SERVICING.getCode();
 			}
 		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
@@ -353,9 +353,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
 		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
 			if (PartnerLifecycle != null) {
-				if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.equals(PartnerLifecycle.getCurrentStep())) {
+				if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(PartnerLifecycle.getCurrentStep())) {
 					return StationApplyStateEnum.QUITAUDITING.getCode();
-				} else if (PartnerLifecycleCurrentStepEnum.BOND.equals(PartnerLifecycle.getCurrentStep())) {
+				} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(PartnerLifecycle.getCurrentStep())) {
 					return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
 				}
 			}
