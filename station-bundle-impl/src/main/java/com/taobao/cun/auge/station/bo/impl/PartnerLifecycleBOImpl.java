@@ -42,7 +42,11 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		ValidateUtils.notNull(partnerLifecycleDto.getLifecycleId() );
 	
 		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
-		DomainUtils.beforeUpdate(items, DomainUtils.DEFAULT_OPERATOR);
+		if(StringUtil.isEmpty(partnerLifecycleDto.getOperator())){
+			DomainUtils.beforeInsert(items, DomainUtils.DEFAULT_OPERATOR);
+		}else{
+			DomainUtils.beforeInsert(items, partnerLifecycleDto.getOperator());
+		}
 		partnerLifecycleItemsMapper.updateByPrimaryKeySelective(items);
 	}
 
