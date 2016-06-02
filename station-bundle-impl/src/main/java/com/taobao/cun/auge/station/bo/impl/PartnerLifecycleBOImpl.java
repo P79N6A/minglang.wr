@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
