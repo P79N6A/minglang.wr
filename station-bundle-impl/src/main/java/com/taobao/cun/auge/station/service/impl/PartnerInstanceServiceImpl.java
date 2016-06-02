@@ -16,6 +16,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -61,6 +62,7 @@ import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -439,6 +441,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			addWaitFrozenMoney(instanceId,taobaoUserId,waitFrozenMoney);
 			
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+					PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+			if (items != null) {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
+				param.setLifecycleId(items.getId());
+				partnerLifecycleBO.updateLifecycle(param);
+			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		} catch (Exception e) {
