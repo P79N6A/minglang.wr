@@ -135,7 +135,11 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		// 设置状态
 		String stationApplySate = convertInstanceState2StationApplyState(instance.getType(), instance.getState(), partnerLifecycleItems);
 		stationApply.setState(stationApplySate);
-
+		
+		
+		stationApply.setModifier(instance.getModifier());
+		stationApply.setGmtModified(instance.getGmtModified());
+		
 		switch (buildType) {
 		case UPDATE_STATE:
 			break;
