@@ -20,7 +20,7 @@ import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
 
-@Component("PartnerInstanceHandler")
+@Component("partnerInstanceHandler")
 public class PartnerInstanceHandler implements InitializingBean{
 	
 	@Autowired

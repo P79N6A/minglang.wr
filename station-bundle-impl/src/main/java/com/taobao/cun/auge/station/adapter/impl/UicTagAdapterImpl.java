@@ -19,8 +19,7 @@ import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 
-@Component
-@HSFProvider(serviceInterface=UicTagAdapter.class)
+@Component("uicTagAdapter")
 public class UicTagAdapterImpl implements UicTagAdapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(UicTagAdapterImpl.class);
