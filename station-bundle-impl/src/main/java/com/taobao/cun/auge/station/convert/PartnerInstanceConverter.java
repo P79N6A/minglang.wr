@@ -129,7 +129,7 @@ public final class PartnerInstanceConverter {
 
 		return instanceDto;
 	}
-	
+
 	public static PartnerInstanceDto convert(PartnerStationRel psRel) {
 		if (null == psRel) {
 			return null;
@@ -151,14 +151,14 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationApplyId(psRel.getStationApplyId());
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(psRel.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
-		
+
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(psRel.getCloseType()));
 
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		return instanceDto;
 	}
-	
+
 	public static PartnerInstanceDto convert(PartnerStationRel psRel, Station station, Partner partner) {
 		PartnerInstanceDto instanceDto = convert(psRel);
 
@@ -172,7 +172,6 @@ public final class PartnerInstanceConverter {
 
 		return instanceDto;
 	}
-	
 
 	private static StationDto convertStationDto(PartnerInstance instance) {
 		if (null == instance) {
@@ -248,5 +247,43 @@ public final class PartnerInstanceConverter {
 		address.setLat(instance.getLat());
 		address.setLng(instance.getLng());
 		return address;
+	}
+
+	public static PartnerStationRel convert(PartnerInstanceDto partnerInstanceDto) {
+		if (null == partnerInstanceDto) {
+			return null;
+		}
+
+		PartnerStationRel rel = new PartnerStationRel();
+
+		rel.setId(partnerInstanceDto.getId());
+		rel.setApplierId(partnerInstanceDto.getApplierId());
+		rel.setApplierType(partnerInstanceDto.getApplierType());
+		rel.setApplyTime(partnerInstanceDto.getApplyTime());
+		rel.setServiceBeginTime(partnerInstanceDto.getServiceBeginTime());
+		rel.setServiceEndTime(partnerInstanceDto.getServiceEndTime());
+		rel.setParentStationId(partnerInstanceDto.getParentStationId());
+
+		if (null != partnerInstanceDto.getState()) {
+			rel.setState(partnerInstanceDto.getState().getCode());
+		}
+		rel.setBit(partnerInstanceDto.getBit());
+		rel.setOpenDate(partnerInstanceDto.getOpenDate());
+		rel.setStationApplyId(partnerInstanceDto.getStationApplyId());
+		if (null != partnerInstanceDto.getType()) {
+
+			rel.setType(partnerInstanceDto.getType().getCode());
+		}
+
+		if (null != partnerInstanceDto.getIsCurrent()) {
+			rel.setIsCurrent(partnerInstanceDto.getIsCurrent().getCode());
+		}
+		if (null != partnerInstanceDto.getCloseType()) {
+			rel.setCloseType(partnerInstanceDto.getCloseType().getCode());
+		}
+		rel.setStationId(partnerInstanceDto.getStationId());
+		rel.setPartnerId(partnerInstanceDto.getPartnerId());
+
+		return rel;
 	}
 }

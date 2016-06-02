@@ -191,15 +191,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
-		PartnerStationRel rel = convertToDomain(partnerInstanceDto);
+		PartnerStationRel rel = PartnerInstanceConverter.convert(partnerInstanceDto);
 		DomainUtils.beforeUpdate(rel, partnerInstanceDto.getOperator());
 		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
-
-	}
-
-	private PartnerStationRel convertToDomain(PartnerInstanceDto partnerInstanceDto) {
-		PartnerStationRel rel = new PartnerStationRel();
-		return rel;
 	}
 
 	@Override
