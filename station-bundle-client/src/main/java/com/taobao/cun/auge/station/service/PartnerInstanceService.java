@@ -144,6 +144,16 @@ public interface PartnerInstanceService {
 	 */
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
+	
+	/**
+	 * 针对入驻失败的 申请入驻
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	
+	
 	/**
 	 * 检查有没有开业包，要调用外部接口 到时候要写适配器封装外部接口 先定义在这里
 	 * 

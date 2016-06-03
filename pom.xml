@@ -337,6 +337,12 @@
 				<groupId>com.taobao.security</groupId>
 				<artifactId>security</artifactId>
 				<version>2.0-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.servlet</groupId>
+						<artifactId>servlet-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
@@ -393,15 +399,15 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>enforce-java7</id>
+						<id>enforce-java6</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[1.7.0,)</version>
-									<message>** Projects must use Java 7 or later version</message>
+									<version>[1.6.0,)</version>
+									<message>** Projects must use Java 6 or later version</message>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
