@@ -12,6 +12,8 @@ public interface PartnerInstanceStrategy {
 
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
 	
+	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
+	
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel) throws AugeServiceException;
 	
 	public void validateExistValidChildren(Long instanceId)throws AugeServiceException ;

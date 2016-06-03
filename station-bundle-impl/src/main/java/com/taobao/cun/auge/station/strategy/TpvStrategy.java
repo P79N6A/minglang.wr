@@ -162,4 +162,11 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		}
 		
 	}
+
+	@Override
+	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
