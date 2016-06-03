@@ -18,17 +18,17 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 //@IntegrationComponentScan("com.taobao.cun")
 @EnableAspectJAutoProxy
 @ImportResource("classpath*:application/application-context.xml")
-public class StationBundleApplication extends SpringBootServletInitializer{
+public class Application extends SpringBootServletInitializer{
 
     public static void main(String[] args) {
     	ConfigurableApplicationContext ctx =
-				SpringApplication.run(StationBundleApplication.class, args);
+				SpringApplication.run(Application.class, args);
     	
     }
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return builder.sources(StationBundleApplication.class);
+		return builder.sources(Application.class);
 	}
 
 
