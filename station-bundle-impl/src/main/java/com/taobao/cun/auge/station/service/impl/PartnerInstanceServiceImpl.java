@@ -73,6 +73,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -907,7 +908,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		/*ValidateUtils.notNull(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getType());
 		ValidateUtils.notNull(partnerInstanceDto.getId());
@@ -919,6 +920,54 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 		return instanceId;*/
 		return null;
+	}
+	
+	@Override
+	public boolean getProtocolInfoToBeSigned(Long taobaoUserId, ProtocolTypeEnum type) {
+		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (null == instance) {
+			return false;
+		}
+		if (ProtocolTypeEnum.SETTLE_PRO.equals(type)) {
+			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
+				throw new RuntimeException("partner's state is not SETTLING");
+			}
+			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+					PartnerLifecycleBusinessTypeEnum.SETTLING);
+			if (null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())) {
+				return false;
+			}
+		} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
+			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
+				return false;
+			}
+			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+					PartnerLifecycleBusinessTypeEnum.SETTLING);
+			if (null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean ifBondToBeFreezen(Long taobaoUserId) {
+		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (null == rel || !PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState())) {
+			String msg = "instance not exists or state is not SETTLING: " + taobaoUserId;
+			logger.error(msg);
+			throw new RuntimeException(msg);
+		}
+		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, rel.getId());
+		if (null == bondMoney || AccountMoneyStateEnum.HAS_THAW.getCode().equals(bondMoney.getState())) {
+			throw new RuntimeException("do not need freeze bond : " + taobaoUserId);
+		}
+
+		boolean ifBondToBeFreezen = AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState()) ? true : false;
+
+		return ifBondToBeFreezen;
 	}
 
 }
