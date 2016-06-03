@@ -343,6 +343,17 @@
 				<artifactId>cuntaoar.shared.scene</artifactId>
 				<version>0.1.5</version>
 			</dependency>
+			<dependency>
+				<groupId>com.aliexpress.boot</groupId>
+				<artifactId>spring-boot-starter-notify</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.configserver</groupId>
+						<artifactId>config-common</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

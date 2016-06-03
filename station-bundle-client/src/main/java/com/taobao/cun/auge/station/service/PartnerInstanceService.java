@@ -45,11 +45,12 @@ public interface PartnerInstanceService {
 
 	/**
 	 * 协议是否待签约,e.g. 入驻协议，管理协议
+	 * 
 	 * @param taobaoUserId
 	 * @param type
 	 * @return
 	 */
-	public boolean ifProtocolToBeSigned(Long taobaoUserId, ProtocolTypeEnum type);
+	public boolean getProtocolInfoToBeSigned(Long taobaoUserId, ProtocolTypeEnum type);
 
 	/**
 	 * 签署入驻协议
@@ -66,6 +67,14 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException;
+
+	/**
+	 * 保证金是否待冻结
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public boolean ifBondToBeFreezen(Long taobaoUserId);
 
 	/**
 	 * 冻结保证金

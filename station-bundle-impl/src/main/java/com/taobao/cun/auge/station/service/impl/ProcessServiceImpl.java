@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.taobao.cun.auge.event.listener.StartProcessListener;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -22,7 +21,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = ProcessService.class)
 public class ProcessServiceImpl implements ProcessService {
 
-	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProcessService.class);
 
 	@Autowired
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
