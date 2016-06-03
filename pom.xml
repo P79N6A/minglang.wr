@@ -399,15 +399,15 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>enforce-java7</id>
+						<id>enforce-java6</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[1.7.0,)</version>
-									<message>** Projects must use Java 7 or later version</message>
+									<version>[1.6.0,)</version>
+									<message>** Projects must use Java 6 or later version</message>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
