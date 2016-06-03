@@ -67,6 +67,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -810,6 +811,33 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
 		partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
+	}
+
+	@Override
+	public boolean ifProtocolToBeSigned(Long taobaoUserId, ProtocolTypeEnum type) {
+		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if(null == instance){
+			return false;
+		}
+		if(ProtocolTypeEnum.SETTLE_PRO.equals(type)){
+			if(!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())){
+				return false;
+			}
+			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(), PartnerLifecycleBusinessTypeEnum.SETTLING);
+			if(null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())){
+				return false;
+			}	
+		}else if(ProtocolTypeEnum.MANAGE_PRO.equals(type)){
+			if(!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())){
+				return false;
+			}
+			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(), PartnerLifecycleBusinessTypeEnum.SETTLING);
+			if(null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())){
+				return false;
+			}	
+		}
+		
+		return true;
 	}
 
 }

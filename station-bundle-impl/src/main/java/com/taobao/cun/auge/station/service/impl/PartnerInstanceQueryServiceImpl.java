@@ -123,11 +123,20 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) {
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		if (null != rel) {
-			PartnerInstanceDto instance = PartnerInstanceConverter.convert(rel);
-			return instance;
+		if (null == rel) {
+			return null;
 		}
-		return null;
+		PartnerInstanceDto instance = PartnerInstanceConverter.convert(rel);
+
+		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+		PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+		instance.setPartnerDto(partnerDto);
+
+		Station station = stationBO.getStationById(instance.getStationId());
+		StationDto stationDto = StationConverter.toStationDto(station);
+		instance.setStationDto(stationDto);
+
+		return instance;
 	}
 
 }
