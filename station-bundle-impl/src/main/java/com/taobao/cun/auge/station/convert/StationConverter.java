@@ -6,6 +6,7 @@ import java.util.List;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -40,7 +41,7 @@ public class StationConverter {
 		address.setLng(station.getLng());
 
 		stationDto.setApplyOrg(station.getApplyOrg());
-		stationDto.setAreaType(station.getAreaType());
+		stationDto.setAreaType(StationAreaTypeEnum.valueof(station.getAreaType()));
 		stationDto.setCovered(station.getCovered());
 		stationDto.setDescription(station.getDescription());
 		stationDto.setFixedType(StationFixedTypeEnum.valueof(station.getFixedType()));
@@ -77,12 +78,10 @@ public class StationConverter {
 			station.setLng(address.getLng());
 		}
 		station.setApplyOrg(stationDto.getApplyOrg());
-		station.setAreaType(stationDto.getAreaType());
+		station.setAreaType(stationDto.getAreaType()==null? null:stationDto.getAreaType().getCode());
 		station.setCovered(stationDto.getCovered());
 		station.setDescription(stationDto.getDescription());
-		if (stationDto.getFixedType() != null) {
-			station.setFixedType(stationDto.getFixedType().getCode());
-		}
+		station.setFixedType(stationDto.getFixedType()==null? null:stationDto.getFixedType().getCode());
 		station.setFormat(stationDto.getFormat());
 		station.setId(stationDto.getId());
 		station.setLogisticsState(stationDto.getLogisticsState());
