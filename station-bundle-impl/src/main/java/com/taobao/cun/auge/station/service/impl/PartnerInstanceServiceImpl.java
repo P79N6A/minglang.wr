@@ -847,6 +847,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		//不同类型合伙人，执行不同的生命周期
 		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+		
 		return instanceId;
 		
 	}

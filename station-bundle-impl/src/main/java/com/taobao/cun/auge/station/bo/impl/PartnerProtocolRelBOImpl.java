@@ -22,6 +22,7 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 @Component("partnerProtocolRelBO")
 public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
@@ -102,7 +103,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		ValidateUtils.notEmpty(partnerProtocolRelDeleteDto.getProtocolTypeList());
 		List<Long>  protocolIds = protocolBO.getAllProtocolId(partnerProtocolRelDeleteDto.getProtocolTypeList());
 		if (protocolIds == null) {
-			
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
 		
@@ -116,5 +117,31 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		DomainUtils.beforeDelete(record, partnerProtocolRelDeleteDto.getOperator());
 		
 		partnerProtocolRelMapper.updateByExampleSelective(record, example);
+	}
+
+	@Override
+	public PartnerProtocolRelDto getPartnerProtocolRelDto(
+			ProtocolTypeEnum type, Long objectId,
+			PartnerProtocolRelTargetTypeEnum targetType)
+			throws AugeServiceException {
+		ValidateUtils.notNull(type);
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(targetType);
+		
+		List<ProtocolTypeEnum> types = new ArrayList<ProtocolTypeEnum>();
+		types.add(type);
+		List<Long>  protocolIds = protocolBO.getAllProtocolId(types);
+		if (protocolIds == null) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
+		
+		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
+		
+		Criteria criteria = example.createCriteria();
+
+		criteria.andObjectIdEqualTo(objectId);
+		criteria.andTargetTypeEqualTo(targetType.getCode());
+		criteria.andProtocolIdIn(protocolIds);
+		return null;
 	}
 }

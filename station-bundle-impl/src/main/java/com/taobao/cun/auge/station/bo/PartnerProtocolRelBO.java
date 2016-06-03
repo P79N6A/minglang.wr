@@ -19,7 +19,7 @@ public interface PartnerProtocolRelBO {
 	 * @param bizType
 	 *            业务类型
 	 */
-	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId,
+	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long objectId,
 			PartnerProtocolRelTargetTypeEnum targetType);
 
 	/**
@@ -47,4 +47,15 @@ public interface PartnerProtocolRelBO {
 	 * @throws AugeServiceException
 	 */
 	public void deletePartnerProtocolRel(PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto) throws AugeServiceException;
+	
+	
+	/**
+	 * 查询签署的协议
+	 * @param type
+	 * @param objectId
+	 * @param targetType
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerProtocolRelDto  getPartnerProtocolRelDto(ProtocolTypeEnum type,Long objectId,PartnerProtocolRelTargetTypeEnum targetType)  throws AugeServiceException;
 }
