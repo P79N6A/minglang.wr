@@ -46,6 +46,10 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(partnerInstanceTypeEnum.getCode()).quit(partnerInstanceQuitDto);
 	}
 	
+	public Long handleApplySettleNewly(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettleNewly(partnerInstanceDto);
+	}
+	
 	
 	public void handleDelete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel)throws AugeServiceException {
 		strategy.get(rel.getType()).delete(partnerInstanceDeleteDto, rel);
