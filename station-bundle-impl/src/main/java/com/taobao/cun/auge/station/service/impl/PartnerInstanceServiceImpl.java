@@ -147,6 +147,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	AccountMoneyBO accountMoneyBO;
 
 	
+	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException { 
+		return null;
+	}
 	
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
