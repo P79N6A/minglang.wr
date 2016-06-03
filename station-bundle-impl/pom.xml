@@ -246,9 +246,14 @@
 			<artifactId>cuntaoar.shared.scene</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.github.pagehelper</groupId>
-				<artifactId>pagehelper</artifactId>
-			</dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper</artifactId>
+		</dependency>
+			
+		<dependency>
+			<groupId>com.aliexpress.boot</groupId>
+			<artifactId>spring-boot-starter-notify</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

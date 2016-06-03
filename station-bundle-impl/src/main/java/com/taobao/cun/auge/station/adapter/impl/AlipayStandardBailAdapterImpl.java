@@ -13,7 +13,7 @@ import com.taobao.cun.common.resultmodel.ResultModel;
 import com.taobao.cun.dto.alipay.AlipayStandardBailDto;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
 
-@Component
+@Component("alipayStandardBailAdapter")
 public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 

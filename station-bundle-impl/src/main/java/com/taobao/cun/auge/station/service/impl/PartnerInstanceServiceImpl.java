@@ -63,6 +63,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -71,6 +72,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -720,13 +722,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()),
 				instanceId);
 
-		// 合伙人实例停业中
-		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING,
-				forcedCloseDto.getOperator());
+		// 合伙人实例停业中,退出类型为强制清退
+		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+		
+		partnerInstanceDto.setId(instanceId);
+		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
+		partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+		partnerInstanceDto.setOperator(forcedCloseDto.getOperator());
+		partnerInstanceDto.setOperatorType(forcedCloseDto.getOperatorType());
+		partnerInstanceDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 		// 村点停业中
 		stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 				forcedCloseDto.getOperator());
+		
+		//添加停业生命周期记录
+		addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
 
 		// 通过事件，定时钟，启动停业流程
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
@@ -743,6 +755,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 		// tair
+	}
+
+	private void addManagerClosingLifecycle(ForcedCloseDto forcedCloseDto, Long instanceId, PartnerStationRel partnerStationRel) {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(instanceId);
+		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+
+		itemsDO.setOperator(forcedCloseDto.getOperator());
+		itemsDO.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		itemsDO.setOperatorType(forcedCloseDto.getOperatorType());
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
 	@Override
@@ -773,6 +799,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING,
 					operator);
 		}
+		
+		//添加退出生命周期
+		addManagerQuitLifecycle(quitDto, instanceId, instance);
 
 		// 退出审批流程，由事件监听完成
 		// 记录村点状态变化
@@ -787,6 +816,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+	}
+
+	private void addManagerQuitLifecycle(QuitDto quitDto, Long instanceId, PartnerStationRel instance) {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(instanceId);
+		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(instance.getType()));
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
+
+		itemsDO.setOperator(quitDto.getOperator());
+		itemsDO.setOperatorOrgId(quitDto.getOperatorOrgId());
+		itemsDO.setOperatorType(quitDto.getOperatorType());
+
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
 	private void validateQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {

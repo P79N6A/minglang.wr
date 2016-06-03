@@ -12,7 +12,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.adapter.WangwangAdapter;
 
-@Component
+@Component("wangwangAdapter")
 public class WangwangAdapterImpl implements WangwangAdapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(WangwangAdapterImpl.class);

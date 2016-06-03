@@ -19,7 +19,7 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
-@Component
+@Component("processApproveResultProcessor")
 public class ProcessApproveResultProcessor {
 
 	@Autowired
