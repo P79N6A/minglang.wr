@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
@@ -72,6 +73,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andObjectIdEqualTo(businessId);
+		criteria.andIsDeletedEqualTo("n");
 
 		Long protocolId = protocolBO.getValidProtocolId(type);
 		criteria.andProtocolIdEqualTo(protocolId);
@@ -112,6 +114,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(partnerProtocolRelDeleteDto.getObjectId());
 		criteria.andTargetTypeEqualTo(partnerProtocolRelDeleteDto.getTargetType().getCode());
 		criteria.andProtocolIdIn(protocolIds);
+		criteria.andIsDeletedEqualTo("n");
 		
 		PartnerProtocolRel  record = new PartnerProtocolRel();
 		DomainUtils.beforeDelete(record, partnerProtocolRelDeleteDto.getOperator());
@@ -142,6 +145,9 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(objectId);
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andProtocolIdIn(protocolIds);
-		return null;
+		criteria.andIsDeletedEqualTo("n");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
 	}
 }
