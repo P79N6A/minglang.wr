@@ -57,7 +57,7 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
-import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -761,7 +761,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException {
+	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(quitDto);
 

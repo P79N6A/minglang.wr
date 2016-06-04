@@ -4,7 +4,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
-import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -14,7 +14,9 @@ public interface PartnerInstanceStrategy {
 
 	public void applySettle(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
 	
-	public void applyQuit(QuitDto quitDto, PartnerInstanceTypeEnum typeEnum)throws AugeServiceException;
+	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum)throws AugeServiceException;
+	
+	public void auditQuit(Boolean isAgree,Long partnerInstanceId) throws AugeServiceException;
 	
 	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
 	

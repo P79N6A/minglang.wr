@@ -8,7 +8,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
-import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -134,7 +134,7 @@ public interface PartnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyQuitByManager(QuitDto quitDto) throws AugeServiceException;
+	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException;
 
 	/**
 	 * 申请入驻

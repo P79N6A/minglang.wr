@@ -2,7 +2,7 @@ package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
-import com.taobao.cun.auge.station.dto.QuitDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 
 public final class QuitStationApplyConverter {
 
@@ -10,7 +10,7 @@ public final class QuitStationApplyConverter {
 
 	}
 
-	public static QuitStationApply convert(QuitDto quitDto, PartnerStationRel instance, String operatorName) {
+	public static QuitStationApply convert(QuitStationApplyDto quitDto, PartnerStationRel instance, String operatorName) {
 		QuitStationApply quitStationApply = new QuitStationApply();
 
 		quitStationApply.setPartnerInstanceId(instance.getId());
