@@ -88,6 +88,14 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 			throws AugeServiceException {
 		ValidateUtils.notNull(partnerProtocolRelDto);
 		PartnerProtocolRel record = PartnerProtocolRelConverter.toPartnerProtocolRel(partnerProtocolRelDto);
+		if (partnerProtocolRelDto.getProtocolId() == null && partnerProtocolRelDto.getProtocolTypeEnum() != null) {
+			Long protocolId = protocolBO.getValidProtocolId(partnerProtocolRelDto.getProtocolTypeEnum());
+			if (protocolId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			}
+			record.setProtocolId(protocolId);
+		}
+		
 		DomainUtils.beforeInsert(record, partnerProtocolRelDto.getOperator());
 		partnerProtocolRelMapper.insert(record);
 		return record.getId();

@@ -561,16 +561,27 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
 		try {
 			PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
 					PartnerInstanceStateEnum.SERVICING);
 			if (partnerInstance == null) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
-			partnerInstanceBO.changeState(partnerInstance.getId(), PartnerInstanceStateEnum.SERVICING,
-					PartnerInstanceStateEnum.CLOSING, String.valueOf(taobaoUserId));
+			OperatorDto operatorDto = new OperatorDto();
+			operatorDto.setOperator(String.valueOf(taobaoUserId));
+			operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+			
+			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+			partnerInstanceDto.setId(partnerInstance.getId());
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
+			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+			partnerInstanceDto.copyOperatorDto(operatorDto);
+			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+			
 			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 					String.valueOf(taobaoUserId));
+			
 			// 插入生命周期扩展表
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
@@ -579,18 +590,25 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.CONFIRM);
 			partnerLifecycle.setPartnerInstanceId(partnerInstance.getId());
+			partnerLifecycle.copyOperatorDto(operatorDto);
 			partnerLifecycleBO.addLifecycle(partnerLifecycle);
-			// TODO:插入停业协议
-			EventDispatcher.getInstance().dispatch("xxxxx", partnerLifecycle);
-			// TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志 2短信推送 3 状态转换日志
 			
-			OperatorDto operator = new OperatorDto();
-			operator.setOperator(String.valueOf(taobaoUserId));
-			operator.setOperatorType(OperatorTypeEnum.HAVANA);
+			//TDODO:村拍档时候要插入停业协议
+			PartnerProtocolRelDto proRelDto  = new PartnerProtocolRelDto();
+			Date quitProDate = new Date();
+			proRelDto.setConfirmTime(quitProDate);
+			proRelDto.setObjectId(partnerInstance.getId());
+			proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
+			proRelDto.setStartTime(quitProDate);
+			proRelDto.setTaobaoUserId(taobaoUserId);
+			proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			proRelDto.copyOperatorDto(operatorDto);
+			partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
+			
 
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 					PartnerInstanceStateChangeEnum.START_CLOSING,
-					partnerInstanceBO.getPartnerInstanceById(partnerInstance.getId()), operator);
+					partnerInstanceBO.getPartnerInstanceById(partnerInstance.getId()), partnerLifecycle);
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			
 			// 同步station_apply
@@ -899,7 +917,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())) {
 				return false;
 			}
-		} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
+		}/* else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {//管理协议不走生命周期，随时可以签
 			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
 				return false;
 			}
@@ -909,7 +927,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				return false;
 			}
 		}
-
+*/
 		return true;
 	}
 

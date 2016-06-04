@@ -63,9 +63,12 @@ public class OperatorDto implements Serializable {
 	}
 
 	public void validateOperatorOrgId() throws AugeServiceException {
-		if (operatorOrgId == null || operatorOrgId < 0L) {
-			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
+		if (!OperatorTypeEnum.HAVANA.getCode().equals(operatorType)) {
+			if (operatorOrgId == null || operatorOrgId < 0L) {
+				throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
+			}
 		}
+		
 	}
 	
 	public void copyOperatorDto(OperatorDto source) {

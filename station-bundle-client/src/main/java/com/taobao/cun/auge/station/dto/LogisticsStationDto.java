@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.dto;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.LogisticsStationStateEnum;
 
 public class LogisticsStationDto  extends OperatorDto {
 
