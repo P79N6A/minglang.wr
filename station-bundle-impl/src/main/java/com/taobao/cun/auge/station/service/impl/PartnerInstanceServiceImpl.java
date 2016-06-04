@@ -525,10 +525,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
-		ValidateUtils.validateParam(openStationDto);
-		ValidateUtils.notNull(openStationDto.getPartnerInstanceId());
-		ValidateUtils.notNull(openStationDto.getOpenDate());
-		ValidateUtils.notNull(openStationDto.isImme());
+		// 参数校验
+		BeanValidator.validateWithThrowable(openStationDto);
 		if (openStationDto.isImme()) {// 立即开业
 			// TODO:检查开业包
 			if (!checkKyPackage()) {
@@ -616,8 +614,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			return true;
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId),augeException.toString());
-			logger.error(error,augeException);
 			throw augeException;
 		}catch (Exception e) {
 			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId),e.getMessage());
@@ -628,15 +624,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
-		ValidateUtils.validateParam(confirmCloseDto);
+		// 参数校验
+		BeanValidator.validateWithThrowable(confirmCloseDto);
 		Long partnerInstanceId = confirmCloseDto.getPartnerInstanceId();
+		
 		String employeeId = confirmCloseDto.getOperator();
-		boolean isAgree = confirmCloseDto.isAgree();
+		Boolean isAgree = confirmCloseDto.isAgree();
 		try {
-
 			PartnerStationRel partnerInstance = partnerInstanceBO
 					.findPartnerInstanceById(confirmCloseDto.getPartnerInstanceId());
-			if (partnerInstance == null) {
+			if (partnerInstance == null || !PartnerInstanceStateEnum.CLOSING.equals(partnerInstance.getState())) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
@@ -648,21 +645,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 			partnerLifecycle.setLifecycleId(lifecycleId);
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			partnerLifecycle.copyOperatorDto(confirmCloseDto);
 
 			if (isAgree) {
-				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING,
-						PartnerInstanceStateEnum.CLOSED, employeeId);
-				// 更新服务结束时间
-				// 更新服务结束时间
-				PartnerInstanceDto instance = new PartnerInstanceDto();
-				instance.setServiceEndTime(new Date());
-				instance.setId(partnerInstanceId);
-				instance.setOperator(employeeId);
-				partnerInstanceBO.updatePartnerStationRel(instance);
+				PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+				partnerInstanceDto.setId(partnerInstanceId);
+				partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
+				partnerInstanceDto.setServiceEndTime(new Date());
+				partnerInstanceDto.copyOperatorDto(confirmCloseDto);
+				partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED,
 						employeeId);
+				
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
+				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 				
 				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED,
 						partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), confirmCloseDto);
@@ -672,22 +669,22 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 						PartnerInstanceStateEnum.SERVICING, employeeId);
 				stationBO.changeState(partnerInstanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING,
 						employeeId);
-				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
 				
+				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
+				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 						partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), confirmCloseDto);
 				EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,event);
 			}
-			partnerLifecycleBO.updateLifecycle(partnerLifecycle);
-			// TODO:发送状态换砖 事件，接受事件里 1记录OPLOG日志 2短信推送 3 状态转换日志 4,去标
 			
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstance.getId());			return true;
-		} catch (Exception e) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("partnerInstanceId:").append(partnerInstanceId).append(" employeeId:").append(employeeId)
-					.append(" isAgree:").append(isAgree);
-			logger.error("confirmClose.error.param:" + sb.toString(), e);
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstance.getId());
+			return true;
+		} catch (AugeServiceException augeException) {
+			throw augeException;
+		}catch (Exception e) {
+			String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto),e.getMessage());
+			logger.error(error,e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
