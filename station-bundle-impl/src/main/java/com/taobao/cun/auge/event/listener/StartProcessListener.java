@@ -99,12 +99,7 @@ public class StartProcessListener implements EventListener {
 			startProcessDto.setRemarks(stateChangeEvent.getRemark());
 			startProcessDto.setBusinessId(stationApplyId);
 			startProcessDto.setBusinessCode(business.getCode());
-
-			startProcessDto.setOperator(stateChangeEvent.getOperator());
-			startProcessDto.setOperatorOrgId(stateChangeEvent.getOperatorOrgId());
-			startProcessDto.setOperatorType(stateChangeEvent.getOperatorType());
-			
-			
+			startProcessDto.copyOperatorDto(stateChangeEvent);
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
 			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
