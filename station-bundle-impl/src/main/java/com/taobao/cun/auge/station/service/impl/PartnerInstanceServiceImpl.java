@@ -33,6 +33,7 @@ import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -44,6 +45,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
@@ -61,8 +63,8 @@ import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -146,6 +148,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
+	@Autowired
+	CloseStationApplyBO closeStationApplyBO;
 
 	
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException { 
@@ -715,15 +720,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 				forcedCloseDto.getOperator());
 		
+		
 		//添加停业生命周期记录
 		addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
+		
+		//新增停业申请
+		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
+		closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
+		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
+		closeStationApplyDto.setPartnerInstanceId(instanceId);
+        closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
 		// 通过事件，定时钟，启动停业流程
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				forcedCloseDto);
 		
-		event.setRemark(PartnerForcedCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
+		event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
 				? forcedCloseDto.getRemarks() : forcedCloseDto.getReason().getDesc());
 
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);

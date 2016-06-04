@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -30,6 +31,9 @@ public class ProcessApproveResultProcessor {
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
+	
+	@Autowired
+	CloseStationApplyBO closeStationApplyBO;
 
 	/**
 	 * 处理停业审批结果
@@ -75,6 +79,9 @@ public class ProcessApproveResultProcessor {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operatorId);
+			
+			//删除停业申请表
+			closeStationApplyBO.deleteCloseStationApply(instanceId,operatorId);
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
