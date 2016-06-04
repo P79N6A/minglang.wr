@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -38,16 +39,20 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
 	}
 	
-	public Long handleApplySettle(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto);
+	public void handleApplySettle(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto);
+	}
+	
+	public void handleApplyQuit(QuitDto quitDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).applyQuit(quitDto,partnerInstanceTypeEnum);
 	}
 	
 	public void handleQuit(PartnerInstanceQuitDto partnerInstanceQuitDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
 		strategy.get(partnerInstanceTypeEnum.getCode()).quit(partnerInstanceQuitDto);
 	}
 	
-	public Long handleApplySettleNewly(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		return strategy.get(partnerInstanceTypeEnum.getCode()).applySettleNewly(partnerInstanceDto);
+	public void handleApplySettleNewly(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).applySettleNewly(partnerInstanceDto);
 	}
 	
 	

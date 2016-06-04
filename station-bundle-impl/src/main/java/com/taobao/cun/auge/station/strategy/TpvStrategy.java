@@ -20,6 +20,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -58,7 +59,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	LogisticsStationBO logisticsStationBO;
 	
 	@Override
-	public Long applySettle(PartnerInstanceDto partnerInstanceDto)
+	public void applySettle(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		///构建入驻生命周期
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
@@ -71,7 +72,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-		return partnerInstanceDto.getId();
 	}
 
 	@Override
@@ -164,9 +164,20 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto)
+	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
-		return null;
+	}
+
+	@Override
+	public void applyQuit(QuitDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
+		itemsDO.setPartnerType(typeEnum);
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.copyOperatorDto(quitDto);
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 }

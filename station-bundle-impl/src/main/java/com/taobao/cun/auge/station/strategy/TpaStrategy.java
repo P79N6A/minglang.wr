@@ -16,6 +16,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -49,7 +50,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	PartnerInstanceBO partnerInstanceBO;
 	
 	@Override
-	public Long applySettle(PartnerInstanceDto partnerInstanceDto)
+	public void applySettle(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		//构建入驻生命周期
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
@@ -71,8 +72,6 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 		} 
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-		
-		return partnerInstanceDto.getId();
 	}
 
 	@Override
@@ -151,9 +150,21 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto)
+	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
-		return null;
+	}
+
+	@Override
+	public void applyQuit(QuitDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
+		itemsDO.setPartnerType(typeEnum);
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.copyOperatorDto(quitDto);
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 }

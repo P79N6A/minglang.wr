@@ -19,11 +19,13 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -53,7 +55,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	
 	
 	@Override
-	public Long applySettle(PartnerInstanceDto partnerInstanceDto)
+	public void applySettle(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		
 		//构建入驻生命周期
@@ -66,7 +68,6 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-		return partnerInstanceDto.getId();
 	}
 
 	@Override
@@ -146,9 +147,21 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	}
 
 	@Override
-	public Long applySettleNewly(PartnerInstanceDto partnerInstanceDto)
+	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
-		return null;
+	}
+
+	@Override
+	public void applyQuit(QuitDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
+		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
+		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
+		itemsDO.setPartnerType(typeEnum);
+		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.copyOperatorDto(quitDto);
+		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 }

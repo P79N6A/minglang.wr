@@ -790,10 +790,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 		//添加退出生命周期
-		addManagerQuitLifecycle(quitDto, instanceId, instance);
+		partnerInstanceHandler.handleApplyQuit(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
-		// 退出审批流程，由事件监听完成
-		// 记录村点状态变化
+		// 退出审批流程，由事件监听完成 记录村点状态变化
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 				PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId),
 				quitDto);
@@ -807,22 +806,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 	}
 
-	private void addManagerQuitLifecycle(QuitDto quitDto, Long instanceId, PartnerStationRel instance) {
-		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
-		itemsDO.setPartnerInstanceId(instanceId);
-		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(instance.getType()));
-		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
-
-		itemsDO.setOperator(quitDto.getOperator());
-		itemsDO.setOperatorOrgId(quitDto.getOperatorOrgId());
-		itemsDO.setOperatorType(quitDto.getOperatorType());
-
-		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
-		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
-		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-
-		partnerLifecycleBO.addLifecycle(itemsDO);
-	}
 
 	private void validateQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
 		Long instanceId = instance.getId();
@@ -895,16 +878,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		/*ValidateUtils.notNull(partnerInstanceDto);
-		ValidateUtils.notNull(partnerInstanceDto.getType());
-		ValidateUtils.notNull(partnerInstanceDto.getId());
-		Long instanceId = partnerInstanceDto.getId();
-
-		updateSubmit(partnerInstanceDto);
-		}
-		//不同类型合伙人，执行不同的生命周期
-		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
-		return instanceId;*/
 		return null;
 	}
 	
