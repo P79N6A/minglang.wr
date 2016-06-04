@@ -708,9 +708,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setId(instanceId);
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
 		partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
-		partnerInstanceDto.setOperator(forcedCloseDto.getOperator());
-		partnerInstanceDto.setOperatorType(forcedCloseDto.getOperatorType());
-		partnerInstanceDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		partnerInstanceDto.copyOperatorDto(forcedCloseDto);
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 		// 村点停业中
@@ -744,10 +742,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
 		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
 		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-
-		itemsDO.setOperator(forcedCloseDto.getOperator());
-		itemsDO.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
-		itemsDO.setOperatorType(forcedCloseDto.getOperatorType());
+		itemsDO.copyOperatorDto(forcedCloseDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
