@@ -78,12 +78,12 @@ public class ProcessApproveResultProcessor {
 			instance.setServiceEndTime(new Date());
 			instance.setState(PartnerInstanceStateEnum.CLOSED);
 			instance.setId(instanceId);
-			instance.setOperator(operator.getOperator());
+			instance.setOperator(DomainUtils.DEFAULT_OPERATOR);
 			instance.setVersion(partnerStationRel.getVersion());
 			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator.getOperator());
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, DomainUtils.DEFAULT_OPERATOR);
 			
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
@@ -101,10 +101,10 @@ public class ProcessApproveResultProcessor {
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, operator.getOperator());
+					PartnerInstanceStateEnum.SERVICING, DomainUtils.DEFAULT_OPERATOR);
 
 			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator.getOperator());
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, DomainUtils.DEFAULT_OPERATOR);
 			
 			//删除停业申请表
 			closeStationApplyBO.deleteCloseStationApply(instanceId,operator.getOperator());
