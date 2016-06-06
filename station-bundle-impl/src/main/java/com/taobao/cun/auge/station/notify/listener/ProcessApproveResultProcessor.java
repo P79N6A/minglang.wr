@@ -64,7 +64,8 @@ public class ProcessApproveResultProcessor {
 	 */
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
+		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Long stationId = partnerStationRel.getStationId();
 
 		OperatorDto operator = new OperatorDto();
 		String operatorId = "sys";
@@ -72,14 +73,13 @@ public class ProcessApproveResultProcessor {
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.CLOSED,
-					operatorId);
-			// 更新服务结束时间
+			// 合伙人实例已停业, 更新服务结束时间
 			PartnerInstanceDto instance = new PartnerInstanceDto();
 			instance.setServiceEndTime(new Date());
+			instance.setState(PartnerInstanceStateEnum.CLOSED);
 			instance.setId(instanceId);
 			instance.setOperator(operatorId);
+			instance.setVersion(partnerStationRel.getVersion());
 			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 村点已停业
