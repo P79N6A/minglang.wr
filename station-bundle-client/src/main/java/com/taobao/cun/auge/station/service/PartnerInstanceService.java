@@ -9,6 +9,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -30,12 +31,12 @@ public interface PartnerInstanceService {
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
-	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中，已停业等）有效合伙人状态下
+	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
 	 * 
 	 * @param condition
 	 * @return
 	 */
-	public void update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
 
 	/**
 	 * 删除合伙人实例

@@ -32,6 +32,12 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_STATE_NOT_APPLICABLE = new PartnerExceptionEnum(
 			"PARTNER_STATE_NOT_APPLICABLE", "当前合伙人的状态不允许开展该业务");
 	
+	public static final PartnerExceptionEnum PARTNER_MOBILE_CHECK_FAIL = new PartnerExceptionEnum(
+			"PARTNER_MOBILE_CHECK_FAIL", "手机号必须是11位数字组成，且以1开头");
+	
+	public static final PartnerExceptionEnum PARTNER_MOBILE_IS_NULL = new PartnerExceptionEnum(
+			"PARTNER_MOBILE_IS_NULL", "手机号不能为空");
+	
 	
 
 	static {
@@ -46,6 +52,8 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_TAOBAOUSERID_HAS_USED", PARTNER_TAOBAOUSERID_HAS_USED);
 		mappings.put("PARTNER_DELETE_FAIL", PARTNER_DELETE_FAIL);
 		mappings.put("PARTNER_STATE_NOT_APPLICABLE", PARTNER_STATE_NOT_APPLICABLE);
+		mappings.put("PARTNER_MOBILE_CHECK_FAIL", PARTNER_MOBILE_CHECK_FAIL);
+		mappings.put("PARTNER_MOBILE_IS_NULL", PARTNER_MOBILE_IS_NULL);
 
 	}
 
