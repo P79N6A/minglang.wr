@@ -42,6 +42,7 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -93,6 +94,7 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
@@ -160,7 +162,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	CloseStationApplyBO closeStationApplyBO;
-	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
+
 	@Autowired
 	TaskExecuteService taskExecuteService;
 
@@ -375,14 +379,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (StringUtils.isBlank(partnerDto.getName())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
 		}
-		
+
 		if (partnerDto.getMobile() == null) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
 		}
 		if (!isMobileNO(partnerDto.getMobile())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
 		}
-		
 
 		OperatorDto operator = new OperatorDto();
 		operator.copyOperatorDto(partnerInstanceDto);
@@ -462,7 +465,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 			Long stationId = rel.getStationId();
 			Long partnerId = rel.getPartnerId();
-			
+
 			if (partnerInstanceUpdateServicingDto.getPartnerDto() != null) {
 				PartnerUpdateServicingDto pDto = partnerInstanceUpdateServicingDto.getPartnerDto();
 				PartnerDto partnerDto = new PartnerDto();
@@ -472,16 +475,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerDto.setEmail(pDto.getEmail());
 				partnerDto.setBusinessType(pDto.getBusinessType());
 				partnerBO.updatePartner(partnerDto);
-				attachementBO.modifyAttachementBatch(pDto.getAttachements(), partnerId,
-						AttachementBizTypeEnum.PARTNER, partnerInstanceUpdateServicingDto.getOperator());
+				attachementBO.modifyAttachementBatch(pDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
+						partnerInstanceUpdateServicingDto.getOperator());
 			}
 			if (partnerInstanceUpdateServicingDto.getStationDto() != null) {
 				StationUpdateServicingDto sDto = partnerInstanceUpdateServicingDto.getStationDto();
-				
+
 				// 判断服务站编号是否使用中
 				checkStationNumDuplicate(stationId, sDto.getStationNum());
-				
-				StationDto  stationDto = new StationDto();
+
+				StationDto stationDto = new StationDto();
 				stationDto.setAddress(sDto.getAddress());
 				stationDto.setAreaType(sDto.getAreaType());
 				stationDto.setCovered(sDto.getCovered());
@@ -497,24 +500,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationDto.setProducts(sDto.getProducts());
 				stationDto.setStationNum(sDto.getStationNum());
 				stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
-				
+
 				// 更新固点协议
 				saveStationFixProtocol(stationDto, stationId);
-				attachementBO.modifyAttachementBatch(sDto.getAttachements(), stationId,
-						AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceUpdateServicingDto.getOperator());
+				attachementBO.modifyAttachementBatch(sDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
+						partnerInstanceUpdateServicingDto.getOperator());
 			}
-			syncUpdateCainiaoStation(partnerInstanceId,partnerInstanceUpdateServicingDto.getOperator());
+			syncUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),augeException.toString());
-			logger.error(error,augeException);
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
+			logger.error(error, augeException);
 			throw augeException;
-		}catch (Exception e) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),e.getMessage());
-			logger.error(error,e);
+		} catch (Exception e) {
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
+			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-	
+
 	private void syncUpdateCainiaoStation(Long instanceId, String operatorId) {
 		try {
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
@@ -526,7 +529,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
 			cainiaoTaskVo.setOperator(operatorId);
 
-			SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+			SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
 			syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
 
 			cainiaoTaskVo.setParameter(syncModifyCainiaoStationDto);
@@ -534,11 +537,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 提交任务
 			taskExecuteService.submitTask(cainiaoTaskVo);
 		} catch (Exception e) {
-			logger.error("Failed to submit syncUpdateCainiaoStation task. instanceId=" + instanceId + " operatorId = "
-					+ operatorId, e);
+			logger.error("Failed to submit syncUpdateCainiaoStation task. instanceId=" + instanceId + " operatorId = " + operatorId, e);
 		}
 	}
-	
+
 	public void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
 		if (stationDto == null) {
 			return;
@@ -566,17 +568,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			   throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
-        }
+			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
+		}
 		stationNum = stationNum.toUpperCase();
-        if (stationNum.length() > 16) {
-        	 throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
-        }
+		if (stationNum.length() > 16) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+		}
 
 		if (isSpecialStr(stationNum)) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
 		}
 	}
+
 	public void validateParnterCanUpdateInfo(PartnerUpdateServicingDto partnerDto) {
 		if (partnerDto == null) {
 			return;
@@ -587,13 +590,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 		}
 	}
-	
-	 public static boolean isMobileNO(String mobiles) {
-      	Pattern p = Pattern.compile("^((1))\\d{10}$");
-      	Matcher m = p.matcher(mobiles);
-      	return m.matches();
-     }
 
+	public static boolean isMobileNO(String mobiles) {
+		Pattern p = Pattern.compile("^((1))\\d{10}$");
+		Matcher m = p.matcher(mobiles);
+		return m.matches();
+	}
 
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException {
@@ -687,12 +689,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
-		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.SETTLING,
-				PartnerLifecycleCurrentStepEnum.BOND);
+		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.BOND);
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, rel.getId());
-		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState()) || null == settleItems || null == bondMoney
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
 				|| !AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
@@ -711,106 +713,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		accountMoneyUpdateDto.setFrozenTime(new Date());
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
-		
-//		submitFreezeBondTasks(stationApplyId, context);
 
-		  // 流转日志, 合伙人入驻
-//        bulidRecordEventForPartnerEnter(stationApplyDetailDto);
+		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+		generalTaskSubmitService.submitFreezeBondTasks(PartnerInstanceConverter.convert(instance, null, partner));
+
+		// 流转日志, 合伙人入驻
+		// bulidRecordEventForPartnerEnter(stationApplyDetailDto);
 
 		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, rel.getId());
+		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instance.getId());
 		return true;
 	}
-	
-//	   private void submitFreezeBondTasks(Long stationApplicationId, ContextDto context) {
-//	        // TODO 异构系统交互提交后台任务
-//	        List<TaskVo> taskVos = new LinkedList<TaskVo>();
-//
-//	        String businessNo = stationApplicationId.toString();// getBusinessNo();
-//	        
-//	        // TODO 菜鸟驿站同步 begin
-//	        TaskVo cainiaoTaskVo = new TaskVo();
-//	        cainiaoTaskVo.setBusinessNo(businessNo);
-//	        cainiaoTaskVo.setBeanName("caiNiaoBo");
-//	        cainiaoTaskVo.setMethodName("syncStationInfo");
-//	        cainiaoTaskVo.setBusinessStepNo(1l);
-//	        cainiaoTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
-//	        cainiaoTaskVo.setBusinessStepDesc("syncStationInfo");
-//	        cainiaoTaskVo.setOperator(context.getAppId());
-//
-//	        CainiaoSyncParam cainiaoSyncParam = new CainiaoSyncParam();
-//	        cainiaoSyncParam.setStationApplyId(stationApplicationId);
-//	        cainiaoSyncParam.setContextDto(context);
-//	        cainiaoTaskVo.setParameter(cainiaoSyncParam);
-//	        taskVos.add(cainiaoTaskVo);
-//	        // TODO 菜鸟驿站同步 end
-//	        
-//	        
-//	        // TODO uic打标 begin
-//	        TaskVo uicTaskVo = new TaskVo();
-//	        uicTaskVo.setBusinessNo(businessNo);
-//	        uicTaskVo.setBeanName("uicBo");
-//	        uicTaskVo.setMethodName("addUserTag");
-//	        uicTaskVo.setBusinessStepNo(2l);
-//	        uicTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
-//	        uicTaskVo.setBusinessStepDesc("addUserTag");
-//	        uicTaskVo.setOperator(context.getAppId());
-//	        uicTaskVo.setParameter(stationApplicationId);
-//	        taskVos.add(uicTaskVo);
-//	        // TODO uic打标 end
-//
-//	       
-//
-//	        // TODO 申请单更新为服务中 begin
-//	        TaskVo stationConfirmTaskVo = new TaskVo();
-//	        stationConfirmTaskVo.setBusinessNo(businessNo);
-//	        stationConfirmTaskVo.setBeanName("stationApplyBO");
-//	        stationConfirmTaskVo.setMethodName("succ");
-//	        stationConfirmTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
-//	        stationConfirmTaskVo.setBusinessStepNo(3l);
-//	        stationConfirmTaskVo.setBusinessStepDesc("stationApply");
-//	        stationConfirmTaskVo.setOperator(context.getAppId());
-//
-//	        StationApplyConfirmTaskParam stationApplyConfirmTaskParam = new StationApplyConfirmTaskParam();
-//	        stationApplyConfirmTaskParam.setStationApplicationId(stationApplicationId);
-//	        stationApplyConfirmTaskParam.setTaobaoUserId(Long.parseLong(context.getAppId()));
-//	        stationApplyConfirmTaskParam.setNow(new Date());
-//
-//	        Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
-//	        Calendar end = Calendar.getInstance();// 得到一个Calendar的实例
-//	        end.add(Calendar.YEAR, 1);
-//	        stationApplyConfirmTaskParam.setServiceBeginDate(now.getTime());
-//	        stationApplyConfirmTaskParam.setServiceEndDate(end.getTime());
-//
-//	        String[] allowedStatesTask = new String[1];
-//	        allowedStatesTask[0] = StationApplyStateEnum.CONFIRMED.getCode();
-//	        stationApplyConfirmTaskParam.setAllowedStates(allowedStatesTask);
-//	        stationConfirmTaskVo.setParameter(stationApplyConfirmTaskParam);
-//	        taskVos.add(stationConfirmTaskVo);
-//	        // TODO 申请单更新为服务中 end
-//
-//	        // TODO 旺旺打标 begin
-//	        TaskVo wangwangTaskVo = new TaskVo();
-//	        wangwangTaskVo.setBusinessNo(businessNo);
-//	        wangwangTaskVo.setBeanName("aliWangWangBO");
-//	        wangwangTaskVo.setMethodName("addWangWangTag");
-//	        wangwangTaskVo.setBusinessStepNo(4l);
-//	        wangwangTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
-//	        wangwangTaskVo.setBusinessStepDesc("addWangWangTag");
-//	        wangwangTaskVo.setOperator(context.getAppId());
-//	        wangwangTaskVo.setParameter(stationApplicationId);
-//	        RetryTaskConfigVo retry = new RetryTaskConfigVo();
-//	        retry.setIntervalTime(6 * 3600);// 失败5小时重试
-//	        retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
-//	        retry.setIntervalIncrement(false);
-//	        wangwangTaskVo.setRetryTaskConfig(retry);
-//	        taskVos.add(wangwangTaskVo);
-//	        // TODO 旺旺打标 end
-//
-//	        // TODO 提交任务
-//	        taskExecuteService.submitTasks(taskVos, true);
-//	    }
-
 
 	@Override
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
