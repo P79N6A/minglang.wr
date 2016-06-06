@@ -41,6 +41,7 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -55,6 +56,7 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
+import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -885,20 +887,31 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 	
 	@Override
-	public boolean getProtocolInfoToBeSigned(Long taobaoUserId, ProtocolTypeEnum type) {
+	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException{
+		ProtocolSigningInfoDto info = new ProtocolSigningInfoDto();
 		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null == instance) {
-			return false;
+			throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 		}
 		if (ProtocolTypeEnum.SETTLE_PRO.equals(type)) {
-			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
-				throw new RuntimeException("partner's state is not SETTLING");
-			}
 			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
 					PartnerLifecycleBusinessTypeEnum.SETTLING);
-			if (null == lifecycleItems || !PartnerLifecycleSettledProtocolEnum.SIGNING.equals(lifecycleItems.getSettledProtocol())) {
-				return false;
+			//合伙人当前不状态不为入驻中，或不存在入驻生命周期record
+			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == lifecycleItems) {
+				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 			}
+			
+			if (PartnerLifecycleSettledProtocolEnum.SIGNED.equals(lifecycleItems.getSettledProtocol())) {
+				info.setHasSigned(true);
+				return info;
+			}else if (PartnerLifecycleSettledProtocolEnum.SIGNED.equals(lifecycleItems.getSettledProtocol())) {
+				info.setPartnerInstance(PartnerInstanceConverter.convert(instance));
+				protocolBO.getValidProtocolId(type);
+			}else{
+				logger.error(CommonExceptionEnum.DATA_UNNORMAL + "getProtocolSigningInfo: {},{}",taobaoUserId,type);
+				throw new AugeServiceException(PartnerExceptionEnum.DATA_UNNORMAL);
+			}
+			
 		} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
 			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
 				return false;

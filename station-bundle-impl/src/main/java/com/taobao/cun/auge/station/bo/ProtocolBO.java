@@ -19,7 +19,7 @@ public interface ProtocolBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public Long getValidProtocolId(ProtocolTypeEnum type) throws AugeServiceException;
+	public ProtocolDto getValidProtocolId(ProtocolTypeEnum type) throws AugeServiceException;
 	/**
 	 * 查询所有状态的协议id
 	 * @param types

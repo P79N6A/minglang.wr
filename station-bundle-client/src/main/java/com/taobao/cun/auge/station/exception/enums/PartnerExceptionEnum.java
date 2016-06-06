@@ -15,25 +15,22 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 			"ID_IS_NULL", "合伙人id为空");
 	public static final PartnerExceptionEnum PARTNER_TAOBAONICK_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_TAOBAONICK_IS_NULL", "申请人淘宝会员名不能为空");
-	
 	public static final PartnerExceptionEnum PARTNER_IDENNUM_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_IDENNUM_IS_NULL", "身份证号码不能为空");
-	
 	public static final PartnerExceptionEnum PARTNER_ALIPAYACCOUNT_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_ALIPAYACCOUNT_IS_NULL", "申请人支付宝账号不能为空");
-	
 	public static final PartnerExceptionEnum PARTNER_NAME_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_NAME_IS_NULL", "申请人姓名不能为空");
 	public static final PartnerExceptionEnum PARTNER_ALIPAYACCOUNT_NOTEQUAL = new PartnerExceptionEnum(
 			"PARTNER_ALIPAYACCOUNT_NOTEQUAL", "您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对");
 	public static final PartnerExceptionEnum PARTNER_PERSION_INFO_NOTEQUAL = new PartnerExceptionEnum(
 			"PARTNER_PERSION_INFO_NOTEQUAL", "目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
-	
 	public static final PartnerExceptionEnum PARTNER_TAOBAOUSERID_HAS_USED = new PartnerExceptionEnum(
 			"PARTNER_TAOBAOUSERID_HAS_USED", "该账号已经存在活动的加盟申请");
-	
 	public static final PartnerExceptionEnum PARTNER_DELETE_FAIL = new PartnerExceptionEnum(
 			"PARTNER_DELETE_FAIL", "当前状态合伙人信息不能删除");
+	public static final PartnerExceptionEnum PARTNER_STATE_NOT_APPLICABLE = new PartnerExceptionEnum(
+			"PARTNER_STATE_NOT_APPLICABLE", "当前合伙人的状态不允许开展该业务");
 	
 	
 
@@ -48,6 +45,8 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_PERSION_INFO_NOTEQUAL", PARTNER_PERSION_INFO_NOTEQUAL);
 		mappings.put("PARTNER_TAOBAOUSERID_HAS_USED", PARTNER_TAOBAOUSERID_HAS_USED);
 		mappings.put("PARTNER_DELETE_FAIL", PARTNER_DELETE_FAIL);
+		mappings.put("PARTNER_STATE_NOT_APPLICABLE", PARTNER_STATE_NOT_APPLICABLE);
+
 	}
 
 	public PartnerExceptionEnum(String code, String desc) {

@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitDto;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -50,7 +51,7 @@ public interface PartnerInstanceService {
 	 * @param type
 	 * @return
 	 */
-	public boolean getProtocolInfoToBeSigned(Long taobaoUserId, ProtocolTypeEnum type);
+	public ProtocolSigningInfoDto getProtocolSigningInfoDto(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException;
 
 	/**
 	 * 签署入驻协议
