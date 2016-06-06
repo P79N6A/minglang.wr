@@ -741,6 +741,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
 		closeStationApplyDto.setPartnerInstanceId(instanceId);
 		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+		closeStationApplyDto.setOperator(forcedCloseDto.getOperator());
+		closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());
 		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
 		// 通过事件，定时钟，启动停业流程

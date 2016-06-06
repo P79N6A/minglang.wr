@@ -28,7 +28,6 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 			throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(closeStationApplyDto);
-		
 		CloseStationApplyDto applydto = getCloseStationApply(closeStationApplyDto.getPartnerInstanceId());
 		if (applydto != null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_EXISTS);
