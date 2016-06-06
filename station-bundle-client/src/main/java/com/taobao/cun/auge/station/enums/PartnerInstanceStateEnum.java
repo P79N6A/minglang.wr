@@ -140,6 +140,21 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		return listValidStatus;
 	}
 	
+	/**
+	 * 统计合伙人管理几个淘帮手时，使用， quiting中，待保证金冻结的子状态除外
+	 * @return
+	 */
+	public static List<String>  getValidTpaStatusArray(){
+		List<String> listValidStatus = new ArrayList<String>();
+		listValidStatus.add(PartnerInstanceStateEnum.TEMP.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.SETTLING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.QUITING.getCode());
+		return listValidStatus;
+	}	
+	
 	
 	
 
