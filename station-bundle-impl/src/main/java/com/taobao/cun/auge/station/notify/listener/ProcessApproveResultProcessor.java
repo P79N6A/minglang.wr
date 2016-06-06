@@ -164,9 +164,9 @@ public class ProcessApproveResultProcessor {
 			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
 					DomainUtils.DEFAULT_OPERATOR);
 			
+			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
-				// 村点已撤点
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
 			}
 
@@ -178,8 +178,8 @@ public class ProcessApproveResultProcessor {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
 					DomainUtils.DEFAULT_OPERATOR);
-			if ("y".equals(quitApply.getIsQuitStation())) {
-				// 村点已停业
+			// 村点已停业
+			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, DomainUtils.DEFAULT_OPERATOR);
 			}
