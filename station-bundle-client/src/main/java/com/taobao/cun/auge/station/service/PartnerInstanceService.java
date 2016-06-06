@@ -2,12 +2,14 @@ package com.taobao.cun.auge.station.service;
 
 import java.math.BigDecimal;
 
+import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -44,13 +46,13 @@ public interface PartnerInstanceService {
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException;
 
 	/**
-	 * 协议是否待签约,e.g. 入驻协议，管理协议
+	 * 获取待签约协议信息,e.g. 入驻协议，管理协议
 	 * 
 	 * @param taobaoUserId
 	 * @param type
 	 * @return
 	 */
-	public boolean getProtocolInfoToBeSigned(Long taobaoUserId, ProtocolTypeEnum type);
+	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException;
 
 	/**
 	 * 签署入驻协议
@@ -69,12 +71,12 @@ public interface PartnerInstanceService {
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
-	 * 保证金是否待冻结
+	 * 获取待冻结保证金信息
 	 * 
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean ifBondToBeFreezen(Long taobaoUserId);
+	public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 冻结保证金
@@ -144,7 +146,6 @@ public interface PartnerInstanceService {
 	 */
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
-	
 	/**
 	 * 针对入驻失败的 申请入驻
 	 * 
@@ -152,8 +153,7 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
-	
-	
+
 	/**
 	 * 检查有没有开业包，要调用外部接口 到时候要写适配器封装外部接口 先定义在这里
 	 * 

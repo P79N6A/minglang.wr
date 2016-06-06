@@ -12,12 +12,26 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
  * @author quanzhu.wangqz
  *
  */
-public class PartnerProtocolRelDto  extends OperatorDto implements Serializable {
+public class PartnerProtocolRelDto extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = -5458194521053835714L;
-	
+
 	private Long protocolId;
-	
+
+	private Long taobaoUserId;
+
+	private ProtocolTypeEnum protocolTypeEnum;
+
+	private Date confirmTime;
+
+	private Date startTime;
+
+	private Date endTime;
+
+	private Long objectId;
+
+	private PartnerProtocolRelTargetTypeEnum targetType;
+
 	public Long getProtocolId() {
 		return protocolId;
 	}
@@ -26,20 +40,6 @@ public class PartnerProtocolRelDto  extends OperatorDto implements Serializable 
 		this.protocolId = protocolId;
 	}
 
-	private Long taobaoUserId;
-	
-	private ProtocolTypeEnum protocolTypeEnum;
-
-    private Date confirmTime;
-
-    private Date startTime;
-
-    private Date endTime;
-
-    private Long objectId;
-
-    private PartnerProtocolRelTargetTypeEnum targetType;
-
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}
@@ -47,7 +47,6 @@ public class PartnerProtocolRelDto  extends OperatorDto implements Serializable 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
 	}
-
 
 	public Date getConfirmTime() {
 		return confirmTime;
@@ -96,6 +95,5 @@ public class PartnerProtocolRelDto  extends OperatorDto implements Serializable 
 	public void setProtocolTypeEnum(ProtocolTypeEnum protocolTypeEnum) {
 		this.protocolTypeEnum = protocolTypeEnum;
 	}
-	
-	
+
 }

@@ -42,7 +42,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
-		Long protocolId = protocolBO.getValidProtocolId(type);
+		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		if (null == protocolId) {
 			throw new RuntimeException("protocol not exists: " + type);
 		}
@@ -74,7 +74,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(businessId);
 		criteria.andIsDeletedEqualTo("n");
 
-		Long protocolId = protocolBO.getValidProtocolId(type);
+		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		criteria.andProtocolIdEqualTo(protocolId);
 
 		DomainUtils.beforeDelete(example, operator);
@@ -89,7 +89,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		ValidateUtils.notNull(partnerProtocolRelDto);
 		PartnerProtocolRel record = PartnerProtocolRelConverter.toPartnerProtocolRel(partnerProtocolRelDto);
 		if (partnerProtocolRelDto.getProtocolId() == null && partnerProtocolRelDto.getProtocolTypeEnum() != null) {
-			Long protocolId = protocolBO.getValidProtocolId(partnerProtocolRelDto.getProtocolTypeEnum());
+			Long protocolId = protocolBO.getValidProtocol(partnerProtocolRelDto.getProtocolTypeEnum()).getId();
 			if (protocolId == null) {
 				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 			}
