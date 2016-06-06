@@ -10,7 +10,7 @@ public final class QuitStationApplyConverter {
 
 	}
 
-	public static QuitStationApply convert(QuitStationApplyDto quitDto, PartnerStationRel instance, String operatorName) {
+	public static QuitStationApply convert(QuitStationApplyDto quitDto, PartnerStationRel instance,	String operatorName) {
 		QuitStationApply quitStationApply = new QuitStationApply();
 
 		quitStationApply.setPartnerInstanceId(instance.getId());
@@ -19,11 +19,11 @@ public final class QuitStationApplyConverter {
 		quitStationApply.setRevocationAppFormFileName(quitDto.getRevocationAppFormFileName());
 		quitStationApply.setOtherDescription(quitDto.getOtherDescription());
 		quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
-		quitStationApply.setLoanHasClose(quitDto.isLoanHasClose()?"y":"n");
+		quitStationApply.setLoanHasClose(quitDto.isLoanHasClose() ? "y" : "n");
 		// FIXME FHH 枚举
 		quitStationApply.setState("FINISHED");
 		quitStationApply.setSubmittedPeopleName(operatorName);
-		quitStationApply.setIsQuitStation(quitDto.getIsQuitStation()?"y":"n");
+		quitStationApply.setIsQuitStation(quitDto.getIsQuitStation() ? "y" : "n");
 		return quitStationApply;
 	}
 
