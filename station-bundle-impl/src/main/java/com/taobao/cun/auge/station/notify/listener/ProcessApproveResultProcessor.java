@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
@@ -68,8 +69,7 @@ public class ProcessApproveResultProcessor {
 		Long instanceId = partnerStationRel.getId();
 
 		OperatorDto operator = new OperatorDto();
-		String operatorId = "sys";
-		operator.setOperator(operatorId);
+		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
@@ -78,12 +78,12 @@ public class ProcessApproveResultProcessor {
 			instance.setServiceEndTime(new Date());
 			instance.setState(PartnerInstanceStateEnum.CLOSED);
 			instance.setId(instanceId);
-			instance.setOperator(operatorId);
+			instance.setOperator(operator.getOperator());
 			instance.setVersion(partnerStationRel.getVersion());
 			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operatorId);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operator.getOperator());
 			
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
@@ -101,13 +101,13 @@ public class ProcessApproveResultProcessor {
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, operatorId);
+					PartnerInstanceStateEnum.SERVICING, operator.getOperator());
 
 			// 村点已停业
-			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operatorId);
+			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator.getOperator());
 			
 			//删除停业申请表
-			closeStationApplyBO.deleteCloseStationApply(instanceId,operatorId);
+			closeStationApplyBO.deleteCloseStationApply(instanceId,operator.getOperator());
 			
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
@@ -146,8 +146,7 @@ public class ProcessApproveResultProcessor {
 	 */
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		OperatorDto operator = new OperatorDto();
-		String operatorId = "sys";
-		operator.setOperator(operatorId);
+		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
 		PartnerStationRel  instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
