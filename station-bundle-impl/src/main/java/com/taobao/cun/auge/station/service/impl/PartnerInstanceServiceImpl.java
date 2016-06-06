@@ -109,7 +109,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  *
  */
-@HSFProvider(serviceInterface = PartnerInstanceService.class)
+@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily.fhh")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
