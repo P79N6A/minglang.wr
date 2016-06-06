@@ -50,7 +50,6 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 		criteria.andTargetTypeEqualTo(accountMoneyDto.getTargetType().getCode());
 		criteria.andTypeEqualTo(accountMoneyDto.getType().getCode());
 		
-		
 		AccountMoney record = AccountMoneyConverter.toAccountMoney(accountMoneyDto);
 		DomainUtils.beforeUpdate(record, accountMoneyDto.getOperator());
 		

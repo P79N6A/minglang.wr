@@ -3,7 +3,9 @@ package com.taobao.cun.auge.station.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +45,7 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -89,6 +92,8 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.crius.event.client.EventDispatcher;
+import com.taobao.cun.dto.ContextDto;
+import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -489,7 +494,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerLifecycleBO.updateLifecycle(param);
 			}
 
-			//乐观锁
+			// 乐观锁
 			PartnerInstanceDto instance = new PartnerInstanceDto();
 			instance.setId(instanceId);
 			instance.setVersion(version);
@@ -550,15 +555,127 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.SETTLING,
 				PartnerLifecycleCurrentStepEnum.BOND);
-		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState()) || null == settleItems) {
-			// logger.error(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
+		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, rel.getId());
+		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState()) || null == settleItems || null == bondMoney
+				|| !AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
 
+		// 修改什么周期表
+		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
+		lifecycleUpdateDto.setLifecycleId(settleItems.getId());
+		lifecycleUpdateDto.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
+		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
+
+		// 修改保证金冻结状态
+		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+		accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
+		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setFrozenTime(new Date());
+		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		
+//		submitFreezeBondTasks(stationApplyId, context);
+
+		  // 流转日志, 合伙人入驻
+//        bulidRecordEventForPartnerEnter(stationApplyDetailDto);
+
 		// 同步station_apply
-		// syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-		return false;
+		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, rel.getId());
+		return true;
 	}
+	
+//	   private void submitFreezeBondTasks(Long stationApplicationId, ContextDto context) {
+//	        // TODO 异构系统交互提交后台任务
+//	        List<TaskVo> taskVos = new LinkedList<TaskVo>();
+//
+//	        String businessNo = stationApplicationId.toString();// getBusinessNo();
+//	        
+//	        // TODO 菜鸟驿站同步 begin
+//	        TaskVo cainiaoTaskVo = new TaskVo();
+//	        cainiaoTaskVo.setBusinessNo(businessNo);
+//	        cainiaoTaskVo.setBeanName("caiNiaoBo");
+//	        cainiaoTaskVo.setMethodName("syncStationInfo");
+//	        cainiaoTaskVo.setBusinessStepNo(1l);
+//	        cainiaoTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
+//	        cainiaoTaskVo.setBusinessStepDesc("syncStationInfo");
+//	        cainiaoTaskVo.setOperator(context.getAppId());
+//
+//	        CainiaoSyncParam cainiaoSyncParam = new CainiaoSyncParam();
+//	        cainiaoSyncParam.setStationApplyId(stationApplicationId);
+//	        cainiaoSyncParam.setContextDto(context);
+//	        cainiaoTaskVo.setParameter(cainiaoSyncParam);
+//	        taskVos.add(cainiaoTaskVo);
+//	        // TODO 菜鸟驿站同步 end
+//	        
+//	        
+//	        // TODO uic打标 begin
+//	        TaskVo uicTaskVo = new TaskVo();
+//	        uicTaskVo.setBusinessNo(businessNo);
+//	        uicTaskVo.setBeanName("uicBo");
+//	        uicTaskVo.setMethodName("addUserTag");
+//	        uicTaskVo.setBusinessStepNo(2l);
+//	        uicTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
+//	        uicTaskVo.setBusinessStepDesc("addUserTag");
+//	        uicTaskVo.setOperator(context.getAppId());
+//	        uicTaskVo.setParameter(stationApplicationId);
+//	        taskVos.add(uicTaskVo);
+//	        // TODO uic打标 end
+//
+//	       
+//
+//	        // TODO 申请单更新为服务中 begin
+//	        TaskVo stationConfirmTaskVo = new TaskVo();
+//	        stationConfirmTaskVo.setBusinessNo(businessNo);
+//	        stationConfirmTaskVo.setBeanName("stationApplyBO");
+//	        stationConfirmTaskVo.setMethodName("succ");
+//	        stationConfirmTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
+//	        stationConfirmTaskVo.setBusinessStepNo(3l);
+//	        stationConfirmTaskVo.setBusinessStepDesc("stationApply");
+//	        stationConfirmTaskVo.setOperator(context.getAppId());
+//
+//	        StationApplyConfirmTaskParam stationApplyConfirmTaskParam = new StationApplyConfirmTaskParam();
+//	        stationApplyConfirmTaskParam.setStationApplicationId(stationApplicationId);
+//	        stationApplyConfirmTaskParam.setTaobaoUserId(Long.parseLong(context.getAppId()));
+//	        stationApplyConfirmTaskParam.setNow(new Date());
+//
+//	        Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
+//	        Calendar end = Calendar.getInstance();// 得到一个Calendar的实例
+//	        end.add(Calendar.YEAR, 1);
+//	        stationApplyConfirmTaskParam.setServiceBeginDate(now.getTime());
+//	        stationApplyConfirmTaskParam.setServiceEndDate(end.getTime());
+//
+//	        String[] allowedStatesTask = new String[1];
+//	        allowedStatesTask[0] = StationApplyStateEnum.CONFIRMED.getCode();
+//	        stationApplyConfirmTaskParam.setAllowedStates(allowedStatesTask);
+//	        stationConfirmTaskVo.setParameter(stationApplyConfirmTaskParam);
+//	        taskVos.add(stationConfirmTaskVo);
+//	        // TODO 申请单更新为服务中 end
+//
+//	        // TODO 旺旺打标 begin
+//	        TaskVo wangwangTaskVo = new TaskVo();
+//	        wangwangTaskVo.setBusinessNo(businessNo);
+//	        wangwangTaskVo.setBeanName("aliWangWangBO");
+//	        wangwangTaskVo.setMethodName("addWangWangTag");
+//	        wangwangTaskVo.setBusinessStepNo(4l);
+//	        wangwangTaskVo.setBusinessType(BusinessTypeEnum.STATION_APPLY_CONFIRM);
+//	        wangwangTaskVo.setBusinessStepDesc("addWangWangTag");
+//	        wangwangTaskVo.setOperator(context.getAppId());
+//	        wangwangTaskVo.setParameter(stationApplicationId);
+//	        RetryTaskConfigVo retry = new RetryTaskConfigVo();
+//	        retry.setIntervalTime(6 * 3600);// 失败5小时重试
+//	        retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
+//	        retry.setIntervalIncrement(false);
+//	        wangwangTaskVo.setRetryTaskConfig(retry);
+//	        taskVos.add(wangwangTaskVo);
+//	        // TODO 旺旺打标 end
+//
+//	        // TODO 提交任务
+//	        taskExecuteService.submitTasks(taskVos, true);
+//	    }
+
 
 	@Override
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
