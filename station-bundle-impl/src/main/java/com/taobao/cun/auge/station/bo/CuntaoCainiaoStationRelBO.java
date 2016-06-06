@@ -35,4 +35,14 @@ public interface CuntaoCainiaoStationRelBO {
 	 * @throws AugeServiceException
 	 */
 	public void insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto) throws AugeServiceException;
+	
+	
+	/**
+	 * 查询菜鸟物流关系
+	 * @param objectId
+	 * @param type
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long getCainiaoStationId(Long stationId) throws AugeServiceException;
 }

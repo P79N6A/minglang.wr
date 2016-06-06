@@ -401,5 +401,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return null;
 	}
 
+	@Override
+	public int getActiveTpaByParentStationId(Long parentStationId)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

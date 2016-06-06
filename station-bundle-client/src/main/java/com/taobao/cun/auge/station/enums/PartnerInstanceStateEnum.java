@@ -127,6 +127,19 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		return listValidStatus;
 	}
 	
+	/**
+	 * 可以降级的合伙人状态
+	 * @return
+	 */
+	public static List<String> canDegradeStateCodeList() {
+		List<String > listValidStatus = new ArrayList<String >();
+		listValidStatus.add(PartnerInstanceStateEnum.DECORATING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED.getCode());
+		return listValidStatus;
+	}
+	
 	
 	
 

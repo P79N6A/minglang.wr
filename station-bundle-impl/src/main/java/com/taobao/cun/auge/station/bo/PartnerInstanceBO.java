@@ -194,7 +194,16 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId);
+	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException ;
+	
+	
+	/**
+	 *  获得有效的的淘帮手
+	 * @param parentStationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public int  getActiveTpaByParentStationId(Long parentStationId) throws AugeServiceException;
 	
 
 }
