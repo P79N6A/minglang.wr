@@ -3,9 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,7 +43,6 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -65,7 +62,6 @@ import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
-import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -100,8 +96,6 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
-import com.taobao.cun.dto.ContextDto;
-import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -462,12 +456,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
 		validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
 		try {
-			Long taobaoUserId = validateSettlable(partnerInstanceDto);
-
-			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-			partnerDto.setTaobaoUserId(taobaoUserId);
-
-			updateCommon(partnerInstanceDto);
 			Long partnerInstanceId = partnerInstanceUpdateServicingDto.getId();
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 			Long stationId = rel.getStationId();
@@ -515,16 +503,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			syncUpdateCainiaoStation(partnerInstanceId,partnerInstanceUpdateServicingDto.getOperator());
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
-			logger.error(error, augeException);
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),augeException.toString());
 			logger.error(error,augeException);
 			throw augeException;
-
-		} catch (Exception e) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
-			logger.error(error, e);
-
 		}catch (Exception e) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),e.getMessage());
 			logger.error(error,e);
@@ -610,6 +591,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
       	Matcher m = p.matcher(mobiles);
       	return m.matches();
      }
+
 
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException {
