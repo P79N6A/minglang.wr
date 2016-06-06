@@ -157,6 +157,7 @@ public final class PartnerInstanceConverter {
 
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
+		instanceDto.setVersion(psRel.getVersion());
 		return instanceDto;
 	}
 
@@ -284,7 +285,7 @@ public final class PartnerInstanceConverter {
 		}
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
-
+		rel.setVersion(partnerInstanceDto.getVersion());
 		return rel;
 	}
 }

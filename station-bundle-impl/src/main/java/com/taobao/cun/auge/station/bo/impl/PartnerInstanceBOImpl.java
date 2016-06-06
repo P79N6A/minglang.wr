@@ -200,9 +200,24 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
+		ValidateUtils.notNull(partnerInstanceDto.getVersion());
 		PartnerStationRel rel = PartnerInstanceConverter.convert(partnerInstanceDto);
+		rel.setVersion(rel.getVersion()+1l);
 		DomainUtils.beforeUpdate(rel, partnerInstanceDto.getOperator());
-		partnerStationRelMapper.updateByPrimaryKeySelective(rel);
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andIdEqualTo(partnerInstanceDto.getId());
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
+		
+		int updateCount = partnerStationRelMapper.updateByExample(rel, example);
+		
+		if (updateCount <1) {
+			throw new AugeServiceException(CommonExceptionEnum.VERION_IS_INVALID);
+		}
 	}
 
 	@Override

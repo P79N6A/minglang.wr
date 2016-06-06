@@ -341,7 +341,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (StringUtils.isEmpty(stationNum)) {
 			   throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
         }
-
+		stationNum = stationNum.toUpperCase();
         if (stationNum.length() > 16) {
         	 throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
         }
@@ -431,9 +431,28 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public boolean update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return false;
+	public void update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		ValidateUtils.validateParam(partnerInstanceDto);
+		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
+		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
+		ValidateUtils.notNull(partnerInstanceDto.getId());
+		ValidateUtils.notNull(partnerInstanceDto.getVersion());
+		try {
+			Long taobaoUserId = validateSettlable(partnerInstanceDto);
+			
+			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+			partnerDto.setTaobaoUserId(taobaoUserId);
+			
+			updateCommon(partnerInstanceDto);
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto),augeException.toString());
+			logger.error(error,augeException);
+			throw augeException;
+		}catch (Exception e) {
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 	@Override

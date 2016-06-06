@@ -33,7 +33,7 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public boolean update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 删除合伙人实例
