@@ -9,17 +9,23 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
@@ -43,6 +49,9 @@ public class ProcessApproveResultProcessor {
 	
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
+	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
 
 	/**
 	 * 处理停业审批结果
@@ -73,6 +82,12 @@ public class ProcessApproveResultProcessor {
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, operatorId);
+			
+			//更新生命周期表
+			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+			
+			// 同步station_apply
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 记录村点状态变化
 			// 去标，通过事件实现
@@ -91,12 +106,29 @@ public class ProcessApproveResultProcessor {
 			
 			//删除停业申请表
 			closeStationApplyBO.deleteCloseStationApply(instanceId,operatorId);
+			
+			//更新生命周期表
+			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			
+			// 同步station_apply
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		}
+	}
+
+	private void updatePartnerLifecycle(Long instanceId, OperatorDto operator,PartnerLifecycleRoleApproveEnum approveResult) {
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		partnerLifecycleDto.setRoleApprove(approveResult);
+		partnerLifecycleDto.setPartnerInstanceId(instanceId);
+		partnerLifecycleDto.setOperator(operator.getOperator());
+		partnerLifecycleDto.setOperatorType(operator.getOperatorType());
+		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
 	/**
