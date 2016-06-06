@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 
 
+
+
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Attachement;
@@ -21,6 +23,7 @@ import com.taobao.cun.auge.station.convert.AttachementConverter;
 import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("attachementBO")
@@ -95,6 +98,14 @@ public class AttachementBOImpl implements AttachementBO {
 	@Override
 	public List<AttachementDto> selectAttachementList(Long objectId,
 			AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException {
+		return selectAttachementList(objectId, bizTypeEnum, null);
+	}
+
+	@Override
+	public List<AttachementDto> selectAttachementList(Long objectId,
+			AttachementBizTypeEnum bizTypeEnum,
+			AttachementTypeIdEnum attachementTypeId)
+			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
 
@@ -103,7 +114,49 @@ public class AttachementBOImpl implements AttachementBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andObjectIdEqualTo(objectId);
 		criteria.andBizTypeEqualTo(bizTypeEnum.getCode());
+		if (attachementTypeId != null) {
+			criteria.andAttachementTypeIdEqualTo(attachementTypeId.getCode());
+		}
 		List<Attachement> attList = attachementMapper.selectByExample(example);
 		return AttachementConverter.toAttachementDtos(attList);
+	}
+
+	@Override
+	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,
+			AttachementTypeIdEnum attachementTypeId, String operator)
+			throws AugeServiceException {
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(bizTypeEnum);
+		ValidateUtils.notNull(attachementTypeId);
+		if (CollectionUtils.isNotEmpty(attachementDtoList)) {
+			for (AttachementDto attachementDto:attachementDtoList) {
+				attachementDto.setObjectId(objectId);
+				attachementDto.setBizType(bizTypeEnum);
+				attachementDto.setAttachementTypeId(attachementTypeId);
+				attachementDto.setOperator(operator);
+				addAttachement(attachementDto);
+			}
+		}
+		
+	}
+
+	@Override
+	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,
+			AttachementTypeIdEnum attachementTypeId, String operator)
+			throws AugeServiceException {
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(bizTypeEnum);
+		ValidateUtils.notNull(attachementTypeId);
+		AttachementDeleteDto attachementDeleteDto = new AttachementDeleteDto();
+		attachementDeleteDto.setObjectId(objectId);
+		attachementDeleteDto.setBizType(bizTypeEnum);
+		attachementDeleteDto.setOperator(operator);
+		attachementDeleteDto.setAttachementTypeId(attachementTypeId);
+		deleteAttachement(attachementDeleteDto);
+		
+		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,attachementTypeId,operator);
+		
 	}
 }

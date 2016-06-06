@@ -1077,8 +1077,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void applySettleSuccess(
 			PartnerInstanceSettleSuccessDto settleSuccessDto)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
+		ValidateUtils.validateParam(settleSuccessDto);
+		Long instanceId = settleSuccessDto.getInstanceId();
+		ValidateUtils.notNull(instanceId);
 		
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (rel == null || StringUtils.isEmpty(rel.getType())) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
+		partnerInstanceHandler.handleSettleSuccess(settleSuccessDto, rel);
 	}
 
 }

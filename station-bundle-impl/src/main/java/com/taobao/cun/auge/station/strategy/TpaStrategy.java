@@ -1,5 +1,10 @@
 package com.taobao.cun.auge.station.strategy;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +20,25 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -37,6 +50,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
@@ -63,6 +77,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
+	
+	@Autowired
+	AttachementBO attachementBO;
 	
 	
 	@Override
@@ -91,13 +108,13 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistValidChildren(Long instanceId) {
+	public void validateExistValidChildren(Long instanceId) throws AugeServiceException{
 		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
-	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
+	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType) throws AugeServiceException{
 		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
 			return ProcessBusinessEnum.stationForcedClosure;
 		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
@@ -245,6 +262,76 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
+		}
+	}
+
+	@Override
+	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel)
+			throws AugeServiceException {
+		Long instanceId = settleSuccessDto.getInstanceId();
+		
+		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
+		Date serviceBeginTime = now.getTime();
+		now.add(Calendar.YEAR, 1);
+		Date serviceEndTime =  now.getTime();
+		
+		Long partnerId = rel.getPartnerId();
+		Long stationId = rel.getStationId();
+		Long taobaoUserId = rel.getTaobaoUserId();
+		
+		StationDto stationDto = new StationDto();
+		stationDto.setState(StationStateEnum.NORMAL);
+		stationDto.setStatus(StationStatusEnum.SERVICING);
+		stationDto.setId(stationId);
+		stationDto.copyOperatorDto(settleSuccessDto);
+		stationBO.updateStation(stationDto);
+		
+		//保证partner表有效记录唯一性
+		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
+		if (oldPartnerId != null) {
+			//更新身份证
+			List<AttachementDto>  attDtoList = attachementBO.selectAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
+			if (CollectionUtils.isNotEmpty(attDtoList)) {
+				attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId,
+						AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, settleSuccessDto.getOperator());
+			}
+			
+			//更新合伙人表信息
+			Partner newPartner = partnerBO.getPartnerById(partnerId);
+			newPartner.setId(oldPartnerId);
+			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+			newPartnerDto.copyOperatorDto(settleSuccessDto);
+			partnerBO.updatePartner(PartnerConverter.toPartnerDto(newPartner));
+			
+			PartnerInstanceDto piDto = new PartnerInstanceDto();
+			piDto.setServiceBeginTime(serviceBeginTime);
+			piDto.setServiceEndTime(serviceEndTime);
+			piDto.setId(instanceId);
+			piDto.setState(PartnerInstanceStateEnum.SERVICING);
+			piDto.setPartnerId(oldPartnerId);
+			piDto.copyOperatorDto(settleSuccessDto);
+			partnerInstanceBO.updatePartnerStationRel(piDto);
+			
+			partnerBO.deletePartner(partnerId, settleSuccessDto.getOperator());
+			
+		}else {
+			PartnerInstanceDto piDto = new PartnerInstanceDto();
+			piDto.setServiceBeginTime(serviceBeginTime);
+			piDto.setServiceEndTime(serviceEndTime);
+			piDto.setId(instanceId);
+			piDto.setState(PartnerInstanceStateEnum.SERVICING);
+			piDto.copyOperatorDto(settleSuccessDto);
+			partnerInstanceBO.updatePartnerStationRel(piDto);
+		}
+		
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.BOND);
+		if (items != null) {
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
 		}
 	}
 		
