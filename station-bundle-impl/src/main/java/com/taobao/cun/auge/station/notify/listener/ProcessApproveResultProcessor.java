@@ -89,9 +89,6 @@ public class ProcessApproveResultProcessor {
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			
-			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
-
 			// 记录村点状态变化
 			// 去标，通过事件实现
 			// 短信推送
@@ -113,14 +110,14 @@ public class ProcessApproveResultProcessor {
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 			
-			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		}
+		// 同步station_apply
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 	}
 
 	private void updatePartnerLifecycle(Long instanceId, OperatorDto operator,PartnerLifecycleRoleApproveEnum approveResult) {
@@ -194,6 +191,9 @@ public class ProcessApproveResultProcessor {
 		
 		//更新生命周期表
 		partnerInstanceHandler.handleAuditQuit(approveResult, instance.getId(), PartnerInstanceTypeEnum.valueof(instance.getType()));
+		
+		// 同步station_apply
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceId));
 
 		// tair清空缓存
 	}
