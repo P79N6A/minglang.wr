@@ -23,6 +23,7 @@ public final class QuitStationApplyConverter {
 		// FIXME FHH 枚举
 		quitStationApply.setState("FINISHED");
 		quitStationApply.setSubmittedPeopleName(operatorName);
+		quitStationApply.setIsQuitStation(quitDto.getIsQuitStation()?"y":"n");
 		return quitStationApply;
 	}
 
