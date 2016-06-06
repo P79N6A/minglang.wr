@@ -63,9 +63,9 @@ public class ProcessApproveResultProcessor {
 	 * @throws Exception
 	 */
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
-		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		Long stationId = partnerStationRel.getStationId();
+		Long instanceId = partnerStationRel.getId();
 
 		OperatorDto operator = new OperatorDto();
 		String operatorId = "sys";
@@ -155,10 +155,7 @@ public class ProcessApproveResultProcessor {
 			logger.error("monitorQuitApprove.getPartnerStationRelByStationApplyId is null param:"+stationApplyId);
 			return;
 		}
-		Boolean isAgree = false;
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			isAgree = true;
-		}
+		Boolean isAgree = ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult);
 		partnerInstanceHandler.handleAuditQuit(isAgree, instance.getId(), PartnerInstanceTypeEnum.valueof(instance.getType()));
 		// tair清空缓存
 	}
