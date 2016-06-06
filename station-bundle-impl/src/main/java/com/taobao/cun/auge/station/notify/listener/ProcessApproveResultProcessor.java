@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
@@ -24,6 +25,7 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -121,6 +123,8 @@ public class ProcessApproveResultProcessor {
 	}
 
 	private void updatePartnerLifecycle(Long instanceId, OperatorDto operator,PartnerLifecycleRoleApproveEnum approveResult) {
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
@@ -128,6 +132,8 @@ public class ProcessApproveResultProcessor {
 		partnerLifecycleDto.setPartnerInstanceId(instanceId);
 		partnerLifecycleDto.setOperator(operator.getOperator());
 		partnerLifecycleDto.setOperatorType(operator.getOperatorType());
+		partnerLifecycleDto.setLifecycleId(items.getId());
+		
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
