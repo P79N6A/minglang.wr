@@ -6,6 +6,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -16,7 +17,7 @@ public interface PartnerInstanceStrategy {
 	
 	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum)throws AugeServiceException;
 	
-	public void auditQuit(Boolean isAgree,Long partnerInstanceId) throws AugeServiceException;
+	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException;
 	
 	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)throws AugeServiceException;
 	

@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -185,67 +186,22 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void auditQuit(Boolean isAgree, Long partnerInstanceId)
-			throws AugeServiceException {
-		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceId);
-		
-		if (quitApply == null) {
-			logger.error("QuitStationApply is null param:"+ partnerInstanceId);
-			return;
-		}
-		OperatorDto operator = new OperatorDto();
-		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
-		
-		if (isAgree) {
-			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
-				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
-				// 村点已撤点
-				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
-			}
-			
-			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
-					PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-			if (items != null) {
-				PartnerLifecycleDto param = new PartnerLifecycleDto();
-				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
-				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
-				param.setLifecycleId(items.getId());
-				partnerLifecycleBO.updateLifecycle(param);
-			}
-			
+	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 
-			// 取消物流站点，取消支付宝标示，
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUIT,
-							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
-		}else {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
-					DomainUtils.DEFAULT_OPERATOR);
-			if ("y".equals(quitApply.getIsQuitStation())) {
-				// 村点已停业
-				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
-				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, DomainUtils.DEFAULT_OPERATOR);
-			}
-			
-			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
-					PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-			if (items != null) {
-				PartnerLifecycleDto param = new PartnerLifecycleDto();
-				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
-				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-				param.setLifecycleId(items.getId());
-				partnerLifecycleBO.updateLifecycle(param);
-			}
-		
-			// 删除退出申请单
-			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, DomainUtils.DEFAULT_OPERATOR);
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
-							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult) && items != null) {
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
+		} else {
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
 		}
 	}
-		
 }
