@@ -11,6 +11,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -88,9 +89,6 @@ public class ProcessApproveResultProcessor {
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			
-			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
-
 			// 记录村点状态变化
 			// 去标，通过事件实现
 			// 短信推送
@@ -112,14 +110,14 @@ public class ProcessApproveResultProcessor {
 			//更新生命周期表
 			updatePartnerLifecycle(instanceId, operator,PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 			
-			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		}
+		// 同步station_apply
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 	}
 
 	private void updatePartnerLifecycle(Long instanceId, OperatorDto operator,PartnerLifecycleRoleApproveEnum approveResult) {
@@ -150,12 +148,53 @@ public class ProcessApproveResultProcessor {
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
 		PartnerStationRel  instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		if (instance == null) {
-			logger.error("monitorQuitApprove.getPartnerStationRelByStationApplyId is null param:"+stationApplyId);
+		Long partnerInstanceId = instance.getId();
+		
+		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceId);
+		if (quitApply == null) {
+			logger.error("QuitStationApply is null param:"+ partnerInstanceId);
 			return;
 		}
-		Boolean isAgree = ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult);
-		partnerInstanceHandler.handleAuditQuit(isAgree, instance.getId(), PartnerInstanceTypeEnum.valueof(instance.getType()));
+		
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+			// 合伙人实例已停业
+			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
+					DomainUtils.DEFAULT_OPERATOR);
+			
+			// 村点已撤点
+			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
+				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
+				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
+			}
+
+			// 取消物流站点，取消支付宝标示，
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUIT,
+							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
+		}else {
+			// 合伙人实例已停业
+			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
+					DomainUtils.DEFAULT_OPERATOR);
+			// 村点已停业
+			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
+				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
+				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, DomainUtils.DEFAULT_OPERATOR);
+			}
+		
+			// 删除退出申请单
+			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, DomainUtils.DEFAULT_OPERATOR);
+			// 记录村点状态变化
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
+							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
+		}
+		
+		//更新生命周期表
+		partnerInstanceHandler.handleAuditQuit(approveResult, instance.getId(), PartnerInstanceTypeEnum.valueof(instance.getType()));
+		
+		// 同步station_apply
+		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceId));
+
 		// tair清空缓存
 	}
 }
