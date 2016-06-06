@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.dto;
 import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.station.enums.PartnerForcedCloseReasonEnum;
+import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 
 public class ForcedCloseDto extends OperatorDto {
 
@@ -14,7 +14,7 @@ public class ForcedCloseDto extends OperatorDto {
 	private Long instanceId;
 
 	@NotNull(message="PartnerForcedCloseReasonEnum not null")
-	private PartnerForcedCloseReasonEnum reason;
+	private CloseStationApplyCloseReasonEnum reason;
 	
 	private String remarks;
 
@@ -26,11 +26,11 @@ public class ForcedCloseDto extends OperatorDto {
 		this.instanceId = instanceId;
 	}
 
-	public PartnerForcedCloseReasonEnum getReason() {
+	public CloseStationApplyCloseReasonEnum getReason() {
 		return reason;
 	}
 
-	public void setReason(PartnerForcedCloseReasonEnum reason) {
+	public void setReason(CloseStationApplyCloseReasonEnum reason) {
 		this.reason = reason;
 	}
 

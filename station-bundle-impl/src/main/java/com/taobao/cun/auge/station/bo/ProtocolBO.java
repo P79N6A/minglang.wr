@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -19,7 +20,7 @@ public interface ProtocolBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public ProtocolDto getValidProtocolId(ProtocolTypeEnum type) throws AugeServiceException;
+	public ProtocolDto getValidProtocol(ProtocolTypeEnum type) throws AugeServiceException;
 	/**
 	 * 查询所有状态的协议id
 	 * @param types

@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 /**
@@ -17,14 +19,17 @@ public class OpenStationDto  extends OperatorDto implements Serializable {
 	/**
 	 * 合伙人实例id
 	 */
+	@NotNull(message="instanceId not null")
 	private Long partnerInstanceId;
 	/**
 	 * 开业时间
 	 */
+	@NotNull(message="openDate not null")
 	private Date openDate; 
 	/**
 	 *是否立即开业
 	 */
+	@NotNull(message="isImme not null")
 	private Boolean isImme;
 	
 	public Long getPartnerInstanceId() {

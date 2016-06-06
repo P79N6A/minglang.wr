@@ -145,7 +145,6 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		PartnerInstanceQuitDto partnerInstanceQuitDto = new PartnerInstanceQuitDto();
 		partnerInstanceQuitDto.copyOperatorDto(operatorDto);
 		partnerInstanceQuitDto.setInstanceId(instanceId);
-		partnerInstanceQuitDto.setIsQuitStation(Boolean.TRUE);
 		
 		quitTaskVo.setParameter(partnerInstanceQuitDto);
 		taskLists.add(quitTaskVo);

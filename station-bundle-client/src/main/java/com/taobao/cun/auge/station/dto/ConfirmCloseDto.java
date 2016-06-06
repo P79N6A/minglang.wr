@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 /**
@@ -15,11 +17,13 @@ public class ConfirmCloseDto extends OperatorDto implements Serializable {
 	/**
 	 * 实例id
 	 */
+	@NotNull(message="instanceId not null")
 	private Long partnerInstanceId;
 	/**
 	 * 是否同意
 	 */
-	private boolean isAgree;
+	@NotNull(message="isAgree not null")
+	private Boolean isAgree;
 	
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -27,10 +31,10 @@ public class ConfirmCloseDto extends OperatorDto implements Serializable {
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
 	}
-	public boolean isAgree() {
+	public Boolean isAgree() {
 		return isAgree;
 	}
-	public void setAgree(boolean isAgree) {
+	public void setAgree(Boolean isAgree) {
 		this.isAgree = isAgree;
 	}
 }

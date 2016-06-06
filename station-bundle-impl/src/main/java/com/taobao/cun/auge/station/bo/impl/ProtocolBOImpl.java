@@ -7,12 +7,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Protocol;
 import com.taobao.cun.auge.dal.domain.ProtocolExample;
 import com.taobao.cun.auge.dal.domain.ProtocolExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
+import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -25,7 +27,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 	ProtocolMapper protocolMapper;
 
 	@Override
-	public Long getValidProtocolId(ProtocolTypeEnum type) throws AugeServiceException {
+	public ProtocolDto getValidProtocol(ProtocolTypeEnum type) throws AugeServiceException {
 		ValidateUtils.notNull(type);
 		ProtocolExample example = new ProtocolExample();
 		
@@ -39,7 +41,10 @@ public class ProtocolBOImpl implements ProtocolBO {
 		if(CollectionUtils.isEmpty(protocols)){
 			return null;
 		}
-		return protocols.get(0).getId();
+		Protocol protocol = protocols.get(0);
+		ProtocolDto dto =new ProtocolDto();
+		BeanCopyUtils.copyNotNullProperties(protocol, dto);
+		return dto;
 	}
 
 

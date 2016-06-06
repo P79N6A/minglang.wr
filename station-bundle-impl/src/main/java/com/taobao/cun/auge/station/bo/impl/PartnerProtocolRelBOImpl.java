@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample.Criteria;
@@ -42,7 +42,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
-		Long protocolId = protocolBO.getValidProtocolId(type);
+		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		if (null == protocolId) {
 			throw new RuntimeException("protocol not exists: " + type);
 		}
@@ -72,8 +72,9 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andObjectIdEqualTo(businessId);
+		criteria.andIsDeletedEqualTo("n");
 
-		Long protocolId = protocolBO.getValidProtocolId(type);
+		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		criteria.andProtocolIdEqualTo(protocolId);
 
 		DomainUtils.beforeDelete(example, operator);
@@ -87,6 +88,14 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 			throws AugeServiceException {
 		ValidateUtils.notNull(partnerProtocolRelDto);
 		PartnerProtocolRel record = PartnerProtocolRelConverter.toPartnerProtocolRel(partnerProtocolRelDto);
+		if (partnerProtocolRelDto.getProtocolId() == null && partnerProtocolRelDto.getProtocolTypeEnum() != null) {
+			Long protocolId = protocolBO.getValidProtocol(partnerProtocolRelDto.getProtocolTypeEnum()).getId();
+			if (protocolId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			}
+			record.setProtocolId(protocolId);
+		}
+		
 		DomainUtils.beforeInsert(record, partnerProtocolRelDto.getOperator());
 		partnerProtocolRelMapper.insert(record);
 		return record.getId();
@@ -112,6 +121,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(partnerProtocolRelDeleteDto.getObjectId());
 		criteria.andTargetTypeEqualTo(partnerProtocolRelDeleteDto.getTargetType().getCode());
 		criteria.andProtocolIdIn(protocolIds);
+		criteria.andIsDeletedEqualTo("n");
 		
 		PartnerProtocolRel  record = new PartnerProtocolRel();
 		DomainUtils.beforeDelete(record, partnerProtocolRelDeleteDto.getOperator());
@@ -142,6 +152,9 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(objectId);
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andProtocolIdIn(protocolIds);
-		return null;
+		criteria.andIsDeletedEqualTo("n");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
 	}
 }

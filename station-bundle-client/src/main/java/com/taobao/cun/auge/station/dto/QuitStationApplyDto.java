@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 
-public class QuitDto extends OperatorDto {
+public class QuitStationApplyDto extends OperatorDto {
 
 	private static final long serialVersionUID = -449672555158774209L;
 
@@ -31,7 +31,7 @@ public class QuitDto extends OperatorDto {
 	private boolean loanHasClose;
 
 	// 是，退出服务站，否，不退出服务站
-	private Boolean isQuitStation = Boolean.TRUE;
+	private Boolean isQuitStation;
 
 	public Long getInstanceId() {
 		return instanceId;

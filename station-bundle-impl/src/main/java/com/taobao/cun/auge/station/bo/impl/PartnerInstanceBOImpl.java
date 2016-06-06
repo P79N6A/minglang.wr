@@ -17,6 +17,7 @@ import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -92,6 +93,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException {
+		PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
+		if (rel == null) {
+			return null;
+		}
+		return rel.getId();
+
+	}
+	
+	@Override
+	public PartnerStationRel getPartnerStationRelByStationApplyId(
+			Long stationApplyId) throws AugeServiceException {
 		ValidateUtils.notNull(stationApplyId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -101,11 +113,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIsDeletedEqualTo("n");
 
 		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
-		if (CollectionUtils.isEmpty(instances)) {
-			return null;
-		}
-		return instances.get(0).getId();
-
+	
+		return ResultUtils.selectOne(instances);
 	}
 
 	@Override
@@ -376,4 +385,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return null;
 	}
+
+
 }
