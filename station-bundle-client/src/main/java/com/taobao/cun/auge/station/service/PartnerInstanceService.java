@@ -65,7 +65,7 @@ public interface PartnerInstanceService {
 	 * @param frozenMoney
 	 * @return
 	 */
-	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney) throws AugeServiceException;
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
 
 	/**
 	 * 开业
