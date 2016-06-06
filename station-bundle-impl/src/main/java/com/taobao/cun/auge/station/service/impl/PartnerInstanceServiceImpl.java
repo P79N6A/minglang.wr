@@ -42,11 +42,9 @@ import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -59,8 +57,6 @@ import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
-import com.taobao.cun.auge.station.dto.ProtocolDto;
-import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -79,7 +75,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -886,71 +881,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
-	}
-
-	@Override
-	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException {
-		ProtocolSigningInfoDto info = new ProtocolSigningInfoDto();
-		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		ProtocolDto protocol = protocolBO.getValidProtocol(type);
-		info.setPartnerInstance(PartnerInstanceConverter.convert(instance));
-		info.setProtocol(protocol);
-
-		if (null == instance || null == protocol) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
-		}
-		// 走入驻生命周期表
-		if (ProtocolTypeEnum.SETTLE_PRO.equals(type)) {
-			PartnerLifecycleItems lifecycleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
-					PartnerLifecycleBusinessTypeEnum.SETTLING);
-
-			// 合伙人当前不状态不为入驻中，或不存在入驻生命周期record
-			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == lifecycleItems) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
-			}
-			PartnerLifecycleSettledProtocolEnum itemState = PartnerLifecycleSettledProtocolEnum
-					.valueof(lifecycleItems.getSettledProtocol());
-			if (null == itemState) {
-				logger.error(CommonExceptionEnum.DATA_UNNORMAL + "getProtocolSigningInfo: {},{}", taobaoUserId, type);
-				throw new AugeServiceException(PartnerExceptionEnum.DATA_UNNORMAL);
-			}
-			info.setHasSigned(PartnerLifecycleSettledProtocolEnum.SIGNED.equals(itemState) ? true : false);
-		} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
-			// 管理协议不走生命周期，随时可以签
-			if (!PartnerInstanceStateEnum.unReSettlableStatusCodeList().contains(instance.getState())) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
-			}
-			PartnerProtocolRelDto dto = partnerProtocolRelBO.getPartnerProtocolRelDto(type, instance.getId(),
-					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			info.setHasSigned(null == dto ? false : true);
-		}
-		return info;
-	}
-
-	@Override
-	public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId) throws AugeServiceException {
-		BondFreezingInfoDto info = new BondFreezingInfoDto();
-		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-		PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO, instance.getId(),
-				PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-		if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
-			logger.error("getBondFreezingInfoDto error, instance/bondMoney/settleProtocol is null: {}", taobaoUserId);
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
-		}
-		info.setPartnerInstance(PartnerInstanceConverter.convert(instance));
-		info.setAcountMoney(bondMoney);
-		info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
-		if (AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
-			info.setHasFrozen(false);
-		} else if (AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(bondMoney.getState())) {
-			info.setHasFrozen(true);
-		} else {
-			logger.error(CommonExceptionEnum.DATA_UNNORMAL + "getBondFreezingInfoDto, {}", taobaoUserId);
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
-		}
-		return info;
 	}
 
 }
