@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -42,64 +43,68 @@ public class PartnerInstanceHandler implements InitializingBean{
 	
 	/**
 	 * 申请入驻
-	 * @param partnerInstanceDto
-	 * @param partnerInstanceTypeEnum
+	 * @param instanceDto
+	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
-	public void handleApplySettle(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).applySettle(partnerInstanceDto);
+	public void handleApplySettle(PartnerInstanceDto instanceDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).applySettle(instanceDto);
 	}
 	
 	/**
 	 * 申请退出
 	 * @param quitDto
-	 * @param partnerInstanceTypeEnum
+	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
-	public void handleApplyQuit(QuitStationApplyDto quitDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).applyQuit(quitDto,partnerInstanceTypeEnum);
+	public void handleApplyQuit(QuitStationApplyDto quitDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).applyQuit(quitDto,typeEnum);
 	}
 	
 	/**
 	 * 审核退出
 	 * @param quitDto
-	 * @param partnerInstanceTypeEnum
+	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
 	public void handleAuditQuit(ProcessApproveResultEnum approveResult,Long partnerInstanceId,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
 		strategy.get(partnerInstanceTypeEnum.getCode()).auditQuit(approveResult,partnerInstanceId);
 	}
-	
 	/**
 	 * 正式退出
 	 * @param partnerInstanceQuitDto
-	 * @param partnerInstanceTypeEnum
+	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
-	public void handleQuit(PartnerInstanceQuitDto partnerInstanceQuitDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).quit(partnerInstanceQuitDto);
+	public void handleQuit(PartnerInstanceQuitDto partnerInstanceQuitDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).quit(partnerInstanceQuitDto);
 	}
 	
-	public void handleApplySettleNewly(PartnerInstanceDto partnerInstanceDto,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).applySettleNewly(partnerInstanceDto);
+	public void handleApplySettleNewly(PartnerInstanceDto instanceDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).applySettleNewly(instanceDto);
 	}
 	
 	
 	/**
 	 * 实例删除
-	 * @param partnerInstanceDeleteDto
+	 * @param deleteDto
 	 * @param rel
 	 * @throws AugeServiceException
 	 */
-	public void handleDelete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel)throws AugeServiceException {
-		strategy.get(rel.getType()).delete(partnerInstanceDeleteDto, rel);
+	public void handleDelete(PartnerInstanceDeleteDto deleteDto,PartnerStationRel rel)throws AugeServiceException {
+		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
 	
-	public void validateExistValidChildren(PartnerInstanceTypeEnum partnerInstanceTypeEnum,Long instanceId)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).validateExistValidChildren(instanceId);
+	public void validateExistValidChildren(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).validateExistValidChildren(instanceId);
 	}
 	
-	public ProcessBusinessEnum findProcessBusiness(PartnerInstanceTypeEnum partnerInstanceTypeEnum,ProcessTypeEnum processType){
-		return strategy.get(partnerInstanceTypeEnum.getCode()).findProcessBusiness(processType);
+	public ProcessBusinessEnum findProcessBusiness(PartnerInstanceTypeEnum typeEnum,ProcessTypeEnum processType){
+		return strategy.get(typeEnum.getCode()).findProcessBusiness(processType);
+	}
+
+	public void handleSettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) {
+		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
+		
 	}
 }
