@@ -50,9 +50,11 @@ import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
@@ -521,7 +523,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			cainiaoTaskVo.setMethodName("updateCainiaoStation");
 			cainiaoTaskVo.setBusinessStepNo(1l);
 			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
+			cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
 			cainiaoTaskVo.setOperator(operatorId);
 
 			SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
@@ -1149,6 +1151,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
+	}
+
+	@Override
+	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void applySettleSuccess(
+			PartnerInstanceSettleSuccessDto settleSuccessDto)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
