@@ -340,12 +340,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			   throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
-        }
+			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
+		}
 		stationNum = stationNum.toUpperCase();
-        if (stationNum.length() > 16) {
-        	 throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
-        }
+		if (stationNum.length() > 16) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+		}
 
 		if (isSpecialStr(stationNum)) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
@@ -439,18 +439,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto.getVersion());
 		try {
 			Long taobaoUserId = validateSettlable(partnerInstanceDto);
-			
+
 			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 			partnerDto.setTaobaoUserId(taobaoUserId);
-			
+
 			updateCommon(partnerInstanceDto);
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto),augeException.toString());
-			logger.error(error,augeException);
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			logger.error(error, augeException);
 			throw augeException;
-		}catch (Exception e) {
-			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto),e.getMessage());
-			logger.error(error,e);
+		} catch (Exception e) {
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
+			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
@@ -469,7 +469,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
-	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException {
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(waitFrozenMoney);
 		try {
@@ -488,6 +488,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				param.setLifecycleId(items.getId());
 				partnerLifecycleBO.updateLifecycle(param);
 			}
+
+			//乐观锁
+			PartnerInstanceDto instance = new PartnerInstanceDto();
+			instance.setId(instanceId);
+			instance.setVersion(version);
+			partnerInstanceBO.updatePartnerStationRel(instance);
+
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		} catch (AugeServiceException augeException) {
@@ -540,6 +547,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
+		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.SETTLING,
+				PartnerLifecycleCurrentStepEnum.BOND);
+		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState()) || null == settleItems) {
+			// logger.error(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
+		}
 
 		// 同步station_apply
 		// syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);

@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.service;
 
-import java.math.BigDecimal;
-
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
@@ -46,9 +44,11 @@ public interface PartnerInstanceService {
 	 * 签署入驻协议
 	 * 
 	 * @param taobaoUserId
-	 * @return
+	 * @param waitFrozenMoney
+	 * @param version 乐观锁
+	 * @throws AugeServiceException
 	 */
-	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议
@@ -65,7 +65,7 @@ public interface PartnerInstanceService {
 	 * @param frozenMoney
 	 * @return
 	 */
-	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney) throws AugeServiceException;
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
 
 	/**
 	 * 开业
