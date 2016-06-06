@@ -213,7 +213,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
 		
-		int updateCount = partnerStationRelMapper.updateByExample(rel, example);
+		int updateCount = partnerStationRelMapper.updateByExampleSelective(rel, example);
 		
 		if (updateCount <1) {
 			throw new AugeServiceException(CommonExceptionEnum.VERION_IS_INVALID);

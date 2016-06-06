@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.station.service;
 
-import java.math.BigDecimal;
-
-import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
@@ -10,10 +7,9 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
-import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+
 
 /**
  * 实例服务接口
@@ -47,15 +43,6 @@ public interface PartnerInstanceService {
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException;
 
 	/**
-	 * 获取待签约协议信息,e.g. 入驻协议，管理协议
-	 * 
-	 * @param taobaoUserId
-	 * @param type
-	 * @return
-	 */
-	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException;
-
-	/**
 	 * 签署入驻协议
 	 * 
 	 * @param taobaoUserId
@@ -72,21 +59,13 @@ public interface PartnerInstanceService {
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException;
 
 	/**
-	 * 获取待冻结保证金信息
-	 * 
-	 * @param taobaoUserId
-	 * @return
-	 */
-	public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId) throws AugeServiceException;
-
-	/**
 	 * 冻结保证金
 	 * 
 	 * @param taobaoUserId
 	 * @param frozenMoney
 	 * @return
 	 */
-	public boolean freezeBond(Long taobaoUserId, BigDecimal frozenMoney) throws AugeServiceException;
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
 
 	/**
 	 * 开业
