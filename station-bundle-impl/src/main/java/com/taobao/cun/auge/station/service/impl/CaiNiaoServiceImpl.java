@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -28,6 +29,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 
+@Service("caiNiaoService")
 public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 	public static final Log logger = LogFactory.getLog(CaiNiaoServiceImpl.class);

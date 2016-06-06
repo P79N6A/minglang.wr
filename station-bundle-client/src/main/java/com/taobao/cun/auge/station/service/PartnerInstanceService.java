@@ -1,15 +1,17 @@
 package com.taobao.cun.auge.station.service;
 
-import java.math.BigDecimal;
-
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+
 
 /**
  * 实例服务接口
@@ -27,12 +29,12 @@ public interface PartnerInstanceService {
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
-	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中，已停业等）有效合伙人状态下
+	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
 	 * 
 	 * @param condition
 	 * @return
 	 */
-	public void update(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
 
 	/**
 	 * 删除合伙人实例
@@ -46,9 +48,11 @@ public interface PartnerInstanceService {
 	 * 签署入驻协议
 	 * 
 	 * @param taobaoUserId
-	 * @return
+	 * @param waitFrozenMoney
+	 * @param version 乐观锁
+	 * @throws AugeServiceException
 	 */
-	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException;
 
 	/**
 	 * 签署管理协议
@@ -150,5 +154,20 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException;
-
+	
+	/**
+	 * 降级合伙人
+	 * @param partnerInstanceDegradeDto
+	 * @throws AugeServiceException
+	 */
+	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto) throws AugeServiceException;
+	
+	
+	/**
+	 * 成功入驻
+	 * @param settleSuccessDto
+	 * @throws AugeServiceException
+	 */
+	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto) throws AugeServiceException;
+	
 }

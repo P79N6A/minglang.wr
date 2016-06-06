@@ -195,5 +195,6 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId);
+	
 
 }

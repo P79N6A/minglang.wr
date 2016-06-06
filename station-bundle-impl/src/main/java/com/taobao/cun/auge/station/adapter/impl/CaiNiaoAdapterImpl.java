@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
@@ -30,6 +31,7 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
+@Component("caiNiaoAdapter")
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
 	public static final Logger logger = LoggerFactory.getLogger(CaiNiaoAdapterImpl.class);
