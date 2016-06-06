@@ -740,6 +740,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
 		partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 		partnerInstanceDto.copyOperatorDto(forcedCloseDto);
+		partnerInstanceDto.setVersion(partnerStationRel.getVersion());
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 		// 村点停业中

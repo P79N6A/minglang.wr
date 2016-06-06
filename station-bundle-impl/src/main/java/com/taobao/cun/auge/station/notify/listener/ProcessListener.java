@@ -43,7 +43,7 @@ public class ProcessListener implements MessageListener {
 		// 监听流程实例结束
 		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			String businessCode = ob.getString("businessCode");
-			String resultCode = ob.getString("resultCode");
+			String resultCode = ob.getString("instanceStatus");
 			String objectId = ob.getString("objectId");
 			String remarks = ob.getString("remarks");
 
