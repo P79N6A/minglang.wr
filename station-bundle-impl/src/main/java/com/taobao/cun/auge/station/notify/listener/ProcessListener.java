@@ -88,8 +88,7 @@ public class ProcessListener implements MessageListener {
 	private void processCloseApproveResult(String resultCode, String objectId) {
 		try {
 			Long stationApplyId = Long.valueOf(objectId);
-			processApproveResultProcessor.monitorCloseApprove(stationApplyId,
-					ProcessApproveResultEnum.valueof(resultCode));
+			processApproveResultProcessor.monitorCloseApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
 		} catch (Exception e) {
 			logger.error("监听审批停业流程失败。stationApplyId = " + objectId);
 		}
