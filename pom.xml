@@ -360,6 +360,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+				<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+				<version>999-not-exist</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -399,15 +404,15 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>enforce-java7</id>
+						<id>enforce-java6</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
 								<requireJavaVersion>
-									<version>[1.7.0,)</version>
-									<message>** Projects must use Java 7 or later version</message>
+									<version>[1.6.0,)</version>
+									<message>** Projects must use Java 6 or later version</message>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
@@ -486,7 +491,7 @@
 			</plugin>
 
 			<!-- generate git.properties -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<version>2.2.0</version>
@@ -503,7 +508,7 @@
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>

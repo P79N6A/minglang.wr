@@ -38,7 +38,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTargetBizTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
@@ -205,7 +205,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				throw new AugeServiceException("protocol not exists : " + p.getCode());
 			}
 			PartnerProtocolRelExample relExample = new PartnerProtocolRelExample();
-			relExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo(ProtocolTargetBizTypeEnum.PARTNER_INSTANCE.getCode())
+			relExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE.getCode())
 					.andProtocolIdEqualTo(protocol.getId()).andObjectIdEqualTo(instance.getId());
 
 			List<PartnerProtocolRel> prList = partnerProtocolRelMapper.selectByExample(relExample);

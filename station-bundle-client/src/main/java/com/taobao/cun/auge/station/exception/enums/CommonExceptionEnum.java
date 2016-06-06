@@ -20,6 +20,9 @@ public class CommonExceptionEnum implements Serializable {
     public static final CommonExceptionEnum OPERATOR_IS_NULL = new CommonExceptionEnum("OPERATOR_IS_NULL", "操作人不能为空");
     public static final CommonExceptionEnum OPERATORTYPE_IS_NULL = new CommonExceptionEnum("OPERATORTYPE_IS_NULL", "操作人类型不能为空");
     public static final CommonExceptionEnum OPERATORORGID_IS_NULL = new CommonExceptionEnum("OPERATORORGID_IS_NULL", "操作人组织不能为空");
+    public static final CommonExceptionEnum DATA_UNNORMAL = new CommonExceptionEnum("DATA_UNNORMAL", "数据异常");
+    public static final CommonExceptionEnum RECORD_EXISTS = new CommonExceptionEnum("RECORD_EXISTS", "当前数据已经存在");
+    public static final CommonExceptionEnum VERION_IS_INVALID = new CommonExceptionEnum("VERION_IS_INVALID", "当前数据已经被他人修改，请重新刷新页面编辑");
 
     static {
         mappings.put("PARAM_IS_NULL", PARAM_IS_NULL);
@@ -28,6 +31,9 @@ public class CommonExceptionEnum implements Serializable {
         mappings.put("OPERATOR_IS_NULL", OPERATOR_IS_NULL);
         mappings.put("OPERATORTYPE_IS_NULL", OPERATORTYPE_IS_NULL);
         mappings.put("OPERATORORGID_IS_NULL", OPERATORORGID_IS_NULL);
+        mappings.put("DATA_UNNORMAL", DATA_UNNORMAL);
+        mappings.put("RECORD_EXISTS", RECORD_EXISTS);
+        mappings.put("VERION_IS_INVALID", VERION_IS_INVALID);
     }
 
     public CommonExceptionEnum(String code, String desc) {

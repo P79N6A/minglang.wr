@@ -4,33 +4,34 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProtocolTargetBizTypeEnum implements Serializable {
-   
-	private static final long serialVersionUID = 3718610373695202165L;
+/**
+ * 
+ * @author quanzhu.wangqz
+ *
+ */
+public class ProtocolGroupTypeEnum implements Serializable {
 
-	private static final Map<String, ProtocolTargetBizTypeEnum> mappings = new HashMap<String, ProtocolTargetBizTypeEnum>();
+    private static final Map<String, ProtocolGroupTypeEnum> mappings = new HashMap<String, ProtocolGroupTypeEnum>();
+
+
+    private static final long serialVersionUID = -2325045809951918493L;
 
     private String code;
     private String desc;
-
-    /**关联业务类型 bizType or target type **/
-    public static final ProtocolTargetBizTypeEnum CRIUS_STATION = new ProtocolTargetBizTypeEnum("CRIUS_STATION", "村点");
-    public static final ProtocolTargetBizTypeEnum PARTNER = new ProtocolTargetBizTypeEnum("PARTNER", "合伙人");
-    public static final ProtocolTargetBizTypeEnum PARTNER_INSTANCE = new ProtocolTargetBizTypeEnum("PARTNER_INSTANCE", "合伙实例");
+    
+    public static final ProtocolGroupTypeEnum FIXED  = new ProtocolGroupTypeEnum("FIXED", "固点协议组");
 
 
     static {
-        mappings.put("CRIUS_STATION", CRIUS_STATION);
-        mappings.put("PARTNER", PARTNER);
-        mappings.put("PARTNER_INSTANCE", PARTNER_INSTANCE);
+    	mappings.put("FIXED", FIXED);
     }
 
-    public ProtocolTargetBizTypeEnum(String code, String desc) {
+    public ProtocolGroupTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public ProtocolTargetBizTypeEnum() {
+    public ProtocolGroupTypeEnum() {
 
     }
 
@@ -50,7 +51,7 @@ public class ProtocolTargetBizTypeEnum implements Serializable {
         this.desc = desc;
     }
 
-    public static ProtocolTargetBizTypeEnum valueof(String code) {
+    public static ProtocolGroupTypeEnum valueof(String code) {
         if (code == null)
             return null;
         return mappings.get(code);
@@ -72,7 +73,7 @@ public class ProtocolTargetBizTypeEnum implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProtocolTargetBizTypeEnum other = (ProtocolTargetBizTypeEnum) obj;
+        ProtocolGroupTypeEnum other = (ProtocolGroupTypeEnum) obj;
         if (code == null) {
             if (other.code != null)
                 return false;
@@ -81,4 +82,3 @@ public class ProtocolTargetBizTypeEnum implements Serializable {
         return true;
     }
 }
-

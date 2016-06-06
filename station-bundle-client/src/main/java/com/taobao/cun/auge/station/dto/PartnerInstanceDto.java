@@ -92,6 +92,11 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private StationDto stationDto;
 	private PartnerDto partnerDto;
 	private PartnerLifecycleDto partnerLifecycleDto;
+	
+	/**
+	 * 乐观锁版本
+	 */
+	private Long version;
 
 	public Long getId() {
 		return id;
@@ -251,6 +256,14 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 }

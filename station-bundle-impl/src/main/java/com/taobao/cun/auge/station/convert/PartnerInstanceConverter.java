@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
@@ -156,6 +157,7 @@ public final class PartnerInstanceConverter {
 
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
+		instanceDto.setVersion(psRel.getVersion());
 		return instanceDto;
 	}
 
@@ -189,7 +191,7 @@ public final class PartnerInstanceConverter {
 		stationDto.setProducts(instance.getProducts());
 		stationDto.setLogisticsState(instance.getLogisticsState());
 		stationDto.setFormat(instance.getFormat());
-		stationDto.setAreaType(instance.getAreaType());
+		stationDto.setAreaType(StationAreaTypeEnum.valueof(instance.getAreaType()));
 		stationDto.setManagerId(instance.getManagerId());
 		stationDto.setProviderId(instance.getProviderId());
 		stationDto.setFeature(FeatureUtil.toMap(instance.getFeature()));
@@ -283,7 +285,7 @@ public final class PartnerInstanceConverter {
 		}
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
-
+		rel.setVersion(partnerInstanceDto.getVersion());
 		return rel;
 	}
 }

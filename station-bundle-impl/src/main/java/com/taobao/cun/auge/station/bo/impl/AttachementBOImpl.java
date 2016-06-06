@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 
 
+
+
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Attachement;
@@ -61,7 +63,7 @@ public class AttachementBOImpl implements AttachementBO {
 
 	@Override
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
-			Long objectId, AttachementBizTypeEnum bizTypeEnum)
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
@@ -69,6 +71,7 @@ public class AttachementBOImpl implements AttachementBO {
 			for (AttachementDto attachementDto:attachementDtoList) {
 				attachementDto.setObjectId(objectId);
 				attachementDto.setBizType(bizTypeEnum);
+				attachementDto.setOperator(operator);
 				addAttachement(attachementDto);
 			}
 		}
@@ -76,16 +79,17 @@ public class AttachementBOImpl implements AttachementBO {
 
 	@Override
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
-			Long objectId, AttachementBizTypeEnum bizTypeEnum)
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
 		AttachementDeleteDto attachementDeleteDto = new AttachementDeleteDto();
 		attachementDeleteDto.setObjectId(objectId);
 		attachementDeleteDto.setBizType(bizTypeEnum);
+		attachementDeleteDto.setOperator(operator);
 		deleteAttachement(attachementDeleteDto);
 		
-		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum);
+		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,operator);
 	}
 
 	@Override

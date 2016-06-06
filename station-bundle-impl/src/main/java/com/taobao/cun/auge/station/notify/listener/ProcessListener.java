@@ -65,8 +65,7 @@ public class ProcessListener implements MessageListener {
 	}
 
 	/**
-	 * 监听停业审批结果
-	 * 
+	 * 监听退出审批结果
 	 * @param resultCode
 	 * @param objectId
 	 */
@@ -81,8 +80,7 @@ public class ProcessListener implements MessageListener {
 	}
 
 	/**
-	 * 监听退出审批结果
-	 * 
+	 * 监听停业审批结果
 	 * @param resultCode
 	 * @param objectId
 	 */
