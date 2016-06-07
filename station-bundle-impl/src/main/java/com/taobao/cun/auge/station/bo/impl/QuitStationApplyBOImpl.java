@@ -42,12 +42,13 @@ public class QuitStationApplyBOImpl implements QuitStationApplyBO {
 
 	@Override
 	public void deleteQuitStationApply(Long instanceId, String operator) {
-
 		QuitStationApplyExample example = new QuitStationApplyExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andPartnerInstanceIdEqualTo(instanceId);
-
-		DomainUtils.beforeDelete(example, operator);
-		quitStationApplyMapper.deleteByExample(example);
+		
+		QuitStationApply record = new QuitStationApply();
+		
+		DomainUtils.beforeDelete(record, operator);
+		quitStationApplyMapper.updateByExampleSelective(record, example);
 	}
 }
