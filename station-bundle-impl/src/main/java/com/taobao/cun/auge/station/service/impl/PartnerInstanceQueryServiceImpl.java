@@ -46,6 +46,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -190,6 +191,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
 		condition.setInstanceId(rel.getId());
+		condition.setOperator(String.valueOf(taobaoUserId));
+		condition.setOperatorType(OperatorTypeEnum.HAVANA);
 		PartnerInstanceDto instance = queryInfo(condition);
 		ProtocolDto protocol = protocolBO.getValidProtocol(type);
 		info.setPartnerInstance(instance);
@@ -204,7 +207,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 					PartnerLifecycleBusinessTypeEnum.SETTLING);
 
 			// 合伙人当前不状态不为入驻中，或不存在入驻生命周期record
-			if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == lifecycleItems) {
+			if (!PartnerInstanceStateEnum.SETTLING.equals(instance.getState()) || null == lifecycleItems) {
 				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 			}
 			PartnerLifecycleSettledProtocolEnum itemState = PartnerLifecycleSettledProtocolEnum
@@ -216,7 +219,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			info.setHasSigned(PartnerLifecycleSettledProtocolEnum.SIGNED.equals(itemState) ? true : false);
 		} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
 			// 管理协议不走生命周期，随时可以签
-			if (!PartnerInstanceStateEnum.unReSettlableStatusCodeList().contains(instance.getState())) {
+			if (!PartnerInstanceStateEnum.unReSettlableStatusCodeList().contains(instance.getState().getCode())) {
 				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 			}
 			PartnerProtocolRelDto dto = partnerProtocolRelBO.getPartnerProtocolRelDto(type, instance.getId(),
@@ -232,6 +235,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
 		condition.setInstanceId(rel.getId());
+		condition.setOperator(String.valueOf(taobaoUserId));
+		condition.setOperatorType(OperatorTypeEnum.HAVANA);
 		PartnerInstanceDto instance = queryInfo(condition);
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
@@ -244,9 +249,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		info.setPartnerInstance(instance);
 		info.setAcountMoney(bondMoney);
 		info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
-		if (AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
+		if (AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
 			info.setHasFrozen(false);
-		} else if (AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(bondMoney.getState())) {
+		} else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
 			info.setHasFrozen(true);
 		} else {
 			logger.error(CommonExceptionEnum.DATA_UNNORMAL + "getBondFreezingInfoDto, {}", taobaoUserId);
