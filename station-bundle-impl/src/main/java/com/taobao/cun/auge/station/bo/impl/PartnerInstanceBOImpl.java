@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -399,6 +400,33 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		}
 		return null;
+	}
+
+	@Override
+	public int getActiveTpaByParentStationId(Long parentStationId)
+			throws AugeServiceException {
+		int count = 0;
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId)
+				.andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode())
+				.andStateIn(PartnerInstanceStateEnum.getValidTpaStatusArray());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(resList)) {
+			return count;
+		}
+		for (PartnerStationRel rel : resList) {
+			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
+				count++;
+			} else {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
+				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
+					continue;
+				}
+				count++;
+			}
+
+		}
+		return count;
 	}
 
 

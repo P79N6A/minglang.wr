@@ -66,4 +66,14 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		relDO.setType(relDto.getType().getCode());
 		return relDO;
 	}
+
+	@Override
+	public Long getCainiaoStationId(Long stationId)
+			throws AugeServiceException {
+		CuntaoCainiaoStationRel rel = queryCuntaoCainiaoStationRel(stationId,CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel ==null) {
+			return null;
+		}
+		return rel.getCainiaoStationId();
+	}
 }

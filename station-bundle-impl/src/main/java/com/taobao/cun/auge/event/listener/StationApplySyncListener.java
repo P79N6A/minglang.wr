@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
-import com.taobao.cun.auge.event.domain.EventConstant;
 import com.taobao.cun.auge.station.sync.SyncStationApplyBO;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
