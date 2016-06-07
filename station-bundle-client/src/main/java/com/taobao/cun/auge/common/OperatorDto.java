@@ -63,7 +63,7 @@ public class OperatorDto implements Serializable {
 	}
 
 	public void validateOperatorOrgId() throws AugeServiceException {
-		if (!OperatorTypeEnum.HAVANA.getCode().equals(operatorType)) {
+		if (!OperatorTypeEnum.HAVANA.equals(operatorType)) {
 			if (operatorOrgId == null || operatorOrgId < 0L) {
 				throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
 			}

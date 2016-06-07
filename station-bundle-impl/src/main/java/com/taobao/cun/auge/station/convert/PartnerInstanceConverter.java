@@ -155,7 +155,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(psRel.getIsCurrent()));
 
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(psRel.getCloseType()));
-
+		instanceDto.setTaobaoUserId(psRel.getTaobaoUserId());
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		instanceDto.setVersion(psRel.getVersion());
@@ -284,6 +284,7 @@ public final class PartnerInstanceConverter {
 		if (null != partnerInstanceDto.getCloseType()) {
 			rel.setCloseType(partnerInstanceDto.getCloseType().getCode());
 		}
+		rel.setTaobaoUserId(partnerInstanceDto.getTaobaoUserId());
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());

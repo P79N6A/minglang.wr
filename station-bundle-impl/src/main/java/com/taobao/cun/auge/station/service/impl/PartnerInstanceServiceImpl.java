@@ -87,6 +87,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -116,7 +117,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  *
  */
-@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily.fhh")
+
+@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -644,6 +646,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
 			if (items != null) {
 				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
 				param.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
 				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
 				param.setLifecycleId(items.getId());
@@ -654,6 +657,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerInstanceDto instance = new PartnerInstanceDto();
 			instance.setId(instanceId);
 			instance.setVersion(version);
+			instance.setOperator(String.valueOf(taobaoUserId));
+			instance.setOperatorType(OperatorTypeEnum.HAVANA);
 			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 同步station_apply
