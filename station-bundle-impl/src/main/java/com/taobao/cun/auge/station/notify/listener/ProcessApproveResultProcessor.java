@@ -81,6 +81,7 @@ public class ProcessApproveResultProcessor {
 			instance.setId(instanceId);
 			instance.setOperator(DomainUtils.DEFAULT_OPERATOR);
 			instance.setVersion(partnerStationRel.getVersion());
+			instance.setOperatorType(OperatorTypeEnum.SYSTEM);
 			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 村点已停业
