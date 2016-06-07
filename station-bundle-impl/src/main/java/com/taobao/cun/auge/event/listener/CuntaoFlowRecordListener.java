@@ -50,8 +50,11 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
-		
+		try{
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+		}catch(Exception e){
+			System.out.println("ddd");
+		}
 	}
 
 	private String buildRecordContent(PartnerInstanceStateChangeEvent stateChangeEvent) {
