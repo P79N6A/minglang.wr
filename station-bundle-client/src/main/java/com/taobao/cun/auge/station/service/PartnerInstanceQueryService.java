@@ -55,6 +55,14 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public Long getPartnerInstanceId(Long stationApplyId);
+	
+	/**
+	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
+	 * 
+	 * @param instanceId
+	 * @return
+	 */
+	public Long getStationApplyId(Long instanceId) throws AugeServiceException;
 
 	/**
 	 * 

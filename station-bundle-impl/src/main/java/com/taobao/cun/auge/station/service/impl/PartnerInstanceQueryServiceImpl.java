@@ -260,4 +260,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		return info;
 	}
 
+	@Override
+	public Long getStationApplyId(Long instanceId) throws AugeServiceException {
+		return partnerInstanceBO.findStationApplyId(instanceId);
+	}
+
 }
