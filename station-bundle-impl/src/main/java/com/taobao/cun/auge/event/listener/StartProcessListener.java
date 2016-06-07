@@ -51,10 +51,11 @@ public class StartProcessListener implements EventListener {
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 
 		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
-		createStartApproveProcessTask(business, stationApplyId,stateChangeEvent);
+		if (null == business) {
+			return;
+		}
+		createStartApproveProcessTask(business, stationApplyId, stateChangeEvent);
 	}
-
-
 
 	/**
 	 * 
@@ -74,9 +75,9 @@ public class StartProcessListener implements EventListener {
 		String msg = "没有找到相应的流程businessCode.changedState=" + changedState.getDescription() + " partnerType="
 				+ partnerType.getCode();
 		logger.warn(msg);
-		throw new IllegalArgumentException(msg);
+		return null;
 	}
-	
+
 	/**
 	 * 启动停业、退出流程审批流程
 	 * 
@@ -91,7 +92,8 @@ public class StartProcessListener implements EventListener {
 	 * @param remarks
 	 *            备注
 	 */
-	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, PartnerInstanceStateChangeEvent stateChangeEvent) {
+	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
+			PartnerInstanceStateChangeEvent stateChangeEvent) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
@@ -115,7 +117,8 @@ public class StartProcessListener implements EventListener {
 			taskExecuteService.submitTask(startProcessTask);
 		} catch (Exception e) {
 			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
-					+ " applierId=" + stateChangeEvent.getOperator() + " operatorType=" + stateChangeEvent.getOperatorType().getCode(), e);
+					+ " applierId=" + stateChangeEvent.getOperator() + " operatorType="
+					+ stateChangeEvent.getOperatorType().getCode(), e);
 		}
 	}
 }
