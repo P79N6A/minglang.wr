@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 
 public final class PartnerInstanceConverter {
 
@@ -189,7 +190,7 @@ public final class PartnerInstanceConverter {
 		stationDto.setCovered(instance.getCovered());
 
 		stationDto.setProducts(instance.getProducts());
-		stationDto.setLogisticsState(instance.getLogisticsState());
+		stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(instance.getLogisticsState()));
 		stationDto.setFormat(instance.getFormat());
 		stationDto.setAreaType(StationAreaTypeEnum.valueof(instance.getAreaType()));
 		stationDto.setManagerId(instance.getManagerId());

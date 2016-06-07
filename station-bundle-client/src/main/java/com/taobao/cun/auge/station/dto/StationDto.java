@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 
 public class StationDto extends OperatorDto implements Serializable{
 
@@ -60,7 +61,7 @@ public class StationDto extends OperatorDto implements Serializable{
     /**
      * 物流状态
      */
-    private String logisticsState;
+    private StationlLogisticsStateEnum logisticsState;
 
     /**
      * 目前业态
@@ -168,14 +169,6 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.products = products;
 	}
 
-	public String getLogisticsState() {
-		return logisticsState;
-	}
-
-	public void setLogisticsState(String logisticsState) {
-		this.logisticsState = logisticsState;
-	}
-
 	public String getFormat() {
 		return format;
 	}
@@ -262,5 +255,14 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setFixedProtocols(PartnerProtocolRelDto fixedProtocols) {
 		this.fixedProtocols = fixedProtocols;
+	}
+
+	public StationlLogisticsStateEnum getLogisticsState() {
+		return logisticsState;
+	}
+
+	public void setLogisticsState(StationlLogisticsStateEnum logisticsState) {
+		this.logisticsState = logisticsState;
 	}	
+	
 }

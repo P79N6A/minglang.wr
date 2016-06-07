@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 
 /**
  * 服务站表dto转换
@@ -47,7 +48,7 @@ public class StationConverter {
 		stationDto.setFixedType(StationFixedTypeEnum.valueof(station.getFixedType()));
 		stationDto.setFormat(station.getFormat());
 		stationDto.setId(station.getId());
-		stationDto.setLogisticsState(station.getLogisticsState());
+		stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(station.getLogisticsState()));
 		stationDto.setManagerId(station.getManagerId());
 		stationDto.setName(station.getName());
 		stationDto.setProducts(station.getProducts());
@@ -84,7 +85,7 @@ public class StationConverter {
 		station.setFixedType(stationDto.getFixedType()==null? null:stationDto.getFixedType().getCode());
 		station.setFormat(stationDto.getFormat());
 		station.setId(stationDto.getId());
-		station.setLogisticsState(stationDto.getLogisticsState());
+		station.setLogisticsState(stationDto.getLogisticsState() ==null? null:stationDto.getLogisticsState().getCode());
 		station.setManagerId(stationDto.getManagerId());
 		station.setName(stationDto.getName());
 		station.setProducts(stationDto.getProducts());
