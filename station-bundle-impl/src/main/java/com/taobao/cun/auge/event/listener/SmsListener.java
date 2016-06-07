@@ -48,11 +48,11 @@ public class SmsListener implements EventListener {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
-
+		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String operatorId = stateChangeEvent.getOperator();
 
-		String partnerMobile = findPartnerMobile(taobaoUserId);
+		String partnerMobile = findPartnerMobile(instanceId);
 		sms(taobaoUserId, partnerMobile, findSmsTemplate(stateChangeEnum), operatorId);
 	}
 
@@ -82,13 +82,13 @@ public class SmsListener implements EventListener {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	private String findPartnerMobile(Long taobaoUserId) {
+	private String findPartnerMobile(Long instanceId) {
 		try {
-			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			return partner.getMobile();
 		} catch (AugeServiceException e) {
-			logger.error("查询合伙人手机号码失败。taobaoUserId=" + taobaoUserId);
+			logger.error("查询合伙人手机号码失败。instanceId=" + instanceId);
 			return "";
 		}
 	}
