@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.event.domain;
+package com.taobao.cun.auge.event;
 
 /**
  * 定义事件类型常量
