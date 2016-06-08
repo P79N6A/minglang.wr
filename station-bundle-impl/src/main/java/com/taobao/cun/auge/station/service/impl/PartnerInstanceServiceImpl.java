@@ -118,7 +118,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  *
  */
 
-@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily.fhh")
+@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily.caotingting")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -800,6 +800,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
 			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
 			partnerInstanceDto.copyOperatorDto(operatorDto);
+			partnerInstanceDto.setVersion(partnerInstance.getVersion());
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
