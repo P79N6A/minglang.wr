@@ -32,8 +32,9 @@ public class CloseStationApplyDto  extends OperatorDto implements Serializable {
 
     /**
      * 停业原因
+     * 
+     * 因为合伙人主动停业时，没有原因，所以为非必空
      */
-	@NotNull(message="closeReason not null")
     private CloseStationApplyCloseReasonEnum closeReason;
 
     /**

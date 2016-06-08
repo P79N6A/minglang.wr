@@ -794,7 +794,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			OperatorDto operatorDto = new OperatorDto();
 			operatorDto.setOperator(String.valueOf(taobaoUserId));
 			operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+			
+			//FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
 
+			//更新合伙人实例状态为停业中
 			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 			partnerInstanceDto.setId(partnerInstance.getId());
 			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
@@ -803,7 +806,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceDto.setVersion(partnerInstance.getVersion());
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
-			stationBO.changeState(partnerInstance.getId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
+			//更新村点状态为停业中
+			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 					String.valueOf(taobaoUserId));
 
 			// 插入生命周期扩展表
@@ -828,7 +832,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 			proRelDto.copyOperatorDto(operatorDto);
 			partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
+			
+			// 新增停业申请
+			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
+			closeStationApplyDto.setPartnerInstanceId(partnerInstance.getId());
+			closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+			closeStationApplyDto.setOperator(operatorDto.getOperator());
+			closeStationApplyDto.setOperatorOrgId(operatorDto.getOperatorOrgId());
+			closeStationApplyDto.setOperatorType(operatorDto.getOperatorType());
+			closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
+			//发送状态变化事件
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_CLOSING,
 					partnerInstanceBO.getPartnerInstanceById(partnerInstance.getId()), partnerLifecycle);
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
