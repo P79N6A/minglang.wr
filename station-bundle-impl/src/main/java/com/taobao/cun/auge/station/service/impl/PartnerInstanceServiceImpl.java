@@ -1048,7 +1048,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (OperatorTypeEnum.BUC.equals(type)) {
 			return emp360Adapter.getName(operator);
 		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
-			return uicReadAdapter.findTaobaoName(operator);
+			return uicReadAdapter.getFullName(Long.parseLong(operator));
 		}
 		return "";
 	}

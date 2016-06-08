@@ -1,25 +1,46 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
-import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
+import com.taobao.uic.common.domain.BaseUserDO;
+import com.taobao.uic.common.domain.ResultDO;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
 @Component("uicReadAdapter")
 public class UicReadAdapterImpl implements UicReadAdapter{
 
-	@Autowired
-	CuntaoUicReadService cuntaoUicReadService;
+	@Resource
+	private UicReadServiceClient uicReadServiceClient;
 
 	@Override
-	public String findTaobaoName(String taobaoUserId)  {
-		ResultModel<String> result = cuntaoUicReadService.findTaobaoName(taobaoUserId);
-		
-		if(null != result && result.isSuccess()){
-			return result.getResult();
+	public String getFullName(Long taobaoUserId) {
+		if (taobaoUserId == null) {
+	         return "";
 		}
-		return "";
+		ResultDO<BaseUserDO> rstDo = uicReadServiceClient.getBaseUserByUserId(taobaoUserId);
+
+		if (rstDo == null || rstDo.getModule() == null || !rstDo.isSuccess()) {
+			return "";
+		} else {
+			return rstDo.getModule().getFullname();
+		}
 	}
+
+	@Override
+	public Long getTaobaoUserIdByTaobaoNick(String taobaoNick) {
+		if (StringUtils.isEmpty(taobaoNick)) {
+			return null;
+		}
+			 
+		ResultDO<Long>  res = uicReadServiceClient.getUserIdByNick(taobaoNick);
+		if (res == null || res.getModule() == null) {
+			return null;
+		}
+		return res.getModule();
+	}
+
 }
