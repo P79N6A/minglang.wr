@@ -896,10 +896,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			} else {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING,
 						employeeId);
-				stationBO.changeState(partnerInstanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
+				stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
 
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+				
+				partnerProtocolRelBO.cancelProtocol(partnerInstance.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, employeeId);
+				
 				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 						PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(partnerInstanceId),
 						confirmCloseDto);
