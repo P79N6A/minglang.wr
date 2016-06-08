@@ -295,4 +295,15 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		}
 		
 	}
+
+	@Override
+	public Boolean validateUpdateSettle(Long instanceId)
+			throws AugeServiceException {
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		if (items != null) {
+			return true;
+		}
+		return false;
+	}
 }

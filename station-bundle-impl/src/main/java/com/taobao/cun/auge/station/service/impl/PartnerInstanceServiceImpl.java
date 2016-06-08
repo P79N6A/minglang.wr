@@ -1225,4 +1225,36 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 	}
 
+	@Override
+	public void updateSettle(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
+		ValidateUtils.validateParam(partnerInstanceDto);
+		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
+		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
+		Long instanceId = partnerInstanceDto.getId();
+		ValidateUtils.notNull(instanceId);
+		try {
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if (rel == null || StringUtils.isEmpty(rel.getType())) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			}
+			boolean canUpdate = partnerInstanceHandler.handleValidateUpdateSettle(instanceId,  PartnerInstanceTypeEnum.valueof(rel.getType()));
+			if (!canUpdate) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
+			}
+			updateCommon(partnerInstanceDto);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+		
+	}
+
 }

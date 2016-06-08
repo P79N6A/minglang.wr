@@ -27,6 +27,13 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	
+	/**
+	 * 更改入驻中的信息    
+	 * @param partnerInstanceDto
+	 * @throws AugeServiceException
+	 */
+	public void updateSettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
