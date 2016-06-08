@@ -118,7 +118,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  *
  */
 
-@HSFProvider(serviceInterface = PartnerInstanceService.class)
+@HSFProvider(serviceInterface = PartnerInstanceService.class,serviceVersion="1.0.0.daily.fhh")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -863,7 +863,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Boolean isAgree = confirmCloseDto.isAgree();
 		try {
 			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(confirmCloseDto.getPartnerInstanceId());
-			if (partnerInstance == null || !PartnerInstanceStateEnum.CLOSING.equals(partnerInstance.getState())) {
+			if (partnerInstance == null || !PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
