@@ -532,7 +532,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationDto.setFixedType(sDto.getFixedType());
 				stationDto.setFormat(sDto.getFormat());
 				stationDto.setId(stationId);
-				stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(sDto.getLogisticsState()));
+				stationDto.setLogisticsState(sDto.getLogisticsState());
 				stationDto.setManagerId(sDto.getManagerId());
 				stationDto.setName(sDto.getName());
 				stationDto.setProducts(sDto.getProducts());

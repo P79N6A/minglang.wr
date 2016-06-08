@@ -8,6 +8,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
+import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 
 public class StationUpdateServicingDto extends OperatorDto implements Serializable{
 
@@ -43,7 +44,7 @@ public class StationUpdateServicingDto extends OperatorDto implements Serializab
     /**
      * 物流状态
      */
-    private String logisticsState;
+    private StationlLogisticsStateEnum logisticsState;
 
     /**
      * 目前业态
@@ -125,11 +126,11 @@ public class StationUpdateServicingDto extends OperatorDto implements Serializab
 		this.products = products;
 	}
 
-	public String getLogisticsState() {
+	public StationlLogisticsStateEnum getLogisticsState() {
 		return logisticsState;
 	}
 
-	public void setLogisticsState(String logisticsState) {
+	public void setLogisticsState(StationlLogisticsStateEnum logisticsState) {
 		this.logisticsState = logisticsState;
 	}
 
