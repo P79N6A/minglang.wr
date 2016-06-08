@@ -195,7 +195,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(null, stationDto.getStationNum());
-
+		
 		Long stationId = stationBO.addStation(stationDto);
 		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
 				partnerInstanceDto.getOperator());
@@ -203,6 +203,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		saveStationFixProtocol(stationDto, stationId);
 
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+		}
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		Long partnerId = partnerBO.addPartner(partnerDto);
 		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
@@ -213,6 +220,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 	}
+	
 
 	private void updateCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceDto.getId());
@@ -232,6 +240,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto.getOperator());
 
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+		}
+		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
 		partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
