@@ -77,9 +77,10 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		criteria.andProtocolIdEqualTo(protocolId);
 
-		DomainUtils.beforeDelete(example, operator);
+		PartnerProtocolRel  record = new PartnerProtocolRel();
+		DomainUtils.beforeDelete(record, operator);
 
-		partnerProtocolRelMapper.deleteByExample(example);
+		partnerProtocolRelMapper.updateByExampleSelective(record, example);
 	}
 
 	@Override

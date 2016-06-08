@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
@@ -48,13 +50,18 @@ public class StartProcessListener implements EventListener {
 		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
 
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		
+		//合伙人申请停业，不需要流程
+		if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(instance.getCloseType())){
+			return;
+		}
 
 		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
 		if (null == business) {
 			return;
 		}
-		createStartApproveProcessTask(business, stationApplyId, stateChangeEvent);
+		createStartApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 	}
 
 	/**

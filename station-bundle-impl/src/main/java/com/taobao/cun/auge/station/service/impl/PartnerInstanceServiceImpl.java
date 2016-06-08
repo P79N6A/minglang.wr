@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -883,9 +884,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
 				partnerInstanceDto.setServiceEndTime(new Date());
 				partnerInstanceDto.copyOperatorDto(confirmCloseDto);
+				partnerInstanceDto.setVersion(partnerInstance.getVersion());
 				partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+				
 
-				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
+				stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
 
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
@@ -896,10 +899,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			} else {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING,
 						employeeId);
-				stationBO.changeState(partnerInstanceId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
+				stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
 
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+				
+				partnerProtocolRelBO.cancelProtocol(partnerInstance.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, employeeId);
+				
+				//删除停业申请表
+				closeStationApplyBO.deleteCloseStationApply(partnerInstanceId,employeeId);
+				
 				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 						PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(partnerInstanceId),
 						confirmCloseDto);
