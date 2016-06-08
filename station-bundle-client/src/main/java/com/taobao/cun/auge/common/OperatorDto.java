@@ -20,12 +20,11 @@ public class OperatorDto implements Serializable {
 	@NotNull(message="operator not null")
 	private String operator;
 
-	@NotNull(message="operatorOrgId not null")
-	private Long operatorOrgId;
-
 	@NotNull(message="operatorType not null")
 	private OperatorTypeEnum operatorType;
 
+	private Long operatorOrgId;
+	
 	public String getOperator() {
 		return operator;
 	}
