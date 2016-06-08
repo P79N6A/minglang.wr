@@ -23,7 +23,9 @@ public class CommonExceptionEnum implements Serializable {
     public static final CommonExceptionEnum DATA_UNNORMAL = new CommonExceptionEnum("DATA_UNNORMAL", "数据异常");
     public static final CommonExceptionEnum RECORD_EXISTS = new CommonExceptionEnum("RECORD_EXISTS", "当前数据已经存在");
     public static final CommonExceptionEnum VERION_IS_INVALID = new CommonExceptionEnum("VERION_IS_INVALID", "当前数据已经被他人修改，请重新刷新页面编辑");
-
+    
+    public static final CommonExceptionEnum RECORD_CAN_NOT_UPDATE = new CommonExceptionEnum("RECORD_CAN_NOT_UPDATE", "当前数据不能编辑");
+    
     static {
         mappings.put("PARAM_IS_NULL", PARAM_IS_NULL);
         mappings.put("RECORD_IS_NULL", RECORD_IS_NULL);
@@ -34,6 +36,7 @@ public class CommonExceptionEnum implements Serializable {
         mappings.put("DATA_UNNORMAL", DATA_UNNORMAL);
         mappings.put("RECORD_EXISTS", RECORD_EXISTS);
         mappings.put("VERION_IS_INVALID", VERION_IS_INVALID);
+        mappings.put("RECORD_CAN_NOT_UPDATE", RECORD_CAN_NOT_UPDATE);
     }
 
     public CommonExceptionEnum(String code, String desc) {

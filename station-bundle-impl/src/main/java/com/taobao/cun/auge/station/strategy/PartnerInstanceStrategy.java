@@ -63,5 +63,7 @@ public interface PartnerInstanceStrategy {
 	
 	public void validateExistValidChildren(Long instanceId)throws AugeServiceException ;
 	
-	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType) throws AugeServiceException;;
+	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType) throws AugeServiceException;
+
+	public Boolean validateUpdateSettle(Long instanceId)throws AugeServiceException;
 }

@@ -52,6 +52,17 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	/**
+	 * 入驻中编辑，只能在生命周期待办任务,没有开始的时候编辑
+	 * 
+	 * @param instanceDto
+	 * @param typeEnum
+	 * @throws AugeServiceException
+	 */
+	public Boolean handleValidateUpdateSettle(Long instanceId,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
+		return strategy.get(typeEnum.getCode()).validateUpdateSettle(instanceId);
+	}
+	
+	/**
 	 * 申请退出
 	 * @param quitDto
 	 * @param typeEnum

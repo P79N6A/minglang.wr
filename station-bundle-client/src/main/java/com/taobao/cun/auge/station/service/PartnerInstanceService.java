@@ -29,7 +29,7 @@ public interface PartnerInstanceService {
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 	/**
-	 * 更改入驻中的信息
+	 * 更改入驻中的信息    
 	 * @param partnerInstanceDto
 	 * @throws AugeServiceException
 	 */
