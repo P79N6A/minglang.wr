@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -883,7 +884,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
 				partnerInstanceDto.setServiceEndTime(new Date());
 				partnerInstanceDto.copyOperatorDto(confirmCloseDto);
+				partnerInstanceDto.setVersion(partnerInstance.getVersion());
 				partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+				
 
 				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
 
