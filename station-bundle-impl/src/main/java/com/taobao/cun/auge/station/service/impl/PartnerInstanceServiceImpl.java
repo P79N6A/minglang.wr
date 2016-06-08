@@ -903,6 +903,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				
 				partnerProtocolRelBO.cancelProtocol(partnerInstance.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, employeeId);
 				
+				//删除停业申请表
+				closeStationApplyBO.deleteCloseStationApply(partnerInstanceId,employeeId);
+				
 				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convert(
 						PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(partnerInstanceId),
 						confirmCloseDto);
