@@ -1211,4 +1211,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 	}
 
+	@Override
+	public void updateSettle(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
