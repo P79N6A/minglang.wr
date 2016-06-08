@@ -888,7 +888,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 				
 
-				stationBO.changeState(partnerInstance.getId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
+				stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
 
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
