@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
@@ -34,6 +35,14 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void updateSettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	
+	
+	/**
+	 * 审批入驻 当前只有小二审批淘帮手
+	 * @param auditSettleDto
+	 * @throws AugeServiceException
+	 */
+	public void auditSettleByManager(AuditSettleDto auditSettleDto) throws AugeServiceException;
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下

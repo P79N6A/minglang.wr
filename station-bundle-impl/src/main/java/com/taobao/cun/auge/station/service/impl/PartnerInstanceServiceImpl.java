@@ -52,6 +52,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -1274,6 +1275,52 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		
+	}
+
+
+	@Override
+	public void auditSettleByManager(AuditSettleDto auditSettleDto)
+			throws AugeServiceException {
+		ValidateUtils.validateParam(auditSettleDto);
+		Long partnerInstanceId = auditSettleDto.getPartnerInstanceId();
+		Boolean isAgree = auditSettleDto.getIsAgree();
+		ValidateUtils.notNull(partnerInstanceId);
+		ValidateUtils.notNull(isAgree);
+		try {
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
+					PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+			if (items == null) {
+				String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto),"SETTLING items is null");
+				logger.error(error);
+				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			}
+			
+			if (isAgree) {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+				param.setLifecycleId(items.getId());
+				param.copyOperatorDto(auditSettleDto);
+				partnerLifecycleBO.updateLifecycle(param);
+			}else {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+				param.setLifecycleId(items.getId());
+				param.copyOperatorDto(auditSettleDto);
+				partnerLifecycleBO.updateLifecycle(param);
+				// 合伙人实例入驻失败
+				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL, auditSettleDto.getOperator());
+			}
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 }
