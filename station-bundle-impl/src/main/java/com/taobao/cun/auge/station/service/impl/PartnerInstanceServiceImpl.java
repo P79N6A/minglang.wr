@@ -655,6 +655,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(waitFrozenMoney);
 		try {
 			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
+			ValidateUtils.notNull(instanceId);
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 
@@ -693,6 +694,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	private void addWaitFrozenMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
+		ValidateUtils.notNull(instanceId);
 		AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
 		accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
 		accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
@@ -701,7 +703,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
 		accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
 		accountMoneyDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
-		accountMoneyBO.addAccountMoney(accountMoneyDto);
+		
+		AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		if  (dupRecord != null) {
+			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyDto);
+		}else {
+			accountMoneyBO.addAccountMoney(accountMoneyDto);
+		}
 	}
 
 	@Override
