@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.condition;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -41,6 +43,7 @@ public class PartnerInstancePageCondition extends PageQuery {
 	private PartnerInstanceStateEnum partnerInstanceState;
 
 	//合伙人类型
+	@NotNull(message="partnerType is null")
 	// private PartnerInstanceTypeEnum partnerType;
 	private String partnerType;
 

@@ -56,6 +56,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 
@@ -134,8 +135,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition) throws AugeServiceException {
 		try {
+			// 参数校验
+			BeanValidator.validateWithThrowable(pageCondition);
 			// FIXME FHH 方便测试，暂时写死
-			PageHelper.startPage(1, 10);
+			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 			Page<PartnerInstance> page = partnerStationRelExtMapper
 					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
 			PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
