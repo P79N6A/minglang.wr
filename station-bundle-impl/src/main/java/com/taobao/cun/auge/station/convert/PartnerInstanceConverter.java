@@ -65,8 +65,7 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
 			example.setTaobaoNick(condition.getTaobaoNick());
 		}
-		if (null != condition.getPartnerInstanceState()
-				&& StringUtil.isNotBlank(condition.getPartnerInstanceState().getCode())) {
+		if (null != condition.getPartnerInstanceState()) {
 			example.setPartnerState(condition.getPartnerInstanceState().getCode());
 		}
 
@@ -82,6 +81,25 @@ public final class PartnerInstanceConverter {
 			example.setPartnerName(condition.getPartnerName());
 		}
 		example.setOrgIds(condition.getOrgIds());
+
+		if (null != condition.getCurrentStep()) {
+			example.setCurrentStep(condition.getCurrentStep().getCode());
+		}
+		if (null != condition.getBusinessType()) {
+			example.setBusinessType(condition.getBusinessType().getCode());
+		}
+
+		if (null != condition.getSettleProtocol()) {
+			example.setSettledProtocol(condition.getSettleProtocol().getCode());
+		}
+
+		if (null != condition.getBond()) {
+			example.setBond(condition.getBond().getCode());
+		}
+
+		if (null != condition.getRoleApprove()) {
+			example.setRoleApprove(condition.getRoleApprove().getCode());
+		}
 
 		return example;
 	}
