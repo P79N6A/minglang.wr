@@ -137,7 +137,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
-			// FIXME FHH 方便测试，暂时写死
 			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 			Page<PartnerInstance> page = partnerStationRelExtMapper
 					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
