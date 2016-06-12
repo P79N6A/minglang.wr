@@ -4,6 +4,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
@@ -45,6 +46,9 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	//所属TP商id
 	private Long providerId;
+	
+	//生命周期业务类型
+	private PartnerLifecycleBusinessTypeEnum businessType;
 
 	//保证金
 	private PartnerLifecycleBondEnum bond;
@@ -201,6 +205,14 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	public void setCurrentStep(PartnerLifecycleCurrentStepEnum currentStep) {
 		this.currentStep = currentStep;
+	}
+
+	public PartnerLifecycleBusinessTypeEnum getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(PartnerLifecycleBusinessTypeEnum businessType) {
+		this.businessType = businessType;
 	}
 
 	// public PartnerInstanceTypeEnum getPartnerType() {
