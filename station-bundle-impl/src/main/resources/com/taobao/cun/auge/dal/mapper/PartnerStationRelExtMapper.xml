@@ -69,6 +69,17 @@
     <result column="feature" jdbcType="VARCHAR" property="feature" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
+    
+    <!-- 生命周期表 -->
+    <result column="lifecycle_business_type" jdbcType="VARCHAR" property="lifecycleBusinessType" />
+    <result column="settled_protocol" jdbcType="VARCHAR" property="settledProtocol" />
+    <result column="bond" jdbcType="VARCHAR" property="bond" />
+    <result column="quit_protocol" jdbcType="VARCHAR" property="quitProtocol" />
+    <result column="logistics_approve" jdbcType="VARCHAR" property="logisticsApprove" />
+    <result column="current_step" jdbcType="VARCHAR" property="currentStep" />
+    <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
+    <result column="confirm" jdbcType="VARCHAR" property="confirm" />
+    
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
@@ -113,13 +124,21 @@
 		s.provider_id,
 		s.feature,
 		s.status,
-		s.fixed_type 
+		s.fixed_type,
 		
-		from partner_station_rel instance,partner p,station s 
+		life.business_type as lifecycle_business_type,
+		life.settled_protocol,
+		life.bond,
+		life.current_step,
+		life.role_approve
+		
+		from partner_station_rel instance,partner p,station s, partner_lifecycle_items life
 		
 		where instance.partner_id = p.id and instance.station_id=s.id and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' 
 
 	<include refid="partner_station_query_condition" />
+	
+	<include refid="partner_lifecycle_items_condition" />
 	
     <if test="orderByClause != null and orderByClause != ''" >
       order by ${orderByClause}
@@ -171,6 +190,26 @@
 			and p.name = #{partnerName,jdbcType=VARCHAR}
 		</if>
    </sql>
+   
+   
+   <sql id="partner_lifecycle_items_condition" >
+        <if test="businessType != null and businessType != ''" >
+			and life.business_type = #{businessType,jdbcType=VARCHAR}
+		</if>
+		<if test="settledProtocol != null and settledProtocol != ''" >
+			and life.settled_protocol = #{settledProtocol,jdbcType=VARCHAR}
+		</if>
+		<if test="bond != null and bond != ''" >
+			and life.bond = #{bond,jdbcType=VARCHAR}
+		</if>
+		<if test="currentStep != null and currentStep != ''" >
+			and life.current_step = #{currentStep,jdbcType=VARCHAR}
+		</if>
+		<if test="roleApprove != null and roleApprove != ''" >
+			and life.role_approve = #{roleApprove,jdbcType=VARCHAR}
+		</if>
+   </sql>
+   
    <select id="getWaitThawMoney" resultType="java.lang.Long" parameterType="java.util.Map" >
    <![CDATA[
    		select psr.id from partner_station_rel psr,partner_lifecycle_items pli
