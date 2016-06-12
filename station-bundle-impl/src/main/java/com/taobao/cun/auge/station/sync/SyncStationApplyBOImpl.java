@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
 import com.taobao.cun.auge.dal.domain.AccountMoneyExample;
@@ -73,6 +74,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 	public StationApply addStationApply(Long partnerInstanceId) throws AugeServiceException {
 		try {
 			StationApply stationApply = buildStationApply(partnerInstanceId, SyncStationApplyEnum.ADD);
+			DomainUtils.beforeInsert(stationApply, DomainUtils.DEFAULT_OPERATOR);
 			stationApply.setVersion(0l);
 			// stationApply.setCustomerLevel(customerLevel);
 			logger.info("sync add to station_apply : {}", JSON.toJSONString(stationApply));
@@ -100,6 +102,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				throw new IllegalArgumentException("invalid param");
 			}
 			StationApply stationApply = buildStationApply(partnerInstanceId, updateType);
+			DomainUtils.beforeUpdate(stationApply, DomainUtils.DEFAULT_OPERATOR);
 			logger.info("sync upate to station_apply {} : {}", updateType, JSON.toJSONString(stationApply));
 			stationApplyMapper.updateByPrimaryKeySelective(stationApply);
 		} catch (Exception e) {
