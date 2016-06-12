@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo;
 
 import java.util.List;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
@@ -38,7 +39,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,String operator) throws AugeServiceException;
+	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 批量修改,   先删除,后新增
@@ -47,7 +48,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,String operator) throws AugeServiceException;
+	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 批量新增附件
@@ -56,7 +57,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId,String operator) throws AugeServiceException;
+	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 批量修改,   先删除,后新增
@@ -65,7 +66,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId,String operator) throws AugeServiceException;
+	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId,OperatorDto operatorDto) throws AugeServiceException;
 	
 	
 	/**

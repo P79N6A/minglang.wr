@@ -81,6 +81,7 @@ public class StationBOImpl implements StationBO {
 		record.setCreater(stationDto.getOperator());
 		record.setModifier(stationDto.getOperator());
 		record.setIsDeleted("n");
+		record.setVersion(0L);
 		stationMapper.insert(record);
 		return record.getId();
 	}

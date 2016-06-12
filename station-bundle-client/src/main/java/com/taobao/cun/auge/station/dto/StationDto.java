@@ -112,6 +112,13 @@ public class StationDto extends OperatorDto implements Serializable{
     private Address  address;
     
     private PartnerProtocolRelDto fixedProtocols;
+    
+    
+    private String alipayAccount;
+    
+    private String taobaoNick;
+    
+    private Long taobaoUserId;
 
 	public Long getId() {
 		return id;
@@ -263,6 +270,30 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setLogisticsState(StationlLogisticsStateEnum logisticsState) {
 		this.logisticsState = logisticsState;
+	}
+
+	public String getAlipayAccount() {
+		return alipayAccount;
+	}
+
+	public void setAlipayAccount(String alipayAccount) {
+		this.alipayAccount = alipayAccount;
+	}
+
+	public String getTaobaoNick() {
+		return taobaoNick;
+	}
+
+	public void setTaobaoNick(String taobaoNick) {
+		this.taobaoNick = taobaoNick;
+	}
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
 	}	
 	
 }

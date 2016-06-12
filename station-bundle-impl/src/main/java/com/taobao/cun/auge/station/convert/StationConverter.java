@@ -93,6 +93,12 @@ public class StationConverter {
 		station.setState(stationDto.getState().getCode());
 		station.setStationNum(stationDto.getStationNum());
 		station.setStatus(stationDto.getStatus().getCode());
+		
+		
+		//老字段，人相关信息继续同步
+		station.setTaobaoNick(stationDto.getTaobaoNick());
+		station.setTaobaoUserId(stationDto.getTaobaoUserId());
+		station.setAlipayAccount(stationDto.getAlipayAccount());
 		return station;
 	}
 

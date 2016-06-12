@@ -201,7 +201,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		
 		Long stationId = stationBO.addStation(stationDto);
 		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
-				partnerInstanceDto.getOperator());
+				partnerInstanceDto);
 		// 更新固点协议
 		saveStationFixProtocol(stationDto, stationId);
 
@@ -212,11 +212,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
 			}
 			partnerDto.setTaobaoUserId(taobaoUserId);
+			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
 		}
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		Long partnerId = partnerBO.addPartner(partnerDto);
 		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
-				partnerInstanceDto.getOperator());
+				partnerInstanceDto);
 
 		partnerInstanceDto.setStationId(stationId);
 		partnerInstanceDto.setPartnerId(partnerId);
@@ -240,7 +241,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 更新固点协议
 		saveStationFixProtocol(stationDto, stationId);
 		attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), stationId,
-				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto.getOperator());
+				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
 
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
@@ -249,13 +250,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
 			}
 			partnerDto.setTaobaoUserId(taobaoUserId);
+			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
 		}
 		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
 		partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
 		attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), partnerId,
-				AttachementBizTypeEnum.PARTNER, partnerInstanceDto.getOperator());
+				AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
 
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
@@ -334,16 +336,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 		try {
-			Long taobaoUserId = validateSettlable(partnerInstanceDto);
+			//Long taobaoUserId = 
+					validateSettlable(partnerInstanceDto);
 			StationDto stationDto = partnerInstanceDto.getStationDto();
 			stationDto.setState(StationStateEnum.INVALID);
 			stationDto.setStatus(StationStatusEnum.NEW);
 
 			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 			partnerDto.setState(PartnerStateEnum.TEMP);
-			partnerDto.setTaobaoUserId(taobaoUserId);
+			//partnerDto.setTaobaoUserId(taobaoUserId);
 
 			partnerInstanceDto.setState(PartnerInstanceStateEnum.SETTLING);
+			partnerInstanceDto.setApplyTime(new Date());
+			partnerInstanceDto.setApplierId(partnerInstanceDto.getOperator());
+			partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
+			
 			Long instanceId = addCommon(partnerInstanceDto);
 
 			// 同步station_apply
@@ -474,15 +481,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 		ValidateUtils.notNull(partnerInstanceDto.getId());
 		try {
-			Long taobaoUserId = validateSettlable(partnerInstanceDto);
+			//Long taobaoUserId = 
+					validateSettlable(partnerInstanceDto);
 
 			StationDto stationDto = partnerInstanceDto.getStationDto();
 			stationDto.setStatus(StationStatusEnum.NEW);
 
-			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-			partnerDto.setTaobaoUserId(taobaoUserId);
-
 			partnerInstanceDto.setState(PartnerInstanceStateEnum.SETTLING);
+			partnerInstanceDto.setApplyTime(new Date());
+			partnerInstanceDto.setApplierId(partnerInstanceDto.getOperator());
+			partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
 
 			updateCommon(partnerInstanceDto);
 			return partnerInstanceDto.getId();
@@ -521,7 +529,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerDto.setBusinessType(pDto.getBusinessType());
 				partnerBO.updatePartner(partnerDto);
 				attachementBO.modifyAttachementBatch(pDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
-						partnerInstanceUpdateServicingDto.getOperator());
+						partnerInstanceUpdateServicingDto);
 			}
 			if (partnerInstanceUpdateServicingDto.getStationDto() != null) {
 				StationUpdateServicingDto sDto = partnerInstanceUpdateServicingDto.getStationDto();
@@ -549,7 +557,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 更新固点协议
 				saveStationFixProtocol(stationDto, stationId);
 				attachementBO.modifyAttachementBatch(sDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
-						partnerInstanceUpdateServicingDto.getOperator());
+						partnerInstanceUpdateServicingDto);
 			}
 			syncUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
 		} catch (AugeServiceException augeException) {
