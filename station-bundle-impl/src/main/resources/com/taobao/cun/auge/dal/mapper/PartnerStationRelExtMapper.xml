@@ -69,6 +69,12 @@
     <result column="feature" jdbcType="VARCHAR" property="feature" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
+    
+    <!-- 生命周期表 -->
+    <result column="settled_protocol" jdbcType="VARCHAR" property="settledProtocol" />
+    <result column="bond" jdbcType="VARCHAR" property="bond" />
+    <result column="current_step" jdbcType="VARCHAR" property="currentStep" />
+    <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
@@ -113,7 +119,12 @@
 		s.provider_id,
 		s.feature,
 		s.status,
-		s.fixed_type 
+		s.fixed_type,
+		
+		life.settled_protocol,
+		life.bond,
+		life.current_step,
+		life.role_approve
 		
 		from partner_station_rel instance,partner p,station s, partner_lifecycle_items life
 		
