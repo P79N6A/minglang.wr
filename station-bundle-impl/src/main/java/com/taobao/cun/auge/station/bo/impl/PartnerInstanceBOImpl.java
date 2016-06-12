@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
@@ -160,7 +162,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.countByExample(example);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
 			throws AugeServiceException {
@@ -196,7 +199,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		return curPartnerInstance.getStationId();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
@@ -235,7 +239,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return PartnerInstanceConverter.convert(psRel, station, partner);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateOpenDate(Long instanceId, Date openDate, String operator) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
@@ -289,7 +294,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.selectByExample(example);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
@@ -322,7 +328,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return true;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deletePartnerStationRel(Long instanceId, String operator) throws AugeServiceException {
 		PartnerStationRel rel = new PartnerStationRel();

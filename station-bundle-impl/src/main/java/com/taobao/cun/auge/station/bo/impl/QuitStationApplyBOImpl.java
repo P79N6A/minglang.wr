@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -18,7 +20,8 @@ public class QuitStationApplyBOImpl implements QuitStationApplyBO {
 
 	@Autowired
 	QuitStationApplyMapper quitStationApplyMapper;
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void saveQuitStationApply(QuitStationApply quitStationApply, String operator) {
 		DomainUtils.beforeInsert(quitStationApply, operator);
@@ -39,7 +42,8 @@ public class QuitStationApplyBOImpl implements QuitStationApplyBO {
 
 		return applyes.get(0);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteQuitStationApply(Long instanceId, String operator) {
 		QuitStationApplyExample example = new QuitStationApplyExample();

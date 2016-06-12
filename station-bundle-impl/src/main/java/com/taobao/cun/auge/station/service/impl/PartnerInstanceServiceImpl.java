@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
@@ -257,7 +259,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
@@ -356,7 +359,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	public static boolean isSpecialStr(String str) {
+	private static boolean isSpecialStr(String str) {
 		Pattern pat = Pattern.compile(RULE_REGEX);
 		Matcher mat = pat.matcher(str);
 		if (mat.find()) {
@@ -491,7 +494,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
@@ -580,7 +584,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	public void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
+	private void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
 		if (stationDto == null) {
 			return;
 		}
@@ -619,7 +623,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	public void validateParnterCanUpdateInfo(PartnerUpdateServicingDto partnerDto) {
+	private void validateParnterCanUpdateInfo(PartnerUpdateServicingDto partnerDto) {
 		if (partnerDto == null) {
 			return;
 		}
@@ -630,12 +634,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	public static boolean isMobileNO(String mobiles) {
+	private static boolean isMobileNO(String mobiles) {
 		Pattern p = Pattern.compile("^((1))\\d{10}$");
 		Matcher m = p.matcher(mobiles);
 		return m.matches();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDeleteDto);
@@ -648,7 +653,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
@@ -711,7 +717,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			accountMoneyBO.addAccountMoney(accountMoneyDto);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
@@ -736,7 +743,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -774,7 +782,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instance.getId());
 		return true;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
 		// 参数校验
@@ -807,7 +816,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// TODO:检查开业包
 		return true;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
@@ -878,7 +888,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		return true;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
 		// 参数校验
@@ -951,7 +962,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
 		// 参数校验
@@ -1016,7 +1028,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		itemsDO.copyOperatorDto(forcedCloseDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException {
 		// 参数校验
@@ -1086,7 +1099,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		return "";
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
@@ -1113,7 +1127,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
 		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT, new StationApplySyncEvent(type, instanceId));
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceQuitDto);
@@ -1133,7 +1148,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		return null;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto)
 			throws AugeServiceException {
@@ -1275,7 +1291,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		return TPAMAX_DEFAULT;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettleSuccess(
 			PartnerInstanceSettleSuccessDto settleSuccessDto)
@@ -1293,7 +1310,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateSettle(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
@@ -1326,7 +1344,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		
 	}
 
-
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void auditSettleByManager(AuditSettleDto auditSettleDto)
 			throws AugeServiceException {

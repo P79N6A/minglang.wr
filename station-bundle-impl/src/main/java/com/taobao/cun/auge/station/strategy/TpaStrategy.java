@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -75,7 +77,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	@Autowired
 	AttachementBO attachementBO;
 	
-	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto)
 			throws AugeServiceException {
@@ -116,7 +118,8 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		}
 		return null;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
 			PartnerStationRel rel) throws AugeServiceException {
@@ -146,7 +149,8 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
 		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void quit(PartnerInstanceQuitDto partnerInstanceQuitDto)
 			throws AugeServiceException {
@@ -182,7 +186,8 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			throws AugeServiceException {
 		// TODO Auto-generated method stub
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
 		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
@@ -195,7 +200,8 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		itemsDO.copyOperatorDto(quitDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
@@ -215,7 +221,8 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			partnerLifecycleBO.updateLifecycle(param);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel)
 			throws AugeServiceException {

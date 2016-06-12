@@ -5,6 +5,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
@@ -45,7 +47,8 @@ public class StationBOImpl implements StationBO {
 		criteria.andStationNumEqualTo(stationNum);
 		return ResultUtils.selectOne(stationMapper.selectByExample(example));
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void changeState(Long stationId, StationStatusEnum preStatus,
 			StationStatusEnum postStatus, String operator)
@@ -67,7 +70,8 @@ public class StationBOImpl implements StationBO {
 		DomainUtils.beforeUpdate(record, operator);
 		stationMapper.updateByPrimaryKeySelective(record);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addStation(StationDto stationDto) throws AugeServiceException {
 		ValidateUtils.notNull(stationDto);
@@ -76,7 +80,8 @@ public class StationBOImpl implements StationBO {
 		stationMapper.insert(record);
 		return record.getId();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateStation(StationDto stationDto) throws AugeServiceException {
 		ValidateUtils.notNull(stationDto);
@@ -115,6 +120,7 @@ public class StationBOImpl implements StationBO {
 		return ResultUtils.selectCount(stationMapper.selectByExample(example));
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteStation(Long stationId,String operator)
 			throws AugeServiceException {

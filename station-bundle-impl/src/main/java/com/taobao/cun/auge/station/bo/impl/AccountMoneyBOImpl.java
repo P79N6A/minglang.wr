@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -25,6 +27,7 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 	@Autowired
 	AccountMoneyMapper accountMoneyMapper;
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addAccountMoney(AccountMoneyDto accountMoneyDto)
 			throws AugeServiceException {
@@ -34,7 +37,8 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 		accountMoneyMapper.insert(accountMoney);
 		return accountMoney.getId();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long updateAccountMoneyByObjectId(AccountMoneyDto accountMoneyDto)
 			throws AugeServiceException {

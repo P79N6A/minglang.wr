@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Attachement;
@@ -31,6 +34,8 @@ public class AttachementBOImpl implements AttachementBO {
 	
 	@Autowired
 	AttachementMapper attachementMapper;
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addAttachement(AttachementDto attachementDto)
 			throws AugeServiceException {
@@ -40,7 +45,8 @@ public class AttachementBOImpl implements AttachementBO {
 		attachementMapper.insert(attachement);
 		return attachement.getId();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto)
 			throws AugeServiceException {
@@ -63,7 +69,7 @@ public class AttachementBOImpl implements AttachementBO {
 		attachementMapper.updateByExampleSelective(attachement, example);
 	}
 	
-
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
@@ -79,7 +85,8 @@ public class AttachementBOImpl implements AttachementBO {
 			}
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
@@ -120,7 +127,8 @@ public class AttachementBOImpl implements AttachementBO {
 		List<Attachement> attList = attachementMapper.selectByExample(example);
 		return AttachementConverter.toAttachementDtos(attList);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,
@@ -140,7 +148,8 @@ public class AttachementBOImpl implements AttachementBO {
 		}
 		
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,

@@ -4,6 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -44,7 +46,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	CountyStationBO countyStationBO;
 	@Autowired
 	PartnerBO partnerBO;
-	 
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void addCainiaoStation(SyncAddCainiaoStationDto  syncAddCainiaoStationDto)
 			throws AugeServiceException {
@@ -148,7 +151,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		sb.append("CaiNiaoService-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:").append(error);
 		return sb.toString();
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto)
 			throws AugeServiceException {
@@ -204,6 +208,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		return null;
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto syncCainiaoStationDto)
 			throws AugeServiceException {
