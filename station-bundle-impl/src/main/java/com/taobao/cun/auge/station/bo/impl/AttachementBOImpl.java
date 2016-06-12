@@ -39,7 +39,7 @@ public class AttachementBOImpl implements AttachementBO {
 	@Override
 	public Long addAttachement(AttachementDto attachementDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(attachementDto);
+		ValidateUtils.validateParam(attachementDto);
 		Attachement attachement = AttachementConverter.toAttachement(attachementDto);
 		DomainUtils.beforeInsert(attachement, attachementDto.getOperator());
 		attachementMapper.insert(attachement);
@@ -50,7 +50,7 @@ public class AttachementBOImpl implements AttachementBO {
 	@Override
 	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(attachementDeleteDto);
+		ValidateUtils.validateParam(attachementDeleteDto);
 		ValidateUtils.notNull(attachementDeleteDto.getObjectId());
 		ValidateUtils.notNull(attachementDeleteDto.getBizType());
 		

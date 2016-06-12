@@ -21,6 +21,7 @@ import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.Attachement;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -34,6 +35,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.AttachementConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -298,7 +300,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		return null;
+		ValidateUtils.validateParam(partnerInstanceDto);
+		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
+		DomainUtils.beforeInsert(partnerStationRel, partnerInstanceDto.getOperator());
+		partnerStationRelMapper.insert(partnerStationRel);
+		return partnerStationRel.getId();
 	}
 
 	@Override
