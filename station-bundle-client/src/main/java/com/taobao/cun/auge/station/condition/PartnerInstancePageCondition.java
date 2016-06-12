@@ -4,6 +4,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -62,6 +63,9 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	//入驻协议
 	private PartnerLifecycleSettledProtocolEnum settleProtocol;
+	
+	//当前阶段
+	private PartnerLifecycleCurrentStepEnum currentStep;
 
 	public String getStationNum() {
 		return stationNum;
@@ -189,6 +193,14 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	public void setSettleProtocol(PartnerLifecycleSettledProtocolEnum settleProtocol) {
 		this.settleProtocol = settleProtocol;
+	}
+
+	public PartnerLifecycleCurrentStepEnum getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(PartnerLifecycleCurrentStepEnum currentStep) {
+		this.currentStep = currentStep;
 	}
 
 	// public PartnerInstanceTypeEnum getPartnerType() {
