@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,10 +20,8 @@ import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 @Component("stationBO")
@@ -76,7 +75,12 @@ public class StationBOImpl implements StationBO {
 	public Long addStation(StationDto stationDto) throws AugeServiceException {
 		ValidateUtils.notNull(stationDto);
 		Station record = StationConverter.toStation(stationDto);
-		DomainUtils.beforeInsert(record, stationDto.getOperator());
+		Date now = new Date();
+		record.setGmtCreate(now);
+		record.setGmtModified(now);
+		record.setCreater(stationDto.getOperator());
+		record.setModifier(stationDto.getOperator());
+		record.setIsDeleted("n");
 		stationMapper.insert(record);
 		return record.getId();
 	}
