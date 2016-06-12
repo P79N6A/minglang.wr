@@ -24,6 +24,14 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
@@ -154,13 +162,16 @@ public final class PartnerInstanceConverter {
 	private static PartnerLifecycleDto convertLifecycleDto(PartnerInstance instance){
 		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
 		
-		
-		
-		
-		
-		
-		
-		
+		lifecleDto.setPartnerType(PartnerInstanceTypeEnum.valueof(instance.getType()));
+		lifecleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.valueof(instance.getLifecycleBusinessType()));
+		lifecleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.valueof(instance.getSettledProtocol()));
+		lifecleDto.setBond(PartnerLifecycleBondEnum.valueof(instance.getBond()));
+		lifecleDto.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.valueof(instance.getQuitProtocol()));
+		lifecleDto.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.valueof(instance.getLogisticsApprove()));
+		lifecleDto.setPartnerInstanceId(instance.getId());
+		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(instance.getCurrentStep()));
+		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
+		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
 		
 		return lifecleDto;
 	}
