@@ -314,8 +314,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 				partnerProtocolRelBO.deletePartnerProtocolRel(deleteDto);
 				PartnerProtocolRelDto fixPro = stationDto.getFixedProtocols();
-				fixPro.copyOperatorDto(stationDto);
-				partnerProtocolRelBO.addPartnerProtocolRel(fixPro);
+				if (fixPro != null) {
+					fixPro.copyOperatorDto(stationDto);
+					partnerProtocolRelBO.addPartnerProtocolRel(fixPro);
+				}
 			}
 		}
 	}
