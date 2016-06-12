@@ -251,7 +251,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			List<AttachementDto>  attDtoList = attachementBO.selectAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
 			if (CollectionUtils.isNotEmpty(attDtoList)) {
 				attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId,
-						AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, settleSuccessDto.getOperator());
+						AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, settleSuccessDto);
 			}
 			
 			//更新合伙人表信息

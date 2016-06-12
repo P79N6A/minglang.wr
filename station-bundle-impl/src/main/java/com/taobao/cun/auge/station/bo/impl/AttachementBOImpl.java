@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Attachement;
@@ -72,7 +73,7 @@ public class AttachementBOImpl implements AttachementBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
-			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
@@ -80,7 +81,7 @@ public class AttachementBOImpl implements AttachementBO {
 			for (AttachementDto attachementDto:attachementDtoList) {
 				attachementDto.setObjectId(objectId);
 				attachementDto.setBizType(bizTypeEnum);
-				attachementDto.setOperator(operator);
+				attachementDto.copyOperatorDto(operatorDto);
 				addAttachement(attachementDto);
 			}
 		}
@@ -89,17 +90,17 @@ public class AttachementBOImpl implements AttachementBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
-			Long objectId, AttachementBizTypeEnum bizTypeEnum,String operator)
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
 		AttachementDeleteDto attachementDeleteDto = new AttachementDeleteDto();
 		attachementDeleteDto.setObjectId(objectId);
 		attachementDeleteDto.setBizType(bizTypeEnum);
-		attachementDeleteDto.setOperator(operator);
+		attachementDeleteDto.copyOperatorDto(operatorDto);
 		deleteAttachement(attachementDeleteDto);
 		
-		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,operator);
+		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,operatorDto);
 	}
 
 	@Override
@@ -132,7 +133,7 @@ public class AttachementBOImpl implements AttachementBO {
 	@Override
 	public void addAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,
-			AttachementTypeIdEnum attachementTypeId, String operator)
+			AttachementTypeIdEnum attachementTypeId, OperatorDto operatorDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
@@ -142,7 +143,7 @@ public class AttachementBOImpl implements AttachementBO {
 				attachementDto.setObjectId(objectId);
 				attachementDto.setBizType(bizTypeEnum);
 				attachementDto.setAttachementTypeId(attachementTypeId);
-				attachementDto.setOperator(operator);
+				attachementDto.copyOperatorDto(operatorDto);
 				addAttachement(attachementDto);
 			}
 		}
@@ -153,7 +154,7 @@ public class AttachementBOImpl implements AttachementBO {
 	@Override
 	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
 			Long objectId, AttachementBizTypeEnum bizTypeEnum,
-			AttachementTypeIdEnum attachementTypeId, String operator)
+			AttachementTypeIdEnum attachementTypeId, OperatorDto operatorDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(bizTypeEnum);
@@ -161,11 +162,11 @@ public class AttachementBOImpl implements AttachementBO {
 		AttachementDeleteDto attachementDeleteDto = new AttachementDeleteDto();
 		attachementDeleteDto.setObjectId(objectId);
 		attachementDeleteDto.setBizType(bizTypeEnum);
-		attachementDeleteDto.setOperator(operator);
+		attachementDeleteDto.copyOperatorDto(operatorDto);
 		attachementDeleteDto.setAttachementTypeId(attachementTypeId);
 		deleteAttachement(attachementDeleteDto);
 		
-		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,attachementTypeId,operator);
+		addAttachementBatch(attachementDtoList, objectId, bizTypeEnum,attachementTypeId,operatorDto);
 		
 	}
 }
