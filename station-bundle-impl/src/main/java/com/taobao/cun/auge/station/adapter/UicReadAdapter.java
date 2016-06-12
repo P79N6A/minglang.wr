@@ -6,4 +6,6 @@ public interface UicReadAdapter {
 	
 	public Long getTaobaoUserIdByTaobaoNick(String taobaoNick);
 	
+	public String getTaobaoNickByTaobaoUserId(Long taobaoUserId);
+	
 }

@@ -43,4 +43,18 @@ public class UicReadAdapterImpl implements UicReadAdapter{
 		return res.getModule();
 	}
 
+	@Override
+	public String getTaobaoNickByTaobaoUserId(Long taobaoUserId) {
+		if (taobaoUserId == null) {
+	         return "";
+		}
+		ResultDO<BaseUserDO> rstDo = uicReadServiceClient.getBaseUserByUserId(taobaoUserId);
+
+		if (rstDo == null || rstDo.getModule() == null || !rstDo.isSuccess()) {
+			return "";
+		} else {
+			return rstDo.getModule().getNick();
+		}
+	}
+
 }
