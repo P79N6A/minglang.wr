@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
@@ -145,9 +146,23 @@ public final class PartnerInstanceConverter {
 		instanceDto.setPartnerId(instance.getPartnerId());
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
-		instanceDto.setPartnerLifecycleDto(null);
+		instanceDto.setPartnerLifecycleDto(convertLifecycleDto(instance));
 
 		return instanceDto;
+	}
+	
+	private static PartnerLifecycleDto convertLifecycleDto(PartnerInstance instance){
+		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		return lifecleDto;
 	}
 
 	public static PartnerInstanceDto convert(PartnerStationRel psRel) {

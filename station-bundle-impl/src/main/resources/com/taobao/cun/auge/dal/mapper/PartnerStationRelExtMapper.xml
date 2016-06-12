@@ -71,10 +71,15 @@
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
     
     <!-- 生命周期表 -->
+    <result column="lifecycle_business_type" jdbcType="VARCHAR" property="lifecycleBusinessType" />
     <result column="settled_protocol" jdbcType="VARCHAR" property="settledProtocol" />
     <result column="bond" jdbcType="VARCHAR" property="bond" />
+    <result column="quit_protocol" jdbcType="VARCHAR" property="quitProtocol" />
+    <result column="logistics_approve" jdbcType="VARCHAR" property="logisticsApprove" />
     <result column="current_step" jdbcType="VARCHAR" property="currentStep" />
     <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
+    <result column="confirm" jdbcType="VARCHAR" property="confirm" />
+    
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
@@ -121,6 +126,7 @@
 		s.status,
 		s.fixed_type,
 		
+		life.business_type as lifecycle_business_type,
 		life.settled_protocol,
 		life.bond,
 		life.current_step,
