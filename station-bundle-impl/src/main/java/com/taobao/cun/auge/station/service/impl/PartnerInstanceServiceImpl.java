@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -52,6 +52,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -72,6 +73,7 @@ import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -95,7 +97,6 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -195,7 +196,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(null, stationDto.getStationNum());
-
+		
 		Long stationId = stationBO.addStation(stationDto);
 		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
 				partnerInstanceDto.getOperator());
@@ -203,6 +204,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		saveStationFixProtocol(stationDto, stationId);
 
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+		}
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		Long partnerId = partnerBO.addPartner(partnerDto);
 		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
@@ -213,6 +221,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 	}
+	
 
 	private void updateCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceDto.getId());
@@ -232,6 +241,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto.getOperator());
 
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+		}
+		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
 		partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
@@ -516,7 +533,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationDto.setFixedType(sDto.getFixedType());
 				stationDto.setFormat(sDto.getFormat());
 				stationDto.setId(stationId);
-				stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(sDto.getLogisticsState()));
+				stationDto.setLogisticsState(sDto.getLogisticsState());
 				stationDto.setManagerId(sDto.getManagerId());
 				stationDto.setName(sDto.getName());
 				stationDto.setProducts(sDto.getProducts());
@@ -1057,7 +1074,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (OperatorTypeEnum.BUC.equals(type)) {
 			return emp360Adapter.getName(operator);
 		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
-			return uicReadAdapter.findTaobaoName(operator);
+			return uicReadAdapter.getFullName(Long.parseLong(operator));
 		}
 		return "";
 	}
@@ -1166,6 +1183,47 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 		
+		// 已停业 增加旺旺 tag
+		try {
+			//异构系统交互提交后台任务
+			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+			
+			//UIC打标
+			UserTagDto userTagDto = new UserTagDto();
+			userTagDto.setTaobaoUserId(rel.getTaobaoUserId());
+			userTagDto.setPartnerType(PartnerInstanceTypeEnum.TPA);
+			
+			GeneralTaskDto task = new GeneralTaskDto();
+			task.setBusinessNo(String.valueOf(instanceId));
+			task.setBeanName("uicTagServiceImpl");
+			task.setMethodName("addUserTag");
+			task.setBusinessStepNo(1l);
+			task.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+			task.setBusinessStepDesc("addUserTag");
+			task.setOperator(degradeDto.getOperator());
+			task.setParameter(userTagDto);
+			taskLists.add(task);
+			
+	        //旺旺打标 begin
+	        if(PartnerInstanceStateEnum.CLOSED.getCode().equals(rel.getState())){
+	        	String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(rel.getTaobaoUserId());
+	        	GeneralTaskDto wwTask = new GeneralTaskDto();
+	        	
+	        	wwTask.setBusinessNo(String.valueOf(instanceId));
+	        	wwTask.setBeanName("wangWangTagServiceImpl");
+	        	wwTask.setMethodName("addWangWangTagByNick");
+	        	wwTask.setBusinessStepNo(2l);
+	        	wwTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+	        	wwTask.setBusinessStepDesc("addWangWangTag");
+	        	wwTask.setOperator(degradeDto.getOperator());
+	        	wwTask.setParameter(taobaoNick);
+	        	taskLists.add(wwTask);
+	        }
+	        taskExecuteService.submitTasks(taskLists);
+		} catch (Exception e) {
+			 logger.error("降级淘帮手为已停业状态打标失败, instanceId= " + instanceId, e);
+		}
+		
 		PartnerInstanceDto param= new PartnerInstanceDto();
 		param.setId(instanceId);
 		param.setBit(-1);
@@ -1258,6 +1316,52 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		
+	}
+
+
+	@Override
+	public void auditSettleByManager(AuditSettleDto auditSettleDto)
+			throws AugeServiceException {
+		ValidateUtils.validateParam(auditSettleDto);
+		Long partnerInstanceId = auditSettleDto.getPartnerInstanceId();
+		Boolean isAgree = auditSettleDto.getIsAgree();
+		ValidateUtils.notNull(partnerInstanceId);
+		ValidateUtils.notNull(isAgree);
+		try {
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
+					PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+			if (items == null) {
+				String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto),"SETTLING items is null");
+				logger.error(error);
+				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			}
+			
+			if (isAgree) {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+				param.setLifecycleId(items.getId());
+				param.copyOperatorDto(auditSettleDto);
+				partnerLifecycleBO.updateLifecycle(param);
+			}else {
+				PartnerLifecycleDto param = new PartnerLifecycleDto();
+				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+				param.setLifecycleId(items.getId());
+				param.copyOperatorDto(auditSettleDto);
+				partnerLifecycleBO.updateLifecycle(param);
+				// 合伙人实例入驻失败
+				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL, auditSettleDto.getOperator());
+			}
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 }

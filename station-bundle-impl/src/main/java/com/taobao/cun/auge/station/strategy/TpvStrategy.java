@@ -174,6 +174,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
+			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
 		/*if(partnerInstanceQuitDto.getIsQuitStation()) {
@@ -291,6 +292,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.AUDIT_PASS);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
+			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
 		

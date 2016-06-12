@@ -162,6 +162,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			param.setBond(PartnerLifecycleBondEnum.HAS_THAW);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
+			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
 		/*if(partnerInstanceQuitDto.getIsQuitStation()) {
@@ -281,6 +282,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			param.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
+			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
 	}
