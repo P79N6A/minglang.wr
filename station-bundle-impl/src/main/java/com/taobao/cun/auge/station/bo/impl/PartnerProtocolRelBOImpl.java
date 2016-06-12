@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -32,14 +34,16 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 	@Autowired
 	ProtocolBO protocolBO;
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId, PartnerProtocolRelTargetTypeEnum targetType) {
 		Date now = new Date();
 		signProtocol(businessId, taobaoUserId, type, now, now, null, String.valueOf(taobaoUserId),
 				PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
 		Long protocolId = protocolBO.getValidProtocol(type).getId();
@@ -61,7 +65,8 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 		partnerProtocolRelMapper.insertSelective(partnerProtocolRelDO);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void cancelProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId, PartnerProtocolRelTargetTypeEnum targetType,
 			String operator) {
@@ -82,7 +87,8 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 		partnerProtocolRelMapper.updateByExampleSelective(record, example);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addPartnerProtocolRel(
 			PartnerProtocolRelDto partnerProtocolRelDto)
@@ -102,7 +108,8 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		return record.getId();
 		
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deletePartnerProtocolRel(
 			PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto)

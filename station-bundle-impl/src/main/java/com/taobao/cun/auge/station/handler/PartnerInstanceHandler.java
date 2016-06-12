@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -47,6 +49,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleApplySettle(PartnerInstanceDto instanceDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).applySettle(instanceDto);
 	}
@@ -58,6 +61,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Boolean handleValidateUpdateSettle(Long instanceId,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
 		return strategy.get(typeEnum.getCode()).validateUpdateSettle(instanceId);
 	}
@@ -68,6 +72,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleApplyQuit(QuitStationApplyDto quitDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).applyQuit(quitDto,typeEnum);
 	}
@@ -78,6 +83,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleAuditQuit(ProcessApproveResultEnum approveResult,Long partnerInstanceId,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
 		strategy.get(partnerInstanceTypeEnum.getCode()).auditQuit(approveResult,partnerInstanceId);
 	}
@@ -87,6 +93,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleQuit(PartnerInstanceQuitDto partnerInstanceQuitDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).quit(partnerInstanceQuitDto);
 	}
@@ -102,6 +109,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @param rel
 	 * @throws AugeServiceException
 	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleDelete(PartnerInstanceDeleteDto deleteDto,PartnerStationRel rel)throws AugeServiceException {
 		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
@@ -113,9 +121,9 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public ProcessBusinessEnum findProcessBusiness(PartnerInstanceTypeEnum typeEnum,ProcessTypeEnum processType){
 		return strategy.get(typeEnum.getCode()).findProcessBusiness(processType);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleSettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) {
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
-		
 	}
 }

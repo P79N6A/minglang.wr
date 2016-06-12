@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -33,7 +35,8 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		criteria.andTypeEqualTo(type.getCode());
 		return ResultUtils.selectOne(cuntaoCainiaoStationRelMapper.selectByExample(example));
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Integer deleteCuntaoCainiaoStationRel(Long objectId, CuntaoCainiaoStationRelTypeEnum type)
 			throws AugeServiceException {
@@ -48,7 +51,8 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		
 		
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto)
 			throws AugeServiceException {

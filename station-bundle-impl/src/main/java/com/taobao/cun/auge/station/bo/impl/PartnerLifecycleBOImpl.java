@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.StringUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -23,7 +25,8 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 
 	@Autowired
 	PartnerLifecycleItemsMapper partnerLifecycleItemsMapper;
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerLifecycleDto);
@@ -36,7 +39,8 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		}
 		partnerLifecycleItemsMapper.insert(items);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerLifecycleDto);
 		ValidateUtils.notNull(partnerLifecycleDto.getLifecycleId() );
@@ -90,7 +94,8 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		criteria.andCurrentStepNotEqualTo(PartnerLifecycleCurrentStepEnum.END.getCode());
 		return ResultUtils.selectOne(partnerLifecycleItemsMapper.selectByExample(example));
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteLifecycleItems(Long instanceId, String operator)
 			throws AugeServiceException {
