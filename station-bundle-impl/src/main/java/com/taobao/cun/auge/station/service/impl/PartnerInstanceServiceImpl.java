@@ -1140,17 +1140,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (instanceId == null) {
 			// 新增入驻
 			instanceId = addSubmit(partnerInstanceDto);
+			
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceDto.setId(instanceId);
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+			
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.ADD, instanceId);
 		} else {
 			// 暂存后，修改入驻
 			updateSubmit(partnerInstanceDto);
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		}
-		// 不同类型合伙人，执行不同的生命周期
-		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
-
 		return instanceId;
 
 	}
