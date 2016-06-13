@@ -776,7 +776,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
-				|| !AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
+				|| !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
 
