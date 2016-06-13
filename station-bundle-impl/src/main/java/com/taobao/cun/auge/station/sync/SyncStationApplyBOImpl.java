@@ -58,11 +58,18 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
+import com.taobao.cun.auge.cache.TairCache;
 
 @Component("syncStationApplyBO")
 public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 	private final static Logger logger = LoggerFactory.getLogger(SyncStationApplyBOImpl.class);
 	private static final String ERROR_MSG = "SYNC_BACK_TO_STATIONAPPLY_ERROR";
+
+	public static final String STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE = "stationapplyid_";
+	public static final String USER_STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE = "user_stationapplyid_";
+	public static final String STATION_ID_KEY_DETAIL_VALUE_PRE = "stationid_";
+	@Autowired
+	TairCache tairCache;
 
 	@Autowired
 	StationApplyMapper stationApplyMapper;
@@ -103,6 +110,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			// 同步station_apply附件
 			syncAttachment(partnerInstanceId, stationApply.getId());
 
+			tairCache.invalid(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
+
 			logger.info("sync add success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
 			return stationApply;
 		} catch (Exception e) {
@@ -127,7 +136,16 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				syncAttachment(partnerInstanceId, stationApply.getId());
 			}
 
-			// TODO失效缓存
+			// 失效缓存
+			List<String> invalidKeys = new ArrayList<String>();
+			invalidKeys.add(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
+			if (null != stationApply.getTaobaoUserId()) {
+				invalidKeys.add(USER_STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getTaobaoUserId());
+			}
+			if (null != stationApply.getStationId()) {
+				invalidKeys.add(STATION_ID_KEY_DETAIL_VALUE_PRE + stationApply.getStationId());
+			}
+			tairCache.minvalid(invalidKeys);
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + ": updateStationApply", e);
 		}
@@ -372,49 +390,35 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		for (Long typeId : typeIdSet) {
 			List<Attachement> instanceSubList = instanceMap.get(typeId);
 			List<Attachement> saSubList = saMap.get(typeId);
-			// 如果新模型附件为空
-			if (null == instanceSubList || instanceSubList.isEmpty()) {
-				if (null == saSubList || saSubList.isEmpty()) {
-					continue;
-				}
-				// 删除station_apply的附件
-				logger.info("attachment deleted, instance_id={},station_apply_id={},type_id={}", partnerInstanceId, stationApplyId, typeId);
-				for (Attachement att : saSubList) {
-					att.setIsDeleted("y");
-					att.setModifier("sync");
-					att.setGmtModified(now);
-					attachementMapper.updateByPrimaryKeySelective(att);
-				}
-			} else {
-				// 没有改变
-				if (!isAttachmentChanged(instanceSubList, saSubList)) {
-					continue;
-				}
-				logger.info("attachment changed, instance_id={},station_apply_id={},type_id={}", partnerInstanceId, stationApplyId, typeId);
-				// 删除老的附件
-				for (Attachement sa : saSubList) {
-					sa.setIsDeleted("y");
-					sa.setModifier("sync");
-					sa.setGmtModified(now);
-					attachementMapper.updateByPrimaryKeySelective(sa);
-				}
-				// 同步新的附件
-				for (Attachement ins : instanceSubList) {
-					ins.setCreator("sync");
-					ins.setModifier("sync");
-					ins.setGmtCreate(now);
-					ins.setGmtModified(now);
-					ins.setId(null);
-					if (AttachementTypeIdEnum.IDCARD_IMG.getCode().equals(typeId)) {
-						ins.setObjectId(instance.getPartnerId());
-						ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
-					} else {
-						ins.setObjectId(instance.getStationId());
-						ins.setBizType(AttachementBizTypeEnum.CRIUS_STATION.getCode());
-					}
-					attachementMapper.insert(ins);
-				}
+			// 没有改变
+			if (!isAttachmentChanged(instanceSubList, saSubList)) {
+				continue;
 			}
+			logger.info("attachment changed, instance_id={},station_apply_id={},type_id={}", partnerInstanceId, stationApplyId, typeId);
+			// 删除老的附件
+			for (Attachement sa : saSubList) {
+				sa.setIsDeleted("y");
+				sa.setModifier("sync");
+				sa.setGmtModified(now);
+				attachementMapper.updateByPrimaryKeySelective(sa);
+			}
+			// 同步新的附件
+			for (Attachement ins : instanceSubList) {
+				ins.setCreator("sync");
+				ins.setModifier("sync");
+				ins.setGmtCreate(now);
+				ins.setGmtModified(now);
+				ins.setId(null);
+				if (AttachementTypeIdEnum.IDCARD_IMG.getCode().equals(typeId)) {
+					ins.setObjectId(instance.getPartnerId());
+					ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
+				} else {
+					ins.setObjectId(instance.getStationId());
+					ins.setBizType(AttachementBizTypeEnum.CRIUS_STATION.getCode());
+				}
+				attachementMapper.insert(ins);
+			}
+
 		}
 
 	}
