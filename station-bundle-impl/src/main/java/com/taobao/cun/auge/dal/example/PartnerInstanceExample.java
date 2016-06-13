@@ -8,6 +8,11 @@ public class PartnerInstanceExample implements Serializable {
 
 	// 村点所属组织ids
 	private Long[] orgIds;
+	
+	/**
+	 * 村点所属组织id path
+	 */
+	private String orgIdPath;
 
 	// 村点编号
 	private String stationNum;
@@ -63,6 +68,14 @@ public class PartnerInstanceExample implements Serializable {
 	
 	//角色审批
 	private String roleApprove;
+	
+	public String getOrgIdPath() {
+		return orgIdPath;
+	}
+
+	public void setOrgIdPath(String orgIdPath) {
+		this.orgIdPath = orgIdPath;
+	}
 
 	public String getStationNum() {
 		return stationNum;

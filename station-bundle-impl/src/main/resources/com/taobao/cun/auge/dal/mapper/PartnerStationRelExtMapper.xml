@@ -164,6 +164,9 @@
 				#{orgId}
 			</foreach>
 		</if>
+		<if test="orgIdPath != null and orgIdPath != ''" >
+			and org.temp_full_id_path like concat(#orgIdPath#, '/%')
+		</if>
 	  	<if test="stationNum != null and stationNum != ''" >
 			and s.station_num = #{stationNum,jdbcType=VARCHAR}
 		</if>
