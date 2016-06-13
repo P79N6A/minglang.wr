@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -777,23 +778,28 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
-				|| !AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
+				|| !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
 
-		// 修改什么周期表
+		// 修改生命周期表
 		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
 		lifecycleUpdateDto.setLifecycleId(settleItems.getId());
 		lifecycleUpdateDto.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
-		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SYS_PROCESS);
+		lifecycleUpdateDto.setOperator( String.valueOf(taobaoUserId));
+		lifecycleUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
 
 		// 修改保证金冻结状态
 		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
 		accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
 		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 		accountMoneyUpdateDto.setFrozenTime(new Date());
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+		accountMoneyUpdateDto.setOperator( String.valueOf(taobaoUserId));
+		accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
 
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());

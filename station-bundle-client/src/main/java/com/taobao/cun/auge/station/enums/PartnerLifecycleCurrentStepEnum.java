@@ -33,6 +33,7 @@ public class PartnerLifecycleCurrentStepEnum  implements Serializable {
 	public static final PartnerLifecycleCurrentStepEnum ROLE_APPROVE = new PartnerLifecycleCurrentStepEnum("ROLE_APPROVE", "人员审批");
 	public static final PartnerLifecycleCurrentStepEnum LOGISTICS_APPROVE = new PartnerLifecycleCurrentStepEnum("LOGISTICS_APPROVE", "物流审批");
 	public static final PartnerLifecycleCurrentStepEnum CONFIRM = new PartnerLifecycleCurrentStepEnum("CONFIRM", "小二确认");
+	public static final PartnerLifecycleCurrentStepEnum SYS_PROCESS = new PartnerLifecycleCurrentStepEnum("SYS_PROCESS", "待系统处理");
 	public static final PartnerLifecycleCurrentStepEnum END = new PartnerLifecycleCurrentStepEnum("END", "结束");
 	
 	
@@ -43,6 +44,7 @@ public class PartnerLifecycleCurrentStepEnum  implements Serializable {
 		mappings.put("BOND", BOND);
 		mappings.put("ROLE_APPROVE", ROLE_APPROVE);
 		mappings.put("LOGISTICS_APPROVE", LOGISTICS_APPROVE);
+		mappings.put("SYS_PROCESS", SYS_PROCESS);
 		mappings.put("END", END);
 	}
 
