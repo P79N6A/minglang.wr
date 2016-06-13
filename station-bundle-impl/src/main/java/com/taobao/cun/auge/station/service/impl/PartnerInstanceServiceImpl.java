@@ -199,13 +199,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(null, stationDto.getStationNum());
 		
-		Long stationId = stationBO.addStation(stationDto);
-		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
-				partnerInstanceDto);
-		// 更新固点协议
-		saveStationFixProtocol(stationDto, stationId);
-
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
 			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
 			if (taobaoUserId == null) {
@@ -213,7 +208,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerDto.setTaobaoUserId(taobaoUserId);
 			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
+			//station表历史字段 同步保存
+			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+			stationDto.setTaobaoUserId(taobaoUserId);
 		}
+		stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+		
+		Long stationId = stationBO.addStation(stationDto);
+		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
+				partnerInstanceDto);
+		// 更新固点协议
+		saveStationFixProtocol(stationDto, stationId);
+		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		Long partnerId = partnerBO.addPartner(partnerDto);
 		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
@@ -222,6 +228,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setStationId(stationId);
 		partnerInstanceDto.setPartnerId(partnerId);
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+		partnerInstanceDto.setVersion(0L);
 		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 	}
 	
@@ -234,7 +241,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
-
+		
+		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
+			//station表历史字段 同步保存
+			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+			stationDto.setTaobaoUserId(taobaoUserId);
+		}
+		stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+		
+		
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		stationDto.setId(stationId);
 		stationBO.updateStation(stationDto);
@@ -243,15 +266,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), stationId,
 				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
 
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
-			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
-			if (taobaoUserId == null) {
-				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
-			}
-			partnerDto.setTaobaoUserId(taobaoUserId);
-			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
-		}
 		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
