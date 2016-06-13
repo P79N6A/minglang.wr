@@ -330,8 +330,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 				partnerProtocolRelBO.deletePartnerProtocolRel(deleteDto);
 				PartnerProtocolRelDto fixPro = stationDto.getFixedProtocols();
+				
 				if (fixPro != null) {
 					fixPro.copyOperatorDto(stationDto);
+					fixPro.setObjectId(stationId);
 					partnerProtocolRelBO.addPartnerProtocolRel(fixPro);
 				}
 			}
@@ -781,7 +783,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
 
-		// 修改什么周期表
+		// 修改生命周期表
 		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
 		lifecycleUpdateDto.setLifecycleId(settleItems.getId());
 		lifecycleUpdateDto.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
@@ -1138,17 +1140,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (instanceId == null) {
 			// 新增入驻
 			instanceId = addSubmit(partnerInstanceDto);
+			
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceDto.setId(instanceId);
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+			
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.ADD, instanceId);
 		} else {
 			// 暂存后，修改入驻
 			updateSubmit(partnerInstanceDto);
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		}
-		// 不同类型合伙人，执行不同的生命周期
-		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
-
 		return instanceId;
 
 	}
