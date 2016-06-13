@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -199,12 +200,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(null, stationDto.getStationNum());
 		
-		Long stationId = stationBO.addStation(stationDto);
-		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
-				partnerInstanceDto);
-		// 更新固点协议
-		saveStationFixProtocol(stationDto, stationId);
-
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
 			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
@@ -213,7 +208,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerDto.setTaobaoUserId(taobaoUserId);
 			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
+			//station表历史字段 同步保存
+			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+			stationDto.setTaobaoUserId(taobaoUserId);
 		}
+		stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+		
+		Long stationId = stationBO.addStation(stationDto);
+		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
+				partnerInstanceDto);
+		// 更新固点协议
+		saveStationFixProtocol(stationDto, stationId);
+		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		Long partnerId = partnerBO.addPartner(partnerDto);
 		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
@@ -222,6 +228,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setStationId(stationId);
 		partnerInstanceDto.setPartnerId(partnerId);
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+		partnerInstanceDto.setVersion(0L);
 		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 	}
 	
@@ -234,7 +241,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
-
+		
+		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		
+		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
+			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
+			if (taobaoUserId == null) {
+				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
+			}
+			partnerDto.setTaobaoUserId(taobaoUserId);
+			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
+			//station表历史字段 同步保存
+			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+			stationDto.setTaobaoUserId(taobaoUserId);
+		}
+		stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+		
+		
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		stationDto.setId(stationId);
 		stationBO.updateStation(stationDto);
@@ -243,15 +266,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), stationId,
 				AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
 
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
-			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
-			if (taobaoUserId == null) {
-				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
-			}
-			partnerDto.setTaobaoUserId(taobaoUserId);
-			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
-		}
 		
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
@@ -763,7 +777,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
-				|| !AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(bondMoney.getState())) {
+				|| !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
 		}
 
@@ -771,15 +785,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
 		lifecycleUpdateDto.setLifecycleId(settleItems.getId());
 		lifecycleUpdateDto.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
-		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SYS_PROCESS);
+		lifecycleUpdateDto.setOperator( String.valueOf(taobaoUserId));
+		lifecycleUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
 
 		// 修改保证金冻结状态
 		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
 		accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
 		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 		accountMoneyUpdateDto.setFrozenTime(new Date());
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+		accountMoneyUpdateDto.setOperator( String.valueOf(taobaoUserId));
+		accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
 
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());

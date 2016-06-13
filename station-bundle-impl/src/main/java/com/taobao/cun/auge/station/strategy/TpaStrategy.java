@@ -283,10 +283,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.BOND);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.SYS_PROCESS);
 		if (items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
 			param.copyOperatorDto(settleSuccessDto);

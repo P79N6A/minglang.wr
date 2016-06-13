@@ -56,6 +56,7 @@ public class StationConverter {
 		stationDto.setState(StationStateEnum.valueof(station.getState()));
 		stationDto.setStationNum(station.getStationNum());
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
+		stationDto.setAddress(address);
 		return stationDto;
 	}
 
