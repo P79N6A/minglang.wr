@@ -13,7 +13,7 @@ public class AttachementTypeIdEnum implements Serializable {
 
     private static final long serialVersionUID = -2325045809951918493L;
     
-    private static final Map<Long, AttachementTypeIdEnum> mappings = new HashMap<Long, AttachementTypeIdEnum>();
+    public static final Map<Long, AttachementTypeIdEnum> mappings = new HashMap<Long, AttachementTypeIdEnum>();
     
 
     public static final AttachementTypeIdEnum IDCARD_IMG = new AttachementTypeIdEnum(1L, "身份证扫描件");
