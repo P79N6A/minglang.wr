@@ -200,7 +200,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		checkStationNumDuplicate(null, stationDto.getStationNum());
 		
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
 			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
 			if (taobaoUserId == null) {
