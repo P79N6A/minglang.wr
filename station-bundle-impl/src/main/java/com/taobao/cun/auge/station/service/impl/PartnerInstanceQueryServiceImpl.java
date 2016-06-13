@@ -133,16 +133,27 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition) throws AugeServiceException {
+	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition)
+			throws AugeServiceException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
 			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
-			Page<PartnerInstance> page = partnerStationRelExtMapper
-					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
-			PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 
-			return result;
+			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
+			// ALL
+			if (null == instanceState) {
+
+				// 不需要生命周期表联合查询
+			} else {
+				Page<PartnerInstance> page = partnerStationRelExtMapper
+						.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+
+				PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+				return result;
+			}
+
+			return null;
 		} catch (Exception e) {
 			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
 			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());

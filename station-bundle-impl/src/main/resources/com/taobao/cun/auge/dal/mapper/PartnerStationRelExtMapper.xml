@@ -125,12 +125,31 @@
 		s.feature,
 		s.status,
 		s.fixed_type
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		,
+		life.business_type as lifecycle_business_type,
+		life.settled_protocol,
+		life.bond,
+		life.current_step,
+		life.role_approve
+		</if>
 		from partner_station_rel instance,partner p,station s
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+			, partner_lifecycle_items life
+		</if>
 		where instance.partner_id = p.id and instance.station_id=s.id and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n'
-	<include refid="partner_station_query_condition" />
-    <if test="orderByClause != null and orderByClause != ''" >
-      order by ${orderByClause}
-    </if>
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+		and instance.id = life.partner_instance_id and life.current_step!='END'
+		</if>
+		
+		<include refid="partner_station_query_condition" />
+		
+		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
+			<include refid="partner_lifecycle_items_condition" />
+		</if>
+	    <if test="orderByClause != null and orderByClause != ''" >
+	      order by ${orderByClause}
+	    </if>
   </select>
   
    <sql id="partner_station_query_condition" >
@@ -178,6 +197,26 @@
 			and p.name = #{partnerName,jdbcType=VARCHAR}
 		</if>
    </sql>
+   
+   
+   <sql id="partner_lifecycle_items_condition" >
+        <if test="businessType != null and businessType != ''" >
+			and life.business_type = #{businessType,jdbcType=VARCHAR}
+		</if>
+		<if test="settledProtocol != null and settledProtocol != ''" >
+			and life.settled_protocol = #{settledProtocol,jdbcType=VARCHAR}
+		</if>
+		<if test="bond != null and bond != ''" >
+			and life.bond = #{bond,jdbcType=VARCHAR}
+		</if>
+		<if test="currentStep != null and currentStep != ''" >
+			and life.current_step = #{currentStep,jdbcType=VARCHAR}
+		</if>
+		<if test="roleApprove != null and roleApprove != ''" >
+			and life.role_approve = #{roleApprove,jdbcType=VARCHAR}
+		</if>
+   </sql>
+   
    <select id="getWaitThawMoney" resultType="java.lang.Long" parameterType="java.util.Map" >
    <![CDATA[
    		select psr.id from partner_station_rel psr,partner_lifecycle_items pli
