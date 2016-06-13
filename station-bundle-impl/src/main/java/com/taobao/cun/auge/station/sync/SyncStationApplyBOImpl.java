@@ -173,7 +173,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
 		Partner partner = partnerMapper.selectByPrimaryKey(instance.getPartnerId());
 		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
-		example.createCriteria().andCurrentStepNotEqualTo("end").andPartnerInstanceIdEqualTo(instance.getId())
+		example.createCriteria().andCurrentStepNotEqualTo("END").andPartnerInstanceIdEqualTo(instance.getId())
 				.andBusinessTypeEqualTo(instance.getState());
 		List<PartnerLifecycleItems> partnerLifecycleItemsList = partnerLifecycleItemsMapper.selectByExample(example);
 		PartnerLifecycleItems partnerLifecycleItems = CollectionUtil.isEmpty(partnerLifecycleItemsList) ? null
