@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -109,6 +108,7 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.station.sync.SyncStationApplyBO;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.service.TaskExecuteService;
@@ -193,6 +193,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	
+	@Autowired
+	SyncStationApplyBO syncStationApplyBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -297,7 +300,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				instanceId = addCommon(partnerInstanceDto);
 
 				// 同步station_apply
-				syncStationApply(SyncStationApplyEnum.ADD, instanceId);
+				syncStationApplyBO.addStationApply(instanceId);
 			} else {// 修改
 				updateCommon(partnerInstanceDto);
 
@@ -370,7 +373,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Long instanceId = addCommon(partnerInstanceDto);
 
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.ADD, instanceId);
+			syncStationApplyBO.addStationApply(instanceId);
 
 			return instanceId;
 		} catch (AugeServiceException augeException) {
