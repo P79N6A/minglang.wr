@@ -396,27 +396,31 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			}
 			logger.info("attachment changed, instance_id={},station_apply_id={},type_id={}", partnerInstanceId, stationApplyId, typeId);
 			// 删除老的附件
-			for (Attachement sa : saSubList) {
-				sa.setIsDeleted("y");
-				sa.setModifier("sync");
-				sa.setGmtModified(now);
-				attachementMapper.updateByPrimaryKeySelective(sa);
+			if (!CollectionUtils.isEmpty(saSubList)) {
+				for (Attachement sa : saSubList) {
+					sa.setIsDeleted("y");
+					sa.setModifier("sync");
+					sa.setGmtModified(now);
+					attachementMapper.updateByPrimaryKeySelective(sa);
+				}
 			}
 			// 同步新的附件
-			for (Attachement ins : instanceSubList) {
-				ins.setCreator("sync");
-				ins.setModifier("sync");
-				ins.setGmtCreate(now);
-				ins.setGmtModified(now);
-				ins.setId(null);
-				if (AttachementTypeIdEnum.IDCARD_IMG.getCode().equals(typeId)) {
-					ins.setObjectId(instance.getPartnerId());
-					ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
-				} else {
-					ins.setObjectId(instance.getStationId());
-					ins.setBizType(AttachementBizTypeEnum.CRIUS_STATION.getCode());
+			if (!CollectionUtils.isEmpty(instanceSubList)) {
+				for (Attachement ins : instanceSubList) {
+					ins.setCreator("sync");
+					ins.setModifier("sync");
+					ins.setGmtCreate(now);
+					ins.setGmtModified(now);
+					ins.setId(null);
+					if (AttachementTypeIdEnum.IDCARD_IMG.getCode().equals(typeId)) {
+						ins.setObjectId(instance.getPartnerId());
+						ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
+					} else {
+						ins.setObjectId(instance.getStationId());
+						ins.setBizType(AttachementBizTypeEnum.CRIUS_STATION.getCode());
+					}
+					attachementMapper.insert(ins);
 				}
-				attachementMapper.insert(ins);
 			}
 
 		}
