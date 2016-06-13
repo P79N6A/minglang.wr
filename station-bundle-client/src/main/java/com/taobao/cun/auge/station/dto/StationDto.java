@@ -38,9 +38,14 @@ public class StationDto extends OperatorDto implements Serializable{
     private StationStateEnum state;
 
     /**
-     * 申请组织
+     * 县服务中心orgId
      */
     private Long applyOrg;
+    
+    /**
+     * 县服务中心名称
+     */
+    private String countyStationName;
 
     /**
      * 村点编号
@@ -294,6 +299,13 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
+	}
+
+	public String getCountyStationName() {
+		return countyStationName;
+	}
+
+	public void setCountyStationName(String countyStationName) {
+		this.countyStationName = countyStationName;
 	}	
-	
 }

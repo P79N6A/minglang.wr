@@ -80,6 +80,8 @@
     <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
     <result column="confirm" jdbcType="VARCHAR" property="confirm" />
     
+    <!-- 县服务中心-->
+    <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
@@ -124,7 +126,9 @@
 		s.provider_id,
 		s.feature,
 		s.status,
-		s.fixed_type
+		s.fixed_type,
+		org.name as county_station_name
+		
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 		,
 		life.business_type as lifecycle_business_type,
@@ -133,11 +137,12 @@
 		life.current_step,
 		life.role_approve
 		</if>
-		from partner_station_rel instance,partner p,station s
+		from partner_station_rel instance,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			, partner_lifecycle_items life
 		</if>
-		where instance.partner_id = p.id and instance.station_id=s.id and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n'
+		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
+		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 		and instance.id = life.partner_instance_id and life.current_step!='END'
 		</if>

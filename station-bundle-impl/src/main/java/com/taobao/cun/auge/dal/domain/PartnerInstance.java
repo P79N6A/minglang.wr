@@ -379,6 +379,11 @@ public class PartnerInstance {
      * 小二确认
      */
     private String confirm;
+    
+    /**
+     * 县服务中心名称
+     */
+    private String countyStationName;
 
 	/**
 	 * 获取主键
@@ -1547,5 +1552,12 @@ public class PartnerInstance {
 	public void setConfirm(String confirm) {
 		this.confirm = confirm;
 	}
-	
+
+	public String getCountyStationName() {
+		return countyStationName;
+	}
+
+	public void setCountyStationName(String countyStationName) {
+		this.countyStationName = countyStationName;
+	}
 }

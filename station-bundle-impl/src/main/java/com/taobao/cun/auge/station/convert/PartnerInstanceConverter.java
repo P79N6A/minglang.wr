@@ -230,6 +230,7 @@ public final class PartnerInstanceConverter {
 		stationDto.setName(instance.getStationName());
 		stationDto.setDescription(instance.getStationDescription());
 		stationDto.setApplyOrg(instance.getApplyOrg());
+		stationDto.setCountyStationName(instance.getCountyStationName());
 		stationDto.setStationNum(instance.getStationNum());
 		stationDto.setCovered(instance.getCovered());
 
