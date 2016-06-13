@@ -20,6 +20,8 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	// 村服务站所属村淘组织
 	private Long[] orgIds;
+	
+	private String orgIdPath;
 
 	// 村服务站编号
 	private String stationNum;
@@ -73,6 +75,14 @@ public class PartnerInstancePageCondition extends PageQuery {
 	
 	//当前阶段
 	private PartnerLifecycleCurrentStepEnum currentStep;
+
+	public String getOrgIdPath() {
+		return orgIdPath;
+	}
+
+	public void setOrgIdPath(String orgIdPath) {
+		this.orgIdPath = orgIdPath;
+	}
 
 	public String getStationNum() {
 		return stationNum;
