@@ -794,6 +794,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
 		accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
 		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 		accountMoneyUpdateDto.setFrozenTime(new Date());
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
 		accountMoneyUpdateDto.setOperator( String.valueOf(taobaoUserId));
