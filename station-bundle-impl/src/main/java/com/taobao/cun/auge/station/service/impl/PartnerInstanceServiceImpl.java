@@ -331,6 +331,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				PartnerProtocolRelDto fixPro = stationDto.getFixedProtocols();
 				if (fixPro != null) {
 					fixPro.copyOperatorDto(stationDto);
+					fixPro.setObjectId(stationId);
 					partnerProtocolRelBO.addPartnerProtocolRel(fixPro);
 				}
 			}
