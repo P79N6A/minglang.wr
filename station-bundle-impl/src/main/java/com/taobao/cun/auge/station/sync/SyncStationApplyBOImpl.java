@@ -379,10 +379,10 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		List<Attachement> saList = getAttachment(stationApplyId, "STATION", null);
 		Map<Long, List<Attachement>> saMap = Maps.newHashMap();
 		copy2Map(saMap, saList);
+		
 		// 新模型的附件分别挂在partner(身份证)和村点上
 		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
 		Map<Long, List<Attachement>> instanceMap = Maps.newHashMap();
-
 		List<Attachement> partnerList = getAttachment(instance.getPartnerId(), "PARTNER", null);
 		List<Attachement> stationList = getAttachment(instance.getStationId(), "CRIUS_STATION", null);
 		copy2Map(instanceMap, partnerList);
@@ -417,7 +417,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 						ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
 					} else {
 						ins.setObjectId(instance.getStationId());
-						ins.setBizType(AttachementBizTypeEnum.CRIUS_STATION.getCode());
+						ins.setBizType("STATION");
 					}
 					attachementMapper.insert(ins);
 				}
