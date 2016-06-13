@@ -336,6 +336,49 @@ public class PartnerInstance {
 	 */
 	@Column(name = "fixed_type")
 	private String fixedType;
+	
+	
+	// -------------生命周期-----------------
+	
+	/**
+	 * 生命周期业务类型
+	 */
+    private String lifecycleBusinessType;
+    
+    /**
+     * 入驻协议
+     */
+    private String settledProtocol;
+    
+    /**
+     * 保证金
+     */
+    private String bond;
+    
+    /**
+     * 退出协议
+     */
+    private String quitProtocol;
+    
+    /**
+     * 物流审批
+     */
+    private String logisticsApprove;
+    
+    /**
+     * 当前步骤
+     */
+    private String currentStep;
+    
+    /**
+     * 角色审批
+     */
+    private String roleApprove;
+    
+    /**
+     * 小二确认
+     */
+    private String confirm;
 
 	/**
 	 * 获取主键
@@ -1441,4 +1484,68 @@ public class PartnerInstance {
 		this.fixedType = fixedType;
 	}
 
+	public String getLifecycleBusinessType() {
+		return lifecycleBusinessType;
+	}
+
+	public void setLifecycleBusinessType(String lifecycleBusinessType) {
+		this.lifecycleBusinessType = lifecycleBusinessType;
+	}
+
+	public String getSettledProtocol() {
+		return settledProtocol;
+	}
+
+	public void setSettledProtocol(String settledProtocol) {
+		this.settledProtocol = settledProtocol;
+	}
+
+	public String getBond() {
+		return bond;
+	}
+
+	public void setBond(String bond) {
+		this.bond = bond;
+	}
+
+	public String getQuitProtocol() {
+		return quitProtocol;
+	}
+
+	public void setQuitProtocol(String quitProtocol) {
+		this.quitProtocol = quitProtocol;
+	}
+
+	public String getLogisticsApprove() {
+		return logisticsApprove;
+	}
+
+	public void setLogisticsApprove(String logisticsApprove) {
+		this.logisticsApprove = logisticsApprove;
+	}
+
+	public String getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(String currentStep) {
+		this.currentStep = currentStep;
+	}
+
+	public String getRoleApprove() {
+		return roleApprove;
+	}
+
+	public void setRoleApprove(String roleApprove) {
+		this.roleApprove = roleApprove;
+	}
+
+	public String getConfirm() {
+		return confirm;
+	}
+
+	public void setConfirm(String confirm) {
+		this.confirm = confirm;
+	}
+	
 }

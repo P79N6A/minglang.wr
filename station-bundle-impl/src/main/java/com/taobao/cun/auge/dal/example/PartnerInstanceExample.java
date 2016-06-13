@@ -6,33 +6,63 @@ public class PartnerInstanceExample implements Serializable {
 
 	private static final long serialVersionUID = 1232528817432543217L;
 
+	// 村点所属组织ids
 	private Long[] orgIds;
 
+	// 村点编号
 	private String stationNum;
 
+	// 村点名称
 	private String stationName;
 
+	// 村点管理员 小二工号或TP商淘宝userid
 	private String managerId;
 
+	// 服务商id
 	private Long providerId;
 
+	// 省
 	private String province;
 
+	// 市
 	private String city;
 
+	// 县
 	private String county;
 
+	// 镇
 	private String town;
 
+	// 人的姓名
 	private String partnerName;
 
+	// 淘宝nick
 	private String taobaoNick;
 
+	// 合伙人类型
 	private String partnerType;
 
+	// 合伙人状态
 	private String partnerState;
 
+	// 排序
 	private String orderByClause;
+	
+	//======生命週期========
+	//业务类型
+	private String businessType;
+	
+	//入驻协议
+	private String settledProtocol;
+	
+	//保证金
+	private String bond;
+	
+	//当前步骤
+	private String currentStep;
+	
+	//角色审批
+	private String roleApprove;
 
 	public String getStationNum() {
 		return stationNum;
@@ -146,4 +176,43 @@ public class PartnerInstanceExample implements Serializable {
 		this.partnerName = partnerName;
 	}
 
+	public String getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(String businessType) {
+		this.businessType = businessType;
+	}
+
+	public String getSettledProtocol() {
+		return settledProtocol;
+	}
+
+	public void setSettledProtocol(String settledProtocol) {
+		this.settledProtocol = settledProtocol;
+	}
+
+	public String getBond() {
+		return bond;
+	}
+
+	public void setBond(String bond) {
+		this.bond = bond;
+	}
+
+	public String getCurrentStep() {
+		return currentStep;
+	}
+
+	public void setCurrentStep(String currentStep) {
+		this.currentStep = currentStep;
+	}
+
+	public String getRoleApprove() {
+		return roleApprove;
+	}
+
+	public void setRoleApprove(String roleApprove) {
+		this.roleApprove = roleApprove;
+	}
 }

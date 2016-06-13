@@ -17,12 +17,21 @@ import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
@@ -65,8 +74,7 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
 			example.setTaobaoNick(condition.getTaobaoNick());
 		}
-		if (null != condition.getPartnerInstanceState()
-				&& StringUtil.isNotBlank(condition.getPartnerInstanceState().getCode())) {
+		if (null != condition.getPartnerInstanceState()) {
 			example.setPartnerState(condition.getPartnerInstanceState().getCode());
 		}
 
@@ -82,6 +90,25 @@ public final class PartnerInstanceConverter {
 			example.setPartnerName(condition.getPartnerName());
 		}
 		example.setOrgIds(condition.getOrgIds());
+
+		if (null != condition.getCurrentStep()) {
+			example.setCurrentStep(condition.getCurrentStep().getCode());
+		}
+		if (null != condition.getBusinessType()) {
+			example.setBusinessType(condition.getBusinessType().getCode());
+		}
+
+		if (null != condition.getSettleProtocol()) {
+			example.setSettledProtocol(condition.getSettleProtocol().getCode());
+		}
+
+		if (null != condition.getBond()) {
+			example.setBond(condition.getBond().getCode());
+		}
+
+		if (null != condition.getRoleApprove()) {
+			example.setRoleApprove(condition.getRoleApprove().getCode());
+		}
 
 		return example;
 	}
@@ -127,9 +154,26 @@ public final class PartnerInstanceConverter {
 		instanceDto.setPartnerId(instance.getPartnerId());
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
-		instanceDto.setPartnerLifecycleDto(null);
+		instanceDto.setPartnerLifecycleDto(convertLifecycleDto(instance));
 
 		return instanceDto;
+	}
+	
+	private static PartnerLifecycleDto convertLifecycleDto(PartnerInstance instance){
+		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
+		
+		lifecleDto.setPartnerType(PartnerInstanceTypeEnum.valueof(instance.getType()));
+		lifecleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.valueof(instance.getLifecycleBusinessType()));
+		lifecleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.valueof(instance.getSettledProtocol()));
+		lifecleDto.setBond(PartnerLifecycleBondEnum.valueof(instance.getBond()));
+		lifecleDto.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.valueof(instance.getQuitProtocol()));
+		lifecleDto.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.valueof(instance.getLogisticsApprove()));
+		lifecleDto.setPartnerInstanceId(instance.getId());
+		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(instance.getCurrentStep()));
+		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
+		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
+		
+		return lifecleDto;
 	}
 
 	public static PartnerInstanceDto convert(PartnerStationRel psRel) {
