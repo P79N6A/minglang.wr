@@ -412,13 +412,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 					ins.setGmtCreate(now);
 					ins.setGmtModified(now);
 					ins.setId(null);
-					if (AttachementTypeIdEnum.IDCARD_IMG.getCode().equals(typeId)) {
-						ins.setObjectId(instance.getPartnerId());
-						ins.setBizType(AttachementBizTypeEnum.PARTNER.getCode());
-					} else {
-						ins.setObjectId(instance.getStationId());
-						ins.setBizType("STATION");
-					}
+					ins.setBizType("STATION");
+					ins.setObjectId(stationApplyId);
 					attachementMapper.insert(ins);
 				}
 			}
