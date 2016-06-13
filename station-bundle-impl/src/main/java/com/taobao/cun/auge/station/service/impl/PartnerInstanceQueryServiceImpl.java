@@ -141,23 +141,41 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 
 			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
+
+			Page<PartnerInstance> page = partnerStationRelExtMapper
+					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
 			// ALL
 			if (null == instanceState) {
-
-				// 不需要生命周期表联合查询
-			} else {
-				Page<PartnerInstance> page = partnerStationRelExtMapper
-						.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
-
-				PageDto<PartnerInstanceDto> result = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
-				return result;
+				for (PartnerInstance instance : page) {
+					PartnerLifecycleItems lifecycle = getLifecycleItem(instance.getId(), instance.getState());
+					if (null != lifecycle) {
+						instance.setBusinessType(lifecycle.getBusinessType());
+						instance.setSettledProtocol(lifecycle.getSettledProtocol());
+						instance.setBond(lifecycle.getBond());
+						instance.setQuitProtocol(lifecycle.getQuitProtocol());
+						instance.setLogisticsApprove(lifecycle.getLogisticsApprove());
+						instance.setCurrentStep(lifecycle.getCurrentStep());
+						instance.setRoleApprove(lifecycle.getRoleApprove());
+						instance.setConfirm(lifecycle.getConfirm());
+					}
+				}
 			}
-
-			return null;
+			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 		} catch (Exception e) {
 			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
 			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
 		}
+	}
+
+	private PartnerLifecycleItems getLifecycleItem(Long id, String state) {
+		if(PartnerInstanceStateEnum.SETTLING.getCode().equals(state)){
+			return  partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.SETTLING);
+		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(state)){
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.CLOSING);
+		}else if(PartnerInstanceStateEnum.QUITING.getCode().equals(state)){
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.QUITING);
+		}
+		return null;
 	}
 
 	@Override
