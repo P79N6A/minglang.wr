@@ -1,16 +1,22 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ali.com.google.common.collect.Lists;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
@@ -22,6 +28,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 	@Autowired
 	TaskExecuteService taskExecuteService;
+	
+	@Autowired
+	UicReadAdapter uicReadAdapter;
 
 	public void submitFreezeBondTasks(PartnerInstanceDto instance) {
 		// 异构系统交互提交后台任务
@@ -102,6 +111,68 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 		// TODO 提交任务
 		taskExecuteService.submitTasks(taskDtos);
+	}
+
+	@Override
+	public void submitUpdateCainiaoStation(Long instanceId, String operatorId)
+			throws AugeServiceException {
+			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
+			cainiaoTaskVo.setBeanName("caiNiaoService");
+			cainiaoTaskVo.setMethodName("updateCainiaoStation");
+			cainiaoTaskVo.setBusinessStepNo(1l);
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.UPDATE_SERVICING_CAINIAO.getCode());
+			cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
+			cainiaoTaskVo.setOperator(operatorId);
+
+			SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+			syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+
+			cainiaoTaskVo.setParameter(syncModifyCainiaoStationDto);
+
+			// 提交任务
+			taskExecuteService.submitTask(cainiaoTaskVo);
+		
+	}
+
+	@Override
+	public void submitDegradePartner(PartnerInstanceDto instanceDto, String operatorId)
+			throws AugeServiceException {
+		//异构系统交互提交后台任务
+		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+		
+		//UIC打标
+		UserTagDto userTagDto = new UserTagDto();
+		userTagDto.setTaobaoUserId(instanceDto.getTaobaoUserId());
+		userTagDto.setPartnerType(PartnerInstanceTypeEnum.TPA);
+		
+		GeneralTaskDto task = new GeneralTaskDto();
+		task.setBusinessNo(String.valueOf(instanceDto.getId()));
+		task.setBeanName("uicTagServiceImpl");
+		task.setMethodName("addUserTag");
+		task.setBusinessStepNo(1l);
+		task.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+		task.setBusinessStepDesc("addUserTag");
+		task.setOperator(operatorId);
+		task.setParameter(userTagDto);
+		taskLists.add(task);
+		
+        //旺旺打标 begin
+        if(PartnerInstanceStateEnum.CLOSED.getCode().equals(instanceDto.getState())){
+        	String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(instanceDto.getTaobaoUserId());
+        	GeneralTaskDto wwTask = new GeneralTaskDto();
+        	
+        	wwTask.setBusinessNo(String.valueOf(instanceDto.getId()));
+        	wwTask.setBeanName("wangWangTagServiceImpl");
+        	wwTask.setMethodName("addWangWangTagByNick");
+        	wwTask.setBusinessStepNo(2l);
+        	wwTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+        	wwTask.setBusinessStepDesc("addWangWangTag");
+        	wwTask.setOperator(operatorId);
+        	wwTask.setParameter(taobaoNick);
+        	taskLists.add(wwTask);
+        }
+        taskExecuteService.submitTasks(taskLists);
 	}
 
 }

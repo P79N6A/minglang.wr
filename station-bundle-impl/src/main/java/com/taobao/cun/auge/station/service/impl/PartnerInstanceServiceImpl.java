@@ -181,9 +181,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	CloseStationApplyBO closeStationApplyBO;
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
-
-	@Autowired
-	TaskExecuteService taskExecuteService;
 	
 	@Autowired
 	AppResourceBO appResourceBO;
@@ -371,9 +368,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
 			
 			Long instanceId = addCommon(partnerInstanceDto);
-
-			// 同步station_apply
-			syncStationApplyBO.addStationApply(instanceId);
 
 			return instanceId;
 		} catch (AugeServiceException augeException) {
@@ -578,7 +572,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				attachementBO.modifyAttachementBatch(sDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
 						partnerInstanceUpdateServicingDto);
 			}
-			syncUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
+			generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId,  partnerInstanceUpdateServicingDto.getOperator());
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
 			logger.error(error, augeException);
@@ -587,29 +581,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
-	}
-
-	private void syncUpdateCainiaoStation(Long instanceId, String operatorId) {
-		try {
-			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
-			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
-			cainiaoTaskVo.setBeanName("caiNiaoService");
-			cainiaoTaskVo.setMethodName("updateCainiaoStation");
-			cainiaoTaskVo.setBusinessStepNo(1l);
-			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
-			cainiaoTaskVo.setBusinessStepDesc("修改物流站点");
-			cainiaoTaskVo.setOperator(operatorId);
-
-			SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
-			syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
-
-			cainiaoTaskVo.setParameter(syncModifyCainiaoStationDto);
-
-			// 提交任务
-			taskExecuteService.submitTask(cainiaoTaskVo);
-		} catch (Exception e) {
-			logger.error("Failed to submit syncUpdateCainiaoStation task. instanceId=" + instanceId + " operatorId = " + operatorId, e);
 		}
 	}
 
@@ -1149,7 +1120,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 			
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.ADD, instanceId);
+			syncStationApplyBO.addStationApply(instanceId);
 		} else {
 			// 暂存后，修改入驻
 			updateSubmit(partnerInstanceDto);
@@ -1196,15 +1167,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long parentTaobaoUserId = degradeDto.getParentTaobaoUserId();
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(parentTaobaoUserId);
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		PartnerInstanceDto rel = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		if (rel == null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
-		if (!StringUtils.equals(PartnerInstanceTypeEnum.TP.getCode(),rel.getType())) {
+		if (!StringUtils.equals(PartnerInstanceTypeEnum.TP.getCode(),rel.getType().getCode())) {
 			throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TYPE_FAIL);
 		}
 		
-		if (!PartnerInstanceStateEnum.canDegradeStateCodeList().contains(rel.getState())) {
+		if (!PartnerInstanceStateEnum.canDegradeStateCodeList().contains(rel.getState().getCode())) {
 			throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_STATE_FAIL);
 		}
 		int tpaCount = partnerInstanceBO.getActiveTpaByParentStationId(rel.getParentStationId());
@@ -1244,47 +1215,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME);
 		}
 		
-		
-		// 已停业 增加旺旺 tag
-		try {
-			//异构系统交互提交后台任务
-			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
-			
-			//UIC打标
-			UserTagDto userTagDto = new UserTagDto();
-			userTagDto.setTaobaoUserId(rel.getTaobaoUserId());
-			userTagDto.setPartnerType(PartnerInstanceTypeEnum.TPA);
-			
-			GeneralTaskDto task = new GeneralTaskDto();
-			task.setBusinessNo(String.valueOf(instanceId));
-			task.setBeanName("uicTagServiceImpl");
-			task.setMethodName("addUserTag");
-			task.setBusinessStepNo(1l);
-			task.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
-			task.setBusinessStepDesc("addUserTag");
-			task.setOperator(degradeDto.getOperator());
-			task.setParameter(userTagDto);
-			taskLists.add(task);
-			
-	        //旺旺打标 begin
-	        if(PartnerInstanceStateEnum.CLOSED.getCode().equals(rel.getState())){
-	        	String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(rel.getTaobaoUserId());
-	        	GeneralTaskDto wwTask = new GeneralTaskDto();
-	        	
-	        	wwTask.setBusinessNo(String.valueOf(instanceId));
-	        	wwTask.setBeanName("wangWangTagServiceImpl");
-	        	wwTask.setMethodName("addWangWangTagByNick");
-	        	wwTask.setBusinessStepNo(2l);
-	        	wwTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
-	        	wwTask.setBusinessStepDesc("addWangWangTag");
-	        	wwTask.setOperator(degradeDto.getOperator());
-	        	wwTask.setParameter(taobaoNick);
-	        	taskLists.add(wwTask);
-	        }
-	        taskExecuteService.submitTasks(taskLists);
-		} catch (Exception e) {
-			 logger.error("降级淘帮手为已停业状态打标失败, instanceId= " + instanceId, e);
-		}
+		generalTaskSubmitService.submitDegradePartner(rel, degradeDto.getOperator());
 		
 		PartnerInstanceDto param= new PartnerInstanceDto();
 		param.setId(instanceId);

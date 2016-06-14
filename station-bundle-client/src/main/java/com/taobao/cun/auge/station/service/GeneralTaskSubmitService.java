@@ -6,5 +6,9 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public interface GeneralTaskSubmitService {
 
 	public void submitFreezeBondTasks(PartnerInstanceDto instance) throws AugeServiceException;
+	
+	public void submitUpdateCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException;
+	
+	public void submitDegradePartner(PartnerInstanceDto instanceDto,String operatorId) throws AugeServiceException;
 
 }
