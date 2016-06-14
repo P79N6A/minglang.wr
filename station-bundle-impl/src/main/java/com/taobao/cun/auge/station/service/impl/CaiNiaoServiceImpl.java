@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -92,6 +93,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				relDto.setCainiaoStationId(caiNiaostationId);
 				relDto.setType(CuntaoCainiaoStationRelTypeEnum.STATION);
 				relDto.setIsOwn("y");
+				relDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 				cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDto);
 			}
 		} catch (Exception e) {
