@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -31,6 +32,7 @@ import com.taobao.cun.chronus.service.TaskExecuteService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@Service("partnerInstanceScheduleService")
 @HSFProvider(serviceInterface = PartnerInstanceScheduleService.class)
 public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceScheduleService {
 	

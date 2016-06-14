@@ -13,6 +13,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
@@ -85,6 +86,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
 		settleSuccessDto.setInstanceId(instance.getId());
 		settleSuccessDto.setOperator(operator);
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		stationConfirmGeneralTaskDto.setParameter(settleSuccessDto);
 		stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
 		taskDtos.add(stationConfirmGeneralTaskDto);
@@ -146,7 +148,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 		GeneralTaskDto task = new GeneralTaskDto();
 		task.setBusinessNo(String.valueOf(instanceDto.getId()));
-		task.setBeanName("uicTagServiceImpl");
+		task.setBeanName("uicTagService");
 		task.setMethodName("addUserTag");
 		task.setBusinessStepNo(1l);
 		task.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
@@ -162,7 +164,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         	GeneralTaskDto wwTask = new GeneralTaskDto();
         	
         	wwTask.setBusinessNo(String.valueOf(instanceDto.getId()));
-        	wwTask.setBeanName("wangWangTagServiceImpl");
+        	wwTask.setBeanName("wangWangTagService");
         	wwTask.setMethodName("addWangWangTagByNick");
         	wwTask.setBusinessStepNo(2l);
         	wwTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());

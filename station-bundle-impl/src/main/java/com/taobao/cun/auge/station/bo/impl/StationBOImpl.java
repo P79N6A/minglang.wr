@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,6 +37,20 @@ public class StationBOImpl implements StationBO {
 	public Station getStationById(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		return stationMapper.selectByPrimaryKey(stationId);
+	}
+	
+	@Override
+	public List<Station> getStationById(List<Long> stationIds) throws AugeServiceException {
+		if (CollectionUtils.isEmpty(stationIds)) {
+			return Collections.<Station> emptyList();
+		}
+
+		StationExample example = new StationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdIn(stationIds);
+
+		return stationMapper.selectByExample(example);
 	}
 
 	@Override
@@ -135,4 +152,6 @@ public class StationBOImpl implements StationBO {
 		DomainUtils.beforeDelete(rel, operator);
 		stationMapper.updateByPrimaryKeySelective(rel);
 	}
+
+
 }
