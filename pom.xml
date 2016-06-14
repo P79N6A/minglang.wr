@@ -365,10 +365,6 @@
 				<artifactId>spring</artifactId>
 				<version>999-not-exist</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-log4j</artifactId>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
