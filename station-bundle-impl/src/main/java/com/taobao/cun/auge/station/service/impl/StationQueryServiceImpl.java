@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +41,14 @@ public class StationQueryServiceImpl implements StationQueryService {
 		}
 		return stationDto;
 	}
-	
 
+	@Override
+	public List<StationDto> queryStations(List<Long> stationIds) throws AugeServiceException {
+		if (CollectionUtils.isEmpty(stationIds)) {
+			return Collections.<StationDto> emptyList();
+		}
+
+		List<Station> stations = stationBO.getStationById(stationIds);
+		return StationConverter.toStationDtos(stations);
+	}
 }
