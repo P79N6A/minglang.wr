@@ -13,16 +13,12 @@ public class ProtocolTypeEnum implements Serializable {
     private String code;
     private String desc;
 
-    //入驻协议
     public static final ProtocolTypeEnum SETTLE_PRO = new ProtocolTypeEnum("SETTLE_PRO", "入驻协议");
 
-    //管理协议
     public static final ProtocolTypeEnum MANAGE_PRO = new ProtocolTypeEnum("MANAGE_PRO", "管理协议");
 
-    //合伙人退出协议
     public static final ProtocolTypeEnum PARTNER_QUIT_PRO = new ProtocolTypeEnum("PARTNER_QUIT_PRO", "合伙人退出协议");
 
-    /** 协议子类型 **/
     public static final ProtocolTypeEnum GOV_FIXED = new ProtocolTypeEnum("GOV_FIXED", "政府固点");
     
     public static final ProtocolTypeEnum TRIPARTITE_FIXED = new ProtocolTypeEnum("TRIPARTITE_FIXED", "三方固点");
