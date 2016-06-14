@@ -806,7 +806,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 
-		return false;
+		return true;
 	}
 
 	@Override
