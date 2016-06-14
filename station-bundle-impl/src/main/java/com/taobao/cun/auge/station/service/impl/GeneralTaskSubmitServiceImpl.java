@@ -158,7 +158,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		taskLists.add(task);
 		
         //旺旺打标 begin
-        if(PartnerInstanceStateEnum.CLOSED.getCode().equals(instanceDto.getState())){
+        if(PartnerInstanceStateEnum.CLOSED.getCode().equals(instanceDto.getState().getCode())){
         	String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(instanceDto.getTaobaoUserId());
         	GeneralTaskDto wwTask = new GeneralTaskDto();
         	
