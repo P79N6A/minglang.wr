@@ -12,7 +12,9 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Service;
 
+@Service("taskExecutor")
 @HSFProvider(serviceInterface = TaskExecutor.class, clientTimeout = 10000)
 public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAware {
 

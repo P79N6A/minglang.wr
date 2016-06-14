@@ -115,7 +115,7 @@ public class StartProcessListener implements EventListener {
 			startProcessTask.setBusinessStepNo(1l);
 			startProcessTask.setBusinessType(business.getCode());
 			startProcessTask.setBusinessStepDesc(business.getDesc());
-			startProcessTask.setBeanName("processServiceImpl");
+			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
 			startProcessTask.setOperator(stateChangeEvent.getOperator());
 			startProcessTask.setParameter(startProcessDto);

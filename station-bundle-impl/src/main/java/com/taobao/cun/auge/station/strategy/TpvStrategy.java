@@ -277,6 +277,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			piDto.setServiceEndTime(serviceEndTime);
 			piDto.setId(instanceId);
 			piDto.setState(PartnerInstanceStateEnum.SERVICING);
+			piDto.setVersion(rel.getVersion());
 			piDto.setPartnerId(oldPartnerId);
 			piDto.copyOperatorDto(settleSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(piDto);
@@ -289,6 +290,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			piDto.setServiceEndTime(serviceEndTime);
 			piDto.setId(instanceId);
 			piDto.setState(PartnerInstanceStateEnum.SERVICING);
+			piDto.setVersion(rel.getVersion());
 			piDto.copyOperatorDto(settleSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(piDto);
 		}

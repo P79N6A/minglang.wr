@@ -238,6 +238,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		
 		//保证partner表有效记录唯一性
 		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
+		
 		if (oldPartnerId != null) {
 			//更新身份证
 			List<AttachementDto>  attDtoList = attachementBO.selectAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
@@ -253,12 +254,16 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			newPartnerDto.copyOperatorDto(settleSuccessDto);
 			partnerBO.updatePartner(PartnerConverter.toPartnerDto(newPartner));
 			
+			
+			
+			
 			PartnerInstanceDto piDto = new PartnerInstanceDto();
 			piDto.setServiceBeginTime(serviceBeginTime);
 			piDto.setServiceEndTime(serviceEndTime);
 			piDto.setId(instanceId);
 			piDto.setState(PartnerInstanceStateEnum.DECORATING);
 			piDto.setPartnerId(oldPartnerId);
+			piDto.setVersion(rel.getVersion());
 			piDto.copyOperatorDto(settleSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(piDto);
 			
@@ -270,6 +275,8 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			piDto.setServiceEndTime(serviceEndTime);
 			piDto.setId(instanceId);
 			piDto.setState(PartnerInstanceStateEnum.DECORATING);
+			piDto.setVersion(rel.getVersion());
+			piDto.setParentStationId(stationId);
 			piDto.copyOperatorDto(settleSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(piDto);
 		}

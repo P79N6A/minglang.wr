@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,7 +117,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  *
  */
-
+@Service("partnerInstanceService")
 @HSFProvider(serviceInterface = PartnerInstanceService.class)
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 

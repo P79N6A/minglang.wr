@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -17,7 +18,7 @@ import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
+@Service("stationQueryService")
 @HSFProvider(serviceInterface = StationQueryService.class)
 public class StationQueryServiceImpl implements StationQueryService {
 	
