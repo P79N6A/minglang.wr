@@ -13,6 +13,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
@@ -85,6 +86,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
 		settleSuccessDto.setInstanceId(instance.getId());
 		settleSuccessDto.setOperator(operator);
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		stationConfirmGeneralTaskDto.setParameter(settleSuccessDto);
 		stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
 		taskDtos.add(stationConfirmGeneralTaskDto);
