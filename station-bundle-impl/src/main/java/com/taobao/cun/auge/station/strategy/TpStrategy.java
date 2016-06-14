@@ -276,6 +276,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			piDto.setId(instanceId);
 			piDto.setState(PartnerInstanceStateEnum.DECORATING);
 			piDto.setVersion(rel.getVersion());
+			piDto.setParentStationId(stationId);
 			piDto.copyOperatorDto(settleSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(piDto);
 		}
