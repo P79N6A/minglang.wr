@@ -78,12 +78,8 @@ public final class PartnerInstanceConverter {
 			example.setPartnerState(condition.getPartnerInstanceState().getCode());
 		}
 
-		// if (null != condition.getPartnerType()) {
-		// example.setPartnerType(condition.getPartnerType().getCode());
-		// }
-
-		if (StringUtil.isNotBlank(condition.getPartnerType())) {
-			example.setPartnerType(condition.getPartnerType());
+		if (null != condition.getPartnerType()) {
+			example.setPartnerType(condition.getPartnerType().getCode());
 		}
 
 		if (StringUtil.isNotBlank(condition.getPartnerName())) {
