@@ -173,7 +173,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
 		Partner partner = partnerMapper.selectByPrimaryKey(instance.getPartnerId());
 		PartnerLifecycleItemsExample example = new PartnerLifecycleItemsExample();
-		example.createCriteria().andCurrentStepNotEqualTo("end").andPartnerInstanceIdEqualTo(instance.getId())
+		example.createCriteria().andCurrentStepNotEqualTo("END").andPartnerInstanceIdEqualTo(instance.getId())
 				.andBusinessTypeEqualTo(instance.getState());
 		List<PartnerLifecycleItems> partnerLifecycleItemsList = partnerLifecycleItemsMapper.selectByExample(example);
 		PartnerLifecycleItems partnerLifecycleItems = CollectionUtil.isEmpty(partnerLifecycleItemsList) ? null
@@ -483,19 +483,19 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 	}
 
 	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
-			PartnerLifecycleItems PartnerLifecycle) {
+			PartnerLifecycleItems partnerLifecycle) {
 		if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
 			return StationApplyStateEnum.TEMP.getCode();
 		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
 			// 入驻中必须要有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
 					return StationApplyStateEnum.TPA_TEMP.getCode();
 				}
-			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.SUMITTED.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(PartnerLifecycle.getCurrentStep())
-					|| PartnerLifecycleCurrentStepEnum.SYS_PROCESS.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycle.getCurrentStep())
+					|| PartnerLifecycleCurrentStepEnum.SYS_PROCESS.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.CONFIRMED.getCode();
 			}
 		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)
@@ -515,9 +515,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
 		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
 			// 必须有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.QUITAUDITING.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(PartnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
 			}
 
