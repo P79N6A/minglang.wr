@@ -69,7 +69,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
-
 	@Autowired
 	StationBO stationBO;
 	@Autowired
