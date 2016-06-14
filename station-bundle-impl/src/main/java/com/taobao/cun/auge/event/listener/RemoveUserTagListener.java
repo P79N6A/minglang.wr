@@ -73,7 +73,7 @@ public class RemoveUserTagListener implements EventListener {
 			// uic去标
 			GeneralTaskDto task = new GeneralTaskDto();
 			task.setBusinessNo(String.valueOf(taobaoUserId));
-			task.setBeanName("uicTagServiceImpl");
+			task.setBeanName("uicTagService");
 			task.setMethodName("removeUserTag");
 			task.setBusinessStepNo(1l);
 			task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
@@ -85,7 +85,7 @@ public class RemoveUserTagListener implements EventListener {
 			// 旺旺去标
 			GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
 			wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
-			wangwangTaskVo.setBeanName("wangWangTagServiceImpl");
+			wangwangTaskVo.setBeanName("wangWangTagService");
 			wangwangTaskVo.setMethodName("removeWangWangTagByNick");
 			wangwangTaskVo.setBusinessStepNo(2l);
 			wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());

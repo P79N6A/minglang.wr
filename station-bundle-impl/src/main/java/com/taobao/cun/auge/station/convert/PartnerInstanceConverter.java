@@ -78,12 +78,8 @@ public final class PartnerInstanceConverter {
 			example.setPartnerState(condition.getPartnerInstanceState().getCode());
 		}
 
-		// if (null != condition.getPartnerType()) {
-		// example.setPartnerType(condition.getPartnerType().getCode());
-		// }
-
-		if (StringUtil.isNotBlank(condition.getPartnerType())) {
-			example.setPartnerType(condition.getPartnerType());
+		if (null != condition.getPartnerType()) {
+			example.setPartnerType(condition.getPartnerType().getCode());
 		}
 
 		if (StringUtil.isNotBlank(condition.getPartnerName())) {
@@ -108,6 +104,10 @@ public final class PartnerInstanceConverter {
 
 		if (null != condition.getRoleApprove()) {
 			example.setRoleApprove(condition.getRoleApprove().getCode());
+		}
+		
+		if(StringUtil.isNotBlank(condition.getOrgIdPath())){
+			example.setOrgIdPath(condition.getOrgIdPath());
 		}
 
 		return example;
