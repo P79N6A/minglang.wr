@@ -1,7 +1,10 @@
 package com.taobao.cun.auge.station.convert;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -104,11 +107,11 @@ public class StationConverter {
 	}
 
 	public static List<StationDto> toStationDtos(List<Station> stations) {
-		if (stations == null) {
-			return null;
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<StationDto>emptyList();
 		}
 
-		List<StationDto> list = new ArrayList<StationDto>();
+		List<StationDto> list = new ArrayList<StationDto>(stations.size());
 		for (Station station : stations) {
 			list.add(toStationDto(station));
 		}
