@@ -24,6 +24,7 @@ public class ProtocolTypeEnum implements Serializable {
 
     /** 协议子类型 **/
     public static final ProtocolTypeEnum GOV_FIXED = new ProtocolTypeEnum("GOV_FIXED", "政府固点");
+    
     public static final ProtocolTypeEnum TRIPARTITE_FIXED = new ProtocolTypeEnum("TRIPARTITE_FIXED", "三方固点");
 
     static {
