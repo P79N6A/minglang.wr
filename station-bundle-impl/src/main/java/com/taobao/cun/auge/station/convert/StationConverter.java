@@ -113,6 +113,9 @@ public class StationConverter {
 
 		List<StationDto> list = new ArrayList<StationDto>(stations.size());
 		for (Station station : stations) {
+			if(null == station){
+				continue;
+			}
 			list.add(toStationDto(station));
 		}
 
@@ -120,12 +123,15 @@ public class StationConverter {
 	}
 
 	public static List<Station> toStations(List<StationDto> stationDtos) {
-		if (stationDtos == null) {
-			return null;
+		if (CollectionUtils.isEmpty(stationDtos)) {
+			return Collections.<Station>emptyList();
 		}
 
 		List<Station> list = new ArrayList<Station>();
 		for (StationDto stationDto : stationDtos) {
+			if(null == stationDto){
+				continue;
+			}
 			list.add(toStation(stationDto));
 		}
 
