@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
@@ -66,7 +67,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			//同步菜鸟
 			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
 			
-			if (!syncAddCainiaoStationDto.isAddStation()) {//只增加关系
+			if (PartnerInstanceTypeEnum.TPA.equals(instanceDto.getType())) {
+				//淘帮手只增加关系(淘帮手需要自己的物流站点需要走审批流程)
 				CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(instanceDto.getParentStationId(), CuntaoCainiaoStationRelTypeEnum.STATION);
 				if(rel != null){
 					caiNiaoStationDto.setStationId(rel.getCainiaoStationId());
@@ -79,7 +81,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		        
                 caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, instanceDto.getType().getCode());
 			}else{
-				//同步菜鸟建立站点及关联关系
+				//合伙人、村拍档同步菜鸟建立站点及关联关系
 				Long caiNiaostationId =caiNiaoAdapter.addStation(caiNiaoStationDto);
 				if (caiNiaostationId == null) {
 				    logger.error("caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");

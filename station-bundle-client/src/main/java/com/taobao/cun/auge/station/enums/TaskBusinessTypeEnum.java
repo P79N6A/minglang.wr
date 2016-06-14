@@ -13,8 +13,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 	private String code;
 	private String desc;
 
-	public static final TaskBusinessTypeEnum STATION_APPLY_CONFIRM = new TaskBusinessTypeEnum("STATION_APPLY_CONFIRM",
-			"停业流程");
+	public static final TaskBusinessTypeEnum SETTLING_SYS_PROCESS = new TaskBusinessTypeEnum("SETTLING_SYS_PROCESS",
+			"入驻流程系统处理环节");
 	public static final TaskBusinessTypeEnum ALIPAY_ACQUIRE_TRADE_CLOSE = new TaskBusinessTypeEnum(
 			"ALIPAY_ACQUIRE_TRADE_CLOSE", "退出流程");
 
@@ -37,7 +37,7 @@ public class TaskBusinessTypeEnum implements Serializable {
 			"UPDATE_SERVICING_CAINIAO", "服务中修改菜鸟");
 
 	static {
-		mappings.put("STATION_APPLY_CONFIRM", STATION_APPLY_CONFIRM);
+		mappings.put("SETTLING_SYS_PROCESS", SETTLING_SYS_PROCESS);
 		mappings.put("ALIPAY_ACQUIRE_TRADE_CLOSE", ALIPAY_ACQUIRE_TRADE_CLOSE);
 		mappings.put("CUNTAO_CENTER_BPM_COMPLETE_TASK", CUNTAO_CENTER_BPM_COMPLETE_TASK);
 		mappings.put("ALIPAY_ACQUIRE_TRADE_CANCLE", ALIPAY_ACQUIRE_TRADE_CANCLE);
