@@ -109,6 +109,10 @@ public final class PartnerInstanceConverter {
 		if (null != condition.getRoleApprove()) {
 			example.setRoleApprove(condition.getRoleApprove().getCode());
 		}
+		
+		if(StringUtil.isNotBlank(condition.getOrgIdPath())){
+			example.setOrgIdPath(condition.getOrgIdPath());
+		}
 
 		return example;
 	}
