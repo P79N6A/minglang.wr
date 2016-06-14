@@ -37,7 +37,7 @@ public class StationQueryServiceImpl implements StationQueryService {
 		Station station = stationBO.getStationById(stationCondition.getId());
 		StationDto stationDto = StationConverter.toStationDto(station);
 		if (stationCondition.getNeedAttachementInfo()) {
-			stationDto.setAttachements(attachementBO.selectAttachementList(stationDto.getId(),AttachementBizTypeEnum.CRIUS_STATION));
+			stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(),AttachementBizTypeEnum.CRIUS_STATION));
 		}
 		return stationDto;
 	}

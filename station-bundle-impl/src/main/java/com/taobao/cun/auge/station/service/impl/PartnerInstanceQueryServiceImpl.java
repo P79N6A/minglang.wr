@@ -104,14 +104,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			if (condition.getNeedDesensitization()) {
 				setSafedInfo(partnerDto);
 			}
-			partnerDto.setAttachements(attachementBO.selectAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
+			partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 			insDto.setPartnerDto(partnerDto);
 		}
 
 		if (condition.getNeedStationInfo()) {
 			Station station = stationBO.getStationById(insDto.getStationId());
 			StationDto stationDto = StationConverter.toStationDto(station);
-			stationDto.setAttachements(attachementBO.selectAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
+			stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 			insDto.setStationDto(stationDto);
 		}
 		return insDto;
