@@ -18,11 +18,7 @@ public class SyncAddCainiaoStationDto extends OperatorDto implements Serializabl
 	 */
 	private Long partnerInstanceId;
 	
-	/**
-	 * 是否同步新增物流站，true, 增加物流站，关系，
-	 * false,只增加关系
-	 */
-	private boolean isAddStation;
+	
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -30,13 +26,5 @@ public class SyncAddCainiaoStationDto extends OperatorDto implements Serializabl
 
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
-	}
-
-	public boolean isAddStation() {
-		return isAddStation;
-	}
-
-	public void setAddStation(boolean isAddStation) {
-		this.isAddStation = isAddStation;
 	}
 }
