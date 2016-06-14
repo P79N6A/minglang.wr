@@ -80,8 +80,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
                 caiNiaoStationDto.setTpTaobaoUserId(parentParner.getTaobaoUserId());
 		        
                 caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, instanceDto.getType().getCode());
-			}else{
-				//合伙人、村拍档同步菜鸟建立站点及关联关系
+			}else if (PartnerInstanceTypeEnum.TP.equals(instanceDto.getType())) {
+				//合伙人
 				Long caiNiaostationId =caiNiaoAdapter.addStation(caiNiaoStationDto);
 				if (caiNiaostationId == null) {
 				    logger.error("caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
