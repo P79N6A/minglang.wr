@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -50,5 +51,12 @@ public interface GeneralTaskSubmitService {
 	 * @param content
 	 */
 	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
+	
+	public void submitRemoveAlipayTagTask(Long taobaoUserId, String operatorId);
+	
+	public void submitRemoveLogisticsTask(Long instanceId, String operatorId);
+	
+	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType,
+			String operatorId);
 
 }
