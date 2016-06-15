@@ -306,6 +306,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 	
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long updateTemp(PartnerInstanceDto partnerInstanceDto)
