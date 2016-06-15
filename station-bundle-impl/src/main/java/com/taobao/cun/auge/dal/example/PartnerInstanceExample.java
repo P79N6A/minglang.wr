@@ -6,9 +6,6 @@ public class PartnerInstanceExample implements Serializable {
 
 	private static final long serialVersionUID = 1232528817432543217L;
 
-	// 村点所属组织ids
-	private Long[] orgIds;
-	
 	/**
 	 * 村点所属组织id path
 	 */
@@ -50,9 +47,6 @@ public class PartnerInstanceExample implements Serializable {
 	// 合伙人状态
 	private String partnerState;
 
-	// 排序
-	private String orderByClause;
-	
 	//======生命週期========
 	//业务类型
 	private String businessType;
@@ -157,28 +151,12 @@ public class PartnerInstanceExample implements Serializable {
 		this.partnerType = partnerType;
 	}
 
-	public Long[] getOrgIds() {
-		return orgIds;
-	}
-
-	public void setOrgIds(Long[] orgIds) {
-		this.orgIds = orgIds;
-	}
-
 	public Long getProviderId() {
 		return providerId;
 	}
 
 	public void setProviderId(Long providerId) {
 		this.providerId = providerId;
-	}
-
-	public String getOrderByClause() {
-		return orderByClause;
-	}
-
-	public void setOrderByClause(String orderByClause) {
-		this.orderByClause = orderByClause;
 	}
 
 	public String getPartnerName() {

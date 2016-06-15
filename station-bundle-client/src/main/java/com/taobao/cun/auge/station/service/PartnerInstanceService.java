@@ -103,7 +103,7 @@ public interface PartnerInstanceService {
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException;
 
 	/**
-	 * 合伙人主动申请停业
+	 * 合伙人主动申请停业，目前给接口只有合伙人会调用，淘帮手，村拍档不能调用
 	 * 
 	 * @param taobaoUserId
 	 * @return

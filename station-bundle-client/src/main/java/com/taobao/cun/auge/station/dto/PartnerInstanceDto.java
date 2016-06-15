@@ -82,17 +82,37 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * station_aply表主键，供数据迁移使用
 	 */
 	private Long stationApplyId;
-	
+
+	/**
+	 * 淘宝id
+	 */
 	private Long taobaoUserId;
 
-
+	/**
+	 * 村点id
+	 */
 	private Long stationId;
+
+	/**
+	 * 合伙人主键id
+	 */
 	private Long partnerId;
-	
+
+	/**
+	 * 村点dto
+	 */
 	private StationDto stationDto;
+
+	/**
+	 * 合伙人dto
+	 */
 	private PartnerDto partnerDto;
+
+	/**
+	 * 生命周期dto
+	 */
 	private PartnerLifecycleDto partnerLifecycleDto;
-	
+
 	/**
 	 * 乐观锁版本
 	 */

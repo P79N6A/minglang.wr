@@ -104,13 +104,13 @@ public class AttachementBOImpl implements AttachementBO {
 	}
 
 	@Override
-	public List<AttachementDto> selectAttachementList(Long objectId,
+	public List<AttachementDto> getAttachementList(Long objectId,
 			AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException {
-		return selectAttachementList(objectId, bizTypeEnum, null);
+		return getAttachementList(objectId, bizTypeEnum, null);
 	}
 
 	@Override
-	public List<AttachementDto> selectAttachementList(Long objectId,
+	public List<AttachementDto> getAttachementList(Long objectId,
 			AttachementBizTypeEnum bizTypeEnum,
 			AttachementTypeIdEnum attachementTypeId)
 			throws AugeServiceException {
