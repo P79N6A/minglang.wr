@@ -579,7 +579,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (stationDto == null) {
 			return;
 		}
-		if (StringUtils.isNotBlank(stationDto.getName())) {
+		if (StringUtils.isEmpty(stationDto.getName())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
 		Address address = stationDto.getAddress();
