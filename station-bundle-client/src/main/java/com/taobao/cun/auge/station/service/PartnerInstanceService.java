@@ -27,7 +27,15 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	
+	/**
+	 * 暂存 人，服务站基础信息
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 	
 	/**
 	 * 更改入驻中的信息    

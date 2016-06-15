@@ -272,42 +272,60 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
-
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public Long saveTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public Long addTemp(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 		try {
-			Long instanceId = partnerInstanceDto.getId();
-			if (instanceId == null) {// 新增
-				StationDto stationDto = partnerInstanceDto.getStationDto();
-				stationDto.setState(StationStateEnum.INVALID);
-				stationDto.setStatus(StationStatusEnum.TEMP);
+			StationDto stationDto = partnerInstanceDto.getStationDto();
+			stationDto.setState(StationStateEnum.INVALID);
+			stationDto.setStatus(StationStatusEnum.TEMP);
 
-				PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-				partnerDto.setState(PartnerStateEnum.TEMP);
+			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+			partnerDto.setState(PartnerStateEnum.TEMP);
 
-				partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
 
-				instanceId = addCommon(partnerInstanceDto);
+			Long instanceId = addCommon(partnerInstanceDto);
 
-				// 同步station_apply
-				syncStationApplyBO.addStationApply(instanceId);
-			} else {// 修改
-				updateCommon(partnerInstanceDto);
-
-				// 同步station_apply
-				syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-			}
+			// 同步station_apply
+			syncStationApplyBO.addStationApply(instanceId);
 			return instanceId;
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("saveTemp", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			String error = getErrorMessage("addTemp", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
-			String error = getErrorMessage("saveTemp", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
+			String error = getErrorMessage("addTemp", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public Long updateTemp(PartnerInstanceDto partnerInstanceDto)
+			throws AugeServiceException {
+		ValidateUtils.validateParam(partnerInstanceDto);
+		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
+		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
+		ValidateUtils.notNull(partnerInstanceDto.getId());
+		try {
+			Long instanceId = partnerInstanceDto.getId();
+			updateCommon(partnerInstanceDto);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+			return instanceId;
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("updateTemp", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("updateTemp", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -1380,5 +1398,4 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
 }
