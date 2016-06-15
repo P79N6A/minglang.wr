@@ -152,9 +152,7 @@
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			<include refid="partner_lifecycle_items_condition" />
 		</if>
-	    <if test="orderByClause != null and orderByClause != ''" >
-			order by ${orderByClause}
-	    </if>
+		order by instance.gmt_modified desc
   </select>
   
    <sql id="partner_station_query_condition" >
