@@ -11,14 +11,12 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
-import com.taobao.cun.chronus.dto.GeneralTaskDto;
-import com.taobao.cun.chronus.service.TaskExecuteService;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -39,7 +37,7 @@ public class StartProcessListener implements EventListener {
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
-	TaskExecuteService taskExecuteService;
+	GeneralTaskSubmitService generalTaskSubmitService;
 
 	@Override
 	public void onMessage(Event event) {
@@ -61,7 +59,7 @@ public class StartProcessListener implements EventListener {
 		if (null == business) {
 			return;
 		}
-		createStartApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 	}
 
 	/**
@@ -85,47 +83,5 @@ public class StartProcessListener implements EventListener {
 		return null;
 	}
 
-	/**
-	 * 启动停业、退出流程审批流程
-	 * 
-	 * @param business
-	 *            业务类型
-	 * @param stationApplyId
-	 *            业务主键
-	 * @param applierId
-	 *            申请人
-	 * @param applierOrgId
-	 *            申请人orgid
-	 * @param remarks
-	 *            备注
-	 */
-	private void createStartApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
-			PartnerInstanceStateChangeEvent stateChangeEvent) {
-		try {
 
-			StartProcessDto startProcessDto = new StartProcessDto();
-
-			startProcessDto.setRemarks(stateChangeEvent.getRemark());
-			startProcessDto.setBusinessId(stationApplyId);
-			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.copyOperatorDto(stateChangeEvent);
-			// 启动流程
-			GeneralTaskDto startProcessTask = new GeneralTaskDto();
-			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
-			startProcessTask.setBusinessStepNo(1l);
-			startProcessTask.setBusinessType(business.getCode());
-			startProcessTask.setBusinessStepDesc(business.getDesc());
-			startProcessTask.setBeanName("processService");
-			startProcessTask.setMethodName("startApproveProcess");
-			startProcessTask.setOperator(stateChangeEvent.getOperator());
-			startProcessTask.setParameter(startProcessDto);
-
-			// 提交任务
-			taskExecuteService.submitTask(startProcessTask);
-		} catch (Exception e) {
-			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
-					+ " applierId=" + stateChangeEvent.getOperator() + " operatorType="
-					+ stateChangeEvent.getOperatorType().getCode(), e);
-		}
-	}
 }
