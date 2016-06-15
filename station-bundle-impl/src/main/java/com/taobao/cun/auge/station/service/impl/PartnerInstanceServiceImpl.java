@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
+import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DateUtil;
@@ -128,6 +129,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private static final String TPAMAX_TYPE = "tpl_max";
 	private static final String TPAMAX_KEY = "tpl_max_num";
 	private static final Long TPAMAX_DEFAULT = 5L;
+	
+	@Autowired
+	private PartnerLifecycleCallbackService partnerLifecycleCallbackService;
 
 	@Autowired
 	ProtocolBO protocolBO;
