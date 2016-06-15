@@ -62,7 +62,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	}
 
 	public void removeUserTag(UserTagDto userTagDto) {
-//		BeanValidator.validateWithThrowable(userTagDto);
+		BeanValidator.validateWithThrowable(userTagDto);
 		try {
 			Long taobaoUserId = userTagDto.getTaobaoUserId();
 			PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();
