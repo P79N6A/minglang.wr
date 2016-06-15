@@ -202,6 +202,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		instanceDto.setVersion(psRel.getVersion());
+		
 		return instanceDto;
 	}
 
@@ -293,6 +294,7 @@ public final class PartnerInstanceConverter {
 		address.setAddressDetail(instance.getAddress());
 		address.setLat(instance.getLat());
 		address.setLng(instance.getLng());
+		
 		return address;
 	}
 
@@ -314,14 +316,14 @@ public final class PartnerInstanceConverter {
 		if (null != partnerInstanceDto.getState()) {
 			rel.setState(partnerInstanceDto.getState().getCode());
 		}
+		
 		rel.setBit(partnerInstanceDto.getBit());
 		rel.setOpenDate(partnerInstanceDto.getOpenDate());
 		rel.setStationApplyId(partnerInstanceDto.getStationApplyId());
+		
 		if (null != partnerInstanceDto.getType()) {
-
 			rel.setType(partnerInstanceDto.getType().getCode());
 		}
-
 		if (null != partnerInstanceDto.getIsCurrent()) {
 			rel.setIsCurrent(partnerInstanceDto.getIsCurrent().getCode());
 		}
@@ -332,6 +334,7 @@ public final class PartnerInstanceConverter {
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());
+		
 		return rel;
 	}
 }
