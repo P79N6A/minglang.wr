@@ -27,10 +27,9 @@ public class OnlineHsfApplicationListener implements ApplicationListener<Applica
 			String env = EnvironmentUtil.getEnvironment().name().toLowerCase();
 			if ("daily".equals(env)) {
 				String response = HttpClientUtil.get(HSF_ONLINE_URL, new HashMap<String, String>(), null);
-				System.out.println("daily env auto hsf online status: " + response);
+				System.out.println("－－－－－－－－－－－－online hsf: " + response);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
