@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +14,14 @@ import com.alibaba.common.lang.StringUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
-import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -42,7 +44,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 	@Autowired
 	UicReadAdapter uicReadAdapter;
-
+	
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		// 异构系统交互提交后台任务
 		List<GeneralTaskDto> taskDtos = Lists.newArrayList();
@@ -265,6 +267,104 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 					+ content;
 			logger.error(msg);
 			logger.error(msg, e);
+		}
+	}
+	
+	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType,
+			String operatorId) {
+		try {
+			UserTagDto userTagDto = new UserTagDto();
+
+			userTagDto.setTaobaoUserId(taobaoUserId);
+			userTagDto.setPartnerType(partnerType);
+
+			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+
+			// uic去标
+			GeneralTaskDto task = new GeneralTaskDto();
+			task.setBusinessNo(String.valueOf(taobaoUserId));
+			task.setBeanName("uicTagService");
+			task.setMethodName("removeUserTag");
+			task.setBusinessStepNo(1l);
+			task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			task.setBusinessStepDesc("去uic标");
+			task.setOperator(operatorId);
+			task.setParameter(userTagDto);
+			taskLists.add(task);
+
+			// 旺旺去标
+			GeneralTaskDto wangwangTaskVo = new GeneralTaskDto();
+			wangwangTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
+			wangwangTaskVo.setBeanName("wangWangTagService");
+			wangwangTaskVo.setMethodName("removeWangWangTagByNick");
+			wangwangTaskVo.setBusinessStepNo(2l);
+			wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			wangwangTaskVo.setBusinessStepDesc("去旺旺标");
+			wangwangTaskVo.setOperator(operatorId);
+			wangwangTaskVo.setParameter(taobaoNick);
+			taskLists.add(wangwangTaskVo);
+
+			// 提交任务
+			taskExecuteService.submitTasks(taskLists);
+		} catch (Exception e) {
+			logger.error("Failed to submit remove user tag task. taobaoUserId=" + taobaoUserId + " operatorId = "
+					+ operatorId, e);
+		}
+	}
+
+	public void submitRemoveLogisticsTask(Long instanceId, String operatorId) {
+		try {
+			// 取消物流站点
+			// FIXME FHH 待完成
+			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
+			cainiaoTaskVo.setBeanName("caiNiaoService");
+			cainiaoTaskVo.setMethodName("deleteCainiaoStation");
+			cainiaoTaskVo.setBusinessStepNo(1l);
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
+			cainiaoTaskVo.setOperator(operatorId);
+
+			SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+			syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+
+			cainiaoTaskVo.setParameter(syncDeleteCainiaoStationDto);
+
+			// 提交任务
+			taskExecuteService.submitTask(cainiaoTaskVo);
+		} catch (Exception e) {
+			logger.error("Failed to submit remove logistics station task. instanceId=" + instanceId + " operatorId = "
+					+ operatorId, e);
+		}
+	}
+
+	public void submitRemoveAlipayTagTask(Long taobaoUserId, String accountNo,String operatorId) {
+		try {
+			// 取消支付宝标示
+			GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
+			dealStationTagTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
+			dealStationTagTaskVo.setBeanName("alipayTagService");
+			dealStationTagTaskVo.setMethodName("dealTag");
+			dealStationTagTaskVo.setBusinessStepNo(1l);
+			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
+			dealStationTagTaskVo.setOperator(operatorId);
+
+			AlipayTagDto alipayTagDto = new AlipayTagDto();
+			alipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
+			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
+			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
+
+			
+			if (StringUtils.isNotEmpty(accountNo)) {
+				alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
+			}
+			dealStationTagTaskVo.setParameter(alipayTagDto);
+
+			// 提交任务
+			taskExecuteService.submitTask(dealStationTagTaskVo);
+		} catch (AugeServiceException e) {
+			logger.error("提交取消支付宝标示任务失败。taobaoUserId=" + taobaoUserId + " operatorId = " + operatorId, e);
 		}
 	}
 
