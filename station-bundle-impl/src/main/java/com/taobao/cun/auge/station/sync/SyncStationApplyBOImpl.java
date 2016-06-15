@@ -114,12 +114,13 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			// 固点协议
 			syncFixProtocol(partnerInstanceId, stationApply.getId());
 
-			tairCache.invalid(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
+			// 失效缓存
+			invalidCache(stationApply);
 
 			logger.info("sync add success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
 			return stationApply;
 		} catch (Exception e) {
-			logger.error(ERROR_MSG + ": addStationApply", e);
+			logger.error(ERROR_MSG + ": addStationApply," + partnerInstanceId, e);
 			return null;
 		}
 	}
@@ -143,18 +144,29 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			}
 
 			// 失效缓存
-			List<String> invalidKeys = new ArrayList<String>();
-			invalidKeys.add(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
-			if (null != stationApply.getTaobaoUserId()) {
-				invalidKeys.add(USER_STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getTaobaoUserId());
-			}
-			if (null != stationApply.getStationId()) {
-				invalidKeys.add(STATION_ID_KEY_DETAIL_VALUE_PRE + stationApply.getStationId());
-			}
-			tairCache.minvalid(invalidKeys);
+			invalidCache(stationApply);
+
+			logger.info("sync update success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
 		} catch (Exception e) {
-			logger.error(ERROR_MSG + ": updateStationApply", e);
+			logger.error(ERROR_MSG + ": updateStationApply," + partnerInstanceId, e);
 		}
+	}
+
+	/**
+	 * 将cuntaocenter生成的缓存失效
+	 * 
+	 * @param stationApply
+	 */
+	private void invalidCache(StationApply stationApply) {
+		List<String> invalidKeys = new ArrayList<String>();
+		invalidKeys.add(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
+		if (null != stationApply.getTaobaoUserId()) {
+			invalidKeys.add(USER_STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getTaobaoUserId());
+		}
+		if (null != stationApply.getStationId()) {
+			invalidKeys.add(STATION_ID_KEY_DETAIL_VALUE_PRE + stationApply.getStationId());
+		}
+		tairCache.minvalid(invalidKeys);
 	}
 
 	private StationApply buildStationApply(Long partnerInstanceId, SyncStationApplyEnum buildType) {
