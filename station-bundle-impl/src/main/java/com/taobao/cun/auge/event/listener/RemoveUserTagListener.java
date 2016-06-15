@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -27,7 +28,7 @@ public class RemoveUserTagListener implements EventListener {
 
 	@Autowired
 	PartnerBO partnerBO;
-	
+
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 
@@ -47,11 +48,13 @@ public class RemoveUserTagListener implements EventListener {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 已退出
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
-			//FIXME FHH是否要保持事务
-			generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, operatorId);
+			// FIXME FHH是否要保持事务
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+
+			String accountNo = partner.getAlipayAccount();
+			generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, operatorId);
 			generalTaskSubmitService.submitRemoveLogisticsTask(instanceId, operatorId);
 		}
 	}
-
 
 }

@@ -52,7 +52,7 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
 	
-	public void submitRemoveAlipayTagTask(Long taobaoUserId, String operatorId);
+	public void submitRemoveAlipayTagTask(Long taobaoUserId, String accountNo,String operatorId);
 	
 	public void submitRemoveLogisticsTask(Long instanceId, String operatorId);
 	

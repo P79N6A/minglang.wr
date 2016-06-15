@@ -11,11 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
@@ -24,7 +22,6 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
-import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -48,9 +45,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Autowired
 	UicReadAdapter uicReadAdapter;
 	
-	@Autowired
-	PartnerBO partnerBO;
-
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		// 异构系统交互提交后台任务
 		List<GeneralTaskDto> taskDtos = Lists.newArrayList();
@@ -344,7 +338,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
-	public void submitRemoveAlipayTagTask(Long taobaoUserId, String operatorId) {
+	public void submitRemoveAlipayTagTask(Long taobaoUserId, String accountNo,String operatorId) {
 		try {
 			// 取消支付宝标示
 			GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
@@ -361,9 +355,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
 			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
-			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-
-			String accountNo = partner.getAlipayAccount();
+			
 			if (StringUtils.isNotEmpty(accountNo)) {
 				alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			}
