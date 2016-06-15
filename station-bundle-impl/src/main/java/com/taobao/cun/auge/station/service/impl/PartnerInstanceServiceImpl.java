@@ -565,6 +565,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 						partnerInstanceUpdateServicingDto);
 			}
 			generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
+			
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceId);
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
 			logger.error(error, augeException);
