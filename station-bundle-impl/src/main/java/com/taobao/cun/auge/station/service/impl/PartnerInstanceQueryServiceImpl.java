@@ -19,6 +19,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -143,8 +144,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
 
-			//先从partner_station_rel，partner，station,cuntao_org查询基本信息
-			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
+			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
 			// ALL，组装生命周期中数据
 			if (null == instanceState) {
 				buildLifecycleItems(page);
