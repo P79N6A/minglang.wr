@@ -130,12 +130,12 @@
 		org.name as county_station_name
 		
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-		,
-		life.business_type as lifecycle_business_type,
-		life.settled_protocol,
-		life.bond,
-		life.current_step,
-		life.role_approve
+			,
+			life.business_type as lifecycle_business_type,
+			life.settled_protocol,
+			life.bond,
+			life.current_step,
+			life.role_approve
 		</if>
 		from partner_station_rel instance,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
@@ -144,7 +144,7 @@
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-		and instance.id = life.partner_instance_id and life.current_step!='END'
+			and instance.id = life.partner_instance_id and life.current_step!='END'
 		</if>
 		
 		<include refid="partner_station_query_condition" />
@@ -153,17 +153,11 @@
 			<include refid="partner_lifecycle_items_condition" />
 		</if>
 	    <if test="orderByClause != null and orderByClause != ''" >
-	      order by ${orderByClause}
+			order by ${orderByClause}
 	    </if>
   </select>
   
    <sql id="partner_station_query_condition" >
-		<if test="orgIds != null" >
-			and s.apply_org in 
-			<foreach collection="orgIds" item="orgId" open="(" close=")" separator="," >
-				#{orgId}
-			</foreach>
-		</if>
 		<if test="orgIdPath != null and orgIdPath != ''" >
 			and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
 		</if>
