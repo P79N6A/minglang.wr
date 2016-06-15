@@ -33,7 +33,7 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 				} else {
 					logger.error("alipayStandardBailService.dealStandardBail error" + JSON.toJSONString(resultModel));
 				}
-				return false;
+				throw resultModel.getException() == null ? new RuntimeException("dealStandardBail error") : resultModel.getException();
 			}
 			return true;
 		} catch (Exception e) {
