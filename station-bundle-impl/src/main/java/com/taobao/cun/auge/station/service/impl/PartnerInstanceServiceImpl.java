@@ -557,6 +557,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationDto.setProducts(sDto.getProducts());
 				stationDto.setStationNum(sDto.getStationNum());
 				stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+				stationBO.updateStation(stationDto);
 
 				// 更新固点协议
 				saveStationFixProtocol(stationDto, stationId);
