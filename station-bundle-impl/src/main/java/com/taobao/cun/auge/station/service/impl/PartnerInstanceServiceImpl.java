@@ -557,6 +557,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				stationDto.setProducts(sDto.getProducts());
 				stationDto.setStationNum(sDto.getStationNum());
 				stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+				stationBO.updateStation(stationDto);
 
 				// 更新固点协议
 				saveStationFixProtocol(stationDto, stationId);
@@ -579,7 +580,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (stationDto == null) {
 			return;
 		}
-		if (StringUtils.isNotBlank(stationDto.getName())) {
+		if (StringUtils.isEmpty(stationDto.getName())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
 		Address address = stationDto.getAddress();

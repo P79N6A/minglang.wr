@@ -76,7 +76,7 @@ public interface AttachementBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<AttachementDto>  selectAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
+	public List<AttachementDto>  getAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
 	
 	/**
 	 * 查询附件
@@ -86,7 +86,7 @@ public interface AttachementBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<AttachementDto> selectAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId) throws AugeServiceException;
+	public List<AttachementDto> getAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId) throws AugeServiceException;
 	
 
 }

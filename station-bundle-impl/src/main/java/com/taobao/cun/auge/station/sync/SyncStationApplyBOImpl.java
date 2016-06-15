@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
@@ -110,6 +111,9 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			// 同步station_apply附件
 			syncAttachment(partnerInstanceId, stationApply.getId());
 
+			// 固点协议
+			syncFixProtocol(partnerInstanceId, stationApply.getId());
+
 			tairCache.invalid(STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE + stationApply.getId());
 
 			logger.info("sync add success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
@@ -134,6 +138,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			if (SyncStationApplyEnum.UPDATE_ALL == updateType) {
 				// 同步station_apply附件
 				syncAttachment(partnerInstanceId, stationApply.getId());
+				// 固点协议
+				syncFixProtocol(partnerInstanceId, stationApply.getId());
 			}
 
 			// 失效缓存
@@ -291,6 +297,62 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 	}
 
+	private void syncFixProtocol(Long partnerInstanceId, Long stationApplyId) {
+		List<ProtocolTypeEnum> protocolTypeList = Lists.newArrayList(ProtocolTypeEnum.GOV_FIXED, ProtocolTypeEnum.TRIPARTITE_FIXED);
+
+		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
+
+		ProtocolExample pExample = new ProtocolExample();
+		pExample.createCriteria().andIsDeletedEqualTo("n");
+		List<Protocol> pList = protocolMapper.selectByExample(pExample);
+
+		for (ProtocolTypeEnum p : protocolTypeList) {
+			Protocol protocol = null;
+			for (Protocol item : pList) {
+				if (p.getCode().equals(item.getType())) {
+					protocol = item;
+					break;
+				}
+			}
+			if (protocol == null) {
+				throw new AugeServiceException("protocol not exists : " + p.getCode());
+			}
+			PartnerProtocolRelExample newRelExample = new PartnerProtocolRelExample();
+			newRelExample.createCriteria().andIsDeletedEqualTo("n")
+					.andTargetTypeEqualTo(PartnerProtocolRelTargetTypeEnum.CRIUS_STATION.getCode()).andProtocolIdEqualTo(protocol.getId())
+					.andObjectIdEqualTo(instance.getStationId());
+
+			PartnerProtocolRelExample oldRelExample = new PartnerProtocolRelExample();
+			oldRelExample.createCriteria().andTargetTypeEqualTo("STATION").andObjectIdEqualTo(stationApplyId)
+					.andProtocolIdEqualTo(protocol.getId());
+
+			List<PartnerProtocolRel> newPrList = partnerProtocolRelMapper.selectByExample(newRelExample);
+			if (CollectionUtils.isEmpty(newPrList)) {
+				// 删除老模型的固点协议
+				PartnerProtocolRel record = new PartnerProtocolRel();
+				record.setIsDeleted("y");
+				partnerProtocolRelMapper.updateByExampleSelective(record, oldRelExample);
+				continue;
+			}
+			PartnerProtocolRel newRel = newPrList.iterator().next();
+
+			List<PartnerProtocolRel> oldPrList = partnerProtocolRelMapper.selectByExample(oldRelExample);
+			if (CollectionUtils.isEmpty(oldPrList)) {
+				for (PartnerProtocolRel rel : oldPrList) {
+					newRel.setId(rel.getId());
+					newRel.setObjectId(rel.getObjectId());
+					newRel.setTargetType(rel.getTargetType());
+					partnerProtocolRelMapper.updateByPrimaryKey(newRel);
+				}
+			} else {
+				newRel.setObjectId(stationApplyId);
+				newRel.setTargetType("STATION");
+				partnerProtocolRelMapper.insert(newRel);
+			}
+		}
+
+	}
+
 	/**
 	 * 设置instance、partner、stationx逆袭到station_apply
 	 * 
@@ -379,7 +441,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 		List<Attachement> saList = getAttachment(stationApplyId, "STATION", null);
 		Map<Long, List<Attachement>> saMap = Maps.newHashMap();
 		copy2Map(saMap, saList);
-		
+
 		// 新模型的附件分别挂在partner(身份证)和村点上
 		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
 		Map<Long, List<Attachement>> instanceMap = Maps.newHashMap();

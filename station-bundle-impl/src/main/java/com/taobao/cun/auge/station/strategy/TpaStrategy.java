@@ -248,7 +248,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
 		if (oldPartnerId != null) {
 			//更新身份证
-			List<AttachementDto>  attDtoList = attachementBO.selectAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
+			List<AttachementDto>  attDtoList = attachementBO.getAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
 			if (CollectionUtils.isNotEmpty(attDtoList)) {
 				attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId,
 						AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, settleSuccessDto);

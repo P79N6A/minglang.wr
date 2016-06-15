@@ -254,7 +254,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		partnerStationRel.setOpenDate(openDate);
 		DomainUtils.beforeUpdate(partnerStationRel, operator);
-		partnerStationRelMapper.updateByPrimaryKey(partnerStationRel);
+		partnerStationRelMapper.updateByPrimaryKeySelective(partnerStationRel);
 	}
 
 	@Override

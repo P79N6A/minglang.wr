@@ -67,7 +67,7 @@ public class PartnerBOImpl implements PartnerBO {
 		ValidateUtils.notNull(partnerDto.getId());
 		Partner record = PartnerConverter.toParnter(partnerDto);
 		DomainUtils.beforeUpdate(record, partnerDto.getOperator());
-		partnerMapper.updateByPrimaryKey(record);
+		partnerMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
