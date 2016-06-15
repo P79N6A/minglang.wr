@@ -41,5 +41,14 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
 			PartnerInstanceStateChangeEvent stateChangeEvent);
+	
+	/**
+	 * 发短信
+	 * @param taobaoUserId
+	 * @param mobile
+	 * @param operatorId
+	 * @param content
+	 */
+	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
 
 }
