@@ -18,8 +18,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
+import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -126,6 +129,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private static final String TPAMAX_TYPE = "tpl_max";
 	private static final String TPAMAX_KEY = "tpl_max_num";
 	private static final Long TPAMAX_DEFAULT = 5L;
+	
+	@Autowired
+	private PartnerLifecycleCallbackService partnerLifecycleCallbackService;
 
 	@Autowired
 	ProtocolBO protocolBO;
@@ -1221,10 +1227,32 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		addCNStationFeature(rel.getStationId(), rel.getTaobaoUserId(), parentRel.getStationId(), parentTaobaoUserId);
 
 		// TODO:添加服务记录及关系布点
-		// addDegradePartnerRelation(partnerDto.getTaobaoUserId(),
-		// stationApplyDetailDto.getTaobaoUserId());
-
+		 addDegradePartnerRelation(parentTaobaoUserId, rel.getTaobaoUserId());
 	}
+	
+	/**
+     * 添加服务记录及关系
+     * 
+     * @param partnerUserId 将要挂到哪个合伙人的USERID
+     * @param userId 被降级的合伙人(降级为淘帮手的)USERID
+     */
+    private void addDegradePartnerRelation(Long partnerUserId, Long userId) {
+        try {
+            logger.info("addDegradePartnerRelation start,partnerUserId=" + partnerUserId + ",userId=" + userId);
+            if (partnerUserId == null || userId == null) {
+                return;
+            }
+
+            PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
+            param.setGmtEnd(DateUtil.getCurrentDate());
+            param.setPartnerUserId(partnerUserId);
+            param.setUserId(userId);
+            partnerLifecycleCallbackService.onDegrade(param);
+            logger.info("addDegradePartnerRelation end,partnerUserId=" + partnerUserId + ",userId=" + userId);
+        } catch (Throwable e) {
+            logger.error("addDegradePartnerRelation exception, partnerUserId=" + partnerUserId + ",userId=" + userId, e);
+        }
+    }
 
 	private void addCNStationFeature(Long stationId, Long taobaoUserId, Long parentStationId, Long parentTaobaoUserId) {
 		if (parentStationId == null || stationId == null || parentTaobaoUserId == null) {

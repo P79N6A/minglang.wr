@@ -85,7 +85,6 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getPartnerName())) {
 			example.setPartnerName(condition.getPartnerName());
 		}
-		example.setOrgIds(condition.getOrgIds());
 
 		if (null != condition.getCurrentStep()) {
 			example.setCurrentStep(condition.getCurrentStep().getCode());

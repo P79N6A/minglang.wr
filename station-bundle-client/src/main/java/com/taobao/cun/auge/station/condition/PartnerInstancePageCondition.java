@@ -20,8 +20,6 @@ public class PartnerInstancePageCondition extends PageQuery {
 	private static final long serialVersionUID = 8658912725579809791L;
 
 	// 村服务站所属村淘组织
-	private Long[] orgIds;
-
 	private String orgIdPath;
 
 	// 村服务站编号
@@ -146,14 +144,6 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	public void setProviderId(Long providerId) {
 		this.providerId = providerId;
-	}
-
-	public Long[] getOrgIds() {
-		return orgIds;
-	}
-
-	public void setOrgIds(Long[] orgIds) {
-		this.orgIds = orgIds;
 	}
 
 	public PartnerLifecycleBondEnum getBond() {

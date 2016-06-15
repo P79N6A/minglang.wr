@@ -12,17 +12,24 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
+/**
+ * 合伙人实例查询服务
+ * 
+ * @author haihu.fhh
+ *
+ */
 public interface PartnerInstanceQueryService {
 
 	/**
 	 * 查询合伙人实例信息
 	 * 
-	 * @param partnerStationId
+	 * @param condition
 	 * @return
 	 */
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
 
 	/**
+	 * 分页查询
 	 * 
 	 * @param pageCondition
 	 * @return
