@@ -3,19 +3,24 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ali.com.google.common.collect.Lists;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -26,6 +31,8 @@ import com.taobao.cun.chronus.service.TaskExecuteService;
 
 @Service("generalTaskSubmitService")
 public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(GeneralTaskSubmitService.class);
 
 	@Autowired
 	TaskExecuteService taskExecuteService;
@@ -174,6 +181,50 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
         	taskLists.add(wwTask);
         }
         taskExecuteService.submitTasks(taskLists);
+	}
+	
+	/**
+	 * 启动停业、退出流程审批流程
+	 * 
+	 * @param business
+	 *            业务类型
+	 * @param stationApplyId
+	 *            业务主键
+	 * @param applierId
+	 *            申请人
+	 * @param applierOrgId
+	 *            申请人orgid
+	 * @param remarks
+	 *            备注
+	 */
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
+			PartnerInstanceStateChangeEvent stateChangeEvent) {
+		try {
+
+			StartProcessDto startProcessDto = new StartProcessDto();
+
+			startProcessDto.setRemarks(stateChangeEvent.getRemark());
+			startProcessDto.setBusinessId(stationApplyId);
+			startProcessDto.setBusinessCode(business.getCode());
+			startProcessDto.copyOperatorDto(stateChangeEvent);
+			// 启动流程
+			GeneralTaskDto startProcessTask = new GeneralTaskDto();
+			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
+			startProcessTask.setBusinessStepNo(1l);
+			startProcessTask.setBusinessType(business.getCode());
+			startProcessTask.setBusinessStepDesc(business.getDesc());
+			startProcessTask.setBeanName("processService");
+			startProcessTask.setMethodName("startApproveProcess");
+			startProcessTask.setOperator(stateChangeEvent.getOperator());
+			startProcessTask.setParameter(startProcessDto);
+
+			// 提交任务
+			taskExecuteService.submitTask(startProcessTask);
+		} catch (Exception e) {
+			logger.error("创建启动流程任务失败。stationApplyId = " + stationApplyId + " business=" + business.getCode()
+					+ " applierId=" + stateChangeEvent.getOperator() + " operatorType="
+					+ stateChangeEvent.getOperatorType().getCode(), e);
+		}
 	}
 
 }

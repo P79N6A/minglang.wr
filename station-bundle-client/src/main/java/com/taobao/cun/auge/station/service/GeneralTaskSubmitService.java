@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface GeneralTaskSubmitService {
@@ -29,5 +31,15 @@ public interface GeneralTaskSubmitService {
 	 * @throws AugeServiceException
 	 */
 	public void submitDegradePartner(PartnerInstanceDto instanceDto, String operatorId) throws AugeServiceException;
+	
+	/**
+	 * 提交流程
+	 * 
+	 * @param business
+	 * @param stationApplyId
+	 * @param stateChangeEvent
+	 */
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
+			PartnerInstanceStateChangeEvent stateChangeEvent);
 
 }

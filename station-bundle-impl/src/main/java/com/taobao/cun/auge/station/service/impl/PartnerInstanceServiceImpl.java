@@ -900,8 +900,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(confirmCloseDto);
+		
 		Long partnerInstanceId = confirmCloseDto.getPartnerInstanceId();
-
 		String employeeId = confirmCloseDto.getOperator();
 		Boolean isAgree = confirmCloseDto.isAgree();
 		try {
