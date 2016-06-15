@@ -822,15 +822,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		return true;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
+		//参数校验
 		ValidateUtils.notNull(taobaoUserId);
+		
+		//合伙人实例状态校验
 		PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
 				PartnerInstanceStateEnum.SERVICING);
 		if (partnerInstance == null) {
 			throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 		}
+		
 		OperatorDto operatorDto = new OperatorDto();
 		operatorDto.setOperator(String.valueOf(taobaoUserId));
 		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
@@ -861,12 +865,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerLifecycle.copyOperatorDto(operatorDto);
 		partnerLifecycleBO.addLifecycle(partnerLifecycle);
 
-		// TDODO:村拍档时候要插入停业协议
+		// 插入停业协议
 		PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
 		Date quitProDate = new Date();
-		proRelDto.setConfirmTime(quitProDate);
 		proRelDto.setObjectId(partnerInstance.getId());
 		proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
+		proRelDto.setConfirmTime(quitProDate);
 		proRelDto.setStartTime(quitProDate);
 		proRelDto.setTaobaoUserId(taobaoUserId);
 		proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
@@ -877,9 +881,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
 		closeStationApplyDto.setPartnerInstanceId(partnerInstance.getId());
 		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
-		closeStationApplyDto.setOperator(operatorDto.getOperator());
-		closeStationApplyDto.setOperatorOrgId(operatorDto.getOperatorOrgId());
-		closeStationApplyDto.setOperatorType(operatorDto.getOperatorType());
+		closeStationApplyDto.copyOperatorDto(operatorDto);
 		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
 		// 发送状态变化事件
