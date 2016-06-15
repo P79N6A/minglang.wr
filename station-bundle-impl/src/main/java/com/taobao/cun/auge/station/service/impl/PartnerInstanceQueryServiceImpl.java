@@ -143,28 +143,32 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
 
-			Page<PartnerInstance> page = partnerStationRelExtMapper
-					.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
-			// ALL
+			//先从partner_station_rel，partner，station,cuntao_org查询基本信息
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(PartnerInstanceConverter.convert(pageCondition));
+			// ALL，组装生命周期中数据
 			if (null == instanceState) {
-				for (PartnerInstance instance : page) {
-					PartnerLifecycleItems lifecycle = getLifecycleItem(instance.getId(), instance.getState());
-					if (null != lifecycle) {
-						instance.setBusinessType(lifecycle.getBusinessType());
-						instance.setSettledProtocol(lifecycle.getSettledProtocol());
-						instance.setBond(lifecycle.getBond());
-						instance.setQuitProtocol(lifecycle.getQuitProtocol());
-						instance.setLogisticsApprove(lifecycle.getLogisticsApprove());
-						instance.setCurrentStep(lifecycle.getCurrentStep());
-						instance.setRoleApprove(lifecycle.getRoleApprove());
-						instance.setConfirm(lifecycle.getConfirm());
-					}
-				}
+				buildLifecycleItems(page);
 			}
 			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 		} catch (Exception e) {
 			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
 			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
+		}
+	}
+
+	private void buildLifecycleItems(Page<PartnerInstance> page) {
+		for (PartnerInstance instance : page) {
+			PartnerLifecycleItems lifecycle = getLifecycleItem(instance.getId(), instance.getState());
+			if (null != lifecycle) {
+				instance.setBusinessType(lifecycle.getBusinessType());
+				instance.setSettledProtocol(lifecycle.getSettledProtocol());
+				instance.setBond(lifecycle.getBond());
+				instance.setQuitProtocol(lifecycle.getQuitProtocol());
+				instance.setLogisticsApprove(lifecycle.getLogisticsApprove());
+				instance.setCurrentStep(lifecycle.getCurrentStep());
+				instance.setRoleApprove(lifecycle.getRoleApprove());
+				instance.setConfirm(lifecycle.getConfirm());
+			}
 		}
 	}
 
