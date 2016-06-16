@@ -30,7 +30,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	// crius服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean cuntaoWorkFlowService(@Value("${hsf.consumer.version.crius.cuntaoWorkFlowService}") String version) {
-		return getConsumerBean(CuntaoWorkFlowService.class, HSFGroup.HSF, version, 3000);
+		return getConsumerBean(CuntaoWorkFlowService.class, HSFGroup.HSF, version, 10000);
 	}
 
 	// cuntaocenter服务

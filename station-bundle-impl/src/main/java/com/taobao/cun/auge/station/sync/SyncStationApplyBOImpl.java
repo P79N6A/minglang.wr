@@ -329,37 +329,41 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 			if (protocol == null) {
 				throw new AugeServiceException("protocol not exists : " + p.getCode());
 			}
+			//新模型固点协议查询条件
 			PartnerProtocolRelExample newRelExample = new PartnerProtocolRelExample();
 			newRelExample.createCriteria().andIsDeletedEqualTo("n")
 					.andTargetTypeEqualTo(PartnerProtocolRelTargetTypeEnum.CRIUS_STATION.getCode()).andProtocolIdEqualTo(protocol.getId())
 					.andObjectIdEqualTo(instance.getStationId());
 
+			//老模型固点协议查询条件
 			PartnerProtocolRelExample oldRelExample = new PartnerProtocolRelExample();
 			oldRelExample.createCriteria().andTargetTypeEqualTo("STATION").andObjectIdEqualTo(stationApplyId)
 					.andProtocolIdEqualTo(protocol.getId());
 
 			List<PartnerProtocolRel> newPrList = partnerProtocolRelMapper.selectByExample(newRelExample);
 			if (CollectionUtils.isEmpty(newPrList)) {
-				// 删除老模型的固点协议
+				// 若新模型中固点协议为空，删除老模型的固点协议
 				PartnerProtocolRel record = new PartnerProtocolRel();
 				record.setIsDeleted("y");
 				partnerProtocolRelMapper.updateByExampleSelective(record, oldRelExample);
 				continue;
 			}
+			//新模型固点协议
 			PartnerProtocolRel newRel = newPrList.iterator().next();
 
 			List<PartnerProtocolRel> oldPrList = partnerProtocolRelMapper.selectByExample(oldRelExample);
+			//若老模型中原先不存在纪录，则insert，否则update
 			if (CollectionUtils.isEmpty(oldPrList)) {
+				newRel.setObjectId(stationApplyId);
+				newRel.setTargetType("STATION");
+				partnerProtocolRelMapper.insert(newRel);
+			} else {
 				for (PartnerProtocolRel rel : oldPrList) {
 					newRel.setId(rel.getId());
 					newRel.setObjectId(rel.getObjectId());
 					newRel.setTargetType(rel.getTargetType());
 					partnerProtocolRelMapper.updateByPrimaryKey(newRel);
 				}
-			} else {
-				newRel.setObjectId(stationApplyId);
-				newRel.setTargetType("STATION");
-				partnerProtocolRelMapper.insert(newRel);
 			}
 		}
 
@@ -450,28 +454,30 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 	private void syncAttachment(Long partnerInstanceId, Long stationApplyId) {
 		Date now = new Date();
 		Set<Long> typeIdSet = AttachementTypeIdEnum.mappings.keySet();
-		List<Attachement> saList = getAttachment(stationApplyId, "STATION", null);
-		Map<Long, List<Attachement>> saMap = Maps.newHashMap();
-		copy2Map(saMap, saList);
+		List<Attachement> stationApplyAttList = getAttachment(stationApplyId, "STATION", null);
+		Map<Long, List<Attachement>> stationApplyAttMap = Maps.newHashMap();
+		//根据attachement_type_id映射
+		copy2Map(stationApplyAttMap, stationApplyAttList);
 
 		// 新模型的附件分别挂在partner(身份证)和村点上
 		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
-		Map<Long, List<Attachement>> instanceMap = Maps.newHashMap();
+		Map<Long, List<Attachement>> newModuleAttMap = Maps.newHashMap();
 		List<Attachement> partnerList = getAttachment(instance.getPartnerId(), "PARTNER", null);
 		List<Attachement> stationList = getAttachment(instance.getStationId(), "CRIUS_STATION", null);
-		copy2Map(instanceMap, partnerList);
-		copy2Map(instanceMap, stationList);
+		copy2Map(newModuleAttMap, partnerList);
+		copy2Map(newModuleAttMap, stationList);
+		//根据attachment_type_id遍历
 		for (Long typeId : typeIdSet) {
-			List<Attachement> instanceSubList = instanceMap.get(typeId);
-			List<Attachement> saSubList = saMap.get(typeId);
+			List<Attachement> newModuleSubList = newModuleAttMap.get(typeId);
+			List<Attachement> stationApplySubList = stationApplyAttMap.get(typeId);
 			// 没有改变
-			if (!isAttachmentChanged(instanceSubList, saSubList)) {
+			if (!isAttachmentChanged(newModuleSubList, stationApplySubList)) {
 				continue;
 			}
 			logger.info("attachment changed, instance_id={},station_apply_id={},type_id={}", partnerInstanceId, stationApplyId, typeId);
 			// 删除老的附件
-			if (!CollectionUtils.isEmpty(saSubList)) {
-				for (Attachement sa : saSubList) {
+			if (!CollectionUtils.isEmpty(stationApplySubList)) {
+				for (Attachement sa : stationApplySubList) {
 					sa.setIsDeleted("y");
 					sa.setModifier("sync");
 					sa.setGmtModified(now);
@@ -479,8 +485,8 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				}
 			}
 			// 同步新的附件
-			if (!CollectionUtils.isEmpty(instanceSubList)) {
-				for (Attachement ins : instanceSubList) {
+			if (!CollectionUtils.isEmpty(newModuleSubList)) {
+				for (Attachement ins : newModuleSubList) {
 					ins.setCreator("sync");
 					ins.setModifier("sync");
 					ins.setGmtCreate(now);
@@ -491,7 +497,6 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 					attachementMapper.insert(ins);
 				}
 			}
-
 		}
 
 	}
