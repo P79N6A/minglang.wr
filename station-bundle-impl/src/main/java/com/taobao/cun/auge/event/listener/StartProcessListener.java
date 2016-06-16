@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
@@ -31,9 +32,6 @@ public class StartProcessListener implements EventListener {
 	PartnerInstanceHandler partnerInstanceHandler;
 
 	@Autowired
-	StationBO stationBO;
-
-	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
@@ -46,8 +44,12 @@ public class StartProcessListener implements EventListener {
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
+		
+		Assert.notNull(stateChangeEvent);
+		Assert.notNull(stateChangeEnum);
+		Assert.notNull(instanceId);
+		Assert.notNull(partnerType);
 
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		
 		//合伙人申请停业，不需要流程
@@ -59,6 +61,7 @@ public class StartProcessListener implements EventListener {
 		if (null == business) {
 			return;
 		}
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 	}
 
