@@ -25,10 +25,10 @@ public class OnlineHsfApplicationListener implements ApplicationListener<Applica
 	public void onApplicationEvent(ApplicationReadyEvent event) {
 		try {
 			String env = EnvironmentUtil.getEnvironment().name().toLowerCase();
-			if ("daily".equals(env)) {
-				String response = HttpClientUtil.get(HSF_ONLINE_URL, new HashMap<String, String>(), null);
-				System.out.println("－－－－－－－－－－－－online hsf: " + response);
-			}
+//			if ("daily".equals(env)) {
+//				String response = HttpClientUtil.get(HSF_ONLINE_URL, new HashMap<String, String>(), null);
+//				System.out.println("－－－－－－－－－－－－online hsf: " + response);
+//			}
 		} catch (Exception e) {
 		}
 	}
