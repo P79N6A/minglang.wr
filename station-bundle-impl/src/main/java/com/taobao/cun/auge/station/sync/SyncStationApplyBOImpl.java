@@ -350,16 +350,16 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 			List<PartnerProtocolRel> oldPrList = partnerProtocolRelMapper.selectByExample(oldRelExample);
 			if (CollectionUtils.isEmpty(oldPrList)) {
+				newRel.setObjectId(stationApplyId);
+				newRel.setTargetType("STATION");
+				partnerProtocolRelMapper.insert(newRel);
+			} else {
 				for (PartnerProtocolRel rel : oldPrList) {
 					newRel.setId(rel.getId());
 					newRel.setObjectId(rel.getObjectId());
 					newRel.setTargetType(rel.getTargetType());
 					partnerProtocolRelMapper.updateByPrimaryKey(newRel);
 				}
-			} else {
-				newRel.setObjectId(stationApplyId);
-				newRel.setTargetType("STATION");
-				partnerProtocolRelMapper.insert(newRel);
 			}
 		}
 
