@@ -1,14 +1,13 @@
 package com.taobao.cun.auge;
 
-import java.util.HashMap;
-
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.springframework.boot.util.env.EnvironmentUtil;
-import com.taobao.cun.auge.common.utils.HttpClientUtil;
 
 /**
  * 日常和本地测试环境自动上线hsf
@@ -26,7 +25,10 @@ public class OnlineHsfApplicationListener implements ApplicationListener<Applica
 		try {
 			String env = EnvironmentUtil.getEnvironment().name().toLowerCase();
 			if ("daily".equals(env)) {
-				String response = HttpClientUtil.get(HSF_ONLINE_URL, new HashMap<String, String>(), null);
+				HttpClient client =  new HttpClient();  
+				GetMethod method = new GetMethod(HSF_ONLINE_URL);
+				client.executeMethod(method);  
+		        String response = method.getResponseBodyAsString();  				
 				System.out.println("－－－－－－－－－－－－online hsf: " + response);
 			}
 		} catch (Exception e) {
