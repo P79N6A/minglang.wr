@@ -20,7 +20,7 @@
 
 		<property name="hsf.consumer.version.employeeServiceVersion" defaultValue="1.0.0.daily" description="hr-version" />
 		<property name="hsf.consumer.version.hsf2icesrv" defaultValue="1.0.0.daily" description="wangwang-tag-version" />
-		<property name="hsf.consumer.version.chronus.taskExecuteService" defaultValue="1.0.0.daily" description="chronus-task-version" />
+		<property name="hsf.consumer.version.chronus.taskSubmitService" defaultValue="1.0.0.daily" description="chronus-task-version" />
 
 		<property name="hsf.consumer.version.crius.cuntaoWorkFlowService" defaultValue="1.0.0.daily" description="crius-version" />
 

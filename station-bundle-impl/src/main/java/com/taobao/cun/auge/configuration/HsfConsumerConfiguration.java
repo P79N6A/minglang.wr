@@ -23,7 +23,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 
 	// chronus服务
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean taskExecuteService(@Value("${hsf.consumer.version.chronus.taskExecuteService}") String version) {
+	public HSFSpringConsumerBean taskSubmitService(@Value("${hsf.consumer.version.chronus.taskSubmitService}") String version) {
 		return getConsumerBean(TaskSubmitService.class, HSFGroup.HSF, version, 3000);
 	}
 
