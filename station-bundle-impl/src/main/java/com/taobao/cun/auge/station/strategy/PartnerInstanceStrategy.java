@@ -66,4 +66,11 @@ public interface PartnerInstanceStrategy {
 	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType) throws AugeServiceException;
 
 	public Boolean validateUpdateSettle(Long instanceId)throws AugeServiceException;
+
+	/**
+	 * 提交支付宝标任务
+	 * 
+	 * @param taobaoUserId
+	 */
+	public void submitRemoveAlipayTagTask(Long taobaoUserId);
 }

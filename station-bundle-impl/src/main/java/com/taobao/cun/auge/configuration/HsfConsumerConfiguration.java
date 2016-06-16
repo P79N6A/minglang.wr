@@ -9,7 +9,7 @@ import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
-import com.taobao.cun.chronus.service.TaskExecuteService;
+import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
@@ -23,8 +23,8 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 
 	// chronus服务
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean taskExecuteService(@Value("${hsf.consumer.version.chronus.taskExecuteService}") String version) {
-		return getConsumerBean(TaskExecuteService.class, HSFGroup.HSF, version, 3000);
+	public HSFSpringConsumerBean taskSubmitService(@Value("${hsf.consumer.version.chronus.taskSubmitService}") String version) {
+		return getConsumerBean(TaskSubmitService.class, HSFGroup.HSF, version, 3000);
 	}
 
 	// crius服务

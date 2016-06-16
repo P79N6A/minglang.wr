@@ -110,9 +110,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	@Override
 	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
 		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
-			return ProcessBusinessEnum.TPV_FORCED_CLOSURE;
+			return ProcessBusinessEnum.stationForcedClosure;
 		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
-			return ProcessBusinessEnum.TPV_QUIT;
+			return ProcessBusinessEnum.stationQuitRecord;
 		}
 		return null;
 	}
@@ -207,7 +207,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
 		itemsDO.setPartnerType(typeEnum);
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
-		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
 		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 		itemsDO.copyOperatorDto(quitDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
@@ -317,5 +317,11 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void submitRemoveAlipayTagTask(Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		
 	}
 }

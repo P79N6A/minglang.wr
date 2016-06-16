@@ -13,11 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
@@ -46,7 +46,6 @@ import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -62,8 +61,8 @@ import com.taobao.vipserver.client.utils.CollectionUtils;
 import com.taobao.cun.auge.cache.TairCache;
 
 @Component("syncStationApplyBO")
-public class SyncStationApplyBOImpl implements SyncStationApplyBO {
-	private final static Logger logger = LoggerFactory.getLogger(SyncStationApplyBOImpl.class);
+public class StationApplySyncBOImpl implements StationApplySyncBO {
+	private final static Logger logger = LoggerFactory.getLogger(StationApplySyncBOImpl.class);
 	private static final String ERROR_MSG = "SYNC_BACK_TO_STATIONAPPLY_ERROR";
 
 	public static final String STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE = "stationapplyid_";
@@ -171,18 +170,14 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 
 	private StationApply buildStationApply(Long partnerInstanceId, SyncStationApplyEnum buildType) {
 		StationApply stationApply = new StationApply();
-		if (null == partnerInstanceId || partnerInstanceId == 0l) {
-			throw new IllegalArgumentException("partnerInstanceId can not be null");
-		}
+		Assert.notNull(partnerInstanceId,"partnerInstanceId can not be null");
+		
 		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
 		if (buildType != SyncStationApplyEnum.ADD) {
-			if (null == instance.getStationApplyId()) {
-				throw new AugeServiceException("[update]instance's station_apply_id is null, instance_id = " + partnerInstanceId);
-			}
+			Assert.notNull(instance.getStationApplyId(),"[update]instance's station_apply_id is null, instance_id = " + partnerInstanceId);
 			stationApply.setId(instance.getStationApplyId());
-			if (null == stationApplyMapper.selectByPrimaryKey(instance.getStationApplyId())) {
-				throw new AugeServiceException("[update]station_apply not exists, instance_id = " + partnerInstanceId);
-			}
+			StationApply existStationApply = stationApplyMapper.selectByPrimaryKey(instance.getStationApplyId());
+			Assert.notNull(existStationApply,"[update]station_apply not exists, instance_id = " + partnerInstanceId);
 		} else if (null != instance.getStationApplyId()) {
 			// 防止多次同步add
 			throw new AugeServiceException("[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
@@ -237,6 +232,7 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				.andTypeEqualTo(AccountMoneyTypeEnum.PARTNER_BOND.getCode())
 				.andTargetTypeEqualTo(TargetTypeEnum.PARTNER_INSTANCE.getCode());
 		List<AccountMoney> list = accountMoneyMapper.selectByExample(example);
+		
 		if (!CollectionUtils.isEmpty(list)) {
 			AccountMoney accountMoney = list.iterator().next();
 			stationApply.setFrozenTime(accountMoney.getFrozenTime());
@@ -498,7 +494,6 @@ public class SyncStationApplyBOImpl implements SyncStationApplyBO {
 				}
 			}
 		}
-
 	}
 
 	private boolean isAttachmentChanged(List<Attachement> instanceSubList, List<Attachement> saSubList) {

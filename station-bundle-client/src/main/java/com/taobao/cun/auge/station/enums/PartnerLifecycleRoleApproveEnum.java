@@ -12,6 +12,8 @@ import java.util.Map;
 public class PartnerLifecycleRoleApproveEnum  implements Serializable {
 	
 	private static final long serialVersionUID = -119918219648000754L;
+	
+	public static final PartnerLifecycleRoleApproveEnum TO_START  = new PartnerLifecycleRoleApproveEnum("TO_START", "待启动任务");
 	public static final PartnerLifecycleRoleApproveEnum TO_AUDIT  = new PartnerLifecycleRoleApproveEnum("TO_AUDIT", "待审批");
     public static final PartnerLifecycleRoleApproveEnum AUDIT_PASS = new PartnerLifecycleRoleApproveEnum("AUDIT_PASS", "审批通过");
     public static final PartnerLifecycleRoleApproveEnum AUDIT_NOPASS = new PartnerLifecycleRoleApproveEnum("AUDIT_NOPASS", "审批不通过");
@@ -19,6 +21,7 @@ public class PartnerLifecycleRoleApproveEnum  implements Serializable {
 	private static final Map<String, PartnerLifecycleRoleApproveEnum> mappings = new HashMap<String, PartnerLifecycleRoleApproveEnum>();
 	
 	static {
+		mappings.put("TO_START", TO_START);
 		mappings.put("TO_AUDIT", TO_AUDIT);
 		mappings.put("AUDIT_PASS", AUDIT_PASS);
 		mappings.put("AUDIT_NOPASS", AUDIT_NOPASS);

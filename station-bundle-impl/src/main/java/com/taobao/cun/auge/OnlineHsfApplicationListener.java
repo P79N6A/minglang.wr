@@ -32,6 +32,7 @@ public class OnlineHsfApplicationListener implements ApplicationListener<Applica
 				System.out.println("－－－－－－－－－－－－online hsf: " + response);
 			}
 		} catch (Exception e) {
+			System.out.println("－－－－－－－－－－－－online hsf fail: " + e.getMessage());
 		}
 	}
 

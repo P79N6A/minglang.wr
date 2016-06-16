@@ -4,7 +4,7 @@ import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-public interface SyncStationApplyBO {
+public interface StationApplySyncBO {
 
 	/**
 	 * 将数据同步新增到老模型

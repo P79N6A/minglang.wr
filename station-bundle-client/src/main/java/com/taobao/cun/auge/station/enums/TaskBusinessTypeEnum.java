@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 内外流程任务类型定义在ProcessBusinessEnum 其他任务类型的枚举在此定义
+ * 
+ * @author linjianke
+ *
+ */
 public class TaskBusinessTypeEnum implements Serializable {
 
 	private static final long serialVersionUID = -6355359207409909479L;
@@ -13,42 +19,31 @@ public class TaskBusinessTypeEnum implements Serializable {
 	private String code;
 	private String desc;
 
-	public static final TaskBusinessTypeEnum SETTLING_SYS_PROCESS = new TaskBusinessTypeEnum("SETTLING_SYS_PROCESS",
-			"入驻流程系统处理环节");
-	public static final TaskBusinessTypeEnum ALIPAY_ACQUIRE_TRADE_CLOSE = new TaskBusinessTypeEnum(
-			"ALIPAY_ACQUIRE_TRADE_CLOSE", "退出流程");
+	public static final TaskBusinessTypeEnum SETTLING_SYS_PROCESS = new TaskBusinessTypeEnum("SETTLING_SYS_PROCESS", "入驻流程系统处理环节");
 
-	public static final TaskBusinessTypeEnum CUNTAO_CENTER_BPM_COMPLETE_TASK = new TaskBusinessTypeEnum(
-			"CUNTAO_CENTER_BPM_COMPLETE_TASK", "停业流程");
-	public static final TaskBusinessTypeEnum ALIPAY_ACQUIRE_TRADE_CANCLE = new TaskBusinessTypeEnum(
-			"ALIPAY_ACQUIRE_TRADE_CANCLE", "退出流程");
+	public static final TaskBusinessTypeEnum UPDATE_SERVICING_CAINIAO = new TaskBusinessTypeEnum("UPDATE_SERVICING_CAINIAO", "服务中修改菜鸟");
 
-	public static final TaskBusinessTypeEnum STATION_QUITE_CONFIRM = new TaskBusinessTypeEnum("STATION_QUITE_CONFIRM",
-			"停业流程");
+	public static final TaskBusinessTypeEnum REMOVE_USER_TAG = new TaskBusinessTypeEnum("REMOVE_USER_TAG", "去UIC、旺旺标任务");
+
+	public static final TaskBusinessTypeEnum REMOVE_LOGISTICS = new TaskBusinessTypeEnum("REMOVE_LOGISTICS", "删除物流站点任务");
+
+	public static final TaskBusinessTypeEnum REMOVE_ALIPAY_TAG = new TaskBusinessTypeEnum("REMOVE_ALIPAY_TAG", "去支付宝标任务");
+
+	public static final TaskBusinessTypeEnum PARTNER_INSTANCE_QUIT = new TaskBusinessTypeEnum("PARTNER_INSTANCE_QUIT", "合伙人保证金解冻及正式退出任务");
+
 	public static final TaskBusinessTypeEnum TP_DEGRADE = new TaskBusinessTypeEnum("TP_DEGRADE", "退出流程");
 
-	public static final TaskBusinessTypeEnum PARTNER_SMS = new TaskBusinessTypeEnum("PARTNER_SMS", "停业流程");
-	public static final TaskBusinessTypeEnum STATION_QUIT_FLOW_TASK = new TaskBusinessTypeEnum("STATION_QUIT_FLOW_TASK",
-			"退出流程");
-	public static final TaskBusinessTypeEnum STATION_FORCE_FLOW_TASK = new TaskBusinessTypeEnum(
-			"STATION_FORCE_FLOW_TASK", "退出流程");
-	
-	public static final TaskBusinessTypeEnum UPDATE_SERVICING_CAINIAO = new TaskBusinessTypeEnum(
-			"UPDATE_SERVICING_CAINIAO", "服务中修改菜鸟");
+	public static final TaskBusinessTypeEnum SMS = new TaskBusinessTypeEnum("SMS", "短信任务");
 
 	static {
 		mappings.put("SETTLING_SYS_PROCESS", SETTLING_SYS_PROCESS);
-		mappings.put("ALIPAY_ACQUIRE_TRADE_CLOSE", ALIPAY_ACQUIRE_TRADE_CLOSE);
-		mappings.put("CUNTAO_CENTER_BPM_COMPLETE_TASK", CUNTAO_CENTER_BPM_COMPLETE_TASK);
-		mappings.put("ALIPAY_ACQUIRE_TRADE_CANCLE", ALIPAY_ACQUIRE_TRADE_CANCLE);
-		mappings.put("STATION_QUITE_CONFIRM", STATION_QUITE_CONFIRM);
-		mappings.put("TP_DEGRADE", TP_DEGRADE);
-
-		mappings.put("PARTNER_SMS", PARTNER_SMS);
-		mappings.put("STATION_QUIT_FLOW_TASK", STATION_QUIT_FLOW_TASK);
-		mappings.put("STATION_FORCE_FLOW_TASK", STATION_FORCE_FLOW_TASK);
-		
 		mappings.put("UPDATE_SERVICING_CAINIAO", UPDATE_SERVICING_CAINIAO);
+		mappings.put("REMOVE_USER_TAG", REMOVE_USER_TAG);
+		mappings.put("REMOVE_LOGISTICS", REMOVE_LOGISTICS);
+		mappings.put("REMOVE_ALIPAY_TAG", REMOVE_ALIPAY_TAG);
+		mappings.put("PARTNER_INSTANCE_QUIT", PARTNER_INSTANCE_QUIT);
+		mappings.put("TP_DEGRADE", TP_DEGRADE);
+		mappings.put("SMS", SMS);
 	}
 
 	public TaskBusinessTypeEnum(String code, String desc) {
