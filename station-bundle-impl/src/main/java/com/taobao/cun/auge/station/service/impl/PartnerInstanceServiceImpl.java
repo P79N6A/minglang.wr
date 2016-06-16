@@ -108,7 +108,7 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
-import com.taobao.cun.auge.station.sync.SyncStationApplyBO;
+import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -193,7 +193,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 
 	@Autowired
-	SyncStationApplyBO syncStationApplyBO;
+	StationApplySyncBO syncStationApplyBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
