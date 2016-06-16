@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
