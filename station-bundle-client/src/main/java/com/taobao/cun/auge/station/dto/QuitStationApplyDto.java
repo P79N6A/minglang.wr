@@ -32,6 +32,9 @@ public class QuitStationApplyDto extends OperatorDto {
 
 	// 是，退出服务站，否，不退出服务站
 	private Boolean isQuitStation;
+	
+	
+	private String submittedPeopleName;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -95,5 +98,13 @@ public class QuitStationApplyDto extends OperatorDto {
 
 	public void setIsQuitStation(Boolean isQuitStation) {
 		this.isQuitStation = isQuitStation;
+	}
+
+	public String getSubmittedPeopleName() {
+		return submittedPeopleName;
+	}
+
+	public void setSubmittedPeopleName(String submittedPeopleName) {
+		this.submittedPeopleName = submittedPeopleName;
 	}
 }

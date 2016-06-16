@@ -44,6 +44,7 @@ public final class QuitStationApplyConverter {
 		quitStationApplyDto.setLoanProveFileName(quitStationApply.getLoanProveFileName());
 		quitStationApplyDto.setOtherDescription(quitStationApply.getOtherDescription());
 		quitStationApplyDto.setRevocationAppFormFileName(quitStationApply.getRevocationAppFormFileName());
+		quitStationApplyDto.setSubmittedPeopleName(quitStationApply.getSubmittedPeopleName());
 		return quitStationApplyDto;
 	}
 
