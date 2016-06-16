@@ -110,9 +110,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	@Override
 	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
 		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
-			return ProcessBusinessEnum.TPV_FORCED_CLOSURE;
+			return ProcessBusinessEnum.stationForcedClosure;
 		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
-			return ProcessBusinessEnum.TPV_QUIT;
+			return ProcessBusinessEnum.stationQuitRecord;
 		}
 		return null;
 	}
