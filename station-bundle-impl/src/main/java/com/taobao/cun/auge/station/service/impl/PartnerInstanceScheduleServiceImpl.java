@@ -33,83 +33,85 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("partnerInstanceScheduleService")
 @HSFProvider(serviceInterface = PartnerInstanceScheduleService.class)
 public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceScheduleService {
-	
+
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+
 	@Autowired
 	PartnerInstanceService partnerInstanceService;
+
 	@Autowired
 	PartnerBO partnerBO;
+
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
+
 	@Autowired
 	AlipayStandardBailAdapter alipayStandardBailAdapter;
-	
+
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 
-	
 	@Override
-	public List<Long> getWaitOpenStationList(int fetchNum)
-			throws AugeServiceException {
+	public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException {
 		return partnerInstanceBO.getWaitOpenStationList(fetchNum);
 	}
 
 	@Override
 	public Boolean openStation(Long instanceId) throws AugeServiceException {
-		OperatorDto operatorDto= new OperatorDto();
+		OperatorDto operatorDto = new OperatorDto();
 		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		operatorDto.setOperatorOrgId(0L);
-		// TODO:检查开业包 
+		// TODO:检查开业包
 		if (!partnerInstanceService.checkKyPackage()) {
-			//开业时间置为空
-			partnerInstanceBO.updateOpenDate(instanceId, null,
-					operatorDto.getOperator());
-			//TODO：发短信
+			// 开业时间置为空
+			partnerInstanceBO.updateOpenDate(instanceId, null, operatorDto.getOperator());
+			// TODO：发短信
 			return Boolean.TRUE;
 		}
 		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING,
 				PartnerInstanceStateEnum.SERVICING, DomainUtils.DEFAULT_OPERATOR);
-	
+
 		// 记录村点状态变化
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_SERVICING,
-						partnerInstanceBO.getPartnerInstanceById(instanceId),operatorDto));
+						partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto));
 		return Boolean.TRUE;
 	}
 
 	@Override
-	public List<Long> getWaitThawMoneyList(int fetchNum)
-			throws AugeServiceException {
+	public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException {
 		return partnerInstanceBO.getWaitOpenStationList(fetchNum);
 	}
 
 	@Override
-	public Boolean thawMoney(Long instanceId)
-			throws AugeServiceException {
+	public Boolean thawMoney(Long instanceId) throws AugeServiceException {
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		if (rel == null)  {
+		if (rel == null) {
 			return Boolean.TRUE;
 		}
 		Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
 		if (partner == null) {
 			return Boolean.TRUE;
 		}
-		OperatorDto operatorDto= new OperatorDto();
+		OperatorDto operatorDto = new OperatorDto();
 		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		operatorDto.setOperatorOrgId(0L);
-		PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(partner.getTaobaoUserId(), operatorDto);
-		
-		//获得冻结的金额
-		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		PaymentAccountDto accountDto = paymentAccountQueryAdapter
+				.queryPaymentAccountByTaobaoUserId(partner.getTaobaoUserId(), operatorDto);
+
+		// 获得冻结的金额
+		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 		String frozenMoney = accountMoney.getMoney().toString();
-		
-		generalTaskSubmitService.submitQuitTask(instanceId,accountDto,frozenMoney,operatorDto);
-		
+
+		generalTaskSubmitService.submitQuitTask(instanceId, accountDto, frozenMoney, operatorDto);
+
 		return Boolean.TRUE;
 	}
 }
