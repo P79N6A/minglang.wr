@@ -106,7 +106,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerProtocolRelDto getProtocolByObjectId(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException;
+	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException;
 	
 	/**
 	 * 获得退出申请单

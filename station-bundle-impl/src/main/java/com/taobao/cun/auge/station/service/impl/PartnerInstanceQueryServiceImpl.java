@@ -314,7 +314,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public PartnerProtocolRelDto getProtocolByObjectId(Long objectId,
+	public PartnerProtocolRelDto getProtocolRel(Long objectId,
 			PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException {
 		return partnerProtocolRelBO.getPartnerProtocolRelDto(type, objectId, targetType);
 	}
