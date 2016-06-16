@@ -996,10 +996,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(forcedCloseDto);
-//		Long operatorOrgId = forcedCloseDto.getOperatorOrgId();
-//		if (null == operatorOrgId || 0l == operatorOrgId) {
-//			throw new AugeServiceException("operatorOrgId not null");
-//		}
+		Long operatorOrgId = forcedCloseDto.getOperatorOrgId();
+		if (null == operatorOrgId || 0l == operatorOrgId) {
+			throw new AugeServiceException("operatorOrgId not null");
+		}
 
 		Long instanceId = forcedCloseDto.getInstanceId();
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);

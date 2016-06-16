@@ -23,7 +23,7 @@ public class OperatorDto implements Serializable {
 	@NotNull(message="operatorType not null")
 	private OperatorTypeEnum operatorType;
 
-	protected Long operatorOrgId;
+	private Long operatorOrgId;
 	
 	public String getOperator() {
 		return operator;
