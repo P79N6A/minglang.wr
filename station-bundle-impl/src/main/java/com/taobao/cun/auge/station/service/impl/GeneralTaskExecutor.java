@@ -15,7 +15,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 @Service("taskExecutor")
-@HSFProvider(serviceInterface = TaskExecutor.class, clientTimeout = 10000)
+@HSFProvider(serviceInterface = TaskExecutor.class, clientTimeout = 12000)
 public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAware {
 
 	private ApplicationContext applicationContext;
