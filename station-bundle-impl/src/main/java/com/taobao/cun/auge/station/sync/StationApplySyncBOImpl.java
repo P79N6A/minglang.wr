@@ -30,10 +30,12 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.Protocol;
 import com.taobao.cun.auge.dal.domain.ProtocolExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationApply;
+import com.taobao.cun.auge.dal.domain.StationApplyExample;
 import com.taobao.cun.auge.dal.domain.AttachementExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
 import com.taobao.cun.auge.dal.mapper.AttachementMapper;
@@ -170,14 +172,14 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 	private StationApply buildStationApply(Long partnerInstanceId, SyncStationApplyEnum buildType) {
 		StationApply stationApply = new StationApply();
-		Assert.notNull(partnerInstanceId,"partnerInstanceId can not be null");
-		
+		Assert.notNull(partnerInstanceId, "partnerInstanceId can not be null");
+
 		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(partnerInstanceId);
 		if (buildType != SyncStationApplyEnum.ADD) {
-			Assert.notNull(instance.getStationApplyId(),"[update]instance's station_apply_id is null, instance_id = " + partnerInstanceId);
+			Assert.notNull(instance.getStationApplyId(), "[update]instance's station_apply_id is null, instance_id = " + partnerInstanceId);
 			stationApply.setId(instance.getStationApplyId());
 			StationApply existStationApply = stationApplyMapper.selectByPrimaryKey(instance.getStationApplyId());
-			Assert.notNull(existStationApply,"[update]station_apply not exists, instance_id = " + partnerInstanceId);
+			Assert.notNull(existStationApply, "[update]station_apply not exists, instance_id = " + partnerInstanceId);
 		} else if (null != instance.getStationApplyId()) {
 			// 防止多次同步add
 			throw new AugeServiceException("[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
@@ -232,7 +234,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				.andTypeEqualTo(AccountMoneyTypeEnum.PARTNER_BOND.getCode())
 				.andTargetTypeEqualTo(TargetTypeEnum.PARTNER_INSTANCE.getCode());
 		List<AccountMoney> list = accountMoneyMapper.selectByExample(example);
-		
+
 		if (!CollectionUtils.isEmpty(list)) {
 			AccountMoney accountMoney = list.iterator().next();
 			stationApply.setFrozenTime(accountMoney.getFrozenTime());
@@ -325,13 +327,13 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			if (protocol == null) {
 				throw new AugeServiceException("protocol not exists : " + p.getCode());
 			}
-			//新模型固点协议查询条件
+			// 新模型固点协议查询条件
 			PartnerProtocolRelExample newRelExample = new PartnerProtocolRelExample();
 			newRelExample.createCriteria().andIsDeletedEqualTo("n")
 					.andTargetTypeEqualTo(PartnerProtocolRelTargetTypeEnum.CRIUS_STATION.getCode()).andProtocolIdEqualTo(protocol.getId())
 					.andObjectIdEqualTo(instance.getStationId());
 
-			//老模型固点协议查询条件
+			// 老模型固点协议查询条件
 			PartnerProtocolRelExample oldRelExample = new PartnerProtocolRelExample();
 			oldRelExample.createCriteria().andTargetTypeEqualTo("STATION").andObjectIdEqualTo(stationApplyId)
 					.andProtocolIdEqualTo(protocol.getId());
@@ -344,11 +346,11 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				partnerProtocolRelMapper.updateByExampleSelective(record, oldRelExample);
 				continue;
 			}
-			//新模型固点协议
+			// 新模型固点协议
 			PartnerProtocolRel newRel = newPrList.iterator().next();
 
 			List<PartnerProtocolRel> oldPrList = partnerProtocolRelMapper.selectByExample(oldRelExample);
-			//若老模型中原先不存在纪录，则insert，否则update
+			// 若老模型中原先不存在纪录，则insert，否则update
 			if (CollectionUtils.isEmpty(oldPrList)) {
 				newRel.setObjectId(stationApplyId);
 				newRel.setTargetType("STATION");
@@ -452,7 +454,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 		Set<Long> typeIdSet = AttachementTypeIdEnum.mappings.keySet();
 		List<Attachement> stationApplyAttList = getAttachment(stationApplyId, "STATION", null);
 		Map<Long, List<Attachement>> stationApplyAttMap = Maps.newHashMap();
-		//根据attachement_type_id映射
+		// 根据attachement_type_id映射
 		copy2Map(stationApplyAttMap, stationApplyAttList);
 
 		// 新模型的附件分别挂在partner(身份证)和村点上
@@ -462,7 +464,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 		List<Attachement> stationList = getAttachment(instance.getStationId(), "CRIUS_STATION", null);
 		copy2Map(newModuleAttMap, partnerList);
 		copy2Map(newModuleAttMap, stationList);
-		//根据attachment_type_id遍历
+		// 根据attachment_type_id遍历
 		for (Long typeId : typeIdSet) {
 			List<Attachement> newModuleSubList = newModuleAttMap.get(typeId);
 			List<Attachement> stationApplySubList = stationApplyAttMap.get(typeId);
@@ -639,6 +641,23 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			return StationCategoryEnum.QITA.getDesc();
 		}
 		return null;
+	}
+
+	@Override
+	public void checkTotalStationApplySize() {
+		StationApplyExample stationApplyExample = new StationApplyExample();
+		stationApplyExample.createCriteria().andIsDeletedEqualTo("n");
+		int totalStationApplySize = stationApplyMapper.countByExample(stationApplyExample);
+
+		PartnerStationRelExample partnerStationRelExample = new PartnerStationRelExample();
+		partnerStationRelExample.createCriteria().andIsDeletedEqualTo("n");
+		int totalInstanceSize = partnerStationRelMapper.countByExample(partnerStationRelExample);
+
+		if (totalStationApplySize != totalInstanceSize) {
+			logger.error(ERROR_MSG + "checkTotalStationApplySize, station_apply = {}, instance = {}", totalStationApplySize,
+					totalInstanceSize);
+		}
+
 	}
 
 }
