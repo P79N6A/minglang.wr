@@ -59,6 +59,10 @@ public class PartnerLifecycleConverter {
 	
 	
 	public static PartnerLifecycleDto toPartnerLifecycleDto(PartnerLifecycleItems items){
+		if (items == null) {
+			return null;
+		}
+		
 		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
 		
 		lifecleDto.setPartnerType(PartnerInstanceTypeEnum.valueof(items.getPartnerType()));
