@@ -5,14 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -22,9 +20,6 @@ import com.taobao.cun.crius.event.client.EventListener;
 public class RemoveUserTagListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(RemoveUserTagListener.class);
-
-	@Autowired
-	TaskSubmitService taskExecuteService;
 
 	@Autowired
 	PartnerBO partnerBO;
@@ -46,15 +41,7 @@ public class RemoveUserTagListener implements EventListener {
 		// 已停业，去标
 		if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
-			// 已退出
-		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
-			// FIXME FHH是否要保持事务
-			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-			String accountNo = partner.getAlipayAccount();
-			
-			generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, operatorId);
-			generalTaskSubmitService.submitRemoveLogisticsTask(instanceId, operatorId);
-		}
+		} 
 	}
 
 }
