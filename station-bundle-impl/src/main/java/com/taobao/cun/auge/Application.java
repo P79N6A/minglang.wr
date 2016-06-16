@@ -9,10 +9,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 
 @SpringBootApplication
-@EnableHSFProvider
+@EnableHSF
 @EnableTransactionManagement
 //@EnableIntegration
 //@IntegrationComponentScan("com.taobao.cun")
