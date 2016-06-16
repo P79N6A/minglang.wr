@@ -108,7 +108,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 		String frozenMoney = accountMoney.getMoney().toString();
 		
-		generalTaskSubmitService.submitThawAndQuitTask(instanceId,accountDto,frozenMoney,operatorDto);
+		generalTaskSubmitService.submitQuitTask(instanceId,accountDto,frozenMoney,operatorDto);
 		
 		return Boolean.TRUE;
 	}

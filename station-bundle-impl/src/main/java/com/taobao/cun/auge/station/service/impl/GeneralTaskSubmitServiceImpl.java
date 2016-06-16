@@ -28,7 +28,6 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
-import com.taobao.cun.auge.station.enums.GeneralTaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -272,7 +271,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setBeanName("messageService");
 			task.setMethodName("sendSmsMsg");
 			task.setBusinessStepNo(1l);
-			task.setBusinessType(TaskBusinessTypeEnum.PARTNER_SMS.getCode());
+			task.setBusinessType(TaskBusinessTypeEnum.SMS.getCode());
 			task.setBusinessStepDesc("发短信");
 			task.setOperator(operatorId);
 			task.setParameterType(SmsSendDto.class.getName());
@@ -300,7 +299,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setBeanName("uicTagService");
 			task.setMethodName("removeUserTag");
 			task.setBusinessStepNo(1l);
-			task.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			task.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
 			task.setBusinessStepDesc("去uic标");
 			task.setOperator(operatorId);
 			task.setParameterType(UserTagDto.class.getName());
@@ -313,7 +312,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			wangwangTaskVo.setBeanName("wangWangTagService");
 			wangwangTaskVo.setMethodName("removeWangWangTagByNick");
 			wangwangTaskVo.setBusinessStepNo(2l);
-			wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			wangwangTaskVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_USER_TAG.getCode());
 			wangwangTaskVo.setBusinessStepDesc("去旺旺标");
 			wangwangTaskVo.setOperator(operatorId);
 			wangwangTaskVo.setParameterType(String.class.getName());
@@ -336,7 +335,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			cainiaoTaskVo.setBeanName("caiNiaoService");
 			cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 			cainiaoTaskVo.setBusinessStepNo(1l);
-			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_LOGISTICS.getCode());
 			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
 			cainiaoTaskVo.setOperator(operatorId);
 
@@ -360,7 +359,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			dealStationTagTaskVo.setBeanName("alipayTagService");
 			dealStationTagTaskVo.setMethodName("dealTag");
 			dealStationTagTaskVo.setBusinessStepNo(1l);
-			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_QUITE_CONFIRM.getCode());
+			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.REMOVE_ALIPAY_TAG.getCode());
 			dealStationTagTaskVo.setBusinessStepDesc("dealTag");
 			dealStationTagTaskVo.setOperator(operatorId);
 
@@ -383,7 +382,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitThawAndQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto) {
+	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto) {
 		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
 		// 解除保证金
@@ -392,7 +391,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
 		dealStanderBailTaskVo.setMethodName("dealStandardBail");
 		dealStanderBailTaskVo.setBusinessStepNo(1l);
-		dealStanderBailTaskVo.setBusinessType(GeneralTaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+		dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
 		dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
 		dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
 
@@ -413,7 +412,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		quitTaskVo.setBeanName("partnerInstanceService");
 		quitTaskVo.setMethodName("quitPartnerInstance");
 		quitTaskVo.setBusinessStepNo(2l);
-		quitTaskVo.setBusinessType(GeneralTaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+		quitTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
 		quitTaskVo.setBusinessStepDesc("quitPartnerInstance");
 		quitTaskVo.setOperator(operatorDto.getOperator());
 

@@ -91,6 +91,6 @@ public interface GeneralTaskSubmitService {
 	 * @param accountDto 
 	 * @return
 	 */
-	public void submitThawAndQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto);
+	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto);
 
 }
