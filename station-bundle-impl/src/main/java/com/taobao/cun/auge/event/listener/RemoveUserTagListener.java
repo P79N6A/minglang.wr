@@ -12,7 +12,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.chronus.service.TaskExecuteService;
+import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -24,7 +24,7 @@ public class RemoveUserTagListener implements EventListener {
 	private static final Logger logger = LoggerFactory.getLogger(RemoveUserTagListener.class);
 
 	@Autowired
-	TaskExecuteService taskExecuteService;
+	TaskSubmitService taskExecuteService;
 
 	@Autowired
 	PartnerBO partnerBO;
