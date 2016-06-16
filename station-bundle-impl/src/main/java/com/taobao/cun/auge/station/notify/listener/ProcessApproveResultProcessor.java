@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -17,6 +18,7 @@ import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -33,17 +35,22 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("processApproveResultProcessor")
 public class ProcessApproveResultProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProcessApproveResultProcessor.class);
+	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
 	StationBO stationBO;
+	
+	@Autowired
+	PartnerBO partnerBO;
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
@@ -56,6 +63,9 @@ public class ProcessApproveResultProcessor {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
 
 	/**
 	 * 处理停业审批结果
@@ -161,9 +171,11 @@ public class ProcessApproveResultProcessor {
 		}
 		
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			// 合伙人实例已停业
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
-					DomainUtils.DEFAULT_OPERATOR);
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
+			String accountNo = partner.getAlipayAccount();
+			
+			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, DomainUtils.DEFAULT_OPERATOR);
+			generalTaskSubmitService.submitRemoveLogisticsTask(instance.getId(), DomainUtils.DEFAULT_OPERATOR);
 			
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
