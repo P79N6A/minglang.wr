@@ -182,11 +182,6 @@ public class ProcessApproveResultProcessor {
 				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
 			}
-
-			// 取消物流站点，取消支付宝标示，
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUIT,
-							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
 		}else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
