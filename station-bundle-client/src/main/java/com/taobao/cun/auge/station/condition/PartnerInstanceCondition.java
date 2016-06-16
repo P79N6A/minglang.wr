@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.condition;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 /**
@@ -13,7 +15,11 @@ import com.taobao.cun.auge.common.OperatorDto;
 public class PartnerInstanceCondition extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 9015126136586505699L;
-
+	
+	/**
+	 * 实例id
+	 */
+	@NotNull(message="instanceId is null")
 	private Long instanceId;
 
 	/**

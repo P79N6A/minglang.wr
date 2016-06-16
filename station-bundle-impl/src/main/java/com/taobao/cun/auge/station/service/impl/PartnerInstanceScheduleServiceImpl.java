@@ -66,7 +66,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		operatorDto.setOperatorOrgId(0L);
-		// TODO:检查开业包
+		// TODO:检查开业包 
 		if (!partnerInstanceService.checkKyPackage()) {
 			//开业时间置为空
 			partnerInstanceBO.updateOpenDate(instanceId, null,

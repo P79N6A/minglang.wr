@@ -50,8 +50,8 @@ public class RemoveUserTagListener implements EventListener {
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
 			// FIXME FHH是否要保持事务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-
 			String accountNo = partner.getAlipayAccount();
+			
 			generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, operatorId);
 			generalTaskSubmitService.submitRemoveLogisticsTask(instanceId, operatorId);
 		}
