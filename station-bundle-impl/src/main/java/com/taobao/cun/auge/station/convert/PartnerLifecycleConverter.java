@@ -2,6 +2,15 @@ package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 
 /**
  * 生命周期表转换
@@ -46,5 +55,23 @@ public class PartnerLifecycleConverter {
 			items.setSettledProtocol(partnerLifecycleDto.getSettledProtocol().getCode());
 		}
 		return items;
+	}
+	
+	
+	public static PartnerLifecycleDto toPartnerLifecycleDto(PartnerLifecycleItems items){
+		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
+		
+		lifecleDto.setPartnerType(PartnerInstanceTypeEnum.valueof(items.getPartnerType()));
+		lifecleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.valueof(items.getBusinessType()));
+		lifecleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.valueof(items.getSettledProtocol()));
+		lifecleDto.setBond(PartnerLifecycleBondEnum.valueof(items.getBond()));
+		lifecleDto.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.valueof(items.getQuitProtocol()));
+		lifecleDto.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.valueof(items.getLogisticsApprove()));
+		lifecleDto.setPartnerInstanceId(items.getPartnerInstanceId());
+		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(items.getCurrentStep()));
+		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(items.getRoleApprove()));
+		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(items.getConfirm()));
+		
+		return lifecleDto;
 	}
 }

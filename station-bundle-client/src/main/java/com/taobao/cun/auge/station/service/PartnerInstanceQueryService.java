@@ -7,8 +7,11 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -95,5 +98,22 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException;
+	
+	/**
+	 * 获得指定类型数据的协议
+	 * @param objectId
+	 * @param targetType
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerProtocolRelDto getProtocolByObjectId(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException;
+	
+	/**
+	 * 获得退出申请单
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
 
 }

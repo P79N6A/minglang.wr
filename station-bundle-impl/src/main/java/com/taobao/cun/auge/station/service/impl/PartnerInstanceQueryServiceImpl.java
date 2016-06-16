@@ -13,7 +13,6 @@ import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
-import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -24,25 +23,30 @@ import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
+import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
+import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -88,16 +92,22 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	PartnerLifecycleBO partnerLifecycleBO;
 	@Autowired
 	CloseStationApplyBO closeStationApplyBO;
+	@Autowired
+	QuitStationApplyBO quitStationApplyBO;
 
 	@Override
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {
-		ValidateUtils.validateParam(condition);
-		ValidateUtils.notNull(condition.getInstanceId());
+		// 参数校验
+		BeanValidator.validateWithThrowable(condition);
 		PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
 		if (psRel == null) {
 			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 		}
+		//获得生命周期数据
+		PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
 		PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
+		insDto.setPartnerLifecycleDto(lifecycleDto);
+		
 		if (condition.getNeedPartnerInfo()) {
 			Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
 			PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
@@ -301,6 +311,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public Long getStationApplyId(Long instanceId) throws AugeServiceException {
 		return partnerInstanceBO.findStationApplyId(instanceId);
+	}
+
+	@Override
+	public PartnerProtocolRelDto getProtocolByObjectId(Long objectId,
+			PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException {
+		return partnerProtocolRelBO.getPartnerProtocolRelDto(type, objectId, targetType);
+	}
+
+	@Override
+	public QuitStationApplyDto getQuitStationApply(Long instanceId)
+			throws AugeServiceException {
+		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
 	}
 
 }
