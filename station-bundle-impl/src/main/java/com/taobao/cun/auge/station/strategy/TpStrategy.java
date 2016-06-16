@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -52,6 +53,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 
 @Component("tpStrategy")
 public class TpStrategy implements PartnerInstanceStrategy{
@@ -76,6 +78,9 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	
 	@Autowired
 	AttachementBO attachementBO;
+	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -301,5 +306,13 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void submitRemoveAlipayTagTask(Long taobaoUserId) {
+		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+		String accountNo = partner.getAlipayAccount();
+		
+		generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, DomainUtils.DEFAULT_OPERATOR);
 	}
 }

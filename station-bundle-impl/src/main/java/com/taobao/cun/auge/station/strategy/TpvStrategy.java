@@ -318,4 +318,10 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		}
 		return false;
 	}
+
+	@Override
+	public void submitRemoveAlipayTagTask(Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

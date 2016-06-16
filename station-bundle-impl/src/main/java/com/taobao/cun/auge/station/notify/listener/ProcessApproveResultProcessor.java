@@ -171,10 +171,10 @@ public class ProcessApproveResultProcessor {
 		}
 		
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
-			String accountNo = partner.getAlipayAccount();
+			//提交去支付宝标任务
+			partnerInstanceHandler.submitRemoveAlipayTagTask(PartnerInstanceTypeEnum.valueof(instance.getType()), instance.getTaobaoUserId());
 			
-			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, DomainUtils.DEFAULT_OPERATOR);
+			//提交去物流站点任务
 			generalTaskSubmitService.submitRemoveLogisticsTask(instance.getId(), DomainUtils.DEFAULT_OPERATOR);
 			
 			// 村点已撤点
