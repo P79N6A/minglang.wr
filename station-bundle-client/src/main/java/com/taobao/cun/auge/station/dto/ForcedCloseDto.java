@@ -16,9 +16,6 @@ public class ForcedCloseDto extends OperatorDto {
 	@NotNull(message="PartnerForcedCloseReasonEnum not null")
 	private CloseStationApplyCloseReasonEnum reason;
 	
-	@NotNull(message="operatorOrgId not null")
-	private Long operatorOrgId;
-	
 	private String remarks;
 
 	public Long getInstanceId() {
@@ -43,13 +40,5 @@ public class ForcedCloseDto extends OperatorDto {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-
-	public Long getOperatorOrgId() {
-		return operatorOrgId;
-	}
-
-	public void setOperatorOrgId(Long operatorOrgId) {
-		this.operatorOrgId = operatorOrgId;
 	}
 }
