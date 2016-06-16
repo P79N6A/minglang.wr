@@ -192,7 +192,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
 		itemsDO.setPartnerType(typeEnum);
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
-		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
 		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
 		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 		itemsDO.copyOperatorDto(quitDto);

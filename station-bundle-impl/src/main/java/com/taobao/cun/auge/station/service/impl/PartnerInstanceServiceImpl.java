@@ -1055,7 +1055,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		itemsDO.setPartnerInstanceId(instanceId);
 		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
-		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
 		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 		itemsDO.copyOperatorDto(forcedCloseDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
