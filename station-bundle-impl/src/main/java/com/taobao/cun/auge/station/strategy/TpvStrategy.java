@@ -117,7 +117,10 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		return null;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	/**
+	 * 新逻辑 占时不用
+	 */
+/*	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
 			PartnerStationRel rel) throws AugeServiceException {
@@ -145,8 +148,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 			}
 			
-			
-			
 		}
 		
 		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
@@ -155,6 +156,41 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
 				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 			}
+			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+		}
+		
+		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
+		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
+	}*/
+	
+	/**
+	 * 过渡使用 支持村拍档  老逻辑删除功能
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
+			PartnerStationRel rel) throws AugeServiceException {
+		
+		if (!StringUtils.equals("AUDIT_FAIL", rel.getState())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+		}
+		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
+			Long stationId =  rel.getStationId();
+			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
+			//删除物流表
+			CuntaoCainiaoStationRel csRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+			if (csRel != null) {
+				Long logisId = csRel.getLogisticsStationId();
+				if (logisId != null) {
+					logisticsStationBO.delete(logisId, partnerInstanceDeleteDto.getOperator());
+				}
+				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+			}
+			
+		}
+		
+		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
+			Long partnerId =  rel.getPartnerId();
 			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
 		}
 		
