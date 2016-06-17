@@ -117,51 +117,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		return null;
 	}
 	
-	/**
-	 * 新逻辑 占时不用
-	 */
-/*	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	@Override
-	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
-			PartnerStationRel rel) throws AugeServiceException {
-		
-		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState()) 
-				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
-		}
-		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
-			Long stationId =  rel.getStationId();
-			Station station = stationBO.getStationById(stationId);
-			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
-					 && !StringUtils.equals(StationStatusEnum.INVALID.getCode(), rel.getState())) {
-				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
-			}
-			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
-			
-			//删除物流表
-			CuntaoCainiaoStationRel csRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
-			if (csRel != null) {
-				Long logisId = csRel.getLogisticsStationId();
-				if (logisId != null) {
-					logisticsStationBO.delete(logisId, partnerInstanceDeleteDto.getOperator());
-				}
-				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
-			}
-			
-		}
-		
-		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
-			Long partnerId =  rel.getPartnerId();
-			Partner partner = partnerBO.getPartnerById(partnerId);
-			if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
-			}
-			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
-		}
-		
-		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
-		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
-	}*/
 	
 	/**
 	 * 过渡使用 支持村拍档  老逻辑删除功能
@@ -171,7 +126,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
 			PartnerStationRel rel) throws AugeServiceException {
 		
-		if (!StringUtils.equals("AUDIT_FAIL", rel.getState())) {
+		if (!StringUtils.equals("AUDIT_FAIL", rel.getState())) {//TODO：这个状态是老的，重构三期要改造
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
