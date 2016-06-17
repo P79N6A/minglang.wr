@@ -31,5 +31,11 @@ public final class EventConstant {
 	 * station_apply信息同步
 	 */
 	public static final String CUNTAO_STATION_APPLY_SYNC_EVENT = "CUNTAO_STATION_APPLY_SYNC_EVENT";
+	
+	
+	/**
+	 * 手机端使用，在合伙人装修中的时候 使用
+	 */
+	public static final String PARTNER_STATION_STATE_CHANGE_EVENT = "PARTNER_STATION_STATE_CHANGE_EVENT";
 
 }

@@ -193,6 +193,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
             }else {
 	            // 同步菜鸟接口
+            	caiNiaoStationDto.setStationId(cainiaoStationId);
             	caiNiaoAdapter.modifyStation(caiNiaoStationDto);
             }
 		} catch (Exception e) {
