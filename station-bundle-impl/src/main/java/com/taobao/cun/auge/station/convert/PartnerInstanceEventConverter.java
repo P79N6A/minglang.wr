@@ -20,7 +20,7 @@ public final class PartnerInstanceEventConverter {
 	private PartnerInstanceEventConverter() {
 	}
 
-	public static PartnerInstanceStateChangeEvent convert(PartnerInstanceStateChangeEnum stateChangeEnum,
+	public static PartnerInstanceStateChangeEvent convertStateChangeEvent(PartnerInstanceStateChangeEnum stateChangeEnum,
 			PartnerInstanceDto partnerInstanceDto, OperatorDto operator) {
 
 		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();

@@ -108,7 +108,7 @@ public class ProcessProcessor {
 			// 短信推送
 			// 通知admin，合伙人退出。让他们监听村点状态变更事件
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSED,
+					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.CLOSED,
 							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 
 			// 同步station_apply状态和服务结束时间
@@ -131,7 +131,7 @@ public class ProcessProcessor {
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
+					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 
 			// 同步station_apply，只更新状态
@@ -191,7 +191,7 @@ public class ProcessProcessor {
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, DomainUtils.DEFAULT_OPERATOR);
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
+					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
 		}
 

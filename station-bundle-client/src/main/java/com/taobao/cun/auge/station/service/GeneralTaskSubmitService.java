@@ -33,7 +33,8 @@ public interface GeneralTaskSubmitService {
 	 * @param operatorId
 	 * @throws AugeServiceException
 	 */
-	public void submitDegradePartner(PartnerInstanceDto instanceDto, String operatorId) throws AugeServiceException;
+	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, String operatorId)
+			throws AugeServiceException;
 
 	/**
 	 * 提交流程
@@ -86,9 +87,9 @@ public interface GeneralTaskSubmitService {
 	 * 解冻和正式退出任务
 	 * 
 	 * @param instanceId
-	 * @param operatorDto 
-	 * @param frozenMoney 
-	 * @param accountDto 
+	 * @param operatorDto
+	 * @param frozenMoney
+	 * @param accountDto
 	 * @return
 	 */
 	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto);

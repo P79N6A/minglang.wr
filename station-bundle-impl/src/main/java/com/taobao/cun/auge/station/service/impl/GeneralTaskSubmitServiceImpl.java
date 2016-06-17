@@ -19,6 +19,7 @@ import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
+import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
@@ -27,6 +28,7 @@ import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -161,10 +163,28 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitDegradePartner(PartnerInstanceDto instanceDto, String operatorId) throws AugeServiceException {
+	public void submitDegradePartner(PartnerInstanceDto instanceDto,PartnerInstanceDto parentInstanceDto, String operatorId) throws AugeServiceException {
 		// 异构系统交互提交后台任务
 		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
-
+		
+		//合伙人降级菜鸟同步
+		GeneralTaskDto tpDegreeCainiaoSyncTask = new GeneralTaskDto();
+		tpDegreeCainiaoSyncTask.setBusinessNo(String.valueOf(instanceDto.getId()));
+		tpDegreeCainiaoSyncTask.setBeanName("caiNiaoService");
+		tpDegreeCainiaoSyncTask.setMethodName("updateCainiaoStationFeatureForTPDegree");
+		tpDegreeCainiaoSyncTask.setBusinessStepNo(1l);
+		tpDegreeCainiaoSyncTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+		tpDegreeCainiaoSyncTask.setBusinessStepDesc("updateCainiaoStationFeatureForTPDegree");
+		tpDegreeCainiaoSyncTask.setOperator(operatorId);
+		SyncTPDegreeCainiaoStationDto syncTPDegreeCainiaoStationDto = new SyncTPDegreeCainiaoStationDto();
+		syncTPDegreeCainiaoStationDto.setStationId(instanceDto.getStationId());
+		syncTPDegreeCainiaoStationDto.setParentStationId(parentInstanceDto.getStationId());
+		syncTPDegreeCainiaoStationDto.setTaobaoUserId(instanceDto.getTaobaoUserId());
+		syncTPDegreeCainiaoStationDto.setParentTaobaoUserId(parentInstanceDto.getTaobaoUserId());
+		tpDegreeCainiaoSyncTask.setParameterType(SyncTPDegreeCainiaoStationDto.class.getName());
+		tpDegreeCainiaoSyncTask.setParameter(JSON.toJSONString(syncTPDegreeCainiaoStationDto));
+		
+		
 		// UIC打标
 		UserTagDto userTagDto = new UserTagDto();
 		userTagDto.setTaobaoUserId(instanceDto.getTaobaoUserId());
@@ -174,13 +194,30 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		task.setBusinessNo(String.valueOf(instanceDto.getId()));
 		task.setBeanName("uicTagService");
 		task.setMethodName("addUserTag");
-		task.setBusinessStepNo(1l);
+		task.setBusinessStepNo(2l);
 		task.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
 		task.setBusinessStepDesc("addUserTag");
 		task.setOperator(operatorId);
 		task.setParameterType(UserTagDto.class.getName());
 		task.setParameter(JSON.toJSONString(userTagDto));
 		taskLists.add(task);
+		
+		GeneralTaskDto degradePartnerInstanceSuccessTask  = new GeneralTaskDto();
+		degradePartnerInstanceSuccessTask.setBusinessNo(String.valueOf(instanceDto.getId()));
+		degradePartnerInstanceSuccessTask.setBeanName("partnerInstanceService");
+		degradePartnerInstanceSuccessTask.setMethodName("degradePartnerInstanceSuccess");
+		degradePartnerInstanceSuccessTask.setBusinessStepNo(3l);
+		degradePartnerInstanceSuccessTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
+		degradePartnerInstanceSuccessTask.setBusinessStepDesc("degradePartnerInstanceSuccess");
+		degradePartnerInstanceSuccessTask.setOperator(operatorId);
+		DegradePartnerInstanceSuccessDto degradePartnerInstanceSuccessDto = new DegradePartnerInstanceSuccessDto();
+		degradePartnerInstanceSuccessDto.setInstanceId(instanceDto.getId());
+		degradePartnerInstanceSuccessDto.setParentInstanceId(parentInstanceDto.getId());
+		degradePartnerInstanceSuccessDto.setOperator(operatorId);
+		degradePartnerInstanceSuccessDto.setOperatorType(OperatorTypeEnum.BUC);
+		degradePartnerInstanceSuccessTask.setParameterType(DegradePartnerInstanceSuccessDto.class.getName());
+		degradePartnerInstanceSuccessTask.setParameter(JSON.toJSONString(degradePartnerInstanceSuccessDto));
+		taskLists.add(degradePartnerInstanceSuccessTask);
 
 		// 旺旺打标 begin
 		if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instanceDto.getState().getCode())) {
@@ -190,7 +227,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			wwTask.setBusinessNo(String.valueOf(instanceDto.getId()));
 			wwTask.setBeanName("wangWangTagService");
 			wwTask.setMethodName("addWangWangTagByNick");
-			wwTask.setBusinessStepNo(2l);
+			wwTask.setBusinessStepNo(4l);
 			wwTask.setBusinessType(TaskBusinessTypeEnum.TP_DEGRADE.getCode());
 			wwTask.setBusinessStepDesc("addWangWangTag");
 			wwTask.setOperator(operatorId);
@@ -198,8 +235,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			wwTask.setParameter(taobaoNick);
 			taskLists.add(wwTask);
 		}
-		
-		
 		
 		taskSubmitService.submitTasks(taskLists);
 	}

@@ -78,7 +78,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 
 		// 记录村点状态变化
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convert(PartnerInstanceStateChangeEnum.START_SERVICING,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.START_SERVICING,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto));
 		return Boolean.TRUE;
 	}

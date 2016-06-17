@@ -19,6 +19,8 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -54,6 +56,8 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.crius.event.client.EventDispatcher;
+import com.taobao.cun.dto.station.StationApplyDetailDto;
 
 @Component("tpStrategy")
 public class TpStrategy implements PartnerInstanceStrategy{
@@ -294,6 +298,31 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			param.setLifecycleId(items.getId());
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
+		}
+		
+		//发送装修中事件，手机端使用
+		dispacthEvent(rel,PartnerInstanceStateEnum.DECORATING.getCode());
+	}
+	
+	/**
+	 * 发送装修中事件 给手机端使用
+	 * @param PartnerStationRel
+	 * @param state
+	 */
+	private void dispacthEvent(PartnerStationRel rel,String state) {
+		try {
+			if (rel != null) {
+				Station stationDto = stationBO.getStationById(rel.getStationId());
+				PartnerStationStateChangeEvent pisc = new PartnerStationStateChangeEvent();
+				pisc.setStationId(rel.getStationId());
+				pisc.setPartnerInstanceState(state);
+				pisc.setStationName(stationDto.getName());
+				pisc.setTaobaoUserId(rel.getTaobaoUserId());
+				String messageId = EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
+				logger.info("PARTNER_STATION_STATE_CHANGE_EVENT messageid " + messageId);
+			}
+		} catch (Exception e) {
+			logger.error("dispatchEvent error " + e.getMessage());
 		}
 	}
 

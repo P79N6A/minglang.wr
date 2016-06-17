@@ -20,7 +20,9 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -30,7 +32,7 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("adminListener")
-@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
+@EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT })
 public class AdminListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdminListener.class);
@@ -52,6 +54,28 @@ public class AdminListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
+		if (event.getValue() instanceof PartnerInstanceStateChangeEvent) {
+			processStateChangeEvent(event);
+		} else if (event.getValue() instanceof PartnerInstanceTypeChangeEvent) {
+			processTypeChangeEvent(event);
+		}
+
+	}
+
+	private void processTypeChangeEvent(Event event) {
+		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
+		// 合伙人降级为淘帮手
+		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEvent.getTypeChangeEnum())) {
+			PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
+			param.setGmtEnd(DateUtil.getCurrentDate());
+			param.setPartnerUserId(typeChangeEvent.getParentTaobaoUserId());
+			param.setUserId(typeChangeEvent.getTaobaoUserId());
+			partnerLifecycleCallbackService.onDegrade(param);
+		}
+
+	}
+
+	private void processStateChangeEvent(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
@@ -72,16 +96,15 @@ public class AdminListener implements EventListener {
 		}
 
 		// 合伙人变成装修中，淘帮手进入服务中
-		if ((PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)
-				&& PartnerInstanceTypeEnum.TP.equals(partnerType))
+		if ((PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum) && PartnerInstanceTypeEnum.TP.equals(partnerType))
 				|| (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)
 						&& PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
 			addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
 		}
+
 	}
 
-	private void addOpenRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
-			Long instanceId) {
+	private void addOpenRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId, Long instanceId) {
 		try {
 			// 这里增加合伙人关系写入
 			logger.info("addOpenRelation start,instanceId=" + instanceId);
@@ -89,7 +112,7 @@ public class AdminListener implements EventListener {
 			StationLifecycleOnStartCallbackParam startCallbackParam = buildOnStartParam(stationId);
 			stationLifecycleCallbackService.onStart(startCallbackParam);
 			// 合伙人服务关系建立
-			PartnerLifecycleOnEnterCallbackParam onEnterParam =  buildOnEnterParam(partnerType, taobaoUserId, stationId, instanceId);
+			PartnerLifecycleOnEnterCallbackParam onEnterParam = buildOnEnterParam(partnerType, taobaoUserId, stationId, instanceId);
 			partnerLifecycleCallbackService.onEnter(onEnterParam);
 			logger.info("addOpenRelation start,instanceId=" + instanceId);
 		} catch (Throwable e) {
@@ -106,9 +129,10 @@ public class AdminListener implements EventListener {
 	 *            站点申请单信息
 	 * @return
 	 */
-	private PartnerLifecycleOnEnterCallbackParam buildOnEnterParam(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId, Long instanceId) {
+	private PartnerLifecycleOnEnterCallbackParam buildOnEnterParam(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
+			Long instanceId) {
 		PartnerLifecycleOnEnterCallbackParam onEnterParam = new PartnerLifecycleOnEnterCallbackParam();
-		
+
 		onEnterParam.setGmtStart(DateUtil.getCurrentDate());
 
 		onEnterParam.setPartnerUserId(taobaoUserId);
@@ -121,14 +145,14 @@ public class AdminListener implements EventListener {
 		onEnterParam.setIsTpa(isTPA);
 		onEnterParam.setStationId(stationId);
 		onEnterParam.setUserId(taobaoUserId);
-		
+
 		return onEnterParam;
 	}
 
 	private StationLifecycleOnStartCallbackParam buildOnStartParam(Long stationId) {
-		
+
 		StationLifecycleOnStartCallbackParam startCallbackParam = new StationLifecycleOnStartCallbackParam();
-		
+
 		startCallbackParam.setGmtStart(DateUtil.getCurrentDate());
 		// 目前都是独占的,后续如果改造的话,需要根据需求处理
 		startCallbackParam.setIsExclusive(Boolean.FALSE);
@@ -151,7 +175,7 @@ public class AdminListener implements EventListener {
 		startCallbackParam.setLocation(location);
 		startCallbackParam.setStationId(stationId);
 		startCallbackParam.setStationId(stationId);
-		
+
 		return startCallbackParam;
 	}
 
@@ -161,8 +185,7 @@ public class AdminListener implements EventListener {
 	 * @param context
 	 * @param stationDetailDto
 	 */
-	private void addQuitRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
-			Long instanceId) {
+	private void addQuitRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId, Long instanceId) {
 		try {
 			logger.info("addQuitRelation start,stationId=" + stationId);
 			Date gmtEnd = DateUtil.getCurrentDate();
