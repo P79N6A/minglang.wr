@@ -201,12 +201,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 	
 	@Override
-	public PartnerInstanceDto getPartnerInstance(Long stationApplyId) {
-		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		return PartnerInstanceConverter.convert(instance);
-	}
-
-	@Override
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException {
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null == rel) {
