@@ -51,7 +51,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 
 	public static final PartnerInstanceStateChangeEnum QUIT = new PartnerInstanceStateChangeEnum(ChangeEnum.QUIT, "已退出 :'退出申请中'->'已退出'",
 			PartnerInstanceStateEnum.QUIT, PartnerInstanceStateEnum.QUITING);
-
+	
 	private static final Map<ChangeEnum, PartnerInstanceStateChangeEnum> mappings = new HashMap<ChangeEnum, PartnerInstanceStateChangeEnum>();
 	static {
 		mappings.put(ChangeEnum.START_SETTLING, START_SETTLING);

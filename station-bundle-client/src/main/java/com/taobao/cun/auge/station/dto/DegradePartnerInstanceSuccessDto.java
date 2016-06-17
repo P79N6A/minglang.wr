@@ -16,6 +16,8 @@ public class DegradePartnerInstanceSuccessDto extends OperatorDto implements Ser
 	 * 合伙人实例id
 	 */
 	public Long instanceId;
+	
+	public Long parentInstanceId;
 
 	
 	public Long getInstanceId() {
@@ -23,5 +25,12 @@ public class DegradePartnerInstanceSuccessDto extends OperatorDto implements Ser
 	}
 	public void setInstanceId(Long instanceId) {
 		this.instanceId = instanceId;
+	}
+	public Long getParentInstanceId() {
+		return parentInstanceId;
+	}
+	public void setParentInstanceId(Long parentInstanceId) {
+		this.parentInstanceId = parentInstanceId;
 	}	
+	
 }
