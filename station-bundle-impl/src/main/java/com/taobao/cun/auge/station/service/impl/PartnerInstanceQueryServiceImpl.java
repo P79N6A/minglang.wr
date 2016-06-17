@@ -199,6 +199,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public Long getPartnerInstanceId(Long stationApplyId) throws AugeServiceException {
 		return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 	}
+	
+	@Override
+	public PartnerInstanceDto getPartnerInstance(Long stationApplyId) {
+		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		return PartnerInstanceConverter.convert(instance);
+	}
 
 	@Override
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException {
@@ -324,5 +330,4 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			throws AugeServiceException {
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
 	}
-
 }

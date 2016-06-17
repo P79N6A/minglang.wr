@@ -67,6 +67,14 @@ public interface PartnerInstanceQueryService {
 	public Long getPartnerInstanceId(Long stationApplyId);
 	
 	/**
+	 * 根据stationapplyId查询合伙人实例[过渡阶段使用，即将废弃]
+	 * 
+	 * @param stationApplyId
+	 * @return
+	 */
+	public PartnerInstanceDto getPartnerInstance(Long stationApplyId);
+	
+	/**
 	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
 	 * 
 	 * @param instanceId
