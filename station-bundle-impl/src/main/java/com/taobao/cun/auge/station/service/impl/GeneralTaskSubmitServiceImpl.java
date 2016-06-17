@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
-import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -237,8 +235,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			wwTask.setParameter(taobaoNick);
 			taskLists.add(wwTask);
 		}
-		
-		
 		
 		taskSubmitService.submitTasks(taskLists);
 	}

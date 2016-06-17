@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,11 +17,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
-import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -35,7 +31,6 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum.ChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
@@ -133,9 +128,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private static final String TPAMAX_TYPE = "tpl_max";
 	private static final String TPAMAX_KEY = "tpl_max_num";
 	private static final Long TPAMAX_DEFAULT = 5L;
-
-	@Autowired
-	private PartnerLifecycleCallbackService partnerLifecycleCallbackService;
 
 	@Autowired
 	ProtocolBO protocolBO;
@@ -1239,53 +1231,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto.getOperator());
 	}
 
-	/**
-	 * 添加服务记录及关系
-	 * 
-	 * @param partnerUserId
-	 *            将要挂到哪个合伙人的USERID
-	 * @param userId
-	 *            被降级的合伙人(降级为淘帮手的)USERID
-	 */
-	private void addDegradePartnerRelation(Long partnerUserId, Long userId) {
-		try {
-			logger.info("addDegradePartnerRelation start,partnerUserId=" + partnerUserId + ",userId=" + userId);
-			if (partnerUserId == null || userId == null) {
-				return;
-			}
-
-			PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
-			param.setGmtEnd(DateUtil.getCurrentDate());
-			param.setPartnerUserId(partnerUserId);
-			param.setUserId(userId);
-			partnerLifecycleCallbackService.onDegrade(param);
-			logger.info("addDegradePartnerRelation end,partnerUserId=" + partnerUserId + ",userId=" + userId);
-		} catch (Throwable e) {
-			logger.error("addDegradePartnerRelation exception, partnerUserId=" + partnerUserId + ",userId=" + userId, e);
-		}
-	}
-
-	private void addCNStationFeature(Long stationId, Long taobaoUserId, Long parentStationId, Long parentTaobaoUserId) {
-		if (parentStationId == null || stationId == null || parentTaobaoUserId == null) {
-			logger.error("addCNStationFeature exception parameters is null!stationId:[" + stationId + "],partnerStationId["
-					+ parentStationId + "],partnerTaobaoUserId[" + parentTaobaoUserId + "]");
-			return;
-		}
-		Long cnStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
-		if (cnStationId != null) {
-			// 调用新菜鸟接口
-			LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
-			featureMap.put(CaiNiaoAdapter.CTP_TB_UID, parentTaobaoUserId.toString());
-			featureMap.put(CaiNiaoAdapter.CTP_ORG_STA_ID, parentStationId.toString());
-			featureMap.put(CaiNiaoAdapter.CTP_TYPE, "CtPA1_0");
-			caiNiaoAdapter.updateStationFeatures(cnStationId, featureMap);
-
-			LinkedHashMap<String, String> featureMap1 = new LinkedHashMap<String, String>();
-			featureMap1.put(CaiNiaoAdapter.PARTNER_ID, parentTaobaoUserId.toString());
-			caiNiaoAdapter.updateStationUserRelFeature(taobaoUserId, featureMap1);
-		}
-	}
-
 	private Long getTpaMax() {
 		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
 		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
@@ -1420,16 +1365,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		event.setPartnerInstanceId(instanceId);
 		event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA);
 		event.setTaobaoUserId(rel.getTaobaoUserId());
+		event.setStationId(rel.getStationId());
 		event.setParentTaobaoUserId(parentRel.getTaobaoUserId());
 		event.setOperator(degradePartnerInstanceSuccessDto.getOperator());
 		event.setOperatorType(degradePartnerInstanceSuccessDto.getOperatorType());
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
 
-		// PartnerLifecycleOnDegradeCallbackParam param = new
-		// PartnerLifecycleOnDegradeCallbackParam();
-		// param.setGmtEnd(DateUtil.getCurrentDate());
-		// param.setPartnerUserId(partnerUserId);
-		// param.setUserId(userId);
-		// partnerLifecycleCallbackService.onDegrade(param);
 	}
 }

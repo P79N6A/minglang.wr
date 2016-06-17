@@ -13,6 +13,11 @@ public class PartnerInstanceTypeChangeEvent extends OperatorDto {
 	private Long partnerInstanceId;
 
 	/**
+	 * 村点id
+	 */
+	private Long stationId;
+
+	/**
 	 * 当前合伙人淘宝userId
 	 */
 	private Long taobaoUserId;
@@ -21,7 +26,7 @@ public class PartnerInstanceTypeChangeEvent extends OperatorDto {
 	 * 淘帮手关联的合伙人淘宝userId，仅限淘帮手使用
 	 */
 	private Long parentTaobaoUserId;
-	
+
 	/**
 	 * 类型变更类型
 	 */
@@ -59,4 +64,11 @@ public class PartnerInstanceTypeChangeEvent extends OperatorDto {
 		this.typeChangeEnum = typeChangeEnum;
 	}
 
+	public Long getStationId() {
+		return stationId;
+	}
+
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
 }
