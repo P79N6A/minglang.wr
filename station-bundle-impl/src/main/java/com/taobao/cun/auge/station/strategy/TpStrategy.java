@@ -306,7 +306,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	
 	/**
 	 * 发送装修中事件 给手机端使用
-	 * @param stationApplyDetailDto
+	 * @param PartnerStationRel
 	 * @param state
 	 */
 	private void dispacthEvent(PartnerStationRel rel,String state) {
