@@ -31,6 +31,7 @@ public class QuitStationApplyDto extends OperatorDto {
 	private boolean loanHasClose;
 
 	// 是，退出服务站，否，不退出服务站
+	@NotNull(message = "isQuitStation not null")
 	private Boolean isQuitStation;
 	
 	
