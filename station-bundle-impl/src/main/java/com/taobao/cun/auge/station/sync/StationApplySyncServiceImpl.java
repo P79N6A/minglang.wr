@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.StationApply;
+import com.taobao.cun.auge.dal.domain.StationApplyExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -41,6 +43,11 @@ public class StationApplySyncServiceImpl implements StationApplySyncService {
 			throw new RuntimeException(msg);
 		}
 		syncStationApplyBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_ALL);
+	}
+
+	@Override
+	public void checkTotalStationApplySize() {
+		syncStationApplyBO.checkTotalStationApplySize();
 	}
 
 }
