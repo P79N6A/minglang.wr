@@ -94,9 +94,9 @@ public class StationConverter {
 		station.setName(stationDto.getName());
 		station.setProducts(stationDto.getProducts());
 		station.setProviderId(station.getProviderId());
-		station.setState(stationDto.getState().getCode());
+		station.setState(stationDto.getState() ==null? null: stationDto.getState().getCode());
 		station.setStationNum(stationDto.getStationNum());
-		station.setStatus(stationDto.getStatus().getCode());
+		station.setStatus(stationDto.getStatus() ==null? null: stationDto.getStatus().getCode());
 		
 		
 		//老字段，人相关信息继续同步

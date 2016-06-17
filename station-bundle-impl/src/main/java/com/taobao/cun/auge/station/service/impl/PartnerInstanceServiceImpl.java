@@ -267,7 +267,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerDto.copyOperatorDto(partnerInstanceDto);
 		partnerDto.setId(partnerId);
 		partnerBO.updatePartner(partnerInstanceDto.getPartnerDto());
-		attachementBO.modifyAttachementBatch(partnerInstanceDto.getStationDto().getAttachements(), partnerId,
+		attachementBO.modifyAttachementBatch(partnerInstanceDto.getPartnerDto().getAttachements(), partnerId,
 				AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
 
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
@@ -281,17 +281,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 		try {
-			StationDto stationDto = partnerInstanceDto.getStationDto();
-			stationDto.setState(StationStateEnum.INVALID);
-			stationDto.setStatus(StationStatusEnum.TEMP);
-
-			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-			partnerDto.setState(PartnerStateEnum.TEMP);
-
-			partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
-
+			setTempState(partnerInstanceDto);
 			Long instanceId = addCommon(partnerInstanceDto);
-
 			// 同步station_apply
 			syncStationApplyBO.addStationApply(instanceId);
 			return instanceId;
@@ -306,6 +297,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 	
+	private void setTempState(PartnerInstanceDto partnerInstanceDto) {
+		StationDto stationDto = partnerInstanceDto.getStationDto();
+		stationDto.setState(StationStateEnum.INVALID);
+		stationDto.setStatus(StationStatusEnum.TEMP);
+		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		partnerDto.setState(PartnerStateEnum.TEMP);
+		partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
+	}
+	
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -316,6 +316,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
 		ValidateUtils.notNull(partnerInstanceDto.getId());
 		try {
+			setTempState(partnerInstanceDto);
 			Long instanceId = partnerInstanceDto.getId();
 			updateCommon(partnerInstanceDto);
 			// 同步station_apply
