@@ -19,7 +19,9 @@ public final class QuitStationApplyConverter {
 
 		quitStationApply.setRevocationAppFormFileName(quitDto.getRevocationAppFormFileName());
 		quitStationApply.setOtherDescription(quitDto.getOtherDescription());
-		quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
+		if (null != quitDto.getAssertUseState()) {
+			quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
+		}
 		quitStationApply.setLoanHasClose(quitDto.isLoanHasClose() ? "y" : "n");
 		// FIXME FHH 枚举
 		quitStationApply.setState("FINISHED");
