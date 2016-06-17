@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
@@ -19,7 +21,7 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
-@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
+@EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT })
 public class CuntaoFlowRecordListener implements EventListener {
 
 	@Autowired
@@ -33,6 +35,44 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
+		if (event.getValue() instanceof PartnerInstanceStateChangeEvent) {
+			processStateChangeEvent(event);
+		} else if (event.getValue() instanceof PartnerInstanceTypeChangeEvent) {
+			processTypeChangeEvent(event);
+		}
+
+	}
+
+	private void processTypeChangeEvent(Event event) {
+		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
+		PartnerInstanceTypeChangeEnum typeChangeEnum = typeChangeEvent.getTypeChangeEnum();
+		Long stationId = typeChangeEvent.getStationId();
+		String operator = typeChangeEvent.getOperator();
+		OperatorTypeEnum operatorType = typeChangeEvent.getOperatorType();
+
+		String buildOperatorName = buildOperatorName(operator, operatorType);
+
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+
+		cuntaoFlowRecord.setTargetId(stationId);
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle(typeChangeEnum.getDescription());
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecord.setRemarks(buildTypeChangeRecordContent(typeChangeEvent));
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+
+	}
+
+	private String buildTypeChangeRecordContent(PartnerInstanceTypeChangeEvent event) {
+		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(event.getTypeChangeEnum())) {
+			return PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.getDescription();
+		}
+		return null;
+	}
+
+	private void processStateChangeEvent(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long stationId = stateChangeEvent.getStationId();
@@ -40,9 +80,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 		OperatorTypeEnum operatorType = stateChangeEvent.getOperatorType();
 
 		String buildOperatorName = buildOperatorName(operator, operatorType);
-		
+
 		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-		
+
 		cuntaoFlowRecord.setTargetId(stationId);
 		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
 		cuntaoFlowRecord.setNodeTitle(stateChangeEnum.getDescription());
@@ -51,6 +91,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+
 	}
 
 	private String buildRecordContent(PartnerInstanceStateChangeEvent stateChangeEvent) {
