@@ -198,6 +198,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			wwTask.setParameter(taobaoNick);
 			taskLists.add(wwTask);
 		}
+		
+		
+		
 		taskSubmitService.submitTasks(taskLists);
 	}
 

@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
+import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
@@ -193,5 +194,12 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto) throws AugeServiceException;
+	
+	/**
+	 * 降级成功
+	 * @param degradeSuccessDto
+	 * @throws AugeServiceException
+	 */
+	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradeSuccessDto) throws AugeServiceException;
 	
 }
