@@ -23,6 +23,7 @@ public class StationApplySyncListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
+		
 		StationApplySyncEvent syncEvent = (StationApplySyncEvent) event.getValue();
 		logger.info("sync back to station_apply: {}", JSON.toJSONString(syncEvent));
 		switch (syncEvent.getSyncType()) {
