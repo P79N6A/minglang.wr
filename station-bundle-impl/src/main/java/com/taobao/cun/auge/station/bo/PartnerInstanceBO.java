@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceBO {
 
+	
 	/**
 	 * 根据实例id，查询stationApplyid
 	 * 
