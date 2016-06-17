@@ -12,11 +12,9 @@ import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeUicTagException;
 import com.taobao.cun.auge.validator.BeanValidator;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.ExtraUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
-import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 
 @Component("uicTagAdapter")
@@ -28,8 +26,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	private UicTagWriteServiceClient uicTagWriteServiceClient;
 	@Resource
 	private UicExtraReadServiceClient uicExtraReadServiceClient;
-	@Resource
-	private UicReadServiceClient uicReadServiceClient;
+	
 
 	private Long DEFAULT_TAG = new Double(Math.pow(2, 12)).longValue();
 
