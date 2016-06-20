@@ -216,7 +216,7 @@ public class ProcessProcessor {
 	public void monitorTaskStarted(Long stationApplyId, PartnerLifecycleBusinessTypeEnum businessType) {
 		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 
-		updatePartnerLifecycle(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING);
+		updatePartnerLifecycle(instanceId, businessType);
 	}
 
 	/**
