@@ -164,8 +164,8 @@ public class ProcessProcessor {
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 提交去支付宝标任务
-			partnerInstanceHandler.submitRemoveAlipayTagTask(PartnerInstanceTypeEnum.valueof(instance.getType()),
-					instance.getTaobaoUserId());
+			partnerInstanceHandler.handleQuitApprovePass(PartnerInstanceTypeEnum.valueof(instance.getType()),
+					instance.getTaobaoUserId(),partnerInstanceId);
 
 			// 提交去物流站点任务
 			generalTaskSubmitService.submitRemoveLogisticsTask(instance.getId(), DomainUtils.DEFAULT_OPERATOR);

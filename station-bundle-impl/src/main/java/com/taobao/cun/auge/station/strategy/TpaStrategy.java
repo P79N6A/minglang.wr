@@ -313,7 +313,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void submitRemoveAlipayTagTask(Long taobaoUserId) {
+	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		String accountNo = partner.getAlipayAccount();
 		

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -311,8 +312,8 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void submitRemoveAlipayTagTask(Long taobaoUserId) {
-		// TODO Auto-generated method stub
+	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
+		partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
 		
 	}
 }

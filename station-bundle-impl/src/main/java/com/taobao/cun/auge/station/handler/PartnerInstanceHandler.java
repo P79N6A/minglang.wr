@@ -127,7 +127,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
 	}
 	
-	public void submitRemoveAlipayTagTask(PartnerInstanceTypeEnum typeEnum,Long taobaoUserId){
-		strategy.get(typeEnum.getType()).submitRemoveAlipayTagTask(taobaoUserId);
+	public void handleQuitApprovePass(PartnerInstanceTypeEnum typeEnum,Long taobaoUserId,Long partnerInstanceId){
+		strategy.get(typeEnum.getType()).handleQuitApprovePass(taobaoUserId,partnerInstanceId);
 	}
 }

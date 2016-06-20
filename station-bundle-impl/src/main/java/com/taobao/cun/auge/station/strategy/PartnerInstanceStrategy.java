@@ -72,5 +72,5 @@ public interface PartnerInstanceStrategy {
 	 * 
 	 * @param taobaoUserId
 	 */
-	public void submitRemoveAlipayTagTask(Long taobaoUserId);
+	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId);
 }
