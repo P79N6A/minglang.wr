@@ -11,7 +11,6 @@ import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
-import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
 
@@ -19,12 +18,6 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean employee360Service(@Value("${hsf.consumer.version.employeeService}") String version) {
 		return getConsumerBean(Employee360Service.class, HSFGroup.HSF, version, 3000);
-	}
-	
-	// hr相关的第二方服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean uicReadServiceClient(@Value("${hsf.consumer.version.uicReadServiceClient}") String version) {
-		return getConsumerBean(UicReadServiceClient.class, HSFGroup.HSF, version, 3000);
 	}
 	
 	//旺旺
