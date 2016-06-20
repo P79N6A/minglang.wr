@@ -128,6 +128,6 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	public void handleQuitApprovePass(PartnerInstanceTypeEnum typeEnum,Long taobaoUserId,Long partnerInstanceId){
-		strategy.get(typeEnum.getType()).handleQuitApprovePass(taobaoUserId,partnerInstanceId);
+		strategy.get(typeEnum.getCode()).handleQuitApprovePass(taobaoUserId,partnerInstanceId);
 	}
 }
