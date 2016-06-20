@@ -43,7 +43,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+			</dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
@@ -217,9 +218,9 @@
 			<artifactId>bpm-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.crius</groupId>
-				<artifactId>biz-client</artifactId>
-			</dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>biz-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
@@ -235,12 +236,12 @@
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaocenter-client</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.taobao.security</groupId>
 			<artifactId>security</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaoar.shared.scene</artifactId>
@@ -249,15 +250,20 @@
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper</artifactId>
 		</dependency>
-			
+
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-notify</artifactId>
 		</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring</artifactId>
-			</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aliexpress.boot</groupId>
+			<artifactId>spring-boot-starter-alimonitor</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

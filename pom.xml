@@ -360,10 +360,15 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring</artifactId>
 				<version>999-not-exist</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.alimonitor</groupId>
+				<artifactId>alimonitor-jmonitor</artifactId>
+				<version>1.1.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -491,24 +496,11 @@
 			</plugin>
 
 			<!-- generate git.properties -->
-			<!-- <plugin>
-				<groupId>pl.project13.maven</groupId>
-				<artifactId>git-commit-id-plugin</artifactId>
-				<version>2.2.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<verbose>true</verbose>
-					<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
-					<generateGitPropertiesFile>true</generateGitPropertiesFile>
-					<failOnNoGitDirectory>false</failOnNoGitDirectory>
-				</configuration>
-			</plugin> -->
+			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
+				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
+				</goals> </execution> </executions> <configuration> <verbose>true</verbose> 
+				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> 
+				<failOnNoGitDirectory>false</failOnNoGitDirectory> </configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
