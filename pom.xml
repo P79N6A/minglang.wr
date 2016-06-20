@@ -291,7 +291,7 @@
 			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
-				<version>3.6.8</version>
+				<version>3.6.9</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.codehaus.jackson</groupId>
