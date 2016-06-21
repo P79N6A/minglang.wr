@@ -819,18 +819,42 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					PartnerInstanceStateEnum.SERVICING, openStationDto.getOperator());
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 					openStationDto.getOperator());
+			
+			PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId());
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.START_SERVICING,
-							partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId()), openStationDto));
+							piDto, openStationDto));
+			//开业包项目事件
+			dispachToServiceEvent(openStationDto,piDto);
+			
 		} else {// 定时开业
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 					openStationDto.getOperator());
 		}
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
-
+		
 		return true;
+	}
+	
+	private void dispachToServiceEvent(OpenStationDto openStationDto,
+			PartnerInstanceDto piDto) {
+		try {
+			PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();
+			partnerInstanceEvent.setExecDate(com.taobao.cun.auge.common.utils.DateUtil.format(openStationDto.getOpenDate()));
+			partnerInstanceEvent.setOwnOrgId(piDto.getStationDto().getApplyOrg());
+			partnerInstanceEvent.setTaobaoUserId(piDto.getTaobaoUserId());
+			partnerInstanceEvent.setTaobaoNick(piDto.getPartnerDto().getTaobaoNick());
+			partnerInstanceEvent.setStationId(piDto.getStationId());
+			partnerInstanceEvent.setStationName(piDto.getStationDto().getStationNum());
+			partnerInstanceEvent.setOperator(openStationDto.getOperator());
+			String msg = EventDispatcher.getInstance().dispatch("STATION_TO_SERVICE_EVENT", partnerInstanceEvent);
+			logger.info("dispachToServiceEvent success partnerInstanceId:" + openStationDto.getPartnerInstanceId() + "msgId:" + msg);
+		} catch (Exception e) {
+			String error = getErrorMessage("dispachToServiceEvent",JSONObject.toJSONString(openStationDto), e.getMessage());
+			logger.error(error, e);
+		}
 	}
 
 	@Override
