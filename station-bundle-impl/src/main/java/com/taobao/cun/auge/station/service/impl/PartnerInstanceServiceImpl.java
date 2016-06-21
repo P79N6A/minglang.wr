@@ -728,7 +728,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException {
+	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
 		try {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -738,6 +738,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.MANAGE_PRO, partnerStationRel.getId(),
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			
+			// 乐观锁
+			PartnerInstanceDto instance = new PartnerInstanceDto();
+			instance.setId(partnerStationRel.getId());
+			instance.setVersion(version);
+			instance.setOperator(String.valueOf(taobaoUserId));
+			instance.setOperatorType(OperatorTypeEnum.HAVANA);
+			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerStationRel.getId());
