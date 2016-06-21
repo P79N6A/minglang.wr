@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -25,12 +23,6 @@ public class ProcessListener implements MessageListener {
 
 	@Autowired
 	ProcessProcessor processProcessor;
-
-	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
-
-	@Autowired
-	PartnerLifecycleBO partnerLifecycleBO;
 
 	@Override
 	public void receiveMessage(Message message, MessageStatus status) {
