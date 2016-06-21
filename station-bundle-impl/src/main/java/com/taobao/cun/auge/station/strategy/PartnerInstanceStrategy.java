@@ -8,8 +8,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceStrategy {
@@ -61,7 +59,13 @@ public interface PartnerInstanceStrategy {
 	 */
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,PartnerStationRel rel) throws AugeServiceException;
 	
-	public void validateExistValidChildren(Long instanceId)throws AugeServiceException ;
-	
-	public Boolean validateUpdateSettle(Long instanceId)throws AugeServiceException;
+	/**
+	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手
+	 * 
+	 * @param instanceId
+	 * @throws AugeServiceException
+	 */
+	public void validateExistValidChildren(Long instanceId) throws AugeServiceException;
+
+	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 }

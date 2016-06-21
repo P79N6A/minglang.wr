@@ -20,7 +20,6 @@ import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -52,15 +51,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("tpvStrategy")
