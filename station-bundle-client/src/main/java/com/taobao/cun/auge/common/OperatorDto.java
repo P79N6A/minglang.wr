@@ -16,6 +16,8 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 public class OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 2739466182498801975L;
+	
+	public static final String DEFAULT_OPERATOR = "system";
 
 	@NotNull(message="operator not null")
 	private String operator;
@@ -75,4 +77,12 @@ public class OperatorDto implements Serializable {
 		this.setOperatorOrgId(source.getOperatorOrgId());
 		this.setOperatorType(source.getOperatorType());
 	} 
+	
+	public static OperatorDto defaultOperator(){
+		OperatorDto operator = new OperatorDto();
+		operator.setOperator(DEFAULT_OPERATOR);
+		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
+		
+		return operator;
+	}
 }

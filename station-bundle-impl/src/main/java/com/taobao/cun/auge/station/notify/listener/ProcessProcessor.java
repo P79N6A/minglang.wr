@@ -82,9 +82,7 @@ public class ProcessProcessor {
 		Long stationId = partnerStationRel.getStationId();
 		Long instanceId = partnerStationRel.getId();
 
-		OperatorDto operator = new OperatorDto();
-		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
+		OperatorDto operator =  OperatorDto.defaultOperator();
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 合伙人实例已停业, 更新服务结束时间
