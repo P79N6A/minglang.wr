@@ -48,9 +48,18 @@ public class ProcessListener implements MessageListener {
 		JSONObject ob = (JSONObject) JSONObject.parse(strMessage.getBody());
 		logger.info("BpmNotifyRecieveImpl notify:" + ob.toJSONString());
 
+		try {
+			handleProcessMsg(strMessage, ob);
+		} catch (Exception e) {
+			logger.error("Failed to handle process msg.msg= " + ob.toJSONString(), e);
+		}
+	}
+
+	private void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
 		String businessCode = ob.getString("businessCode");
 		String objectId = ob.getString("objectId");
+		Long stationApplyId = Long.valueOf(objectId);
 		// 监听流程实例结束
 		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
@@ -58,10 +67,10 @@ public class ProcessListener implements MessageListener {
 
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				processCloseApproveResult(resultCode, objectId);
+				processProcessor.monitorCloseApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				processQuitApproveResult(resultCode, objectId);
+				processProcessor.monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -69,41 +78,11 @@ public class ProcessListener implements MessageListener {
 		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				processProcessor.monitorTaskStarted(Long.valueOf(objectId), PartnerLifecycleBusinessTypeEnum.CLOSING);
+				processProcessor.monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.CLOSING);
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				processProcessor.monitorTaskStarted(Long.valueOf(objectId), PartnerLifecycleBusinessTypeEnum.QUITING);
+				processProcessor.monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.QUITING);
 			}
-		}
-	}
-
-	/**
-	 * 监听退出审批结果
-	 * 
-	 * @param resultCode
-	 * @param objectId
-	 */
-	private void processQuitApproveResult(String resultCode, String objectId) {
-		try {
-			Long stationApplyId = Long.valueOf(objectId);
-			processProcessor.monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
-		} catch (Exception e) {
-			logger.error("监听审批退出流程失败。stationApplyId = " + objectId + " resultCode=" + resultCode, e);
-		}
-	}
-
-	/**
-	 * 监听停业审批结果
-	 * 
-	 * @param resultCode
-	 * @param objectId
-	 */
-	private void processCloseApproveResult(String resultCode, String objectId) {
-		try {
-			Long stationApplyId = Long.valueOf(objectId);
-			processProcessor.monitorCloseApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
-		} catch (Exception e) {
-			logger.error("监听审批停业流程失败。stationApplyId = " + objectId + " resultCode=" + resultCode, e);
 		}
 	}
 }
