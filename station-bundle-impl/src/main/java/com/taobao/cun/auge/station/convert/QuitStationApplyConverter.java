@@ -23,7 +23,6 @@ public final class QuitStationApplyConverter {
 			quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
 		}
 		quitStationApply.setLoanHasClose(quitDto.isLoanHasClose() ? "y" : "n");
-		// FIXME FHH 枚举
 		quitStationApply.setState("FINISHED");
 		quitStationApply.setSubmittedPeopleName(operatorName);
 		quitStationApply.setIsQuitStation(quitDto.getIsQuitStation() ? "y" : "n");
