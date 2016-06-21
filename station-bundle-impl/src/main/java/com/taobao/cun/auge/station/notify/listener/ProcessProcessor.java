@@ -191,13 +191,13 @@ public class ProcessProcessor {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, DomainUtils.DEFAULT_OPERATOR);
-			// 记录村点状态变化
+			// 发送合伙人实例状态变化事件
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
 							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
 		}
 
-		// 更新生命周期表
+		// 处理合伙人、淘帮手、村拍档不一样的业务
 		partnerInstanceHandler.handleAuditQuit(approveResult, instance.getId(),
 				PartnerInstanceTypeEnum.valueof(instance.getType()));
 
