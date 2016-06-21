@@ -19,7 +19,6 @@
 		<property name="hsf.consumer.version.cainiao.stationUserWriteService" defaultValue="1.0.0.daily" description="cainiao-version" />
 
 		<property name="hsf.consumer.version.employeeService" defaultValue="1.0.0.daily" description="hr-version" />
-		<property name="hsf.consumer.version.uicReadServiceClient" defaultValue="1.0.0.daily" description="uic-version" />
 		
 		<property name="hsf.consumer.version.hsf2icesrv" defaultValue="1.0.0.daily" description="wangwang-tag-version" />
 		<property name="hsf.consumer.version.chronus.taskSubmitService" defaultValue="1.0.0.daily" description="chronus-task-version" />
