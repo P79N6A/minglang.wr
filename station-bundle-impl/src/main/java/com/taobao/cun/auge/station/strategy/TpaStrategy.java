@@ -113,16 +113,6 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		
 	}
 	
-	@Override
-	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType) throws AugeServiceException{
-		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
-			return ProcessBusinessEnum.stationForcedClosure;
-		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
-			return ProcessBusinessEnum.stationQuitRecord;
-		}
-		return null;
-	}
-	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,

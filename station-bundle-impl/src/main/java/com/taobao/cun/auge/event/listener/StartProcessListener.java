@@ -56,7 +56,7 @@ public class StartProcessListener implements EventListener {
 			return;
 		}
 
-		ProcessBusinessEnum business = findBusinessType(stateChangeEnum, partnerType);
+		ProcessBusinessEnum business = findBusinessType(stateChangeEnum);
 		if (null == business) {
 			return;
 		}
@@ -70,20 +70,16 @@ public class StartProcessListener implements EventListener {
 	 * @param partnerType
 	 * @return
 	 */
-	private ProcessBusinessEnum findBusinessType(PartnerInstanceStateChangeEnum changedState,
-			PartnerInstanceTypeEnum partnerType) {
+	private ProcessBusinessEnum findBusinessType(PartnerInstanceStateChangeEnum changedState) {
 		// 停业申请
 		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(changedState)) {
-			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.CLOSING_PRO);
+			return ProcessBusinessEnum.stationForcedClosure;
 			// 退出申请
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(changedState)) {
-			return partnerInstanceHandler.findProcessBusiness(partnerType, ProcessTypeEnum.QUITING_PRO);
+			return ProcessBusinessEnum.stationQuitRecord;
 		}
-		String msg = "没有找到相应的流程businessCode.changedState=" + changedState.getDescription() + " partnerType="
-				+ partnerType.getCode();
+		String msg = "没有找到相应的流程businessCode.changedState=" + changedState.getDescription();
 		logger.warn(msg);
 		return null;
 	}
-
-
 }

@@ -118,10 +118,6 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(typeEnum.getCode()).validateExistValidChildren(instanceId);
 	}
 	
-	public ProcessBusinessEnum findProcessBusiness(PartnerInstanceTypeEnum typeEnum,ProcessTypeEnum processType){
-		return strategy.get(typeEnum.getCode()).findProcessBusiness(processType);
-	}
-	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleSettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) {
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);

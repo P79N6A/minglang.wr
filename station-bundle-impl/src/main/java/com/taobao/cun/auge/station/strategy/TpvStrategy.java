@@ -114,17 +114,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		
 	}
 	
-	@Override
-	public ProcessBusinessEnum findProcessBusiness(ProcessTypeEnum processType){
-		if(ProcessTypeEnum.CLOSING_PRO.equals(processType)){
-			return ProcessBusinessEnum.stationForcedClosure;
-		}else if(ProcessTypeEnum.QUITING_PRO.equals(processType)){
-			return ProcessBusinessEnum.stationQuitRecord;
-		}
-		return null;
-	}
-	
-	
 	/**
 	 * 过渡使用 支持村拍档  老逻辑删除功能
 	 */
