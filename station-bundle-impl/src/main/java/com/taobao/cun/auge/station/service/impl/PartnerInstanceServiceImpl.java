@@ -33,7 +33,6 @@ import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
-import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
@@ -42,7 +41,6 @@ import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -131,63 +129,40 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	ProtocolBO protocolBO;
-
 	@Autowired
 	PartnerProtocolRelBO partnerProtocolRelBO;
-
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
-
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
-
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
-
 	@Autowired
 	StationBO stationBO;
-
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
-
 	@Autowired
 	StationApplyBO stationApplyBO;
-
 	@Autowired
 	Emp360Adapter emp360Adapter;
-
 	@Autowired
 	UicReadAdapter uicReadAdapter;
-
 	@Autowired
 	PartnerBO partnerBO;
-
 	@Autowired
 	TradeAdapter tradeAdapter;
-
 	@Autowired
 	AttachementBO attachementBO;
-
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
-
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
-
 	@Autowired
 	CloseStationApplyBO closeStationApplyBO;
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
-
 	@Autowired
 	AppResourceBO appResourceBO;
-
-	@Autowired
-	CaiNiaoAdapter caiNiaoAdapter;
-
-	@Autowired
-	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
-
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
 
