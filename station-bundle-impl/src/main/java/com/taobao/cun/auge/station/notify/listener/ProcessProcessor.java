@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -164,6 +165,11 @@ public class ProcessProcessor {
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 提交去支付宝标任务
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
+			String accountNo = partner.getAlipayAccount();
+			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, DomainUtils.DEFAULT_OPERATOR);
+			
+			//村拍档，实例状态变更为quit
 			partnerInstanceHandler.handleQuitApprovePass(PartnerInstanceTypeEnum.valueof(instance.getType()),
 					instance.getTaobaoUserId(),partnerInstanceId);
 

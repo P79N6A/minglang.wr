@@ -339,9 +339,6 @@ public class TpStrategy implements PartnerInstanceStrategy{
 
 	@Override
 	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
-		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-		String accountNo = partner.getAlipayAccount();
-		
-		generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, DomainUtils.DEFAULT_OPERATOR);
+
 	}
 }

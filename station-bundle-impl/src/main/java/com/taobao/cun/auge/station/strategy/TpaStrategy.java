@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -314,9 +313,5 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 
 	@Override
 	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
-		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-		String accountNo = partner.getAlipayAccount();
-		
-		generalTaskSubmitService.submitRemoveAlipayTagTask(taobaoUserId, accountNo, DomainUtils.DEFAULT_OPERATOR);
 	}		
 }
