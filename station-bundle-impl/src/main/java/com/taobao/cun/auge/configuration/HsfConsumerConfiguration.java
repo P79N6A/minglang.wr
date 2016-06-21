@@ -11,7 +11,6 @@ import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.uic.service.CuntaoUicReadService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
@@ -66,13 +65,6 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(AlipayAccountTagService.class, HSFGroup.HSF, version, 3000);
 	}
 
-	//crius服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean cuntaoUicReadService(
-			@Value("${hsf.consumer.version.crius.cuntaoUicReadService}") String version) {
-		return getConsumerBean(CuntaoUicReadService.class, HSFGroup.HSF, version, 3000);
-	}
-	
 	//admin服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean partnerLifecycleCallbackService(
