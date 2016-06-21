@@ -92,7 +92,7 @@ public class ProcessProcessor {
 			instance.setState(PartnerInstanceStateEnum.CLOSED);
 			instance.setId(instanceId);
 			instance.setOperator(DomainUtils.DEFAULT_OPERATOR);
-			instance.setVersion(partnerStationRel.getVersion());
+//			instance.setVersion(partnerStationRel.getVersion());这里不需要乐观锁
 			instance.setOperatorType(OperatorTypeEnum.SYSTEM);
 			partnerInstanceBO.updatePartnerStationRel(instance);
 

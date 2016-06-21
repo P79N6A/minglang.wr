@@ -85,7 +85,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException;
+	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException;
 
 	/**
 	 * 冻结保证金

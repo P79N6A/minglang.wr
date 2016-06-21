@@ -728,7 +728,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signManageProtocol(Long taobaoUserId) throws AugeServiceException {
+	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException {
 		ValidateUtils.notNull(taobaoUserId);
 		try {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
