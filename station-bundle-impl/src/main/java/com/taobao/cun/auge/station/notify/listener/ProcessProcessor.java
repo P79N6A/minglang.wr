@@ -168,10 +168,6 @@ public class ProcessProcessor {
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
 			String accountNo = partner.getAlipayAccount();
 			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, DomainUtils.DEFAULT_OPERATOR);
-			
-			//村拍档，实例状态变更为quit
-			partnerInstanceHandler.handleQuitApprovePass(PartnerInstanceTypeEnum.valueof(instance.getType()),
-					instance.getTaobaoUserId(),partnerInstanceId);
 
 			// 提交去物流站点任务
 			generalTaskSubmitService.submitRemoveLogisticsTask(instance.getId(), DomainUtils.DEFAULT_OPERATOR);

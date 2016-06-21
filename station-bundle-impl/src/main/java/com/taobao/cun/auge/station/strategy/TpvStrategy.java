@@ -210,13 +210,16 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
 				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult) && items != null) {
+		
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
 			partnerLifecycleBO.updateLifecycle(param);
+			
+			//村拍档，实例状态变更为quit
+			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
 		} else {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
@@ -309,11 +312,5 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
-		partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
-		
 	}
 }

@@ -126,8 +126,4 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public void handleSettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) {
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
 	}
-	
-	public void handleQuitApprovePass(PartnerInstanceTypeEnum typeEnum,Long taobaoUserId,Long partnerInstanceId){
-		strategy.get(typeEnum.getCode()).handleQuitApprovePass(taobaoUserId,partnerInstanceId);
-	}
 }

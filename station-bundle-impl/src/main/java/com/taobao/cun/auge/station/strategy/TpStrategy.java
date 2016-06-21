@@ -336,9 +336,4 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		}
 		return false;
 	}
-
-	@Override
-	public void handleQuitApprovePass(Long taobaoUserId,Long partnerInstanceId) {
-
-	}
 }
