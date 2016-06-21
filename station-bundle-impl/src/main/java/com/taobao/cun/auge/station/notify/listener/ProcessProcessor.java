@@ -147,13 +147,12 @@ public class ProcessProcessor {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		OperatorDto operator = new OperatorDto();
-		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
+		OperatorDto operator =  OperatorDto.defaultOperator();
 
 		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		Long partnerInstanceId = instance.getId();
-
+		Long stationId = instance.getStationId();
+		
 		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceId);
 		if (quitApply == null) {
 			logger.error("QuitStationApply is null param:" + partnerInstanceId);
@@ -164,16 +163,15 @@ public class ProcessProcessor {
 			// 提交去支付宝标任务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
 			String accountNo = partner.getAlipayAccount();
-			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, DomainUtils.DEFAULT_OPERATOR);
+			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, operator.getOperator());
 
 			// 提交去物流站点任务
-			generalTaskSubmitService.submitRemoveLogisticsTask(instance.getId(), DomainUtils.DEFAULT_OPERATOR);
+			generalTaskSubmitService.submitRemoveLogisticsTask(partnerInstanceId, operator.getOperator());
 
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
-				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT,
-						DomainUtils.DEFAULT_OPERATOR);
+						operator.getOperator());
 			}
 		} else {
 			// 合伙人实例已停业
@@ -181,13 +179,12 @@ public class ProcessProcessor {
 					PartnerInstanceStateEnum.CLOSED, DomainUtils.DEFAULT_OPERATOR);
 			// 村点已停业
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
-				Long stationId = partnerInstanceBO.findStationIdByInstanceId(partnerInstanceId);
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED,
-						DomainUtils.DEFAULT_OPERATOR);
+						operator.getOperator());
 			}
 
 			// 删除退出申请单
-			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, DomainUtils.DEFAULT_OPERATOR);
+			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, operator.getOperator());
 			// 发送合伙人实例状态变化事件
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
@@ -195,7 +192,7 @@ public class ProcessProcessor {
 		}
 
 		// 处理合伙人、淘帮手、村拍档不一样的业务
-		partnerInstanceHandler.handleAuditQuit(approveResult, instance.getId(),
+		partnerInstanceHandler.handleAuditQuit(approveResult, partnerInstanceId,
 				PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 		// 同步station_apply
