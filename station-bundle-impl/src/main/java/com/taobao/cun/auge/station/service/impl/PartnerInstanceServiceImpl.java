@@ -738,6 +738,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.MANAGE_PRO, partnerStationRel.getId(),
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			
+			// 乐观锁
+			PartnerInstanceDto instance = new PartnerInstanceDto();
+			instance.setId(partnerStationRel.getId());
+			instance.setVersion(version);
+			instance.setOperator(String.valueOf(taobaoUserId));
+			instance.setOperatorType(OperatorTypeEnum.HAVANA);
+			partnerInstanceBO.updatePartnerStationRel(instance);
 
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerStationRel.getId());
