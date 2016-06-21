@@ -367,7 +367,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	public void submitRemoveLogisticsTask(Long instanceId, String operatorId) {
 		try {
 			// 取消物流站点
-			// FIXME FHH 待完成
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 			cainiaoTaskVo.setBeanName("caiNiaoService");
