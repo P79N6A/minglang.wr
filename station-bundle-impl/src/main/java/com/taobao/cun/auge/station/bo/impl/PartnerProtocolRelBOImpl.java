@@ -161,6 +161,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andProtocolIdIn(protocolIds);
 		criteria.andIsDeletedEqualTo("n");
+		example.setOrderByClause("id DESC");
 		
 		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
 		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
