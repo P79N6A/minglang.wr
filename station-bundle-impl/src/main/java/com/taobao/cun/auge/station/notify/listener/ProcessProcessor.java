@@ -28,7 +28,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -237,17 +236,15 @@ public class ProcessProcessor {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
 				PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 
-		String roleApprove = items.getRoleApprove();
-		if (PartnerLifecycleRoleApproveEnum.TO_AUDIT.equals(roleApprove)) {
+		if (PartnerLifecycleRoleApproveEnum.TO_AUDIT.getCode().equals(items.getRoleApprove())) {
 			return;
 		}
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 
 		partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
-		partnerLifecycleDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		partnerLifecycleDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		partnerLifecycleDto.setLifecycleId(items.getId());
+		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
 
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
