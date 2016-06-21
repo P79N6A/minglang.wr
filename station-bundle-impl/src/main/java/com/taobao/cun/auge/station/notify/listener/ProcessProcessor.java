@@ -99,7 +99,7 @@ public class ProcessProcessor {
 					operator.getOperator());
 
 			// 更新生命周期表
-			updatePartnerLifecycle(instanceId, operator, PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 
 			// 记录村点状态变化
 			// 去标，通过事件实现
@@ -125,7 +125,7 @@ public class ProcessProcessor {
 			closeStationApplyBO.deleteCloseStationApply(instanceId, operator.getOperator());
 
 			// 更新生命周期表
-			updatePartnerLifecycle(instanceId, operator, PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 
 			// 记录村点状态变化
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
@@ -136,6 +136,28 @@ public class ProcessProcessor {
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 		}
+	}
+	
+	/**
+	 * 更新生命周期表，流程审批结果
+	 * 
+	 * @param instanceId
+	 * @param operator
+	 * @param approveResult
+	 */
+	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		partnerLifecycleDto.setRoleApprove(approveResult);
+		partnerLifecycleDto.setPartnerInstanceId(instanceId);
+		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
+		partnerLifecycleDto.setLifecycleId(items.getId());
+
+		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
 	/**
@@ -203,7 +225,7 @@ public class ProcessProcessor {
 	}
 
 	/**
-	 * 监听任务已启动
+	 * 监听任务已启动,修改生命周期表，流程中心任务已启动
 	 * 
 	 * @param stationApplyId
 	 * @param businessType
@@ -212,16 +234,6 @@ public class ProcessProcessor {
 	public void monitorTaskStarted(Long stationApplyId, PartnerLifecycleBusinessTypeEnum businessType) {
 		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 
-		updatePartnerLifecycle(instanceId, businessType);
-	}
-
-	/**
-	 * 修改生命周期表，流程中心任务已启动
-	 * 
-	 * @param instanceId
-	 * @param businessType
-	 */
-	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleBusinessTypeEnum businessType) {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
 				PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 
@@ -239,29 +251,4 @@ public class ProcessProcessor {
 
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
-
-	/**
-	 * 更新生命周期表，流程审批结果
-	 * 
-	 * @param instanceId
-	 * @param operator
-	 * @param approveResult
-	 */
-	private void updatePartnerLifecycle(Long instanceId, OperatorDto operator,
-			PartnerLifecycleRoleApproveEnum approveResult) {
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
-
-		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-
-		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-		partnerLifecycleDto.setRoleApprove(approveResult);
-		partnerLifecycleDto.setPartnerInstanceId(instanceId);
-		partnerLifecycleDto.setOperator(operator.getOperator());
-		partnerLifecycleDto.setOperatorType(operator.getOperatorType());
-		partnerLifecycleDto.setLifecycleId(items.getId());
-
-		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
-	}
-
 }
