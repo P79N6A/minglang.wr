@@ -174,12 +174,14 @@ public class ProcessProcessor {
 		Long partnerInstanceId = instance.getId();
 		Long stationId = instance.getStationId();
 		
+		//校验退出申请单是否存在
 		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceId);
 		if (quitApply == null) {
 			logger.error("QuitStationApply is null param:" + partnerInstanceId);
 			return;
 		}
 
+		//审批通过
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			// 提交去支付宝标任务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
