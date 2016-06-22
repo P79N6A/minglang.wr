@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -104,9 +104,7 @@ public class ProcessProcessor {
 			// 去标，通过事件实现
 			// 短信推送
 			// 通知admin，合伙人退出。让他们监听村点状态变更事件
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.CLOSED,
-							partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto));
+			dispatchStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
 
 			// 同步station_apply状态和服务结束时间
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
@@ -126,10 +124,7 @@ public class ProcessProcessor {
 			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 
 			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convertStateChangeEvent(
-							PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
-							partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto));
+			dispatchStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
 
 			// 同步station_apply，只更新状态
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
@@ -207,11 +202,9 @@ public class ProcessProcessor {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, operator);
+			
 			// 发送合伙人实例状态变化事件
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convertStateChangeEvent(
-							PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
-							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operatorDto));
+			dispatchStateChangeEvent(partnerInstanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
 		}
 
 		// 处理合伙人、淘帮手、村拍档不一样的业务
@@ -249,5 +242,13 @@ public class ProcessProcessor {
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
 
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
+	}
+	
+	private void dispatchStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange,
+			OperatorDto operator) {
+		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange,
+				partnerInstanceDto, operator);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 }
