@@ -104,7 +104,7 @@ public class ProcessProcessor {
 			// 去标，通过事件实现
 			// 短信推送
 			// 通知admin，合伙人退出。让他们监听村点状态变更事件
-			dispatchStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
+			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
 
 			// 同步station_apply状态和服务结束时间
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
@@ -124,14 +124,14 @@ public class ProcessProcessor {
 			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 
 			// 记录村点状态变化
-			dispatchStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
+			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
 
 			// 同步station_apply，只更新状态
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 		}
 	}
-	
+
 	/**
 	 * 更新生命周期表，流程审批结果
 	 * 
@@ -167,13 +167,13 @@ public class ProcessProcessor {
 		String operator = operatorDto.getOperator();
 
 		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		Long partnerInstanceId = instance.getId();
+		Long instanceId = instance.getId();
 		Long stationId = instance.getStationId();
 
 		// 校验退出申请单是否存在
-		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceId);
+		QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(instanceId);
 		if (quitApply == null) {
-			logger.error("QuitStationApply is null param:" + partnerInstanceId);
+			logger.error("QuitStationApply is null param:" + instanceId);
 			return;
 		}
 
@@ -185,7 +185,7 @@ public class ProcessProcessor {
 			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, operator);
 
 			// 提交去物流站点任务
-			generalTaskSubmitService.submitRemoveLogisticsTask(partnerInstanceId, operator);
+			generalTaskSubmitService.submitRemoveLogisticsTask(instanceId, operator);
 
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
@@ -193,27 +193,27 @@ public class ProcessProcessor {
 			}
 		} else {
 			// 合伙人实例已停业
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING,
-					PartnerInstanceStateEnum.CLOSED, operator);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
+					operator);
 			// 村点已停业
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
 			}
 
 			// 删除退出申请单
-			quitStationApplyBO.deleteQuitStationApply(partnerInstanceId, operator);
-			
+			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
+
 			// 发送合伙人实例状态变化事件
-			dispatchStateChangeEvent(partnerInstanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
+			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
 		}
 
 		// 处理合伙人、淘帮手、村拍档不一样的业务
-		partnerInstanceHandler.handleDifferQuitAudit(approveResult, partnerInstanceId,
+		partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId,
 				PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 		// 同步station_apply
 		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-				new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceId));
+				new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 		// tair清空缓存
 	}
@@ -243,8 +243,8 @@ public class ProcessProcessor {
 
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
-	
-	private void dispatchStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange,
+
+	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange,
 			OperatorDto operator) {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange,
