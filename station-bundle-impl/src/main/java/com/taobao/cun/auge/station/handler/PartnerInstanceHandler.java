@@ -84,7 +84,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 	 * @throws AugeServiceException
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void handleAuditQuit(ProcessApproveResultEnum approveResult,Long partnerInstanceId,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
+	public void handleDifferQuitAudit(ProcessApproveResultEnum approveResult,Long partnerInstanceId,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
 		strategy.get(partnerInstanceTypeEnum.getCode()).auditQuit(approveResult,partnerInstanceId);
 	}
 	/**
