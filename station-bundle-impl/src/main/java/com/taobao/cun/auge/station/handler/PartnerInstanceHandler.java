@@ -76,17 +76,21 @@ public class PartnerInstanceHandler implements InitializingBean{
 			throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).applyQuit(quitDto, typeEnum);
 	}
-	
+
 	/**
 	 * 审核退出
-	 * @param quitDto
+	 * 
+	 * @param approveResult
+	 * @param partnerInstanceId
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void handleDifferQuitAudit(ProcessApproveResultEnum approveResult,Long partnerInstanceId,PartnerInstanceTypeEnum partnerInstanceTypeEnum)throws AugeServiceException {
-		strategy.get(partnerInstanceTypeEnum.getCode()).auditQuit(approveResult,partnerInstanceId);
+	public void handleDifferQuitAudit(ProcessApproveResultEnum approveResult, Long partnerInstanceId,
+			PartnerInstanceTypeEnum partnerInstanceTypeEnum) throws AugeServiceException {
+		strategy.get(partnerInstanceTypeEnum.getCode()).auditQuit(approveResult, partnerInstanceId);
 	}
+	
 	/**
 	 * 正式退出
 	 * @param partnerInstanceQuitDto
