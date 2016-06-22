@@ -17,8 +17,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.ProcessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.strategy.PartnerInstanceStrategy;
 import com.taobao.cun.auge.station.strategy.TpStrategy;
@@ -68,13 +66,15 @@ public class PartnerInstanceHandler implements InitializingBean{
 	
 	/**
 	 * 申请退出
+	 * 
 	 * @param quitDto
 	 * @param typeEnum
 	 * @throws AugeServiceException
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void handleApplyQuit(QuitStationApplyDto quitDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).applyQuit(quitDto,typeEnum);
+	public void handleDifferQuiting(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum)
+			throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).applyQuit(quitDto, typeEnum);
 	}
 	
 	/**

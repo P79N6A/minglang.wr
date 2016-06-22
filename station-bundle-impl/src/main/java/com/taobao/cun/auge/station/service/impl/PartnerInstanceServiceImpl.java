@@ -1075,23 +1075,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 
-		// 校验申请退出的条件
+		// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
 		validateQuitPreCondition(instance, partner);
 
 		// 保存退出申请单
 		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
 		quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
-		// 合伙人实例退出中
+		// 合伙人实例状态变更为退出中
 		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING, operator);
 
-		// 村点退出中
+		// 村点状态变更为退出中
 		if (quitDto.getIsQuitStation()) {
 			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
 		}
 
-		// 添加退出生命周期
-		partnerInstanceHandler.handleApplyQuit(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
+		// 不同合伙人不同退出生命周期
+		partnerInstanceHandler.handleDifferQuiting(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 		// 退出审批流程，由事件监听完成 记录村点状态变化
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
@@ -1099,8 +1099,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		// 失效tair
-		// tairCache.invalid(TairCache.STATION_APPLY_ID_KEY_DETAIL_VALUE_PRE
-		// + quitStationApplyDto.getStationApplyId());
 
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
