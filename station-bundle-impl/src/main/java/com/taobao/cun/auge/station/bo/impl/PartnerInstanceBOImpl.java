@@ -382,6 +382,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		param.put("businessType", PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
 
 		Calendar calendar = Calendar.getInstance();
+		
+		
+		
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);// 30天前的数据
 
