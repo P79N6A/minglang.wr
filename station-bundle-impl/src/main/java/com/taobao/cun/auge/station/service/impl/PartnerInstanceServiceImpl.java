@@ -1000,6 +1000,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		BeanValidator.validateWithThrowable(forcedCloseDto);
 		Long operatorOrgId = forcedCloseDto.getOperatorOrgId();
 		if (null == operatorOrgId || 0l == operatorOrgId) {
+			logger.error("operatorOrgId not null");
 			throw new AugeServiceException("operatorOrgId not null");
 		}
 
@@ -1026,7 +1027,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 添加停业生命周期记录
 		addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
 
-		// 新增停业申请
+		// 新增停业申请单
 		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
 		closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
 		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
@@ -1076,7 +1077,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 
 		// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-		validateQuitPreCondition(instance, partner);
+		validateApplyQuitPreCondition(instance, partner);
 
 		// 保存退出申请单
 		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
@@ -1104,11 +1105,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 	}
 
-	private void validateQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
+	private void validateApplyQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
 		Long instanceId = instance.getId();
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
 		if (quitStationApply != null) {
+			logger.error("Quit station apply already exist");
 			throw new AugeServiceException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST);
 		}
 
