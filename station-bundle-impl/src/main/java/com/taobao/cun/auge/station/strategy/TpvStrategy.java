@@ -21,7 +21,9 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
@@ -197,8 +199,8 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
+	public void auditQuit(ProcessApproveResultEnum approveResult, Long instanceId) throws AugeServiceException {
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
 				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
 		
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
@@ -209,16 +211,20 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			partnerLifecycleBO.updateLifecycle(param);
 			
 			//村拍档，实例状态变更为quit
-			partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
 			
 			// 记录村点状态变化
 			OperatorDto operator = new OperatorDto();
 			operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
 			operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 			
+			// 同步station_apply
+			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+			
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
-							partnerInstanceBO.getPartnerInstanceById(partnerInstanceId), operator));
+							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 		} else {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);

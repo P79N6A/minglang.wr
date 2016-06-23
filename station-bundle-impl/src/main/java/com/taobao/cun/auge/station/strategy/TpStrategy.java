@@ -103,7 +103,6 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	public void validateExistValidChildren(Long instanceId) throws AugeServiceException {
 		int count = partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.getValidChildPartnersStatus());
 		if (count > 0) {
-			logger.error(StationExceptionEnum.HAS_CHILDREN_TPA.getDesc());
 			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 		}
 	}
