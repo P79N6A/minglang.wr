@@ -1037,7 +1037,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
 		closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());
 		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
-
+		
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+		
 		// 通过事件，定时钟，启动停业流程
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
 				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), forcedCloseDto);
@@ -1046,9 +1049,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				: forcedCloseDto.getReason().getDesc());
 
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 		// tair
 	}
@@ -1094,15 +1094,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 不同合伙人不同退出生命周期
 		partnerInstanceHandler.handleDifferQuiting(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+		
 		// 退出审批流程，由事件监听完成 记录村点状态变化
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
 				PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		// 失效tair
-
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 	}
 
 	private void validateApplyQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
