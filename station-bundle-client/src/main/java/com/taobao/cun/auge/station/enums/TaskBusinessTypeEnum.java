@@ -32,6 +32,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 	public static final TaskBusinessTypeEnum PARTNER_INSTANCE_QUIT = new TaskBusinessTypeEnum("PARTNER_INSTANCE_QUIT", "合伙人保证金解冻及正式退出任务");
 
 	public static final TaskBusinessTypeEnum TP_DEGRADE = new TaskBusinessTypeEnum("TP_DEGRADE", "退出流程");
+	
+	public static final TaskBusinessTypeEnum PARTNER_INSTANCE_QUIT_APPROVED = new TaskBusinessTypeEnum("PARTNER_INSTANCE_QUIT_APPROVED","退出审批确认环节");
 
 	public static final TaskBusinessTypeEnum SMS = new TaskBusinessTypeEnum("SMS", "短信任务");
 
@@ -42,6 +44,7 @@ public class TaskBusinessTypeEnum implements Serializable {
 		mappings.put("REMOVE_LOGISTICS", REMOVE_LOGISTICS);
 		mappings.put("REMOVE_ALIPAY_TAG", REMOVE_ALIPAY_TAG);
 		mappings.put("PARTNER_INSTANCE_QUIT", PARTNER_INSTANCE_QUIT);
+		mappings.put("PARTNER_INSTANCE_QUIT_APPROVED", PARTNER_INSTANCE_QUIT_APPROVED);
 		mappings.put("TP_DEGRADE", TP_DEGRADE);
 		mappings.put("SMS", SMS);
 	}
