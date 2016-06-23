@@ -51,11 +51,16 @@ public class ProcessServiceImpl implements ProcessService {
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(applierOrgId));
 		initData.put("remarks", remarks);
+		try{
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
 					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());
+		}
+		}catch(Exception e){
+			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
+					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, e);
 		}
 	}
 }
