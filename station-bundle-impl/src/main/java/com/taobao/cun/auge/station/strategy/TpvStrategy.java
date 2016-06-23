@@ -53,6 +53,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -100,7 +101,8 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
 		partnerLifecycleDto.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.TO_AUDIT);
 		partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
-		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
@@ -157,7 +159,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 				PartnerInstanceStateEnum.QUIT, partnerInstanceQuitDto.getOperator());
 		//TODO:沒有保证金 审批通
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
@@ -192,7 +194,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		itemsDO.setPartnerType(typeEnum);
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
 		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
-		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		itemsDO.copyOperatorDto(quitDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
@@ -201,7 +203,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	@Override
 	public void auditQuit(ProcessApproveResultEnum approveResult, Long instanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
@@ -296,7 +298,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.LOGISTICS_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum.AUDIT_PASS);
@@ -312,7 +314,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	public Boolean validateUpdateSettle(Long instanceId)
 			throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			return true;
 		}

@@ -290,9 +290,9 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 		// lifecycle,protocol_confirming_step
 		if (null != partnerLifecycleItems && PartnerInstanceStateEnum.SETTLING.getCode().equals(partnerLifecycleItems.getBusinessType())) {
-			if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
+			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
 				stationApply.setProtocolConfirmingStep("CONFIRMED");
-			} else if (PartnerLifecycleCurrentStepEnum.SYS_PROCESS.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
 				stationApply.setProtocolConfirmingStep("FROZEN");
 			}
 		}
@@ -564,14 +564,14 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			return StationApplyStateEnum.TEMP.getCode();
 		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
 			// 入驻中必须要有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(partnerLifecycle.getCurrentStep())) {
+			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
 					return StationApplyStateEnum.TPA_TEMP.getCode();
 				}
-			} else if (PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL.getCode().equals(partnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.SUMITTED.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycle.getCurrentStep())
-					|| PartnerLifecycleCurrentStepEnum.SYS_PROCESS.getCode().equals(partnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())
+					|| PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.CONFIRMED.getCode();
 			}
 		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)
@@ -591,9 +591,9 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
 		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
 			// 必须有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.ROLE_APPROVE.getCode().equals(partnerLifecycle.getCurrentStep())) {
+			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.QUITAUDITING.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.BOND.getCode().equals(partnerLifecycle.getCurrentStep())) {
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
 				return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
 			}
 

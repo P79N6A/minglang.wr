@@ -141,7 +141,7 @@ public class ProcessProcessor {
 	 */
 	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 
@@ -229,7 +229,7 @@ public class ProcessProcessor {
 		Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
-				PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
 
 		if (PartnerLifecycleRoleApproveEnum.TO_AUDIT.getCode().equals(items.getRoleApprove())) {
 			return;

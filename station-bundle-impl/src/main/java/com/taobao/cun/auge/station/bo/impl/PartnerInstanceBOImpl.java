@@ -326,7 +326,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				return false;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
+				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
 					continue;
 				}
 				return false;
@@ -378,7 +378,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("partnerState", PartnerInstanceStateEnum.QUITING.getCode());
-		param.put("currentStep", PartnerLifecycleCurrentStepEnum.BOND.getCode());
+		param.put("currentStep", PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
 		param.put("businessType", PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
 
 		Calendar calendar = Calendar.getInstance();
@@ -409,7 +409,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				return rel;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
+				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
 					continue;
 				}
 				return rel;
@@ -436,7 +436,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				count++;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.BOND.getCode(), item.getCurrentStep())) {
+				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
 					continue;
 				}
 				count++;

@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 /**
  * 合伙人生命周期 dto
  * @author quanzhu.wangqz
@@ -75,6 +76,12 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
      * 小二确认
      */
     private PartnerLifecycleConfirmEnum confirm;
+    
+    
+    /**
+     * 系统任务
+     */
+    private PartnerLifecycleSystemEnum system;
     
 
 	public PartnerInstanceTypeEnum getPartnerType() {
@@ -165,6 +172,14 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
 
 	public void setLifecycleId(Long lifecycleId) {
 		LifecycleId = lifecycleId;
+	}
+
+	public PartnerLifecycleSystemEnum getSystem() {
+		return system;
+	}
+
+	public void setSystem(PartnerLifecycleSystemEnum system) {
+		this.system = system;
 	}
 
 }

@@ -43,6 +43,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -93,14 +94,15 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		if (StringUtils.equals(OperatorTypeEnum.BUC.getCode(), partnerInstanceDto.getOperatorType().getCode())) {//小二提交 走到确认协议
 			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
 			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
-			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+			partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
+			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 			
 			
 		}else if(StringUtils.equals(OperatorTypeEnum.HAVANA.getCode(), partnerInstanceDto.getOperatorType().getCode())) {//合伙人提交 走到 小二审批
 			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
 			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
 			partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
-			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		} 
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
@@ -152,7 +154,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, 
 				PartnerInstanceStateEnum.QUIT, partnerInstanceQuitDto.getOperator());
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.BOND);
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setBond(PartnerLifecycleBondEnum.HAS_THAW);
@@ -188,7 +190,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
 		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
 		itemsDO.setBond(PartnerLifecycleBondEnum.WAIT_THAW);
-		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		itemsDO.copyOperatorDto(quitDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
@@ -197,12 +199,11 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	@Override
 	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
-				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult) && items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
-			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
 			param.setLifecycleId(items.getId());
 			partnerLifecycleBO.updateLifecycle(param);
 		} else {
@@ -277,10 +278,11 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.SYS_PROCESS);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setSystem(PartnerLifecycleSystemEnum.HAS_PROCESS);
 			param.setLifecycleId(items.getId());
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
@@ -292,7 +294,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			throws AugeServiceException {
 
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
 			return true;
 		}

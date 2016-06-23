@@ -650,12 +650,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			addWaitFrozenMoney(instanceId, taobaoUserId, waitFrozenMoney);
 
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
-					PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
 			if (items != null) {
 				PartnerLifecycleDto param = new PartnerLifecycleDto();
 				param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
-				param.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
-				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.BOND);
 				param.setLifecycleId(items.getId());
 				partnerLifecycleBO.updateLifecycle(param);
 			}
@@ -740,7 +738,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
-				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.BOND);
+				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 		if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
@@ -753,7 +751,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
 		lifecycleUpdateDto.setLifecycleId(settleItems.getId());
 		lifecycleUpdateDto.setBond(PartnerLifecycleBondEnum.HAS_FROZEN);
-		lifecycleUpdateDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.SYS_PROCESS);
 		lifecycleUpdateDto.setOperator(operator);
 		lifecycleUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
@@ -877,9 +874,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 		partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
 		partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
-		partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.WAIT_CONFIRM);
 		partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
-		partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.CONFIRM);
 		partnerLifecycle.setPartnerInstanceId(instanceId);
 		partnerLifecycle.copyOperatorDto(operatorDto);
 		partnerLifecycleBO.addLifecycle(partnerLifecycle);
@@ -937,7 +932,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					partnerInstanceId);
 
 			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(partnerInstanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
-					PartnerLifecycleCurrentStepEnum.CONFIRM);
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 			partnerLifecycle.setLifecycleId(lifecycleId);
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
@@ -1050,7 +1045,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
-		// tair
 	}
 
 	private void addManagerClosingLifecycle(ForcedCloseDto forcedCloseDto, Long instanceId, PartnerStationRel partnerStationRel) {
@@ -1059,7 +1053,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
 		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
 		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
-		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		itemsDO.copyOperatorDto(forcedCloseDto);
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
@@ -1312,7 +1306,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(isAgree);
 		try {
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
-					PartnerLifecycleCurrentStepEnum.ROLE_APPROVE);
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
 			if (items == null) {
 				String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), "SETTLING items is null");
 				logger.error(error);
@@ -1322,7 +1316,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (isAgree) {
 				PartnerLifecycleDto param = new PartnerLifecycleDto();
 				param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
-				param.setCurrentStep(PartnerLifecycleCurrentStepEnum.SETTLED_PROTOCOL);
 				param.setLifecycleId(items.getId());
 				param.copyOperatorDto(auditSettleDto);
 				partnerLifecycleBO.updateLifecycle(param);

@@ -28,23 +28,14 @@ public class PartnerLifecycleCurrentStepEnum  implements Serializable {
 	 * 退出：  人员审批》解冻保证金》结束
 	 */
 
-	public static final PartnerLifecycleCurrentStepEnum SETTLED_PROTOCOL = new PartnerLifecycleCurrentStepEnum("SETTLED_PROTOCOL", "入驻协议");
-	public static final PartnerLifecycleCurrentStepEnum BOND = new PartnerLifecycleCurrentStepEnum("BOND", "保证金");
-	public static final PartnerLifecycleCurrentStepEnum ROLE_APPROVE = new PartnerLifecycleCurrentStepEnum("ROLE_APPROVE", "人员审批");
-	public static final PartnerLifecycleCurrentStepEnum LOGISTICS_APPROVE = new PartnerLifecycleCurrentStepEnum("LOGISTICS_APPROVE", "物流审批");
-	public static final PartnerLifecycleCurrentStepEnum CONFIRM = new PartnerLifecycleCurrentStepEnum("CONFIRM", "小二确认");
-	public static final PartnerLifecycleCurrentStepEnum SYS_PROCESS = new PartnerLifecycleCurrentStepEnum("SYS_PROCESS", "待系统处理");
+	public static final PartnerLifecycleCurrentStepEnum PROCESSING = new PartnerLifecycleCurrentStepEnum("PROCESSING", "处理中");
 	public static final PartnerLifecycleCurrentStepEnum END = new PartnerLifecycleCurrentStepEnum("END", "结束");
 	
 	
 	private static final Map<String, PartnerLifecycleCurrentStepEnum> mappings = new HashMap<String, PartnerLifecycleCurrentStepEnum>();
 	
 	static {
-		mappings.put("SETTLED_PROTOCOL", SETTLED_PROTOCOL);
-		mappings.put("BOND", BOND);
-		mappings.put("ROLE_APPROVE", ROLE_APPROVE);
-		mappings.put("LOGISTICS_APPROVE", LOGISTICS_APPROVE);
-		mappings.put("SYS_PROCESS", SYS_PROCESS);
+		mappings.put("PROCESSING", PROCESSING);
 		mappings.put("END", END);
 	}
 
