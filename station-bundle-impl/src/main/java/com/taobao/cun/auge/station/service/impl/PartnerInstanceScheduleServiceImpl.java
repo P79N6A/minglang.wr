@@ -85,7 +85,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 
 	@Override
 	public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException {
-		return partnerInstanceBO.getWaitOpenStationList(fetchNum);
+		return partnerInstanceBO.getWaitThawMoneyList(fetchNum);
 	}
 
 	@Override
