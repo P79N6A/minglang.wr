@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 
 /**
  * 生命周期表转换
@@ -54,6 +55,10 @@ public class PartnerLifecycleConverter {
 		if (partnerLifecycleDto.getSettledProtocol() != null) {
 			items.setSettledProtocol(partnerLifecycleDto.getSettledProtocol().getCode());
 		}
+		
+		if (partnerLifecycleDto.getSystem() != null) {
+			items.setSystem(partnerLifecycleDto.getSystem().getCode());
+		}
 		return items;
 	}
 	
@@ -75,6 +80,7 @@ public class PartnerLifecycleConverter {
 		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(items.getCurrentStep()));
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(items.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(items.getConfirm()));
+		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(items.getSystem()));
 		
 		return lifecleDto;
 	}
