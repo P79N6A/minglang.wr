@@ -1116,14 +1116,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 
-			// 退出审批流程，由事件监听完成 记录村点状态变化
-			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-					PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId),
-					quitDto);
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			// 发送合伙人实例状态变化事件
+			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_QUITTING, quitDto);
 
 			// 失效tair
-
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
@@ -1412,5 +1408,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		event.setOperatorType(degradePartnerInstanceSuccessDto.getOperatorType());
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
 
+	}
+	
+	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange,
+			OperatorDto operator) {
+		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange,
+				partnerInstanceDto, operator);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 }
