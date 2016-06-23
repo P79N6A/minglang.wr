@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -988,63 +989,71 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
-		// 参数校验
-		BeanValidator.validateWithThrowable(forcedCloseDto);
-		Long operatorOrgId = forcedCloseDto.getOperatorOrgId();
-		if (null == operatorOrgId || 0l == operatorOrgId) {
-			logger.error("operatorOrgId not null");
-			throw new AugeServiceException("operatorOrgId not null");
+		try {
+			// 参数校验
+			BeanValidator.validateWithThrowable(forcedCloseDto);
+			Long operatorOrgId = forcedCloseDto.getOperatorOrgId();
+			if (null == operatorOrgId || 0l == operatorOrgId) {
+				logger.error("operatorOrgId not null");
+				throw new AugeServiceException("operatorOrgId not null");
+			}
+
+			Long instanceId = forcedCloseDto.getInstanceId();
+			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			Long stationId = partnerStationRel.getStationId();
+
+			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+			partnerInstanceHandler.validateExistValidChildren(
+					PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
+
+			// 合伙人实例停业中,退出类型为强制清退
+			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+			partnerInstanceDto.setId(instanceId);
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
+			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+			partnerInstanceDto.copyOperatorDto(forcedCloseDto);
+			partnerInstanceDto.setVersion(partnerStationRel.getVersion());
+			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+
+			// 村点停业中
+			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
+					forcedCloseDto.getOperator());
+
+			// 添加停业生命周期记录
+			addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
+
+			// 新增停业申请单
+			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
+			closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
+			closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
+			closeStationApplyDto.setPartnerInstanceId(instanceId);
+			closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+			closeStationApplyDto.setOperator(forcedCloseDto.getOperator());
+			closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+			closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());
+			closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
+
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+
+			// 通过事件，定时钟，启动停业流程
+			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
+					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+					forcedCloseDto);
+
+			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
+					? forcedCloseDto.getRemarks() : forcedCloseDto.getReason().getDesc());
+
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			// 失效tair
+		} catch (Exception e) {
+			logger.error("强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e);
+			throw new AugeServiceException(e);
 		}
-
-		Long instanceId = forcedCloseDto.getInstanceId();
-		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		Long stationId = partnerStationRel.getStationId();
-
-		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
-
-		// 合伙人实例停业中,退出类型为强制清退
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-
-		partnerInstanceDto.setId(instanceId);
-		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
-		partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
-		partnerInstanceDto.copyOperatorDto(forcedCloseDto);
-		partnerInstanceDto.setVersion(partnerStationRel.getVersion());
-		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
-
-		// 村点停业中
-		stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
-
-		// 添加停业生命周期记录
-		addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
-
-		// 新增停业申请单
-		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
-		closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
-		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
-		closeStationApplyDto.setPartnerInstanceId(instanceId);
-		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
-		closeStationApplyDto.setOperator(forcedCloseDto.getOperator());
-		closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
-		closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());
-		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
-		
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-		
-		// 通过事件，定时钟，启动停业流程
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), forcedCloseDto);
-
-		event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason()) ? forcedCloseDto.getRemarks()
-				: forcedCloseDto.getReason().getDesc());
-
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-
 	}
 
 	private void addManagerClosingLifecycle(ForcedCloseDto forcedCloseDto, Long instanceId, PartnerStationRel partnerStationRel) {
@@ -1058,45 +1067,54 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerLifecycleBO.addLifecycle(itemsDO);
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException {
-		// 参数校验
-		BeanValidator.validateWithThrowable(quitDto);
+		try {
+			// 参数校验
+			BeanValidator.validateWithThrowable(quitDto);
 
-		Long instanceId = quitDto.getInstanceId();
-		String operator = quitDto.getOperator();
+			Long instanceId = quitDto.getInstanceId();
+			String operator = quitDto.getOperator();
 
-		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 
-		// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-		validateApplyQuitPreCondition(instance, partner);
+			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
+			validateApplyQuitPreCondition(instance, partner);
 
-		// 保存退出申请单
-		QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
-		quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
+			// 保存退出申请单
+			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance,
+					buildOperatorName(quitDto));
+			quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
-		// 合伙人实例状态变更为退出中
-		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING, operator);
+			// 合伙人实例状态变更为退出中
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.QUITING,
+					operator);
 
-		// 村点状态变更为退出中
-		if (quitDto.getIsQuitStation()) {
-			stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
+			// 村点状态变更为退出中
+			if (quitDto.getIsQuitStation()) {
+				stationBO.changeState(instance.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.QUITING,
+						operator);
+			}
+
+			// 不同合伙人不同退出生命周期
+			partnerInstanceHandler.handleDifferQuiting(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
+
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+
+			// 退出审批流程，由事件监听完成 记录村点状态变化
+			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
+					PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+					quitDto);
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+
+			// 失效tair
+		} catch (Exception e) {
+			logger.error("退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e);
+			throw new AugeServiceException(e);
 		}
-
-		// 不同合伙人不同退出生命周期
-		partnerInstanceHandler.handleDifferQuiting(quitDto, PartnerInstanceTypeEnum.valueof(instance.getType()));
-
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-		
-		// 退出审批流程，由事件监听完成 记录村点状态变化
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-				PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceBO.getPartnerInstanceById(instanceId), quitDto);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-
-		// 失效tair
 	}
 
 	private void validateApplyQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
