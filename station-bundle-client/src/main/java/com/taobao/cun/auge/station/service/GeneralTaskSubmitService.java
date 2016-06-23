@@ -56,22 +56,6 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
 
-	/**
-	 * 去支付宝标
-	 * 
-	 * @param taobaoUserId
-	 * @param accountNo
-	 * @param operatorId
-	 */
-	public void submitRemoveAlipayTagTask(Long taobaoUserId, String accountNo, String operatorId);
-
-	/**
-	 * 去物流站点任务
-	 * 
-	 * @param instanceId
-	 * @param operatorId
-	 */
-	public void submitRemoveLogisticsTask(Long instanceId, String operatorId);
 
 	/**
 	 * 用户去标
@@ -93,5 +77,15 @@ public interface GeneralTaskSubmitService {
 	 * @return
 	 */
 	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto);
+
+	/**
+	 * 退出审批通过后去支付标和物流站点等任务
+	 * 
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param accountNo
+	 * @param operator
+	 */
+	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator);
 
 }

@@ -91,7 +91,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		criteria.andPartnerInstanceIdEqualTo(instanceId);
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andBusinessTypeEqualTo(businessTypeEnum.getCode());
-		criteria.andCurrentStepNotEqualTo(PartnerLifecycleCurrentStepEnum.END.getCode());
+		criteria.andCurrentStepEqualTo(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
 		return ResultUtils.selectOne(partnerLifecycleItemsMapper.selectByExample(example));
 	}
 	

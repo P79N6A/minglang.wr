@@ -103,7 +103,7 @@ public class ProcessProcessor {
 			// 同步station_apply状态和服务结束时间
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_BASE, instanceId));
-			
+
 			// 记录村点状态变化
 			// 去标，通过事件实现
 			// 短信推送
@@ -111,8 +111,7 @@ public class ProcessProcessor {
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
 		} else {
 			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
-					PartnerInstanceStateEnum.SERVICING, operator);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, operator);
 
 			// 村点已停业
 			stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
@@ -126,7 +125,7 @@ public class ProcessProcessor {
 			// 同步station_apply，只更新状态
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
-			
+
 			// 记录村点状态变化
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
 		}
@@ -140,8 +139,8 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 */
 	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 
@@ -183,18 +182,14 @@ public class ProcessProcessor {
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
 			}
-			
+
 			// 提交去支付宝标任务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
 			String accountNo = partner.getAlipayAccount();
-			generalTaskSubmitService.submitRemoveAlipayTagTask(instance.getTaobaoUserId(), accountNo, operator);
-			
-			// 提交去物流站点任务
-			generalTaskSubmitService.submitRemoveLogisticsTask(instanceId, operator);
+			generalTaskSubmitService.submitQuitApprovedTask(instanceId, instance.getTaobaoUserId(), accountNo, operator);
 		} else {
 			// 合伙人实例已停业
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED,
-					operator);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);
 			// 村点已停业
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
@@ -202,7 +197,7 @@ public class ProcessProcessor {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
-			
+
 			// 同步station_apply
 			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
@@ -212,8 +207,7 @@ public class ProcessProcessor {
 		}
 
 		// 处理合伙人、淘帮手、村拍档不一样的业务
-		partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId,
-				PartnerInstanceTypeEnum.valueof(instance.getType()));
+		partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 		// tair清空缓存
 	}
@@ -244,11 +238,10 @@ public class ProcessProcessor {
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
-	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange,
-			OperatorDto operator) {
+	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange, OperatorDto operator) {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange,
-				partnerInstanceDto, operator);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
+				operator);
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 }
