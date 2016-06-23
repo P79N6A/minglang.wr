@@ -582,7 +582,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
 			if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
 				return StationApplyStateEnum.TPA_SERVICING.getCode();
-			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType)) {
+			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType) || PartnerInstanceTypeEnum.TPV.getCode().equals(partnerType)) {
 				return StationApplyStateEnum.SERVICING.getCode();
 			}
 		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
