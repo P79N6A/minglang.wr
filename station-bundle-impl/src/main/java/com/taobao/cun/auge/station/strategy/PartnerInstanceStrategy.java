@@ -37,12 +37,12 @@ public interface PartnerInstanceStrategy {
 	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException;
 	
 	/**
-	 * 审批退出
-	 * @param isAgree
+	 * 退出审批同意
+	 * 
 	 * @param partnerInstanceId
 	 * @throws AugeServiceException
 	 */
-	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException;
+	public void handleDifferQuitAuditPass(Long partnerInstanceId) throws AugeServiceException;
 	
 	/**
 	 * 退出成功

@@ -48,7 +48,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -197,27 +196,20 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void auditQuit(ProcessApproveResultEnum approveResult, Long partnerInstanceId) throws AugeServiceException {
+	public void handleDifferQuitAuditPass(Long partnerInstanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId,
 				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult) && items != null) {
-			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
-			param.setLifecycleId(items.getId());
-			partnerLifecycleBO.updateLifecycle(param);
-		} else {
-			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
-			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-			param.setLifecycleId(items.getId());
-			partnerLifecycleBO.updateLifecycle(param);
-		}
-		
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+		param.setLifecycleId(items.getId());
+		partnerLifecycleBO.updateLifecycle(param);
+
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-//		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-//				new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+		// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
+		// instanceId));
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

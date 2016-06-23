@@ -21,7 +21,6 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
-import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -54,7 +53,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -205,45 +203,34 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void auditQuit(ProcessApproveResultEnum approveResult, Long instanceId) throws AugeServiceException {
+	public void handleDifferQuitAuditPass(Long instanceId) throws AugeServiceException {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
 				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
-		
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
-			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-			param.setLifecycleId(items.getId());
-			partnerLifecycleBO.updateLifecycle(param);
-			
-			//村拍档，实例状态变更为quit
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT, DomainUtils.DEFAULT_OPERATOR);
-			
-			// 记录村点状态变化
-			OperatorDto operator = new OperatorDto();
-			operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
-			operator.setOperatorType(OperatorTypeEnum.SYSTEM);
-			
-			// 同步station_apply
-			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
-			
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
-							partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
-		} else {
-			PartnerLifecycleDto param = new PartnerLifecycleDto();
-			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
-			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-			param.setLifecycleId(items.getId());
-			partnerLifecycleBO.updateLifecycle(param);
-			
-			// 同步station_apply
-			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
-		}
+
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+		param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		param.setLifecycleId(items.getId());
+		partnerLifecycleBO.updateLifecycle(param);
+
+		// 村拍档，实例状态变更为quit
+		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.QUIT,
+				DomainUtils.DEFAULT_OPERATOR);
+
+		// 记录村点状态变化
+		OperatorDto operator = new OperatorDto();
+		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
+		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
+
+		// 同步station_apply
+		stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+		// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
+		// instanceId));
+
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

@@ -188,7 +188,7 @@ public class ProcessProcessor {
 			}
 
 			// 处理合伙人、淘帮手、村拍档不一样的业务
-			partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
+			partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 			
 			// 提交去支付宝标任务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
@@ -205,8 +205,20 @@ public class ProcessProcessor {
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
 			
-			// 处理合伙人、淘帮手、村拍档不一样的业务
-			partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
+			//更新什么周期表
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+					PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
+			
+			// 同步station_apply
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 发送合伙人实例状态变化事件
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
