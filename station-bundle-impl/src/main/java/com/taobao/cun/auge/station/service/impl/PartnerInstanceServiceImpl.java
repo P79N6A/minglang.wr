@@ -839,76 +839,84 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
-		// 参数校验
-		ValidateUtils.notNull(taobaoUserId);
+		try {
+			// 参数校验
+			ValidateUtils.notNull(taobaoUserId);
 
-		// 合伙人实例状态校验
-		PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
-				PartnerInstanceStateEnum.SERVICING);
-		if (partnerInstance == null) {
-			throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+			// 合伙人实例状态校验
+			PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
+					PartnerInstanceStateEnum.SERVICING);
+			if (partnerInstance == null) {
+				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+			}
+
+			Long instanceId = partnerInstance.getId();
+
+			OperatorDto operatorDto = new OperatorDto();
+			operatorDto.setOperator(String.valueOf(taobaoUserId));
+			operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
+
+			// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
+
+			// 更新合伙人实例状态为停业中
+			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+			partnerInstanceDto.setId(instanceId);
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
+			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+			partnerInstanceDto.copyOperatorDto(operatorDto);
+			partnerInstanceDto.setVersion(partnerInstance.getVersion());
+			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+
+			// 更新村点状态为停业中
+			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING,
+					StationStatusEnum.CLOSING, String.valueOf(taobaoUserId));
+
+			// 插入生命周期扩展表
+			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
+			partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
+			partnerLifecycle.setPartnerInstanceId(instanceId);
+			partnerLifecycle.copyOperatorDto(operatorDto);
+			partnerLifecycleBO.addLifecycle(partnerLifecycle);
+
+			// 插入停业协议
+			PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
+			Date quitProDate = new Date();
+			proRelDto.setObjectId(instanceId);
+			proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
+			proRelDto.setConfirmTime(quitProDate);
+			proRelDto.setStartTime(quitProDate);
+			proRelDto.setTaobaoUserId(taobaoUserId);
+			proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			proRelDto.copyOperatorDto(operatorDto);
+			partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
+
+			// 新增停业申请
+			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
+			closeStationApplyDto.setPartnerInstanceId(instanceId);
+			closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+			closeStationApplyDto.copyOperatorDto(operatorDto);
+			closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
+
+			// 发送状态变化事件
+			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
+					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+					partnerLifecycle);
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+
+			return true;
+		} catch (AugeServiceException augeException) {
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-		
-		Long instanceId = partnerInstance.getId();
-
-		OperatorDto operatorDto = new OperatorDto();
-		operatorDto.setOperator(String.valueOf(taobaoUserId));
-		operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
-
-		// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
-
-		// 更新合伙人实例状态为停业中
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-		
-		partnerInstanceDto.setId(instanceId);
-		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
-		partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
-		partnerInstanceDto.copyOperatorDto(operatorDto);
-		partnerInstanceDto.setVersion(partnerInstance.getVersion());
-		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
-
-		// 更新村点状态为停业中
-		stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
-				String.valueOf(taobaoUserId));
-
-		// 插入生命周期扩展表
-		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
-		partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
-		partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
-		partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
-		partnerLifecycle.setPartnerInstanceId(instanceId);
-		partnerLifecycle.copyOperatorDto(operatorDto);
-		partnerLifecycleBO.addLifecycle(partnerLifecycle);
-
-		// 插入停业协议
-		PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
-		Date quitProDate = new Date();
-		proRelDto.setObjectId(instanceId);
-		proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
-		proRelDto.setConfirmTime(quitProDate);
-		proRelDto.setStartTime(quitProDate);
-		proRelDto.setTaobaoUserId(taobaoUserId);
-		proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-		proRelDto.copyOperatorDto(operatorDto);
-		partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
-
-		// 新增停业申请
-		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
-		closeStationApplyDto.setPartnerInstanceId(instanceId);
-		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
-		closeStationApplyDto.copyOperatorDto(operatorDto);
-		closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
-
-		// 发送状态变化事件
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-				PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
-				partnerLifecycle);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
-
-		return true;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1050,9 +1058,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
+		} catch (AugeServiceException augeException) {
+			throw augeException;
 		} catch (Exception e) {
-			logger.error("强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e);
-			throw new AugeServiceException(e);
+			String error = getErrorMessage("applyCloseByManager",
+					"强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 
@@ -1111,9 +1123,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 			// 失效tair
+
+		} catch (AugeServiceException augeException) {
+			throw augeException;
 		} catch (Exception e) {
-			logger.error("退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e);
-			throw new AugeServiceException(e);
+			String error = getErrorMessage("applyQuitByManager",
+					"退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 
