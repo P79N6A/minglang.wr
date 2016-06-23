@@ -182,6 +182,7 @@ public class ProcessProcessor {
 
 		// 审批通过
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+			try{
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
@@ -194,6 +195,9 @@ public class ProcessProcessor {
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
 			String accountNo = partner.getAlipayAccount();
 			generalTaskSubmitService.submitQuitApprovedTask(instanceId, instance.getTaobaoUserId(), accountNo, operator);
+			}catch(Exception e){
+				logger.error("",e);
+			}
 		} else {
 			// 合伙人实例已停业
 			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);
