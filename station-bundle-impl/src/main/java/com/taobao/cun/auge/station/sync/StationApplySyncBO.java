@@ -24,6 +24,12 @@ public interface StationApplySyncBO {
 	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType) throws AugeServiceException;
 
 	/**
+	 * 删除
+	 * @param stationApplyId
+	 */
+	public void deleteStationApply(Long stationApplyId);
+	
+	/**
 	 * 验证station_apply和partner_station_rel总数
 	 */
 	public void checkTotalStationApplySize();

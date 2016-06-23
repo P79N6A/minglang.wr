@@ -660,4 +660,15 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 	}
 
+	@Override
+	public void deleteStationApply(Long stationApplyId) {
+		if (null == stationApplyId) {
+			return;
+		}
+		StationApply sa = new StationApply();
+		sa.setId(stationApplyId);
+		sa.setIsDeleted("y");
+		stationApplyMapper.updateByPrimaryKeySelective(sa);
+	}
+
 }

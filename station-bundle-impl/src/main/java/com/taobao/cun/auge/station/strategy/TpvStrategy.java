@@ -59,6 +59,7 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
+import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("tpvStrategy")
@@ -89,6 +90,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	AttachementBO attachementBO;
+	
+	@Autowired
+	StationApplySyncBO stationApplySyncBO;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -221,8 +225,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 			
 			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 			
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 					PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUITTING_REFUSED,

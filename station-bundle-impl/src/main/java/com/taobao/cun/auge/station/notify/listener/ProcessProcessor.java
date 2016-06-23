@@ -37,6 +37,7 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("processProcessor")
@@ -64,7 +65,8 @@ public class ProcessProcessor {
 
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
-
+	@Autowired
+	StationApplySyncBO stationApplySyncBO;
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 
@@ -101,8 +103,9 @@ public class ProcessProcessor {
 			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 
 			// 同步station_apply状态和服务结束时间
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_BASE, instanceId));
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_BASE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_BASE, instanceId));
 
 			// 记录村点状态变化
 			// 去标，通过事件实现
@@ -123,8 +126,9 @@ public class ProcessProcessor {
 			updatePartnerLifecycle(instanceId, PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 
 			// 同步station_apply，只更新状态
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 记录村点状态变化
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
@@ -199,8 +203,9 @@ public class ProcessProcessor {
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
 
 			// 同步station_apply
-			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 
 			// 发送合伙人实例状态变化事件
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
@@ -209,7 +214,6 @@ public class ProcessProcessor {
 		// 处理合伙人、淘帮手、村拍档不一样的业务
 		partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
-		// tair清空缓存
 	}
 
 	/**
