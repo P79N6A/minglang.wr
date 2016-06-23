@@ -10,6 +10,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -20,17 +21,20 @@ import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
-@Component("startProcessListener")
+@Component("partnerInstanceStateChangeListener")
 @EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
-public class StartProcessListener implements EventListener {
+public class PartnerInstanceStateChangeListener implements EventListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(StartProcessListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceStateChangeListener.class);
 
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+
+	@Autowired
+	PartnerBO partnerBO;
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -42,43 +46,34 @@ public class StartProcessListener implements EventListener {
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
-		
+		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
+		String taobaoNick = stateChangeEvent.getTaobaoNick();
+		String operatorId = stateChangeEvent.getOperator();
+
 		Assert.notNull(stateChangeEvent);
 		Assert.notNull(stateChangeEnum);
 		Assert.notNull(instanceId);
 		Assert.notNull(partnerType);
+		Assert.notNull(taobaoUserId);
+		Assert.notNull(taobaoNick);
+		Assert.notNull(operatorId);
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		
-		//合伙人申请停业，不需要流程
-		if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(instance.getCloseType())){
-			return;
-		}
 
-		ProcessBusinessEnum business = findBusinessType(stateChangeEnum);
-		if (null == business) {
-			return;
-		}
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
-	}
+		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
+			ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 
-	/**
-	 * 
-	 * @param changedState
-	 * @param partnerType
-	 * @return
-	 */
-	private ProcessBusinessEnum findBusinessType(PartnerInstanceStateChangeEnum changedState) {
-		// 停业申请
-		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(changedState)) {
-			return ProcessBusinessEnum.stationForcedClosure;
-			// 退出申请
-		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(changedState)) {
-			return ProcessBusinessEnum.stationQuitRecord;
+			// 已停业，去标
+		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
+			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
+			// 退出
+		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
+			ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 		}
-		String msg = "没有找到相应的流程businessCode.changedState=" + changedState.getDescription();
-		logger.warn(msg);
-		return null;
 	}
 }
