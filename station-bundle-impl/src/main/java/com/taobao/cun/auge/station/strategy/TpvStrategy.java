@@ -238,6 +238,11 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			param.setLifecycleId(items.getId());
 			partnerLifecycleBO.updateLifecycle(param);
+			
+			// 同步station_apply
+			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
+//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 		}
 	}
 	

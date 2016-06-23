@@ -187,6 +187,9 @@ public class ProcessProcessor {
 				stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
 			}
 
+			// 处理合伙人、淘帮手、村拍档不一样的业务
+			partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
+			
 			// 提交去支付宝标任务
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
 			String accountNo = partner.getAlipayAccount();
@@ -201,19 +204,13 @@ public class ProcessProcessor {
 
 			// 删除退出申请单
 			quitStationApplyBO.deleteQuitStationApply(instanceId, operator);
-
-			// 同步station_apply
-			stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-//			EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-//					new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
+			
+			// 处理合伙人、淘帮手、村拍档不一样的业务
+			partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 			// 发送合伙人实例状态变化事件
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
 		}
-
-		// 处理合伙人、淘帮手、村拍档不一样的业务
-		partnerInstanceHandler.handleDifferQuitAudit(approveResult, instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
-
 	}
 
 	/**

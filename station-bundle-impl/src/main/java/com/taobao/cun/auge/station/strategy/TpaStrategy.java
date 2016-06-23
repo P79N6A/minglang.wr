@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -52,6 +53,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.pandora.util.StringUtils;
 
 @Component("tpaStrategy")
@@ -79,6 +81,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	StationApplySyncBO stationApplySyncBO;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -213,6 +218,11 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			param.setLifecycleId(items.getId());
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+		
+		// 同步station_apply
+		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
+//		EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
+//				new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE, instanceId));
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
