@@ -412,7 +412,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Override
 	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator) {
 		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
-
 		// 取消物流站点
 		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 		cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
