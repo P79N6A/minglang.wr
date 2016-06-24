@@ -30,7 +30,6 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
-import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -872,16 +871,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 					String.valueOf(taobaoUserId));
 
-			// 插入生命周期扩展表
-			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
-			partnerLifecycle.setPartnerInstanceId(instanceId);
-			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
-			partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
-			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
-			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
-		
-			partnerLifecycle.copyOperatorDto(operatorDto);
-			partnerLifecycleBO.addLifecycle(partnerLifecycle);
+			// 添加停业生命周期记录
+			addManagerClosingLifecycle(operatorDto, partnerInstance,PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
 
 			// 插入停业协议
 			PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
@@ -907,7 +898,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 发送状态变化事件
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), partnerLifecycle);
+					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 			return true;
@@ -1039,7 +1030,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
 
 			// 添加停业生命周期记录
-			addManagerClosingLifecycle(forcedCloseDto, instanceId, partnerStationRel);
+			addManagerClosingLifecycle(forcedCloseDto, partnerStationRel,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 
 			// 新增停业申请单
 			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
@@ -1074,15 +1065,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	private void addManagerClosingLifecycle(ForcedCloseDto forcedCloseDto, Long instanceId, PartnerStationRel partnerStationRel) {
-		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
-		itemsDO.setPartnerInstanceId(instanceId);
-		itemsDO.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
-		itemsDO.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
-		itemsDO.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
-		itemsDO.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
-		itemsDO.copyOperatorDto(forcedCloseDto);
-		partnerLifecycleBO.addLifecycle(itemsDO);
+	private void addManagerClosingLifecycle(OperatorDto operatorDto, PartnerStationRel partnerStationRel,
+			PartnerInstanceCloseTypeEnum closeType) {
+		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+		
+		partnerLifecycle.setPartnerInstanceId(partnerStationRel.getId());
+		partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()));
+		partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+		
+		if (PartnerInstanceCloseTypeEnum.WORKER_QUIT.equals(closeType)) {
+			partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_START);
+		} else if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(closeType)) {
+			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
+		}
+		partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
+		partnerLifecycle.copyOperatorDto(operatorDto);
+		
+		partnerLifecycleBO.addLifecycle(partnerLifecycle);
 	}
 
 	@Override
