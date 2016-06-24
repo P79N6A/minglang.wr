@@ -258,7 +258,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				//删除logistics_station
 				Long logisId = rel.getLogisticsStationId();
 				if (logisId != null) {
-					logisticsStationBO.delete(logisId, syncCainiaoStationDto.getOperator());
+					logisticsStationBO.changeState(logisId, syncCainiaoStationDto.getOperator(), "QUIT");
 				}
 
 				// 删除本地数据菜鸟驿站对应关系

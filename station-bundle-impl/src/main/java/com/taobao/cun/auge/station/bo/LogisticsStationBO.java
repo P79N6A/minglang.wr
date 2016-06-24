@@ -17,4 +17,7 @@ public interface LogisticsStationBO {
 	 */
 	public void delete(Long id,String operator) throws AugeServiceException;
 	
+	
+	public void changeState(Long id,String operator,String targetState) throws AugeServiceException;
+	
 }
