@@ -865,14 +865,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
 
 			// 更新合伙人实例状态为停业中
-			closingPartnerInstance(partnerInstance.getVersion(), instanceId, PartnerInstanceCloseTypeEnum.PARTNER_QUIT,operatorDto);
+			closingPartnerInstance(partnerInstance, PartnerInstanceCloseTypeEnum.PARTNER_QUIT,operatorDto);
 
 			// 更新村点状态为停业中
 			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
 					String.valueOf(taobaoUserId));
 
 			// 添加停业生命周期记录
-			addManagerClosingLifecycle(operatorDto, partnerInstance,PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+			addClosingLifecycle(operatorDto, partnerInstance,PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
 
 			// 插入停业协议
 			PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
@@ -911,14 +911,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	private void closingPartnerInstance(Long version, Long instanceId, PartnerInstanceCloseTypeEnum closeType,OperatorDto operatorDto) {
+	private void closingPartnerInstance(PartnerStationRel partnerInstance, PartnerInstanceCloseTypeEnum closeType,OperatorDto operatorDto) {
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
-		partnerInstanceDto.setId(instanceId);
+		partnerInstanceDto.setId(partnerInstance.getId());
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
 		partnerInstanceDto.setCloseType(closeType);
 		partnerInstanceDto.copyOperatorDto(operatorDto);
-		partnerInstanceDto.setVersion(version);
+		partnerInstanceDto.setVersion(partnerInstance.getVersion());
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
 
@@ -1024,13 +1024,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
-			closingPartnerInstance(partnerStationRel.getVersion(), instanceId, PartnerInstanceCloseTypeEnum.WORKER_QUIT,forcedCloseDto);
+			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT,forcedCloseDto);
 
 			// 村点停业中
 			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
 
 			// 添加停业生命周期记录
-			addManagerClosingLifecycle(forcedCloseDto, partnerStationRel,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+			addClosingLifecycle(forcedCloseDto, partnerStationRel,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 
 			// 新增停业申请单
 			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
@@ -1065,7 +1065,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	private void addManagerClosingLifecycle(OperatorDto operatorDto, PartnerStationRel partnerStationRel,
+	private void addClosingLifecycle(OperatorDto operatorDto, PartnerStationRel partnerStationRel,
 			PartnerInstanceCloseTypeEnum closeType) {
 		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 		
