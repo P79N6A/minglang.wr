@@ -423,6 +423,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		cainiaoTaskVo.setOperator(operator);
 
 		SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+		syncDeleteCainiaoStationDto.copyOperatorDto(OperatorDto.defaultOperator());
 		syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
 		cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
 		cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
