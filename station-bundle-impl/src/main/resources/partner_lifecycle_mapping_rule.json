@@ -1,8 +1,8 @@
 {
     "TP": [
         {
-            "ITEM": "SETTLING.settledProtocol",
-            "DESC": "合伙人入驻协议",
+            "item": "SETTLING.settledProtocol",
+            "desc": "合伙人入驻协议",
             "executedCondition": [
                 {
                     "settledProtocol": "SIGNED"
@@ -15,8 +15,8 @@
             ]
         },
         {
-            "ITEM": "SETTLING.bond",
-            "DESC": "合伙人保证金冻结",
+            "item": "SETTLING.bond",
+            "desc": "合伙人保证金冻结",
             "executedCondition": [
                 {
                     "bond": "HAS_FROZEN"
@@ -30,8 +30,8 @@
             ]
         },
         {
-            "ITEM": "SETTLING.system",
-            "DESC": "合伙人入驻系统处理环节",
+            "item": "SETTLING.system",
+            "desc": "合伙人入驻系统处理环节",
             "executedCondition": [
                 {
                     "system": "HAS_PROCESS"
@@ -39,15 +39,14 @@
             ],
             "executableCondition": [
                 {
-                    "settledProtocol": "SIGNED",
                     "bond": "HAS_FROZEN",
                     "system": "WAIT_PROCESS"
                 }
             ]
         },
         {
-            "ITEM": "CLOSING.roleApprove",
-            "DESC": "小儿发起合伙人停业，省长审批",
+            "item": "CLOSING.roleApprove",
+            "desc": "小儿发起合伙人停业，省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -60,8 +59,8 @@
             ]
         },
         {
-            "ITEM": "CLOSING.confirm",
-            "DESC": "合伙人发起停业，小儿确认",
+            "item": "CLOSING.confirm",
+            "desc": "合伙人发起停业，小儿确认",
             "executedCondition": [
                 {
                     "confirm": "CONFIRM"
@@ -74,8 +73,8 @@
             ]
         },
         {
-            "ITEM": "QUITING.roleApprove",
-            "DESC": "小二撤点省长审批",
+            "item": "QUITING.roleApprove",
+            "desc": "小二撤点省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -88,8 +87,8 @@
             ]
         },
         {
-            "ITEM": "QUITING.bond",
-            "DESC": "合伙人保证金解冻",
+            "item": "QUITING.bond",
+            "desc": "合伙人保证金解冻",
             "executedCondition": [
                 {
                     "bond": "HAS_THAW"
@@ -105,8 +104,8 @@
     ],
     "TPA": [
         {
-            "ITEM": "SETTLING.roleApprove",
-            "DESC": "淘帮手申请合伙人，小二审批？",
+            "item": "SETTLING.roleApprove",
+            "desc": "淘帮手申请合伙人，小二审批？",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -119,8 +118,8 @@
             ]
         },
         {
-            "ITEM": "SETTLING.settledProtocol",
-            "DESC": "淘帮手入驻协议，可执行条件二选一：需要审批且一通过，或不需要审批",
+            "item": "SETTLING.settledProtocol",
+            "desc": "淘帮手入驻协议，可执行条件二选一：需要审批且一通过，或不需要审批",
             "executedCondition": [
                 {
                     "settledProtocol": "SIGNED"
@@ -138,8 +137,8 @@
             ]
         },
         {
-            "ITEM": "SETTLING.bond",
-            "DESC": "淘帮手冻结保证金",
+            "item": "SETTLING.bond",
+            "desc": "淘帮手冻结保证金",
             "executedCondition": [
                 {
                     "bond": "HAS_FROZEN"
@@ -153,8 +152,8 @@
             ]
         },
         {
-            "ITEM": "SETTLING.system",
-            "DESC": "淘帮手入驻系统处理环节",
+            "item": "SETTLING.system",
+            "desc": "淘帮手入驻系统处理环节",
             "executedCondition": [
                 {
                     "system": "HAS_PROCESS"
@@ -162,15 +161,14 @@
             ],
             "executableCondition": [
                 {
-                    "settledProtocol": "SIGNED",
                     "bond": "HAS_FROZEN",
                     "system": "WAIT_PROCESS"
                 }
             ]
         },
         {
-            "ITEM": "CLOSING.roleApprove",
-            "DESC": "小二强制清退省长审批",
+            "item": "CLOSING.roleApprove",
+            "desc": "小二强制清退省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -183,8 +181,8 @@
             ]
         },
         {
-            "ITEM": "CLOSING.confirm",
-            "DESC": "淘帮手申请停业小二确认(暂无)",
+            "item": "CLOSING.confirm",
+            "desc": "淘帮手申请停业小二确认(暂无)",
             "executedCondition": [
                 {
                     "confirm": "CONFIRM"
@@ -197,8 +195,8 @@
             ]
         },
         {
-            "ITEM": "QUITING.roleApprove",
-            "DESC": "小二申请撤点，省长审批",
+            "item": "QUITING.roleApprove",
+            "desc": "小二申请撤点，省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -211,8 +209,8 @@
             ]
         },
         {
-            "ITEM": "QUITING.bond",
-            "DESC": "淘帮手解冻保证金",
+            "item": "QUITING.bond",
+            "desc": "淘帮手解冻保证金",
             "executedCondition": [
                 {
                     "bond": "HAS_THAW"
@@ -228,8 +226,8 @@
     ],
     "TPV": [
         {
-            "ITEM": "CLOSING.roleApprove",
-            "DESC": "TP商强制清退村拍档，省长审批",
+            "item": "CLOSING.roleApprove",
+            "desc": "TP商强制清退村拍档，省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
@@ -242,8 +240,8 @@
             ]
         },
         {
-            "ITEM": "QUITING.roleApprove",
-            "DESC": "村拍档撤点省长审批",
+            "item": "QUITING.roleApprove",
+            "desc": "村拍档撤点省长审批",
             "executedCondition": [
                 {
                     "roleApprove": "AUDIT_PASS"
