@@ -844,7 +844,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
+	public void applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		try {
 			// 参数校验
 			ValidateUtils.notNull(taobaoUserId);
@@ -903,6 +903,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
+	/**
+	 * 添加停业协议
+	 * 
+	 * @param taobaoUserId
+	 * @param instanceId
+	 * @param operatorDto
+	 */
 	private void addCloseProtocol(Long taobaoUserId, Long instanceId, OperatorDto operatorDto) {
 		PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
 		Date quitProDate = new Date();
@@ -916,6 +923,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
 	}
 
+	/**
+	 * 合伙人实例 停业中
+	 * 
+	 * @param partnerInstance
+	 * @param closeType
+	 * @param operatorDto
+	 */
 	private void closingPartnerInstance(PartnerStationRel partnerInstance, PartnerInstanceCloseTypeEnum closeType,OperatorDto operatorDto) {
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
@@ -929,7 +943,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
+	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(confirmCloseDto);
@@ -1005,8 +1019,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 						confirmCloseDto);
 			}
-
-			return true;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
@@ -1080,6 +1092,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
+	/**
+	 * 添加停业生命周期
+	 * 
+	 * @param operatorDto
+	 * @param partnerStationRel
+	 * @param closeType
+	 */
 	private void addClosingLifecycle(OperatorDto operatorDto, PartnerStationRel partnerStationRel,
 			PartnerInstanceCloseTypeEnum closeType) {
 		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
@@ -1110,10 +1129,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String operator = quitDto.getOperator();
 
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-			validateApplyQuitPreCondition(instance, partner);
+			validateApplyQuitPreCondition(instance);
 
 			// 保存退出申请单
 			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
@@ -1146,7 +1164,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	private void validateApplyQuitPreCondition(PartnerStationRel instance, Partner partner) throws AugeServiceException {
+	/**
+	 * 校验申请退出的前置条件
+	 * 
+	 * @param instance
+	 * @throws AugeServiceException
+	 */
+	private void validateApplyQuitPreCondition(PartnerStationRel instance) throws AugeServiceException {
 		Long instanceId = instance.getId();
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
@@ -1154,8 +1178,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error("Quit station apply already exist");
 			throw new AugeServiceException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST);
 		}
-
+		
 		// 校验是否存在未结束的订单
+		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
 
 		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
