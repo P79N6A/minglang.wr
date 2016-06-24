@@ -25,8 +25,6 @@ import com.taobao.vipserver.client.utils.CollectionUtils;
 
 import reactor.core.support.Assert;
 
-//businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
-
 public class PartnerLifecycleParser {
 	private static final Logger logger = LoggerFactory.getLogger(PartnerLifecycleParser.class);
 	private static Map<String, List<PartnerLifecycleMappingRule>> rules;
@@ -152,7 +150,14 @@ public class PartnerLifecycleParser {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("---");
+		// businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
+		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
+		lifecycle.setSettledProtocol("SIGNING");
+		lifecycle.setRoleApprove(null);
+		lifecycle.setBusinessType("SETTLING");
+
+		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+
 	}
 
 }
