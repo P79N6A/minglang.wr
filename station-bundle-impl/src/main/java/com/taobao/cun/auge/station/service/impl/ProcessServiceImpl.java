@@ -18,6 +18,7 @@ import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 @Service("processService")
 @HSFProvider(serviceInterface = ProcessService.class)
 public class ProcessServiceImpl implements ProcessService {
@@ -42,7 +43,6 @@ public class ProcessServiceImpl implements ProcessService {
 		Long businessId = startProcessDto.getBusinessId();
 		String remarks = startProcessDto.getRemarks();
 
-
 		String applierId = startProcessDto.getOperator();
 		Long applierOrgId = startProcessDto.getOperatorOrgId();
 		OperatorTypeEnum operatorType = startProcessDto.getOperatorType();
@@ -51,16 +51,11 @@ public class ProcessServiceImpl implements ProcessService {
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(applierOrgId));
 		initData.put("remarks", remarks);
-		try{
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
 					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());
-		}
-		}catch(Exception e){
-			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
-					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, e);
 		}
 	}
 }
