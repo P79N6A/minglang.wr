@@ -857,9 +857,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 
 			Long instanceId = partnerInstance.getId();
-
+			Long stationId = partnerInstance.getStationId();
+			
+			String taobaoUserIdStr = String.valueOf(taobaoUserId);
 			OperatorDto operatorDto = new OperatorDto();
-			operatorDto.setOperator(String.valueOf(taobaoUserId));
+			operatorDto.setOperator(taobaoUserIdStr);
 			operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
 
 			// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
@@ -868,23 +870,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			closingPartnerInstance(partnerInstance, PartnerInstanceCloseTypeEnum.PARTNER_QUIT,operatorDto);
 
 			// 更新村点状态为停业中
-			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
-					String.valueOf(taobaoUserId));
+			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, taobaoUserIdStr);
 
 			// 添加停业生命周期记录
 			addClosingLifecycle(operatorDto, partnerInstance,PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
 
 			// 插入停业协议
-			PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
-			Date quitProDate = new Date();
-			proRelDto.setObjectId(instanceId);
-			proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
-			proRelDto.setConfirmTime(quitProDate);
-			proRelDto.setStartTime(quitProDate);
-			proRelDto.setTaobaoUserId(taobaoUserId);
-			proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			proRelDto.copyOperatorDto(operatorDto);
-			partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
+			addCloseProtocol(taobaoUserId, instanceId, operatorDto);
 
 			// 新增停业申请
 			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
@@ -911,6 +903,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
+	private void addCloseProtocol(Long taobaoUserId, Long instanceId, OperatorDto operatorDto) {
+		PartnerProtocolRelDto proRelDto = new PartnerProtocolRelDto();
+		Date quitProDate = new Date();
+		proRelDto.setObjectId(instanceId);
+		proRelDto.setProtocolTypeEnum(ProtocolTypeEnum.PARTNER_QUIT_PRO);
+		proRelDto.setConfirmTime(quitProDate);
+		proRelDto.setStartTime(quitProDate);
+		proRelDto.setTaobaoUserId(taobaoUserId);
+		proRelDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+		proRelDto.copyOperatorDto(operatorDto);
+		partnerProtocolRelBO.addPartnerProtocolRel(proRelDto);
+	}
+
 	private void closingPartnerInstance(PartnerStationRel partnerInstance, PartnerInstanceCloseTypeEnum closeType,OperatorDto operatorDto) {
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
@@ -925,73 +930,80 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
-		// 参数校验
-		BeanValidator.validateWithThrowable(confirmCloseDto);
-
-		Long partnerInstanceId = confirmCloseDto.getPartnerInstanceId();
-		String employeeId = confirmCloseDto.getOperator();
-		Boolean isAgree = confirmCloseDto.isAgree();
 		try {
-			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
-			if (partnerInstance == null || !PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
+			// 参数校验
+			BeanValidator.validateWithThrowable(confirmCloseDto);
+
+			Long instanceId = confirmCloseDto.getPartnerInstanceId();
+			String employeeId = confirmCloseDto.getOperator();
+			Boolean isAgree = confirmCloseDto.isAgree();
+			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if (partnerInstance == null
+					|| !PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 
 			Long stationId = partnerInstance.getStationId();
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()),
-					partnerInstanceId);
+			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
+			partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
 
-			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(partnerInstanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
-					PartnerLifecycleCurrentStepEnum.PROCESSING);
+			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(instanceId,
+					PartnerLifecycleBusinessTypeEnum.CLOSING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 			partnerLifecycle.setLifecycleId(lifecycleId);
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			partnerLifecycle.copyOperatorDto(confirmCloseDto);
 
 			if (isAgree) {
+				// 更新合伙人实例，已停业
 				PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-				partnerInstanceDto.setId(partnerInstanceId);
+				partnerInstanceDto.setId(instanceId);
 				partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
 				partnerInstanceDto.setServiceEndTime(new Date());
 				partnerInstanceDto.copyOperatorDto(confirmCloseDto);
 				partnerInstanceDto.setVersion(partnerInstance.getVersion());
 				partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
+				// 更新村点状态，已停业
 				stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, employeeId);
 
+				// 更新生命周期，已确认
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 
 				// 同步station_apply
-				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
+				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
-				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-						PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceBO.getPartnerInstanceById(partnerInstanceId),
-						confirmCloseDto);
-				EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+				// 发出合伙人实例状态变更事件
+				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, confirmCloseDto);
 			} else {
-				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING,
-						employeeId);
+				// 更新合伙人实例，服务中
+				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING,
+						PartnerInstanceStateEnum.SERVICING, employeeId);
+
+				// 更新村点状态，服务中
 				stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, employeeId);
 
+				// 更新生命周期，拒绝
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CANCEL);
 				partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 
-				partnerProtocolRelBO.cancelProtocol(partnerInstance.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceId,
+				// 删除停业协议
+				partnerProtocolRelBO.cancelProtocol(partnerInstance.getTaobaoUserId(),
+						ProtocolTypeEnum.PARTNER_QUIT_PRO, instanceId,
 						PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, employeeId);
 
-				// 删除停业申请表
-				closeStationApplyBO.deleteCloseStationApply(partnerInstanceId, employeeId);
+				// 删除停业申请单
+				closeStationApplyBO.deleteCloseStationApply(instanceId, employeeId);
 
 				// 同步station_apply
-				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
+				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
-				PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-						PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceBO.getPartnerInstanceById(partnerInstanceId),
+				// 发出合伙人实例状态变更事件
+				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED,
 						confirmCloseDto);
-				EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			}
 
 			return true;
@@ -1019,18 +1031,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Long instanceId = forcedCloseDto.getInstanceId();
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Long stationId = partnerStationRel.getStationId();
+			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
+			partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
-			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT,forcedCloseDto);
+			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
 
 			// 村点停业中
-			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
+			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
+					forcedCloseDto.getOperator());
 
 			// 添加停业生命周期记录
-			addClosingLifecycle(forcedCloseDto, partnerStationRel,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+			addClosingLifecycle(forcedCloseDto, partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 
 			// 新增停业申请单
 			CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
@@ -1048,18 +1062,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 通过事件，定时钟，启动停业流程
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), forcedCloseDto);
+					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId),
+					forcedCloseDto);
 
-			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason()) ? forcedCloseDto.getRemarks()
-					: forcedCloseDto.getReason().getDesc());
+			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason())
+					? forcedCloseDto.getRemarks() : forcedCloseDto.getReason().getDesc());
 
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
-			String error = getErrorMessage("applyCloseByManager", "强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),
-					e.getMessage());
+			String error = getErrorMessage("applyCloseByManager",
+					"强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
