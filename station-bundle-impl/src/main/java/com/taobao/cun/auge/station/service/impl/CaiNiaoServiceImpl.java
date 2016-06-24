@@ -19,6 +19,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
+import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
@@ -51,6 +52,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	CountyStationBO countyStationBO;
 	@Autowired
 	PartnerBO partnerBO;
+    @Autowired
+    LogisticsStationBO logisticsStationBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -251,9 +254,16 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				caiNiaoAdapter.removeStationUserRel(instanceDto.getPartnerDto().getTaobaoUserId());
 			} else {// 有物流站，删除物流站
 				caiNiaoAdapter.removeStationById(rel.getCainiaoStationId(), instanceDto.getPartnerDto().getTaobaoUserId());
-
-				// 删除本地数据菜鸟驿站对应关系
-				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+				
+				//删除logistics_station
+				Long logisId = rel.getLogisticsStationId();
+				if (logisId != null) {
+					logisticsStationBO.changeState(logisId, syncCainiaoStationDto.getOperator(), "QUIT");
+				}else {
+					// 删除本地数据菜鸟驿站对应关系
+					cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+				}
+				
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("deleteCainiaoStation", String.valueOf(partnerInstanceId), e.getMessage());

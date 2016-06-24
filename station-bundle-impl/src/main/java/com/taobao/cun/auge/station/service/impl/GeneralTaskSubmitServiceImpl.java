@@ -412,15 +412,32 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Override
 	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator) {
 		List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+		// 取消物流站点
+		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+		cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
+		cainiaoTaskVo.setBeanName("caiNiaoService");
+		cainiaoTaskVo.setMethodName("deleteCainiaoStation");
+		cainiaoTaskVo.setBusinessStepNo(1l);
+		cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
+		cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
+		cainiaoTaskVo.setOperator(operator);
 
+		SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+		syncDeleteCainiaoStationDto.copyOperatorDto(OperatorDto.defaultOperator());
+		syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+		cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
+		cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
+
+		taskLists.add(cainiaoTaskVo);
+		
 		// 取消支付宝标示
 		GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
-		dealStationTagTaskVo.setBusinessNo(String.valueOf(taobaoUserId));
+		dealStationTagTaskVo.setBusinessNo(String.valueOf(instanceId));
 		dealStationTagTaskVo.setBeanName("alipayTagService");
 		dealStationTagTaskVo.setMethodName("dealTag");
-		dealStationTagTaskVo.setBusinessStepNo(1l);
+		dealStationTagTaskVo.setBusinessStepNo(2l);
 		dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
-		dealStationTagTaskVo.setBusinessStepDesc("dealTag");
+		dealStationTagTaskVo.setBusinessStepDesc("取消支付宝标示");
 		dealStationTagTaskVo.setOperator(operator);
 
 		AlipayTagDto alipayTagDto = new AlipayTagDto();
@@ -434,23 +451,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
 		dealStationTagTaskVo.setParameter(JSON.toJSONString(alipayTagDto));
 		taskLists.add(dealStationTagTaskVo);
-
-		// 取消物流站点
-		GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
-		cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
-		cainiaoTaskVo.setBeanName("caiNiaoService");
-		cainiaoTaskVo.setMethodName("deleteCainiaoStation");
-		cainiaoTaskVo.setBusinessStepNo(2l);
-		cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
-		cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
-		cainiaoTaskVo.setOperator(operator);
-
-		SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
-		syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
-		cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
-		cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
-
-		taskLists.add(cainiaoTaskVo);
 		// 提交任务
 		taskSubmitService.submitTasks(taskLists);
 	}

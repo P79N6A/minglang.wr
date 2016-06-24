@@ -29,4 +29,16 @@ public class LogisticsStationBOImpl implements LogisticsStationBO {
 		logisticsStationMapper.updateByPrimaryKeySelective(rel);
 	}
 
+	@Override
+	public void changeState(Long id, String operator,String targetState) throws AugeServiceException {
+		ValidateUtils.notNull(id);
+		ValidateUtils.notNull(operator);
+		ValidateUtils.notNull(targetState);
+		LogisticsStation rel = new LogisticsStation();
+		rel.setId(id);
+		rel.setState(targetState);
+		DomainUtils.beforeUpdate(rel, operator);
+		logisticsStationMapper.updateByPrimaryKeySelective(rel);
+	}
+
 }
