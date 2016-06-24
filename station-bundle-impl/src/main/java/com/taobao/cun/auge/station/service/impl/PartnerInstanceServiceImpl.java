@@ -893,7 +893,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
-			return true;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
