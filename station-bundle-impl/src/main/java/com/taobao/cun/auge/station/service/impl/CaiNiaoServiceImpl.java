@@ -259,10 +259,11 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				Long logisId = rel.getLogisticsStationId();
 				if (logisId != null) {
 					logisticsStationBO.changeState(logisId, syncCainiaoStationDto.getOperator(), "QUIT");
+				}else {
+					// 删除本地数据菜鸟驿站对应关系
+					cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 				}
-
-				// 删除本地数据菜鸟驿站对应关系
-				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+				
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("deleteCainiaoStation", String.valueOf(partnerInstanceId), e.getMessage());
