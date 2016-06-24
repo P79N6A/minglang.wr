@@ -866,14 +866,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
 
 			// 更新合伙人实例状态为停业中
-			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-
-			partnerInstanceDto.setId(instanceId);
-			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
-			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
-			partnerInstanceDto.copyOperatorDto(operatorDto);
-			partnerInstanceDto.setVersion(partnerInstance.getVersion());
-			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+			closingPartnerInstance(partnerInstance.getVersion(), instanceId, PartnerInstanceCloseTypeEnum.PARTNER_QUIT,operatorDto);
 
 			// 更新村点状态为停业中
 			stationBO.changeState(partnerInstance.getStationId(), StationStatusEnum.SERVICING, StationStatusEnum.CLOSING,
@@ -881,10 +874,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 插入生命周期扩展表
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+			partnerLifecycle.setPartnerInstanceId(instanceId);
 			partnerLifecycle.setPartnerType(PartnerInstanceTypeEnum.valueof(partnerInstance.getType()));
 			partnerLifecycle.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
 			partnerLifecycle.setQuitProtocol(PartnerLifecycleQuitProtocolEnum.SIGNED);
-			partnerLifecycle.setPartnerInstanceId(instanceId);
+			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
+		
 			partnerLifecycle.copyOperatorDto(operatorDto);
 			partnerLifecycleBO.addLifecycle(partnerLifecycle);
 
@@ -923,6 +918,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	private void closingPartnerInstance(Long version, Long instanceId, PartnerInstanceCloseTypeEnum closeType,OperatorDto operatorDto) {
+		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+		partnerInstanceDto.setId(instanceId);
+		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
+		partnerInstanceDto.setCloseType(closeType);
+		partnerInstanceDto.copyOperatorDto(operatorDto);
+		partnerInstanceDto.setVersion(version);
+		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1027,14 +1033,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(partnerStationRel.getType()), instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
-			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-
-			partnerInstanceDto.setId(instanceId);
-			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSING);
-			partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
-			partnerInstanceDto.copyOperatorDto(forcedCloseDto);
-			partnerInstanceDto.setVersion(partnerStationRel.getVersion());
-			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+			closingPartnerInstance(partnerStationRel.getVersion(), instanceId, PartnerInstanceCloseTypeEnum.WORKER_QUIT,forcedCloseDto);
 
 			// 村点停业中
 			stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, forcedCloseDto.getOperator());
