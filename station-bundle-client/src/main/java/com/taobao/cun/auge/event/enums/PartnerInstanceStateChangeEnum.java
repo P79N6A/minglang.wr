@@ -40,7 +40,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 	public static final PartnerInstanceStateChangeEnum CLOSING_REFUSED = new PartnerInstanceStateChangeEnum(ChangeEnum.CLOSING_REFUSED,
 			"停业申请打回:'停业申请中' ->'服务中'", PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING);
 
-	public static final PartnerInstanceStateChangeEnum CLOSED = new PartnerInstanceStateChangeEnum(ChangeEnum.CLOSING_REFUSED,
+	public static final PartnerInstanceStateChangeEnum CLOSED = new PartnerInstanceStateChangeEnum(ChangeEnum.CLOSED,
 			"停业 : '停业申请中' -> '已停业'", PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.CLOSING);
 
 	public static final PartnerInstanceStateChangeEnum START_QUITTING = new PartnerInstanceStateChangeEnum(ChangeEnum.START_QUITTING,
