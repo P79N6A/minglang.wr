@@ -237,7 +237,7 @@ public class ProcessProcessor {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 
-		if (PartnerLifecycleRoleApproveEnum.TO_AUDIT.getCode().equals(items.getRoleApprove())) {
+		if (null == items || PartnerLifecycleRoleApproveEnum.TO_AUDIT.getCode().equals(items.getRoleApprove())) {
 			return;
 		}
 
