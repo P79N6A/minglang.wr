@@ -11,13 +11,13 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	default-autowire="byName">
 	<bean id="eventConsumer" class="com.taobao.cun.crius.event.client.impl.EventConsumerImpl">
-		<property name="group" value="${event.consumer.group}"/>
-		<property name="topic" value="${event.consumer.topic}"/>
+		<property name="group" value="${event_consumer_group}"/>
+		<property name="topic" value="${event_consumer_topic}"/>
 	</bean>
 	
 	<bean id="eventProducer" class="com.taobao.cun.crius.event.client.impl.EventProducerImpl">
-		<property name="group" value="${event.producer.group}"/>
-		<property name="topic" value="${event.producer.topic}"/>
+		<property name="group" value="${event_producer_group}"/>
+		<property name="topic" value="${event_producer_topic}"/>
 	</bean>
 	
 	<bean id="eventListenerDispatcher" class="com.taobao.cun.crius.event.client.impl.EventListenerDispatcherImpl"/>

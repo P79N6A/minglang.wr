@@ -49,7 +49,7 @@
 
 	<script>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
-		<generate template="event-client-context.xml.vm" destfile="/application/beans-event-client-context.xml" charset="GBK" />
+		<generate template="event-client-context.xml.vm" destfile="application/beans-event-client-context.xml" charset="GBK" />
 		<generate template="log4j.xml.vm" destfile="log4j.xml" charset="GBK" />
 	</script>
 </config>
