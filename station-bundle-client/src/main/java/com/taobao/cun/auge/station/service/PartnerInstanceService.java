@@ -117,7 +117,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public boolean applyCloseByPartner(Long taobaoUserId) throws AugeServiceException;
+	public void applyCloseByPartner(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 小二确认合伙人申请停业
@@ -127,7 +127,7 @@ public interface PartnerInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public boolean confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
+	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
 
 	/**
 	 * 小二、TP商申请停业

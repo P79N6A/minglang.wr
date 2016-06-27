@@ -28,7 +28,9 @@ public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAwar
 		Class parameterClass = null;
 		parameterClass = Class.forName(parameterType);
 		Method method = targetObject.getClass().getMethod(taskExecute.getMethodName(), parameterClass);
-		Object arguments = JSON.parseObject(taskExecute.getParameter(), parameterClass);
+
+		Object arguments = parameterClass.getName().equals("java.lang.String") ? taskExecute.getParameter()
+				: JSON.parseObject(taskExecute.getParameter(), parameterClass);
 
 		try {
 			method.invoke(targetObject, arguments);
