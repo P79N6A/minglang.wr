@@ -79,6 +79,11 @@ public class ProcessProcessor {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		
+		if(!PartnerInstanceTypeEnum.TPV.getCode().equals(partnerStationRel.getType())){
+			return;
+		}
+		
 		Long stationId = partnerStationRel.getStationId();
 		Long instanceId = partnerStationRel.getId();
 
@@ -169,6 +174,11 @@ public class ProcessProcessor {
 		String operator = operatorDto.getOperator();
 
 		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		
+		if(!PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType())){
+			return;
+		}
+		
 		Long instanceId = instance.getId();
 		Long stationId = instance.getStationId();
 
