@@ -47,6 +47,7 @@ import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -57,7 +58,7 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 import com.taobao.cun.auge.cache.TairCache;
@@ -195,7 +196,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				: partnerLifecycleItemsList.iterator().next();
 
 		// 设置状态
-		String stationApplySate = convertInstanceState2StationApplyState(instance.getType(), instance.getState(), partnerLifecycleItems);
+		String stationApplySate = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), PartnerLifecycleConverter.toPartnerLifecycleDto(partnerLifecycleItems));
 		stationApply.setState(stationApplySate);
 
 		stationApply.setModifier(instance.getModifier());
@@ -558,50 +559,6 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 		return attList;
 	}
 
-	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
-			PartnerLifecycleItems partnerLifecycle) {
-		if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.TEMP.getCode();
-		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
-			// 入驻中必须要有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-					return StationApplyStateEnum.TPA_TEMP.getCode();
-				}
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.SUMITTED.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())
-					|| PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.CONFIRMED.getCode();
-			}
-		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)
-				&& PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-			return StationApplyStateEnum.TPA_AUDIT_FAIL.getCode();
-		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.DECORATING.getCode();
-		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
-			if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-				return StationApplyStateEnum.TPA_SERVICING.getCode();
-			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType) || PartnerInstanceTypeEnum.TPV.getCode().equals(partnerType)) {
-				return StationApplyStateEnum.SERVICING.getCode();
-			}
-		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT_APPLYING.getCode();
-		} else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
-		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
-			// 必须有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.QUITAUDITING.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
-			}
-
-		} else if (PartnerInstanceStateEnum.QUIT.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT.getCode();
-		}
-		throw new RuntimeException("convertInstanceState2StationApplyState error");
-	}
 
 	private static String changeStationCategoryCode2Value(String code) {
 		if (code == null) {

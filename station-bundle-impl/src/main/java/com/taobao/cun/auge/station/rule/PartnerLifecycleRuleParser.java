@@ -350,18 +350,19 @@ public class PartnerLifecycleRuleParser {
 		// businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
 		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
 //		lifecycle.setSettledProtocol("SIGNED");
-		lifecycle.setSystem("WAIT_PROCESS");
-		lifecycle.setBond("HAS_FROZEN");
-//		lifecycle.setRoleApprove(null);
-		lifecycle.setBusinessType("SETTLING");
+//		lifecycle.setSystem("WAIT_PROCESS");
+		lifecycle.setBond("WAIT_THAW");
+		lifecycle.setRoleApprove("AUDIT_PASS");
+		lifecycle.setBusinessType("QUTING");
 
-		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+//		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
 
-		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
+//		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
 
 		System.out.println("---"
-				+ parseStationApplyState("TP", "SETTLING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
-
+				+ parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
+		
+		
 	}
 
 }
