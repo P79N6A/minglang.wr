@@ -124,7 +124,7 @@ public class PartnerLifecycleRuleParser {
 				return mapping.getStationApplyState();
 			}
 		}
-		throw new AugeServiceException("convertInstanceState2StationApplyState error: " + partnerType + " , " + instatnceState + ", "
+		throw new AugeServiceException("parseStationApplyState error: " + partnerType + " , " + instatnceState + ", "
 				+ JSON.toJSONString(partnerLifecycle));
 	}
 
@@ -231,7 +231,7 @@ public class PartnerLifecycleRuleParser {
 
 		if (null != partnerLifecycleRule.getSystem()) {
 			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getSystem();
-			String itemCode = null == partnerLifecycle.getConfirm() ? null : partnerLifecycle.getConfirm().getCode();
+			String itemCode = null == partnerLifecycle.getSystem() ? null : partnerLifecycle.getSystem().getCode();
 			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
 			if (!isMatch) {
 				return false;
@@ -349,17 +349,20 @@ public class PartnerLifecycleRuleParser {
 	public static void main(String[] args) {
 		// businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
 		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
-		lifecycle.setSettledProtocol("SIGNING");
-		lifecycle.setRoleApprove(null);
-		lifecycle.setBusinessType("SETTLING");
+//		lifecycle.setSettledProtocol("SIGNED");
+//		lifecycle.setSystem("WAIT_PROCESS");
+		lifecycle.setBond("WAIT_THAW");
+		lifecycle.setRoleApprove("AUDIT_PASS");
+		lifecycle.setBusinessType("QUTING");
 
-		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+//		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
 
-		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
+//		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
 
 		System.out.println("---"
-				+ parseStationApplyState("TP", "SETTLING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
-
+				+ parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
+		
+		
 	}
 
 }
