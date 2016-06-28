@@ -21,7 +21,7 @@ public class PartnerLifecycleRuleItem {
 		this.value = value;
 	}
 
-	public boolean isEqual() {
+	public boolean getEqual() {
 		return equal;
 	}
 

@@ -16,15 +16,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
-import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 import reactor.core.support.Assert;
@@ -35,7 +32,7 @@ public class PartnerLifecycleParser {
 	private static Map<String, List<PartnerLifecycleExecutableMappingRule>> executableMappingRules;
 	private static Map<String, Field> partnerLifecycleItemsFieldMap;
 
-	private static Map<String, List<Map<String, PartnerLifecycleRule>>> stateMappingRules;
+	private static Map<String, List<PartnerLifecycleRuleMapping>> stateMappingRules;
 	private static Map<String, Field> partnerLifecycleRuleFieldMap;
 
 	static {
@@ -82,6 +79,35 @@ public class PartnerLifecycleParser {
 		return PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE;
 
 	}
+	
+	/**
+	 * 根据合伙人类型和老模型状态映射新模型
+	 * @param type
+	 * @param stationApplyState
+	 * @return
+	 */
+	public PartnerLifecycleRule parseStationApplyState(PartnerInstanceTypeEnum type, String stationApplyState) {
+
+		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(type.getCode());
+		for (PartnerLifecycleRuleMapping mapping : ruleList) {
+			if (stationApplyState.equalsIgnoreCase(mapping.getStationApplyState())) {
+				return mapping.getPartnerLifecycleRule();
+			}
+		}
+		throw new AugeServiceException("PartnerLifecycleRule not exists: " + type.getCode() + " , " + stationApplyState);
+	}
+
+	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
+			PartnerLifecycleDto partnerLifecycle) {
+		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
+		for (PartnerLifecycleRuleMapping mapping : ruleList) {
+			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
+				return mapping.getStationApplyState();
+			}
+		}
+		throw new AugeServiceException("convertInstanceState2StationApplyState error: " + partnerType + " , " + instatnceState + ", "
+				+ JSON.toJSONString(partnerLifecycle));
+	}
 
 	private static boolean isMatchCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
 		Iterator<String> it = ruleCondition.keySet().iterator();
@@ -121,54 +147,75 @@ public class PartnerLifecycleParser {
 		return null;
 	}
 
-	public PartnerInstancePageCondition adaptQueryCondition(String state, PartnerInstanceTypeEnum type) {
-		return null;
-	}
+	
 
-	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
+	private static boolean isMatchPartnerLifecycleRule(PartnerLifecycleRule partnerLifecycleRule, String instatnceState,
 			PartnerLifecycleDto partnerLifecycle) {
-		if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.TEMP.getCode();
-		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
-			// 入驻中必须要有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-					return StationApplyStateEnum.TPA_TEMP.getCode();
-				}
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.SUMITTED.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())
-					|| PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.CONFIRMED.getCode();
+		if (null != partnerLifecycleRule.getSettledProtocol()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getSettledProtocol();
+			String itemCode = null == partnerLifecycle.getSettledProtocol() ? null : partnerLifecycle.getSettledProtocol().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
 			}
-		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)
-				&& PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-			return StationApplyStateEnum.TPA_AUDIT_FAIL.getCode();
-		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.DECORATING.getCode();
-		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
-			if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
-				return StationApplyStateEnum.TPA_SERVICING.getCode();
-			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType)
-					|| PartnerInstanceTypeEnum.TPV.getCode().equals(partnerType)) {
-				return StationApplyStateEnum.SERVICING.getCode();
+		}
+
+		if (null != partnerLifecycleRule.getBond()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getBond();
+			String itemCode = null == partnerLifecycle.getBond() ? null : partnerLifecycle.getBond().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
 			}
-		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT_APPLYING.getCode();
-		} else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
-		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
-			// 必须有生命周期纪录
-			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.QUITAUDITING.getCode();
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
-				return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
+		}
+
+		if (null != partnerLifecycleRule.getQuitProtocol()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getQuitProtocol();
+			String itemCode = null == partnerLifecycle.getQuitProtocol() ? null : partnerLifecycle.getQuitProtocol().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
 			}
 
-		} else if (PartnerInstanceStateEnum.QUIT.getCode().equals(instatnceState)) {
-			return StationApplyStateEnum.QUIT.getCode();
 		}
-		throw new RuntimeException("convertInstanceState2StationApplyState error");
+
+		if (null != partnerLifecycleRule.getLogisticsApprove()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getLogisticsApprove();
+			String itemCode = null == partnerLifecycle.getLogisticsApprove() ? null : partnerLifecycle.getLogisticsApprove().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+
+		if (null != partnerLifecycleRule.getRoleApprove()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getRoleApprove();
+			String itemCode = null == partnerLifecycle.getRoleApprove() ? null : partnerLifecycle.getRoleApprove().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+
+		if (null != partnerLifecycleRule.getConfirm()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getConfirm();
+			String itemCode = null == partnerLifecycle.getConfirm() ? null : partnerLifecycle.getConfirm().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!(isMatch)) {
+				return false;
+			}
+		}
+
+		if (null != partnerLifecycleRule.getSystem()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getSystem();
+			String itemCode = null == partnerLifecycle.getConfirm() ? null : partnerLifecycle.getConfirm().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private static void loadFiled() {
@@ -223,15 +270,15 @@ public class PartnerLifecycleParser {
 		}
 	}
 
-	private static Map<String, List<Map<String, PartnerLifecycleRule>>> adpatStateMappingRules(
+	private static Map<String, List<PartnerLifecycleRuleMapping>> adpatStateMappingRules(
 			Map<String, List<PartnerLifecycleStateMappingRule>> originalStateMappingRules) {
-		Map<String, List<Map<String, PartnerLifecycleRule>>> resultMap = Maps.newHashMap();
+		Map<String, List<PartnerLifecycleRuleMapping>> resultMap = Maps.newHashMap();
 		// key为TP、TPA、TPV
 		for (String key : originalStateMappingRules.keySet()) {
 			// 原始的规则列表
 			List<PartnerLifecycleStateMappingRule> list = originalStateMappingRules.get(key);
 			// 适配完的规则列表
-			List<Map<String, PartnerLifecycleRule>> ruleList = Lists.newArrayList();
+			List<PartnerLifecycleRuleMapping> ruleList = Lists.newArrayList();
 			// 遍历原始的规则列表，进行适配
 			for (PartnerLifecycleStateMappingRule mappingRule : list) {
 
@@ -263,9 +310,10 @@ public class PartnerLifecycleParser {
 					}
 				}
 				// 适配后的规则
-				Map<String, PartnerLifecycleRule> map = Maps.newHashMap();
-				map.put(mappingRule.getStationApplyState(), partnerLifecycleRule);
-				ruleList.add(map);
+				PartnerLifecycleRuleMapping mapping = new PartnerLifecycleRuleMapping();
+				mapping.setStationApplyState(mappingRule.getStationApplyState());
+				mapping.setPartnerLifecycleRule(partnerLifecycleRule);
+				ruleList.add(mapping);
 			}
 			resultMap.put(key, ruleList);
 		}
