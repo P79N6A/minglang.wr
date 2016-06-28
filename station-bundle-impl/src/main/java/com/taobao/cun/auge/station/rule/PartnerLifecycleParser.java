@@ -1,0 +1,287 @@
+package com.taobao.cun.auge.station.rule;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ali.com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.google.common.collect.Maps;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
+import com.taobao.vipserver.client.utils.CollectionUtils;
+
+import reactor.core.support.Assert;
+
+public class PartnerLifecycleParser {
+	private static final Logger logger = LoggerFactory.getLogger(PartnerLifecycleParser.class);
+
+	private static Map<String, List<PartnerLifecycleExecutableMappingRule>> executableMappingRules;
+	private static Map<String, Field> partnerLifecycleItemsFieldMap;
+
+	private static Map<String, List<Map<String, PartnerLifecycleRule>>> stateMappingRules;
+	private static Map<String, Field> partnerLifecycleRuleFieldMap;
+
+	static {
+		loadMappingRule();
+		loadFiled();
+	}
+
+	/**
+	 * 解析当前某个生命周期item是否可执行
+	 * 
+	 * @param type
+	 *            合伙人类型
+	 * @param targetItem
+	 *            具体需要执行的事项(冻结、签入驻协议等)
+	 * @param lifecycle
+	 *            生命周期对象
+	 * @return
+	 */
+	public static PartnerLifecycleItemCheckResultEnum parseExecutable(PartnerInstanceTypeEnum type,
+			PartnerLifecycleItemCheckEnum targetItem, PartnerLifecycleItems lifecycle) {
+		String item = lifecycle.getBusinessType() + "." + targetItem;
+		PartnerLifecycleExecutableMappingRule mappingRule = getMappingRuleByPartnerInstanceType(type.getCode(), item);
+		Assert.notNull(mappingRule, "Mapping rule not exists for " + item);
+
+		// 是否已执行
+		if (CollectionUtils.isNotEmpty((mappingRule.getExecutedCondition()))) {
+			// 多个规则里面只要满足其一即认为已执行
+			for (Map<String, String> ruleCondition : mappingRule.getExecutedCondition()) {
+				if (isMatchCondition(ruleCondition, lifecycle)) {
+					return PartnerLifecycleItemCheckResultEnum.EXECUTED;
+				}
+			}
+		}
+
+		// 是否可执行
+		if (CollectionUtils.isNotEmpty((mappingRule.getExecutableCondition()))) {
+			// 多个规则里面只要满足其一即认为可执行
+			for (Map<String, String> ruleCondition : mappingRule.getExecutableCondition()) {
+				if (isMatchCondition(ruleCondition, lifecycle)) {
+					return PartnerLifecycleItemCheckResultEnum.EXECUTABLE;
+				}
+			}
+		}
+		return PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE;
+
+	}
+
+	private static boolean isMatchCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
+		Iterator<String> it = ruleCondition.keySet().iterator();
+		while (it.hasNext()) {
+
+			try {
+				String key = it.next();
+				Field field = partnerLifecycleItemsFieldMap.get(key);
+				String ruleValue = ruleCondition.get(key);
+
+				String currentValue = (String) field.get(lifecycle);
+				// 规则里当前值需要为空时，当前实际值也需要为空
+				if (null == ruleValue) {
+					if (null != currentValue) {
+						return false;
+					}
+				} else if (!ruleValue.equals(currentValue)) {
+					return false;
+				}
+
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				logger.error("parse field value error", e);
+				throw new AugeServiceException("parse field value error");
+			}
+
+		}
+		return true;
+	}
+
+	private static PartnerLifecycleExecutableMappingRule getMappingRuleByPartnerInstanceType(String code, String item) {
+		List<PartnerLifecycleExecutableMappingRule> list = executableMappingRules.get(code);
+		for (PartnerLifecycleExecutableMappingRule rule : list) {
+			if (rule.getItem().equals(item)) {
+				return rule;
+			}
+		}
+		return null;
+	}
+
+	public PartnerInstancePageCondition adaptQueryCondition(String state, PartnerInstanceTypeEnum type) {
+		return null;
+	}
+
+	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
+			PartnerLifecycleDto partnerLifecycle) {
+		if (PartnerInstanceStateEnum.TEMP.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.TEMP.getCode();
+		} else if (PartnerInstanceStateEnum.SETTLING.getCode().equals(instatnceState)) {
+			// 入驻中必须要有生命周期纪录
+			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
+				if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
+					return StationApplyStateEnum.TPA_TEMP.getCode();
+				}
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.SUMITTED.getCode();
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())
+					|| PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.CONFIRMED.getCode();
+			}
+		} else if (PartnerInstanceStateEnum.SETTLE_FAIL.getCode().equals(instatnceState)
+				&& PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
+			return StationApplyStateEnum.TPA_AUDIT_FAIL.getCode();
+		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.DECORATING.getCode();
+		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instatnceState)) {
+			if (PartnerInstanceTypeEnum.TPA.getCode().equals(partnerType)) {
+				return StationApplyStateEnum.TPA_SERVICING.getCode();
+			} else if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType)
+					|| PartnerInstanceTypeEnum.TPV.getCode().equals(partnerType)) {
+				return StationApplyStateEnum.SERVICING.getCode();
+			}
+		} else if (PartnerInstanceStateEnum.CLOSING.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT_APPLYING.getCode();
+		} else if (PartnerInstanceStateEnum.CLOSED.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT_APPLY_CONFIRMED.getCode();
+		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(instatnceState)) {
+			// 必须有生命周期纪录
+			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.QUITAUDITING.getCode();
+			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycle.getCurrentStep())) {
+				return StationApplyStateEnum.CLOSED_WAIT_THAW.getCode();
+			}
+
+		} else if (PartnerInstanceStateEnum.QUIT.getCode().equals(instatnceState)) {
+			return StationApplyStateEnum.QUIT.getCode();
+		}
+		throw new RuntimeException("convertInstanceState2StationApplyState error");
+	}
+
+	private static void loadFiled() {
+		// 加载PartnerLifecycleItems.class的field
+		if (null == partnerLifecycleItemsFieldMap) {
+			partnerLifecycleItemsFieldMap = Maps.newHashMap();
+		}
+		Field[] partnerLifecycleItemsFields = PartnerLifecycleItems.class.getDeclaredFields();
+		for (int j = 0; j < partnerLifecycleItemsFields.length; j++) {
+			Field field = partnerLifecycleItemsFields[j];
+			field.setAccessible(true);
+			partnerLifecycleItemsFieldMap.put(field.getName(), field);
+		}
+
+		// 加载PartnerLifecycleRule.class的field
+		if (null == partnerLifecycleRuleFieldMap) {
+			partnerLifecycleRuleFieldMap = Maps.newHashMap();
+		}
+		Field[] partnerLifecycleRuleFields = PartnerLifecycleRule.class.getDeclaredFields();
+		for (int j = 0; j < partnerLifecycleRuleFields.length; j++) {
+			Field field = partnerLifecycleRuleFields[j];
+			field.setAccessible(true);
+			partnerLifecycleRuleFieldMap.put(field.getName(), field);
+		}
+
+	}
+
+	private static void loadMappingRule() {
+		InputStream executableRuleStream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("partner_lifecycle_executable_mapping_rule.json");
+		InputStream stateRuleStream = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("partner_lifecycle_state_mapping_rule.json");
+
+		try {
+			String executableRuleContent = IOUtils.toString(executableRuleStream);
+			logger.info("load partner lifecycle executable mapping rule: {}", executableRuleContent);
+			executableMappingRules = JSON.parseObject(executableRuleContent,
+					new TypeReference<Map<String, List<PartnerLifecycleExecutableMappingRule>>>() {
+					});
+
+			String stateRuleContent = IOUtils.toString(stateRuleStream);
+			logger.info("load partner lifecycle state mapping rule: {}", stateRuleContent);
+
+			Map<String, List<PartnerLifecycleStateMappingRule>> originalStateMappingRules = JSON.parseObject(stateRuleContent,
+					new TypeReference<Map<String, List<PartnerLifecycleStateMappingRule>>>() {
+					});
+			stateMappingRules = adpatStateMappingRules(originalStateMappingRules);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		} finally {
+			IOUtils.closeQuietly(executableRuleStream);
+		}
+	}
+
+	private static Map<String, List<Map<String, PartnerLifecycleRule>>> adpatStateMappingRules(
+			Map<String, List<PartnerLifecycleStateMappingRule>> originalStateMappingRules) {
+		Map<String, List<Map<String, PartnerLifecycleRule>>> resultMap = Maps.newHashMap();
+		// key为TP、TPA、TPV
+		for (String key : originalStateMappingRules.keySet()) {
+			// 原始的规则列表
+			List<PartnerLifecycleStateMappingRule> list = originalStateMappingRules.get(key);
+			// 适配完的规则列表
+			List<Map<String, PartnerLifecycleRule>> ruleList = Lists.newArrayList();
+			// 遍历原始的规则列表，进行适配
+			for (PartnerLifecycleStateMappingRule mappingRule : list) {
+
+				PartnerInstanceStateEnum partnerInstanceState = PartnerInstanceStateEnum.valueof(mappingRule.getPartnerInstanceState());
+				Assert.notNull(partnerInstanceState);
+
+				PartnerLifecycleRule partnerLifecycleRule = new PartnerLifecycleRule();
+				partnerLifecycleRule.setState(partnerInstanceState);
+				Map<String, String> condition = mappingRule.getCondition();
+				if (null != condition && !condition.isEmpty()) {
+					/*
+					 * 遍历condition map的元素，如"roleApprove":"!TO_AUDIT"
+					 * 如果值以"!"开头表示不等于
+					 * 
+					 */
+					for (String itemKey : condition.keySet()) {
+						Field field = partnerLifecycleRuleFieldMap.get(itemKey);
+						String itemValue = condition.get(key);
+						// 如果值以"!"开头表示不等于
+						PartnerLifecycleRuleItem ruleItem = itemValue.startsWith("!")
+								? new PartnerLifecycleRuleItem(itemValue.substring(1), false)
+								: new PartnerLifecycleRuleItem(itemValue, true);
+						try {
+							field.set(partnerLifecycleRule, ruleItem);
+						} catch (IllegalArgumentException | IllegalAccessException e) {
+							logger.error("adpatStateMappingRules error", e);
+							throw new AugeServiceException("padpatStateMappingRules error");
+						}
+					}
+				}
+				// 适配后的规则
+				Map<String, PartnerLifecycleRule> map = Maps.newHashMap();
+				map.put(mappingRule.getStationApplyState(), partnerLifecycleRule);
+				ruleList.add(map);
+			}
+			resultMap.put(key, ruleList);
+		}
+
+		return resultMap;
+	}
+
+	public static void main(String[] args) {
+		// businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
+		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
+		lifecycle.setSettledProtocol("SIGNING");
+		lifecycle.setRoleApprove(null);
+		lifecycle.setBusinessType("SETTLING");
+
+		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+
+	}
+
+}

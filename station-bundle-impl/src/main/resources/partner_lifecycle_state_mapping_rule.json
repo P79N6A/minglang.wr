@@ -1,0 +1,189 @@
+{
+    "TP": [
+        {
+            "stationApplyState": "TEMP",
+            "desc": "合伙人station_apply暂存",
+            "partnerInstanceState": "TEMP",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "SUMITTED",
+            "desc": "合伙人station_apply SUMITTED",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "settledProtocol": "SIGNING"
+            }
+        },
+        {
+            "stationApplyState": "CONFIRMED",
+            "desc": "合伙人station_apply CONFIRMED",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "settledProtocol": "SIGNED",
+                "bond": "WAIT_FROZEN"
+            }
+        },
+        {
+            "stationApplyState": "FROZEN",
+            "desc": "合伙人station_apply FROZEN",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "bond": "HAS_FROZEN",
+                "system": "WAIT_PROCESS"
+            }
+        },
+        {
+            "stationApplyState": "DECORATING",
+            "desc": "合伙人station_apply DECORATING",
+            "partnerInstanceState": "DECORATING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "SERVICING",
+            "desc": "合伙人station_apply SERVICING",
+            "partnerInstanceState": "SERVICING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLYING",
+            "desc": "合伙人station_apply QUIT_APPLYING",
+            "partnerInstanceState": "CLOSING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLY_CONFIRMED",
+            "desc": "合伙人station_apply QUIT_APPLY_CONFIRMED",
+            "partnerInstanceState": "CLOSED",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUITAUDITING",
+            "desc": "合伙人station_apply QUITAUDITING",
+            "partnerInstanceState": "QUITING",
+            "condition": {
+                "roleApprove": "TO_AUDIT"
+            }
+        },
+        {
+            "stationApplyState": "CLOSED_WAIT_THAW",
+            "desc": "合伙人station_apply CLOSED_WAIT_THAW",
+            "partnerInstanceState": "QUITING",
+            "condition": {
+                "roleApprove": "AUDIT_PASS",
+                "bond": "WAIT_THAW"
+            }
+        }
+    ],
+    "TPA": [
+        {
+            "stationApplyState": "TEMP",
+            "desc": "合伙人station_apply暂存",
+            "partnerInstanceState": "TEMP",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "TPA_TEMP",
+            "desc": "合伙人station_apply TPA_TEMP",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "roleApprove": "TO_AUDIT"
+            }
+        },
+        {
+            "stationApplyState": "SUMITTED",
+            "desc": "合伙人station_apply SUMITTED",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "roleApprove": "!TO_AUDIT",
+                "settledProtocol": "SIGNING"
+            }
+        },
+        {
+            "stationApplyState": "CONFIRMED",
+            "desc": "合伙人station_apply CONFIRMED",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "settledProtocol": "SIGNED",
+                "bond": "WAIT_FROZEN"
+            }
+        },
+        {
+            "stationApplyState": "FROZEN",
+            "desc": "合伙人station_apply FROZEN",
+            "partnerInstanceState": "SETTLING",
+            "condition": {
+                "bond": "HAS_FROZEN",
+                "system": "WAIT_PROCESS"
+            }
+        },
+        {
+            "stationApplyState": "TPA_AUDIT_FAIL",
+            "desc": "合伙人station_apply TPA_AUDIT_FAIL",
+            "partnerInstanceState": "SETTLE_FAIL",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "TPA_SERVICING",
+            "desc": "合伙人station_apply TPA_SERVICING",
+            "partnerInstanceState": "SERVICING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLYING",
+            "desc": "合伙人station_apply QUIT_APPLYING",
+            "partnerInstanceState": "CLOSING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLY_CONFIRMED",
+            "desc": "合伙人station_apply QUIT_APPLY_CONFIRMED",
+            "partnerInstanceState": "CLOSED",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUITAUDITING",
+            "desc": "合伙人station_apply QUITAUDITING",
+            "partnerInstanceState": "QUITING",
+            "condition": {
+                "roleApprove": "TO_AUDIT"
+            }
+        },
+        {
+            "stationApplyState": "CLOSED_WAIT_THAW",
+            "desc": "合伙人station_apply CLOSED_WAIT_THAW",
+            "partnerInstanceState": "QUITING",
+            "condition": {
+                "roleApprove": "AUDIT_PASS",
+                "bond": "WAIT_THAW"
+            }
+        }
+    ],
+    "TPV": [
+        {
+            "stationApplyState": "QUIT_APPLYING",
+            "desc": "合伙人station_apply QUIT_APPLYING",
+            "partnerInstanceState": "CLOSING",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUIT_APPLY_CONFIRMED",
+            "desc": "合伙人station_apply QUIT_APPLY_CONFIRMED",
+            "partnerInstanceState": "CLOSED",
+            "condition": {}
+        },
+        {
+            "stationApplyState": "QUITAUDITING",
+            "desc": "合伙人station_apply QUITAUDITING",
+            "partnerInstanceState": "QUITING",
+            "condition": {
+                "roleApprove": "TO_AUDIT"
+            }
+        },
+        {
+            "stationApplyState": "QUIT",
+            "desc": "合伙人station_apply QUIT",
+            "partnerInstanceState": "QUIT",
+            "condition": {}
+        }
+    ]
+}
