@@ -26,8 +26,8 @@ import com.taobao.vipserver.client.utils.CollectionUtils;
 
 import reactor.core.support.Assert;
 
-public class PartnerLifecycleParser {
-	private static final Logger logger = LoggerFactory.getLogger(PartnerLifecycleParser.class);
+public class PartnerLifecycleRuleParser {
+	private static final Logger logger = LoggerFactory.getLogger(PartnerLifecycleRuleParser.class);
 
 	private static Map<String, List<PartnerLifecycleExecutableMappingRule>> executableMappingRules;
 	private static Map<String, Field> partnerLifecycleItemsFieldMap;
