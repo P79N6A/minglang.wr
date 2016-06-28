@@ -30,9 +30,8 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
-import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
@@ -77,24 +76,34 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
+	
 	@Autowired
 	StationBO stationBO;
+	
 	@Autowired
 	PartnerBO partnerBO;
+	
 	@Autowired
 	ProtocolBO protocolBO;
+	
 	@Autowired
 	AttachementBO attachementBO;
+	
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
 	@Autowired
 	PartnerProtocolRelBO partnerProtocolRelBO;
+	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
 	@Autowired
 	CloseStationApplyBO closeStationApplyBO;
+	
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
@@ -148,32 +157,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 		}
 	}
-
+	
 	@Override
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition){
-		try {
-			// 参数校验
-			BeanValidator.validateWithThrowable(pageCondition);
-			
-			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
-			
-			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
-			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
-			
-			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
-			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
-			// ALL，组装生命周期中数据
-			if (null == instanceState) {
-				buildLifecycleItems(page);
-			}
-			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
-		} catch (Exception e) {
-			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
-			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
-		}
-	}
-	
-	public PageDto<PartnerInstanceDto> queryByPage2(OldPartnerInstancePageCondition pageCondition){
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);

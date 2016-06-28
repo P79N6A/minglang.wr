@@ -14,7 +14,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
-import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -351,7 +351,7 @@ public final class PartnerInstanceConverter {
 		return rel;
 	}
 
-	public static PartnerInstanceExample convert(OldPartnerInstancePageCondition condition) {
+	public static PartnerInstanceExample convert(PartnerInstancePageCondition condition) {
 		PartnerInstanceExample example = new PartnerInstanceExample();
 
 		if (null == condition) {
