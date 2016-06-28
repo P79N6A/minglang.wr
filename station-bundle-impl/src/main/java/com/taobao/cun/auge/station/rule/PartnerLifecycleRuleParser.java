@@ -11,6 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import reactor.core.support.Assert;
+
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -22,10 +24,9 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
-
-import reactor.core.support.Assert;
 
 /**
  * 映射规则解析器
@@ -116,12 +117,17 @@ public class PartnerLifecycleRuleParser {
 	 *            生命周期元素对象
 	 * @return
 	 */
-	public static String parseStationApplyState(String partnerType, String instatnceState,
+	public static StationApplyStateEnum parseStationApplyState(String partnerType, String instatnceState,
 			PartnerLifecycleDto partnerLifecycle) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
 			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
-				return mapping.getStationApplyState();
+				StationApplyStateEnum stateEnum = StationApplyStateEnum.valueof(mapping.getStationApplyState());
+				if (stateEnum == null) {
+					throw new AugeServiceException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState + ", "
+							+ JSON.toJSONString(partnerLifecycle));
+				}
+				return stateEnum;
 			}
 		}
 		throw new AugeServiceException("parseStationApplyState error: " + partnerType + " , " + instatnceState + ", "

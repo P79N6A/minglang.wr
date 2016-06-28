@@ -55,6 +55,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -196,8 +197,8 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				: partnerLifecycleItemsList.iterator().next();
 
 		// 设置状态
-		String stationApplySate = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), PartnerLifecycleConverter.toPartnerLifecycleDto(partnerLifecycleItems));
-		stationApply.setState(stationApplySate);
+		 com.taobao.cun.auge.station.enums.StationApplyStateEnum stationApplySate = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), PartnerLifecycleConverter.toPartnerLifecycleDto(partnerLifecycleItems));
+		stationApply.setState(stationApplySate.getCode());
 
 		stationApply.setModifier(instance.getModifier());
 		stationApply.setGmtModified(instance.getGmtModified());

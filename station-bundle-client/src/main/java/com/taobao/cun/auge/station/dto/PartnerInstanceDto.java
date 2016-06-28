@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
 public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
@@ -82,6 +83,11 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * station_aply表主键，供数据迁移使用
 	 */
 	private Long stationApplyId;
+	
+	/**
+	 * station_apply表的state 兼容老模型
+	 */
+	private StationApplyStateEnum stationApplyState;
 
 	/**
 	 * 淘宝id
@@ -284,6 +290,14 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public StationApplyStateEnum getStationApplyState() {
+		return stationApplyState;
+	}
+
+	public void setStationApplyState(StationApplyStateEnum stationApplyState) {
+		this.stationApplyState = stationApplyState;
 	}
 
 }

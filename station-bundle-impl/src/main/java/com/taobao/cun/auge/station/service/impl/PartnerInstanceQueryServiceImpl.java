@@ -62,6 +62,7 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -108,6 +109,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
 		PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
 		insDto.setPartnerLifecycleDto(lifecycleDto);
+		
+		insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
 		
 		if (condition.getNeedPartnerInfo()) {
 			Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
