@@ -392,9 +392,6 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
-			// if (null != rule.getCurrentStep()) {
-			// example.setCurrentStep(rule.getCurrentStep().getCode());
-			// }
 			// if (null != rule.getBusinessType()) {
 			// example.setBusinessType(rule.getBusinessType().getCode());
 			// }
