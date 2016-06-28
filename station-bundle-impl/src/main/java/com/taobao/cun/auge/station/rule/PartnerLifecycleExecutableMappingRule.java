@@ -3,11 +3,20 @@ package com.taobao.cun.auge.station.rule;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 生命周期事项是否可执行的判断规则
+ * 
+ * @author linjianke
+ *
+ */
 public class PartnerLifecycleExecutableMappingRule {
-
+	// 判断事项，如SETTLING.settledProtocol
 	private String item;
+	// 描述
 	private String desc;
+	// 已执行的判断条件列表，只要满足其一即表示已执行
 	private List<Map<String, String>> executedCondition;
+	// 可执行的判断条件列表，只要满足其一即表示可执行，详见例子SETTLING.settledProtocol
 	private List<Map<String, String>> executableCondition;
 
 	public String getItem() {
