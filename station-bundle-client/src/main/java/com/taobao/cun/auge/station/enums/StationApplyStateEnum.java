@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.sync;
+package com.taobao.cun.auge.station.enums;
 
 import java.io.Serializable;
 import java.util.ArrayList;
