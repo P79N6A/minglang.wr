@@ -84,7 +84,6 @@ public class PartnerLifecycleRuleParser {
 			}
 		}
 		return PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE;
-
 	}
 
 	/**
@@ -96,8 +95,7 @@ public class PartnerLifecycleRuleParser {
 	 *            老模型状态
 	 * @return
 	 */
-	public static PartnerLifecycleRule parseStationApplyState(PartnerInstanceTypeEnum type, String stationApplyState) {
-
+	public static PartnerLifecycleRule parsePartnerLifecycleRule(PartnerInstanceTypeEnum type, String stationApplyState) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(type.getCode());
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
 			if (stationApplyState.equalsIgnoreCase(mapping.getStationApplyState())) {
@@ -118,7 +116,7 @@ public class PartnerLifecycleRuleParser {
 	 *            生命周期元素对象
 	 * @return
 	 */
-	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
+	public static String parseStationApplyState(String partnerType, String instatnceState,
 			PartnerLifecycleDto partnerLifecycle) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
@@ -133,7 +131,6 @@ public class PartnerLifecycleRuleParser {
 	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
 		Iterator<String> it = ruleCondition.keySet().iterator();
 		while (it.hasNext()) {
-
 			try {
 				String key = it.next();
 				Field field = partnerLifecycleItemsFieldMap.get(key);
@@ -358,10 +355,10 @@ public class PartnerLifecycleRuleParser {
 
 		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
 
-		System.out.println("---" + JSON.toJSONString(parseStationApplyState(PartnerInstanceTypeEnum.TP, "SUMITTED")));
+		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
 
 		System.out.println("---"
-				+ convertInstanceState2StationApplyState("TP", "SETTLING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
+				+ parseStationApplyState("TP", "SETTLING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
 
 	}
 
