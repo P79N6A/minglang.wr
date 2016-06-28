@@ -59,6 +59,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
@@ -176,15 +177,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
-//
-//			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
-//
-//			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
-//			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+
+			StationApplyStateEnum stationApplyState = pageCondition.getStationApplyState();
+
+			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
+			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
 			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
-			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(null);
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
 			// ALL，组装生命周期中数据
-			if (null == null) {
+			if (null == stationApplyState) {
 				buildLifecycleItems(page);
 			}
 			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));

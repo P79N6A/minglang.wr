@@ -54,14 +54,23 @@ public class PartnerInstanceExample implements Serializable {
 	//入驻协议
 	private String settledProtocol;
 	
+	//入驻协议操作符
+	private String settledProtocolOp;
+	
 	//保证金
 	private String bond;
+	
+	//保证金操作符
+	private String bondOp;
 	
 	//当前步骤
 	private String currentStep;
 	
 	//角色审批
 	private String roleApprove;
+	
+	//角色审批操作符
+	private String roleApproveOp;
 	
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -205,5 +214,29 @@ public class PartnerInstanceExample implements Serializable {
 
 	public void setRoleApprove(String roleApprove) {
 		this.roleApprove = roleApprove;
+	}
+
+	public String getSettledProtocolOp() {
+		return settledProtocolOp;
+	}
+
+	public void setSettledProtocolOp(String settledProtocolOp) {
+		this.settledProtocolOp = settledProtocolOp;
+	}
+
+	public String getBondOp() {
+		return bondOp;
+	}
+
+	public void setBondOp(String bondOp) {
+		this.bondOp = bondOp;
+	}
+
+	public String getRoleApproveOp() {
+		return roleApproveOp;
+	}
+
+	public void setRoleApproveOp(String roleApproveOp) {
+		this.roleApproveOp = roleApproveOp;
 	}
 }

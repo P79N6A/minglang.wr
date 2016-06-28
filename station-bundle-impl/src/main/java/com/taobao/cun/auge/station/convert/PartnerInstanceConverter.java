@@ -14,6 +14,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -33,10 +34,14 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 
 public final class PartnerInstanceConverter {
 
@@ -104,8 +109,8 @@ public final class PartnerInstanceConverter {
 		if (null != condition.getRoleApprove()) {
 			example.setRoleApprove(condition.getRoleApprove().getCode());
 		}
-		
-		if(StringUtil.isNotBlank(condition.getOrgIdPath())){
+
+		if (StringUtil.isNotBlank(condition.getOrgIdPath())) {
 			example.setOrgIdPath(condition.getOrgIdPath());
 		}
 
@@ -157,10 +162,10 @@ public final class PartnerInstanceConverter {
 
 		return instanceDto;
 	}
-	
-	private static PartnerLifecycleDto convertLifecycleDto(PartnerInstance instance){
+
+	private static PartnerLifecycleDto convertLifecycleDto(PartnerInstance instance) {
 		PartnerLifecycleDto lifecleDto = new PartnerLifecycleDto();
-		
+
 		lifecleDto.setPartnerType(PartnerInstanceTypeEnum.valueof(instance.getType()));
 		lifecleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.valueof(instance.getLifecycleBusinessType()));
 		lifecleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.valueof(instance.getSettledProtocol()));
@@ -171,7 +176,7 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(instance.getCurrentStep()));
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
-		
+
 		return lifecleDto;
 	}
 
@@ -202,7 +207,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		instanceDto.setVersion(psRel.getVersion());
-		
+
 		return instanceDto;
 	}
 
@@ -294,7 +299,7 @@ public final class PartnerInstanceConverter {
 		address.setAddressDetail(instance.getAddress());
 		address.setLat(instance.getLat());
 		address.setLng(instance.getLng());
-		
+
 		return address;
 	}
 
@@ -316,11 +321,11 @@ public final class PartnerInstanceConverter {
 		if (null != partnerInstanceDto.getState()) {
 			rel.setState(partnerInstanceDto.getState().getCode());
 		}
-		
+
 		rel.setBit(partnerInstanceDto.getBit());
 		rel.setOpenDate(partnerInstanceDto.getOpenDate());
 		rel.setStationApplyId(partnerInstanceDto.getStationApplyId());
-		
+
 		if (null != partnerInstanceDto.getType()) {
 			rel.setType(partnerInstanceDto.getType().getCode());
 		}
@@ -334,7 +339,80 @@ public final class PartnerInstanceConverter {
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());
-		
+
 		return rel;
+	}
+
+	public static PartnerInstanceExample convert(OldPartnerInstancePageCondition condition) {
+		PartnerInstanceExample example = new PartnerInstanceExample();
+
+		if (null == condition) {
+			return example;
+		}
+
+		if (StringUtil.isNotBlank(condition.getStationNum())) {
+			example.setStationNum(condition.getStationNum());
+		}
+		if (StringUtil.isNotBlank(condition.getStationName())) {
+			example.setStationName(condition.getStationName());
+		}
+		if (StringUtil.isNotBlank(condition.getManagerId())) {
+			example.setManagerId(condition.getManagerId());
+		}
+		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
+			example.setProviderId(condition.getProviderId());
+		}
+		Address address = condition.getAddress();
+		if (null != address) {
+			example.setProvince(address.getProvince());
+			example.setCity(address.getCity());
+			example.setCounty(address.getCounty());
+			example.setTown(address.getTown());
+		}
+
+		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
+			example.setTaobaoNick(condition.getTaobaoNick());
+		}
+
+		PartnerInstanceTypeEnum partnerType = condition.getPartnerType();
+		if (null != partnerType) {
+			example.setPartnerType(partnerType.getCode());
+		}
+
+		if (StringUtil.isNotBlank(condition.getPartnerName())) {
+			example.setPartnerName(condition.getPartnerName());
+		}
+
+		if (StringUtil.isNotBlank(condition.getOrgIdPath())) {
+			example.setOrgIdPath(condition.getOrgIdPath());
+		}
+
+		StationApplyStateEnum stationApplyState = condition.getStationApplyState();
+		if (null != stationApplyState) {
+			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
+					stationApplyState.getCode());
+
+			// if (null != rule.getBusinessType()) {
+			// example.setBusinessType(rule.getBusinessType().getCode());
+			// }
+
+			PartnerLifecycleRuleItem settledProtocol = rule.getSettledProtocol();
+			if (null != settledProtocol) {
+				example.setSettledProtocol(settledProtocol.getValue());
+				example.setSettledProtocolOp(true == settledProtocol.getEqual() ? "=" : "!=");
+			}
+
+			PartnerLifecycleRuleItem bond = rule.getBond();
+			if (null != bond) {
+				example.setBond(bond.getValue());
+				example.setBondOp(true == bond.getEqual() ? "=" : "!=");
+			}
+
+			if (null != rule.getRoleApprove()) {
+				example.setRoleApprove(rule.getRoleApprove().getValue());
+				example.setRoleApproveOp(true == bond.getEqual() ? "=" : "!=");
+			}
+		}
+		return example;
 	}
 }

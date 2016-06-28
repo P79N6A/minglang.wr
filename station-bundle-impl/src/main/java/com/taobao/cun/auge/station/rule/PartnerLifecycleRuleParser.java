@@ -117,8 +117,7 @@ public class PartnerLifecycleRuleParser {
 	 *            生命周期元素对象
 	 * @return
 	 */
-	public static StationApplyStateEnum parseStationApplyState(String partnerType, String instatnceState,
-			PartnerLifecycleDto partnerLifecycle) {
+	public static StationApplyStateEnum parseStationApplyState(String partnerType, String instatnceState, PartnerLifecycleDto partnerLifecycle) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
 			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
@@ -130,8 +129,8 @@ public class PartnerLifecycleRuleParser {
 				return stateEnum;
 			}
 		}
-		throw new AugeServiceException("parseStationApplyState error: " + partnerType + " , " + instatnceState + ", "
-				+ JSON.toJSONString(partnerLifecycle));
+		throw new AugeServiceException(
+				"parseStationApplyState error: " + partnerType + " , " + instatnceState + ", " + JSON.toJSONString(partnerLifecycle));
 	}
 
 	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
@@ -174,6 +173,10 @@ public class PartnerLifecycleRuleParser {
 		// 主状态是否匹配
 		if (!partnerLifecycleRule.getState().getCode().equals(instatnceState)) {
 			return false;
+		}
+		// partnerLifecycle为空时，只校验主状态
+		if (null == partnerLifecycle) {
+			return true;
 		}
 		/**
 		 * 生命周期元素是否匹配
@@ -279,14 +282,14 @@ public class PartnerLifecycleRuleParser {
 				.getResourceAsStream("partner_lifecycle_state_mapping_rule.json");
 
 		try {
-			//加载是否可执行的规则
+			// 加载是否可执行的规则
 			String executableRuleContent = IOUtils.toString(executableRuleStream);
 			logger.info("load partner lifecycle executable mapping rule: {}", executableRuleContent);
 			executableMappingRules = JSON.parseObject(executableRuleContent,
 					new TypeReference<Map<String, List<PartnerLifecycleExecutableMappingRule>>>() {
 					});
 
-			//加载新老模型状态映射规则
+			// 加载新老模型状态映射规则
 			String stateRuleContent = IOUtils.toString(stateRuleStream);
 			logger.info("load partner lifecycle state mapping rule: {}", stateRuleContent);
 			Map<String, List<PartnerLifecycleStateMappingRule>> originalStateMappingRules = JSON.parseObject(stateRuleContent,
@@ -355,20 +358,22 @@ public class PartnerLifecycleRuleParser {
 	public static void main(String[] args) {
 		// businessType;settledProtocol;bond;quitProtocol;logisticsApprove;currentStep;roleApprove;confirm;system;
 		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
-//		lifecycle.setSettledProtocol("SIGNED");
-//		lifecycle.setSystem("WAIT_PROCESS");
+		// lifecycle.setSettledProtocol("SIGNED");
+		// lifecycle.setSystem("WAIT_PROCESS");
 		lifecycle.setBond("WAIT_THAW");
 		lifecycle.setRoleApprove("AUDIT_PASS");
 		lifecycle.setBusinessType("QUTING");
 
-//		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+		// System.out.println("---" +
+		// parseExecutable(PartnerInstanceTypeEnum.TPA,
+		// PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
 
-//		System.out.println("---" + JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP, "SUMITTED")));
+		// System.out.println("---" +
+		// JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP,
+		// "SUMITTED")));
 
-		System.out.println("---"
-				+ parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
-		
-		
+		System.out.println("---" + parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
+
 	}
 
 }
