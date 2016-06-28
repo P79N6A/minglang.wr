@@ -30,6 +30,7 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
@@ -167,19 +168,19 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		}
 	}
 	
-	public PageDto<PartnerInstanceDto> queryByPage2(PartnerInstancePageCondition pageCondition){
+	public PageDto<PartnerInstanceDto> queryByPage2(OldPartnerInstancePageCondition pageCondition){
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
 			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
-
-			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
-
-			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
-			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
-			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
+//
+//			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
+//
+//			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
+//			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(null);
 			// ALL，组装生命周期中数据
-			if (null == instanceState) {
+			if (null == null) {
 				buildLifecycleItems(page);
 			}
 			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));

@@ -3,10 +3,11 @@ package com.taobao.cun.auge.station.condition;
 import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
-public class OldPartnerInstancePageCondition {
+public class OldPartnerInstancePageCondition extends PageQuery{
 
 	// 村服务站所属村淘组织
 	private String orgIdPath;
