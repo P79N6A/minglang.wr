@@ -331,8 +331,14 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
-			// 处理中的
-			example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			PartnerInstanceStateEnum instanceState = rule.getState();
+			if (PartnerInstanceStateEnum.SETTLING.equals(instanceState)
+					|| PartnerInstanceStateEnum.CLOSING.equals(instanceState)
+					|| PartnerInstanceStateEnum.QUITING.equals(instanceState)) {
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			} else {
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.END.getCode());
+			}
 
 			if (null != rule.getBusinessType()) {
 				example.setBusinessType(rule.getBusinessType().getCode());
