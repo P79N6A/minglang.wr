@@ -144,7 +144,7 @@
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
-			and instance.id = life.partner_instance_id and life.current_step!='END'
+			and instance.id = life.partner_instance_id
 		</if>
 		
 		<include refid="partner_station_query_condition" />
@@ -204,16 +204,16 @@
 			and life.business_type = #{businessType,jdbcType=VARCHAR}
 		</if>
 		<if test="settledProtocol != null and settledProtocol != ''" >
-			and life.settled_protocol = #{settledProtocol,jdbcType=VARCHAR}
+			and life.settled_protocol #{settledProtocolOp} #{settledProtocol,jdbcType=VARCHAR}
 		</if>
 		<if test="bond != null and bond != ''" >
-			and life.bond = #{bond,jdbcType=VARCHAR}
+			and life.bond #{bondOp} #{bond,jdbcType=VARCHAR}
 		</if>
 		<if test="currentStep != null and currentStep != ''" >
 			and life.current_step = #{currentStep,jdbcType=VARCHAR}
 		</if>
 		<if test="roleApprove != null and roleApprove != ''" >
-			and life.role_approve = #{roleApprove,jdbcType=VARCHAR}
+			and life.role_approve #{roleApproveOp} #{roleApprove,jdbcType=VARCHAR}
 		</if>
    </sql>
    

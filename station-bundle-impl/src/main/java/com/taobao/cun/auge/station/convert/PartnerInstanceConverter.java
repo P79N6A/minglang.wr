@@ -392,9 +392,9 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
-			// if (null != rule.getBusinessType()) {
-			// example.setBusinessType(rule.getBusinessType().getCode());
-			// }
+			if (null != rule.getBusinessType()) {
+				example.setBusinessType(rule.getBusinessType().getCode());
+			}
 
 			PartnerLifecycleRuleItem settledProtocol = rule.getSettledProtocol();
 			if (null != settledProtocol) {
@@ -412,6 +412,9 @@ public final class PartnerInstanceConverter {
 				example.setRoleApprove(rule.getRoleApprove().getValue());
 				example.setRoleApproveOp(true == bond.getEqual() ? "=" : "!=");
 			}
+
+			// 处理中的
+			example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
 		}
 		return example;
 	}
