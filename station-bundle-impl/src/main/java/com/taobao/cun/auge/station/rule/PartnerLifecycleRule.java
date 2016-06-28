@@ -1,9 +1,15 @@
 package com.taobao.cun.auge.station.rule;
 
+import java.io.Serializable;
+
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 
-public class PartnerLifecycleRule {
+public class PartnerLifecycleRule implements Serializable{
+	
+	private static final long serialVersionUID = 7346499100977904220L;
+	
 	private PartnerInstanceStateEnum state;
+	
 	/**
 	 * 入驻协议签署标签
 	 */
