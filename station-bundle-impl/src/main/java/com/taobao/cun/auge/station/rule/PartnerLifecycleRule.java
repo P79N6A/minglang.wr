@@ -3,13 +3,20 @@ package com.taobao.cun.auge.station.rule;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 
-public class PartnerLifecycleRule implements Serializable{
-	
+public class PartnerLifecycleRule implements Serializable {
+
 	private static final long serialVersionUID = 7346499100977904220L;
-	
+	/**
+	 * 新模型实例状态
+	 */
 	private PartnerInstanceStateEnum state;
-	
+	/**
+	 * 业务类型
+	 */
+	private PartnerLifecycleBusinessTypeEnum businessType;
+
 	/**
 	 * 入驻协议签署标签
 	 */
@@ -107,6 +114,14 @@ public class PartnerLifecycleRule implements Serializable{
 
 	public void setSystem(PartnerLifecycleRuleItem system) {
 		this.system = system;
+	}
+
+	public PartnerLifecycleBusinessTypeEnum getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(PartnerLifecycleBusinessTypeEnum businessType) {
+		this.businessType = businessType;
 	}
 
 }
