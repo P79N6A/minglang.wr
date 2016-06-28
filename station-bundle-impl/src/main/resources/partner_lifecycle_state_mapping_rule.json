@@ -72,6 +72,12 @@
                 "roleApprove": "AUDIT_PASS",
                 "bond": "WAIT_THAW"
             }
+        },
+        {
+            "stationApplyState": "QUIT",
+            "desc": "合伙人station_apply QUIT",
+            "partnerInstanceState": "QUIT",
+            "condition": {}
         }
     ],
     "TPA": [
@@ -156,6 +162,12 @@
                 "roleApprove": "AUDIT_PASS",
                 "bond": "WAIT_THAW"
             }
+        },
+        {
+            "stationApplyState": "QUIT",
+            "desc": "合伙人station_apply QUIT",
+            "partnerInstanceState": "QUIT",
+            "condition": {}
         }
     ],
     "TPV": [
