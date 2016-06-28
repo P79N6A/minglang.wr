@@ -150,12 +150,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
-			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
-
+			
 			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
-
+			
 			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
 			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+			
+			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
 			// ALL，组装生命周期中数据
 			if (null == instanceState) {
@@ -172,12 +173,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
-			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 //
 //			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
 //
 //			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
 //			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
 			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(null);
 			// ALL，组装生命周期中数据
 			if (null == null) {
