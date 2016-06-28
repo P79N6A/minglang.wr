@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -26,6 +27,12 @@ import com.taobao.vipserver.client.utils.CollectionUtils;
 
 import reactor.core.support.Assert;
 
+/**
+ * 映射规则解析器
+ * 
+ * @author linjianke
+ *
+ */
 public class PartnerLifecycleRuleParser {
 	private static final Logger logger = LoggerFactory.getLogger(PartnerLifecycleRuleParser.class);
 
@@ -36,8 +43,8 @@ public class PartnerLifecycleRuleParser {
 	private static Map<String, Field> partnerLifecycleRuleFieldMap;
 
 	static {
-		loadMappingRule();
 		loadFiled();
+		loadMappingRule();
 	}
 
 	/**
@@ -61,7 +68,7 @@ public class PartnerLifecycleRuleParser {
 		if (CollectionUtils.isNotEmpty((mappingRule.getExecutedCondition()))) {
 			// 多个规则里面只要满足其一即认为已执行
 			for (Map<String, String> ruleCondition : mappingRule.getExecutedCondition()) {
-				if (isMatchCondition(ruleCondition, lifecycle)) {
+				if (isMatchExecuteCondition(ruleCondition, lifecycle)) {
 					return PartnerLifecycleItemCheckResultEnum.EXECUTED;
 				}
 			}
@@ -71,7 +78,7 @@ public class PartnerLifecycleRuleParser {
 		if (CollectionUtils.isNotEmpty((mappingRule.getExecutableCondition()))) {
 			// 多个规则里面只要满足其一即认为可执行
 			for (Map<String, String> ruleCondition : mappingRule.getExecutableCondition()) {
-				if (isMatchCondition(ruleCondition, lifecycle)) {
+				if (isMatchExecuteCondition(ruleCondition, lifecycle)) {
 					return PartnerLifecycleItemCheckResultEnum.EXECUTABLE;
 				}
 			}
@@ -79,14 +86,15 @@ public class PartnerLifecycleRuleParser {
 		return PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE;
 
 	}
-	
+
 	/**
 	 * 根据合伙人类型和老模型状态映射新模型
+	 * 
 	 * @param type
 	 * @param stationApplyState
 	 * @return
 	 */
-	public PartnerLifecycleRule parseStationApplyState(PartnerInstanceTypeEnum type, String stationApplyState) {
+	public static PartnerLifecycleRule parseStationApplyState(PartnerInstanceTypeEnum type, String stationApplyState) {
 
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(type.getCode());
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
@@ -97,6 +105,14 @@ public class PartnerLifecycleRuleParser {
 		throw new AugeServiceException("PartnerLifecycleRule not exists: " + type.getCode() + " , " + stationApplyState);
 	}
 
+	/**
+	 * 映射到老模型
+	 * 
+	 * @param partnerType
+	 * @param instatnceState
+	 * @param partnerLifecycle
+	 * @return
+	 */
 	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
 			PartnerLifecycleDto partnerLifecycle) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
@@ -109,7 +125,7 @@ public class PartnerLifecycleRuleParser {
 				+ JSON.toJSONString(partnerLifecycle));
 	}
 
-	private static boolean isMatchCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
+	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
 		Iterator<String> it = ruleCondition.keySet().iterator();
 		while (it.hasNext()) {
 
@@ -127,12 +143,10 @@ public class PartnerLifecycleRuleParser {
 				} else if (!ruleValue.equals(currentValue)) {
 					return false;
 				}
-
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				logger.error("parse field value error", e);
 				throw new AugeServiceException("parse field value error");
 			}
-
 		}
 		return true;
 	}
@@ -147,10 +161,17 @@ public class PartnerLifecycleRuleParser {
 		return null;
 	}
 
-	
-
 	private static boolean isMatchPartnerLifecycleRule(PartnerLifecycleRule partnerLifecycleRule, String instatnceState,
 			PartnerLifecycleDto partnerLifecycle) {
+		// 主状态是否匹配
+		if (!partnerLifecycleRule.getState().getCode().equals(instatnceState)) {
+			return false;
+		}
+		/**
+		 * 生命周期元素是否匹配
+		 * settledProtocol,bond,quitProtocol,logisticsApprove,roleApprove,
+		 * confirm,system
+		 */
 		if (null != partnerLifecycleRule.getSettledProtocol()) {
 			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getSettledProtocol();
 			String itemCode = null == partnerLifecycle.getSettledProtocol() ? null : partnerLifecycle.getSettledProtocol().getCode();
@@ -296,7 +317,7 @@ public class PartnerLifecycleRuleParser {
 					 */
 					for (String itemKey : condition.keySet()) {
 						Field field = partnerLifecycleRuleFieldMap.get(itemKey);
-						String itemValue = condition.get(key);
+						String itemValue = condition.get(itemKey);
 						// 如果值以"!"开头表示不等于
 						PartnerLifecycleRuleItem ruleItem = itemValue.startsWith("!")
 								? new PartnerLifecycleRuleItem(itemValue.substring(1), false)
@@ -329,6 +350,11 @@ public class PartnerLifecycleRuleParser {
 		lifecycle.setBusinessType("SETTLING");
 
 		System.out.println("---" + parseExecutable(PartnerInstanceTypeEnum.TPA, PartnerLifecycleItemCheckEnum.settledProtocol, lifecycle));
+
+		System.out.println("---" + JSON.toJSONString(parseStationApplyState(PartnerInstanceTypeEnum.TP, "SUMITTED")));
+
+		System.out.println("---"
+				+ convertInstanceState2StationApplyState("TP", "SETTLING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
 
 	}
 
