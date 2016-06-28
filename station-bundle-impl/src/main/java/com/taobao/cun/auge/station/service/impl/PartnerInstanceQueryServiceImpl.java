@@ -145,8 +145,29 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition)
-			throws AugeServiceException {
+	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition){
+		try {
+			// 参数校验
+			BeanValidator.validateWithThrowable(pageCondition);
+			PageHelper.startPage(pageCondition.getPageNum(), pageCondition.getPageSize());
+
+			PartnerInstanceStateEnum instanceState = pageCondition.getPartnerInstanceState();
+
+			// 先从partner_station_rel，partner，station,cuntao_org查询基本信息
+			PartnerInstanceExample example = PartnerInstanceConverter.convert(pageCondition);
+			Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByExample(example);
+			// ALL，组装生命周期中数据
+			if (null == instanceState) {
+				buildLifecycleItems(page);
+			}
+			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+		} catch (Exception e) {
+			logger.error("queryByPage error,PartnerInstancePageCondition =" + JSON.toJSONString(pageCondition), e);
+			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
+		}
+	}
+	
+	public PageDto<PartnerInstanceDto> queryByPage2(PartnerInstancePageCondition pageCondition){
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
