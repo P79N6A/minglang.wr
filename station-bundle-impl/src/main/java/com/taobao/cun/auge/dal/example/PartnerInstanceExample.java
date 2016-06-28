@@ -51,26 +51,50 @@ public class PartnerInstanceExample implements Serializable {
 	//业务类型
 	private String businessType;
 	
+	//当前步骤
+	private String currentStep;
+	
 	//入驻协议
 	private String settledProtocol;
 	
 	//入驻协议操作符
-	private String settledProtocolOp;
+	private boolean settledProtocolOp;
 	
 	//保证金
 	private String bond;
 	
 	//保证金操作符
-	private String bondOp;
-	
-	//当前步骤
-	private String currentStep;
-	
+	private boolean bondOp;
+
 	//角色审批
 	private String roleApprove;
 	
 	//角色审批操作符
-	private String roleApproveOp;
+	private boolean roleApproveOp;
+	
+	//退出协议
+	private String quitProtocol;
+	
+	//退出协议操作符
+	private boolean quitProtocolOp;
+	
+	//物流审批
+	private String logisticsApprove;
+	
+	//物流审批操作符
+	private boolean logisticsApproveOp;
+	
+	//小二确认
+	private String confirm;
+	
+	//小二确认操作符
+	private boolean confirmOp;
+	
+	//系统操作
+	private String system;
+	
+	//系统操作操作符
+	private boolean systemOp;
 	
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -216,27 +240,91 @@ public class PartnerInstanceExample implements Serializable {
 		this.roleApprove = roleApprove;
 	}
 
-	public String getSettledProtocolOp() {
+	public boolean isSettledProtocolOp() {
 		return settledProtocolOp;
 	}
 
-	public void setSettledProtocolOp(String settledProtocolOp) {
+	public void setSettledProtocolOp(boolean settledProtocolOp) {
 		this.settledProtocolOp = settledProtocolOp;
 	}
 
-	public String getBondOp() {
+	public boolean isBondOp() {
 		return bondOp;
 	}
 
-	public void setBondOp(String bondOp) {
+	public void setBondOp(boolean bondOp) {
 		this.bondOp = bondOp;
 	}
 
-	public String getRoleApproveOp() {
+	public boolean isRoleApproveOp() {
 		return roleApproveOp;
 	}
 
-	public void setRoleApproveOp(String roleApproveOp) {
+	public void setRoleApproveOp(boolean roleApproveOp) {
 		this.roleApproveOp = roleApproveOp;
+	}
+
+	public String getQuitProtocol() {
+		return quitProtocol;
+	}
+
+	public void setQuitProtocol(String quitProtocol) {
+		this.quitProtocol = quitProtocol;
+	}
+
+	public boolean isQuitProtocolOp() {
+		return quitProtocolOp;
+	}
+
+	public void setQuitProtocolOp(boolean quitProtocolOp) {
+		this.quitProtocolOp = quitProtocolOp;
+	}
+
+	public String getLogisticsApprove() {
+		return logisticsApprove;
+	}
+
+	public void setLogisticsApprove(String logisticsApprove) {
+		this.logisticsApprove = logisticsApprove;
+	}
+
+	public boolean isLogisticsApproveOp() {
+		return logisticsApproveOp;
+	}
+
+	public void setLogisticsApproveOp(boolean logisticsApproveOp) {
+		this.logisticsApproveOp = logisticsApproveOp;
+	}
+
+	public String getConfirm() {
+		return confirm;
+	}
+
+	public void setConfirm(String confirm) {
+		this.confirm = confirm;
+	}
+
+	public boolean isConfirmOp() {
+		return confirmOp;
+	}
+
+	public void setConfirmOp(boolean confirmOp) {
+		this.confirmOp = confirmOp;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
+	public void setSystem(String system) {
+		this.system = system;
+	}
+
+	public boolean isSystemOp() {
+		return systemOp;
+	}
+
+	public void setSystemOp(boolean systemOp) {
+		this.systemOp = systemOp;
 	}
 }

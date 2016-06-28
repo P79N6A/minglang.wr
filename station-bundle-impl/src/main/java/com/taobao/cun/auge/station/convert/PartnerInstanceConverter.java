@@ -392,6 +392,9 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
+			// 处理中的
+			example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+
 			if (null != rule.getBusinessType()) {
 				example.setBusinessType(rule.getBusinessType().getCode());
 			}
@@ -399,22 +402,44 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRuleItem settledProtocol = rule.getSettledProtocol();
 			if (null != settledProtocol) {
 				example.setSettledProtocol(settledProtocol.getValue());
-				example.setSettledProtocolOp(true == settledProtocol.getEqual() ? "=" : "!=");
+				example.setSettledProtocolOp(settledProtocol.getEqual());
 			}
 
 			PartnerLifecycleRuleItem bond = rule.getBond();
 			if (null != bond) {
 				example.setBond(bond.getValue());
-				example.setBondOp(true == bond.getEqual() ? "=" : "!=");
+				example.setBondOp(bond.getEqual());
 			}
 
-			if (null != rule.getRoleApprove()) {
-				example.setRoleApprove(rule.getRoleApprove().getValue());
-				example.setRoleApproveOp(true == bond.getEqual() ? "=" : "!=");
+			PartnerLifecycleRuleItem roleApprove = rule.getRoleApprove();
+			if (null != roleApprove) {
+				example.setRoleApprove(roleApprove.getValue());
+				example.setRoleApproveOp(bond.getEqual());
 			}
 
-			// 处理中的
-			example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			PartnerLifecycleRuleItem quitProtocol = rule.getQuitProtocol();
+			if (null != quitProtocol) {
+				example.setQuitProtocol(quitProtocol.getValue());
+				example.setQuitProtocolOp(quitProtocol.getEqual());
+			}
+
+			PartnerLifecycleRuleItem logisticsApprove = rule.getLogisticsApprove();
+			if (null != logisticsApprove) {
+				example.setLogisticsApprove(logisticsApprove.getValue());
+				example.setLogisticsApproveOp(logisticsApprove.getEqual());
+			}
+
+			PartnerLifecycleRuleItem confirm = rule.getConfirm();
+			if (null != confirm) {
+				example.setConfirm(confirm.getValue());
+				example.setConfirmOp(confirm.getEqual());
+			}
+
+			PartnerLifecycleRuleItem system = rule.getSystem();
+			if (null != system) {
+				example.setSystem(system.getValue());
+				example.setSystemOp(system.getEqual());
+			}
 		}
 		return example;
 	}
