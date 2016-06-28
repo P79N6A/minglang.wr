@@ -33,6 +33,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
@@ -156,9 +157,16 @@ public final class PartnerInstanceConverter {
 
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
+
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
-		instanceDto.setPartnerLifecycleDto(convertLifecycleDto(instance));
+
+		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
+		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
+
+		StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
+				.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+		instanceDto.setStationApplyState(parseStationApplyState);
 
 		return instanceDto;
 	}
@@ -176,7 +184,7 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(instance.getCurrentStep()));
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
-
+		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
 		return lifecleDto;
 	}
 

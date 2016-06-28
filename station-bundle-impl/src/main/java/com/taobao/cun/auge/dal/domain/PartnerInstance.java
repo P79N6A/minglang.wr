@@ -381,6 +381,11 @@ public class PartnerInstance {
     private String confirm;
     
     /**
+     * 系统操作
+     */
+    private String system;
+    
+    /**
      * 县服务中心名称
      */
     private String countyStationName;
@@ -1559,5 +1564,13 @@ public class PartnerInstance {
 
 	public void setCountyStationName(String countyStationName) {
 		this.countyStationName = countyStationName;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
+	public void setSystem(String system) {
+		this.system = system;
 	}
 }

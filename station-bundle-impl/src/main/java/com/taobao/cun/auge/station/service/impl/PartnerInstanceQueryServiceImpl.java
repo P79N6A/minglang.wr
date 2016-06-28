@@ -207,6 +207,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				instance.setCurrentStep(lifecycle.getCurrentStep());
 				instance.setRoleApprove(lifecycle.getRoleApprove());
 				instance.setConfirm(lifecycle.getConfirm());
+				instance.setSystem(lifecycle.getSystem());
 			}
 		}
 	}
