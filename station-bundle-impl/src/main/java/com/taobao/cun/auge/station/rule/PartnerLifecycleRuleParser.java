@@ -91,7 +91,9 @@ public class PartnerLifecycleRuleParser {
 	 * 根据合伙人类型和老模型状态映射新模型
 	 * 
 	 * @param type
+	 *            合伙人类型
 	 * @param stationApplyState
+	 *            老模型状态
 	 * @return
 	 */
 	public static PartnerLifecycleRule parseStationApplyState(PartnerInstanceTypeEnum type, String stationApplyState) {
@@ -109,8 +111,11 @@ public class PartnerLifecycleRuleParser {
 	 * 映射到老模型
 	 * 
 	 * @param partnerType
+	 *            合伙人类型
 	 * @param instatnceState
+	 *            新模型实例状态
 	 * @param partnerLifecycle
+	 *            生命周期元素对象
 	 * @return
 	 */
 	public static String convertInstanceState2StationApplyState(String partnerType, String instatnceState,
