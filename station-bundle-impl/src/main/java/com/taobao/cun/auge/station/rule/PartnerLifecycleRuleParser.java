@@ -276,15 +276,16 @@ public class PartnerLifecycleRuleParser {
 				.getResourceAsStream("partner_lifecycle_state_mapping_rule.json");
 
 		try {
+			//加载是否可执行的规则
 			String executableRuleContent = IOUtils.toString(executableRuleStream);
 			logger.info("load partner lifecycle executable mapping rule: {}", executableRuleContent);
 			executableMappingRules = JSON.parseObject(executableRuleContent,
 					new TypeReference<Map<String, List<PartnerLifecycleExecutableMappingRule>>>() {
 					});
 
+			//加载新老模型状态映射规则
 			String stateRuleContent = IOUtils.toString(stateRuleStream);
 			logger.info("load partner lifecycle state mapping rule: {}", stateRuleContent);
-
 			Map<String, List<PartnerLifecycleStateMappingRule>> originalStateMappingRules = JSON.parseObject(stateRuleContent,
 					new TypeReference<Map<String, List<PartnerLifecycleStateMappingRule>>>() {
 					});
@@ -293,6 +294,7 @@ public class PartnerLifecycleRuleParser {
 			logger.error(e.getMessage(), e);
 		} finally {
 			IOUtils.closeQuietly(executableRuleStream);
+			IOUtils.closeQuietly(stateRuleStream);
 		}
 	}
 
