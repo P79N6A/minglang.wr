@@ -158,7 +158,7 @@ public class PartnerLifecycleRuleParser {
 				return rule;
 			}
 		}
-		return null;
+		throw new AugeServiceException("getMappingRuleByPartnerInstanceType error");
 	}
 
 	private static boolean isMatchPartnerLifecycleRule(PartnerLifecycleRule partnerLifecycleRule, String instatnceState,
