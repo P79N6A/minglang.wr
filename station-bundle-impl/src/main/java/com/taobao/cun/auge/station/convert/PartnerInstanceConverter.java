@@ -15,7 +15,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
-import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -48,74 +47,6 @@ public final class PartnerInstanceConverter {
 
 	private PartnerInstanceConverter() {
 
-	}
-
-	public static PartnerInstanceExample convert(PartnerInstancePageCondition condition) {
-		PartnerInstanceExample example = new PartnerInstanceExample();
-
-		if (null == condition) {
-			return example;
-		}
-
-		if (StringUtil.isNotBlank(condition.getStationNum())) {
-			example.setStationNum(condition.getStationNum());
-		}
-		if (StringUtil.isNotBlank(condition.getStationName())) {
-			example.setStationName(condition.getStationName());
-		}
-		if (StringUtil.isNotBlank(condition.getManagerId())) {
-			example.setManagerId(condition.getManagerId());
-		}
-		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
-			example.setProviderId(condition.getProviderId());
-		}
-		Address address = condition.getAddress();
-		if (null != address) {
-			example.setProvince(address.getProvince());
-			example.setCity(address.getCity());
-			example.setCounty(address.getCounty());
-			example.setTown(address.getTown());
-		}
-
-		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
-			example.setTaobaoNick(condition.getTaobaoNick());
-		}
-		if (null != condition.getPartnerInstanceState()) {
-			example.setPartnerState(condition.getPartnerInstanceState().getCode());
-		}
-
-		if (null != condition.getPartnerType()) {
-			example.setPartnerType(condition.getPartnerType().getCode());
-		}
-
-		if (StringUtil.isNotBlank(condition.getPartnerName())) {
-			example.setPartnerName(condition.getPartnerName());
-		}
-
-		if (null != condition.getCurrentStep()) {
-			example.setCurrentStep(condition.getCurrentStep().getCode());
-		}
-		if (null != condition.getBusinessType()) {
-			example.setBusinessType(condition.getBusinessType().getCode());
-		}
-
-		if (null != condition.getSettleProtocol()) {
-			example.setSettledProtocol(condition.getSettleProtocol().getCode());
-		}
-
-		if (null != condition.getBond()) {
-			example.setBond(condition.getBond().getCode());
-		}
-
-		if (null != condition.getRoleApprove()) {
-			example.setRoleApprove(condition.getRoleApprove().getCode());
-		}
-
-		if (StringUtil.isNotBlank(condition.getOrgIdPath())) {
-			example.setOrgIdPath(condition.getOrgIdPath());
-		}
-
-		return example;
 	}
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
