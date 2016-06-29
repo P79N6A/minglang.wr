@@ -332,6 +332,10 @@ public final class PartnerInstanceConverter {
 					stationApplyState.getCode());
 
 			PartnerInstanceStateEnum instanceState = rule.getState();
+			if(null != instanceState){
+				example.setPartnerState(instanceState.getCode());
+			}
+			
 			if (PartnerInstanceStateEnum.SETTLING.equals(instanceState)
 					|| PartnerInstanceStateEnum.CLOSING.equals(instanceState)
 					|| PartnerInstanceStateEnum.QUITING.equals(instanceState)) {
