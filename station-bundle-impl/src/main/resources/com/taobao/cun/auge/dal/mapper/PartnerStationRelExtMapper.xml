@@ -79,6 +79,7 @@
     <result column="current_step" jdbcType="VARCHAR" property="currentStep" />
     <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
     <result column="confirm" jdbcType="VARCHAR" property="confirm" />
+    <result column="system" jdbcType="VARCHAR" property="system" />
     
     <!-- 县服务中心-->
     <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
