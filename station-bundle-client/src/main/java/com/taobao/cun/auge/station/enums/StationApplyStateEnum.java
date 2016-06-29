@@ -66,6 +66,7 @@ public class StationApplyStateEnum implements Serializable {
 		mappings.put("TEMP", TEMP);
 		mappings.put("SUMITTED", SUMITTED);
 		mappings.put("CONFIRMED", CONFIRMED);
+		mappings.put("FROZEN", FROZEN);
 		mappings.put("DECORATING", DECORATING);
 		mappings.put("SERVICING", SERVICING);
 		mappings.put("CLOSED", CLOSED);
