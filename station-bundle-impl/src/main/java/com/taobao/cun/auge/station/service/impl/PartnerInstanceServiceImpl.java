@@ -1220,9 +1220,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
-		ValidateUtils.notNull(partnerInstanceDto.getType());
 		Long instanceId = partnerInstanceDto.getId();
 		if (instanceId == null) {
+			ValidateUtils.notNull(partnerInstanceDto.getType());
 			// 新增入驻
 			instanceId = addSubmit(partnerInstanceDto);
 
@@ -1233,10 +1233,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.ADD,instanceId);
 		} else {
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if (rel == null || StringUtils.isEmpty(rel.getType())) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			}
 			// 暂存后，修改入驻
 			updateSubmit(partnerInstanceDto);
 			// 不同类型合伙人，执行不同的生命周期
-			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		}
