@@ -155,7 +155,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	
 	private String getErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PartnerInstanceService-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
+		sb.append("PartnerInstanceQueryService-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
 				.append(error);
 		return sb.toString();
 	}
