@@ -88,6 +88,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -103,6 +105,7 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
@@ -647,21 +650,30 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(waitFrozenMoney);
 		try {
-			Long instanceId = partnerInstanceBO.getInstanceIdByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
-			ValidateUtils.notNull(instanceId);
+			PartnerStationRel psRel = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
+			ValidateUtils.notNull(psRel);
+			Long instanceId = psRel.getId();
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
+			if (items == null) {
+				throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			}
+			PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
+			if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
+				return;
+			}else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
+			}
+			
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 
 			addWaitFrozenMoney(instanceId, taobaoUserId, waitFrozenMoney);
-
-			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
-					PartnerLifecycleCurrentStepEnum.PROCESSING);
-			if (items != null) {
-				PartnerLifecycleDto param = new PartnerLifecycleDto();
-				param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
-				param.setLifecycleId(items.getId());
-				partnerLifecycleBO.updateLifecycle(param);
-			}
+			
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
 
 			// 乐观锁
 			PartnerInstanceDto instance = new PartnerInstanceDto();
@@ -680,7 +692,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} catch (Exception e) {
 			String error = getErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
-			throw new AugeServiceException(StationExceptionEnum.SYSTEM_ERROR);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 
