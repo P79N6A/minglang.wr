@@ -22,6 +22,7 @@ import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
@@ -117,14 +118,15 @@ public class PartnerLifecycleRuleParser {
 	 *            生命周期元素对象
 	 * @return
 	 */
-	public static StationApplyStateEnum parseStationApplyState(String partnerType, String instatnceState, PartnerLifecycleDto partnerLifecycle) {
+	public static StationApplyStateEnum parseStationApplyState(String partnerType, String instatnceState,
+			PartnerLifecycleDto partnerLifecycle) {
 		List<PartnerLifecycleRuleMapping> ruleList = stateMappingRules.get(partnerType);
 		for (PartnerLifecycleRuleMapping mapping : ruleList) {
 			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
 				StationApplyStateEnum stateEnum = StationApplyStateEnum.valueof(mapping.getStationApplyState());
 				if (stateEnum == null) {
-					throw new AugeServiceException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState + ", "
-							+ JSON.toJSONString(partnerLifecycle));
+					throw new AugeServiceException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState
+							+ ", " + JSON.toJSONString(partnerLifecycle));
 				}
 				return stateEnum;
 			}
@@ -343,6 +345,15 @@ public class PartnerLifecycleRuleParser {
 						}
 					}
 				}
+				//设置businessType
+				if (PartnerInstanceStateEnum.SETTLING.equals(partnerInstanceState)) {
+					partnerLifecycleRule.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
+				} else if (PartnerInstanceStateEnum.CLOSING.equals(partnerInstanceState)) {
+					partnerLifecycleRule.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING);
+				} else if (PartnerInstanceStateEnum.QUITING.equals(partnerInstanceState)) {
+					partnerLifecycleRule.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING);
+				}
+
 				// 适配后的规则
 				PartnerLifecycleRuleMapping mapping = new PartnerLifecycleRuleMapping();
 				mapping.setStationApplyState(mappingRule.getStationApplyState());

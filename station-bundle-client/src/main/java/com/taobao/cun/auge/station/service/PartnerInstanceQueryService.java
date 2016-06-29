@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -33,20 +33,12 @@ public interface PartnerInstanceQueryService {
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
 
 	/**
-	 * 分页查询
-	 * 
-	 * @param pageCondition
-	 * @return
-	 */
-	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
-	
-	/**
 	 * 使用stationapply state 查询
 	 * 
 	 * @param pageCondition
 	 * @return
 	 */
-	public PageDto<PartnerInstanceDto> queryByPage2(OldPartnerInstancePageCondition pageCondition);
+	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
 
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]

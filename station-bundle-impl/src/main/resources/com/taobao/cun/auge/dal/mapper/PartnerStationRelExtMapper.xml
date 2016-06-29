@@ -79,6 +79,7 @@
     <result column="current_step" jdbcType="VARCHAR" property="currentStep" />
     <result column="role_approve" jdbcType="VARCHAR" property="roleApprove" />
     <result column="confirm" jdbcType="VARCHAR" property="confirm" />
+    <result column="system" jdbcType="VARCHAR" property="system" />
     
     <!-- 县服务中心-->
     <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
@@ -134,8 +135,12 @@
 			life.business_type as lifecycle_business_type,
 			life.settled_protocol,
 			life.bond,
+			life.quit_protocol,
+			life.logistics_approve,
 			life.current_step,
-			life.role_approve
+			life.role_approve,
+			life.confirm,
+			life.system
 		</if>
 		from partner_station_rel instance,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
@@ -203,17 +208,78 @@
         <if test="businessType != null and businessType != ''" >
 			and life.business_type = #{businessType,jdbcType=VARCHAR}
 		</if>
-		<if test="settledProtocol != null and settledProtocol != ''" >
-			and life.settled_protocol #{settledProtocolOp} #{settledProtocol,jdbcType=VARCHAR}
-		</if>
-		<if test="bond != null and bond != ''" >
-			and life.bond #{bondOp} #{bond,jdbcType=VARCHAR}
-		</if>
 		<if test="currentStep != null and currentStep != ''" >
 			and life.current_step = #{currentStep,jdbcType=VARCHAR}
 		</if>
+		<if test="settledProtocol != null and settledProtocol != ''" >
+			and life.settled_protocol 
+			<if test="settledProtocolOp == true" >
+			= 
+			</if>
+			<if test="settledProtocolOp != true" >
+			!=
+			</if>
+			#{settledProtocol,jdbcType=VARCHAR}
+		</if>
+		<if test="bond != null and bond != ''" >
+			and life.bond 
+			<if test="bondOp == true" >
+			= 
+			</if>
+			<if test="bondOp != true" >
+			!=
+			</if>
+			#{bond,jdbcType=VARCHAR}
+		</if>
 		<if test="roleApprove != null and roleApprove != ''" >
-			and life.role_approve #{roleApproveOp} #{roleApprove,jdbcType=VARCHAR}
+			and life.role_approve 
+			<if test="roleApproveOp == true" >
+			= 
+			</if>
+			<if test="roleApproveOp != true" >
+			!=
+			</if>
+			#{roleApprove,jdbcType=VARCHAR}
+		</if>
+		<if test="quitProtocol != null and quitProtocol != ''" >
+			and life.quit_protocol 
+			<if test="quitProtocolOp == true" >
+			= 
+			</if>
+			<if test="quitProtocolOp != true" >
+			!=
+			</if>
+			#{quitProtocol,jdbcType=VARCHAR}
+		</if>
+		<if test="logisticsApprove != null and logisticsApprove != ''" >
+			and life.logistics_approve 
+			<if test="logisticsApproveOp == true" >
+			= 
+			</if>
+			<if test="logisticsApproveOp != true" >
+			!=
+			</if>
+			#{logisticsApprove,jdbcType=VARCHAR}
+		</if>
+		<if test="confirm != null and confirm != ''" >
+			and life.confirm 
+			<if test="confirmOp == true" >
+			= 
+			</if>
+			<if test="confirmOp != true" >
+			!=
+			</if>
+			#{confirm,jdbcType=VARCHAR}
+		</if>
+		<if test="system != null and system != ''" >
+			and life.system 
+			<if test="systemOp == true" >
+			= 
+			</if>
+			<if test="systemOp != true" >
+			!=
+			</if>
+			#{system,jdbcType=VARCHAR}
 		</if>
    </sql>
    

@@ -14,7 +14,6 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
-import com.taobao.cun.auge.station.condition.OldPartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -33,6 +32,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
@@ -47,74 +47,6 @@ public final class PartnerInstanceConverter {
 
 	private PartnerInstanceConverter() {
 
-	}
-
-	public static PartnerInstanceExample convert(PartnerInstancePageCondition condition) {
-		PartnerInstanceExample example = new PartnerInstanceExample();
-
-		if (null == condition) {
-			return example;
-		}
-
-		if (StringUtil.isNotBlank(condition.getStationNum())) {
-			example.setStationNum(condition.getStationNum());
-		}
-		if (StringUtil.isNotBlank(condition.getStationName())) {
-			example.setStationName(condition.getStationName());
-		}
-		if (StringUtil.isNotBlank(condition.getManagerId())) {
-			example.setManagerId(condition.getManagerId());
-		}
-		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
-			example.setProviderId(condition.getProviderId());
-		}
-		Address address = condition.getAddress();
-		if (null != address) {
-			example.setProvince(address.getProvince());
-			example.setCity(address.getCity());
-			example.setCounty(address.getCounty());
-			example.setTown(address.getTown());
-		}
-
-		if (StringUtil.isNotBlank(condition.getTaobaoNick())) {
-			example.setTaobaoNick(condition.getTaobaoNick());
-		}
-		if (null != condition.getPartnerInstanceState()) {
-			example.setPartnerState(condition.getPartnerInstanceState().getCode());
-		}
-
-		if (null != condition.getPartnerType()) {
-			example.setPartnerType(condition.getPartnerType().getCode());
-		}
-
-		if (StringUtil.isNotBlank(condition.getPartnerName())) {
-			example.setPartnerName(condition.getPartnerName());
-		}
-
-		if (null != condition.getCurrentStep()) {
-			example.setCurrentStep(condition.getCurrentStep().getCode());
-		}
-		if (null != condition.getBusinessType()) {
-			example.setBusinessType(condition.getBusinessType().getCode());
-		}
-
-		if (null != condition.getSettleProtocol()) {
-			example.setSettledProtocol(condition.getSettleProtocol().getCode());
-		}
-
-		if (null != condition.getBond()) {
-			example.setBond(condition.getBond().getCode());
-		}
-
-		if (null != condition.getRoleApprove()) {
-			example.setRoleApprove(condition.getRoleApprove().getCode());
-		}
-
-		if (StringUtil.isNotBlank(condition.getOrgIdPath())) {
-			example.setOrgIdPath(condition.getOrgIdPath());
-		}
-
-		return example;
 	}
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
@@ -156,9 +88,16 @@ public final class PartnerInstanceConverter {
 
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
+
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
-		instanceDto.setPartnerLifecycleDto(convertLifecycleDto(instance));
+
+		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
+		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
+
+		StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
+				.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+		instanceDto.setStationApplyState(parseStationApplyState);
 
 		return instanceDto;
 	}
@@ -176,7 +115,7 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.valueof(instance.getCurrentStep()));
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
-
+		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
 		return lifecleDto;
 	}
 
@@ -343,7 +282,7 @@ public final class PartnerInstanceConverter {
 		return rel;
 	}
 
-	public static PartnerInstanceExample convert(OldPartnerInstancePageCondition condition) {
+	public static PartnerInstanceExample convert(PartnerInstancePageCondition condition) {
 		PartnerInstanceExample example = new PartnerInstanceExample();
 
 		if (null == condition) {
@@ -392,6 +331,19 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
+			PartnerInstanceStateEnum instanceState = rule.getState();
+			if(null != instanceState){
+				example.setPartnerState(instanceState.getCode());
+			}
+			
+			if (PartnerInstanceStateEnum.SETTLING.equals(instanceState)
+					|| PartnerInstanceStateEnum.CLOSING.equals(instanceState)
+					|| PartnerInstanceStateEnum.QUITING.equals(instanceState)) {
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			} else {
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.END.getCode());
+			}
+
 			if (null != rule.getBusinessType()) {
 				example.setBusinessType(rule.getBusinessType().getCode());
 			}
@@ -399,22 +351,44 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRuleItem settledProtocol = rule.getSettledProtocol();
 			if (null != settledProtocol) {
 				example.setSettledProtocol(settledProtocol.getValue());
-				example.setSettledProtocolOp(true == settledProtocol.getEqual() ? "=" : "!=");
+				example.setSettledProtocolOp(settledProtocol.getEqual());
 			}
 
 			PartnerLifecycleRuleItem bond = rule.getBond();
 			if (null != bond) {
 				example.setBond(bond.getValue());
-				example.setBondOp(true == bond.getEqual() ? "=" : "!=");
+				example.setBondOp(bond.getEqual());
 			}
 
-			if (null != rule.getRoleApprove()) {
-				example.setRoleApprove(rule.getRoleApprove().getValue());
-				example.setRoleApproveOp(true == bond.getEqual() ? "=" : "!=");
+			PartnerLifecycleRuleItem roleApprove = rule.getRoleApprove();
+			if (null != roleApprove) {
+				example.setRoleApprove(roleApprove.getValue());
+				example.setRoleApproveOp(bond.getEqual());
 			}
 
-			// 处理中的
-			example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			PartnerLifecycleRuleItem quitProtocol = rule.getQuitProtocol();
+			if (null != quitProtocol) {
+				example.setQuitProtocol(quitProtocol.getValue());
+				example.setQuitProtocolOp(quitProtocol.getEqual());
+			}
+
+			PartnerLifecycleRuleItem logisticsApprove = rule.getLogisticsApprove();
+			if (null != logisticsApprove) {
+				example.setLogisticsApprove(logisticsApprove.getValue());
+				example.setLogisticsApproveOp(logisticsApprove.getEqual());
+			}
+
+			PartnerLifecycleRuleItem confirm = rule.getConfirm();
+			if (null != confirm) {
+				example.setConfirm(confirm.getValue());
+				example.setConfirmOp(confirm.getEqual());
+			}
+
+			PartnerLifecycleRuleItem system = rule.getSystem();
+			if (null != system) {
+				example.setSystem(system.getValue());
+				example.setSystemOp(system.getEqual());
+			}
 		}
 		return example;
 	}

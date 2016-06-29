@@ -4,20 +4,12 @@ import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
-public class PartnerInstancePageCondition extends PageQuery {
+public class PartnerInstancePageCondition extends PageQuery{
 
-	private static final long serialVersionUID = 8658912725579809791L;
+	private static final long serialVersionUID = 2555611748293416838L;
 
 	// 村服务站所属村淘组织
 	private String orgIdPath;
@@ -41,7 +33,7 @@ public class PartnerInstancePageCondition extends PageQuery {
 	private String partnerName;
 
 	// 合伙人状态
-	private PartnerInstanceStateEnum partnerInstanceState;
+	private StationApplyStateEnum stationApplyState;
 
 	// 合伙人类型
 	@NotNull(message = "partnerType is null")
@@ -49,30 +41,6 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	// 所属TP商id
 	private Long providerId;
-
-	// 生命周期业务类型
-	private PartnerLifecycleBusinessTypeEnum businessType;
-
-	// 保证金
-	private PartnerLifecycleBondEnum bond;
-
-	// 物流审批
-	private PartnerLifecycleLogisticsApproveEnum logisticsApprove;
-
-	// 退出协议
-	private PartnerLifecycleQuitProtocolEnum quitProtocol;
-
-	// 角色审批
-	private PartnerLifecycleRoleApproveEnum roleApprove;
-
-	// 入驻审批
-	private PartnerLifecycleSettledApproveEnum settleApprove;
-
-	// 入驻协议
-	private PartnerLifecycleSettledProtocolEnum settleProtocol;
-
-	// 当前阶段
-	private PartnerLifecycleCurrentStepEnum currentStep;
 
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -98,28 +66,12 @@ public class PartnerInstancePageCondition extends PageQuery {
 		this.stationName = stationName;
 	}
 
-	public String getTaobaoNick() {
-		return taobaoNick;
-	}
-
-	public void setTaobaoNick(String taobaoNick) {
-		this.taobaoNick = taobaoNick;
-	}
-
 	public String getManagerId() {
 		return managerId;
 	}
 
 	public void setManagerId(String managerId) {
 		this.managerId = managerId;
-	}
-
-	public PartnerInstanceStateEnum getPartnerInstanceState() {
-		return partnerInstanceState;
-	}
-
-	public void setPartnerInstanceState(PartnerInstanceStateEnum partnerInstanceState) {
-		this.partnerInstanceState = partnerInstanceState;
 	}
 
 	public Address getAddress() {
@@ -130,6 +82,14 @@ public class PartnerInstancePageCondition extends PageQuery {
 		this.address = address;
 	}
 
+	public String getTaobaoNick() {
+		return taobaoNick;
+	}
+
+	public void setTaobaoNick(String taobaoNick) {
+		this.taobaoNick = taobaoNick;
+	}
+
 	public String getPartnerName() {
 		return partnerName;
 	}
@@ -138,76 +98,12 @@ public class PartnerInstancePageCondition extends PageQuery {
 		this.partnerName = partnerName;
 	}
 
-	public Long getProviderId() {
-		return providerId;
+	public StationApplyStateEnum getStationApplyState() {
+		return stationApplyState;
 	}
 
-	public void setProviderId(Long providerId) {
-		this.providerId = providerId;
-	}
-
-	public PartnerLifecycleBondEnum getBond() {
-		return bond;
-	}
-
-	public void setBond(PartnerLifecycleBondEnum bond) {
-		this.bond = bond;
-	}
-
-	public PartnerLifecycleLogisticsApproveEnum getLogisticsApprove() {
-		return logisticsApprove;
-	}
-
-	public void setLogisticsApprove(PartnerLifecycleLogisticsApproveEnum logisticsApprove) {
-		this.logisticsApprove = logisticsApprove;
-	}
-
-	public PartnerLifecycleQuitProtocolEnum getQuitProtocol() {
-		return quitProtocol;
-	}
-
-	public void setQuitProtocol(PartnerLifecycleQuitProtocolEnum quitProtocol) {
-		this.quitProtocol = quitProtocol;
-	}
-
-	public PartnerLifecycleRoleApproveEnum getRoleApprove() {
-		return roleApprove;
-	}
-
-	public void setRoleApprove(PartnerLifecycleRoleApproveEnum roleApprove) {
-		this.roleApprove = roleApprove;
-	}
-
-	public PartnerLifecycleSettledApproveEnum getSettleApprove() {
-		return settleApprove;
-	}
-
-	public void setSettleApprove(PartnerLifecycleSettledApproveEnum settleApprove) {
-		this.settleApprove = settleApprove;
-	}
-
-	public PartnerLifecycleSettledProtocolEnum getSettleProtocol() {
-		return settleProtocol;
-	}
-
-	public void setSettleProtocol(PartnerLifecycleSettledProtocolEnum settleProtocol) {
-		this.settleProtocol = settleProtocol;
-	}
-
-	public PartnerLifecycleCurrentStepEnum getCurrentStep() {
-		return currentStep;
-	}
-
-	public void setCurrentStep(PartnerLifecycleCurrentStepEnum currentStep) {
-		this.currentStep = currentStep;
-	}
-
-	public PartnerLifecycleBusinessTypeEnum getBusinessType() {
-		return businessType;
-	}
-
-	public void setBusinessType(PartnerLifecycleBusinessTypeEnum businessType) {
-		this.businessType = businessType;
+	public void setStationApplyState(StationApplyStateEnum stationApplyState) {
+		this.stationApplyState = stationApplyState;
 	}
 
 	public PartnerInstanceTypeEnum getPartnerType() {
@@ -216,5 +112,13 @@ public class PartnerInstancePageCondition extends PageQuery {
 
 	public void setPartnerType(PartnerInstanceTypeEnum partnerType) {
 		this.partnerType = partnerType;
+	}
+
+	public Long getProviderId() {
+		return providerId;
+	}
+
+	public void setProviderId(Long providerId) {
+		this.providerId = providerId;
 	}
 }
