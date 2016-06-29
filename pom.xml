@@ -37,8 +37,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
-				collision issues. -->
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
 				<groupId>com.aliexpress.boot</groupId>
@@ -365,6 +364,11 @@
 				<artifactId>alimonitor-jmonitor</artifactId>
 				<version>1.1.4</version>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -491,11 +495,10 @@
 			</plugin>
 
 			<!-- generate git.properties -->
-			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
-				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
-				</goals> </execution> </executions> <configuration> <verbose>true</verbose> 
-				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> 
-				<failOnNoGitDirectory>false</failOnNoGitDirectory> </configuration> </plugin> -->
+			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> <version>2.2.0</version> 
+				<executions> <execution> <goals> <goal>revision</goal> </goals> </execution> </executions> <configuration> <verbose>true</verbose> 
+				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> <failOnNoGitDirectory>false</failOnNoGitDirectory> 
+				</configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
