@@ -83,7 +83,7 @@
     "TPA": [
         {
             "stationApplyState": "TEMP",
-            "desc": "合伙人station_apply暂存",
+            "desc": "合伙人station_apply TEMP",
             "partnerInstanceState": "TEMP",
             "condition": {}
         },
