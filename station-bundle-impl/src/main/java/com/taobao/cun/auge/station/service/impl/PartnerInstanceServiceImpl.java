@@ -656,12 +656,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (items == null) {
 				throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 			}
-			PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
-			if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
-				return;
-			}else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
-				throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
-			}
+			
+			checkExecutable(PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
+		
 			
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
@@ -691,6 +688,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String error = getErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+	
+	private void checkExecutable(PartnerInstanceTypeEnum type,
+			PartnerLifecycleItemCheckEnum targetItem, PartnerLifecycleItems lifecycle) {
+		PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(type, targetItem, lifecycle);
+		if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
+			return;
+		}else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
 		}
 	}
 
