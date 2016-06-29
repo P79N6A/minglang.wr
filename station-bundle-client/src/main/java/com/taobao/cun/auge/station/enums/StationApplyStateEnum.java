@@ -20,6 +20,8 @@ public class StationApplyStateEnum implements Serializable {
 				"SUMITTED", "待签约人确认");
 		public static final StationApplyStateEnum CONFIRMED = new StationApplyStateEnum(
 				"CONFIRMED", "已确认处理中");
+		public static final StationApplyStateEnum FROZEN = new StationApplyStateEnum(
+				"FROZEN", "已冻结待处理");
 		//当冻结资金完成之后，村点申请单状态变为装修中，当装修完成之后，需要小二点击开业，才进入服务中
 		public static final StationApplyStateEnum  DECORATING = new StationApplyStateEnum("DECORATING", "装修中");
 		
