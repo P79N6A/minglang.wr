@@ -311,7 +311,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 				logger.info("PARTNER_STATION_STATE_CHANGE_EVENT messageid " + messageId);
 			}
 		} catch (Exception e) {
-			logger.error("dispatchEvent error " + e.getMessage());
+			logger.error("dispatchEvent error param: instanceId"+ rel.getId(),e);
 		}
 	}
 
