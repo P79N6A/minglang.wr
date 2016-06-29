@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 采用JSR-303规范对Bean校验
@@ -54,11 +55,12 @@ public class BeanValidator {
 	 * @param groups
 	 * @throws BeanValidateException
 	 */
-	public static <T> void validateWithThrowable(T object, Class<?>... groups) throws BeanValidateException {
+	public static <T> void validateWithThrowable(T object, Class<?>... groups) throws AugeServiceException {
 		ValidateResult validateResult = validate(object, groups);
 
 		if (validateResult.hasError()) {
-			throw new BeanValidateException(validateResult.getClassName(), validateResult.getErrors());
+			BeanValidateException validateException =  new BeanValidateException(validateResult.getClassName(), validateResult.getErrors());
+			throw new AugeServiceException("param error",validateException.getMessage());
 		}
 	}
 

@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -111,34 +113,51 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(condition);
-		PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
-		if (psRel == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
-		}
-		//获得生命周期数据
-		PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
-		PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
-		insDto.setPartnerLifecycleDto(lifecycleDto);
-		
-		insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
-		
-		if (condition.getNeedPartnerInfo()) {
-			Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
-			PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
-			if (condition.getNeedDesensitization()) {
-				setSafedInfo(partnerDto);
+		try {
+			PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
+			if (psRel == null) {
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 			}
-			partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
-			insDto.setPartnerDto(partnerDto);
+			//获得生命周期数据
+			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
+			PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
+			insDto.setPartnerLifecycleDto(lifecycleDto);
+			insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+			
+			if (condition.getNeedPartnerInfo()) {
+				Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
+				PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+				if (condition.getNeedDesensitization()) {
+					setSafedInfo(partnerDto);
+				}
+				partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
+				insDto.setPartnerDto(partnerDto);
+			}
+	
+			if (condition.getNeedStationInfo()) {
+				Station station = stationBO.getStationById(insDto.getStationId());
+				StationDto stationDto = StationConverter.toStationDto(station);
+				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
+				insDto.setStationDto(stationDto);
+			}
+			return insDto;
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("queryInfo", JSONObject.toJSONString(condition), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-
-		if (condition.getNeedStationInfo()) {
-			Station station = stationBO.getStationById(insDto.getStationId());
-			StationDto stationDto = StationConverter.toStationDto(station);
-			stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
-			insDto.setStationDto(stationDto);
-		}
-		return insDto;
+		
+	}
+	
+	private String getErrorMessage(String methodName, String param, String error) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("PartnerInstanceService-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
+				.append(error);
+		return sb.toString();
 	}
 
 	private void setSafedInfo(PartnerDto partnerDto) {
@@ -211,11 +230,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Override
 	public Long getPartnerInstanceId(Long stationApplyId) throws AugeServiceException {
+	    ValidateUtils.notNull(stationApplyId);
 		return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 	}
 	
 	@Override
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null == rel) {
 			return null;
@@ -324,6 +345,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Override
 	public Long getStationApplyId(Long instanceId) throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
 		return partnerInstanceBO.findStationApplyId(instanceId);
 	}
 
@@ -336,6 +358,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public QuitStationApplyDto getQuitStationApply(Long instanceId)
 			throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
 	}
 }
