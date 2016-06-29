@@ -168,8 +168,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	AppResourceBO appResourceBO;
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
-	@Autowired
-	StationApplySyncBO stationApplySyncBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -641,7 +639,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 		//同步删除
-		stationApplySyncBO.deleteStationApply(rel.getStationApplyId());
+		syncStationApplyBO.deleteStationApply(rel.getStationApplyId());
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1240,7 +1238,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
-		stationApplySyncBO.updateStationApply(instanceId, type);
+		syncStationApplyBO.updateStationApply(instanceId, type);
 		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
 		// new StationApplySyncEvent(type, instanceId));
 	}
