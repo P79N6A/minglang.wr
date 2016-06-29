@@ -363,7 +363,7 @@ public final class PartnerInstanceConverter {
 			PartnerLifecycleRuleItem roleApprove = rule.getRoleApprove();
 			if (null != roleApprove) {
 				example.setRoleApprove(roleApprove.getValue());
-				example.setRoleApproveOp(bond.getEqual());
+				example.setRoleApproveOp(roleApprove.getEqual());
 			}
 
 			PartnerLifecycleRuleItem quitProtocol = rule.getQuitProtocol();
