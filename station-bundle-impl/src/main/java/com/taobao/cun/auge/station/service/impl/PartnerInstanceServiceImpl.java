@@ -45,9 +45,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -129,9 +127,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private static final String TPAMAX_TYPE = "tpl_max";
 	private static final String TPAMAX_KEY = "tpl_max_num";
 	private static final Long TPAMAX_DEFAULT = 5L;
-
-	@Autowired
-	ProtocolBO protocolBO;
+	
 	@Autowired
 	PartnerProtocolRelBO partnerProtocolRelBO;
 	@Autowired
@@ -144,8 +140,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	StationBO stationBO;
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
-	@Autowired
-	StationApplyBO stationApplyBO;
 	@Autowired
 	Emp360Adapter emp360Adapter;
 	@Autowired
