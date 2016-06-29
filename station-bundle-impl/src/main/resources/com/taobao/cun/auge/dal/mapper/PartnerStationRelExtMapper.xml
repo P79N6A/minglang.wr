@@ -134,8 +134,12 @@
 			life.business_type as lifecycle_business_type,
 			life.settled_protocol,
 			life.bond,
+			life.quit_protocol,
+			life.logistics_approve,
 			life.current_step,
-			life.role_approve
+			life.role_approve,
+			life.confirm,
+			life.system
 		</if>
 		from partner_station_rel instance,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
