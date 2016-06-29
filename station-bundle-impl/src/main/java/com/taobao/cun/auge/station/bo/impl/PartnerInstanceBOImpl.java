@@ -38,8 +38,10 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -380,6 +382,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		param.put("partnerState", PartnerInstanceStateEnum.QUITING.getCode());
 		param.put("currentStep", PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
 		param.put("businessType", PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
+		param.put("roleApprove", PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode());
+		param.put("bond", PartnerLifecycleBondEnum.WAIT_THAW.getCode());
 
 		Calendar calendar = Calendar.getInstance();
 		
