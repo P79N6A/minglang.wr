@@ -1231,7 +1231,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.ADD,instanceId);
+			syncStationApplyBO.addStationApply(instanceId);
 		} else {
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			if (rel == null || StringUtils.isEmpty(rel.getType())) {
@@ -1250,8 +1250,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
 		syncStationApplyBO.updateStationApply(instanceId, type);
-		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-		// new StationApplySyncEvent(type, instanceId));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
