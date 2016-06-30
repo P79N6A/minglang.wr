@@ -12,7 +12,7 @@ public class PartnerLifecycleSystemEnum  implements Serializable {
 	
 	private static final long serialVersionUID = -119918219648000754L;
 	public static final PartnerLifecycleSystemEnum WAIT_PROCESS  = new PartnerLifecycleSystemEnum("WAIT_PROCESS", "待处理");
-    public static final PartnerLifecycleSystemEnum HAS_PROCESS = new PartnerLifecycleSystemEnum("HAS_FROZEN", "已处理");
+    public static final PartnerLifecycleSystemEnum HAS_PROCESS = new PartnerLifecycleSystemEnum("HAS_PROCESS", "已处理");
 	
 	private static final Map<String, PartnerLifecycleSystemEnum> mappings = new HashMap<String, PartnerLifecycleSystemEnum>();
 	

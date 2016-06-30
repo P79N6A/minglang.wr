@@ -805,38 +805,51 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(openStationDto);
-		if (openStationDto.isImme()) {// 立即开业
-			// TODO:检查开业包
-			if (!checkKyPackage()) {
-				throw new AugeServiceException(StationExceptionEnum.KAYE_PACKAGE_NOT_EXIST);
+		Long instanceId = openStationDto.getPartnerInstanceId();
+		String operator =  openStationDto.getOperator();
+		try {
+			if (openStationDto.isImme()) {// 立即开业		
+				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+				if (rel == null|| !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
+					throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+				}
+				//更新合伙人实例状态为服务中
+				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING,
+						PartnerInstanceStateEnum.SERVICING, operator);
+				//更新村点状态为服务中
+				stationBO.changeState(rel.getStationId(), StationStatusEnum.DECORATING, StationStatusEnum.SERVICING, operator);
+				//更新开业时间
+				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
+						openStationDto.getOperator());
+				// 同步station_apply
+				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+				// 记录村点状态变化
+				sendPartnerInstanceStateChangeEvent(instanceId,PartnerInstanceStateChangeEnum.START_SERVICING,openStationDto);
+				// 开业包项目事件
+				dispachToServiceEvent(openStationDto, instanceId);
+			} else {// 定时开业
+				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
+						openStationDto.getOperator());
+				// 同步station_apply
+				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 			}
-			partnerInstanceBO.changeState(openStationDto.getPartnerInstanceId(), PartnerInstanceStateEnum.DECORATING,
-					PartnerInstanceStateEnum.SERVICING, openStationDto.getOperator());
-			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
-					openStationDto.getOperator());
-
-			PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(openStationDto.getPartnerInstanceId());
-			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
-
-			// 记录村点状态变化
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
-					.convertStateChangeEvent(PartnerInstanceStateChangeEnum.START_SERVICING, piDto, openStationDto));
-			// 开业包项目事件
-			dispachToServiceEvent(openStationDto, piDto);
-
-		} else {// 定时开业
-			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
-					openStationDto.getOperator());
-			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
+		} catch (Exception e) {
+			String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-
 		return true;
 	}
+	
+	private void sendPartnerInstanceStateChangeEvent(Long instanceId,PartnerInstanceStateChangeEnum stateChangeEnum,OperatorDto operator) {
+		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+				.convertStateChangeEvent(stateChangeEnum, piDto, operator));
+	}
 
-	private void dispachToServiceEvent(OpenStationDto openStationDto, PartnerInstanceDto piDto) {
+	private void dispachToServiceEvent(OpenStationDto openStationDto, Long instanceId) {
 		try {
+			PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 			PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();
 			partnerInstanceEvent.setExecDate(com.taobao.cun.auge.common.utils.DateUtil.format(openStationDto.getOpenDate()));
 			partnerInstanceEvent.setOwnOrgId(piDto.getStationDto().getApplyOrg());
