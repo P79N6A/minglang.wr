@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
@@ -44,6 +45,8 @@ public class SmsListener implements EventListener {
 	public void onMessage(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
+		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
+		
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
@@ -59,6 +62,8 @@ public class SmsListener implements EventListener {
 		String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
 
 		generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
+		
+		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {

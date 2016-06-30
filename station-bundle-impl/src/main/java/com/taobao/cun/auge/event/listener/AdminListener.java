@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.ar.model.StationLocation;
 import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
 import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnEnterCallbackParam;
@@ -64,6 +65,8 @@ public class AdminListener implements EventListener {
 
 	private void processTypeChangeEvent(Event event) {
 		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
+		
+		logger.info("receive event."+JSON.toJSONString(typeChangeEvent));
 		// 合伙人降级为淘帮手
 		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEvent.getTypeChangeEnum())) {
 			PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
@@ -72,12 +75,15 @@ public class AdminListener implements EventListener {
 			param.setUserId(typeChangeEvent.getTaobaoUserId());
 			partnerLifecycleCallbackService.onDegrade(param);
 		}
-
+		
+		logger.info("Finished to handle event."+JSON.toJSONString(typeChangeEvent));
 	}
 
 	private void processStateChangeEvent(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
+		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
+		
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
@@ -87,6 +93,7 @@ public class AdminListener implements EventListener {
 
 		// 村拍档，不处理
 		if (PartnerInstanceTypeEnum.TPV.equals(partnerType)) {
+			logger.info("tpv not handle.");
 			return;
 		}
 
@@ -101,6 +108,8 @@ public class AdminListener implements EventListener {
 						&& PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
 			addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
 		}
+		
+		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
 
 	}
 
