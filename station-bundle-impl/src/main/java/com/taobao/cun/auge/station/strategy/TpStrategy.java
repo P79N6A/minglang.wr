@@ -234,25 +234,8 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
 		
 		if (oldPartnerId != null && (!oldPartnerId.equals(partnerId))) {
-			//更新身份证
-			List<AttachementDto>  attDtoList = attachementBO.getAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
-			if (CollectionUtils.isNotEmpty(attDtoList)) {
-				attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId,
-						AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, settleSuccessDto);
-			}
-			
-			//更新合伙人表信息
-			Partner newPartner = partnerBO.getPartnerById(partnerId);
-			newPartner.setId(oldPartnerId);
-			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
-			newPartnerDto.setState(PartnerStateEnum.NORMAL);
-			newPartnerDto.copyOperatorDto(settleSuccessDto);
-			partnerBO.updatePartner(newPartnerDto);
-			
+			syncNewPartnerInfoToOldPartnerId(partnerId,oldPartnerId,settleSuccessDto);
 			setPartnerInstanceToDecorating(rel,settleSuccessDto,oldPartnerId);
-			
-			partnerBO.deletePartner(partnerId, settleSuccessDto.getOperator());
-			
 		}else {
 			setPartnerInstanceToDecorating(rel,settleSuccessDto,null);
 			
@@ -277,6 +260,23 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		
 		//发送装修中事件，手机端使用
 		dispacthEvent(rel,PartnerInstanceStateEnum.DECORATING.getCode());
+	}
+	
+	private void syncNewPartnerInfoToOldPartnerId(Long newPartnerId,Long oldPartnerId,OperatorDto operatorDto) {
+		//更新身份证
+		List<AttachementDto>  attDtoList = attachementBO.getAttachementList(newPartnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
+		if (CollectionUtils.isNotEmpty(attDtoList)) {
+			attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId,
+					AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG, operatorDto);
+		}
+		//更新合伙人表信息
+		Partner newPartner = partnerBO.getPartnerById(newPartnerId);
+		newPartner.setId(oldPartnerId);
+		PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+		newPartnerDto.setState(PartnerStateEnum.NORMAL);
+		newPartnerDto.copyOperatorDto(operatorDto);
+		partnerBO.updatePartner(newPartnerDto);
+		partnerBO.deletePartner(newPartnerId, operatorDto.getOperator());
 	}
 	
 	/**
