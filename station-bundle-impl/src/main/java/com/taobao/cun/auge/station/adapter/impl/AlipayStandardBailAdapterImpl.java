@@ -10,7 +10,6 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.resultmodel.ResultModel;
-import com.taobao.cun.dto.alipay.AlipayStandardBailDto;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
 
 @Component("alipayStandardBailAdapter")
@@ -21,7 +20,7 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 	private AlipayStandardBailService alipayStandardBailService;
 
 	@Override
-	public boolean dealStandardBail(AlipayStandardBailDto alipayStandardBailDto) {
+	public boolean dealStandardBail(com.taobao.cun.auge.station.dto.AlipayStandardBailDto alipayStandardBailDto) {
 		try {
 			logger.info("start dealStandardBail : " + JSON.toJSONString(alipayStandardBailDto));
 			com.taobao.cun.dto.alipay.AlipayStandardBailDto dto = new com.taobao.cun.dto.alipay.AlipayStandardBailDto();
