@@ -1243,6 +1243,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		}
+		
+		//记录村点状态变化
+		sendPartnerInstanceStateChangeEvent(instanceId,PartnerInstanceStateChangeEnum.START_SETTLING,partnerInstanceDto);
 		return instanceId;
 
 	}

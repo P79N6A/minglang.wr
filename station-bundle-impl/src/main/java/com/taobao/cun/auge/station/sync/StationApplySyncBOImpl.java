@@ -124,7 +124,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			return stationApply;
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + ": addStationApply," + partnerInstanceId, e);
-			return null;
+			throw new AugeServiceException(e.getMessage());
 		}
 	}
 
@@ -152,6 +152,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			logger.info("sync update success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + ": updateStationApply," + partnerInstanceId, e);
+			throw new AugeServiceException(e.getMessage());
 		}
 	}
 
