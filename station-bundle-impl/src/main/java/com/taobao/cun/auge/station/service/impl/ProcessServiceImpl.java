@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
@@ -56,6 +58,8 @@ public class ProcessServiceImpl implements ProcessService {
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
 					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());
+			throw new AugeServiceException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
+					rm.getException());
 		}
 	}
 }
