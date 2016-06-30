@@ -977,9 +977,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String employeeId = confirmCloseDto.getOperator();
 			Boolean isAgree = confirmCloseDto.isAgree();
 			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-			if (partnerInstance == null	|| !PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
+			if (!PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
 				logger.warn("没有停业申请中的合伙人。ConfirmCloseDto = " + JSON.toJSONString(confirmCloseDto));
-				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_STATUS_CHANGED);
 			}
 
 			Long stationId = partnerInstance.getStationId();

@@ -22,6 +22,10 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum  {
     public static final PartnerInstanceExceptionEnum DEGRADE_TARGET_PARTNER_TYPE_NOT_TP = new PartnerInstanceExceptionEnum("DEGRADE_TARGET_PARTNER_TYPE_NOT_TP", "归属合伙人类型必须为合伙人");
     public static final PartnerInstanceExceptionEnum DEGRADE_TARGET_PARTNER_HAS_TPA_MAX = new PartnerInstanceExceptionEnum("DEGRADE_TARGET_PARTNER_HAS_TPA_MAX", "所归属的合伙人的淘帮手超过限额，不允许绑定");
     public static final PartnerInstanceExceptionEnum DEGRADE_PARTNER_ORG_NOT_SAME = new PartnerInstanceExceptionEnum("DEGRADE_PARTNER_ORG_NOT_SAME", "需要降级的合伙人与归属合伙人组织不在同一个县，请检查确认后再做降级");
+    
+	public static final PartnerInstanceExceptionEnum PARTNER_INSTANCE_STATUS_CHANGED = new PartnerInstanceExceptionEnum(
+			"PARTNER_INSTANCE_STATUS_CHANGED", "合伙人状态已变更");
+	
     static {
         mappings.put("DEGRADE_PARTNER_TYPE_FAIL", DEGRADE_PARTNER_TYPE_FAIL);
         mappings.put("DEGRADE_PARTNER_STATE_FAIL", DEGRADE_PARTNER_STATE_FAIL);
@@ -32,7 +36,7 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum  {
         mappings.put("DEGRADE_TARGET_PARTNER_TYPE_NOT_TP", DEGRADE_TARGET_PARTNER_TYPE_NOT_TP);
         mappings.put("DEGRADE_TARGET_PARTNER_HAS_TPA_MAX", DEGRADE_TARGET_PARTNER_HAS_TPA_MAX);
         mappings.put("DEGRADE_PARTNER_ORG_NOT_SAME", DEGRADE_PARTNER_ORG_NOT_SAME);
-      
+        mappings.put("PARTNER_INSTANCE_STATUS_CHANGED", PARTNER_INSTANCE_STATUS_CHANGED);
     }
 
     public PartnerInstanceExceptionEnum(String code, String desc) {
