@@ -2,9 +2,12 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.resultmodel.ResultModel;
@@ -15,6 +18,8 @@ import com.taobao.tc.refund.domain.RefundDO;
 
 @Component("tradeAdapter")
 public class TradeAdapterImpl implements TradeAdapter {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TradeAdapter.class);
 
 	@Autowired
 	TaobaoTradeOrderQueryService taobaoTradeOrderQueryService;
@@ -23,6 +28,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeServiceException {
 		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
         if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
+			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate));
             throw new AugeServiceException(taobaoNoEndTradeDtoResultModel.getException());
         }
 
@@ -41,6 +47,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 				build.append(refund.getAuctionTitle());
 				build.append("\n");
 			}
+			logger.warn("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 			throw new AugeServiceException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 		}
 	}

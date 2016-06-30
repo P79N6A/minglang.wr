@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +31,8 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
+	
+	private static final Logger logger = LoggerFactory.getLogger(StationBO.class);
 
 	@Autowired
 	StationMapper stationMapper;
@@ -66,21 +70,21 @@ public class StationBOImpl implements StationBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void changeState(Long stationId, StationStatusEnum preStatus,
-			StationStatusEnum postStatus, String operator)
+	public void changeState(Long stationId, StationStatusEnum preStatus, StationStatusEnum postStatus, String operator)
 			throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		ValidateUtils.notNull(preStatus);
 		ValidateUtils.notNull(postStatus);
 		ValidateUtils.notNull(operator);
 		Station station = getStationById(stationId);
-		if (!StringUtils.equals(preStatus.getCode(), station.getStatus())){
-			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_EXIST);
+		if (!StringUtils.equals(preStatus.getCode(), station.getStatus())) {
+			logger.warn("村点状态不正确。当前状态为" + station.getStatus());
+			throw new AugeServiceException(StationExceptionEnum.STATION_STATUS_CHANGED);
 		}
 		Station record = new Station();
 		record.setId(stationId);
 		record.setStatus(postStatus.getCode());
-		if(StationStatusEnum.QUIT.equals(postStatus)){
+		if (StationStatusEnum.QUIT.equals(postStatus)) {
 			record.setState("INVALID");
 		}
 		DomainUtils.beforeUpdate(record, operator);

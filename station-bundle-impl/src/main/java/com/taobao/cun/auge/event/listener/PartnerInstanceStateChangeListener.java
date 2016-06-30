@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -43,14 +42,14 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 	@Override
 	public void onMessage(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
-		
-		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
+
+		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
 
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
-		
-		logger.info("instance Id."+instanceId);
-		
+
+		logger.info("instance Id." + instanceId);
+
 		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String taobaoNick = stateChangeEvent.getTaobaoNick();
@@ -58,7 +57,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-		logger.info("partner instance."+JSON.toJSONString(instance));
+		logger.info("partner instance." + JSON.toJSONString(instance));
 		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
 			ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
@@ -74,7 +73,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 		}
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
 }
