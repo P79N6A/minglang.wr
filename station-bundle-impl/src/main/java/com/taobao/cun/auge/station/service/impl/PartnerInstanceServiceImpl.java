@@ -875,6 +875,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
 					PartnerInstanceStateEnum.SERVICING);
 			if (partnerInstance == null) {
+				logger.warn("没有服务中的合伙人。taobaoUserId = " + taobaoUserId);
 				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
 			}
 
@@ -915,8 +916,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
-		} catch (AugeServiceException augeException) {
-			throw augeException;
+		} catch (AugeServiceException e) {
+			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
 		} catch (Exception e) {
 			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
@@ -974,8 +977,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String employeeId = confirmCloseDto.getOperator();
 			Boolean isAgree = confirmCloseDto.isAgree();
 			PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-			if (partnerInstance == null || !PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
-				throw new AugeServiceException(PartnerExceptionEnum.NO_RECORD);
+			if (!PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState())) {
+				logger.warn("没有停业申请中的合伙人。ConfirmCloseDto = " + JSON.toJSONString(confirmCloseDto));
+				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_STATUS_CHANGED);
 			}
 
 			Long stationId = partnerInstance.getStationId();
@@ -1037,8 +1041,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 发出合伙人实例状态变更事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, confirmCloseDto);
 			}
-		} catch (AugeServiceException augeException) {
-			throw augeException;
+		} catch (AugeServiceException e) {
+			String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.getMessage());
+			logger.error(error, e);
+			throw e;
 		} catch (Exception e) {
 			String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.getMessage());
 			logger.error(error, e);
@@ -1098,11 +1104,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
-		} catch (AugeServiceException augeException) {
-			throw augeException;
+		} catch (AugeServiceException e) {
+			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
+			logger.error(error, e);
+			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("applyCloseByManager", "强制停业失败。ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),
-					e.getMessage());
+			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -1170,10 +1177,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_QUITTING, quitDto);
 
 			// 失效tair
-		} catch (AugeServiceException augeException) {
-			throw augeException;
+		} catch (AugeServiceException e) {
+			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			logger.error(error, e);
+			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("applyQuitByManager", "退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -1212,6 +1221,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
 			return uicReadAdapter.getFullName(Long.parseLong(operator));
 		}
+		logger.warn("查询操作人姓名失败，不支持的操作人类型。OperatorTypeEnum=" + (null != type ? type.getDesc() : ""));
 		return "";
 	}
 

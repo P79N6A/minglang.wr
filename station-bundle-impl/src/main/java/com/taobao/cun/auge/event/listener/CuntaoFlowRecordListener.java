@@ -26,7 +26,7 @@ import com.taobao.cun.crius.event.client.EventListener;
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT })
 public class CuntaoFlowRecordListener implements EventListener {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
 
 	@Autowired
@@ -50,9 +50,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	private void processTypeChangeEvent(Event event) {
 		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
-		
-		logger.info("receive event."+JSON.toJSONString(typeChangeEvent));
-		
+
+		logger.info("receive event." + JSON.toJSONString(typeChangeEvent));
+
 		PartnerInstanceTypeChangeEnum typeChangeEnum = typeChangeEvent.getTypeChangeEnum();
 		Long stationId = typeChangeEvent.getStationId();
 		String operator = typeChangeEvent.getOperator();
@@ -70,8 +70,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecord.setRemarks(buildTypeChangeRecordContent(typeChangeEvent));
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(typeChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
 	}
 
 	private String buildTypeChangeRecordContent(PartnerInstanceTypeChangeEvent event) {
@@ -83,9 +83,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	private void processStateChangeEvent(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
-		
-		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
-		
+
+		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
+
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long stationId = stateChangeEvent.getStationId();
 		String operator = stateChangeEvent.getOperator();
@@ -103,8 +103,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
 
 	private String buildRecordContent(PartnerInstanceStateChangeEvent stateChangeEvent) {
