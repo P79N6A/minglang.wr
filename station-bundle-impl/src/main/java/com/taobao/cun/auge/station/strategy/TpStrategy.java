@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -217,11 +218,6 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) throws AugeServiceException {
 		Long instanceId = settleSuccessDto.getInstanceId();
 		
-		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
-		Date serviceBeginTime = now.getTime();
-		now.add(Calendar.YEAR, 1);
-		Date serviceEndTime =  now.getTime();
-		
 		Long partnerId = rel.getPartnerId();
 		Long stationId = rel.getStationId();
 		Long taobaoUserId = rel.getTaobaoUserId();
@@ -249,33 +245,21 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			newPartner.setId(oldPartnerId);
 			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
 			newPartnerDto.copyOperatorDto(settleSuccessDto);
-			partnerBO.updatePartner(PartnerConverter.toPartnerDto(newPartner));
+			partnerBO.updatePartner(newPartnerDto);
 			
-			
-			
-			
-			PartnerInstanceDto piDto = new PartnerInstanceDto();
-			piDto.setServiceBeginTime(serviceBeginTime);
-			piDto.setServiceEndTime(serviceEndTime);
-			piDto.setId(instanceId);
-			piDto.setState(PartnerInstanceStateEnum.DECORATING);
-			piDto.setPartnerId(oldPartnerId);
-			piDto.setVersion(rel.getVersion());
-			piDto.copyOperatorDto(settleSuccessDto);
-			partnerInstanceBO.updatePartnerStationRel(piDto);
+			setPartnerInstanceToDecorating(rel,settleSuccessDto,oldPartnerId);
 			
 			partnerBO.deletePartner(partnerId, settleSuccessDto.getOperator());
 			
 		}else {
-			PartnerInstanceDto piDto = new PartnerInstanceDto();
-			piDto.setServiceBeginTime(serviceBeginTime);
-			piDto.setServiceEndTime(serviceEndTime);
-			piDto.setId(instanceId);
-			piDto.setState(PartnerInstanceStateEnum.DECORATING);
-			piDto.setVersion(rel.getVersion());
-			piDto.setParentStationId(stationId);
-			piDto.copyOperatorDto(settleSuccessDto);
-			partnerInstanceBO.updatePartnerStationRel(piDto);
+			setPartnerInstanceToDecorating(rel,settleSuccessDto,null);
+			
+			//更新合伙人表为normal
+			Partner newPartner = partnerBO.getPartnerById(partnerId);
+			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+			newPartnerDto.setState(PartnerStateEnum.NORMAL);
+			newPartnerDto.copyOperatorDto(settleSuccessDto);
+			partnerBO.updatePartner(newPartnerDto);
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
@@ -291,6 +275,30 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		
 		//发送装修中事件，手机端使用
 		dispacthEvent(rel,PartnerInstanceStateEnum.DECORATING.getCode());
+	}
+	
+	/**
+	 * 设置关系表为装修中
+	 */
+	private void setPartnerInstanceToDecorating(PartnerStationRel rel,OperatorDto operatorDto,Long changePartnerId) {
+		
+		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
+		Date serviceBeginTime = now.getTime();
+		now.add(Calendar.YEAR, 1);
+		Date serviceEndTime =  now.getTime();
+		
+		PartnerInstanceDto piDto = new PartnerInstanceDto();
+		piDto.setServiceBeginTime(serviceBeginTime);
+		piDto.setServiceEndTime(serviceEndTime);
+		piDto.setId(rel.getId());
+		piDto.setState(PartnerInstanceStateEnum.DECORATING);
+		piDto.setVersion(rel.getVersion());
+		piDto.setParentStationId(rel.getStationId());
+		piDto.copyOperatorDto(operatorDto);
+		if (changePartnerId != null) {
+			piDto.setPartnerId(changePartnerId);
+		}
+		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
 	
 	/**
