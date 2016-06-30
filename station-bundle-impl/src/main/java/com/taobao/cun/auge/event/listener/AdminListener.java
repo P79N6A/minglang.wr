@@ -65,8 +65,8 @@ public class AdminListener implements EventListener {
 
 	private void processTypeChangeEvent(Event event) {
 		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
-		
-		logger.info("receive event."+JSON.toJSONString(typeChangeEvent));
+
+		logger.info("receive event." + JSON.toJSONString(typeChangeEvent));
 		// 合伙人降级为淘帮手
 		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEvent.getTypeChangeEnum())) {
 			PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
@@ -75,15 +75,15 @@ public class AdminListener implements EventListener {
 			param.setUserId(typeChangeEvent.getTaobaoUserId());
 			partnerLifecycleCallbackService.onDegrade(param);
 		}
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(typeChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
 	}
 
 	private void processStateChangeEvent(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
-		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
-		
+		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
+
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
@@ -103,17 +103,19 @@ public class AdminListener implements EventListener {
 		}
 
 		// 合伙人变成装修中，淘帮手进入服务中
-		if ((PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum) && PartnerInstanceTypeEnum.TP.equals(partnerType))
+		if ((PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)
+				&& PartnerInstanceTypeEnum.TP.equals(partnerType))
 				|| (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)
 						&& PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
 			addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
 		}
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 
 	}
 
-	private void addOpenRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId, Long instanceId) {
+	private void addOpenRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
+			Long instanceId) {
 		try {
 			// 这里增加合伙人关系写入
 			logger.info("addOpenRelation start,instanceId=" + instanceId);
@@ -121,7 +123,8 @@ public class AdminListener implements EventListener {
 			StationLifecycleOnStartCallbackParam startCallbackParam = buildOnStartParam(stationId);
 			stationLifecycleCallbackService.onStart(startCallbackParam);
 			// 合伙人服务关系建立
-			PartnerLifecycleOnEnterCallbackParam onEnterParam = buildOnEnterParam(partnerType, taobaoUserId, stationId, instanceId);
+			PartnerLifecycleOnEnterCallbackParam onEnterParam = buildOnEnterParam(partnerType, taobaoUserId, stationId,
+					instanceId);
 			partnerLifecycleCallbackService.onEnter(onEnterParam);
 			logger.info("addOpenRelation start,instanceId=" + instanceId);
 		} catch (Throwable e) {
@@ -138,8 +141,8 @@ public class AdminListener implements EventListener {
 	 *            站点申请单信息
 	 * @return
 	 */
-	private PartnerLifecycleOnEnterCallbackParam buildOnEnterParam(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
-			Long instanceId) {
+	private PartnerLifecycleOnEnterCallbackParam buildOnEnterParam(PartnerInstanceTypeEnum partnerType,
+			Long taobaoUserId, Long stationId, Long instanceId) {
 		PartnerLifecycleOnEnterCallbackParam onEnterParam = new PartnerLifecycleOnEnterCallbackParam();
 
 		onEnterParam.setGmtStart(DateUtil.getCurrentDate());
@@ -194,7 +197,8 @@ public class AdminListener implements EventListener {
 	 * @param context
 	 * @param stationDetailDto
 	 */
-	private void addQuitRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId, Long instanceId) {
+	private void addQuitRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
+			Long instanceId) {
 		try {
 			logger.info("addQuitRelation start,stationId=" + stationId);
 			Date gmtEnd = DateUtil.getCurrentDate();
