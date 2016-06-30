@@ -232,7 +232,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 		//保证partner表有效记录唯一性
 		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
 		
-		if (oldPartnerId != null) {
+		if (oldPartnerId != null && (!oldPartnerId.equals(partnerId))) {
 			//更新身份证
 			List<AttachementDto>  attDtoList = attachementBO.getAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
 			if (CollectionUtils.isNotEmpty(attDtoList)) {
