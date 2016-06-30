@@ -1267,17 +1267,28 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException {
-		ValidateUtils.notNull(partnerInstanceQuitDto);
+		ValidateUtils.validateParam(partnerInstanceQuitDto);
 		Long instanceId = partnerInstanceQuitDto.getInstanceId();
 		ValidateUtils.notNull(instanceId);
-
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		if (rel == null || StringUtils.isEmpty(rel.getType())) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		try {
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if (rel == null || StringUtils.isEmpty(rel.getType())) {
+				if (PartnerInstanceStateEnum.QUIT.getCode().equals(rel.getState())) {
+					return;
+				}else if (!PartnerInstanceStateEnum.QUITING.getCode().equals(rel.getState())){
+					throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				}
+			}
+			partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+		} catch (AugeServiceException augeException) {
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-		partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
-		// 同步station_apply
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 	}
 
 	@Override
