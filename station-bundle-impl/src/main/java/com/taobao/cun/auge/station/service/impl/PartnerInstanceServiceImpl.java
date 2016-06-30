@@ -1178,11 +1178,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 失效tair
 		} catch (AugeServiceException e) {
-			String error = getErrorMessage("applyQuitByManager", "退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("applyQuitByManager", "退出失败。QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
