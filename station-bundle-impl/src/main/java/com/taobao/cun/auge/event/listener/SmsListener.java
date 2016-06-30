@@ -45,25 +45,26 @@ public class SmsListener implements EventListener {
 	public void onMessage(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
-		logger.info("receive event."+JSON.toJSONString(stateChangeEvent));
-		
+		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
+
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String operatorId = stateChangeEvent.getOperator();
 
-		//查询手机号码
+		// 查询手机号码
 		String mobile = findPartnerMobile(instanceId);
-		//查询短信模板
+		// 查询短信模板
 		DingtalkTemplateEnum dingTalkType = findSmsTemplate(stateChangeEnum);
 		if (null == dingTalkType) {
+			logger.info("没有找到钉钉模板.");
 			return;
 		}
 		String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
 
 		generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
-		
-		logger.info("Finished to handle event."+JSON.toJSONString(stateChangeEvent));
+
+		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
