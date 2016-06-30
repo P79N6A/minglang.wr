@@ -53,6 +53,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -237,12 +238,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	@Override
 	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,	PartnerStationRel rel) throws AugeServiceException {
 		Long instanceId = settleSuccessDto.getInstanceId();
-		
-		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
-		Date serviceBeginTime = now.getTime();
-		now.add(Calendar.YEAR, 1);
-		Date serviceEndTime =  now.getTime();
-		
 		Long partnerId = rel.getPartnerId();
 		Long stationId = rel.getStationId();
 		Long taobaoUserId = rel.getTaobaoUserId();
@@ -269,29 +264,18 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			newPartner.setId(oldPartnerId);
 			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
 			newPartnerDto.copyOperatorDto(settleSuccessDto);
-			partnerBO.updatePartner(PartnerConverter.toPartnerDto(newPartner));
-			
-			PartnerInstanceDto piDto = new PartnerInstanceDto();
-			piDto.setServiceBeginTime(serviceBeginTime);
-			piDto.setServiceEndTime(serviceEndTime);
-			piDto.setId(instanceId);
-			piDto.setState(PartnerInstanceStateEnum.SERVICING);
-			piDto.setVersion(rel.getVersion());
-			piDto.setPartnerId(oldPartnerId);
-			piDto.copyOperatorDto(settleSuccessDto);
-			partnerInstanceBO.updatePartnerStationRel(piDto);
-			
+			partnerBO.updatePartner(newPartnerDto);
+			setPartnerInstanceToServicing(rel,settleSuccessDto,oldPartnerId);
 			partnerBO.deletePartner(partnerId, settleSuccessDto.getOperator());
 			
 		}else {
-			PartnerInstanceDto piDto = new PartnerInstanceDto();
-			piDto.setServiceBeginTime(serviceBeginTime);
-			piDto.setServiceEndTime(serviceEndTime);
-			piDto.setId(instanceId);
-			piDto.setState(PartnerInstanceStateEnum.SERVICING);
-			piDto.setVersion(rel.getVersion());
-			piDto.copyOperatorDto(settleSuccessDto);
-			partnerInstanceBO.updatePartnerStationRel(piDto);
+			setPartnerInstanceToServicing(rel,settleSuccessDto,null);
+			//更新合伙人表为normal
+			Partner newPartner = partnerBO.getPartnerById(partnerId);
+			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+			newPartnerDto.setState(PartnerStateEnum.NORMAL);
+			newPartnerDto.copyOperatorDto(settleSuccessDto);
+			partnerBO.updatePartner(newPartnerDto);
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
@@ -304,7 +288,30 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+	}
+	
+	/**
+	 * 设置关系表为服务中
+	 */
+	private void setPartnerInstanceToServicing(PartnerStationRel rel,OperatorDto operatorDto,Long changePartnerId) {
 		
+		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
+		Date serviceBeginTime = now.getTime();
+		now.add(Calendar.YEAR, 1);
+		Date serviceEndTime =  now.getTime();
+		
+		PartnerInstanceDto piDto = new PartnerInstanceDto();
+		piDto.setServiceBeginTime(serviceBeginTime);
+		piDto.setServiceEndTime(serviceEndTime);
+		piDto.setId(rel.getId());
+		piDto.setState(PartnerInstanceStateEnum.SERVICING);
+		piDto.setVersion(rel.getVersion());
+		piDto.setParentStationId(rel.getStationId());
+		piDto.copyOperatorDto(operatorDto);
+		if (changePartnerId != null) {
+			piDto.setPartnerId(changePartnerId);
+		}
+		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
 
 	@Override

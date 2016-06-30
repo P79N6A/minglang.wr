@@ -813,11 +813,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				//更新开业时间
 				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 						openStationDto.getOperator());
-				// 同步station_apply
+				//同步station_apply
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-				// 记录村点状态变化
+				//记录村点状态变化
 				sendPartnerInstanceStateChangeEvent(instanceId,PartnerInstanceStateChangeEnum.START_SERVICING,openStationDto);
-				// 开业包项目事件
+				//开业包项目事件
 				dispachToServiceEvent(openStationDto, instanceId);
 			} else {// 定时开业
 				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
