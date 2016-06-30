@@ -244,6 +244,7 @@ public class TpStrategy implements PartnerInstanceStrategy{
 			Partner newPartner = partnerBO.getPartnerById(partnerId);
 			newPartner.setId(oldPartnerId);
 			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+			newPartnerDto.setState(PartnerStateEnum.NORMAL);
 			newPartnerDto.copyOperatorDto(settleSuccessDto);
 			partnerBO.updatePartner(newPartnerDto);
 			

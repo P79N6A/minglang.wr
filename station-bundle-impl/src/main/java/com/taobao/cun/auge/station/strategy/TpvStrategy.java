@@ -251,7 +251,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		
 		//保证partner表有效记录唯一性
 		Long oldPartnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(taobaoUserId);
-		if (oldPartnerId != null && oldPartnerId.equals(partnerId)) {
+		if (oldPartnerId != null && (!oldPartnerId.equals(partnerId))) {
 			//更新身份证
 			List<AttachementDto>  attDtoList = attachementBO.getAttachementList(partnerId, AttachementBizTypeEnum.PARTNER,AttachementTypeIdEnum.IDCARD_IMG);
 			if (CollectionUtils.isNotEmpty(attDtoList)) {
@@ -263,6 +263,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			Partner newPartner = partnerBO.getPartnerById(partnerId);
 			newPartner.setId(oldPartnerId);
 			PartnerDto newPartnerDto = PartnerConverter.toPartnerDto(newPartner);
+			newPartnerDto.setState(PartnerStateEnum.NORMAL);
 			newPartnerDto.copyOperatorDto(settleSuccessDto);
 			partnerBO.updatePartner(newPartnerDto);
 			setPartnerInstanceToServicing(rel,settleSuccessDto,oldPartnerId);
