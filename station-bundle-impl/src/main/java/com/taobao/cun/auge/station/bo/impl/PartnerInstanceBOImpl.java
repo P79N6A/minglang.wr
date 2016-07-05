@@ -21,12 +21,15 @@ import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.CriusTaskExecute;
+import com.taobao.cun.auge.dal.domain.CriusTaskExecuteExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
@@ -42,6 +45,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -68,6 +72,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	StationBO stationBO;
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
+	@Autowired
+	CriusTaskExecuteMapper criusTaskExecuteMapper;
 
 	@Override
 	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
@@ -105,10 +111,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return rel.getId();
 
 	}
-	
+
 	@Override
-	public PartnerStationRel getPartnerStationRelByStationApplyId(
-			Long stationApplyId) throws AugeServiceException {
+	public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) throws AugeServiceException {
 		ValidateUtils.notNull(stationApplyId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -118,7 +123,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIsDeletedEqualTo("n");
 
 		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
-	
+
 		return ResultUtils.selectOne(instances);
 	}
 
@@ -164,7 +169,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.countByExample(example);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
@@ -201,16 +206,16 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		return curPartnerInstance.getStationId();
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
-		//ValidateUtils.notNull(partnerInstanceDto.getVersion());
+		// ValidateUtils.notNull(partnerInstanceDto.getVersion());
 		PartnerStationRel rel = PartnerInstanceConverter.convert(partnerInstanceDto);
 		DomainUtils.beforeUpdate(rel, partnerInstanceDto.getOperator());
-		
+
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
 		Criteria criteria = example.createCriteria();
@@ -218,14 +223,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIdEqualTo(partnerInstanceDto.getId());
 		criteria.andIsDeletedEqualTo("n");
 		if (partnerInstanceDto.getVersion() != null) {
-			rel.setVersion(rel.getVersion()+1l);
+			rel.setVersion(rel.getVersion() + 1l);
 			criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
 		}
-		
-		
+
 		int updateCount = partnerStationRelMapper.updateByExampleSelective(rel, example);
-		
-		if (updateCount <1) {
+
+		if (updateCount < 1) {
 			throw new AugeServiceException(CommonExceptionEnum.VERION_IS_INVALID);
 		}
 	}
@@ -244,7 +248,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return PartnerInstanceConverter.convert(psRel, station, partner);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateOpenDate(Long instanceId, Date openDate, String operator) throws AugeServiceException {
@@ -299,7 +303,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.selectByExample(example);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -337,7 +341,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return true;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deletePartnerStationRel(Long instanceId, String operator) throws AugeServiceException {
@@ -386,9 +390,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		param.put("bond", PartnerLifecycleBondEnum.WAIT_THAW.getCode());
 
 		Calendar calendar = Calendar.getInstance();
-		
-		
-		
+
 		calendar.setTime(new Date());
 		calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);// 30天前的数据
 
@@ -396,6 +398,30 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		PageHelper.startPage(1, fetchNum);
 		List<Long> instanceIdList = partnerStationRelExtMapper.getWaitThawMoney(param);
+		if (CollectionUtils.isEmpty(instanceIdList)) {
+			return instanceIdList;
+		}
+		List<String> businessNoList = Lists.transform(instanceIdList, new Function<Long, String>() {
+			@Override
+			public String apply(Long id) {
+				return String.valueOf(id);
+			}
+
+		});
+
+		CriusTaskExecuteExample example = new CriusTaskExecuteExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode())
+				.andBusinessNoIn(businessNoList);
+		List<CriusTaskExecute> existTaskList = criusTaskExecuteMapper.selectByExample(example);
+		if (CollectionUtils.isNotEmpty(existTaskList)) {
+			for (CriusTaskExecute task : existTaskList) {
+				Long businessNo = Long.parseLong(task.getBusinessNo());
+				if (instanceIdList.contains(businessNo)) {
+					instanceIdList.remove(businessNo);
+				}
+			}
+		}
+
 		return instanceIdList;
 	}
 
@@ -424,13 +450,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public int getActiveTpaByParentStationId(Long parentStationId)
-			throws AugeServiceException {
+	public int getActiveTpaByParentStationId(Long parentStationId) throws AugeServiceException {
 		int count = 0;
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId)
-				.andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode())
-				.andStateIn(PartnerInstanceStateEnum.getValidTpaStatusArray());
+				.andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateIn(PartnerInstanceStateEnum.getValidTpaStatusArray());
 		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(resList)) {
 			return count;
@@ -449,6 +473,5 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return count;
 	}
-
 
 }
