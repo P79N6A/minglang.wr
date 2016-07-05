@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.common.lang.StringUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -44,6 +47,8 @@ import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 
 public final class PartnerInstanceConverter {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceConverter.class);
 
 	private PartnerInstanceConverter() {
 
@@ -95,10 +100,13 @@ public final class PartnerInstanceConverter {
 		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
 		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
 
-		StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
-				.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
-		instanceDto.setStationApplyState(parseStationApplyState);
-
+		try {
+			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
+					.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+			instanceDto.setStationApplyState(parseStationApplyState);
+		} catch (Exception e) {
+			logger.error("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance), e);
+		}
 		return instanceDto;
 	}
 
