@@ -1490,6 +1490,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		param.setState(PartnerInstanceStateEnum.SERVICING);
 		param.copyOperatorDto(degradePartnerInstanceSuccessDto);
 		partnerInstanceBO.updatePartnerStationRel(param);
+		
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 		// 发送降级成功事件
 		PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
