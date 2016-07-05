@@ -18,6 +18,8 @@ import com.taobao.cun.service.alipay.AlipayAccountTagService;
 public class AlipayTagAdapterImpl implements AlipayTagAdapter {
 
 	private static final Logger logger = LoggerFactory.getLogger(AlipayTagAdapterImpl.class);
+	public static final String ALIPAY_TAG_ERROR_MSG = "ALIPAY_TAG_ERROR";
+
 	@Autowired
 	private AlipayAccountTagService alipayAccountTagService;
 
@@ -38,7 +40,7 @@ public class AlipayTagAdapterImpl implements AlipayTagAdapter {
 			}
 			return true;
 		} catch (Exception e) {
-			logger.error("AlipayTagAdapter.dealTag error", e);
+			logger.error(ALIPAY_TAG_ERROR_MSG + " parameter = {},{}", JSON.toJSONString(alipayTagDto), e);
 			throw new AugeServiceException("AlipayTagAdapter.dealTag error" + e.getMessage());
 		}
 	}
