@@ -1360,7 +1360,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (parentStation.getApplyOrg().longValue() != station.getApplyOrg().longValue()) {
 			throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME);
 		}
-		generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto.getOperator());
+		generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
 	}
 
 	private Long getTpaMax() {
