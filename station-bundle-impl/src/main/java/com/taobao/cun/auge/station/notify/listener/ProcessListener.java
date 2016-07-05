@@ -43,7 +43,7 @@ public class ProcessListener implements MessageListener {
 		try {
 			handleProcessMsg(strMessage, ob);
 		} catch (Exception e) {
-			logger.error("Failed to handle process msg.msg= " + ob.toJSONString(), e);
+			logger.error("ProcessListenerError, msg= " + ob.toJSONString(), e);
 		}
 	}
 

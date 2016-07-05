@@ -9,6 +9,8 @@ import com.taobao.cun.chronus.enums.ExecuteStateEnum;
 import com.taobao.cun.chronus.service.TaskExecutor;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service("taskExecutor")
 @HSFProvider(serviceInterface = TaskExecutor.class, clientTimeout = 12000)
 public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAware {
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private ApplicationContext applicationContext;
 
@@ -35,6 +38,7 @@ public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAwar
 		try {
 			method.invoke(targetObject, arguments);
 		} catch (Exception e) {
+			logger.error("GeneralTaskExecutorError, parameter = {}, {}", JSON.toJSON(taskExecute), e);
 			throw new java.lang.RuntimeException(e.getCause().getMessage(), e.getCause());
 		}
 
