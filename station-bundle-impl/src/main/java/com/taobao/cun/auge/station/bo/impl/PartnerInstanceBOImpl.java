@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
+import com.ali.com.google.common.collect.Sets;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -401,28 +403,18 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (CollectionUtils.isEmpty(instanceIdList)) {
 			return instanceIdList;
 		}
-		List<String> businessNoList = Lists.transform(instanceIdList, new Function<Long, String>() {
-			@Override
-			public String apply(Long id) {
-				return String.valueOf(id);
-			}
-
-		});
-
-		CriusTaskExecuteExample example = new CriusTaskExecuteExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode())
-				.andBusinessNoIn(businessNoList);
-		List<CriusTaskExecute> existTaskList = criusTaskExecuteMapper.selectByExample(example);
-		if (CollectionUtils.isNotEmpty(existTaskList)) {
-			for (CriusTaskExecute task : existTaskList) {
-				Long businessNo = Long.parseLong(task.getBusinessNo());
-				if (instanceIdList.contains(businessNo)) {
-					instanceIdList.remove(businessNo);
-				}
+		Set<Long> idSet = Sets.newHashSet();
+		for (Long id : instanceIdList) {
+			CriusTaskExecuteExample example = new CriusTaskExecuteExample();
+			example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode())
+					.andBusinessNoEqualTo(String.valueOf(id));
+			List<CriusTaskExecute> existTaskList = criusTaskExecuteMapper.selectByExample(example);
+			if (CollectionUtils.isEmpty(existTaskList)) {
+				idSet.add(id);
 			}
 		}
-
-		return instanceIdList;
+		List<Long> returnList = Lists.newArrayList(idSet);
+		return returnList;
 	}
 
 	@Override
