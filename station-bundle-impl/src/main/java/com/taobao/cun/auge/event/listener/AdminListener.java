@@ -186,7 +186,6 @@ public class AdminListener implements EventListener {
 
 		startCallbackParam.setLocation(location);
 		startCallbackParam.setStationId(stationId);
-		startCallbackParam.setStationId(stationId);
 
 		return startCallbackParam;
 	}

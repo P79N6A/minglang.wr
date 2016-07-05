@@ -1360,7 +1360,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (parentStation.getApplyOrg().longValue() != station.getApplyOrg().longValue()) {
 			throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME);
 		}
-		generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto.getOperator());
+		generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
 	}
 
 	private Long getTpaMax() {
@@ -1490,6 +1490,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		param.setState(PartnerInstanceStateEnum.SERVICING);
 		param.copyOperatorDto(degradePartnerInstanceSuccessDto);
 		partnerInstanceBO.updatePartnerStationRel(param);
+		
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 		// 发送降级成功事件
 		PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();

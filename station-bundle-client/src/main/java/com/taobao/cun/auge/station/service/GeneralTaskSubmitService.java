@@ -33,7 +33,7 @@ public interface GeneralTaskSubmitService {
 	 * @param operatorId
 	 * @throws AugeServiceException
 	 */
-	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, String operatorId)
+	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, OperatorDto operatorDto)
 			throws AugeServiceException;
 
 	/**
