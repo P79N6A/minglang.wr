@@ -21,12 +21,12 @@ import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 public class UicTagAdapterImpl implements UicTagAdapter {
 
 	public static final Logger logger = LoggerFactory.getLogger(UicTagAdapterImpl.class);
+	public static final String UIC_TAG_ERROR_MSG = "UIC_TAG_ERROR";
 
 	@Resource
 	private UicTagWriteServiceClient uicTagWriteServiceClient;
 	@Resource
 	private UicExtraReadServiceClient uicExtraReadServiceClient;
-	
 
 	private Long DEFAULT_TAG = new Double(Math.pow(2, 12)).longValue();
 
@@ -53,7 +53,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				break;
 			}
 		} catch (Exception e) {
-			logger.error("addUserTag error ,e {}", e);
+			logger.error(UIC_TAG_ERROR_MSG + " [addUserTag]  parameter = {}, {}", JSON.toJSONString(userTagDto), e);
 			throw new AugeUicTagException("addUserTag  error!", e);
 		}
 	}
@@ -77,7 +77,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				break;
 			}
 		} catch (Exception e) {
-			logger.error("addUserTag error ,e {}", e);
+			logger.error(UIC_TAG_ERROR_MSG + " [removeUserTag] parameter = {}, {}", JSON.toJSONString(userTagDto), e);
 			throw new AugeUicTagException("addUserTag  error!", e);
 		}
 	}
