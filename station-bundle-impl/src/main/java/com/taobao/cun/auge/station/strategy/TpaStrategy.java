@@ -18,6 +18,8 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -26,6 +28,7 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
+import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -54,6 +57,7 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.pandora.util.StringUtils;
 
 @Component("tpaStrategy")
@@ -258,7 +262,18 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+		
+		//发送服务中事件
+		sendPartnerInstanceStateChangeEvent(instanceId,PartnerInstanceStateChangeEnum.START_SERVICING,settleSuccessDto);
 	}
+	
+	
+	private void sendPartnerInstanceStateChangeEvent(Long instanceId,PartnerInstanceStateChangeEnum stateChangeEnum,OperatorDto operator) {
+		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
+		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, PartnerInstanceEventConverter
+				.convertStateChangeEvent(stateChangeEnum, piDto, operator));
+	}
+	
 	
 	private void syncNewPartnerInfoToOldPartnerId(Long newPartnerId,Long oldPartnerId,OperatorDto operatorDto) {
 		//更新身份证
