@@ -151,7 +151,7 @@
             "desc": "合伙人station_apply QUITAUDITING",
             "partnerInstanceState": "QUITING",
             "condition": {
-                "roleApprove": "TO_AUDIT"
+                 "roleApprove": "!AUDIT_PASS"
             }
         },
         {
