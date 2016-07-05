@@ -16,17 +16,31 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 public class OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 2739466182498801975L;
-	
+
 	public static final String DEFAULT_OPERATOR = "system";
 
-	@NotNull(message="operator not null")
+	@NotNull(message = "operator not null")
 	private String operator;
 
-	@NotNull(message="operatorType not null")
+	@NotNull(message = "operatorType not null")
 	private OperatorTypeEnum operatorType;
 
 	private Long operatorOrgId;
-	
+
+	public OperatorDto() {
+	}
+
+	public OperatorDto(String operator, OperatorTypeEnum operatorType) {
+		this.operator = operator;
+		this.operatorType = operatorType;
+	}
+
+	public OperatorDto(String operator, OperatorTypeEnum operatorType, Long operatorOrgId) {
+		this.operator = operator;
+		this.operatorType = operatorType;
+		this.operatorOrgId = operatorOrgId;
+	}
+
 	public String getOperator() {
 		return operator;
 	}
@@ -69,20 +83,20 @@ public class OperatorDto implements Serializable {
 				throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
 			}
 		}
-		
+
 	}
-	
+
 	public void copyOperatorDto(OperatorDto source) {
 		this.setOperator(source.getOperator());
 		this.setOperatorOrgId(source.getOperatorOrgId());
 		this.setOperatorType(source.getOperatorType());
-	} 
-	
-	public static OperatorDto defaultOperator(){
+	}
+
+	public static OperatorDto defaultOperator() {
 		OperatorDto operator = new OperatorDto();
 		operator.setOperator(DEFAULT_OPERATOR);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
-		
+
 		return operator;
 	}
 }
