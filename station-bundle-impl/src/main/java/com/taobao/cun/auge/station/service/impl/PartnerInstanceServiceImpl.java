@@ -109,6 +109,7 @@ import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.crius.event.client.EventDispatcher;
+import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -508,8 +509,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceId);
-
-			generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
+			
+			if (isNeedToUpdateCainiaoStation(rel.getState())) {
+				generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
+			}
+			
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
 			logger.error(error, augeException);
@@ -519,6 +523,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	private boolean isNeedToUpdateCainiaoStation(String state) {
+		return PartnerInstanceStateEnum.DECORATING.getCode().equals(state)
+				|| PartnerInstanceStateEnum.SERVICING.getCode().equals(state)
+				|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state);
 	}
 
 	private void updateStationForServicing(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto, Long stationId) {
