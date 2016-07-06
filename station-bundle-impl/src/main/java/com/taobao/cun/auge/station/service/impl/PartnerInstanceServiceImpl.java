@@ -1280,12 +1280,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 记录村点状态变化
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 			return instanceId;
+		} catch (AugeServiceException augeException) {
+			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
-
+		} 		
 	}
 
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
@@ -1390,11 +1391,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME);
 			}
 			generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
+		}catch (AugeServiceException augeException) {
+			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("degradePartnerInstance", JSON.toJSONString(degradeDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
+		} 
 	}
 
 	private Long getTpaMax() {
