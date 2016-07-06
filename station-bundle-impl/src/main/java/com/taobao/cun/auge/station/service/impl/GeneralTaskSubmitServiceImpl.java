@@ -47,6 +47,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 	private static final Logger logger = LoggerFactory.getLogger(GeneralTaskSubmitService.class);
 	private static final String TASK_SUBMIT_ERROR_MSG = "TASK_SUBMIT_ERROR";
+	public static final String OUT_ORDER_NO_PRE = "CT";
 
 	@Autowired
 	TaskSubmitService taskSubmitService;
@@ -409,7 +410,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
 			alipayStandardBailDto.setAmount(frozenMoney);
 			alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE);
-			alipayStandardBailDto.setOutOrderNo(String.valueOf(instanceId));
+			alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
 			alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
 			alipayStandardBailDto.setTypeCode(standerBailTypeCode);
 			alipayStandardBailDto.setUserAccount(accountDto.getAccountNo());
