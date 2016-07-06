@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,7 +123,9 @@ public class StationBOImpl implements StationBO {
 		if (StringUtils.isNotEmpty(oldRecord.getFeature())) {
 			Map<String, String> sourceMap = FeatureUtil.toMap(oldRecord.getFeature());
 			if (sourceMap != null && sourceMap.size()>0) {
-				sourceMap.putAll(stationDto.getFeature());
+				if (stationDto.getFeature() != null) {
+					sourceMap.putAll(stationDto.getFeature());
+				}
 				record.setFeature(FeatureUtil.toString(sourceMap));
 			}else {
 				record.setFeature(FeatureUtil.toString(stationDto.getFeature()));
