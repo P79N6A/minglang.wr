@@ -26,6 +26,7 @@
     <result column="applier_type" jdbcType="VARCHAR" property="applierType" />
     <result column="close_type" jdbcType="VARCHAR" property="closeType" />
     <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
+    <result column="version" jdbcType="BIGINT" property="version" />
     
     <!-- pepole -->
      <result column="partner_name" jdbcType="VARCHAR" property="partnerName" />
