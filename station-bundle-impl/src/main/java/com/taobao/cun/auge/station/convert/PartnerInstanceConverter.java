@@ -90,6 +90,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(instance.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(instance.getIsCurrent()));
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(instance.getCloseType()));
+		instanceDto.setVersion(instance.getVersion());
 
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
