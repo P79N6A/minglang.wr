@@ -1006,10 +1006,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			Long stationId = partnerInstance.getStationId();
 
-			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
-			partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
-
 			Long lifecycleId = partnerLifecycleBO.getLifecycleItemsId(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
 					PartnerLifecycleCurrentStepEnum.PROCESSING);
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
@@ -1018,6 +1014,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerLifecycle.copyOperatorDto(confirmCloseDto);
 
 			if (isAgree) {
+				// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+				PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
+				partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
+				
 				// 更新合伙人实例，已停业
 				PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 				partnerInstanceDto.setId(instanceId);
