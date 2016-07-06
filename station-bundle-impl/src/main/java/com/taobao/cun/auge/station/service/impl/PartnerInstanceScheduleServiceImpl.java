@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,31 +11,29 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.event.EventConstant;
-import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("partnerInstanceScheduleService")
 @HSFProvider(serviceInterface = PartnerInstanceScheduleService.class)
 public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceScheduleService {
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceScheduleService.class);
+	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
@@ -62,24 +62,17 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 
 	@Override
 	public Boolean openStation(Long instanceId) throws AugeServiceException {
-		OperatorDto operatorDto = new OperatorDto();
-		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
-		operatorDto.setOperatorOrgId(0L);
-		// TODO:检查开业包
-		if (!partnerInstanceService.checkKyPackage()) {
-			// 开业时间置为空
-			partnerInstanceBO.updateOpenDate(instanceId, null, operatorDto.getOperator());
-			// TODO：发短信
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (rel == null) {
+			logger.error("PartnerInstanceScheduleService error record is null param:"+instanceId);
 			return Boolean.TRUE;
 		}
-		partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING,
-				PartnerInstanceStateEnum.SERVICING, DomainUtils.DEFAULT_OPERATOR);
-
-		// 记录村点状态变化
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.START_SERVICING,
-						partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto));
+		OpenStationDto openStationDto =new OpenStationDto();
+		openStationDto.setImme(Boolean.TRUE);
+		openStationDto.setOpenDate(rel.getOpenDate());
+		openStationDto.copyOperatorDto(OperatorDto.defaultOperator());
+		openStationDto.setPartnerInstanceId(instanceId);
+		partnerInstanceService.openStation(openStationDto);
 		return Boolean.TRUE;
 	}
 
