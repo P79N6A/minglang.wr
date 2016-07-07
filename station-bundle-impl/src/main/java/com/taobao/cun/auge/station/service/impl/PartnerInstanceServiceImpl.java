@@ -644,11 +644,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 			// 同步删除
 			syncStationApplyBO.deleteStationApply(rel.getStationApplyId());
+		}catch (AugeServiceException augeException) {
+			String error = getErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
+		} 
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

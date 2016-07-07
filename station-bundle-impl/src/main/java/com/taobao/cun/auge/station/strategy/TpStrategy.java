@@ -122,13 +122,15 @@ public class TpStrategy implements PartnerInstanceStrategy{
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
 			PartnerStationRel rel) throws AugeServiceException {
 		
-		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())) {
+		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState()) && 
+				!StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
 			Long stationId =  rel.getStationId();
 			Station station = stationBO.getStationById(stationId);
-			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())) {
+			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus()) && 
+					!StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())) {
 				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
 			}
 			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
