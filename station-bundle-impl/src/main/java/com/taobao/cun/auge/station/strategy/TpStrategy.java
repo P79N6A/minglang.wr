@@ -159,6 +159,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		}
 
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
+		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
 	}
 
 	private boolean isBondHasFrozen(Long id) {
