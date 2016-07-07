@@ -1528,7 +1528,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (null == rel || StringUtils.isEmpty(rel.getType()) || parentRel == null || StringUtils.isEmpty(parentRel.getType())) {
 				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
 			}
-
+			
+			if (PartnerInstanceStateEnum.CLOSING.getCode().equals(rel.getState()) ||
+					PartnerInstanceStateEnum.CLOSED.getCode().equals(rel.getState()))  {
+				//删除停业申请单
+				closeStationApplyBO.deleteCloseStationApply(instanceId, degradePartnerInstanceSuccessDto.getOperator());
+			}
+			
+			if (PartnerInstanceStateEnum.CLOSING.getCode().equals(rel.getState()))  {
+				//删除生命周期表
+				PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
+						PartnerLifecycleCurrentStepEnum.PROCESSING);
+				PartnerLifecycleDto lifeDto = new PartnerLifecycleDto();
+				lifeDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+				lifeDto.setLifecycleId(items.getId());
+				lifeDto.copyOperatorDto(degradePartnerInstanceSuccessDto);
+				partnerLifecycleBO.updateLifecycle(lifeDto);
+			}
+			
 			PartnerInstanceDto param = new PartnerInstanceDto();
 			param.setId(instanceId);
 			param.setBit(-1);
@@ -1545,9 +1562,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			stationDto.copyOperatorDto(degradePartnerInstanceSuccessDto);
 			stationBO.updateStation(stationDto);
 			
-			//删除停业申请单
-			closeStationApplyBO.deleteCloseStationApply(instanceId, degradePartnerInstanceSuccessDto.getOperator());
-
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
