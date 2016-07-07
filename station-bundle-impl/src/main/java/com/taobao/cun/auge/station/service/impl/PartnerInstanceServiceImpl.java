@@ -1537,6 +1537,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			param.setState(PartnerInstanceStateEnum.SERVICING);
 			param.copyOperatorDto(degradePartnerInstanceSuccessDto);
 			partnerInstanceBO.updatePartnerStationRel(param);
+			
+			//更新station为服务中
+			StationDto stationDto =new StationDto();
+			stationDto.setStatus(StationStatusEnum.SERVICING);
+			stationDto.setId(rel.getStationId());
+			stationDto.copyOperatorDto(degradePartnerInstanceSuccessDto);
+			stationBO.updateStation(stationDto);
+			
+			//删除停业申请单
+			closeStationApplyBO.deleteCloseStationApply(instanceId, degradePartnerInstanceSuccessDto.getOperator());
 
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
