@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -64,10 +66,15 @@ public class ProcessProcessor {
 
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
 	@Autowired
 	StationApplySyncBO stationApplySyncBO;
+	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	AppResourceBO appResourceBO;
 
 	/**
 	 * 处理停业审批结果
@@ -79,7 +86,12 @@ public class ProcessProcessor {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		
+
+		//不是TPV，且开关未打开，直接返回
+		if (!PartnerInstanceTypeEnum.TPV.getCode().equals(partnerStationRel.getType()) && !isOpen()) {
+			return;
+		}
+
 		Long stationId = partnerStationRel.getStationId();
 		Long instanceId = partnerStationRel.getId();
 
@@ -171,6 +183,11 @@ public class ProcessProcessor {
 
 		PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		
+		//不是TPV，且开关未打开，直接返回
+		if (!PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType()) && !isOpen()) {
+			return;
+		}
+		
 		Long instanceId = instance.getId();
 		Long stationId = instance.getStationId();
 
@@ -258,4 +275,13 @@ public class ProcessProcessor {
 				operator);
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
+	
+    private  Boolean isOpen() {
+    	AppResource resource = appResourceBO.queryAppResource("auge_service_switch", "switch");
+        if (resource != null && "y".equals(resource.getValue())) {
+            return Boolean.TRUE;
+        }else {
+            return Boolean.FALSE;
+        }
+    }
 }
