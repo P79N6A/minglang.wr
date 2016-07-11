@@ -277,7 +277,7 @@ public class ProcessProcessor {
 	}
 	
     private  Boolean isOpen() {
-    	AppResource resource = appResourceBO.queryAppResource("auge_service_switch", "switch");
+    	AppResource resource = appResourceBO.queryAppResource("auge_service_switch_center", "switch");
         if (resource != null && "y".equals(resource.getValue())) {
             return Boolean.TRUE;
         }else {
