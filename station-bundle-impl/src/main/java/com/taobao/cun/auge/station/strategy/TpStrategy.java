@@ -116,10 +116,27 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	@Override
 	public void validateExistValidChildren(Long instanceId) throws AugeServiceException {
-		int count = partnerInstanceBO.findChildPartners(instanceId, PartnerInstanceStateEnum.getValidChildPartnersStatus());
-		if (count > 0) {
-			logger.warn("合伙人存在淘帮手");
-			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId,
+				PartnerInstanceStateEnum.getValidChildPartnersStatus());
+
+		if (CollectionUtils.isEmpty(children)) {
+			return;
+		}
+		for (PartnerStationRel rel : children) {
+			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
+				logger.warn("合伙人存在淘帮手");
+				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+			} else {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(),PartnerLifecycleBusinessTypeEnum.QUITING);
+				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
+						item.getCurrentStep())) {
+					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
+						continue;
+					}
+					logger.warn("合伙人存在淘帮手");
+					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+				}
+			}
 		}
 	}
 

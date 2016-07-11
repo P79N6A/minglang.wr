@@ -107,6 +107,7 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
 		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
 		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
+		listValidStatus.add(PartnerInstanceStateEnum.QUITING);
 		return listValidStatus;
 	}
 	
