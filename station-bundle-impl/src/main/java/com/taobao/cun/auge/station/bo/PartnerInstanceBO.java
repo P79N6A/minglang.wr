@@ -102,7 +102,7 @@ public interface PartnerInstanceBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException;
+	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException;
 
 	/**
 	 * 状态流转

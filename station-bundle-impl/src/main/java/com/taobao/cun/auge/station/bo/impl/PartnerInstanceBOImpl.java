@@ -146,7 +146,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public int findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException {
+	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
@@ -169,7 +169,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		// 排除自己
 		criteria.andTypeNotEqualTo(curPartnerInstance.getType());
 
-		return partnerStationRelMapper.countByExample(example);
+		return partnerStationRelMapper.selectByExample(example);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
