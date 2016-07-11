@@ -133,9 +133,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
 						continue;
 					}
+					logger.warn("合伙人存在淘帮手");
+					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 				}
-				logger.warn("合伙人存在淘帮手");
-				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 			}
 		}
 	}
