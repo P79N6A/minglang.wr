@@ -109,7 +109,6 @@ import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.crius.event.client.EventDispatcher;
-import com.taobao.cun.dto.station.enums.StationApplyStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
