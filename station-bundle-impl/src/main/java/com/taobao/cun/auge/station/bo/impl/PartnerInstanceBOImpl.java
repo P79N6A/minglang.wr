@@ -434,8 +434,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				return rel;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTABLE.equals(PartnerLifecycleRuleParser
-						.parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.bond, item))) {
+				if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
+						.parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
 					continue;
 				}
 				return rel;
