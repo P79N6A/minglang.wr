@@ -62,10 +62,22 @@ public interface PartnerInstanceStrategy {
 	/**
 	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手
 	 * 
+	 * 退出时，校验
+	 * 
 	 * @param instanceId
 	 * @throws AugeServiceException
 	 */
-	public void validateExistValidChildren(Long instanceId) throws AugeServiceException;
+	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException;
+	
+	/**
+	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手
+	 * 
+	 * 停业时，校验
+	 * 
+	 * @param instanceId
+	 * @throws AugeServiceException
+	 */
+	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException;
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 }

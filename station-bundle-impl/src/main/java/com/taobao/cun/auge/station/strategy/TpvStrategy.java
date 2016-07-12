@@ -112,8 +112,14 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistValidChildren(Long instanceId) {
+	public void validateExistChildrenForQuit(Long instanceId) {
 		
+	}
+	
+	@Override
+	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+		// TODO Auto-generated method stub
+
 	}
 	
 	/**

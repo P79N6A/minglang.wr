@@ -115,9 +115,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistValidChildren(Long instanceId) throws AugeServiceException {
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId,
-				PartnerInstanceStateEnum.getValidChildPartnersStatus());
+	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException {
+		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId,states);
 
 		if (CollectionUtils.isEmpty(children)) {
 			return;
@@ -137,6 +137,17 @@ public class TpStrategy implements PartnerInstanceStrategy {
 					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 				}
 			}
+		}
+	}
+	
+	@Override
+	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+
+		if (CollectionUtils.isNotEmpty(children)) {
+			logger.warn("合伙人存在淘帮手");
+			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 		}
 	}
 

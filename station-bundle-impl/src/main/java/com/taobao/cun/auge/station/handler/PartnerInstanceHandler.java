@@ -116,8 +116,14 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
 	
-	public void validateExistValidChildren(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).validateExistValidChildren(instanceId);
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instanceId);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void validateExistChildrenForClose(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).validateExistChildrenForClose(instanceId);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

@@ -101,13 +101,28 @@ public class PartnerInstanceStateEnum  implements Serializable {
 	 * 
 	 * @return
 	 */
-	public static List<PartnerInstanceStateEnum>  getValidChildPartnersStatus(){
+	public static List<PartnerInstanceStateEnum>  getPartnerStatusForValidateQuit(){
 		ArrayList<PartnerInstanceStateEnum > listValidStatus = new ArrayList<PartnerInstanceStateEnum >();
 		listValidStatus.add(PartnerInstanceStateEnum.TEMP);
 		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
 		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
 		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED);
 		listValidStatus.add(PartnerInstanceStateEnum.QUITING);
+		return listValidStatus;
+	}
+	
+	/**
+	 * 合伙人停业申请时，校验是否存在下一级淘帮手
+	 * 
+	 * @return
+	 */
+	public static List<PartnerInstanceStateEnum>  getPartnerStatusForValidateClose(){
+		ArrayList<PartnerInstanceStateEnum > listValidStatus = new ArrayList<PartnerInstanceStateEnum >();
+		listValidStatus.add(PartnerInstanceStateEnum.TEMP);
+		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
 		return listValidStatus;
 	}
 	

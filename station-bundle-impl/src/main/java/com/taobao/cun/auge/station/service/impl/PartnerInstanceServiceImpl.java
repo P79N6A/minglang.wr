@@ -1020,7 +1020,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (isAgree) {
 				// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 				PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
-				partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
+				partnerInstanceHandler.validateExistChildrenForClose(partnerType, instanceId);
 				
 				// 更新合伙人实例，已停业
 				PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
@@ -1096,7 +1096,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-			partnerInstanceHandler.validateExistValidChildren(partnerType, instanceId);
+			partnerInstanceHandler.validateExistChildrenForClose(partnerType, instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
 			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
@@ -1234,7 +1234,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
 
 		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-		partnerInstanceHandler.validateExistValidChildren(PartnerInstanceTypeEnum.valueof(instance.getType()), instanceId);
+		partnerInstanceHandler.validateExistChildrenForQuit(PartnerInstanceTypeEnum.valueof(instance.getType()), instanceId);
 	}
 
 	private String buildOperatorName(OperatorDto operatorDto) {

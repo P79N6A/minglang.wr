@@ -126,7 +126,13 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistValidChildren(Long instanceId) throws AugeServiceException {
+	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
 		// TODO Auto-generated method stub
 
 	}
