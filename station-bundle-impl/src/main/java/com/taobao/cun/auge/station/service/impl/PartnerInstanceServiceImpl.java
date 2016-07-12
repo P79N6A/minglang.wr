@@ -1500,6 +1500,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL,
 						auditSettleDto.getOperator());
 			}
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), augeException.toString());
 			logger.error(error, augeException);
