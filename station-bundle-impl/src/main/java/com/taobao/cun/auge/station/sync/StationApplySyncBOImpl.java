@@ -53,6 +53,8 @@ import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
@@ -198,8 +200,11 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				: partnerLifecycleItemsList.iterator().next();
 
 		// 设置状态
-		 com.taobao.cun.auge.station.enums.StationApplyStateEnum stationApplySate = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), PartnerLifecycleConverter.toPartnerLifecycleDto(partnerLifecycleItems));
-		stationApply.setState(stationApplySate.getCode());
+		com.taobao.cun.auge.station.enums.StationApplyStateEnum stationApplySate = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), PartnerLifecycleConverter.toPartnerLifecycleDto(partnerLifecycleItems));
+		if(com.taobao.cun.auge.station.enums.StationApplyStateEnum.FROZEN.equals(stationApplySate)){
+			stationApplySate = com.taobao.cun.auge.station.enums.StationApplyStateEnum.CONFIRMED;
+		}
+		 stationApply.setState(stationApplySate.getCode());
 
 		stationApply.setModifier(instance.getModifier());
 		stationApply.setGmtModified(instance.getGmtModified());
@@ -293,9 +298,10 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 		// lifecycle,protocol_confirming_step
 		if (null != partnerLifecycleItems && PartnerInstanceStateEnum.SETTLING.getCode().equals(partnerLifecycleItems.getBusinessType())) {
-			if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
+			if(PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser.parseExecutable(PartnerInstanceTypeEnum.valueof(instance.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, partnerLifecycleItems))){
 				stationApply.setProtocolConfirmingStep("CONFIRMED");
-			} else if (PartnerLifecycleCurrentStepEnum.PROCESSING.getCode().equals(partnerLifecycleItems.getCurrentStep())) {
+			}
+			if(PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser.parseExecutable(PartnerInstanceTypeEnum.valueof(instance.getType()), PartnerLifecycleItemCheckEnum.bond, partnerLifecycleItems))){
 				stationApply.setProtocolConfirmingStep("FROZEN");
 			}
 		}
