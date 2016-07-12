@@ -201,16 +201,15 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		/*
-		 * if(partnerInstanceQuitDto.getIsQuitStation()) { Long stationId =
-		 * partnerInstanceBO.findStationIdByInstanceId(instanceId); Station
-		 * station = stationBO.getStationById(stationId); if (station != null) {
-		 * if (StringUtils.equals(StationStatusEnum.QUITING.getCode(),
-		 * station.getStatus())) { stationBO.changeState(stationId,
-		 * StationStatusEnum.QUITING, StationStatusEnum.QUIT,
-		 * partnerInstanceQuitDto.getOperator()); } } }
-		 */
-
+		//解冻保证金
+		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+		accountMoneyUpdateDto.setObjectId(instanceId);
+		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
+		accountMoneyUpdateDto.setThawTime(new Date());
+		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
+		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
+		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
 	}
 
 	@Override
