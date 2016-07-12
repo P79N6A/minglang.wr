@@ -337,9 +337,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				return false;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
+				if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
+						.parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
 					continue;
 				}
+				
+//				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
+//					continue;
+//				}
 				return false;
 			}
 
@@ -460,9 +465,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				count++;
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
+				if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
+						.parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
 					continue;
 				}
+//				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
+//					continue;
+//				}
 				count++;
 			}
 
