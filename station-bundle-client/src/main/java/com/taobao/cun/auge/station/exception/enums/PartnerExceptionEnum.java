@@ -38,6 +38,9 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_MOBILE_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_MOBILE_IS_NULL", "手机号不能为空");
 	
+	public static final PartnerExceptionEnum PARTNER_NOT_FINISH_COURSE = new PartnerExceptionEnum(
+			"PARTNER_NOT_FINISH_COURSE", "当前合伙人没有完成培训");
+	
 	
 
 	static {
@@ -54,6 +57,7 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_STATE_NOT_APPLICABLE", PARTNER_STATE_NOT_APPLICABLE);
 		mappings.put("PARTNER_MOBILE_CHECK_FAIL", PARTNER_MOBILE_CHECK_FAIL);
 		mappings.put("PARTNER_MOBILE_IS_NULL", PARTNER_MOBILE_IS_NULL);
+		mappings.put("PARTNER_NOT_FINISH_COURSE", PARTNER_NOT_FINISH_COURSE);
 
 	}
 

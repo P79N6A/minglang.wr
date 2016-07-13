@@ -85,7 +85,9 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
@@ -824,6 +826,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long instanceId = openStationDto.getPartnerInstanceId();
 		String operator = openStationDto.getOperator();
 		try {
+			//检查装修中的生命周期（装修，培训）完成后，才能开业
+			checkPartnerLifecycleForOpenStation(instanceId);
+			
 			if (openStationDto.isImme()) {// 立即开业
 				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 				if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
@@ -849,12 +854,35 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 同步station_apply
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 			}
+		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		return true;
+	}
+	/**
+	 * 检查装修中的生命周期（装修，培训）完成后，才能开业
+	 * @param instanceId
+	 */
+	private void checkPartnerLifecycleForOpenStation(Long instanceId)  throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
+				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		if (!PartnerLifecycleCourseStatusEnum.DONE.getCode().equals(items.getCourseStatus())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
+		}
+		
+		if (!PartnerLifecycleDecorateStatusEnum.DONE.getCode().equals(items.getDecorateStatus())) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+		}
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
