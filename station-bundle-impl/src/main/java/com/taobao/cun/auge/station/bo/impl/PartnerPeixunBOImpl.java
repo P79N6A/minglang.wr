@@ -36,7 +36,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
 		//判断是否是村淘入驻培训订单
-		String code=ob.getString("code");
+		String code=ob.getString("serviceCode");
 		if(!"111".equals(code)){
 			return;
 		}
@@ -53,9 +53,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private void handlePaymentSucess(JSONObject ob){
-		Long userId=ob.getLong("userId");
-		String orderNum=ob.getString("orderNum");
-		String code=ob.getString("code");
+		Long userId=ob.getLong("buyerAliId");
+		String orderNum=ob.getString("orderNo");
+		String code=ob.getString("serviceCode");
 		Assert.notNull(userId);
 		Assert.notNull(orderNum);
 		Assert.notNull(code);
@@ -85,8 +85,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 
 	private void handleComplete(JSONObject ob){
-		Long userId=ob.getLong("userId");
-		String orderNum=ob.getString("orderNum");
+		Long userId=ob.getLong("buyerAliId");
+		String orderNum=ob.getString("orderNo");
 		Assert.notNull(userId);
 		Assert.notNull(orderNum);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
