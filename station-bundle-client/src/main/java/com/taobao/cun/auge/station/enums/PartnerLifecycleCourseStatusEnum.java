@@ -12,16 +12,14 @@ import java.util.Map;
 public class PartnerLifecycleCourseStatusEnum  implements Serializable {
 	
 	private static final long serialVersionUID = -119918219648000754L;
-	public static final PartnerLifecycleCourseStatusEnum NEW  = new PartnerLifecycleCourseStatusEnum("NEW", "未培训");
-    public static final PartnerLifecycleCourseStatusEnum WAIT_SIGN = new PartnerLifecycleCourseStatusEnum("WAIT_SIGN", "待签到");
- 	public static final PartnerLifecycleCourseStatusEnum DONE = new PartnerLifecycleCourseStatusEnum("DONE", "已培训");
+	public static final PartnerLifecycleCourseStatusEnum N  = new PartnerLifecycleCourseStatusEnum("N", "未培训");
+ 	public static final PartnerLifecycleCourseStatusEnum Y = new PartnerLifecycleCourseStatusEnum("Y", "已培训");
 	
 	private static final Map<String, PartnerLifecycleCourseStatusEnum> mappings = new HashMap<String, PartnerLifecycleCourseStatusEnum>();
 	
 	static {
-		mappings.put("NEW", NEW);
-		mappings.put("WAIT_SIGN", WAIT_SIGN);
-		mappings.put("DONE", DONE);
+		mappings.put("N", N);
+		mappings.put("Y", Y);
 	}
 
 	private String code;

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -28,6 +29,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
@@ -47,15 +49,17 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -97,6 +101,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
+	@Autowired
+	PartnerPeixunBO partnerPeixunBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -309,11 +316,38 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+		
+		//初始化装修中生命周期
+		initPartnerLifeCycleForDecorating(rel);
 
 		// 发送装修中事件
 		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, settleSuccessDto);
 		// 发送装修中事件，手机端使用
 		dispacthEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
+	}
+	
+	/**
+	 * 构建装修中生命周期
+	 * @param rel
+	 */
+	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
+		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
+		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
+		
+		PartnerCourseRecord pcr = partnerPeixunBO.initPartnerApplyInRecord(rel.getTaobaoUserId());
+		if (PartnerPeixunStatusEnum.DONE.getCode().equals(pcr.getStatus())) {
+			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
+		}else {
+			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
+		}
+		
+		//TODO:检查装修
+		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
+		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,

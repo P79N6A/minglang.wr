@@ -874,13 +874,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
 				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			//没有数据 认为是标准化项目之前的数据，直接可以开业
+			return;
 		}
-		if (!PartnerLifecycleCourseStatusEnum.DONE.getCode().equals(items.getCourseStatus())) {
+		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
 		}
 		
-		if (!PartnerLifecycleDecorateStatusEnum.DONE.getCode().equals(items.getDecorateStatus())) {
+		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
 		}
 	}

@@ -12,18 +12,14 @@ import java.util.Map;
 public class PartnerLifecycleDecorateStatusEnum  implements Serializable {
 	
 	private static final long serialVersionUID = -119918219648000754L;
-	public static final PartnerLifecycleDecorateStatusEnum UNDECORATE  = new PartnerLifecycleDecorateStatusEnum("UNDECORATE", "未装修");
-    public static final PartnerLifecycleDecorateStatusEnum DECORATING = new PartnerLifecycleDecorateStatusEnum("DECORATING", "装修中");
- 	public static final PartnerLifecycleDecorateStatusEnum WAIT_AUDIT = new PartnerLifecycleDecorateStatusEnum("WAIT_AUDIT", "装修反馈待审核");
- 	public static final PartnerLifecycleDecorateStatusEnum DONE = new PartnerLifecycleDecorateStatusEnum("DONE", "已装修");
+	public static final PartnerLifecycleDecorateStatusEnum N  = new PartnerLifecycleDecorateStatusEnum("N", "未装修");
+ 	public static final PartnerLifecycleDecorateStatusEnum Y = new PartnerLifecycleDecorateStatusEnum("Y", "已装修");
 	
 	private static final Map<String, PartnerLifecycleDecorateStatusEnum> mappings = new HashMap<String, PartnerLifecycleDecorateStatusEnum>();
 	
 	static {
-		mappings.put("UNDECORATE", UNDECORATE);
-		mappings.put("DECORATING", DECORATING);
-		mappings.put("WAIT_AUDIT", WAIT_AUDIT);
-		mappings.put("DONE", DONE);
+		mappings.put("N", N);
+		mappings.put("Y", Y);
 	}
 
 	private String code;

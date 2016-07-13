@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.support.Assert;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -76,7 +77,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			record.setCourseCode(code);
 			record.setStatus(PartnerPeixunStatusEnum.PAY.getCode());
 			record.setOrderNum(orderNum);
-			record.setGmtModified(new Date());
+			DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
 			partnerCourseRecordMapper.updateByPrimaryKey(record);
 		}else{
 			logger.warn("peixunRecord status :"+record.getStatus());
@@ -100,9 +101,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 		PartnerCourseRecord record=records.get(0);
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
-        record.setGmtModified(new Date());
         record.setGmtDone(new Date());
         record.setOrderNum(orderNum);
+        DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle
 	}
@@ -122,13 +123,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 		PartnerCourseRecord record=new PartnerCourseRecord();
 		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
-		record.setGmtCreate(new Date());
-		record.setGmtModified(new Date());
-		record.setCreator("SYSTEM");
-		record.setModifier("SYSTEM");
-		record.setIsDeleted("n");
 		record.setPartnerUserId(userId);
 		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
+		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
 		return record;
 	}
