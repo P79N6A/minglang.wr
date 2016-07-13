@@ -17,14 +17,13 @@ import com.taobao.notify.remotingclient.MessageListener;
 import com.taobao.notify.remotingclient.MessageStatus;
 
 @Component("processListener")
-public class ProcessListener implements MessageListener {
+public class ProcessListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProcessListener.class);
 
 	@Autowired
 	ProcessProcessor processProcessor;
 
-	@Override
 	public void receiveMessage(Message message, MessageStatus status) {
 		logger.info("BpmNotifyRecieveImpl receiveMessage start");
 		if (message == null)
