@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +34,14 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Autowired
 	PartnerLifecycleBO  partnerLifecycleBO;
 
+	@Value("${partner.apply.in.peixun.code}")
+	private String peixunCode;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
 		//判断是否是村淘入驻培训订单
 		String code=ob.getString("serviceCode");
-		if(!"111".equals(code)){
+		if(!peixunCode.equals(code)){
 			return;
 		}
 		String messageType=strMessage.getMessageType();
