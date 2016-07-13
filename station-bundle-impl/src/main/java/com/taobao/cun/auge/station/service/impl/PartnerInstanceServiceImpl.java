@@ -662,8 +662,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel psRel = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SETTLING);
 			ValidateUtils.notNull(psRel);
 			Long instanceId = psRel.getId();
-			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
-					PartnerLifecycleCurrentStepEnum.PROCESSING);
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
 			if (items == null) {
 				throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 			}
