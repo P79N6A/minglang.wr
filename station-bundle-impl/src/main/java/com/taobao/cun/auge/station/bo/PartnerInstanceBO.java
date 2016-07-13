@@ -95,7 +95,7 @@ public interface PartnerInstanceBO {
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
 
 	/**
-	 * 查询子合伙人数量
+	 * 查询子合伙人
 	 * 
 	 * @param instanceId
 	 * @param stateEnums

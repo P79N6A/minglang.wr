@@ -43,6 +43,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -162,6 +163,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	AppResourceBO appResourceBO;
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
+	
+	@Autowired
+	PartnerInstanceExtBO partnerInstanceExtBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -1383,7 +1387,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 所归属的合伙人的淘帮手不能大于等于5个
 			int parentTpaCount = partnerInstanceBO.getActiveTpaByParentStationId(parentRel.getParentStationId());
-			if (parentTpaCount >= getTpaMax()) {
+			Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(parentRel.getId());
+			if (parentTpaCount >= maxChildNum) {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_HAS_TPA_MAX);
 			}
 
@@ -1403,14 +1408,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} 
 	}
 
-	private Long getTpaMax() {
-		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
-		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-			return Long.parseLong(resource.getValue());
-		}
-		return TPAMAX_DEFAULT;
-	}
-
+//	private Long getTpaMax() {
+//		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
+//		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+//			return Long.parseLong(resource.getValue());
+//		}
+//		return TPAMAX_DEFAULT;
+//	}
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto) throws AugeServiceException {
