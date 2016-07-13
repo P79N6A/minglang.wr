@@ -1,13 +1,13 @@
 package com.taobao.cun.auge.station.bo;
 
-import java.util.List;
-
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import java.lang.Long;
 
 /**
  * 生命周期扩展表 服务
@@ -58,5 +58,30 @@ public interface PartnerLifecycleBO {
 	 */
 	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum) throws AugeServiceException; 
 	
+	/**
+	 * 根据实例id,删除生命周期数据
+	 * @param instanceId
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
 	public void deleteLifecycleItems(Long instanceId,String operator) throws AugeServiceException; 
+	
+	
+	/**
+	 * 更新装修状态
+	 * @param instanceId
+	 * @param decorateStateEnum
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void updateDecorateState(Long instanceId, PartnerLifecycleDecorateStatusEnum decorateStateEnum,OperatorDto operatorDto) throws AugeServiceException; 
+	
+	/**
+	 * 更新培训状态
+	 * @param instanceId
+	 * @param courseStatusEnum
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void updateCourseState(Long instanceId, PartnerLifecycleCourseStatusEnum courseStatusEnum,OperatorDto operatorDto) throws AugeServiceException; 
 }

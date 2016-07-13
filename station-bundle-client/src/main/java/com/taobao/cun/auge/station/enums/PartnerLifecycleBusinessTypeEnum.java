@@ -15,6 +15,7 @@ public class PartnerLifecycleBusinessTypeEnum  implements Serializable {
 	public static final PartnerLifecycleBusinessTypeEnum SETTLING  = new PartnerLifecycleBusinessTypeEnum("SETTLING", "入驻中");
     public static final PartnerLifecycleBusinessTypeEnum CLOSING = new PartnerLifecycleBusinessTypeEnum("CLOSING", "停业中");
  	public static final PartnerLifecycleBusinessTypeEnum QUITING = new PartnerLifecycleBusinessTypeEnum("QUITING", "退出中");
+ 	public static final PartnerLifecycleBusinessTypeEnum DECORATING = new PartnerLifecycleBusinessTypeEnum("DECORATING", "装修中");
 	
 	private static final Map<String, PartnerLifecycleBusinessTypeEnum> mappings = new HashMap<String, PartnerLifecycleBusinessTypeEnum>();
 	
@@ -22,6 +23,7 @@ public class PartnerLifecycleBusinessTypeEnum  implements Serializable {
 		mappings.put("SETTLING", SETTLING);
 		mappings.put("CLOSING", CLOSING);
 		mappings.put("QUITING", QUITING);
+		mappings.put("DECORATING", DECORATING);
 	}
 
 	private String code;
