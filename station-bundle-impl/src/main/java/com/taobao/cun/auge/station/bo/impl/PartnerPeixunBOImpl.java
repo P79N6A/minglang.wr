@@ -19,8 +19,9 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -33,7 +34,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Autowired
 	PartnerCourseRecordMapper partnerCourseRecordMapper;
 	@Autowired
-	PartnerLifecycleBO  partnerLifecycleBO;
+	PartnerInstanceBO  partnerInstanceBO;
 
 	@Value("${partner.apply.in.peixun.code}")
 	private String peixunCode;
@@ -110,6 +111,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle
+        partnerInstanceBO.finishCourse(userId);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -132,6 +134,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
 		return record;
+	}
+
+	@Override
+	public List<PartnerPeixunDto> queryApplyInPeixunList(Long userId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
