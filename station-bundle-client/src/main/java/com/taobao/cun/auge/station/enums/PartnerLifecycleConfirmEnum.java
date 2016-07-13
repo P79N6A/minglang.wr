@@ -12,7 +12,7 @@ import java.util.Map;
 public class PartnerLifecycleConfirmEnum  implements Serializable {
 	
 	private static final long serialVersionUID = -119918219648000754L;
-	public static final PartnerLifecycleConfirmEnum CONFIRM  = new PartnerLifecycleConfirmEnum("CONFIRM ", "确认");
+	public static final PartnerLifecycleConfirmEnum CONFIRM  = new PartnerLifecycleConfirmEnum("CONFIRM", "确认");
     public static final PartnerLifecycleConfirmEnum CANCEL = new PartnerLifecycleConfirmEnum("CANCEL", "取消");
  	public static final PartnerLifecycleConfirmEnum WAIT_CONFIRM = new PartnerLifecycleConfirmEnum("WAIT_CONFIRM", "待确认");
 	
