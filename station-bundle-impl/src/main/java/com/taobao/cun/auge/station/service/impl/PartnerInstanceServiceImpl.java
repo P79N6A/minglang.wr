@@ -941,7 +941,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		} catch (AugeServiceException e) {
-			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.getMessage());
+			String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1073,7 +1073,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, confirmCloseDto);
 			}
 		} catch (AugeServiceException e) {
-			String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.getMessage());
+			String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1136,7 +1136,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
 		} catch (AugeServiceException e) {
-			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
+			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1210,7 +1210,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 失效tair
 		} catch (AugeServiceException e) {
-			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
+			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1291,6 +1291,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 			return instanceId;
 		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), augeException.toString());
+			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), e.getMessage());
@@ -1305,7 +1307,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApplyBO.addStationApply(instanceId);
 			break;
 		case DELETE:
-			throw new AugeServiceException("delete is not support!");
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		default:
 			syncStationApplyBO.updateStationApply(instanceId, type);
 			break;
@@ -1332,6 +1334,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), augeException.toString());
+			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), e.getMessage());
@@ -1402,6 +1406,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
 		} catch (AugeServiceException augeException) {
+			String error = getErrorMessage("degradePartnerInstance", JSON.toJSONString(degradeDto), augeException.toString());
+			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("degradePartnerInstance", JSON.toJSONString(degradeDto), e.getMessage());
