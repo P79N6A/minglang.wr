@@ -171,6 +171,12 @@
         }
     ],
     "TPV": [
+       {
+            "stationApplyState": "SERVICING",
+            "desc": "村拍档station_apply SERVICING",
+            "partnerInstanceState": "SERVICING",
+            "condition": {}
+        },
         {
             "stationApplyState": "SERVICING",
             "desc": "合伙人station_apply SERVICING",

@@ -36,7 +36,7 @@ public class PartnerInstancePageCondition extends PageQuery{
 	private StationApplyStateEnum stationApplyState;
 
 	// 合伙人类型
-	@NotNull(message = "partnerType is null")
+//	@NotNull(message = "partnerType is null")
 	private PartnerInstanceTypeEnum partnerType;
 
 	// 所属TP商id
