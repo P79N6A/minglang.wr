@@ -8,9 +8,9 @@ public class PartnerInstanceExtDto implements Serializable {
 
 	private Long instanceId;
 
-	private int curChildNum;
+	private Integer curChildNum;
 
-	private int maxChildNum;
+	private Integer maxChildNum;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -20,20 +20,19 @@ public class PartnerInstanceExtDto implements Serializable {
 		this.instanceId = instanceId;
 	}
 
-	public int getCurChildNum() {
+	public Integer getCurChildNum() {
 		return curChildNum;
 	}
 
-	public void setCurChildNum(int curChildNum) {
+	public void setCurChildNum(Integer curChildNum) {
 		this.curChildNum = curChildNum;
 	}
 
-	public int getMaxChildNum() {
+	public Integer getMaxChildNum() {
 		return maxChildNum;
 	}
 
-	public void setMaxChildNum(int maxChildNum) {
+	public void setMaxChildNum(Integer maxChildNum) {
 		this.maxChildNum = maxChildNum;
 	}
-
 }
