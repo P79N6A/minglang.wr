@@ -517,6 +517,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
 			}
 			
+			// 修改子成员配额
+			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
+			if (null != childNum) {
+				partnerInstanceExtBO.updatePartnerMaxChildNum(partnerInstanceId, childNum, partnerInstanceUpdateServicingDto.getOperator());
+			}
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
 			logger.error(error, augeException);

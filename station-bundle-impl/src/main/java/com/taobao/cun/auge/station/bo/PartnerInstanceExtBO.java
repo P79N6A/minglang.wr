@@ -21,5 +21,12 @@ public interface PartnerInstanceExtBO {
 	 * @return
 	 */
 	public List<PartnerInstanceExt> findPartnerInstanceExts(List<Long> instanceIds);
-
+	
+	/**
+	 * 修改合伙人最大子成员配额
+	 * 
+	 * @param instanceId
+	 * @param maxNum
+	 */
+	public void updatePartnerMaxChildNum(Long instanceId, Integer maxNum,String operator);
 }

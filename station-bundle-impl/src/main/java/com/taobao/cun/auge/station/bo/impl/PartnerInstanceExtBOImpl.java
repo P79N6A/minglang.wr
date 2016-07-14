@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -54,5 +55,23 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 		criteria.andIsDeletedEqualTo("n");
 		
 		return partnerInstanceExtMapper.selectByExample(example);
+	}
+
+	@Override
+	public void updatePartnerMaxChildNum(Long instanceId, Integer maxNum,String operator) {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(maxNum);
+		
+		PartnerInstanceExtExample example = new PartnerInstanceExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andPartnerInstanceIdEqualTo(instanceId);
+		criteria.andIsDeletedEqualTo("n");
+		
+		PartnerInstanceExt record = new PartnerInstanceExt();
+		record.setMaxChildNum(maxNum);
+		record.setModifier(operator);
+		record.setGmtModified(new Date());		
+		partnerInstanceExtMapper.updateByExampleSelective(record, example);
+		
 	}
 }
