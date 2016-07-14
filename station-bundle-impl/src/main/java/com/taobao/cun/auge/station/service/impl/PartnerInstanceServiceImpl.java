@@ -714,6 +714,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
 		accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
 		accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
+		accountMoneyDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		accountMoneyDto.setObjectId(instanceId);
 		accountMoneyDto.setState(AccountMoneyStateEnum.WAIT_FROZEN);
 		accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
