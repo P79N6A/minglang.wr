@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -114,9 +115,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			// 参数校验
 			BeanValidator.validateWithThrowable(condition);
 			PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
-			if (psRel == null) {
-				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
-			}
+			Assert.notNull(psRel,"partner instace not exists");
+			
 			// 获得生命周期数据
 			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
 					.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
