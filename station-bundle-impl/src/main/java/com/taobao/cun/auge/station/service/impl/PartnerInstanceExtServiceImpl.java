@@ -39,15 +39,15 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		List<PartnerInstanceStateEnum> validChildStates = PartnerInstanceStateEnum.getValidChildStates();
 		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, validChildStates);
 		if (CollectionUtil.isEmpty(children)) {
-			return Boolean.TRUE;
+			return Boolean.FALSE;
 		}
 		
 		int childrenNum = children.size();
 		Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
 		if (childrenNum >= maxChildNum) {
-			return Boolean.FALSE;
+			return Boolean.TRUE;
 		}
-		return Boolean.TRUE;
+		return Boolean.FALSE;
 	}
 
 }
