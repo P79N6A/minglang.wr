@@ -8,14 +8,5 @@
     http://www.springframework.org/schema/context/spring-beans-3.0.xsd"
 	default-autowire="byName">
 
-	<bean id="trainingRecordServiceFacade" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="syncInit">
-		<property name="interfaceName" value="com.alibaba.ivy.service.user.TrainingRecordServiceFacade" />
-		<property name="version" value="${partner.peixun.service.version}" />
-	</bean>
-	
-	<bean id="courseServiceFacade" class="com.taobao.hsf.app.spring.util.HSFSpringConsumerBean" init-method="syncInit">
-		<property name="interfaceName" value="com.alibaba.ivy.service.course.CourseServiceFacade" />
-		<property name="version" value="${partner.peixun.service.version}" />
-	</bean>
 	
 </beans>

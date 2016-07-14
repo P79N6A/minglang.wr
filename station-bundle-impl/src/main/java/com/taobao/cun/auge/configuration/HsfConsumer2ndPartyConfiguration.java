@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
+import com.alibaba.ivy.service.course.CourseServiceFacade;
+import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
@@ -42,4 +44,13 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return getConsumerBean(StationUserWriteService.class, HSFGroup.HSF, version, 3000);
 	}
 
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean trainingRecordServiceFacade(@Value("${partner.peixun.service.version}") String version) {
+		return getConsumerBean(TrainingRecordServiceFacade.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean courseServiceFacade(@Value("${partner.peixun.service.version}") String version) {
+		return getConsumerBean(CourseServiceFacade.class, HSFGroup.HSF, version, 3000);
+	}
 }
