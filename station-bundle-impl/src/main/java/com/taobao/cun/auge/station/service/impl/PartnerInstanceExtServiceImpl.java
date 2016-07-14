@@ -1,20 +1,24 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.util.CollectionUtil;
 
 @Service("partnerInstanceExtService")
 @HSFProvider(serviceInterface = PartnerInstanceExtService.class)
@@ -36,18 +40,46 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		}
 		Long instanceId = parent.getId();
 
-		List<PartnerInstanceStateEnum> validChildStates = PartnerInstanceStateEnum.getValidChildStates();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, validChildStates);
-		if (CollectionUtil.isEmpty(children)) {
-			return Boolean.FALSE;
-		}
-		
-		int childrenNum = children.size();
+		int childrenNum = findPartnerChildrenNum(instanceId);
 		Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
-		if (childrenNum >= maxChildNum) {
-			return Boolean.TRUE;
-		}
-		return Boolean.FALSE;
+		return childrenNum >= maxChildNum;
 	}
 
+	@Override
+	public List<PartnerInstanceExtDto> findPartnerExtInfos(List<Long> instanceIds) {
+		if (CollectionUtils.isEmpty(instanceIds)) {
+			return Collections.<PartnerInstanceExtDto> emptyList();
+		}
+
+		List<PartnerInstanceExt> instanceExts = partnerInstanceExtBO.findPartnerInstanceExts(instanceIds);
+		List<PartnerInstanceExtDto> instanceExtDtos = new ArrayList<PartnerInstanceExtDto>(instanceExts.size());
+		for (PartnerInstanceExt instanceExt : instanceExts) {
+			if (null == instanceExt) {
+				continue;
+			}
+			Long partnerInstanceId = instanceExt.getPartnerInstanceId();
+
+			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+
+			instanceExtDto.setInstanceId(partnerInstanceId);
+			instanceExtDto.setMaxChildNum(instanceExt.getMaxChildNum());
+			instanceExtDto.setCurChildNum(findPartnerChildrenNum(partnerInstanceId));
+
+			instanceExtDtos.add(instanceExtDto);
+
+		}
+		return instanceExtDtos;
+	}
+
+	// 查询下一级合伙人的数量
+	private int findPartnerChildrenNum(Long partnerInstanceId) {
+		try {
+			List<PartnerInstanceStateEnum> validChildStates = PartnerInstanceStateEnum.getValidChildStates();
+			List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerInstanceId, validChildStates);
+
+			return CollectionUtils.size(children);
+		} catch (Exception e) {
+			return 0;
+		}
+	}
 }
