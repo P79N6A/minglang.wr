@@ -17,10 +17,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
+import com.alibaba.ivy.enums.TrainStatus;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.course.dto.CourseDTO;
 import com.alibaba.ivy.service.course.query.CourseQueryDTO;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
+import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
+import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -173,17 +176,20 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
 					record.getStatus()).getDesc());
 			if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
-				try {
 					// 获取课程信息
 					CourseDTO course=getCourseFromPeixun(record.getCourseCode());
 					result.setCourseName(course.getName());
 					result.setCourseAmount(course.getPrice());
 					result.setGmtDone(record.getGmtDone());
 					result.setCourseCode(peixunCode);
-				} catch (Exception e) {
-					logger.error("queryApplyInPeixunList error", e);
-					throw new RuntimeException(e);
+					result.setOrderNum(record.getOrderNum());
+			}else{
+				//查询有没有未付款订单信息
+				List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(peixunCode,userId);
+				if(trainRecords.size()>0){
+					result.setOrderNum(trainRecords.get(0).getOrderItemNum());
 				}
+				return result;
 			}
 		}
 		return result;
@@ -197,15 +203,43 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		auth.setCode(peixunCode);
 		CourseQueryDTO courseQuery = new CourseQueryDTO();
 		courseQuery.setCodes(Lists.newArrayList(peixunCode));
-		ResultDTO<PageDTO<CourseDTO>> courseResult = courseServiceFacade.find(
-				auth, courseQuery, 100, 1);
-		if (courseResult.isSuccess()
-				&& courseResult.getData().getRows().size() > 0) {
-			return courseResult.getData().getRows().get(0);
-		} else {
-			throw new RuntimeException("query course error,"
-					+ courseResult.getMsg());
+		try {
+			ResultDTO<PageDTO<CourseDTO>> courseResult = courseServiceFacade
+					.find(auth, courseQuery, 100, 1);
+			if (courseResult.isSuccess()
+					&& courseResult.getData().getRows().size() > 0) {
+				return courseResult.getData().getRows().get(0);
+			} else {
+				throw new RuntimeException("query course error,"
+						+ courseResult.getMsg());
+			}
+		} catch (Exception e) {
+			logger.error("queryApplyInPeixunList error", e);
+			throw new RuntimeException(e);
 		}
 	}
 	
+	private List<TrainingRecordDTO> getRecordFromPeixun(String code, Long userId) {
+		AppAuthDTO auth = new AppAuthDTO();
+		auth.setAuthkey(peixunClientKey);
+		auth.setCode(peixunCode);
+		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
+		query.addCourseCode(code);
+		query.addTrainee(String.valueOf(userId));
+		query.addStatus(TrainStatus.NotEffect.value());
+		try {
+			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
+					.find(auth, query, 100, 1);
+			if (result.isSuccess()) {
+				return result.getData().getRows();
+			} else {
+				throw new RuntimeException("query record error,"
+						+ result.getMsg());
+			}
+		} catch (Exception e) {
+			logger.error("queryPeixunRecordList error", e);
+			throw new RuntimeException(e);
+		}
+	}
+
 }
