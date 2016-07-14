@@ -14,6 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.support.Assert;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.ivy.common.AppAuthDTO;
+import com.alibaba.ivy.common.PageDTO;
+import com.alibaba.ivy.common.ResultDTO;
+import com.alibaba.ivy.service.course.CourseServiceFacade;
+import com.alibaba.ivy.service.course.dto.CourseDTO;
+import com.alibaba.ivy.service.course.query.CourseQueryDTO;
+import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
@@ -35,9 +43,19 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	PartnerCourseRecordMapper partnerCourseRecordMapper;
 	@Autowired
 	PartnerInstanceBO  partnerInstanceBO;
+	@Autowired
+	TrainingRecordServiceFacade trainingRecordServiceFacade;
+	@Autowired
+	CourseServiceFacade courseServiceFacade;
 
 	@Value("${partner.apply.in.peixun.code}")
 	private String peixunCode;
+	
+	@Value("${partner.peixun.client.code}")
+	private String peixunClientCode;
+	
+	@Value("${partner.peixun.client.key}")
+	private String peixunClientKey;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
@@ -137,9 +155,57 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 
 	@Override
-	public List<PartnerPeixunDto> queryApplyInPeixunList(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
+	public PartnerPeixunDto queryApplyInPeixunRecord(Long userId) {
+		Assert.notNull(userId);
+		PartnerPeixunDto result = new PartnerPeixunDto();
+		result.setUserId(userId);
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andPartnerUserIdEqualTo(userId);
+		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN
+				.getCode());
+		List<PartnerCourseRecord> records = partnerCourseRecordMapper
+				.selectByExample(example);
+		if (records.size() > 0) {
+			PartnerCourseRecord record = records.get(0);
+			result.setStatus(record.getStatus());
+			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
+					record.getStatus()).getDesc());
+			if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
+				try {
+					// 获取课程信息
+					CourseDTO course=getCourseFromPeixun(record.getCourseCode());
+					result.setCourseName(course.getName());
+					result.setCourseAmount(course.getPrice());
+					result.setGmtDone(record.getGmtDone());
+					result.setCourseCode(peixunCode);
+				} catch (Exception e) {
+					logger.error("queryApplyInPeixunList error", e);
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		return result;
+	}
+	
+	
+	
+	private CourseDTO getCourseFromPeixun(String code) {
+		AppAuthDTO auth = new AppAuthDTO();
+		auth.setAuthkey(peixunClientKey);
+		auth.setCode(peixunCode);
+		CourseQueryDTO courseQuery = new CourseQueryDTO();
+		courseQuery.setCodes(Lists.newArrayList(peixunCode));
+		ResultDTO<PageDTO<CourseDTO>> courseResult = courseServiceFacade.find(
+				auth, courseQuery, 100, 1);
+		if (courseResult.isSuccess()
+				&& courseResult.getData().getRows().size() > 0) {
+			return courseResult.getData().getRows().get(0);
+		} else {
+			throw new RuntimeException("query course error,"
+					+ courseResult.getMsg());
+		}
 	}
 	
 }

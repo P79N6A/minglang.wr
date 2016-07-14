@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.bo;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
@@ -33,6 +31,6 @@ public interface PartnerPeixunBO {
 	 * @param userId
 	 * @return
 	 */
-	public List<PartnerPeixunDto> queryApplyInPeixunList(Long userId);
+	public PartnerPeixunDto queryApplyInPeixunRecord(Long userId);
 	
 }

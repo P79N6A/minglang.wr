@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class PartnerPeixunDto implements Serializable{
@@ -14,6 +15,9 @@ public class PartnerPeixunDto implements Serializable{
 	private Date gmtDone;
 	private String courseType;
 	private String courseTypeDesc;
+	private String courseName;
+	private BigDecimal courseAmount;
+	
 	public Long getUserId() {
 		return userId;
 	}
@@ -61,6 +65,18 @@ public class PartnerPeixunDto implements Serializable{
 	}
 	public void setCourseTypeDesc(String courseTypeDesc) {
 		this.courseTypeDesc = courseTypeDesc;
+	}
+	public String getCourseName() {
+		return courseName;
+	}
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	public BigDecimal getCourseAmount() {
+		return courseAmount;
+	}
+	public void setCourseAmount(BigDecimal courseAmount) {
+		this.courseAmount = courseAmount;
 	}
 	
 	
