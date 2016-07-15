@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 服务站装修表，装修状态枚举
+ * 服务站装修表，isvalid枚举
  * @author quanzhu.wangqz
  *
  */

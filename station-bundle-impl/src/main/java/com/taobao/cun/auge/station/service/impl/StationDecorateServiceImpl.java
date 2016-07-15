@@ -7,12 +7,21 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -32,6 +41,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
+	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
 		// 参数校验
@@ -42,12 +54,17 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		try {
-			StationDecorateDto sdDto =new StationDecorateDto();
-			sdDto.setId(stationDecorateAuditDto.getId());
-			sdDto.setAuditOpinion(stationDecorateAuditDto.getAuditOpinion() == null ? "" : stationDecorateAuditDto.getAuditOpinion());
-			sdDto.setStatus(StationDecorateStatusEnum.DONE);
-			sdDto.copyOperatorDto(stationDecorateAuditDto);
-			stationDecorateBO.updateStationDecorate(sdDto);
+			Long sdId = stationDecorateAuditDto.getId();
+			StationDecorate sd = stationDecorateBO.getStationDecorateById(sdId);
+			if (sd == null) {
+				String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "StationDecorate is null");
+				logger.error(error);
+				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			}
+			//审批服务站装修记录
+			auditStationDecorate(stationDecorateAuditDto);
+			//更新生命周期表为已完成
+			setLifecycleDecorate(stationDecorateAuditDto, sd);
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
@@ -55,6 +72,34 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	private void setLifecycleDecorate(
+			StationDecorateAuditDto stationDecorateAuditDto, StationDecorate sd) {
+		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(sd.getPartnerUserId());
+		if (rel == null) {
+			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "PartnerStationRel is null");
+			logger.error(error);
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
+				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setLifecycleId(items.getId());
+		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+		partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
+		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
+	}
+
+	private void auditStationDecorate(
+			StationDecorateAuditDto stationDecorateAuditDto) {
+		StationDecorateDto sdDto =new StationDecorateDto();
+		sdDto.setId(stationDecorateAuditDto.getId());
+		sdDto.setAuditOpinion(stationDecorateAuditDto.getAuditOpinion() == null ? "" : stationDecorateAuditDto.getAuditOpinion());
+		sdDto.setStatus(StationDecorateStatusEnum.DONE);
+		sdDto.copyOperatorDto(stationDecorateAuditDto);
+		stationDecorateBO.updateStationDecorate(sdDto);
 	}
 	
 	private String getErrorMessage(String methodName, String param, String error) {

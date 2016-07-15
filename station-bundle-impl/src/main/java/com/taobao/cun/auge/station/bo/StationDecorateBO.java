@@ -68,4 +68,12 @@ public interface StationDecorateBO {
 	 * @throws AugeServiceException
 	 */
 	public StationDecorate getStationDecorateByStationId(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 根据主键查询服务站装修记录
+	 * @param id
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public StationDecorate getStationDecorateById(Long id) throws AugeServiceException;
 }

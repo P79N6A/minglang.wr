@@ -10,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.PageHelper;
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
-import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
@@ -31,7 +29,6 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -70,6 +67,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		if (record.getShopId() ==null) {
 			record.setShopId(getShopId(stationId));
 		}
+		record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
+		record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
 		DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
 		stationDecorateMapper.insert(record);
 		return record;
@@ -177,7 +176,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			return null;
 		}
 		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
+		//添加附件
 		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
+		//TODO：在未装修或装修中是，查询淘宝订单状态
 		return sdDto; 
 	}
 
@@ -199,6 +200,13 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public StationDecorate getStationDecorateById(Long id)
+			throws AugeServiceException {
+		ValidateUtils.notNull(id);
+		return stationDecorateMapper.selectByPrimaryKey(id);
 	}
 
 	

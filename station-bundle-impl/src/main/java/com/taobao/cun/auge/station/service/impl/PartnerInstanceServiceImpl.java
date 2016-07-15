@@ -884,6 +884,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
 		}
+		
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setLifecycleId(items.getId());
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
+		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
