@@ -33,7 +33,7 @@ public class StationDecorateConverter {
 		stationDecorateDto.setReflectNick(stationDecorate.getReflectNick());
 		stationDecorateDto.setReflectOrderNum(stationDecorate.getReflectOrderNum());
 		stationDecorateDto.setReflectUserId(stationDecorate.getReflectUserId());
-		stationDecorateDto.setShopId(stationDecorate.getShopId());
+		stationDecorateDto.setSellerTaobaoUserId(stationDecorate.getSellerTaobaoUserId());
 		stationDecorateDto.setStationId(stationDecorate.getStationId());
 		stationDecorateDto.setStatus(StationDecorateStatusEnum.valueof(stationDecorate.getStatus()));
 		stationDecorateDto.setTaobaoOrderNum(stationDecorate.getTaobaoOrderNum());
@@ -55,7 +55,7 @@ public class StationDecorateConverter {
 		stationDecorate.setReflectNick(stationDecorateDto.getReflectNick());
 		stationDecorate.setReflectOrderNum(stationDecorateDto.getReflectOrderNum());
 		stationDecorate.setReflectUserId(stationDecorateDto.getReflectUserId());
-		stationDecorate.setShopId(stationDecorateDto.getShopId());
+		stationDecorate.setSellerTaobaoUserId(stationDecorateDto.getSellerTaobaoUserId());
 		stationDecorate.setStationId(stationDecorateDto.getStationId());
 		stationDecorate.setStatus(stationDecorateDto.getStatus() ==null? null:stationDecorateDto.getStatus().getCode());
 		stationDecorate.setTaobaoOrderNum(stationDecorateDto.getTaobaoOrderNum());

@@ -64,8 +64,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		
 		StationDecorate record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
 		//添加店铺id
-		if (record.getShopId() ==null) {
-			record.setShopId(getShopId(stationId));
+		if (record.getSellerTaobaoUserId() ==null) {
+			record.setSellerTaobaoUserId(getSeller(stationId));
 		}
 		record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
 		record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
@@ -74,7 +74,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		return record;
 	}
 	
-	private String getShopId(Long stationId) {
+	private String getSeller(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
 		if (station == null) {
 			logger.error("stationBO.getStationById is null"+stationId);
