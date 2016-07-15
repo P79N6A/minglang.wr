@@ -3,8 +3,6 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,23 +171,26 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		List<PartnerCourseRecord> records = partnerCourseRecordMapper
 				.selectByExample(example);
 		if (records.size() > 0) {
+			// 获取课程信息
+			CourseDTO course=getCourseFromPeixun(peixunCode);
+			result.setCourseName(course.getName());
+			result.setCourseAmount(course.getPrice());
+			result.setCourseCode(peixunCode);
+			result.setLogo(course.getLogo());
 			PartnerCourseRecord record = records.get(0);
 			result.setStatus(record.getStatus());
 			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
 					record.getStatus()).getDesc());
 			if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
-					// 获取课程信息
-					CourseDTO course=getCourseFromPeixun(record.getCourseCode());
-					result.setCourseName(course.getName());
-					result.setCourseAmount(course.getPrice());
 					result.setGmtDone(record.getGmtDone());
-					result.setCourseCode(peixunCode);
 					result.setOrderNum(record.getOrderNum());
 			}else{
 				//查询有没有未付款订单信息
 				List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(peixunCode,userId);
 				if(trainRecords.size()>0){
 					result.setOrderNum(trainRecords.get(0).getOrderItemNum());
+					result.setStatus("WAIT_PAY");
+					result.setStatusDesc("待付款");
 				}
 				return result;
 			}

@@ -17,6 +17,7 @@ public class PartnerPeixunDto implements Serializable{
 	private String courseTypeDesc;
 	private String courseName;
 	private BigDecimal courseAmount;
+	private String logo;
 	
 	public Long getUserId() {
 		return userId;
@@ -77,6 +78,12 @@ public class PartnerPeixunDto implements Serializable{
 	}
 	public void setCourseAmount(BigDecimal courseAmount) {
 		this.courseAmount = courseAmount;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 	
 	
