@@ -210,7 +210,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private String getTicketNo(List<TrainingRecordDTO> trainRecords,String orderNum){
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunCode);
+		auth.setCode(peixunClientCode);
 		for(TrainingRecordDTO dto:trainRecords){
 			if(orderNum.equals(dto.getOrderItemNum())){
 				ResultDTO<TrainingTicketDTO> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
@@ -227,7 +227,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private CourseDTO getCourseFromPeixun(String code) {
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunCode);
+		auth.setCode(peixunClientCode);
 		CourseQueryDTO courseQuery = new CourseQueryDTO();
 		courseQuery.setCodes(Lists.newArrayList(peixunCode));
 		try {
@@ -249,7 +249,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private List<TrainingRecordDTO> getRecordFromPeixun(String code, Long userId) {
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunCode);
+		auth.setCode(peixunClientCode);
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
 		query.addCourseCode(code);
 		query.addTrainee(String.valueOf(userId));
