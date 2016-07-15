@@ -3,8 +3,6 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,9 @@ import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.course.dto.CourseDTO;
 import com.alibaba.ivy.service.course.query.CourseQueryDTO;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
+import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
+import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -52,7 +52,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	@Autowired
 	CourseServiceFacade courseServiceFacade;
-
+	@Autowired
+	TrainingTicketServiceFacade trainingTicketServiceFacade;
+	
 	@Value("${partner.apply.in.peixun.code}")
 	private String peixunCode;
 	
@@ -173,23 +175,31 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		List<PartnerCourseRecord> records = partnerCourseRecordMapper
 				.selectByExample(example);
 		if (records.size() > 0) {
+			// 获取课程信息
+			CourseDTO course=getCourseFromPeixun(peixunCode);
+			result.setCourseName(course.getName());
+			result.setCourseAmount(course.getPrice());
+			result.setCourseCode(peixunCode);
+			result.setLogo(course.getLogo());
 			PartnerCourseRecord record = records.get(0);
 			result.setStatus(record.getStatus());
 			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
 					record.getStatus()).getDesc());
+			//获取培训记录
+			List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(peixunCode,userId);
 			if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
-					// 获取课程信息
-					CourseDTO course=getCourseFromPeixun(record.getCourseCode());
-					result.setCourseName(course.getName());
-					result.setCourseAmount(course.getPrice());
 					result.setGmtDone(record.getGmtDone());
-					result.setCourseCode(peixunCode);
 					result.setOrderNum(record.getOrderNum());
+					result.setGmtOrder(record.getGmtCreate());
+					//获取签到码
+					result.setTicketNo(getTicketNo(trainRecords,record.getOrderNum()));
 			}else{
 				//查询有没有未付款订单信息
-				List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(peixunCode,userId);
 				if(trainRecords.size()>0){
 					result.setOrderNum(trainRecords.get(0).getOrderItemNum());
+					result.setStatus("WAIT_PAY");
+					result.setStatusDesc("待付款");
+					result.setGmtOrder(record.getGmtCreate());
 				}
 				return result;
 			}
@@ -197,7 +207,22 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		return result;
 	}
 	
-	
+	private String getTicketNo(List<TrainingRecordDTO> trainRecords,String orderNum){
+		AppAuthDTO auth = new AppAuthDTO();
+		auth.setAuthkey(peixunClientKey);
+		auth.setCode(peixunCode);
+		for(TrainingRecordDTO dto:trainRecords){
+			if(orderNum.equals(dto.getOrderItemNum())){
+				ResultDTO<TrainingTicketDTO> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
+				if(ticketDto.isSuccess()){
+					return ticketDto.getData().getTicketNo();
+				}else{
+					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
+				}
+			}
+		}
+		return null;
+	}
 	
 	private CourseDTO getCourseFromPeixun(String code) {
 		AppAuthDTO auth = new AppAuthDTO();

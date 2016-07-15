@@ -17,6 +17,9 @@ public class PartnerPeixunDto implements Serializable{
 	private String courseTypeDesc;
 	private String courseName;
 	private BigDecimal courseAmount;
+	private String logo;
+	private Date gmtOrder;
+	private String ticketNo;
 	
 	public Long getUserId() {
 		return userId;
@@ -77,6 +80,24 @@ public class PartnerPeixunDto implements Serializable{
 	}
 	public void setCourseAmount(BigDecimal courseAmount) {
 		this.courseAmount = courseAmount;
+	}
+	public String getLogo() {
+		return logo;
+	}
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+	public Date getGmtOrder() {
+		return gmtOrder;
+	}
+	public void setGmtOrder(Date gmtOrder) {
+		this.gmtOrder = gmtOrder;
+	}
+	public String getTicketNo() {
+		return ticketNo;
+	}
+	public void setTicketNo(String ticketNo) {
+		this.ticketNo = ticketNo;
 	}
 	
 	
