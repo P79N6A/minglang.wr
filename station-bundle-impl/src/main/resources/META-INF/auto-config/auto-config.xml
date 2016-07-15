@@ -49,6 +49,8 @@
 		<property name="partner.peixun.client.code" defaultValue="TWTP1YC" description="培训平台交互code" />
 		<property name="partner.peixun.client.key" defaultValue="666L83IJ06RD" description="培训平台交互key" />
 		<property name="partner.peixun.service.version" defaultValue="1.0.0.daily" description="培训平台交互version" />
+		<property name="hsf.consumer.version.auge.cuntaoOrgService" defaultValue="1.0.0.daily" description="村淘组织服务version" />
+		
 
 	</group>
 .

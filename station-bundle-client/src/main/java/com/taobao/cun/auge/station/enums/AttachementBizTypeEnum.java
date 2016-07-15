@@ -21,11 +21,13 @@ public class AttachementBizTypeEnum implements Serializable {
 
     public static final AttachementBizTypeEnum PARTNER = new AttachementBizTypeEnum("PARTNER", "合伙人");
     public static final AttachementBizTypeEnum CRIUS_STATION = new AttachementBizTypeEnum("CRIUS_STATION", "村点");
+    public static final AttachementBizTypeEnum STATION_DECORATE = new AttachementBizTypeEnum("STATION_DECORATE", "村点装修记录");
 
 
     static {
         mappings.put("PARTNER", PARTNER);
         mappings.put("CRIUS_STATION", CRIUS_STATION);
+        mappings.put("STATION_DECORATE", STATION_DECORATE);
     }
 
     public AttachementBizTypeEnum(String code, String desc) {
