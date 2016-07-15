@@ -24,6 +24,10 @@ public class AttachementTypeIdEnum implements Serializable {
 	public static final AttachementTypeIdEnum LESSOR_IDCARD = new AttachementTypeIdEnum(6L, "出租人身份证");
 	public static final AttachementTypeIdEnum PROPERTY_PROVE = new AttachementTypeIdEnum(7L, "房产证明");
 	public static final AttachementTypeIdEnum GOV_PROTOCOL = new AttachementTypeIdEnum(8L, "政府协议");
+	
+	public static final AttachementTypeIdEnum STATION_DECORATE_SYYJ = new AttachementTypeIdEnum(10L, "服务站装修记录-室外远景");
+	public static final AttachementTypeIdEnum STATION_DECORATE_SYJJ = new AttachementTypeIdEnum(11L, "服务站装修记录-室外近景");
+	public static final AttachementTypeIdEnum STATION_DECORATE_SNT = new AttachementTypeIdEnum(12L, "服务站装修记录-室内图");
 
 
     static {
@@ -34,6 +38,10 @@ public class AttachementTypeIdEnum implements Serializable {
         mappings.put(6L, LESSOR_IDCARD);
         mappings.put(7L, PROPERTY_PROVE);
         mappings.put(8L, GOV_PROTOCOL);
+        
+        mappings.put(10L, STATION_DECORATE_SYYJ);
+        mappings.put(11L, STATION_DECORATE_SYJJ);
+        mappings.put(12L, STATION_DECORATE_SNT);
     }
     
     private Long code;

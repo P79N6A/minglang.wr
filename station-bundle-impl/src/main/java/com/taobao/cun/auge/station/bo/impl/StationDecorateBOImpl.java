@@ -12,9 +12,10 @@ import org.springframework.stereotype.Component;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
-import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
@@ -27,11 +28,11 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
-import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -118,13 +119,22 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	}
 
 	@Override
-	public List<StationDecorateDto> getStationDecorateListForSchedule(int fetchNum)
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize)
 			throws AugeServiceException {
-		List<StationDecorateDto> returnList = new ArrayList<StationDecorateDto>();
-		if (fetchNum < 0) {
-			return returnList;
+		if (pageNum < 0) {
+			pageNum = 1;
+		}
+		if (pageSize < 0) {
+			pageSize = 300;
 		}
 		
+		StationDecorateExample example = buildExampleForSchedule();
+		PageHelper.startPage(pageNum, pageSize);
+		List<StationDecorate> sdList = stationDecorateMapper.selectByExample(example);
+		return StationDecorateConverter.toStationDecorateDtos(sdList);
+	}
+
+	private StationDecorateExample buildExampleForSchedule() {
 		StationDecorateExample example = new StationDecorateExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
@@ -132,11 +142,14 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		statusList.add(StationDecorateStatusEnum.UNDECORATE.getCode());
 		statusList.add(StationDecorateStatusEnum.DECORATING.getCode());
 		criteria.andStatusIn(statusList);
-		
-		PageHelper.startPage(1, fetchNum);
-		List<StationDecorate> sdList = stationDecorateMapper.selectByExample(example);
+		return example;
+	}
 	
-		return StationDecorateConverter.toStationDecorateDtos(sdList);
+	@Override
+	public int getStationDecorateListCountForSchedule()
+			throws AugeServiceException {
+		StationDecorateExample example = buildExampleForSchedule();
+		return stationDecorateMapper.countByExample(example);
 	}
 
 	@Override
@@ -149,43 +162,44 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		
 		//更新附件
 		if (stationDecorateDto.getAttachements() != null) {
-			List<Long> attIds = attachementBO.modifyAttachementBatch(stationDecorateDto.getAttachements(), stationDecorateDto.getId(), AttachementBizTypeEnum.STATION_DECORATE, stationDecorateDto);
+			attachementBO.modifyAttachementBatch(stationDecorateDto.getAttachements(), stationDecorateDto.getId(), AttachementBizTypeEnum.STATION_DECORATE, stationDecorateDto);
 			
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(record);
 	}
-	public static void main(String[] args) {
-		List<Long> aaa =new ArrayList<Long>();
-		aaa.add(1l);
-		aaa.add(1l);
-		aaa.add(1l);
-		aaa.add(1l);
-		StringBuilder sb = new StringBuilder();
-		for (Long a :aaa) {
-			sb.append(a).append(":");
-		}
-		System.out.println(sb.toString());
-	}
-	
 
 	@Override
 	public StationDecorateDto getStationDecorateDtoByStationId(Long stationId)
 			throws AugeServiceException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateStatus(Long id, StationDecorateStatusEnum statusEnum,
-			OperatorDto operatorDto) throws AugeServiceException {
-		// TODO Auto-generated method stub
-
+		ValidateUtils.notNull(stationId);
+		StationDecorate sd = getStationDecorateByStationId(stationId);
+		if (sd == null) {
+			return null;
+		}
+		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
+		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
+		return sdDto; 
 	}
 
 	@Override
 	public StationDecorate getStationDecorateByStationId(Long stationId)
 			throws AugeServiceException {
-		return null;
+		ValidateUtils.notNull(stationId);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode());
+		List<StationDecorate> resList = stationDecorateMapper.selectByExample(example);
+		return ResultUtils.selectOne(resList);
 	}
 
+	@Override
+	public void syncStationDecorateFromTaobao(
+			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }
