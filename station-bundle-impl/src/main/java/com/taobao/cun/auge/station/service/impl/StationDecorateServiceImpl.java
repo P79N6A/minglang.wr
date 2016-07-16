@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,5 +177,13 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		return sdDto;
 		
 	}
+	
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize){
+		return stationDecorateBO.getStationDecorateListForSchedule(pageNum, pageSize);
+	}
 
+	
+	public int getStationDecorateListCountForSchedule(){
+		return stationDecorateBO.getStationDecorateListCountForSchedule();
+	}
 }

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
@@ -34,4 +36,24 @@ public interface StationDecorateService {
 	 * @throws AugeServiceException
 	 */
 	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) throws AugeServiceException; 
+	
+	/**
+	 * 返回装修记录
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize)throws AugeServiceException; 
+	
+	/**
+	 * 返回装修记录总数
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public int getStationDecorateListCountForSchedule();
+	
+	
 }
