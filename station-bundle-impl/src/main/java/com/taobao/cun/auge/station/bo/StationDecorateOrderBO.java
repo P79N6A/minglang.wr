@@ -8,7 +8,7 @@ public interface StationDecorateOrderBO {
 
 	Optional<StationDecorateOrderDto> getDecorateOrderById(Long bizOrderId);
 
-	Optional<StationDecorateOrderDto> getByDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,
+	Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,
 			Long orderAmount);
 
 }

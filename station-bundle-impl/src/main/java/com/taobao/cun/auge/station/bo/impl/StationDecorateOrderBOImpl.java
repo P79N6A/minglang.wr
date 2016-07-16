@@ -65,7 +65,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	 * @see com.taobao.cun.auge.station.bo.impl.StationDecorateOrderBO#getByDecorateOrder(java.lang.Long, java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public Optional<StationDecorateOrderDto> getByDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,
+	public Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,
 			Long orderAmount) {
 		try {
 			QueryBizOrderDO query = new QueryBizOrderDO();

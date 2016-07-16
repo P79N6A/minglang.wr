@@ -16,11 +16,11 @@ public class StationDecorateOrderServiceImpl implements StationDecorateOrderServ
 	private StationDecorateOrderBO stationDecorateOrderBO;
 	
 	public StationDecorateOrderDto getDecorateOrderById(Long bizOrderId){
-		return stationDecorateOrderBO.getDecorateOrderById(bizOrderId).get();
+		return stationDecorateOrderBO.getDecorateOrderById(bizOrderId).orElse(null);
 	}
 
 	public StationDecorateOrderDto getByDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,Long orderAmount){
-		return stationDecorateOrderBO.getByDecorateOrder(sellerTaobaoUserId,buyerTaobaoUserId,orderAmount).get();
+		return stationDecorateOrderBO.getDecorateOrder(sellerTaobaoUserId,buyerTaobaoUserId,orderAmount).orElse(null);
 	}
 
 }
