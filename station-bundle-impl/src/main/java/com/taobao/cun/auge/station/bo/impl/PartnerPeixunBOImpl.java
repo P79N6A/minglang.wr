@@ -253,12 +253,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
 		query.addCourseCode(code);
 		query.addTrainee(String.valueOf(userId));
-		query.addStatus(TrainStatus.NotEffect.value());
+//		query.addStatus(TrainStatus.NotEffect.value());
 		try {
 			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
 					.find(auth, query, 100, 1);
 			if (result.isSuccess()) {
-				return result.getData().getRows();
+				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
 			} else {
 				throw new RuntimeException("query record error,"
 						+ result.getMsg());
