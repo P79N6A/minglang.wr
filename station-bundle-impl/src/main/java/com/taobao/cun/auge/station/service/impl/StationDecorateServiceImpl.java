@@ -186,4 +186,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	public int getStationDecorateListCountForSchedule(){
 		return stationDecorateBO.getStationDecorateListCountForSchedule();
 	}
+
+	@Override
+	public void updateStationDecorate(StationDecorateDto stationDecorateDto) {
+		 stationDecorateBO.updateStationDecorate(stationDecorateDto);
+	}
 }

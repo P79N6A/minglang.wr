@@ -55,5 +55,14 @@ public interface StationDecorateService {
 	 */
 	public int getStationDecorateListCountForSchedule();
 	
+	/**
+	 * 更新装修记录
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public void updateStationDecorate(StationDecorateDto stationDecorateDto);
+	
 	
 }
