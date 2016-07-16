@@ -30,6 +30,8 @@ public class PartnerConverter {
 		partnerDto.setIdenNum(partner.getIdenNum());
 		partnerDto.setMobile(partner.getMobile());
 		partnerDto.setEmail(partner.getEmail());
+		partnerDto.setSolidPoint(partner.getSolidPoint());
+		partnerDto.setLeaseArea(partner.getLeaseArea());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
