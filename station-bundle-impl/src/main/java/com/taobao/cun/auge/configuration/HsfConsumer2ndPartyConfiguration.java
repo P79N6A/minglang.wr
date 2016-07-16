@@ -14,6 +14,7 @@ import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.tc.service.TcBaseService;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
 
@@ -58,5 +59,10 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean trainingTicketServiceFacade(@Value("${partner.peixun.service.version}") String version) {
 		return getConsumerBean(TrainingTicketServiceFacade.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean tcBaseService (@Value("${tcBaseService.service.version}") String version) {
+		return getConsumerBean(TcBaseService.class, HSFGroup.HSF, version, 3000);
 	}
 }

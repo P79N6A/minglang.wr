@@ -28,6 +28,8 @@ public class StationDecorateOrderDto implements Serializable{
 
     private Date createDate; //创建时间
     
+    private Long auctionPrice; //产品单价
+    
 	public boolean isPaid() {
 		return paid;
 	}
@@ -102,6 +104,14 @@ public class StationDecorateOrderDto implements Serializable{
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	public Long getAuctionPrice() {
+		return auctionPrice;
+	}
+
+	public void setAuctionPrice(Long auctionPrice) {
+		this.auctionPrice = auctionPrice;
 	}
 
 	
