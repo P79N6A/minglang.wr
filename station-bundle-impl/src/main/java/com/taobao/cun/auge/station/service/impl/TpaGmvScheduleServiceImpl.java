@@ -110,6 +110,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			
 			instanceExtDto.setInstanceId(instanceId);
 			instanceExtDto.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
+			instanceExtDto.setChildNumChangDate(parseDate(incomeDto.getBizMonth()));
 			instanceExtDto.setOperator(operator);
 			
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
