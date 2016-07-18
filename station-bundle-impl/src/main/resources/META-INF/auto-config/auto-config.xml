@@ -52,6 +52,7 @@
 		<property name="hsf.consumer.version.auge.cuntaoOrgService" defaultValue="1.0.0.daily" description="村淘组织服务version" />
 		<property name="tcBaseService.service.version" defaultValue="1.0.0.daily" description="淘宝订单服务" />
 		
+		<property name="stationDecorateOrder.amount" defaultValue="350000" description="装修订单价格" />
 
 	</group>
 .

@@ -271,10 +271,6 @@
 			<artifactId>ivy.services</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>com.aliexpress.boot</groupId>
-			<artifactId>spring-boot-starter-diamond</artifactId>
-		</dependency>
 		
 	</dependencies>
 	<build>

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
@@ -20,7 +19,6 @@ import com.taobao.tc.domain.result.SingleQueryResultDO;
 import com.taobao.tc.service.TcBaseService;
 
 @Service("stationDecorateOrderBO")
-@RefreshScope
 public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 
 	private static final Logger logger = LoggerFactory.getLogger(StationDecorateOrderBOImpl.class);
