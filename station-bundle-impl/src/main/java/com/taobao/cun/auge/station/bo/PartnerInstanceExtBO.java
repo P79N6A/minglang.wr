@@ -33,10 +33,9 @@ public interface PartnerInstanceExtBO {
 	public List<PartnerInstanceExt> findPartnerInstanceExts(List<Long> instanceIds);
 	
 	/**
-	 * 修改合伙人最大子成员配额
+	 * 修改合伙人扩展
 	 * 
-	 * @param instanceId
-	 * @param maxNum
+	 * @param instanceExtDto
 	 */
 	public void updatePartnerInstanceExt(PartnerInstanceExtDto instanceExtDto);
 	
@@ -44,7 +43,7 @@ public interface PartnerInstanceExtBO {
 	/**
 	 * 新增合伙人扩展
 	 * 
-	 * @param instanceExt
+	 * @param instanceExtDto
 	 */
 	public Long addPartnerInstanceExt(PartnerInstanceExtDto instanceExtDto);
 }
