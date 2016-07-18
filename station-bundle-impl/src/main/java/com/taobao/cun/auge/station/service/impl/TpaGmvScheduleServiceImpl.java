@@ -13,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -23,17 +27,23 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("tpaGmvScheduleService")
 @HSFProvider(serviceInterface = TpaGmvScheduleService.class)
 public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(TpaGmvScheduleService.class);
 
 	// 最近两个月
 	private static final Integer lastMonthCount = 2;
 
-	//排名前20%
+	// 排名前20%
 	private static final Double scale = 0.2;
 
 	@Autowired
 	DwiCtStationTpaIncomeMExtMapper dwiCtStationTpaIncomeMExtMapper;
+
+	@Autowired
+	PartnerInstanceExtBO partnerInstanceExtBO;
+
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 
 	@Override
 	public List<Long> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
@@ -47,7 +57,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		example.setLastMonthCount(lastMonthCount);
 		example.setScale(scale);
 
-		try{
+		try {
 			PageHelper.startPage(1, fetchNum);
 			List<DwiCtStationTpaIncomeM> resList = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
 			if (CollectionUtils.isEmpty(resList)) {
@@ -58,10 +68,23 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 				instanceIdList.add(rel.getStationId());
 			}
 			return instanceIdList;
-		}catch(Exception e){
-			logger.error("查询合伙人淘帮手连续n个月绩效失败",e);
+		} catch (Exception e) {
+			logger.error("查询合伙人淘帮手连续n个月绩效失败", e);
 			return Collections.<Long> emptyList();
 		}
+	}
+
+	@Override
+	public Boolean addChildNumByGmv(Long stationId) {
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+		Long instanceId = rel.getId();
+
+		Integer curMaxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
+
+		String operator = OperatorDto.defaultOperator().getOperator();
+		partnerInstanceExtBO.updatePartnerMaxChildNum(instanceId, curMaxChildNum + 2, operator);
+
+		return Boolean.TRUE;
 	}
 
 	private String[] findLastTwoMonth() {
