@@ -30,6 +30,8 @@ public class PartnerConverter {
 		partnerDto.setIdenNum(partner.getIdenNum());
 		partnerDto.setMobile(partner.getMobile());
 		partnerDto.setEmail(partner.getEmail());
+		partnerDto.setSolidPoint(partner.getSolidPoint());
+		partnerDto.setLeaseArea(partner.getLeaseArea());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
@@ -57,6 +59,8 @@ public class PartnerConverter {
 		partner.setIdenNum(parnterDto.getIdenNum());
 		partner.setMobile(parnterDto.getMobile());
 		partner.setEmail(parnterDto.getEmail());
+		partner.setSolidPoint(parnterDto.getSolidPoint());
+		partner.setLeaseArea(parnterDto.getLeaseArea());
 		if (parnterDto.getBusinessType() != null) {
 			partner.setBusinessType(parnterDto.getBusinessType().getCode());
 		}

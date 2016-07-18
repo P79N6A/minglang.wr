@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +11,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
@@ -44,9 +43,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
-	
-	@Autowired
-	StationBO stationBO;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
@@ -136,16 +132,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
 			}
-			
-			//添加服务站信息
-			Station s = stationBO.getStationById(sdDto.getStationId());
-			if (s == null) {
-				String error = getErrorMessage("getInfoByTaobaoUserId",String.valueOf(sdDto.getStationId()), "Station is null");
-				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
-			}
-			sdDto.setStationDto(StationConverter.toStationDto(s));
-			
 			return sdDto;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
@@ -187,6 +173,20 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		sdDto.setAttachements(stationDecorateReflectDto.getAttachements());
 		sdDto.copyOperatorDto(stationDecorateReflectDto);
 		return sdDto;
+		
+	}
+	
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize){
+		return stationDecorateBO.getStationDecorateListForSchedule(pageNum, pageSize);
 	}
 
+	
+	public int getStationDecorateListCountForSchedule(){
+		return stationDecorateBO.getStationDecorateListCountForSchedule();
+	}
+
+	@Override
+	public void updateStationDecorate(StationDecorateDto stationDecorateDto) {
+		 stationDecorateBO.updateStationDecorate(stationDecorateDto);
+	}
 }

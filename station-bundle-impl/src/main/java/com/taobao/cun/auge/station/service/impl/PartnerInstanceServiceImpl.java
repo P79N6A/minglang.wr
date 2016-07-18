@@ -420,12 +420,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (StringUtils.isBlank(partnerDto.getName())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
 		}
-
+		if (StringUtils.isBlank(partnerDto.getSolidPoint())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
+		}
+		if (StringUtils.isBlank(String.valueOf(partnerDto.getLeaseArea()))) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
+		}
 		if (partnerDto.getMobile() == null) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_SOLID_POINT_IS_NULL);
 		}
 		if (!isMobileNO(partnerDto.getMobile())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_LEASE_AREA_IS_NULL);
 		}
 
 		OperatorDto operator = new OperatorDto();
