@@ -275,6 +275,10 @@
 			  <groupId>com.alibaba.intl.base.fileserver</groupId>
 			  <artifactId>fileserver-commons-tool</artifactId>
 			 </dependency>
+		<dependency>
+			<groupId>com.aliexpress.boot</groupId>
+			<artifactId>spring-boot-starter-diamond</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
