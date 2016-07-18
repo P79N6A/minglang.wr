@@ -22,9 +22,23 @@
   </resultMap>
   
   <select id="selectStationsByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple" >
-		select  * from (
-			select  * from dwi_ct_station_tpa_income_m where <include refid="query_condition" /> order by biz_month desc
-		) as temp group by station_id 
+		select 
+			id,
+			stat_date,
+			max(biz_month) as biz_month,
+			county_org_id,
+			county_org_name,
+			station_id,
+			station_name,
+			tpa_srvc_cnt_1d,
+			ct_srvc_tpa_income_est_fee_amt_mtd,
+			ct_srvc_tpa_income_est_fee_amt_avg_mtd,
+			station_srvc_cnt,
+			ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd
+		
+		from dwi_ct_station_tpa_income_m where 
+			<include refid="query_condition" />  
+		group by station_id 
 		<if test="lastMonthCount != null" >
 		    having count(station_id) = lastMonthCount
 		</if>
@@ -36,9 +50,8 @@
 				#{bizMonth}
 			</foreach>
 		</if>
-		
 		<if test="scale != null" >
-		    and ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd/station_srvc_cnt< scale
+			<![CDATA[ and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= scale ]]>
 		</if>
   </sql>
 </mapper>
