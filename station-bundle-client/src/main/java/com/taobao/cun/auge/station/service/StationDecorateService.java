@@ -65,4 +65,12 @@ public interface StationDecorateService {
 	public void updateStationDecorate(StationDecorateDto stationDecorateDto);
 	
 	
+	/**
+	 * 定时同步订单状态
+	 * @param stationDecorateDto
+	 * @throws AugeServiceException
+	 */
+	public void syncStationDecorateFromTaobao(StationDecorateDto stationDecorateDto)throws AugeServiceException;
+	
+	
 }

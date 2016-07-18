@@ -189,4 +189,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	public void updateStationDecorate(StationDecorateDto stationDecorateDto) {
 		 stationDecorateBO.updateStationDecorate(stationDecorateDto);
 	}
+
+	@Override
+	public void syncStationDecorateFromTaobao(
+			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+		stationDecorateBO.syncStationDecorateFromTaobao(stationDecorateDto);
+		
+	}
 }
