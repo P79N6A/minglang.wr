@@ -156,7 +156,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
 		record.setPartnerUserId(userId);
 		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
-		record.setCourseCode(courseCode);
+		record.setCourseCode(peixunCode);
 		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
 		return record;
@@ -205,7 +205,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				return result;
 			}
 		}
-		return result;
+		return null;
 	}
 	
 	private String getTicketNo(List<TrainingRecordDTO> trainRecords,String orderNum){
