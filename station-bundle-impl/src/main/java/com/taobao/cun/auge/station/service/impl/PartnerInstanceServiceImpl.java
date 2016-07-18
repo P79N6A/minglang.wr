@@ -21,7 +21,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -62,6 +61,7 @@ import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -520,7 +520,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 修改子成员配额
 			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
 			if (null != childNum) {
-				partnerInstanceExtBO.updatePartnerMaxChildNum(partnerInstanceId, childNum, partnerInstanceUpdateServicingDto.getOperator());
+				PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+				
+				instanceExtDto.setInstanceId(partnerInstanceId);
+				instanceExtDto.setMaxChildNum(childNum);
+				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+				
+				partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 			}
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());

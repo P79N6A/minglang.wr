@@ -14,14 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
-import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
@@ -103,14 +102,13 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		
 		//没有查询到，则插入默认值
 		if(null == curMaxChildNum){
+			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			
-			PartnerInstanceExt instanceExt = new PartnerInstanceExt();
+			instanceExtDto.setInstanceId(instanceId);
+			instanceExtDto.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
+			instanceExtDto.setOperator(operator);
 			
-			instanceExt.setPartnerInstanceId(instanceId);
-			instanceExt.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
-			DomainUtils.beforeInsert(instanceExt, operator);
-			
-			partnerInstanceExtBO.addPartnerInstanceExt(instanceExt);
+			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
 		}
 
 		// 已经达到最大配额
@@ -121,8 +119,15 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 		// 最大配额校验
 		childNum = childNum >= MAX_CHILD_NUM ? MAX_CHILD_NUM : childNum;
+		
+		
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+		
+		instanceExtDto.setInstanceId(instanceId);
+		instanceExtDto.setMaxChildNum(childNum);
+		instanceExtDto.setOperator(operator);
 
-		partnerInstanceExtBO.updatePartnerInstanceExt(instanceId, childNum, operator);
+		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 
 		return Boolean.TRUE;
 	}

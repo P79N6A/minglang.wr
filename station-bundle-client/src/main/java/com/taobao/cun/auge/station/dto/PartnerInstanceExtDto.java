@@ -2,7 +2,9 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 
-public class PartnerInstanceExtDto implements Serializable {
+import com.taobao.cun.auge.common.OperatorDto;
+
+public class PartnerInstanceExtDto extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 5575424342867122921L;
 

@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 
 public interface PartnerInstanceExtBO {
 
@@ -37,7 +38,7 @@ public interface PartnerInstanceExtBO {
 	 * @param instanceId
 	 * @param maxNum
 	 */
-	public void updatePartnerInstanceExt(Long instanceId, Integer maxNum,String operator);
+	public void updatePartnerInstanceExt(PartnerInstanceExtDto instanceExtDto);
 	
 	
 	/**
@@ -45,5 +46,5 @@ public interface PartnerInstanceExtBO {
 	 * 
 	 * @param instanceExt
 	 */
-	public void addPartnerInstanceExt(PartnerInstanceExt instanceExt);
+	public Long addPartnerInstanceExt(PartnerInstanceExtDto instanceExtDto);
 }
