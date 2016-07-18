@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.taobao.cun.auge.common.OperatorDto;
 
@@ -13,6 +14,8 @@ public class PartnerInstanceExtDto extends OperatorDto implements Serializable {
 	private Integer curChildNum;
 
 	private Integer maxChildNum;
+	
+	private Date childNumChangDate;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -36,5 +39,13 @@ public class PartnerInstanceExtDto extends OperatorDto implements Serializable {
 
 	public void setMaxChildNum(Integer maxChildNum) {
 		this.maxChildNum = maxChildNum;
+	}
+
+	public Date getChildNumChangDate() {
+		return childNumChangDate;
+	}
+
+	public void setChildNumChangDate(Date childNumChangDate) {
+		this.childNumChangDate = childNumChangDate;
 	}
 }

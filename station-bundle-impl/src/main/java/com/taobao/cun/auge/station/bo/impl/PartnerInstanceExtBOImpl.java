@@ -69,6 +69,20 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 
 		return partnerInstanceExtMapper.selectByExample(example);
 	}
+	
+	@Override
+	public PartnerInstanceExt findPartnerInstanceExt(Long instanceId){
+		ValidateUtils.notNull(instanceId);
+		
+		PartnerInstanceExtExample example = new PartnerInstanceExtExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andPartnerInstanceIdEqualTo(instanceId);
+		criteria.andIsDeletedEqualTo("n");
+
+		List<PartnerInstanceExt>  instanceExts = partnerInstanceExtMapper.selectByExample(example);
+	
+	}
 
 	@Override
 	public void updatePartnerInstanceExt(PartnerInstanceExtDto instanceExtDto) {

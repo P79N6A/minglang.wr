@@ -18,6 +18,7 @@ public final class PartnerInstanceExtConverter {
 
 		instanceExt.setPartnerInstanceId(instanceExtDto.getInstanceId());
 		instanceExt.setMaxChildNum(instanceExtDto.getMaxChildNum());
+		instanceExt.setChildNumChangDate(instanceExtDto.getChildNumChangDate());
 
 		return instanceExt;
 	}

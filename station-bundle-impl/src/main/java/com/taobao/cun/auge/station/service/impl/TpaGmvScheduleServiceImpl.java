@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -127,10 +129,20 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
 		instanceExtDto.setOperator(operator);
+		instanceExtDto.setChildNumChangDate(formatDate(incomeDto.getBizMonth()));
 
 		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 
 		return Boolean.TRUE;
+	}
+	
+	private Date formatDate(String bizMonth){
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+		try {
+			return format.parse(bizMonth);
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 
 	private String[] findLastNMonth() {

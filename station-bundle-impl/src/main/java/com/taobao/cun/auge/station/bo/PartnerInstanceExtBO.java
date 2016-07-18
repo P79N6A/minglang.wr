@@ -33,6 +33,14 @@ public interface PartnerInstanceExtBO {
 	public List<PartnerInstanceExt> findPartnerInstanceExts(List<Long> instanceIds);
 	
 	/**
+	 * 查询合伙人实例扩展
+	 * 
+	 * @param instanceId
+	 * @return
+	 */
+	public PartnerInstanceExt findPartnerInstanceExt(Long instanceId);
+	
+	/**
 	 * 修改合伙人扩展
 	 * 
 	 * @param instanceExtDto
