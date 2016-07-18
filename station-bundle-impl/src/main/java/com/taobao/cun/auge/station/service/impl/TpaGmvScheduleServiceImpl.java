@@ -75,11 +75,11 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			if (CollectionUtils.isEmpty(resList)) {
 				return Collections.<Long> emptyList();
 			}
-			List<Long> instanceIdList = new ArrayList<Long>(resList.size());
+			List<Long> stationIds = new ArrayList<Long>(resList.size());
 			for (DwiCtStationTpaIncomeM rel : resList) {
-				instanceIdList.add(rel.getStationId());
+				stationIds.add(rel.getStationId());
 			}
-			return instanceIdList;
+			return stationIds;
 		} catch (Exception e) {
 			logger.error("查询合伙人淘帮手连续n个月绩效失败", e);
 			return Collections.<Long> emptyList();
