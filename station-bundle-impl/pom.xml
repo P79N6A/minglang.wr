@@ -267,9 +267,15 @@
 		</dependency>
 		
 		<dependency>
-				  <groupId>com.alibaba.intl.sourcing.shared</groupId>
-				  <artifactId>ivy.services</artifactId>
+			<groupId>com.alibaba.intl.sourcing.shared</groupId>
+			<artifactId>ivy.services</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.aliexpress.boot</groupId>
+			<artifactId>spring-boot-starter-diamond</artifactId>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>

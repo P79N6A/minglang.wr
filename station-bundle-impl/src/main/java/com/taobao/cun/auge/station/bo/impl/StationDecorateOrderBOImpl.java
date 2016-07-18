@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
@@ -18,6 +20,7 @@ import com.taobao.tc.domain.result.SingleQueryResultDO;
 import com.taobao.tc.service.TcBaseService;
 
 @Service("stationDecorateOrderBO")
+@RefreshScope
 public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 
 	private static final Logger logger = LoggerFactory.getLogger(StationDecorateOrderBOImpl.class);
@@ -25,6 +28,8 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Autowired
 	private TcBaseService tcBaseService;
 	
+	@Value("${stationDecorateOrder.amount}")
+	private Long orderAmount;
 	
 	/* (non-Javadoc)
 	 * @see com.taobao.cun.auge.station.bo.impl.StationDecorateOrderBO#getDecorateOrderById(java.lang.Long)
@@ -65,8 +70,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	 * @see com.taobao.cun.auge.station.bo.impl.StationDecorateOrderBO#getByDecorateOrder(java.lang.Long, java.lang.Long, java.lang.Long)
 	 */
 	@Override
-	public Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,
-			Long orderAmount) {
+	public Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId) {
 		try {
 			QueryBizOrderDO query = new QueryBizOrderDO();
 			query.setSellerNumId(new long[] { sellerTaobaoUserId });

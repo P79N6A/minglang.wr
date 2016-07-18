@@ -26,8 +26,10 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
@@ -50,6 +52,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	StationBO stationBO;
 	@Autowired
 	AttachementBO attachementBO;
+	@Autowired
+	StationDecorateOrderBO stationDecorateOrderBO;
 	
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
@@ -198,8 +202,35 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public void syncStationDecorateFromTaobao(
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
-		// TODO Auto-generated method stub
-		
+
+		if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode())){
+			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrder(Long.parseLong(stationDecorateDto.getSellerTaobaoUserId()), stationDecorateDto.getPartnerUserId()).orElse(null);
+			if(decorateOrder != null){
+				if(decorateOrder.isPaid()){
+					StationDecorateDto updateDto = new StationDecorateDto();
+					updateDto.setId(stationDecorateDto.getId());
+					updateDto.setStatus(StationDecorateStatusEnum.DECORATING);
+					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
+					updateStationDecorate(updateDto);
+				}else{
+					StationDecorateDto updateDto = new StationDecorateDto();
+					updateDto.setId(stationDecorateDto.getId());
+					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
+					updateStationDecorate(updateDto);
+				}
+			}	
+		}if(StationDecorateStatusEnum.DECORATING.getCode().equals(stationDecorateDto.getStatus().getCode())){
+			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(stationDecorateDto.getTaobaoOrderNum())).orElse(null);
+			if(decorateOrder != null)  {
+				if(decorateOrder.isRefund()){
+					StationDecorateDto updateDto = new StationDecorateDto();
+					updateDto.setId(stationDecorateDto.getId());
+					updateDto.setStatus(StationDecorateStatusEnum.UNDECORATE);
+					updateDto.setTaobaoOrderNum("");
+					updateStationDecorate(updateDto);
+				}
+			}
+		}
 	}
 
 	@Override

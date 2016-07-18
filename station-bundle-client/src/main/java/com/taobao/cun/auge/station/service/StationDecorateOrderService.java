@@ -7,5 +7,5 @@ public interface StationDecorateOrderService {
 	StationDecorateOrderDto getDecorateOrderById(Long bizOrderId);
 	
 	
-	StationDecorateOrderDto getByDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,Long orderAmount);
+	StationDecorateOrderDto getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId);
 }

@@ -350,6 +350,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+				  <groupId>com.aliexpress.boot</groupId>
+				  <artifactId>spring-boot-starter-diamond</artifactId>
+				  <version>1.0.2-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

@@ -19,8 +19,8 @@ public class StationDecorateOrderServiceImpl implements StationDecorateOrderServ
 		return stationDecorateOrderBO.getDecorateOrderById(bizOrderId).orElse(null);
 	}
 
-	public StationDecorateOrderDto getByDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId,Long orderAmount){
-		return stationDecorateOrderBO.getDecorateOrder(sellerTaobaoUserId,buyerTaobaoUserId,orderAmount).orElse(null);
+	public StationDecorateOrderDto getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId){
+		return stationDecorateOrderBO.getDecorateOrder(sellerTaobaoUserId,buyerTaobaoUserId).orElse(null);
 	}
 
 }
