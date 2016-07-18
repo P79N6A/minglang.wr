@@ -21,6 +21,7 @@ import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -35,6 +36,12 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	// 排名前20%
 	private static final Double scale = 0.2;
+
+	// 最大配额
+	private static final Integer MAX_CHILD_NUM = 10;
+
+	// 每次新增名额
+	private static final Integer ADD_NUM_PER = 2;
 
 	@Autowired
 	DwiCtStationTpaIncomeMExtMapper dwiCtStationTpaIncomeMExtMapper;
@@ -53,7 +60,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 		DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-		example.setBizMonths(findLastTwoMonth());
+		example.setBizMonths(findLastNMonth());
 		example.setLastMonthCount(lastMonthCount);
 		example.setScale(scale);
 
@@ -76,18 +83,33 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	@Override
 	public Boolean addChildNumByGmv(Long stationId) {
+		// 根据stationId,查询实例id
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+		if (null == rel) {
+			logger.error("partner instance is not exist.stationId " + stationId);
+			throw new AugeServiceException(StationExceptionEnum.PARTNER_INSTANCE_NOT_EXIST);
+		}
 		Long instanceId = rel.getId();
 
+		// 查询当前最大配额
 		Integer curMaxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
 
+		// 已经达到最大配额
+		if (curMaxChildNum >= MAX_CHILD_NUM) {
+			return Boolean.TRUE;
+		}
+		Integer childNum = curMaxChildNum + ADD_NUM_PER;
+
+		// 最大配额校验
+		childNum = childNum >= MAX_CHILD_NUM ? MAX_CHILD_NUM : childNum;
+
 		String operator = OperatorDto.defaultOperator().getOperator();
-		partnerInstanceExtBO.updatePartnerMaxChildNum(instanceId, curMaxChildNum + 2, operator);
+		partnerInstanceExtBO.updatePartnerMaxChildNum(instanceId, childNum, operator);
 
 		return Boolean.TRUE;
 	}
 
-	private String[] findLastTwoMonth() {
+	private String[] findLastNMonth() {
 		List<String> lastTwoMonths = new ArrayList<String>();
 
 		for (int i = lastMonthCount; i > 0; i--) {

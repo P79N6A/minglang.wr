@@ -26,6 +26,17 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	
 	@Override
 	public Integer findPartnerMaxChildNum(Long instanceId) {
+		Integer maxChildNum = findPartnerCurMaxChildNum(instanceId);
+		
+		//没有查询到，则返回默认值
+		if(null == maxChildNum){
+			return DEFAULT_MAX_CHILD_NUM;
+		}
+		return maxChildNum;
+	}
+	
+	@Override
+	public Integer findPartnerCurMaxChildNum(Long instanceId) {
 		ValidateUtils.notNull(instanceId);
 		
 		PartnerInstanceExtExample example = new PartnerInstanceExtExample();
@@ -37,8 +48,8 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 		List<PartnerInstanceExt> instanceExts = partnerInstanceExtMapper.selectByExample(example);
 		
 		//没有查询到，则返回默认值
-		if(CollectionUtils.isEmpty(instanceExts) || null == instanceExts.get(0).getMaxChildNum()){
-			return DEFAULT_MAX_CHILD_NUM;
+		if(CollectionUtils.isEmpty(instanceExts)){
+			return null;
 		}
 		return instanceExts.get(0).getMaxChildNum();
 	}
