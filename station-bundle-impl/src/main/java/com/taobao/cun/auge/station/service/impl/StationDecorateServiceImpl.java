@@ -169,16 +169,18 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	 * @param sdDto
 	 */
 	private void setShopInfo(StationDecorateDto sdDto) {
-		if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
-			AppResource resource = appResourceBO.queryAppResource("shop_info", sdDto.getSellerTaobaoUserId());
-			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-				String str = resource.getValue();
-				String[] shopInfo = str.split("##");
-				sdDto.setSellerShopUrl(shopInfo[0]);
-				sdDto.setSellerPayUrl(shopInfo[1]);
+		try {
+			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
+				AppResource resource = appResourceBO.queryAppResource("shop_info", sdDto.getSellerTaobaoUserId());
+				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+					String str = resource.getValue();
+					String[] shopInfo = str.split("##");
+					sdDto.setSellerShopUrl(shopInfo[0]);
+					sdDto.setSellerPayUrl(shopInfo[1]);
+				}
 			}
-			logger.error("getShop error: key"+sdDto.getSellerTaobaoUserId());
-			throw new RuntimeException("getShop error: key"+sdDto.getSellerTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("setShopInfo error: key"+sdDto.getSellerTaobaoUserId());
 		}
 	}
 	@Override
