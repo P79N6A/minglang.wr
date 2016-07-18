@@ -71,6 +71,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			QueryBizOrderDO query = new QueryBizOrderDO();
 			query.setSellerNumId(new long[] { sellerTaobaoUserId });
 			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
+			query.setPayStatus(new int[]{PayOrderDO.STATUS_PAID,PayOrderDO.STATUS_NOT_PAY,PayOrderDO.STATUS_REFUNDED} );
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
 			Optional<BizOrderDO> paidOrder = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
@@ -80,9 +81,15 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			}
 			Optional<BizOrderDO> order = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
-					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount)).findFirst();
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && bizOrder.getPayStatus() == PayOrderDO.STATUS_NOT_PAY )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(order.get()));
+			}
+			Optional<BizOrderDO> refund = batchQueryResult.getOrderList().stream()
+					.map(orderInfo -> orderInfo.getBizOrderDO())
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && bizOrder.getPayStatus() == PayOrderDO.STATUS_REFUNDED )).findFirst();
+			if(order.isPresent()){
+				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
 			}
 		} catch (Exception e) {
 			logger.error("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);

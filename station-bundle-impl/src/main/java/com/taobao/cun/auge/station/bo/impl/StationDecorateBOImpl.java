@@ -213,8 +213,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
 					updateStationDecorate(updateDto);
 				}else{
-					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
-					updateStationDecorate(updateDto);
+					if(!decorateOrder.isRefund()){
+						updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
+						updateStationDecorate(updateDto);
+					}
 				}
 			}	
 		}if(StationDecorateStatusEnum.DECORATING.getCode().equals(stationDecorateDto.getStatus().getCode())){
