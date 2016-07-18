@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +10,19 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -43,6 +48,12 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	StationDecorateOrderBO stationDecorateOrderBO;
+	
+	@Autowired
+	AppResourceBO appResourceBO;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
@@ -122,9 +133,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			StationDecorateDto sdDto =  null;
 			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
 			if (sdDto == null) {
-				String error = getErrorMessage("getInfoByTaobaoUserId", JSONObject.toJSONString(taobaoUserId), "StationDecorate is null");
-				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				return null;
 			}
 			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
 			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) ||
@@ -132,6 +141,19 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
 			}
+			
+			if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
+				StationDecorateOrderDto sdod = stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(sdDto.getTaobaoOrderNum())).orElse(null);
+				if (sdod == null) {
+					sdDto.setStatus(StationDecorateStatusEnum.NO_ORDER);
+				}else {
+					if(!sdod.isPaid()) {
+						sdDto.setStatus(StationDecorateStatusEnum.WAIT_PAY);
+					}
+					sdDto.setStationDecorateOrderDto(sdod);
+				}
+			}
+			setShopInfo(sdDto);
 			return sdDto;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
@@ -141,7 +163,24 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
+	
+	/**
+	 * 设置 店铺url 和付款url
+	 * @param sdDto
+	 */
+	private void setShopInfo(StationDecorateDto sdDto) {
+		if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
+			AppResource resource = appResourceBO.queryAppResource("shop_info", sdDto.getSellerTaobaoUserId());
+			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+				String str = resource.getValue();
+				String[] shopInfo = str.split("##");
+				sdDto.setSellerShopUrl(shopInfo[0]);
+				sdDto.setSellerPayUrl(shopInfo[1]);
+			}
+			logger.error("getShop error: key"+sdDto.getSellerTaobaoUserId());
+			throw new RuntimeException("getShop error: key"+sdDto.getSellerTaobaoUserId());
+		}
+	}
 	@Override
 	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) throws AugeServiceException {
 		// 参数校验

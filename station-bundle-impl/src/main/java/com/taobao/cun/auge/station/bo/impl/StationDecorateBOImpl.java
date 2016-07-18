@@ -86,7 +86,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}
 		
 		Long largeAreaOrgId = getLargeAreaOrgId(station);
-		return getShop(String.valueOf(largeAreaOrgId));
+		return getSellerTaobaoUserId(String.valueOf(largeAreaOrgId));
 	}
 
 	private Long getLargeAreaOrgId(Station station) {
@@ -112,8 +112,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		return largeAreaOrgId;
 	}
 	
-	private String getShop(String key) {
-		AppResource resource = appResourceBO.queryAppResource("decorate_shop", key);
+	private String getSellerTaobaoUserId(String key) {
+		AppResource resource = appResourceBO.queryAppResource("decorate_Selller", key);
 		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 			return resource.getValue();
 		}
@@ -182,7 +182,6 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
 		//添加附件
 		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
-		//TODO：在未装修或装修中是，查询淘宝订单状态
 		return sdDto; 
 	}
 

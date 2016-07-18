@@ -97,6 +97,21 @@ public class StationDecorateDto  extends OperatorDto {
      */
     private StationDto stationDto;
     
+    /**
+     * 装修订单信息
+     */
+    private StationDecorateOrderDto stationDecorateOrderDto;
+    
+    /**
+     * 卖家店铺url
+     */
+    private String sellerShopUrl;
+    
+    /**
+     * 淘宝付款url
+     */
+    private String sellerPayUrl;
+    
 
 	public Long getId() {
 		return id;
@@ -233,4 +248,31 @@ public class StationDecorateDto  extends OperatorDto {
 	public void setStationDto(StationDto stationDto) {
 		this.stationDto = stationDto;
 	}
+
+	public StationDecorateOrderDto getStationDecorateOrderDto() {
+		return stationDecorateOrderDto;
+	}
+
+	public void setStationDecorateOrderDto(
+			StationDecorateOrderDto stationDecorateOrderDto) {
+		this.stationDecorateOrderDto = stationDecorateOrderDto;
+	}
+
+	public String getSellerShopUrl() {
+		return sellerShopUrl;
+	}
+
+	public void setSellerShopUrl(String sellerShopUrl) {
+		this.sellerShopUrl = sellerShopUrl;
+	}
+
+	public String getSellerPayUrl() {
+		return sellerPayUrl;
+	}
+
+	public void setSellerPayUrl(String sellerPayUrl) {
+		this.sellerPayUrl = sellerPayUrl;
+	}
+	
+	
 }

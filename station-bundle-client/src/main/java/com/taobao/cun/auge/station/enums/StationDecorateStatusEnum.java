@@ -17,6 +17,11 @@ public class StationDecorateStatusEnum  implements Serializable {
 	public static final StationDecorateStatusEnum WAIT_AUDIT = new StationDecorateStatusEnum("WAIT_AUDIT", "装修反馈待审核");
 	public static final StationDecorateStatusEnum DONE = new StationDecorateStatusEnum("DONE", "已装修");
 	
+	
+	//未装修时，对应淘宝订单状态
+	public static final StationDecorateStatusEnum NO_ORDER = new StationDecorateStatusEnum("NO_ORDER", "未下单");
+	public static final StationDecorateStatusEnum WAIT_PAY = new StationDecorateStatusEnum("WAIT_PAY", "待付款");
+	
 	private static final Map<String, StationDecorateStatusEnum> mappings = new HashMap<String, StationDecorateStatusEnum>();
 	
 	static {
@@ -24,6 +29,9 @@ public class StationDecorateStatusEnum  implements Serializable {
 		mappings.put("DECORATING", DECORATING);
 		mappings.put("WAIT_AUDIT", WAIT_AUDIT);
 		mappings.put("DONE", DONE);
+		
+		mappings.put("NO_ORDER", NO_ORDER);
+		mappings.put("WAIT_PAY", WAIT_PAY);
 	}
 
 	private String code;
