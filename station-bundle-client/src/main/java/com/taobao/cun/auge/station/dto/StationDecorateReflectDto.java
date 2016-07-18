@@ -52,11 +52,6 @@ public class StationDecorateReflectDto extends OperatorDto {
     private Long reflectUserId;
     
     /**
-     * 审计意见
-     */
-    private String auditOpinion;
-    
-    /**
      * 反馈人nick
      */
     private String reflectNick;
@@ -115,14 +110,6 @@ public class StationDecorateReflectDto extends OperatorDto {
 
 	public void setReflectUserId(Long reflectUserId) {
 		this.reflectUserId = reflectUserId;
-	}
-
-	public String getAuditOpinion() {
-		return auditOpinion;
-	}
-
-	public void setAuditOpinion(String auditOpinion) {
-		this.auditOpinion = auditOpinion;
 	}
 
 	public String getReflectNick() {
