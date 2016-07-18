@@ -9,16 +9,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
@@ -43,6 +44,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	StationBO stationBO;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
@@ -132,6 +136,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
 			}
+			
+			//添加服务站信息
+			Station s = stationBO.getStationById(sdDto.getStationId());
+			if (s == null) {
+				String error = getErrorMessage("getInfoByTaobaoUserId",String.valueOf(sdDto.getStationId()), "Station is null");
+				logger.error(error);
+				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			}
+			sdDto.setStationDto(StationConverter.toStationDto(s));
+			
 			return sdDto;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
@@ -173,7 +187,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		sdDto.setAttachements(stationDecorateReflectDto.getAttachements());
 		sdDto.copyOperatorDto(stationDecorateReflectDto);
 		return sdDto;
-		
 	}
 
 }

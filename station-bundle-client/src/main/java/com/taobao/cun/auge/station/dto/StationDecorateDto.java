@@ -31,7 +31,7 @@ public class StationDecorateDto  extends OperatorDto {
     private Long partnerUserId;
     
     /**
-     * 店铺id
+     * 卖家淘宝userid
      */
     private String sellerTaobaoUserId;
     
@@ -91,6 +91,12 @@ public class StationDecorateDto  extends OperatorDto {
     private String reflectNick;
     
     private StationDecorateIsValidEnum  isValid;
+    
+    /**
+     * 服务站基础信息
+     */
+    private StationDto stationDto;
+    
 
 	public Long getId() {
 		return id;
@@ -218,5 +224,13 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setSellerTaobaoUserId(String sellerTaobaoUserId) {
 		this.sellerTaobaoUserId = sellerTaobaoUserId;
+	}
+
+	public StationDto getStationDto() {
+		return stationDto;
+	}
+
+	public void setStationDto(StationDto stationDto) {
+		this.stationDto = stationDto;
 	}
 }
