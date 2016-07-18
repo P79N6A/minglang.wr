@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.support.Assert;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.intl.fileserver.commons.tool.url.FileserverURLTools;
+import com.alibaba.intl.fileserver.commons.tool.url.SchemaEnum;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
@@ -181,7 +183,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			result.setCourseName(course.getName());
 			result.setCourseAmount(course.getPrice());
 			result.setCourseCode(peixunCode);
-			result.setLogo(course.getLogo());
+			result.setLogo(FileserverURLTools.alibabaV2Builder()
+					.filename(course.getLogo()).useSchema(SchemaEnum.EMPTY)
+					.build());
 			PartnerCourseRecord record = records.get(0);
 			result.setStatus(record.getStatus());
 			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
