@@ -109,6 +109,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			instanceExtDto.setOperator(operator);
 			
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
+			
+			return Boolean.TRUE;
 		}
 
 		// 已经达到最大配额
