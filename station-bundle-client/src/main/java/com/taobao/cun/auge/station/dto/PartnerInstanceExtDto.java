@@ -15,7 +15,7 @@ public class PartnerInstanceExtDto extends OperatorDto implements Serializable {
 
 	private Integer maxChildNum;
 	
-	private Date childNumChangDate;
+	private String childNumChangDate;
 
 	public Long getInstanceId() {
 		return instanceId;
@@ -41,11 +41,11 @@ public class PartnerInstanceExtDto extends OperatorDto implements Serializable {
 		this.maxChildNum = maxChildNum;
 	}
 
-	public Date getChildNumChangDate() {
+	public String getChildNumChangDate() {
 		return childNumChangDate;
 	}
 
-	public void setChildNumChangDate(Date childNumChangDate) {
+	public void setChildNumChangDate(String childNumChangDate) {
 		this.childNumChangDate = childNumChangDate;
 	}
 }

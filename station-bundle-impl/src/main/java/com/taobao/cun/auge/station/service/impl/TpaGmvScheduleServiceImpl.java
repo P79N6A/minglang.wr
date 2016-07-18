@@ -1,11 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -110,7 +108,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			
 			instanceExtDto.setInstanceId(instanceId);
 			instanceExtDto.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
-			instanceExtDto.setChildNumChangDate(parseDate(incomeDto.getBizMonth()));
+			instanceExtDto.setChildNumChangDate(incomeDto.getBizMonth());
 			instanceExtDto.setOperator(operator);
 			
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
@@ -119,8 +117,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		}
 		
 		//上次变更时间
-		Date lastChangChildNumTime = instanceExt.getChildNumChangDate();
-		String lastChangeTime = formatDate(lastChangChildNumTime);
+		String lastChangeTime = instanceExt.getChildNumChangDate();
 		
 		//如果上个月的数据已经处理过，则不再变更
 		if(lastChangeTime.equals(incomeDto.getBizMonth())){
@@ -145,30 +142,13 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
 		instanceExtDto.setOperator(operator);
-		instanceExtDto.setChildNumChangDate(parseDate(incomeDto.getBizMonth()));
+		instanceExtDto.setChildNumChangDate(incomeDto.getBizMonth());
 
 		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 
 		return Boolean.TRUE;
 	}
 	
-	private String formatDate(Date date){
-		if(null == date){
-			return "";
-		}
-		String lastMonth = format.format(date);
-		
-		return lastMonth;
-	}
-	
-	private Date parseDate(String bizMonth){
-		try {
-			return format.parse(bizMonth);
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
 	private String[] findLastNMonth() {
 		List<String> lastTwoMonths = new ArrayList<String>();
 
