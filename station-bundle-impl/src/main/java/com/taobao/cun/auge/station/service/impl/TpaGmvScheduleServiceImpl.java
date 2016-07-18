@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
@@ -42,6 +44,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	// 每次新增名额
 	private static final Integer ADD_NUM_PER = 2;
+	
+	//默认初始化配额
+	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 
 	@Autowired
 	DwiCtStationTpaIncomeMExtMapper dwiCtStationTpaIncomeMExtMapper;
@@ -83,6 +88,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	@Override
 	public Boolean addChildNumByGmv(Long stationId) {
+		String operator = OperatorDto.defaultOperator().getOperator();
+		
 		// 根据stationId,查询实例id
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 		if (null == rel) {
@@ -92,7 +99,19 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		Long instanceId = rel.getId();
 
 		// 查询当前最大配额
-		Integer curMaxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
+		Integer curMaxChildNum = partnerInstanceExtBO.findPartnerCurMaxChildNum(instanceId);
+		
+		//没有查询到，则插入默认值
+		if(null == curMaxChildNum){
+			
+			PartnerInstanceExt instanceExt = new PartnerInstanceExt();
+			
+			instanceExt.setPartnerInstanceId(instanceId);
+			instanceExt.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
+			DomainUtils.beforeInsert(instanceExt, operator);
+			
+			partnerInstanceExtBO.addPartnerInstanceExt(instanceExt);
+		}
 
 		// 已经达到最大配额
 		if (curMaxChildNum >= MAX_CHILD_NUM) {
@@ -103,8 +122,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		// 最大配额校验
 		childNum = childNum >= MAX_CHILD_NUM ? MAX_CHILD_NUM : childNum;
 
-		String operator = OperatorDto.defaultOperator().getOperator();
-		partnerInstanceExtBO.updatePartnerMaxChildNum(instanceId, childNum, operator);
+		partnerInstanceExtBO.updatePartnerInstanceExt(instanceId, childNum, operator);
 
 		return Boolean.TRUE;
 	}

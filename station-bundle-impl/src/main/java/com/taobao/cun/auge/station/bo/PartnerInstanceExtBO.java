@@ -37,5 +37,13 @@ public interface PartnerInstanceExtBO {
 	 * @param instanceId
 	 * @param maxNum
 	 */
-	public void updatePartnerMaxChildNum(Long instanceId, Integer maxNum,String operator);
+	public void updatePartnerInstanceExt(Long instanceId, Integer maxNum,String operator);
+	
+	
+	/**
+	 * 新增合伙人扩展
+	 * 
+	 * @param instanceExt
+	 */
+	public void addPartnerInstanceExt(PartnerInstanceExt instanceExt);
 }

@@ -69,7 +69,7 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	}
 
 	@Override
-	public void updatePartnerMaxChildNum(Long instanceId, Integer maxNum,String operator) {
+	public void updatePartnerInstanceExt(Long instanceId, Integer maxNum,String operator) {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(maxNum);
 		
@@ -84,5 +84,12 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 		record.setGmtModified(new Date());		
 		partnerInstanceExtMapper.updateByExampleSelective(record, example);
 		
+	}
+	
+	@Override
+	public void addPartnerInstanceExt(PartnerInstanceExt instanceExt){
+		ValidateUtils.notNull(instanceExt);
+		
+		partnerInstanceExtMapper.insertSelective(instanceExt);
 	}
 }
