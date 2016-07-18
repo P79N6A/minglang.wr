@@ -202,8 +202,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					result.setStatusDesc("待付款");
 					result.setGmtOrder(record.getGmtCreate());
 				}
-				return result;
 			}
+			return result;
 		}
 		return null;
 	}
