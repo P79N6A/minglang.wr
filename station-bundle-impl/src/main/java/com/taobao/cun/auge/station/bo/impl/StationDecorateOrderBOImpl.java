@@ -49,10 +49,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		orderDto.setPaid(mainOrder.isPaid());
 		List<BizOrderDO> items = mainOrder.getDetailOrderList();
 		BizOrderDO subOrder = items.stream().findFirst().get();
-		boolean refund = items.stream().allMatch(order -> {
-			return order.isRefundSuccess();
-		});
-		orderDto.setRefund(refund);
+		orderDto.setRefund(mainOrder.getPayStatus() == PayOrderDO.STATUS_REFUNDED);
 		orderDto.setBizOrderId(mainOrder.getBizOrderId());
 		orderDto.setTotalFee(mainOrder.getTotalFee());
 		orderDto.setAuctionPrice(mainOrder.getAuctionPrice());
@@ -70,13 +67,20 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Override
 	public Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId) {
 		try {
+			logger.info("getDecorateOrder sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId);
 			QueryBizOrderDO query = new QueryBizOrderDO();
 			query.setSellerNumId(new long[] { sellerTaobaoUserId });
 			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
+			Optional<BizOrderDO> paidOrder = batchQueryResult.getOrderList().stream()
+					.map(orderInfo -> orderInfo.getBizOrderDO())
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount && bizOrder.isPaid()  )).findFirst();
+			if(paidOrder.isPresent()){
+				return Optional.ofNullable(getStationDecorateOrder(paidOrder.get()));
+			}
 			Optional<BizOrderDO> order = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
-					.filter(bizOrder -> bizOrder.getAuctionPrice() == orderAmount).findFirst();
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount)).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(order.get()));
 			}
