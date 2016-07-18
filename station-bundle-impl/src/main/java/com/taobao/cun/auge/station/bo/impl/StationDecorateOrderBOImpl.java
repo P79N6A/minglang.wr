@@ -73,7 +73,6 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			QueryBizOrderDO query = new QueryBizOrderDO();
 			query.setSellerNumId(new long[] { sellerTaobaoUserId });
 			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
-			query.setPayStatus(new int[] { PayOrderDO.STATUS_PAID });
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
 			Optional<BizOrderDO> order = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
