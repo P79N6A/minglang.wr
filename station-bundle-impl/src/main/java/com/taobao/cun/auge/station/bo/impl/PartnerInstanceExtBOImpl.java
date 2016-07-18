@@ -71,17 +71,22 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	}
 	
 	@Override
-	public PartnerInstanceExt findPartnerInstanceExt(Long instanceId){
+	public PartnerInstanceExt findPartnerInstanceExt(Long instanceId) {
 		ValidateUtils.notNull(instanceId);
-		
+
 		PartnerInstanceExtExample example = new PartnerInstanceExtExample();
 		Criteria criteria = example.createCriteria();
 
 		criteria.andPartnerInstanceIdEqualTo(instanceId);
 		criteria.andIsDeletedEqualTo("n");
 
-		List<PartnerInstanceExt>  instanceExts = partnerInstanceExtMapper.selectByExample(example);
-	
+		List<PartnerInstanceExt> instanceExts = partnerInstanceExtMapper.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(instanceExts)) {
+			return null;
+		}
+
+		return instanceExts.get(0);
 	}
 
 	@Override

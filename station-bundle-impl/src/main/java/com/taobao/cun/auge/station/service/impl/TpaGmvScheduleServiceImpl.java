@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
@@ -35,6 +36,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	private static final Logger logger = LoggerFactory.getLogger(TpaGmvScheduleService.class);
+	
+	private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
 
 	// 最近两个月
 	private static final Integer lastMonthCount = 2;
@@ -98,11 +101,11 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		}
 		Long instanceId = rel.getId();
 
-		// 查询当前最大配额
-		Integer curMaxChildNum = partnerInstanceExtBO.findPartnerCurMaxChildNum(instanceId);
+		// 查询合伙人扩展
+		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceId);
 		
 		//没有查询到，则插入默认值
-		if(null == curMaxChildNum){
+		if(null == instanceExt){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			
 			instanceExtDto.setInstanceId(instanceId);
@@ -113,6 +116,18 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			
 			return Boolean.TRUE;
 		}
+		
+		//上次变更时间
+		Date lastChangChildNumTime = instanceExt.getChildNumChangDate();
+		String lastChangeTime = formatDate(lastChangChildNumTime);
+		
+		//如果上个月的数据已经处理过，则不再变更
+		if(lastChangeTime.equals(incomeDto.getBizMonth())){
+			return Boolean.TRUE;
+		}
+		
+		//当前最大配额
+		Integer curMaxChildNum = instanceExt.getMaxChildNum();
 
 		// 已经达到最大配额
 		if (curMaxChildNum >= MAX_CHILD_NUM) {
@@ -129,15 +144,23 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
 		instanceExtDto.setOperator(operator);
-		instanceExtDto.setChildNumChangDate(formatDate(incomeDto.getBizMonth()));
+		instanceExtDto.setChildNumChangDate(parseDate(incomeDto.getBizMonth()));
 
 		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 
 		return Boolean.TRUE;
 	}
 	
-	private Date formatDate(String bizMonth){
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+	private String formatDate(Date date){
+		if(null == date){
+			return "";
+		}
+		String lastMonth = format.format(date);
+		
+		return lastMonth;
+	}
+	
+	private Date parseDate(String bizMonth){
 		try {
 			return format.parse(bizMonth);
 		} catch (ParseException e) {
@@ -151,7 +174,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		for (int i = lastMonthCount; i > 0; i--) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -i);
-			SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
 			String lastMonth = format.format(cal.getTime());
 
 			lastTwoMonths.add(lastMonth);
