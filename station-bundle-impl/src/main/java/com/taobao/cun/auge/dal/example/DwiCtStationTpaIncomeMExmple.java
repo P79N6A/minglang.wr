@@ -17,12 +17,12 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 	/**
 	 * 连续n个月
 	 */
-	private int lastMonthCount;
+	private Integer lastMonthCount;
 	
 	/**
 	 * 排名范围，例如前20%
 	 */
-	private long scale;
+	private Long scale;
 
 	public String[] getBizMonths() {
 		return bizMonths;
@@ -32,21 +32,19 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 		this.bizMonths = bizMonths;
 	}
 
-	public int getLastMonthCount() {
+	public Integer getLastMonthCount() {
 		return lastMonthCount;
 	}
 
-	public void setLastMonthCount(int lastMonthCount) {
+	public void setLastMonthCount(Integer lastMonthCount) {
 		this.lastMonthCount = lastMonthCount;
 	}
 
-	public long getScale() {
+	public Long getScale() {
 		return scale;
 	}
 
-	public void setScale(long scale) {
+	public void setScale(Long scale) {
 		this.scale = scale;
 	}
-	
-	
 }
