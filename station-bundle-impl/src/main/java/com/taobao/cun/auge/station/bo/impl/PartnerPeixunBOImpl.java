@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,10 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.support.Assert;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.intl.fileserver.commons.tool.url.FileserverURLTools;
+import com.alibaba.intl.fileserver.commons.tool.url.SchemaEnum;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
-import com.alibaba.ivy.enums.TrainStatus;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.course.dto.CourseDTO;
 import com.alibaba.ivy.service.course.query.CourseQueryDTO;
@@ -181,7 +183,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			result.setCourseName(course.getName());
 			result.setCourseAmount(course.getPrice());
 			result.setCourseCode(peixunCode);
-			result.setLogo(course.getLogo());
+			result.setLogo(FileserverURLTools.alibabaV2Builder()
+					.filename(course.getLogo()).useSchema(SchemaEnum.EMPTY)
+					.build());
 			PartnerCourseRecord record = records.get(0);
 			result.setStatus(record.getStatus());
 			result.setStatusDesc(PartnerPeixunStatusEnum.valueof(
@@ -202,8 +206,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					result.setStatusDesc("待付款");
 					result.setGmtOrder(record.getGmtCreate());
 				}
-				return result;
 			}
+			return result;
 		}
 		return null;
 	}
@@ -268,6 +272,30 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			logger.error("queryPeixunRecordList error", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds) {
+		List<PartnerPeixunDto> result=new ArrayList<PartnerPeixunDto>();
+		if(userIds==null||userIds.size()==0){
+			return result;
+		}
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andPartnerUserIdIn(userIds);
+		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN
+				.getCode());
+		List<PartnerCourseRecord> records = partnerCourseRecordMapper
+				.selectByExample(example);
+		for(PartnerCourseRecord record:records){
+			PartnerPeixunDto dto=new PartnerPeixunDto();
+			dto.setUserId(record.getPartnerUserId());
+			dto.setStatus(record.getStatus());
+			dto.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
+			result.add(dto);
+		}
+		return result;
 	}
 
 }

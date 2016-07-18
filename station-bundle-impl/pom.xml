@@ -271,7 +271,10 @@
 			<artifactId>ivy.services</artifactId>
 		</dependency>
 		
-		
+		<dependency>
+			  <groupId>com.alibaba.intl.base.fileserver</groupId>
+			  <artifactId>fileserver-commons-tool</artifactId>
+			 </dependency>
 	</dependencies>
 	<build>
 		<plugins>

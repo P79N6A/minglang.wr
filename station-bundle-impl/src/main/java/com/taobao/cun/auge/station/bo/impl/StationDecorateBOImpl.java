@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -201,29 +202,27 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public void syncStationDecorateFromTaobao(
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
-
+		StationDecorateDto updateDto = new StationDecorateDto();
+		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
+		updateDto.setId(stationDecorateDto.getId());
 		if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode())){
 			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrder(Long.parseLong(stationDecorateDto.getSellerTaobaoUserId()), stationDecorateDto.getPartnerUserId()).orElse(null);
 			if(decorateOrder != null){
 				if(decorateOrder.isPaid()){
-					StationDecorateDto updateDto = new StationDecorateDto();
-					updateDto.setId(stationDecorateDto.getId());
 					updateDto.setStatus(StationDecorateStatusEnum.DECORATING);
 					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
 					updateStationDecorate(updateDto);
 				}else{
-					StationDecorateDto updateDto = new StationDecorateDto();
-					updateDto.setId(stationDecorateDto.getId());
-					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
-					updateStationDecorate(updateDto);
+					if(!decorateOrder.isRefund()){
+						updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
+						updateStationDecorate(updateDto);
+					}
 				}
 			}	
 		}if(StationDecorateStatusEnum.DECORATING.getCode().equals(stationDecorateDto.getStatus().getCode())){
 			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(stationDecorateDto.getTaobaoOrderNum())).orElse(null);
 			if(decorateOrder != null)  {
 				if(decorateOrder.isRefund()){
-					StationDecorateDto updateDto = new StationDecorateDto();
-					updateDto.setId(stationDecorateDto.getId());
 					updateDto.setStatus(StationDecorateStatusEnum.UNDECORATE);
 					updateDto.setTaobaoOrderNum("");
 					updateStationDecorate(updateDto);
