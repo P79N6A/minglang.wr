@@ -322,11 +322,11 @@
 				<artifactId>commons-lang3</artifactId>
 				<version>3.4</version>
 			</dependency>
-			<dependency>
-				  <groupId>com.alibaba.intl.sourcing.shared</groupId>
-				  <artifactId>ivy.services</artifactId>
-				  <version>1.0.12</version>
-			</dependency>
+				<dependency>
+					  <groupId>com.alibaba.intl.sourcing.shared</groupId>
+					  <artifactId>ivy.services</artifactId>
+					  <version>1.0.13-SNAPSHOT</version>
+				</dependency>
 			<dependency>
 				<groupId>com.taobao.trade.platform</groupId>
 				<artifactId>tp-client-base</artifactId>

@@ -156,6 +156,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
 		record.setPartnerUserId(userId);
 		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
+		record.setCourseCode(courseCode);
 		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
 		return record;
@@ -213,9 +214,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		auth.setCode(peixunClientCode);
 		for(TrainingRecordDTO dto:trainRecords){
 			if(orderNum.equals(dto.getOrderItemNum())){
-				ResultDTO<TrainingTicketDTO> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
-				if(ticketDto.isSuccess()){
-					return ticketDto.getData().getTicketNo();
+				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
+				if(ticketDto.isSuccess()&&ticketDto.getData().size()>0){
+					return ticketDto.getData().get(0).getTicketNo();
 				}else{
 					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
 				}
