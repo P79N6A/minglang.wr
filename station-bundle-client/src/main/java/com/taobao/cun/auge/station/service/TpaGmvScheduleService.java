@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -17,7 +18,7 @@ public interface TpaGmvScheduleService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<Long> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException;
+	public List<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException;
 
 	/**
 	 * 合伙人连续两个月GMV排名，所在县前20%，其淘帮手名额添加2个
@@ -25,5 +26,5 @@ public interface TpaGmvScheduleService {
 	 * @param stationId
 	 * @return
 	 */
-	public Boolean addChildNumByGmv(Long stationId);
+	public Boolean addChildNumByGmv(DwiCtStationTpaIncomeMDto incomeDto);
 }

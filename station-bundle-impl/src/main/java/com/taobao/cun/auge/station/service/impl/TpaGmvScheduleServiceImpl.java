@@ -20,6 +20,8 @@ import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.convert.DwiCtStationTpaIncomeMConverter;
+import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -57,9 +59,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Override
-	public List<Long> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
+	public List<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
 		if (fetchNum < 0) {
-			return Collections.<Long> emptyList();
+			return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
 		}
 
 		DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
@@ -72,23 +74,20 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			PageHelper.startPage(1, fetchNum);
 			List<DwiCtStationTpaIncomeM> resList = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
 			if (CollectionUtils.isEmpty(resList)) {
-				return Collections.<Long> emptyList();
+				return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
 			}
-			List<Long> stationIds = new ArrayList<Long>(resList.size());
-			for (DwiCtStationTpaIncomeM rel : resList) {
-				stationIds.add(rel.getStationId());
-			}
-			return stationIds;
+			return DwiCtStationTpaIncomeMConverter.convert(resList);
 		} catch (Exception e) {
 			logger.error("查询合伙人淘帮手连续n个月绩效失败", e);
-			return Collections.<Long> emptyList();
+			return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
 		}
 	}
 
 	@Override
-	public Boolean addChildNumByGmv(Long stationId) {
+	public Boolean addChildNumByGmv(DwiCtStationTpaIncomeMDto incomeDto) {
 		String operator = OperatorDto.defaultOperator().getOperator();
 		
+		Long stationId = incomeDto.getStationId();
 		// 根据stationId,查询实例id
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 		if (null == rel) {
