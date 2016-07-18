@@ -36,11 +36,11 @@
 			station_srvc_cnt,
 			ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd
 		
-		from dwi_ct_station_tpa_income_m where 
+		from dwi_ct_station_tpa_income_m where 1=1
 			<include refid="query_condition" />  
 		group by station_id 
 		<if test="lastMonthCount != null" >
-		    having count(station_id) = lastMonthCount
+		    having count(station_id) = #{lastMonthCount}
 		</if>
   </select>
   <sql id="query_condition" >
@@ -51,7 +51,7 @@
 			</foreach>
 		</if>
 		<if test="scale != null" >
-			<![CDATA[ and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= scale ]]>
+			<![CDATA[ and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
 		</if>
   </sql>
 </mapper>

@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("tpaGmvScheduleService")
 @HSFProvider(serviceInterface = TpaGmvScheduleService.class)
 public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(TpaGmvScheduleService.class);
 
 	// 最近两个月
 	private static final Integer lastMonthCount = 2;
@@ -43,16 +47,21 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		example.setLastMonthCount(lastMonthCount);
 		example.setScale(scale);
 
-		PageHelper.startPage(1, fetchNum);
-		List<DwiCtStationTpaIncomeM> resList = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
-		if (CollectionUtils.isEmpty(resList)) {
+		try{
+			PageHelper.startPage(1, fetchNum);
+			List<DwiCtStationTpaIncomeM> resList = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
+			if (CollectionUtils.isEmpty(resList)) {
+				return Collections.<Long> emptyList();
+			}
+			List<Long> instanceIdList = new ArrayList<Long>(resList.size());
+			for (DwiCtStationTpaIncomeM rel : resList) {
+				instanceIdList.add(rel.getStationId());
+			}
+			return instanceIdList;
+		}catch(Exception e){
+			logger.error("查询合伙人淘帮手连续n个月绩效失败",e);
 			return Collections.<Long> emptyList();
 		}
-		List<Long> instanceIdList = new ArrayList<Long>(resList.size());
-		for (DwiCtStationTpaIncomeM rel : resList) {
-			instanceIdList.add(rel.getStationId());
-		}
-		return instanceIdList;
 	}
 
 	private String[] findLastTwoMonth() {
