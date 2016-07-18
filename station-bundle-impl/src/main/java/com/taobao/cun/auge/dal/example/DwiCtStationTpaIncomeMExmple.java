@@ -20,9 +20,9 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 	private Integer lastMonthCount;
 	
 	/**
-	 * 排名范围，例如前20%
+	 * 排名范围，例如前20%,scale= 0.2
 	 */
-	private Long scale;
+	private Double scale;
 
 	public String[] getBizMonths() {
 		return bizMonths;
@@ -40,11 +40,11 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 		this.lastMonthCount = lastMonthCount;
 	}
 
-	public Long getScale() {
+	public Double getScale() {
 		return scale;
 	}
 
-	public void setScale(Long scale) {
+	public void setScale(Double scale) {
 		this.scale = scale;
 	}
 }
