@@ -13,12 +13,14 @@ public class PartnerPeixunDto implements Serializable{
 	private String statusDesc;
 	private String orderNum;
 	private Date gmtDone;
+	private String gmtDoneDesc;
 	private String courseType;
 	private String courseTypeDesc;
 	private String courseName;
 	private BigDecimal courseAmount;
 	private String logo;
 	private Date gmtOrder;
+	private String gmtOrderDesc;
 	private String ticketNo;
 	
 	private String courseDetailUrl;
@@ -113,6 +115,18 @@ public class PartnerPeixunDto implements Serializable{
 	}
 	public void setMyOrderUrl(String myOrderUrl) {
 		this.myOrderUrl = myOrderUrl;
+	}
+	public String getGmtDoneDesc() {
+		return gmtDoneDesc;
+	}
+	public void setGmtDoneDesc(String gmtDoneDesc) {
+		this.gmtDoneDesc = gmtDoneDesc;
+	}
+	public String getGmtOrderDesc() {
+		return gmtOrderDesc;
+	}
+	public void setGmtOrderDesc(String gmtOrderDesc) {
+		this.gmtOrderDesc = gmtOrderDesc;
 	}
 	
 	

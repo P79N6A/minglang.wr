@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,13 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	public PartnerPeixunDto queryPartnerPeixunProcess(Long userId) {
 		PartnerPeixunDto dto= partnerPeixunBO.queryApplyInPeixunRecord(userId);
 		if(dto!=null){
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+			if(dto.getGmtDone()!=null){
+				dto.setGmtDoneDesc(sdf.format(dto.getGmtDone()));
+			}
+			if(dto.getGmtOrder()!=null){
+				dto.setGmtOrderDesc(sdf.format(dto.getGmtOrder()));
+			}
 			dto.setMyOrderUrl(orderUrl);
 			dto.setCourseDetailUrl(courseUrl);
 		}
