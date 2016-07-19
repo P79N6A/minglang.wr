@@ -22,7 +22,7 @@ import com.taobao.cun.auge.dal.domain.StationDecorateExample;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationDecorateMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
-import com.taobao.cun.auge.org.service.CuntaoOrgService;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -50,7 +50,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Autowired
 	AppResourceBO appResourceBO;
 	@Autowired
-	CuntaoOrgService cuntaoOrgService;
+	CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	@Autowired
 	StationBO stationBO;
 	@Autowired
@@ -101,7 +101,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	private Long getLargeAreaOrgId(Station station) {
 		
-		CuntaoOrgDto coDto = cuntaoOrgService.getCuntaoOrg(station.getApplyOrg());
+		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getCuntaoOrg(station.getApplyOrg());
 		Long largeAreaOrgId = null;
 		CuntaoOrgDto cunOrg = coDto;
 		

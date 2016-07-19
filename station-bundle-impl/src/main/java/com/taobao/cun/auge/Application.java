@@ -7,10 +7,11 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
+
+import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 
 @SpringBootApplication
-@EnableHSF
+@EnableHSFProvider
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 @ImportResource("classpath*:application/application-context.xml")
