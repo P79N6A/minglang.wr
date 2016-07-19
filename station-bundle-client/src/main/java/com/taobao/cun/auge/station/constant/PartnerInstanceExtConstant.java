@@ -3,10 +3,10 @@ package com.taobao.cun.auge.station.constant;
 public final class PartnerInstanceExtConstant {
 	
 	// 最近两个月
-	public static final Integer lastMonthCount = 2;
+	public static final Integer LAST_MONTH_COUNT = 2;
 
 	// 排名前20%
-	public static final Double scale = 0.2;
+	public static final Double SCALE = 0.2;
 
 	// 最大配额
 	public static final Integer MAX_CHILD_NUM = 10;

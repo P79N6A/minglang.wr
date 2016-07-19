@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
@@ -54,8 +55,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
 		example.setBizMonths(findLastNMonth());
-		example.setLastMonthCount(PartnerInstanceExtConstant.lastMonthCount);
-		example.setScale(PartnerInstanceExtConstant.scale);
+		example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
+		example.setScale(PartnerInstanceExtConstant.SCALE);
 
 		try {
 			PageHelper.startPage(1, fetchNum);
@@ -72,26 +73,31 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	@Override
 	public Boolean addChildNumByGmv(DwiCtStationTpaIncomeMDto incomeDto) {
+		logger.info("Start to add child max num.DwiCtStationTpaIncomeMDto=" + JSON.toJSONString(incomeDto));
+
 		String operator = OperatorDto.defaultOperator().getOperator();
 
 		Long stationId = incomeDto.getStationId();
 		// 根据stationId,查询实例id
 		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
-
 		// 查询合伙人扩展
 		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceId);
 
 		// 没有查询到，则插入默认值
+		String bizMonth = incomeDto.getBizMonth();
 		if (null == instanceExt) {
+			logger.info("PartnerInstanceExt is not exist.instanceId=" + instanceId);
+
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 
 			instanceExtDto.setInstanceId(instanceId);
 			instanceExtDto.setMaxChildNum(PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
-			instanceExtDto.setChildNumChangDate(incomeDto.getBizMonth());
+			instanceExtDto.setChildNumChangDate(bizMonth);
 			instanceExtDto.setOperator(operator);
 
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
 
+			logger.info("add default max child num to instance.instanceId=" + instanceId);
 			return Boolean.TRUE;
 		}
 
@@ -99,7 +105,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		String lastChangeTime = instanceExt.getChildNumChangDate();
 
 		// 如果上个月的数据已经处理过，则不再变更
-		if (lastChangeTime.equals(incomeDto.getBizMonth())) {
+		if (lastChangeTime.equals(bizMonth)) {
+			logger.info("data has handled.instanceId=" + instanceId + " bizMonth= " + bizMonth);
 			return Boolean.TRUE;
 		}
 
@@ -111,34 +118,40 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 		// 名额未用完，则不增加
 		if (curChildNum < curMaxChildNum) {
+			logger.info("child num not run out.instanceId=" + instanceId + " curChildNum= " + curChildNum
+					+ " curMaxChildNum=" + curMaxChildNum);
 			return Boolean.TRUE;
 		}
 
 		// 已经达到最大配额
 		if (curMaxChildNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM) {
+			logger.info("child num reaches a maximun.instanceId=" + instanceId + " curMaxChildNum=" + curMaxChildNum);
 			return Boolean.TRUE;
 		}
 		Integer childNum = curMaxChildNum + PartnerInstanceExtConstant.ADD_NUM_PER;
 
 		// 最大配额校验
-		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM : childNum;
+		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM
+				: childNum;
 
 		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
 		instanceExtDto.setOperator(operator);
-		instanceExtDto.setChildNumChangDate(incomeDto.getBizMonth());
+		instanceExtDto.setChildNumChangDate(bizMonth);
 
 		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 
+		logger.info(
+				"change child maxNum.instanceId=" + instanceId + " childNum=" + childNum + " bizMonth= " + bizMonth);
 		return Boolean.TRUE;
 	}
 
 	private String[] findLastNMonth() {
-		List<String> lastTwoMonths = new ArrayList<String>(PartnerInstanceExtConstant.lastMonthCount);
+		List<String> lastTwoMonths = new ArrayList<String>(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
 
-		for (int i = PartnerInstanceExtConstant.lastMonthCount; i > 0; i--) {
+		for (int i = PartnerInstanceExtConstant.LAST_MONTH_COUNT; i > 0; i--) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -i);
 			String lastMonth = format.format(cal.getTime());
