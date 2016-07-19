@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -54,6 +55,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	AppResourceBO appResourceBO;
+	
+	@Value("${taobao.image.url}")
+	private String taobaoImageUrl;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
@@ -238,6 +242,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				}else {
 					if(!sdod.isPaid()) {
 						sdDto.setStatus(StationDecorateStatusEnum.WAIT_PAY);
+					}
+					if (StringUtils.isNotEmpty(sdod.getAuctionPicUrl())) {
+						sdod.setAuctionPicUrl(taobaoImageUrl+sdod.getAuctionPicUrl());
 					}
 					sdDto.setStationDecorateOrderDto(sdod);
 				}
