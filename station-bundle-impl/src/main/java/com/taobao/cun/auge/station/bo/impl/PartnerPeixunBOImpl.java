@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +66,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
+	
+	@Value("${crm.peixun.course.url}")
+	private String courseUrl;
+	
+	@Value("${crm.peixun.order.url}")
+	private String orderUrl;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
@@ -207,6 +214,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					result.setGmtOrder(record.getGmtCreate());
 				}
 			}
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+			if(result.getGmtDone()!=null){
+				result.setGmtDoneDesc(sdf.format(result.getGmtDone()));
+			}
+			if(result.getGmtOrder()!=null){
+				result.setGmtOrderDesc(sdf.format(result.getGmtOrder()));
+			}
+			result.setMyOrderUrl(orderUrl);
+			result.setCourseDetailUrl(courseUrl);
 			return result;
 		}
 		return null;
