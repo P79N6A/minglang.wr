@@ -23,6 +23,8 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 	
 	public static final CuntaoFlowRecordTargetTypeEnum STATION = new CuntaoFlowRecordTargetTypeEnum("STATION","村点日志");
 	
+	public static final CuntaoFlowRecordTargetTypeEnum PARTNER_INSTANCE = new CuntaoFlowRecordTargetTypeEnum("PARTNER_INSTANCE","合伙人实例");
+	
 	public static final Map<String, CuntaoFlowRecordTargetTypeEnum> mappings = new HashMap<String, CuntaoFlowRecordTargetTypeEnum>();
 	
 	static {
@@ -35,6 +37,7 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 		mappings.put("partnerApplyDownload", PARTNER_APPLY_DOWNLOAD);
 		
 		mappings.put("STATION", STATION);
+		mappings.put("PARTNER_INSTANCE", PARTNER_INSTANCE);		
 	}
 
 	private CuntaoFlowRecordTargetTypeEnum() {}

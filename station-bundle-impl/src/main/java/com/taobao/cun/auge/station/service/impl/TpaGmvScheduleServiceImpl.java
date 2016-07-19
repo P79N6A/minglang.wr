@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.convert.DwiCtStationTpaIncomeMConverter;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -45,6 +46,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+	
+	@Autowired
+	PartnerInstanceExtService partnerInstanceExtService;
 
 	@Override
 	public List<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
@@ -75,8 +79,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	public Boolean addChildNumByGmv(DwiCtStationTpaIncomeMDto incomeDto) {
 		logger.info("Start to add child max num.DwiCtStationTpaIncomeMDto=" + JSON.toJSONString(incomeDto));
 
-		String operator = OperatorDto.defaultOperator().getOperator();
-
 		Long stationId = incomeDto.getStationId();
 		// 根据stationId,查询实例id
 		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
@@ -86,18 +88,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		// 没有查询到，则插入默认值
 		String bizMonth = incomeDto.getBizMonth();
 		if (null == instanceExt) {
-			logger.info("PartnerInstanceExt is not exist.instanceId=" + instanceId);
-
-			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
-
-			instanceExtDto.setInstanceId(instanceId);
-			instanceExtDto.setMaxChildNum(PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
-			instanceExtDto.setChildNumChangDate(bizMonth);
-			instanceExtDto.setOperator(operator);
-
-			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
-
-			logger.info("add default max child num to instance.instanceId=" + instanceId);
+			savePartnerChildMaxNum(instanceId, bizMonth, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
 			return Boolean.TRUE;
 		}
 
@@ -134,18 +125,23 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM
 				: childNum;
 
+		//更新配额
+		savePartnerChildMaxNum(instanceId, bizMonth, childNum);
+		
+		logger.info(
+				"change child maxNum.instanceId=" + instanceId + " childNum=" + childNum + " bizMonth= " + bizMonth);
+		return Boolean.TRUE;
+	}
+
+	private void savePartnerChildMaxNum(Long instanceId, String bizMonth, Integer childNum) {
 		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
-		instanceExtDto.setOperator(operator);
 		instanceExtDto.setChildNumChangDate(bizMonth);
+		instanceExtDto.copyOperatorDto(OperatorDto.defaultOperator());
 
-		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
-
-		logger.info(
-				"change child maxNum.instanceId=" + instanceId + " childNum=" + childNum + " bizMonth= " + bizMonth);
-		return Boolean.TRUE;
+		partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 	}
 
 	private String[] findLastNMonth() {

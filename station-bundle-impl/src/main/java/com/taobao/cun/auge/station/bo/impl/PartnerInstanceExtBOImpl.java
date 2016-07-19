@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -114,6 +116,7 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updatePartnerInstanceExt(PartnerInstanceExtDto instanceExtDto) {
 		ValidateUtils.notNull(instanceExtDto);
 		ValidateUtils.notNull(instanceExtDto.getInstanceId());
@@ -129,6 +132,7 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addPartnerInstanceExt(PartnerInstanceExtDto instanceExtDto) {
 		ValidateUtils.notNull(instanceExtDto);
 		ValidateUtils.notNull(instanceExtDto.getInstanceId());

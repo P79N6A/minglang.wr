@@ -5,27 +5,35 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.PartnerChildMaxNumChangeEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
+import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
+import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("partnerInstanceExtService")
 @HSFProvider(serviceInterface = PartnerInstanceExtService.class)
 public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService {
 	
-	// 默认初始化配额
-	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
-
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceExtService.class);
+	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
@@ -78,12 +86,26 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto){
 		ValidateUtils.notNull(instanceExtDto);
 		ValidateUtils.notNull(instanceExtDto.getInstanceId());
-		
-		PartnerInstanceExt instanceExt=	partnerInstanceExtBO.findPartnerInstanceExt(instanceExtDto.getInstanceId());
-		if(null == instanceExt){
+
+		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceExtDto.getInstanceId());
+		if (null == instanceExt) {
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
+			logger.info(
+					"PartnerInstanceExt isnot exist.add PartnerInstanceExtDto = " + JSON.toJSONString(instanceExtDto));
 		}
-		
+
 		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
+		logger.info("update PartnerInstanceExt.PartnerInstanceExtDto=" + JSON.toJSONString(instanceExtDto));
+
+		Integer maxChildNum = instanceExtDto.getMaxChildNum();
+		//如果修改了子成员最大名额，则，发事件
+		if (null == maxChildNum) {
+			PartnerChildMaxNumChangeEvent event = new PartnerChildMaxNumChangeEvent();
+			event.setPartnerInstanceId(instanceExtDto.getInstanceId());
+			event.setChildMaxNum(maxChildNum);
+			event.copyOperatorDto(instanceExtDto);
+
+			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, event);
+		}
 	}
 }
