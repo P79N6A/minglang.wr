@@ -107,7 +107,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		
 		while(true){ 
 			if(OrgRangeType.LARGE_AREA.type.equals(cunOrg.getOrgRangeType())){ 
-				largeAreaOrgId = coDto.getId();
+				largeAreaOrgId = cunOrg.getId();
 				break;
 			}
 			cunOrg = cunOrg.getParent();
