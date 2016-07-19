@@ -56,8 +56,23 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	@Autowired
 	AppResourceBO appResourceBO;
 	
+	/**
+	 * 淘宝商品图片
+	 */
 	@Value("${taobao.image.url}")
 	private String taobaoImageUrl;
+	
+	/**
+	 * 淘宝订单详情
+	 */
+	@Value("${taobao.orderDetail.url}")
+	private String taobaoOrderDetailUrl;
+	
+	/**
+	 * 淘宝商品
+	 */
+	@Value("${taobao.item.url}")
+	private String taobaoItemUrl;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
@@ -145,18 +160,15 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 	
 	/**
-	 * 设置 店铺url 和付款url
+	 * 设置 店铺url
 	 * @param sdDto
 	 */
-	private void setShopInfo(StationDecorateDto sdDto) {
+	private void setShopItemInfo(StationDecorateDto sdDto) {
 		try {
 			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
-				AppResource resource = appResourceBO.queryAppResource("shop_info", sdDto.getSellerTaobaoUserId());
+				AppResource resource = appResourceBO.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
 				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-					String str = resource.getValue();
-					String[] shopInfo = str.split("##");
-					sdDto.setSellerShopUrl(shopInfo[0]);
-					sdDto.setSellerPayUrl(shopInfo[1]);
+					sdDto.setTaobaoItemUrl(taobaoItemUrl+resource.getValue());
 				}
 			}
 		} catch (Exception e) {
@@ -247,9 +259,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 						sdod.setAuctionPicUrl(taobaoImageUrl+sdod.getAuctionPicUrl());
 					}
 					sdDto.setStationDecorateOrderDto(sdod);
+					//订单详情
+					sdDto.setTaobaoOrderDetailUrl(taobaoOrderDetailUrl+sdDto.getTaobaoOrderNum());
 				}
 			}
-			setShopInfo(sdDto);
+			setShopItemInfo(sdDto);
 			return sdDto;
 		} catch (AugeServiceException augeException) {
 			throw augeException;
