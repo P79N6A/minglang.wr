@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -63,21 +64,28 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		ValidateUtils.notNull(stationDecorateDto);
 		Long stationId = stationDecorateDto.getStationId();
 		ValidateUtils.notNull(stationId);
-		StationDecorate sd = this.getStationDecorateByStationId(stationId);
-		if (sd != null) {
-			return sd;
+		StationDecorate record;
+		try {
+			StationDecorate sd = this.getStationDecorateByStationId(stationId);
+			if (sd != null) {
+				return sd;
+			}
+			
+			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
+			//添加店铺id
+			if (record.getSellerTaobaoUserId() ==null) {
+				record.setSellerTaobaoUserId(getSeller(stationId));
+			}
+			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
+			record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
+			DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
+			stationDecorateMapper.insert(record);
+			return record;
+		} catch (Exception e) {
+			logger.error("StationDecorateBO.addStationDecorate.error. param:"+JSONObject.toJSONString(stationDecorateDto),e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		
-		StationDecorate record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
-		//添加店铺id
-		if (record.getSellerTaobaoUserId() ==null) {
-			record.setSellerTaobaoUserId(getSeller(stationId));
-		}
-		record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
-		record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
-		DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
-		stationDecorateMapper.insert(record);
-		return record;
 	}
 	
 	private String getSeller(Long stationId) {
