@@ -53,7 +53,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		orderDto.setPaid(mainOrder.isPaid());
 		List<BizOrderDO> items = mainOrder.getDetailOrderList();
 		BizOrderDO subOrder = items.stream().findFirst().get();
-		orderDto.setRefund(mainOrder.getRefundStatus() == RefundDO.STATUS_END_REFUND);
+		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS));
 		orderDto.setBizOrderId(mainOrder.getBizOrderId());
 		orderDto.setTotalFee(mainOrder.getTotalFee());
 		orderDto.setAuctionPrice(mainOrder.getAuctionPrice());
@@ -78,7 +78,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
 			Optional<BizOrderDO> paidOrder = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
-					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount && bizOrder.isPaid()  )).findFirst();
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount && (bizOrder.isPaid()||bizOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED)  )).findFirst();
 			if(paidOrder.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(paidOrder.get()));
 			}
@@ -90,7 +90,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			}
 			Optional<BizOrderDO> refund = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
-					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && bizOrder.getRefundStatus() == RefundDO.STATUS_END_REFUND )).findFirst();
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS) )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
 			}
