@@ -109,7 +109,7 @@ public class TomcatURLStreamHandlerFactory implements URLStreamHandlerFactory {
         // factory
         this.registered = register;
         if (register) {
-            URL.setURLStreamHandlerFactory(this);
+           // URL.setURLStreamHandlerFactory(this);
         }
     }
 
