@@ -15,23 +15,20 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExtExample;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExtExample.Criteria;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.PartnerInstanceExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerInstanceExtConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 
 @Component("partnerInstanceExtBO")
 public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceExtBO.class);
-
-	// 合伙人下一级淘帮手默认名额
-	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 
 	@Autowired
 	PartnerInstanceExtMapper partnerInstanceExtMapper;
@@ -45,7 +42,7 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 
 		// 没有查询到，则返回默认值
 		if (null == maxChildNum) {
-			return DEFAULT_MAX_CHILD_NUM;
+			return PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM;
 		}
 		return maxChildNum;
 	}

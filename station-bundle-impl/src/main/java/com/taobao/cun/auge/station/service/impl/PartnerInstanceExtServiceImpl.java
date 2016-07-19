@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -24,7 +22,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
-import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
