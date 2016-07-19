@@ -56,8 +56,8 @@
 		<property name="crm.peixun.course.url" defaultValue="//cunxuexi.taobao.com" description="课程详情页面" />
 		<property name="crm.peixun.order.url" defaultValue="//fuwu.alibaba.com/account/my_orders.htm" description="我的订单" />
 		<property name="taobao.image.url" defaultValue="//img.daily.taobaocdn.net/bao/uploaded/" description="淘宝订单图片url前缀" />
-		
-		
+		<property name="taobao.orderDetail.url" defaultValue="//buyertrade.daily.taobao.net/trade/detail/trade_item_detail.htm?bizOrderId=" description="淘宝订单详情url前缀" />
+		<property name="taobao.item.url" defaultValue="//item.taobao.com/item.htm?id=" description="淘宝商品url前缀" />
 
 	</group>
 .
