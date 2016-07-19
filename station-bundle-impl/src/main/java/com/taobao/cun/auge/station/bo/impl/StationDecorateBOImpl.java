@@ -28,6 +28,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
@@ -183,6 +184,13 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
 		//添加附件
 		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
+		
+		if (sdDto.getStationId() != null) {
+			Station s = stationBO.getStationById(stationId);
+			if (s != null) {
+				sdDto.setStationDto(StationConverter.toStationDto(s));
+			}
+		}
 		return sdDto; 
 	}
 
