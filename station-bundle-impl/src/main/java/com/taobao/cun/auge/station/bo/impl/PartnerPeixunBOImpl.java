@@ -209,8 +209,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				//查询有没有未付款订单信息
 				if(trainRecords.size()>0){
 					result.setOrderNum(trainRecords.get(0).getOrderItemNum());
-					result.setStatus("WAIT_PAY");
-					result.setStatusDesc("待付款");
+					result.setStatus(PartnerPeixunStatusEnum.WAIT_PAY.getCode());
+					result.setStatusDesc(PartnerPeixunStatusEnum.WAIT_PAY.getDesc());
 					result.setGmtOrder(record.getGmtCreate());
 				}
 			}
