@@ -11,5 +11,5 @@
     <import resource="classpath*:/application/beans-event-client-context.xml"/>
 
   
-
+	<bean id="cuntaoOrgServiceClient" class="com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl" init-method="init"/>
 </beans>
