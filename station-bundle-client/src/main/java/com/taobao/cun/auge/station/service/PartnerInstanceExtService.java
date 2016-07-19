@@ -31,4 +31,5 @@ public interface PartnerInstanceExtService {
 	 * @return
 	 */
 	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto);
+	
 }
