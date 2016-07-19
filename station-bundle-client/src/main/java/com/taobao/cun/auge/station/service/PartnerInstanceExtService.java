@@ -24,4 +24,11 @@ public interface PartnerInstanceExtService {
 	 * @return
 	 */
 	public List<PartnerInstanceExtDto> findPartnerExtInfos(List<Long> instanceIds);
+	
+	/**
+	 * 保存合伙人扩展，不存在修改，存在，修改
+	 * 
+	 * @return
+	 */
+	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto);
 }

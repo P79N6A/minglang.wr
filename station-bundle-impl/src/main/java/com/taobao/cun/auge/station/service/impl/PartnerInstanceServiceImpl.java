@@ -106,6 +106,7 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -163,6 +164,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	AppResourceBO appResourceBO;
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
+	
+	@Autowired
+	PartnerInstanceExtService partnerInstanceExtService;
 	
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
@@ -526,7 +530,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				instanceExtDto.setMaxChildNum(childNum);
 				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
 				
-				partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
+				partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 			}
 		} catch (AugeServiceException augeException) {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());

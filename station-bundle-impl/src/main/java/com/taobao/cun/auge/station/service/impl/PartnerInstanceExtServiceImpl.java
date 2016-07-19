@@ -22,6 +22,9 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("partnerInstanceExtService")
 @HSFProvider(serviceInterface = PartnerInstanceExtService.class)
 public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService {
+	
+	// 默认初始化配额
+	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
@@ -69,5 +72,18 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 		}
 		return instanceExtDtos;
+	}
+	
+	@Override
+	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto){
+		ValidateUtils.notNull(instanceExtDto);
+		ValidateUtils.notNull(instanceExtDto.getInstanceId());
+		
+		PartnerInstanceExt instanceExt=	partnerInstanceExtBO.findPartnerInstanceExt(instanceExtDto.getInstanceId());
+		if(null == instanceExt){
+			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
+		}
+		
+		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
 	}
 }

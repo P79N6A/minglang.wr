@@ -12,11 +12,13 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -26,6 +28,9 @@ import com.taobao.cun.crius.event.client.EventListener;
 public class PartnerInstanceStateChangeListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceStateChangeListener.class);
+	
+	// 默认初始化配额
+	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
@@ -38,6 +43,9 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	PartnerInstanceExtService partnerInstanceExtService;
 
 	@Override
 	public void onMessage(Event event) {
@@ -72,6 +80,15 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
 			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
+			//服务中
+		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
+			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+			
+			instanceExtDto.setInstanceId(instanceId);
+			instanceExtDto.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
+			instanceExtDto.setOperator(operatorId);
+			
+			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 		}
 
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));

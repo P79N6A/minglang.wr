@@ -60,9 +60,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
-	@Autowired
-	PartnerInstanceExtService partnerInstanceExtService;
-
 	@Override
 	public List<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
 		if (fetchNum < 0) {
