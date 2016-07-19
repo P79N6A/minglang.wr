@@ -84,7 +84,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			
 			instanceExtDto.setInstanceId(instanceId);
 			instanceExtDto.setMaxChildNum(PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
-			instanceExtDto.setOperator(operatorId);
+			instanceExtDto.copyOperatorDto(stateChangeEvent);
 			
 			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 		}
