@@ -10,8 +10,14 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
+/**
+ * 事务提交后再发送事件
+ * 
+ * @author linjianke
+ *
+ */
 public class EventDispatcherUtil {
-	private static String ERROR_MSG = "EVENT_DISPATCH_ERROR|";
+	private static String ERROR_MSG = "EVENT_DISPATCH_ERROR";
 	private static final Logger logger = LoggerFactory.getLogger(EventDispatcherUtil.class);
 
 	public static void dispatch(final String eventName, final Object obj) {
@@ -32,7 +38,8 @@ public class EventDispatcherUtil {
 
 	private static final String getErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(ERROR_MSG).append(methodName).append("(.param=").append(param).append(").").append("errorMessage:").append(error);
+		sb.append(ERROR_MSG).append("|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
+				.append(error);
 		return sb.toString();
 	}
 
