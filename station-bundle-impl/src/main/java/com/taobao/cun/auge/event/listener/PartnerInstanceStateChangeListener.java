@@ -12,6 +12,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -29,9 +30,6 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceStateChangeListener.class);
 	
-	// 默认初始化配额
-	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
-
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
 
@@ -85,7 +83,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			
 			instanceExtDto.setInstanceId(instanceId);
-			instanceExtDto.setMaxChildNum(DEFAULT_MAX_CHILD_NUM);
+			instanceExtDto.setMaxChildNum(PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
 			instanceExtDto.setOperator(operatorId);
 			
 			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
