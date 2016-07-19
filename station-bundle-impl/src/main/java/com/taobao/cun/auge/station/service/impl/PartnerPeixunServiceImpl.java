@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,11 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public PartnerPeixunDto queryPartnerPeixunProcess(Long userId) {
 		return partnerPeixunBO.queryApplyInPeixunRecord(userId);
+	}
+
+	@Override
+	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds) {
+		return partnerPeixunBO.queryBatchPeixunRecord(userIds);
 	}
 
 }

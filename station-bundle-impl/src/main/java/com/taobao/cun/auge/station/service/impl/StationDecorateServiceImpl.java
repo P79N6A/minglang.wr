@@ -130,31 +130,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				logger.error(error);
 				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
 			}
-			StationDecorateDto sdDto =  null;
-			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
-			if (sdDto == null) {
-				return null;
-			}
-			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
-			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) ||
-					StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())) {
-				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
-				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(rel.getStationId());
-			}
-			
-			if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
-				StationDecorateOrderDto sdod = stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(sdDto.getTaobaoOrderNum())).orElse(null);
-				if (sdod == null) {
-					sdDto.setStatus(StationDecorateStatusEnum.NO_ORDER);
-				}else {
-					if(!sdod.isPaid()) {
-						sdDto.setStatus(StationDecorateStatusEnum.WAIT_PAY);
-					}
-					sdDto.setStationDecorateOrderDto(sdod);
-				}
-			}
-			setShopInfo(sdDto);
-			return sdDto;
+			return getInfoByStationId(rel.getStationId());
 		} catch (AugeServiceException augeException) {
 			throw augeException;
 		} catch (Exception e) {
@@ -236,5 +212,44 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
 		stationDecorateBO.syncStationDecorateFromTaobao(stationDecorateDto);
 		
+	}
+
+	@Override
+	public StationDecorateDto getInfoByStationId(Long stationId)
+			throws AugeServiceException {
+		ValidateUtils.notNull(stationId);
+		try {
+			StationDecorateDto sdDto =  null;
+			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
+			if (sdDto == null) {
+				return null;
+			}
+			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
+			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) ||
+					StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())) {
+				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
+				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
+			}
+			
+			if (StringUtils.isNotEmpty(sdDto.getTaobaoOrderNum())) {
+				StationDecorateOrderDto sdod = stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(sdDto.getTaobaoOrderNum())).orElse(null);
+				if (sdod == null) {
+					sdDto.setStatus(StationDecorateStatusEnum.NO_ORDER);
+				}else {
+					if(!sdod.isPaid()) {
+						sdDto.setStatus(StationDecorateStatusEnum.WAIT_PAY);
+					}
+					sdDto.setStationDecorateOrderDto(sdod);
+				}
+			}
+			setShopInfo(sdDto);
+			return sdDto;
+		} catch (AugeServiceException augeException) {
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("getInfoByStationId", String.valueOf(stationId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 }

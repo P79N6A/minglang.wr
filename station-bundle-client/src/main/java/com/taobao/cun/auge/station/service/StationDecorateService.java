@@ -24,11 +24,19 @@ public interface StationDecorateService {
 	
 	/**
 	 * 查询装修记录
-	 * @param stationId
+	 * @param taobaoUserId
 	 * @return
 	 * @throws AugeServiceException
 	 */
 	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	
+	/**
+	 * 查询装修记录
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public StationDecorateDto getInfoByStationId(Long stationId) throws AugeServiceException;
 	
 	/**
 	 * 反馈装修记录
