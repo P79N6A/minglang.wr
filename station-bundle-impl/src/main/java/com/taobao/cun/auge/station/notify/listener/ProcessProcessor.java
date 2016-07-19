@@ -16,6 +16,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -39,7 +40,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -118,9 +118,6 @@ public class ProcessProcessor {
 
 				// 同步station_apply状态和服务结束时间
 				stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_BASE);
-				// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-				// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_BASE,
-				// instanceId));
 
 				// 记录村点状态变化
 				// 去标，通过事件实现
@@ -142,9 +139,6 @@ public class ProcessProcessor {
 
 				// 同步station_apply，只更新状态
 				stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-				// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-				// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
-				// instanceId));
 
 				// 记录村点状态变化
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);
@@ -240,9 +234,6 @@ public class ProcessProcessor {
 
 				// 同步station_apply
 				stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-				// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-				// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
-				// instanceId));
 
 				// 发送合伙人实例状态变化事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
@@ -283,7 +274,7 @@ public class ProcessProcessor {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 
 	private Boolean isOpen() {

@@ -20,6 +20,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -64,7 +65,6 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("tpStrategy")
 public class TpStrategy implements PartnerInstanceStrategy {
@@ -261,9 +261,6 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-		// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
-		// instanceId));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -319,7 +316,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
 			OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
 	}
 
@@ -380,8 +377,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 				pisc.setPartnerInstanceState(state);
 				pisc.setStationName(stationDto.getName());
 				pisc.setTaobaoUserId(rel.getTaobaoUserId());
-				String messageId = EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
-				logger.info("PARTNER_STATION_STATE_CHANGE_EVENT messageid " + messageId);
+				EventDispatcherUtil.dispatch(EventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
 			}
 		} catch (Exception e) {
 			logger.error("dispatchEvent error param: instanceId" + rel.getId(), e);

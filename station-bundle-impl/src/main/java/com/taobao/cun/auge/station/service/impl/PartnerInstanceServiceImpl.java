@@ -29,6 +29,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -109,7 +110,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -861,7 +861,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
 			OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
 	}
 
@@ -876,8 +876,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceEvent.setStationId(piDto.getStationId());
 			partnerInstanceEvent.setStationName(piDto.getStationDto().getStationNum());
 			partnerInstanceEvent.setOperator(openStationDto.getOperator());
-			String msg = EventDispatcher.getInstance().dispatch("STATION_TO_SERVICE_EVENT", partnerInstanceEvent);
-			logger.info("dispachToServiceEvent success partnerInstanceId:" + openStationDto.getPartnerInstanceId() + "msgId:" + msg);
+			EventDispatcherUtil.dispatch("STATION_TO_SERVICE_EVENT", partnerInstanceEvent);
+			logger.info("dispachToServiceEvent success partnerInstanceId:" + openStationDto.getPartnerInstanceId());
 		} catch (Exception e) {
 			String error = getErrorMessage("dispachToServiceEvent", JSONObject.toJSONString(openStationDto), e.getMessage());
 			logger.error(error, e);
@@ -937,7 +937,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 发送状态变化事件
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
 					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.toString());
@@ -1131,7 +1131,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason()) ? forcedCloseDto.getRemarks()
 					: forcedCloseDto.getReason().getDesc());
 
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
@@ -1578,7 +1578,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			event.setParentTaobaoUserId(parentRel.getTaobaoUserId());
 			event.setOperator(degradePartnerInstanceSuccessDto.getOperator());
 			event.setOperatorType(degradePartnerInstanceSuccessDto.getOperatorType());
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
 		} catch (Exception e) {
 			String error = getErrorMessage("degradePartnerInstanceSuccess", JSON.toJSONString(degradePartnerInstanceSuccessDto),
 					e.getMessage());
@@ -1592,6 +1592,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 }
