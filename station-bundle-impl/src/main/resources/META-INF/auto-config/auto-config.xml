@@ -53,6 +53,8 @@
 		<property name="tcBaseService.service.version" defaultValue="1.0.0.daily" description="淘宝订单服务" />
 		
 		<property name="stationDecorateOrder.amount" defaultValue="350000" description="装修订单价格" />
+		<property name="crm.peixun.course.url" defaultValue="http://cunxuexi.taobao.com" description="课程详情页面" />
+		<property name="crm.peixun.order.url" defaultValue="http://fuwu.alibaba.com/account/my_orders.htm" description="我的订单" />
 
 	</group>
 .
