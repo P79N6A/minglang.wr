@@ -50,7 +50,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 
 	private StationDecorateOrderDto getStationDecorateOrder(BizOrderDO mainOrder) {
 		StationDecorateOrderDto orderDto = new StationDecorateOrderDto();
-		orderDto.setPaid(mainOrder.isPaid());
+		orderDto.setPaid(mainOrder.isPaid()||mainOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED);
 		List<BizOrderDO> items = mainOrder.getDetailOrderList();
 		BizOrderDO subOrder = items.stream().findFirst().get();
 		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS));
