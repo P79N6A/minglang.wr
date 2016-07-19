@@ -189,7 +189,9 @@
 		<if test="providerId != null" >
 			and s.provider_id = #{providerId,jdbcType=BIGINT}
 		</if>
-		
+		<if test="parentStationId != null" >
+			and instance.parent_station_id = #{parentStationId,jdbcType=BIGINT}
+		</if>
 		<if test="partnerType != null and partnerType != ''" >
 			and instance.type = #{partnerType,jdbcType=VARCHAR}
 		</if>

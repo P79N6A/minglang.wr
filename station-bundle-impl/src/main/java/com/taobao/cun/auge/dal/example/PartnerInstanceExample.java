@@ -17,6 +17,9 @@ public class PartnerInstanceExample implements Serializable {
 	// 村点名称
 	private String stationName;
 
+	// 父站点id
+	private Long parentStationId;
+
 	// 村点管理员 小二工号或TP商淘宝userid
 	private String managerId;
 
@@ -47,55 +50,63 @@ public class PartnerInstanceExample implements Serializable {
 	// 合伙人状态
 	private String partnerState;
 
-	//======生命週期========
-	//业务类型
+	// ======生命週期========
+	// 业务类型
 	private String businessType;
-	
-	//当前步骤
+
+	// 当前步骤
 	private String currentStep;
-	
-	//入驻协议
+
+	// 入驻协议
 	private String settledProtocol;
-	
-	//入驻协议操作符
+
+	// 入驻协议操作符
 	private boolean settledProtocolOp;
-	
-	//保证金
+
+	// 保证金
 	private String bond;
-	
-	//保证金操作符
+
+	// 保证金操作符
 	private boolean bondOp;
 
-	//角色审批
+	// 角色审批
 	private String roleApprove;
-	
-	//角色审批操作符
+
+	// 角色审批操作符
 	private boolean roleApproveOp;
-	
-	//退出协议
+
+	// 退出协议
 	private String quitProtocol;
-	
-	//退出协议操作符
+
+	// 退出协议操作符
 	private boolean quitProtocolOp;
-	
-	//物流审批
+
+	// 物流审批
 	private String logisticsApprove;
-	
-	//物流审批操作符
+
+	// 物流审批操作符
 	private boolean logisticsApproveOp;
-	
-	//小二确认
+
+	// 小二确认
 	private String confirm;
-	
-	//小二确认操作符
+
+	// 小二确认操作符
 	private boolean confirmOp;
-	
-	//系统操作
+
+	// 系统操作
 	private String system;
-	
-	//系统操作操作符
+
+	// 系统操作操作符
 	private boolean systemOp;
 	
+	public Long getParentStationId() {
+		return parentStationId;
+	}
+
+	public void setParentStationId(Long parentStationId) {
+		this.parentStationId = parentStationId;
+	}
+
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
