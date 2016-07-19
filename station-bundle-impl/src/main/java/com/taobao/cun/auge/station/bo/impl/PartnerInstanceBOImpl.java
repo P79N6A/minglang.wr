@@ -277,6 +277,16 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return null;
 	}
+	
+	@Override
+	public Long findPartnerInstanceIdByStationId(Long stationId) throws AugeServiceException{
+		PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
+		if (null == rel) {
+			logger.error("partner instance is not exist.stationId " + stationId);
+			throw new AugeServiceException(StationExceptionEnum.PARTNER_INSTANCE_NOT_EXIST);
+		}
+		return rel.getId();
+	}
 
 	@Override
 	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException {

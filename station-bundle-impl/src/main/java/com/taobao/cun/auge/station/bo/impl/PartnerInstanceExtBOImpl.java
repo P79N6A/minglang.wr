@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,20 +13,29 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExtExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExtExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerInstanceExtMapper;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceExtConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
 
 @Component("partnerInstanceExtBO")
 public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceExtBO.class);
 
 	// 合伙人下一级淘帮手默认名额
 	private final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 
 	@Autowired
 	PartnerInstanceExtMapper partnerInstanceExtMapper;
+	
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 
 	@Override
 	public Integer findPartnerMaxChildNum(Long instanceId) {
@@ -54,6 +65,19 @@ public class PartnerInstanceExtBOImpl implements PartnerInstanceExtBO {
 			return null;
 		}
 		return instanceExts.get(0).getMaxChildNum();
+	}
+	
+	@Override
+	public Integer findPartnerChildrenNum(Long instanceId) {
+		try {
+			List<PartnerInstanceStateEnum> validChildStates = PartnerInstanceStateEnum.getValidChildStates();
+			List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, validChildStates);
+
+			return CollectionUtils.size(children);
+		} catch (Exception e) {
+			logger.error("查询合伙人子成员数量失败。instanceId=" + instanceId, e);
+			return 0;
+		}
 	}
 
 	@Override

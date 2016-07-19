@@ -14,7 +14,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
@@ -40,7 +39,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		}
 		Long instanceId = parent.getId();
 
-		int childrenNum = findPartnerChildrenNum(instanceId);
+		Integer childrenNum = partnerInstanceExtBO.findPartnerChildrenNum(instanceId);
 		Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
 		return childrenNum >= maxChildNum;
 	}
@@ -63,23 +62,12 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 			instanceExtDto.setInstanceId(partnerInstanceId);
 			instanceExtDto.setMaxChildNum(instanceExt.getMaxChildNum());
-			instanceExtDto.setCurChildNum(findPartnerChildrenNum(partnerInstanceId));
+			Integer childrenNum = partnerInstanceExtBO.findPartnerChildrenNum(partnerInstanceId);
+			instanceExtDto.setCurChildNum(childrenNum);
 
 			instanceExtDtos.add(instanceExtDto);
 
 		}
 		return instanceExtDtos;
-	}
-
-	// 查询下一级合伙人的数量
-	private int findPartnerChildrenNum(Long partnerInstanceId) {
-		try {
-			List<PartnerInstanceStateEnum> validChildStates = PartnerInstanceStateEnum.getValidChildStates();
-			List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerInstanceId, validChildStates);
-
-			return CollectionUtils.size(children);
-		} catch (Exception e) {
-			return 0;
-		}
 	}
 }

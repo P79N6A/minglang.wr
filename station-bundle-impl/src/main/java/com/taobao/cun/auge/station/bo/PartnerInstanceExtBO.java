@@ -25,6 +25,14 @@ public interface PartnerInstanceExtBO {
 	public Integer findPartnerCurMaxChildNum(Long instanceId);
 	
 	/**
+	 * 查询合伙人当前实际子成员数量
+	 * 
+	 * @param partnerInstanceId
+	 * @return
+	 */
+	public Integer findPartnerChildrenNum(Long instanceId);
+	
+	/**
 	 * 批量查询合伙人实例扩展信息
 	 * 
 	 * @param instanceIds

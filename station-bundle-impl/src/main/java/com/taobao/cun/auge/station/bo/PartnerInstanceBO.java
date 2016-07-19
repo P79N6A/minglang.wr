@@ -26,6 +26,14 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public Long findStationApplyIdByStationId(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long findPartnerInstanceIdByStationId(Long stationId) throws AugeServiceException;
 
 	/**
 	 * 根据stationId查询stationAPPLYid
