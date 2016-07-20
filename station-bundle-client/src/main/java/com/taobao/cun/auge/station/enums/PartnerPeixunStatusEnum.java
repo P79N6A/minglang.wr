@@ -9,7 +9,7 @@ public class PartnerPeixunStatusEnum implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public static final PartnerPeixunStatusEnum NEW = new PartnerPeixunStatusEnum("NEW", "未培训");
 	public static final PartnerPeixunStatusEnum PAY = new PartnerPeixunStatusEnum("PAY", "已付款未签到");
-	public static final PartnerPeixunStatusEnum DONE = new PartnerPeixunStatusEnum("DONE", "已培训");
+	public static final PartnerPeixunStatusEnum DONE = new PartnerPeixunStatusEnum("DONE", "已签到");
 	public static final PartnerPeixunStatusEnum WAIT_PAY = new PartnerPeixunStatusEnum("WAIT_PAY", "待付款");
 
 	private static final Map<String, PartnerPeixunStatusEnum> mappings = new HashMap<String, PartnerPeixunStatusEnum>();
