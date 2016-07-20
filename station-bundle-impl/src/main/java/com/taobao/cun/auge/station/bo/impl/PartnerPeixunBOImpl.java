@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,7 +234,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		auth.setAuthkey(peixunClientKey);
 		auth.setCode(peixunClientCode);
 		for(TrainingRecordDTO dto:trainRecords){
-			if(orderNum.equals(dto.getOrderItemNum())){
+			if(orderNum.equals(getOrderNoByOrderItem(dto.getOrderItemNum()))){
 				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
 				if(ticketDto.isSuccess()&&ticketDto.getData().size()>0){
 					return ticketDto.getData().get(0).getTicketNo();
@@ -288,6 +289,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			logger.error("queryPeixunRecordList error", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected String getOrderNoByOrderItem(String orderItem) {
+		if (StringUtils.isBlank(orderItem))
+			return null;
+		int lastIndex = orderItem.lastIndexOf("_");
+		if (lastIndex <= 0)
+			return null;
+		return orderItem.substring(0, lastIndex);
 	}
 
 	@Override
