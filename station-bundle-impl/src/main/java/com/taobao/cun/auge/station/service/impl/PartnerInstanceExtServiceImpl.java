@@ -36,6 +36,18 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
+	
+	@Override
+	public Integer findPartnerMaxChildNum(Long partnerStationId) {
+		ValidateUtils.notNull(partnerStationId);
+
+		PartnerStationRel parent = partnerInstanceBO.findPartnerInstanceByStationId(partnerStationId);
+		if (parent == null) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
+		Long instanceId = parent.getId();
+		return partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
+	}
 
 	@Override
 	public Boolean validateChildNum(Long parentStationId) {

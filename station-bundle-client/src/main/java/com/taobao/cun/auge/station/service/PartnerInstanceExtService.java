@@ -5,6 +5,14 @@ import java.util.List;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 
 public interface PartnerInstanceExtService {
+	
+	/**
+	 * 根据合伙人的村点的id，查询子成员最大名额
+	 * 
+	 * @param partnerStationId
+	 * @return
+	 */
+	public Integer findPartnerMaxChildNum(Long partnerStationId);
 
 	/**
 	 * 校验下一级是否超过名额限制，没有超过返回false，超过，返回true
