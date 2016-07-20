@@ -22,7 +22,7 @@ public class CommonExceptionEnum implements Serializable {
     public static final CommonExceptionEnum OPERATORORGID_IS_NULL = new CommonExceptionEnum("OPERATORORGID_IS_NULL", "操作人组织不能为空");
     public static final CommonExceptionEnum DATA_UNNORMAL = new CommonExceptionEnum("DATA_UNNORMAL", "数据异常");
     public static final CommonExceptionEnum RECORD_EXISTS = new CommonExceptionEnum("RECORD_EXISTS", "当前数据已经存在");
-    public static final CommonExceptionEnum VERION_IS_INVALID = new CommonExceptionEnum("VERION_IS_INVALID", "当前数据已经被他人修改，请重新刷新页面编辑");
+    public static final CommonExceptionEnum VERION_IS_INVALID = new CommonExceptionEnum("VERION_IS_INVALID", "当前数据有更新，请刷新页面重试");
     
     public static final CommonExceptionEnum TAOBAONICK_ERROR = new CommonExceptionEnum("TAOBAONICK_ERROR", "淘宝账号不正确");
     
