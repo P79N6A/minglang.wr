@@ -112,6 +112,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 			PartnerChildMaxNumChangeEvent event = new PartnerChildMaxNumChangeEvent();
 			event.setPartnerInstanceId(instanceExtDto.getInstanceId());
 			event.setChildMaxNum(maxChildNum);
+			event.setBizMonth(instanceExtDto.getChildNumChangDate());
 			event.copyOperatorDto(instanceExtDto);
 
 			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, event);
