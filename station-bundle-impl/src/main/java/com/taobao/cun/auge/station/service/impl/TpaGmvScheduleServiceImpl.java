@@ -96,7 +96,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		String lastChangeTime = instanceExt.getChildNumChangDate();
 
 		// 如果上个月的数据已经处理过，则不再变更
-		if (lastChangeTime.equals(bizMonth)) {
+		if (null != lastChangeTime && lastChangeTime.equals(bizMonth)) {
 			logger.info("data has handled.instanceId=" + instanceId + " bizMonth= " + bizMonth);
 			return Boolean.TRUE;
 		}
