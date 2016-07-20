@@ -1,12 +1,16 @@
 package com.taobao.cun.auge.station.convert;
 
+import org.apache.ecs.xhtml.li;
+
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -59,6 +63,14 @@ public class PartnerLifecycleConverter {
 		if (partnerLifecycleDto.getSystem() != null) {
 			items.setSystem(partnerLifecycleDto.getSystem().getCode());
 		}
+		
+		if (partnerLifecycleDto.getDecorateStatus() != null) {
+			items.setDecorateStatus(partnerLifecycleDto.getDecorateStatus().getCode());
+		}
+		
+		if (partnerLifecycleDto.getCourseStatus() != null) {
+			items.setCourseStatus(partnerLifecycleDto.getCourseStatus().getCode());
+		}
 		return items;
 	}
 	
@@ -81,6 +93,8 @@ public class PartnerLifecycleConverter {
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(items.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(items.getConfirm()));
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(items.getSystem()));
+		lifecleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.valueof(items.getDecorateStatus()));
+		lifecleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.valueof(items.getCourseStatus()));
 		
 		return lifecleDto;
 	}
