@@ -2,8 +2,6 @@ package com.taobao.cun.auge.station.dto;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
@@ -71,6 +69,11 @@ public class StationDecorateDto  extends OperatorDto {
      * 室内围贴面积
      */
     private String insideArea;
+    
+    /**
+     * 室内装修面积
+     */
+    private String carpetArea;
     
     /**
      * 附件
@@ -274,5 +277,13 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setTaobaoItemUrl(String taobaoItemUrl) {
 		this.taobaoItemUrl = taobaoItemUrl;
+	}
+
+	public String getCarpetArea() {
+		return carpetArea;
+	}
+
+	public void setCarpetArea(String carpetArea) {
+		this.carpetArea = carpetArea;
 	}
 }

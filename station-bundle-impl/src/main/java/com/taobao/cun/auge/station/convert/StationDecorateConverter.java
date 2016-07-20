@@ -38,6 +38,7 @@ public class StationDecorateConverter {
 		stationDecorateDto.setStatus(StationDecorateStatusEnum.valueof(stationDecorate.getStatus()));
 		stationDecorateDto.setTaobaoOrderNum(stationDecorate.getTaobaoOrderNum());
 		stationDecorateDto.setWallArea(stationDecorate.getWallArea());
+		stationDecorateDto.setCarpetArea(stationDecorate.getCarpetArea());
 		
 		return stationDecorateDto;
 	}
@@ -60,6 +61,7 @@ public class StationDecorateConverter {
 		stationDecorate.setStatus(stationDecorateDto.getStatus() ==null? null:stationDecorateDto.getStatus().getCode());
 		stationDecorate.setTaobaoOrderNum(stationDecorateDto.getTaobaoOrderNum());
 		stationDecorate.setWallArea(stationDecorateDto.getWallArea());
+		stationDecorate.setCarpetArea(stationDecorateDto.getCarpetArea());
 	
 		return stationDecorate;
 	}

@@ -42,6 +42,11 @@ public class StationDecorateReflectDto extends OperatorDto {
     private String insideArea;
     
     /**
+     * 室内装修面积
+     */
+    private String carpetArea;
+    
+    /**
      * 附件
      */
     private List<AttachementDto> attachements;
@@ -127,4 +132,14 @@ public class StationDecorateReflectDto extends OperatorDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public String getCarpetArea() {
+		return carpetArea;
+	}
+
+	public void setCarpetArea(String carpetArea) {
+		this.carpetArea = carpetArea;
+	}
+	
+	
 }
