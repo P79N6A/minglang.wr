@@ -108,7 +108,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 		Integer maxChildNum = instanceExtDto.getMaxChildNum();
 		//如果修改了子成员最大名额，则，发事件
-		if (null == maxChildNum) {
+		if (null != maxChildNum) {
 			PartnerChildMaxNumChangeEvent event = new PartnerChildMaxNumChangeEvent();
 			event.setPartnerInstanceId(instanceExtDto.getInstanceId());
 			event.setChildMaxNum(maxChildNum);
