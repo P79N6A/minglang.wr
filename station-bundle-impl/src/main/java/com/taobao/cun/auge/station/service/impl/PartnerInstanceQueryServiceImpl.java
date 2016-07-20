@@ -142,7 +142,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
+			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -159,6 +159,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				.append("errorMessage:").append(error);
 		return sb.toString();
 	}
+	
+	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
+				.append(error);
+		return sb.toString();
+	}
+
 
 	private void setSafedInfo(PartnerDto partnerDto) {
 		if (partnerDto != null) {
@@ -302,7 +310,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				PartnerLifecycleSettledProtocolEnum itemState = PartnerLifecycleSettledProtocolEnum
 						.valueof(lifecycleItems.getSettledProtocol());
 				if (null == itemState) {
-					throw new AugeServiceException(PartnerExceptionEnum.DATA_UNNORMAL);
+					throw new RuntimeException("invalid settle protocol in lifecycle_items");
 				}
 				info.setHasSigned(PartnerLifecycleSettledProtocolEnum.SIGNED.equals(itemState) ? true : false);
 			} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
@@ -315,7 +323,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				info.setHasSigned(null == dto ? false : true);
 			}
 			return info;
-		} catch (Exception e) {
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
+			logger.error(error, e);
+			throw e;
+		}catch (Exception e) {
 			String error = getErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -327,7 +339,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		try {
 			BondFreezingInfoDto info = new BondFreezingInfoDto();
 			PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			if (null == rel) {
+			if (null == rel || !PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState())) {
 				logger.info("no active partner instance for user : {}", taobaoUserId);
 				return null;
 			}
@@ -341,7 +353,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
 					instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
-				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+				throw new NullPointerException("bond money or settle protocol not exist");
 			}
 			info.setPartnerInstance(instance);
 			info.setAcountMoney(bondMoney);
@@ -351,10 +363,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			} else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
 				info.setHasFrozen(true);
 			} else {
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				throw new RuntimeException("invalid account_money state");
 			}
 			return info;
-		} catch (Exception e) {
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
+		}catch (Exception e) {
 			String error = getErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);

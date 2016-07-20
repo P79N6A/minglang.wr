@@ -42,6 +42,8 @@ public class PartnerLifecycleRuleParser {
 
 	private static Map<String, List<PartnerLifecycleRuleMapping>> stateMappingRules;
 	private static Map<String, Field> partnerLifecycleRuleFieldMap;
+	
+	private static String ERROR_MSG="PARTNER_LIFECYCLE_RULE_PARSER_ERROR";
 
 	static {
 		loadFiled();
@@ -103,7 +105,9 @@ public class PartnerLifecycleRuleParser {
 				return mapping.getPartnerLifecycleRule();
 			}
 		}
-		throw new AugeServiceException("PartnerLifecycleRule not exists: " + type.getCode() + " , " + stationApplyState);
+		String msg = "PartnerLifecycleRule not exists: " + type.getCode() + " , " + stationApplyState;
+		logger.error(ERROR_MSG + msg);
+		throw new RuntimeException(msg);
 	}
 
 	/**
@@ -124,14 +128,16 @@ public class PartnerLifecycleRuleParser {
 			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
 				StationApplyStateEnum stateEnum = StationApplyStateEnum.valueof(mapping.getStationApplyState());
 				if (stateEnum == null) {
-					throw new AugeServiceException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState
+					throw new RuntimeException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState
 							+ ", " + JSON.toJSONString(partnerLifecycle));
 				}
 				return stateEnum;
 			}
 		}
-		throw new AugeServiceException(
-				"parseStationApplyState error: " + partnerType + " , " + instatnceState + ", " + JSON.toJSONString(partnerLifecycle));
+		String msg = "parseStationApplyState error: " + partnerType + " , " + instatnceState + ", " + JSON.toJSONString(partnerLifecycle);
+		logger.error(ERROR_MSG + msg);
+		throw new RuntimeException(msg
+				);
 	}
 
 	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
@@ -153,7 +159,7 @@ public class PartnerLifecycleRuleParser {
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				logger.error("parse field value error", e);
-				throw new AugeServiceException("parse field value error");
+				throw new RuntimeException("parse field value error");
 			}
 		}
 		return true;
