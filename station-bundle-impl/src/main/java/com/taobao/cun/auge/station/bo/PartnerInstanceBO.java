@@ -26,6 +26,14 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public Long findStationApplyIdByStationId(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Long findPartnerInstanceIdByStationId(Long stationId) throws AugeServiceException;
 
 	/**
 	 * 根据stationId查询stationAPPLYid
@@ -95,7 +103,7 @@ public interface PartnerInstanceBO {
 	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
 
 	/**
-	 * 查询子合伙人数量
+	 * 查询子合伙人
 	 * 
 	 * @param instanceId
 	 * @param stateEnums

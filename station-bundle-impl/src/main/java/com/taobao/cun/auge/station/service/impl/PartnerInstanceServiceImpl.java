@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -45,6 +44,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -63,6 +63,7 @@ import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -107,6 +108,7 @@ import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -163,6 +165,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	AppResourceBO appResourceBO;
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
+
+	@Autowired
+	PartnerInstanceExtService partnerInstanceExtService;
+	
+	@Autowired
+	PartnerInstanceExtBO partnerInstanceExtBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -522,6 +530,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
 			}
 
+			// 修改子成员配额
+			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
+			if (null != childNum) {
+				PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+				
+				instanceExtDto.setInstanceId(partnerInstanceId);
+				instanceExtDto.setMaxChildNum(childNum);
+				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+				
+				partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+			}
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
 			logger.error(error, augeException);
@@ -1389,7 +1408,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 所归属的合伙人的淘帮手不能大于等于5个
 			int parentTpaCount = partnerInstanceBO.getActiveTpaByParentStationId(parentRel.getParentStationId());
-			if (parentTpaCount >= getTpaMax()) {
+			Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(parentRel.getId());
+			if (parentTpaCount >= maxChildNum) {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_HAS_TPA_MAX);
 			}
 
@@ -1411,13 +1431,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	private Long getTpaMax() {
-		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
-		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-			return Long.parseLong(resource.getValue());
-		}
-		return TPAMAX_DEFAULT;
-	}
+//	private Long getTpaMax() {
+//		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
+//		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+//			return Long.parseLong(resource.getValue());
+//		}
+//		return TPAMAX_DEFAULT;
+//	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override

@@ -41,6 +41,9 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	// 所属TP商id
 	private Long providerId;
+	
+	// 父站点id
+	private Long parentStationId;
 
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -120,5 +123,13 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	public void setProviderId(Long providerId) {
 		this.providerId = providerId;
+	}
+
+	public Long getParentStationId() {
+		return parentStationId;
+	}
+
+	public void setParentStationId(Long parentStationId) {
+		this.parentStationId = parentStationId;
 	}
 }
