@@ -270,6 +270,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 					//订单详情
 					sdDto.setTaobaoOrderDetailUrl(taobaoOrderDetailUrl+sdDto.getTaobaoOrderNum());
 				}
+			}else {
+				sdDto.setStatus(StationDecorateStatusEnum.NO_ORDER);
 			}
 			setShopItemInfo(sdDto);
 			return sdDto;
