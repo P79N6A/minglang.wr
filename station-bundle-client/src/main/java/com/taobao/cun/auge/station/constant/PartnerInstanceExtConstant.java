@@ -15,7 +15,7 @@ public final class PartnerInstanceExtConstant {
 	public static final Integer ADD_NUM_PER = 2;
 
 	// 默认初始化配额
-	public final static Integer DEFAULT_MAX_CHILD_NUM = 3;
+	public final static Integer DEFAULT_MAX_CHILD_NUM = 0;
 	
 	private PartnerInstanceExtConstant(){
 		

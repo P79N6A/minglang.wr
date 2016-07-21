@@ -88,7 +88,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		// 没有查询到，则插入默认值
 		String bizMonth = incomeDto.getBizMonth();
 		if (null == instanceExt) {
-			savePartnerChildMaxNum(instanceId, bizMonth, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
+			savePartnerChildMaxNum(instanceId, bizMonth, PartnerInstanceExtConstant.ADD_NUM_PER);
 			return Boolean.TRUE;
 		}
 
