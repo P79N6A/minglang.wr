@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -26,6 +28,7 @@ import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -111,6 +114,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	StationDecorateBO stationDecorateBO;
+	
+	@Autowired
+	AppResourceBO appResourceBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -333,11 +339,30 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		dispacthEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
 	
+	private  Boolean containCountyOrgId(Long countyOrgId) {
+		if (countyOrgId != null) {
+			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
+			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
+				return countyIdList.contains(countyOrgId);
+			}else {
+				return true;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * 构建装修中生命周期
 	 * @param rel
 	 */
 	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
+		
+		Station s = stationBO.getStationById(rel.getStationId());
+		if(!containCountyOrgId(s.getApplyOrg())) {
+			return;
+		}
+		
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
