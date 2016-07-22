@@ -222,8 +222,13 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		updateDto.setId(stationDecorateDto.getId());
 		if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode())){
-			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrder(Long.parseLong(stationDecorateDto.getSellerTaobaoUserId()), stationDecorateDto.getPartnerUserId()).orElse(null);
-			if(decorateOrder != null){
+			StationDecorateOrderDto decorateOrder = null;
+			if(StringUtils.isNotEmpty(stationDecorateDto.getTaobaoOrderNum())){
+				decorateOrder =	stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(stationDecorateDto.getTaobaoOrderNum())).orElse(null);
+			}else{
+				decorateOrder =	stationDecorateOrderBO.getDecorateOrder(Long.parseLong(stationDecorateDto.getSellerTaobaoUserId()), stationDecorateDto.getPartnerUserId()).orElse(null);
+			}
+			 if(decorateOrder != null){
 				if(decorateOrder.isPaid()){
 					updateDto.setStatus(StationDecorateStatusEnum.DECORATING);
 					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
