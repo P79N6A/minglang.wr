@@ -108,6 +108,20 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
+	
+	@Override
+	public PartnerInstanceDto queryInfo(Long stationId) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+		
+		PartnerInstanceCondition condition = new PartnerInstanceCondition();
+		condition.setInstanceId(instanceId);
+		condition.setNeedPartnerInfo(Boolean.TRUE);
+		condition.setNeedStationInfo(Boolean.TRUE);
+		condition.setNeedDesensitization(Boolean.TRUE);
+		
+		return queryInfo(condition);
+	}
 
 	@Override
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {	
