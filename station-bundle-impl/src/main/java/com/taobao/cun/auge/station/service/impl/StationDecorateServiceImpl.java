@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -283,5 +284,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	@Override
+	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
+			List<Long> stationIds) throws AugeServiceException {
+		return stationDecorateBO.getStatusByStationId(stationIds);
 	}
 }

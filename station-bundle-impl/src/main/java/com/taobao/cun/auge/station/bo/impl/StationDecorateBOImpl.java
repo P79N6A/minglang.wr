@@ -1,13 +1,16 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -261,6 +264,26 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			throws AugeServiceException {
 		ValidateUtils.notNull(id);
 		return stationDecorateMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
+			List<Long> stationIds) throws AugeServiceException {
+		ValidateUtils.notEmpty(stationIds);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStationIdIn(stationIds);
+		criteria.andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode());
+		List<StationDecorate> resList = stationDecorateMapper.selectByExample(example);
+		if (!CollectionUtils.isEmpty(resList)) {
+			Map<Long, StationDecorateStatusEnum> res = new HashMap<Long, StationDecorateStatusEnum>();
+			for (StationDecorate sd : resList) {
+				res.put(sd.getStationId(), StationDecorateStatusEnum.valueof(sd.getStatus()));
+			}
+			return res;
+		}
+		return null;
 	}
 
 	

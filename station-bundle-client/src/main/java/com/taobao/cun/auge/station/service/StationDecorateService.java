@@ -1,10 +1,12 @@
 package com.taobao.cun.auge.station.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -79,6 +81,14 @@ public interface StationDecorateService {
 	 * @throws AugeServiceException
 	 */
 	public void syncStationDecorateFromTaobao(StationDecorateDto stationDecorateDto)throws AugeServiceException;
+	
+	/**
+	 * 根据stationId 获得装修状态
+	 * @param stationIds
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Map<Long,StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds) throws AugeServiceException;
 	
 	
 }

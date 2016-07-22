@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.station.bo;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -76,4 +78,12 @@ public interface StationDecorateBO {
 	 * @throws AugeServiceException
 	 */
 	public StationDecorate getStationDecorateById(Long id) throws AugeServiceException;
+	
+	/**
+	 * 根据staitonId获得状态
+	 * @param stationIds
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds) throws AugeServiceException;
 }
