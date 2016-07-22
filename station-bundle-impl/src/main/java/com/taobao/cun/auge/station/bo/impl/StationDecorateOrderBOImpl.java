@@ -55,7 +55,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		orderDto.setPaid(mainOrder.isPaid()||mainOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED);
 		List<BizOrderDO> items = mainOrder.getDetailOrderList();
 		BizOrderDO subOrder = items.stream().findFirst().get();
-		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS));
+		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS||mainOrder.getPayStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO));
 		orderDto.setBizOrderId(mainOrder.getBizOrderId());
 		orderDto.setTotalFee(mainOrder.getTotalFee());
 		orderDto.setAuctionPrice(mainOrder.getAuctionPrice());
