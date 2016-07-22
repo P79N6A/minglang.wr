@@ -502,6 +502,30 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException{
+		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
+		validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
+		validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
+		Long stationId = partnerInstanceUpdateServicingDto.getStationDto().getStationId();
+		ValidateUtils.notNull(stationId);
+		
+		try {
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+			partnerInstanceUpdateServicingDto.setId(instanceId);
+			updateInternal(partnerInstanceUpdateServicingDto);
+		} catch (AugeServiceException augeException) {
+			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		} catch (Exception e) {
+			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -512,30 +536,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
 		validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
 		try {
-			Long partnerInstanceId = partnerInstanceUpdateServicingDto.getId();
-			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
-			Long stationId = rel.getStationId();
-			Long partnerId = rel.getPartnerId();
-
-			if (partnerInstanceUpdateServicingDto.getPartnerDto() != null) {
-				updatePartnerForServicing(partnerInstanceUpdateServicingDto, partnerId);
-			}
-			if (partnerInstanceUpdateServicingDto.getStationDto() != null) {
-				updateStationForServicing(partnerInstanceUpdateServicingDto, stationId);
-			}
-			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceId);
-
-			if (isNeedToUpdateCainiaoStation(rel.getState())) {
-				generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
-			}
+			updateInternal(partnerInstanceUpdateServicingDto);
 
 			// 修改子成员配额
 			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
 			if (null != childNum) {
 				PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 				
-				instanceExtDto.setInstanceId(partnerInstanceId);
+				instanceExtDto.setInstanceId(partnerInstanceUpdateServicingDto.getId());
 				instanceExtDto.setMaxChildNum(childNum);
 				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
 				
@@ -549,6 +557,26 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
+	private void updateInternal(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) {
+		Long partnerInstanceId = partnerInstanceUpdateServicingDto.getId();
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+		Long stationId = rel.getStationId();
+		Long partnerId = rel.getPartnerId();
+
+		if (partnerInstanceUpdateServicingDto.getPartnerDto() != null) {
+			updatePartnerForServicing(partnerInstanceUpdateServicingDto, partnerId);
+		}
+		if (partnerInstanceUpdateServicingDto.getStationDto() != null) {
+			updateStationForServicing(partnerInstanceUpdateServicingDto, stationId);
+		}
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceId);
+
+		if (isNeedToUpdateCainiaoStation(rel.getState())) {
+			generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
 		}
 	}
 
