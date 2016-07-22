@@ -184,7 +184,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			if (sd == null) {
 				throw new AugeServiceException("查询不到当前装修记录");
 			}
-			if (!StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(sd.getStatus())) {
+			if (!StationDecorateStatusEnum.DECORATING.getCode().equals(sd.getStatus())) {
 				throw new AugeServiceException("当前状态不能提交反馈");
 			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
