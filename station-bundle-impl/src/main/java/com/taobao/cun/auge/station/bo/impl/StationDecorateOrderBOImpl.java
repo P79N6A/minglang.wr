@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
-import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
+import com.taobao.tair.deploy.Main;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
 import com.taobao.tc.domain.dataobject.PayOrderDO;
 import com.taobao.tc.domain.query.QueryBizOrderDO;
@@ -55,7 +56,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		orderDto.setPaid(mainOrder.isPaid()||mainOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED);
 		List<BizOrderDO> items = mainOrder.getDetailOrderList();
 		BizOrderDO subOrder = items.stream().findFirst().get();
-		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS));
+		orderDto.setRefund((mainOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS||mainOrder.getPayStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO));
 		orderDto.setBizOrderId(mainOrder.getBizOrderId());
 		orderDto.setTotalFee(mainOrder.getTotalFee());
 		orderDto.setAuctionPrice(mainOrder.getAuctionPrice());
@@ -79,7 +80,9 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
 			List<BizOrderDO> orders = batchQueryResult.getOrderList().stream()
-					.map(orderInfo -> orderInfo.getBizOrderDO()).filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_CLOSED_BY_TAOBAO || bizOrder.getPayStatus() != PayOrderDO.STATUS_NOT_READY))
+					.map(orderInfo -> orderInfo.getBizOrderDO())
+					.filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_CLOSED_BY_TAOBAO))
+					.filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_NOT_READY))
 					.collect(Collectors.toList());
 			Optional<BizOrderDO> paidOrder =orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount && (bizOrder.isPaid()||bizOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED)  )).findFirst();
@@ -102,4 +105,8 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		return Optional.empty();
 	}
 	
+	public static void main(String[] args) {
+		List<String> s1 = Stream.of(1l,2l,3l).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
+		System.out.println(s1);
+	}
 }
