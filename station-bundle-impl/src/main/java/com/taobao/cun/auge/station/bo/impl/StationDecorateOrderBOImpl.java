@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
@@ -76,20 +78,20 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			query.setSellerNumId(new long[] { sellerTaobaoUserId });
 			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
-			Optional<BizOrderDO> paidOrder = batchQueryResult.getOrderList().stream()
-					.map(orderInfo -> orderInfo.getBizOrderDO())
+			List<BizOrderDO> orders = batchQueryResult.getOrderList().stream()
+					.map(orderInfo -> orderInfo.getBizOrderDO()).filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_CLOSED_BY_TAOBAO || bizOrder.getPayStatus() != PayOrderDO.STATUS_NOT_READY))
+					.collect(Collectors.toList());
+			Optional<BizOrderDO> paidOrder =orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount && (bizOrder.isPaid()||bizOrder.getPayStatus() == PayOrderDO.STATUS_TRANSFERED)  )).findFirst();
 			if(paidOrder.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(paidOrder.get()));
 			}
-			Optional<BizOrderDO> order = batchQueryResult.getOrderList().stream()
-					.map(orderInfo -> orderInfo.getBizOrderDO())
+			Optional<BizOrderDO> order = orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && bizOrder.getPayStatus() == PayOrderDO.STATUS_NOT_PAY )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(order.get()));
 			}
-			Optional<BizOrderDO> refund = batchQueryResult.getOrderList().stream()
-					.map(orderInfo -> orderInfo.getBizOrderDO())
+			Optional<BizOrderDO> refund = orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS) )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
@@ -99,4 +101,5 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		}
 		return Optional.empty();
 	}
+	
 }
