@@ -127,9 +127,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
 	public static final String RULE_REGEX = "^[0-9A-Z]+$";
-	private static final String TPAMAX_TYPE = "tpl_max";
-	private static final String TPAMAX_KEY = "tpl_max_num";
-	private static final Long TPAMAX_DEFAULT = 5L;
 
 	@Autowired
 	PartnerProtocolRelBO partnerProtocolRelBO;
@@ -1521,6 +1518,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 合伙人实例入驻失败
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL,
 						auditSettleDto.getOperator());
+				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+                stationBO.changeState(rel.getStationId(), StationStatusEnum.NEW, StationStatusEnum.INVALID, auditSettleDto.getOperator());
 			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
