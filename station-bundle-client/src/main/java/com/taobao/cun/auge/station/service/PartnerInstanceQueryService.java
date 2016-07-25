@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
@@ -30,7 +31,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto queryInfo(Long stationId) throws AugeServiceException;
+	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException;
 
 	/**
 	 * 查询合伙人实例信息
