@@ -21,11 +21,23 @@ public class EventDispatcherUtil {
 	private static final Logger logger = LoggerFactory.getLogger(EventDispatcherUtil.class);
 
 	public static void dispatch(final String eventName, final Object obj) {
-//		if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-//			logger.info("start dispatch event : eventName = {}, obj = {}", eventName, JSON.toJSONString(obj));
-//			EventDispatcher.getInstance().dispatch(eventName, obj);
-//			return;
-//		}
+		// if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+		// logger.info("start dispatch event : eventName = {}, obj = {}",
+		// eventName, JSON.toJSONString(obj));
+		// EventDispatcher.getInstance().dispatch(eventName, obj);
+		// return;
+		// }
+		try {
+			dispatctAfterTransactionCommit(eventName, obj);
+		} catch (Exception e) {
+			String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
+			logger.error(msg, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+
+	}
+
+	public static void dispatctAfterTransactionCommit(final String eventName, final Object obj) {
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 			@Override
 			public void afterCommit() {
