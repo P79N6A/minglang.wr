@@ -21,6 +21,11 @@ public class EventDispatcherUtil {
 	private static final Logger logger = LoggerFactory.getLogger(EventDispatcherUtil.class);
 
 	public static void dispatch(final String eventName, final Object obj) {
+//		if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+//			logger.info("start dispatch event : eventName = {}, obj = {}", eventName, JSON.toJSONString(obj));
+//			EventDispatcher.getInstance().dispatch(eventName, obj);
+//			return;
+//		}
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 			@Override
 			public void afterCommit() {
