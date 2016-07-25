@@ -21,14 +21,10 @@ public class EventDispatcherUtil {
 	private static final Logger logger = LoggerFactory.getLogger(EventDispatcherUtil.class);
 
 	public static void dispatch(final String eventName, final Object obj) {
-		// if (!TransactionSynchronizationManager.isActualTransactionActive()) {
-		// logger.info("start dispatch event : eventName = {}, obj = {}",
-		// eventName, JSON.toJSONString(obj));
-		// EventDispatcher.getInstance().dispatch(eventName, obj);
-		// return;
-		// }
 		try {
-			dispatctAfterTransactionCommit(eventName, obj);
+			// TransactionSynchronizationManager.isActualTransactionActive()暂时只支持事务开启时使用
+			boolean isActualTransactionActive = true;
+			dispatctEvent(eventName, obj, isActualTransactionActive);
 		} catch (Exception e) {
 			String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
 			logger.error(msg, e);
@@ -37,7 +33,12 @@ public class EventDispatcherUtil {
 
 	}
 
-	public static void dispatctAfterTransactionCommit(final String eventName, final Object obj) {
+	public static void dispatctEvent(final String eventName, final Object obj, boolean isActualTransactionActive) {
+		if (!isActualTransactionActive) {
+			logger.info("start dispatch event : eventName = {}, obj = {}", eventName, JSON.toJSONString(obj));
+			EventDispatcher.getInstance().dispatch(eventName, obj);
+			return;
+		}
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 			@Override
 			public void afterCommit() {
