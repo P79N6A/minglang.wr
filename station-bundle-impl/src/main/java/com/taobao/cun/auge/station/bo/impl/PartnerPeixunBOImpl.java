@@ -236,8 +236,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		for(TrainingRecordDTO dto:trainRecords){
 			if(orderNum.equals(getOrderNoByOrderItem(dto.getOrderItemNum()))){
 				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
-				if(ticketDto.isSuccess()&& ticketDto.getData() != null && ticketDto.getData().size()>0){
-					return ticketDto.getData().get(0).getTicketNo();
+				if(ticketDto.isSuccess()){
+					if(ticketDto.getData() != null && ticketDto.getData().size()>0){
+						return ticketDto.getData().get(0).getTicketNo();
+					}else {
+						return "";
+					}
 				}else{
 					logger.error("getByTrainingRecordId error param:"+dto.getId()+"message:"+JSONObject.toJSONString(ticketDto));
 					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
