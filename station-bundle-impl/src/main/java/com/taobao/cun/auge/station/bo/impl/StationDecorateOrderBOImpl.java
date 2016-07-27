@@ -81,7 +81,6 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService.queryMainAndDetail(query);
 			List<BizOrderDO> orders = batchQueryResult.getOrderList().stream()
 					.map(orderInfo -> orderInfo.getBizOrderDO())
-					.filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_CLOSED_BY_TAOBAO))
 					.filter(bizOrder -> (bizOrder.getPayStatus() != PayOrderDO.STATUS_NOT_READY))
 					.collect(Collectors.toList());
 			Optional<BizOrderDO> paidOrder =orders.stream()
@@ -98,6 +97,11 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS) )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
+			}
+			Optional<BizOrderDO> close = orders.stream()
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO) )).findFirst();
+			if(order.isPresent()){
+				return Optional.ofNullable(getStationDecorateOrder(close.get()));
 			}
 		} catch (Exception e) {
 			logger.error("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);
