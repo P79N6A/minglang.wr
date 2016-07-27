@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -46,6 +47,18 @@ public final class PartnerValidator {
 			if (!isMobileNO(partnerDto.getMobile())) {
 				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
 			}
+		}
+	}
+	
+	public static void validateParnterUpdateInfoByPartner(PartnerUpdateServicingDto partnerDto) {
+		if (partnerDto == null) {
+			return;
+		}
+		if (StringUtil.isBlank(partnerDto.getMobile())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
+		}
+		if (!isMobileNO(partnerDto.getMobile())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
 		}
 	}
 	
