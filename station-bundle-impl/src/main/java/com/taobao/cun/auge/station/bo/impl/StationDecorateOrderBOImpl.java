@@ -99,7 +99,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
 			}
 			Optional<BizOrderDO> close = orders.stream()
-					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO) )).findFirst();
+					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getPayStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO) )).findFirst();
 			if(order.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(close.get()));
 			}
