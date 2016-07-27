@@ -95,12 +95,12 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			}
 			Optional<BizOrderDO> refund = orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getRefundStatus() == RefundDO.STATUS_SUCCESS) )).findFirst();
-			if(order.isPresent()){
+			if(refund.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(refund.get()));
 			}
 			Optional<BizOrderDO> close = orders.stream()
 					.filter(bizOrder -> (bizOrder.getAuctionPrice() == orderAmount  && (bizOrder.getPayStatus() == PayOrderDO.STATUS_CLOSED_BY_TAOBAO) )).findFirst();
-			if(order.isPresent()){
+			if(close.isPresent()){
 				return Optional.ofNullable(getStationDecorateOrder(close.get()));
 			}
 		} catch (Exception e) {
