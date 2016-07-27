@@ -1,12 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -17,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -111,6 +108,8 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.auge.station.validate.PartnerValidator;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -126,7 +125,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
-	public static final String RULE_REGEX = "^[0-9A-Z]+$";
+
 	private static final String TPAMAX_TYPE = "tpl_max";
 	private static final String TPAMAX_KEY = "tpl_max_num";
 	private static final Long TPAMAX_DEFAULT = 5L;
@@ -373,75 +372,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
 	}
 
-	private static boolean isSpecialStr(String str) {
-		Pattern pat = Pattern.compile(RULE_REGEX);
-		Matcher mat = pat.matcher(str);
-		if (mat.find()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
 	private Long validateSettlable(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		ValidateUtils.notNull(stationDto);
 
-		if (StringUtils.isBlank(stationDto.getName())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
-		}
-		Address address = stationDto.getAddress();
-		if (address == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
-		}
-		String stationName = "";
-		if (StringUtils.isNotBlank(address.getCountyDetail())) {
-			stationName += address.getCountyDetail();
-		}
-		stationName += stationDto.getName();
-		try {
-			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeServiceException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
-			}
-		} catch (UnsupportedEncodingException e) {
-			logger.error("validate:", e);
-		}
-
-		String stationNum = stationDto.getStationNum();
-		if (StringUtils.isEmpty(stationNum)) {
-
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
-		}
-		stationNum = stationNum.toUpperCase();
-		if (stationNum.length() > 16) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
-		}
-
-		if (isSpecialStr(stationNum)) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
-		}
-
-		if (StringUtils.isBlank(partnerDto.getTaobaoNick())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_TAOBAONICK_IS_NULL);
-		}
-		if (StringUtils.isBlank(partnerDto.getAlipayAccount())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_ALIPAYACCOUNT_IS_NULL);
-		}
-		if (StringUtils.isBlank(partnerDto.getIdenNum())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_IDENNUM_IS_NULL);
-		}
-		if (StringUtils.isBlank(partnerDto.getName())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
-		}
-
-		if (partnerDto.getMobile() == null) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
-		}
-		if (!isMobileNO(partnerDto.getMobile())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
-		}
+		StationValidator.validateStation(stationDto);
+		PartnerValidator.validatePartnerInfo(partnerDto);
 
 		OperatorDto operator = new OperatorDto();
 		operator.copyOperatorDto(partnerInstanceDto);
@@ -507,8 +445,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException{
 		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
-		validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
-		validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
+		PartnerValidator.validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
+		StationValidator.validateStationUpdateInfoByPartner(partnerInstanceUpdateServicingDto.getStationDto());
 		Long stationId = partnerInstanceUpdateServicingDto.getStationDto().getStationId();
 		ValidateUtils.notNull(stationId);
 		
@@ -533,8 +471,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
 		ValidateUtils.notNull(partnerInstanceUpdateServicingDto.getId());
 		ValidateUtils.notNull(partnerInstanceUpdateServicingDto.getVersion());
-		validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
-		validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
+		PartnerValidator.validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
+		StationValidator.validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
 		try {
 			updateInternal(partnerInstanceUpdateServicingDto);
 
@@ -588,10 +526,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void updateStationForServicing(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto, Long stationId) {
 		StationUpdateServicingDto sDto = partnerInstanceUpdateServicingDto.getStationDto();
 
-		// 判断服务站编号是否使用中
-		checkStationNumDuplicate(stationId, sDto.getStationNum());
-
 		StationDto stationDto = new StationDto();
+		// 判断服务站编号是否使用中
+		if(StringUtil.isNotBlank(sDto.getStationNum())){
+			checkStationNumDuplicate(stationId, sDto.getStationNum());
+			stationDto.setStationNum(sDto.getStationNum());
+		}
+
 		stationDto.setAddress(sDto.getAddress());
 		stationDto.setAreaType(sDto.getAreaType());
 		stationDto.setCovered(sDto.getCovered());
@@ -605,7 +546,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setManagerId(sDto.getManagerId());
 		stationDto.setName(sDto.getName());
 		stationDto.setProducts(sDto.getProducts());
-		stationDto.setStationNum(sDto.getStationNum());
+
 		stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
 		stationBO.updateStation(stationDto);
 
@@ -626,62 +567,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerBO.updatePartner(partnerDto);
 		attachementBO.modifyAttachementBatch(pDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER,
 				partnerInstanceUpdateServicingDto);
-	}
-
-	private void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
-		if (stationDto == null) {
-			return;
-		}
-		if (StringUtils.isEmpty(stationDto.getName())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
-		}
-		Address address = stationDto.getAddress();
-		if (address == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
-		}
-		String stationName = "";
-		if (StringUtils.isNotBlank(address.getCountyDetail())) {
-			stationName += address.getCountyDetail();
-		}
-		stationName += stationDto.getName();
-		try {
-			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeServiceException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
-			}
-		} catch (UnsupportedEncodingException e) {
-			logger.error("validate:", e);
-		}
-
-		String stationNum = stationDto.getStationNum();
-		if (StringUtils.isEmpty(stationNum)) {
-
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
-		}
-		stationNum = stationNum.toUpperCase();
-		if (stationNum.length() > 16) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
-		}
-
-		if (isSpecialStr(stationNum)) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
-		}
-	}
-
-	private void validateParnterCanUpdateInfo(PartnerUpdateServicingDto partnerDto) {
-		if (partnerDto == null) {
-			return;
-		}
-		if (partnerDto.getMobile() != null) {
-			if (!isMobileNO(partnerDto.getMobile())) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
-			}
-		}
-	}
-
-	private static boolean isMobileNO(String mobiles) {
-		Pattern p = Pattern.compile("^((1))\\d{10}$");
-		Matcher m = p.matcher(mobiles);
-		return m.matches();
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
