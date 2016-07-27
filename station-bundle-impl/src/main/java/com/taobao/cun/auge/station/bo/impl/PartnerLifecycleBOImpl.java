@@ -51,9 +51,9 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	
 		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
 		if(StringUtil.isEmpty(partnerLifecycleDto.getOperator())){
-			DomainUtils.beforeInsert(items, DomainUtils.DEFAULT_OPERATOR);
+			DomainUtils.beforeUpdate(items, DomainUtils.DEFAULT_OPERATOR);
 		}else{
-			DomainUtils.beforeInsert(items, partnerLifecycleDto.getOperator());
+			DomainUtils.beforeUpdate(items, partnerLifecycleDto.getOperator());
 		}
 		partnerLifecycleItemsMapper.updateByPrimaryKeySelective(items);
 	}

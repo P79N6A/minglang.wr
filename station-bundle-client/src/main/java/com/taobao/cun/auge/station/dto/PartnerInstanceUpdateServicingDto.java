@@ -22,6 +22,9 @@ public class PartnerInstanceUpdateServicingDto extends OperatorDto implements Se
 
 	private PartnerUpdateServicingDto partnerDto;
 	
+	//下一级合伙人数量
+	private Integer childNum;
+	
 	/**
 	 * 乐观锁版本
 	 */
@@ -49,6 +52,14 @@ public class PartnerInstanceUpdateServicingDto extends OperatorDto implements Se
 
 	public void setPartnerDto(PartnerUpdateServicingDto partnerDto) {
 		this.partnerDto = partnerDto;
+	}
+
+	public Integer getChildNum() {
+		return childNum;
+	}
+
+	public void setChildNum(Integer childNum) {
+		this.childNum = childNum;
 	}
 
 	public Long getVersion() {

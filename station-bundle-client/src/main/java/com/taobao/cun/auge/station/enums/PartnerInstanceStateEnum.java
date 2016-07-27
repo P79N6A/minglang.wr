@@ -171,7 +171,18 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		return listValidStatus;
 	}	
 	
-	
+	/**
+	 * 获取占用名额的下一级合伙人的状态
+	 * @return
+	 */
+	public static List<PartnerInstanceStateEnum>  getValidChildStates(){
+		List<PartnerInstanceStateEnum> listValidStatus = new ArrayList<PartnerInstanceStateEnum>();
+		listValidStatus.add(PartnerInstanceStateEnum.SETTLING);
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING);
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING);
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSED);
+		return listValidStatus;
+	}
 	
 
 	@SuppressWarnings("unused")

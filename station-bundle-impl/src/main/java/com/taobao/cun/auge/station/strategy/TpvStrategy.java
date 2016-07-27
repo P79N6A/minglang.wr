@@ -21,6 +21,7 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -59,7 +60,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 
 @Component("tpvStrategy")
 public class TpvStrategy implements PartnerInstanceStrategy {
@@ -231,11 +231,8 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-		// EventDispatcher.getInstance().dispatch(EventConstant.CUNTAO_STATION_APPLY_SYNC_EVENT,
-		// new StationApplySyncEvent(SyncStationApplyEnum.UPDATE_STATE,
-		// instanceId));
 
-		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 	}
