@@ -1434,6 +1434,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 合伙人实例入驻失败
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL,
 						auditSettleDto.getOperator());
+				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+                stationBO.changeState(rel.getStationId(), StationStatusEnum.NEW, StationStatusEnum.INVALID, auditSettleDto.getOperator());
 			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
@@ -1449,6 +1451,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradePartnerInstanceSuccessDto)
 			throws AugeServiceException {
 
