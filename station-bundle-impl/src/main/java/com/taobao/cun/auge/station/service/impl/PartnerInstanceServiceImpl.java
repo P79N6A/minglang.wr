@@ -406,12 +406,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Station oldStation = stationBO.getStationById(stationId);
 			oldStationNum = oldStation.getStationNum();
 		}
-		int count = stationBO.getStationCountByStationNum(newStationNum);
-		if (StringUtils.equals(oldStationNum, newStationNum)) {
-			if (count > 1) {
-				throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_DUPLICATE);
-			}
-		} else {
+		if (!StringUtils.equals(oldStationNum, newStationNum)) {
+			int count = stationBO.getStationCountByStationNum(newStationNum);
 			if (count > 0) {
 				throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_DUPLICATE);
 			}
