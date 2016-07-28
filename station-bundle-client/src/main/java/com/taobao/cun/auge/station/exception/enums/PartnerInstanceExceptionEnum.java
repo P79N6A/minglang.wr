@@ -25,6 +25,8 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum  {
     
 	public static final PartnerInstanceExceptionEnum PARTNER_INSTANCE_STATUS_CHANGED = new PartnerInstanceExceptionEnum(
 			"PARTNER_INSTANCE_STATUS_CHANGED", "合伙人状态已变更");
+	public static final PartnerInstanceExceptionEnum PARTNER_INSTANCE_ITEM_UNEXECUTABLE = new PartnerInstanceExceptionEnum(
+			"PARTNER_INSTANCE_ITEM_UNEXECUTABLE", "当前操作不满足执行条件");
 	
     static {
         mappings.put("DEGRADE_PARTNER_TYPE_FAIL", DEGRADE_PARTNER_TYPE_FAIL);
@@ -37,6 +39,7 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum  {
         mappings.put("DEGRADE_TARGET_PARTNER_HAS_TPA_MAX", DEGRADE_TARGET_PARTNER_HAS_TPA_MAX);
         mappings.put("DEGRADE_PARTNER_ORG_NOT_SAME", DEGRADE_PARTNER_ORG_NOT_SAME);
         mappings.put("PARTNER_INSTANCE_STATUS_CHANGED", PARTNER_INSTANCE_STATUS_CHANGED);
+        mappings.put("PARTNER_INSTANCE_ITEM_UNEXECUTABLE", PARTNER_INSTANCE_ITEM_UNEXECUTABLE);
     }
 
     public PartnerInstanceExceptionEnum(String code, String desc) {

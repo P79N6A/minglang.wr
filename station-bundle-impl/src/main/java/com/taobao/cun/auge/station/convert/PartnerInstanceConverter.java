@@ -399,6 +399,10 @@ public final class PartnerInstanceConverter {
 				example.setSystemOp(system.getEqual());
 			}
 		}
+		
+		if (null != condition.getParentStationId()) {
+			example.setParentStationId(condition.getParentStationId());
+		}
 		return example;
 	}
 }

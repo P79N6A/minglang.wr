@@ -21,6 +21,11 @@ public final class EventConstant {
 	 * 合伙人类型变更事件，如合伙人降级为淘帮手
 	 */
 	public static final String PARTNER_INSTANCE_TYPE_CHANGE_EVENT = "PARTNER_INSTANCE_TYPE_CHANGE_EVENT";
+	
+	/**
+	 * 合伙人子成员最大数量变更事件
+	 */
+	public static final String PARTNER_CHILD_MAX_NUM_CHANGE_EVENT = "PARTNER_CHILD_MAX_NUM_CHANGE_EVENT";
 
 	/**
 	 * 流程日志事件

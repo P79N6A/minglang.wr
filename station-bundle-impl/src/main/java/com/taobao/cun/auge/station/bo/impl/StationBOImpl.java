@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -26,6 +27,7 @@ import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -86,7 +88,7 @@ public class StationBOImpl implements StationBO {
 		record.setId(stationId);
 		record.setStatus(postStatus.getCode());
 		if (StationStatusEnum.QUIT.equals(postStatus)) {
-			record.setState("INVALID");
+			record.setState(StationStateEnum.INVALID.getCode());
 		}
 		DomainUtils.beforeUpdate(record, operator);
 		stationMapper.updateByPrimaryKeySelective(record);
@@ -146,6 +148,7 @@ public class StationBOImpl implements StationBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStationNumEqualTo(stationNum);
+		criteria.andStatusNotIn(Lists.newArrayList(StationStatusEnum.QUIT.getCode(),StationStatusEnum.INVALID.getCode()));
 		return ResultUtils.selectCount(stationMapper.selectByExample(example));
 	}
 	
