@@ -378,7 +378,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		ValidateUtils.notNull(stationDto);
 
-		StationValidator.validateStation(stationDto);
+		StationValidator.validateStationInfo(stationDto);
 		PartnerValidator.validatePartnerInfo(partnerDto);
 
 		OperatorDto operator = new OperatorDto();
