@@ -73,7 +73,7 @@ public final class StationValidator {
 		}
 	}
 	
-	public static void validateStation(StationDto stationDto) {
+	public static void validateStationInfo(StationDto stationDto) {
 		if (StringUtils.isBlank(stationDto.getName())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
