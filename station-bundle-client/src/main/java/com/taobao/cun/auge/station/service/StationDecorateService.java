@@ -91,4 +91,12 @@ public interface StationDecorateService {
 	public Map<Long,StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds) throws AugeServiceException;
 	
 	
+	/**
+	 * 只有在装修中，装修审核待反馈的时候，才返回url,否则返回null
+	 * @param taobaoUserId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException;
+	
 }

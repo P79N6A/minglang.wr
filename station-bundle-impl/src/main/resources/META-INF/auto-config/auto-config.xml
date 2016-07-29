@@ -58,6 +58,7 @@
 		<property name="taobao.image.url" defaultValue="//img.daily.taobaocdn.net/bao/uploaded/" description="ÌÔ±¦¶©µ¥Í¼Æ¬urlÇ°×º" />
 		<property name="taobao.orderDetail.url" defaultValue="//buyertrade.daily.taobao.net/trade/detail/trade_item_detail.htm?bizOrderId=" description="ÌÔ±¦¶©µ¥ÏêÇéurlÇ°×º" />
 		<property name="taobao.item.url" defaultValue="//item.taobao.com/item.htm?id=" description="ÌÔ±¦ÉÌÆ·urlÇ°×º" />
+		<property name="station.decorate.reflect.url" defaultValue="//cuntaoadmin.daily.taobao.net/my/h5/stationDecorateEdit.htm?stationId=" description="×°ÐÞ·´À¡urlÇ°×º" />
 
 	</group>
 .

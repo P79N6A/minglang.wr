@@ -75,6 +75,12 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	@Value("${taobao.item.url}")
 	private String taobaoItemUrl;
 	
+	/**
+	 * 装修反馈url
+	 */
+	@Value("${station.decorate.reflect.url}")
+	private String stationDecorateReflectUrl;
+	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
 		// 参数校验
@@ -290,5 +296,17 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
 			List<Long> stationIds) throws AugeServiceException {
 		return stationDecorateBO.getStatusByStationId(stationIds);
+	}
+
+	@Override
+	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException {
+		StationDecorateDto dto = this.getInfoByTaobaoUserId(taobaoUserId);
+		if (dto != null) {
+			if (StationDecorateStatusEnum.DECORATING.equals(dto.getStatus())
+					||StationDecorateStatusEnum.WAIT_AUDIT.equals(dto.getStatus())) {
+				return stationDecorateReflectUrl+dto.getStationId();
+			}
+		}
+		return null;
 	}
 }
