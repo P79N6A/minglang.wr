@@ -1,13 +1,5 @@
 package com.taobao.cun.auge.station.convert;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
@@ -19,37 +11,22 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.event.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
-import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
-import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.pandora.util.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class PartnerInstanceConverter {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceConverter.class);
 
 	private PartnerInstanceConverter() {
@@ -58,7 +35,7 @@ public final class PartnerInstanceConverter {
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
 		if (CollectionUtils.isEmpty(instances)) {
-			return Collections.<PartnerInstanceDto> emptyList();
+			return Collections.<PartnerInstanceDto>emptyList();
 		}
 		List<PartnerInstanceDto> instanceDtos = new ArrayList<PartnerInstanceDto>(instances.size());
 		for (PartnerInstance instance : instances) {
@@ -102,9 +79,11 @@ public final class PartnerInstanceConverter {
 
 		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
 		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
-		
-		if(StringUtils.isNotBlank(instance.getLevel())){
-			instanceDto.setLevel(PartnerInstanceLevelEnum.valueof(instance.getLevel()));
+
+		if (StringUtils.isNotBlank(instance.getLevel())) {
+			PartnerInstanceLevelDto level = new PartnerInstanceLevelDto();
+			level.setCurrentLevel(PartnerInstanceLevelEnum.valueof(instance.getLevel()));
+			instanceDto.setPartnerInstanceLevel(level);
 		}
 
 		try {
@@ -332,8 +311,8 @@ public final class PartnerInstanceConverter {
 		if (null != partnerType) {
 			example.setPartnerType(partnerType.getCode());
 		}
-		
-		if(null != condition.getPartnerInstanceLevel()){
+
+		if (null != condition.getPartnerInstanceLevel()) {
 			example.setPartnerInstanceLevel(condition.getPartnerInstanceLevel().getLevel().toString());
 		}
 
@@ -351,10 +330,10 @@ public final class PartnerInstanceConverter {
 					stationApplyState.getCode());
 
 			PartnerInstanceStateEnum instanceState = rule.getState();
-			if(null != instanceState){
+			if (null != instanceState) {
 				example.setPartnerState(instanceState.getCode());
 			}
-			
+
 			if (PartnerInstanceStateEnum.SETTLING.equals(instanceState)
 					|| PartnerInstanceStateEnum.CLOSING.equals(instanceState)
 					|| PartnerInstanceStateEnum.QUITING.equals(instanceState)) {
@@ -409,7 +388,7 @@ public final class PartnerInstanceConverter {
 				example.setSystemOp(system.getEqual());
 			}
 		}
-		
+
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
 		}
