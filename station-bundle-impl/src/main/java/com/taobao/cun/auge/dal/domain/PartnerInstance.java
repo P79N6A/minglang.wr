@@ -105,6 +105,12 @@ public class PartnerInstance {
 	 * 合伙人层级
 	 */
 	private String level;
+	
+	/**
+	 * 合伙人层级
+	 */
+	@Column(name = "expected_level")
+	private String expectedLevel;
 
 	/**
 	 * 开业时间
@@ -1601,6 +1607,16 @@ public class PartnerInstance {
 	public void setLevel(String level) {
 		this.level = level;
 	}
+
+	public String getExpectedLevel() {
+		return expectedLevel;
+	}
+
+	public void setExpectedLevel(String expectedLevel) {
+		this.expectedLevel = expectedLevel;
+	}
+	
+	
 	
 	
 }

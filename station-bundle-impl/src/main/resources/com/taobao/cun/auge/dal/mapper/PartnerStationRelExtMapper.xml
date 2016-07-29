@@ -137,7 +137,8 @@
 		
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
 		,
-		level.current_level as level
+		level.current_level as level,
+		level.expected_level
 		</if>
 		
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >

@@ -83,6 +83,7 @@ public final class PartnerInstanceConverter {
 		if (StringUtils.isNotBlank(instance.getLevel())) {
 			PartnerInstanceLevelDto level = new PartnerInstanceLevelDto();
 			level.setCurrentLevel(PartnerInstanceLevelEnum.valueof(instance.getLevel()));
+			level.setExpectedLevel(PartnerInstanceLevelEnum.valueof(instance.getExpectedLevel()));
 			instanceDto.setPartnerInstanceLevel(level);
 		}
 
