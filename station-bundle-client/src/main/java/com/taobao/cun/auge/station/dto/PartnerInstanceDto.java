@@ -59,7 +59,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * 合伙人or村拍档
 	 */
 	private PartnerInstanceTypeEnum type;
-	
+
 	/**
 	 * 合伙人层级
 	 */
@@ -89,7 +89,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * station_aply表主键，供数据迁移使用
 	 */
 	private Long stationApplyId;
-	
+
 	/**
 	 * station_apply表的state 兼容老模型
 	 */
@@ -129,6 +129,8 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * 乐观锁版本
 	 */
 	private Long version;
+
+	private PartnerInstanceLevelDto partnerInstanceLevel;
 
 	public Long getId() {
 		return id;
@@ -313,6 +315,13 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	public void setLevel(PartnerInstanceLevelEnum level) {
 		this.level = level;
 	}
-	
+
+	public PartnerInstanceLevelDto getPartnerInstanceLevel() {
+		return partnerInstanceLevel;
+	}
+
+	public void setPartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevel) {
+		this.partnerInstanceLevel = partnerInstanceLevel;
+	}
 
 }
