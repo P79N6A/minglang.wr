@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.event.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -45,6 +46,7 @@ import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.pandora.util.StringUtils;
 
 public final class PartnerInstanceConverter {
 	
@@ -100,6 +102,10 @@ public final class PartnerInstanceConverter {
 
 		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
 		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
+		
+		if(StringUtils.isNotBlank(instance.getLevel())){
+			instanceDto.setLevel(PartnerInstanceLevelEnum.valueof(instance.getLevel()));
+		}
 
 		try {
 			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
@@ -325,6 +331,10 @@ public final class PartnerInstanceConverter {
 		PartnerInstanceTypeEnum partnerType = condition.getPartnerType();
 		if (null != partnerType) {
 			example.setPartnerType(partnerType.getCode());
+		}
+		
+		if(null != condition.getPartnerInstanceLevel()){
+			example.setPartnerInstanceLevel(condition.getPartnerInstanceLevel().getLevel().toString());
 		}
 
 		if (StringUtil.isNotBlank(condition.getPartnerName())) {

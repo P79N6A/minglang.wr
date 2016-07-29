@@ -100,6 +100,11 @@ public class PartnerInstance {
 	 * 合伙人or村拍档
 	 */
 	private String type;
+	
+	/**
+	 * 合伙人层级
+	 */
+	private String level;
 
 	/**
 	 * 开业时间
@@ -1588,4 +1593,14 @@ public class PartnerInstance {
 	public void setVersion(Long version) {
 		this.version = version;
 	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+	
+	
 }
