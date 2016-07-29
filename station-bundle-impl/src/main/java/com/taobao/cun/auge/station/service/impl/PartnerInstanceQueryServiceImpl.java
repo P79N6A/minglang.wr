@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import com.taobao.cun.auge.dal.domain.*;
+import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.convert.*;
+import com.taobao.cun.auge.station.dto.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,41 +19,10 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerInstance;
-import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
-import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.ProtocolBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
-import com.taobao.cun.auge.station.convert.PartnerConverter;
-import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
-import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
-import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
-import com.taobao.cun.auge.station.convert.StationConverter;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
-import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.dto.ProtocolDto;
-import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
-import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -109,14 +82,17 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
+	@Autowired
+	PartnerInstanceLevelBO partnerInstanceLevelBO;
+
 	@Override
-	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {	
+	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(condition);
 			PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
-			Assert.notNull(psRel,"partner instace not exists");
-			
+			Assert.notNull(psRel, "partner instace not exists");
+
 			// 获得生命周期数据
 			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
 					.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
@@ -140,6 +116,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 			}
+
+			if (condition.getNeedPartnerLevelInfo()) {
+				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
+				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
+			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
@@ -159,7 +141,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				.append("errorMessage:").append(error);
 		return sb.toString();
 	}
-	
+
 	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
@@ -327,7 +309,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			String error = getErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -370,7 +352,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			String error = getErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
