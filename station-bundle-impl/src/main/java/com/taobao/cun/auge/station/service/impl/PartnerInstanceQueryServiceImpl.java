@@ -45,7 +45,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 
 @Service("partnerInstanceQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
+@HSFProvider(serviceInterface = PartnerInstanceQueryService.class, serviceVersion="1.0.0.daily.level")
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
