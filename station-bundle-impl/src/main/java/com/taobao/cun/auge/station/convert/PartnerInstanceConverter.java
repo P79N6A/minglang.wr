@@ -9,7 +9,6 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
-import com.taobao.cun.auge.event.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.*;

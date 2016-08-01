@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.condition;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
-import com.taobao.cun.auge.event.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 

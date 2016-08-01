@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
-import com.taobao.cun.auge.event.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 
 /**
  * Created by jingxiao.gjx on 2016/7/29.
