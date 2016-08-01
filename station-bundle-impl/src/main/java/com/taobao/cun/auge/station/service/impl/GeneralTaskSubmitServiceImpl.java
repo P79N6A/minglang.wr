@@ -295,8 +295,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			startProcessTask.setParameterType(StartProcessDto.class.getName());
 			startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
 
+			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
+			//20s执行一次
+			config.setIntervalTime(20000);
 			// 提交任务
-			taskSubmitService.submitTask(startProcessTask);
+			taskSubmitService.submitTask(startProcessTask,config);
 			logger.info("submitApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] stationApplyId = " + stationApplyId + " business="

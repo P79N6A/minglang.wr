@@ -11,6 +11,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -32,8 +33,8 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
+import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
@@ -108,6 +109,21 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
+	
+	@Override
+	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+		
+		PartnerInstanceCondition condition = new PartnerInstanceCondition();
+		condition.setInstanceId(instanceId);
+		condition.setNeedPartnerInfo(Boolean.TRUE);
+		condition.setNeedStationInfo(Boolean.TRUE);
+		condition.setNeedDesensitization(Boolean.TRUE);
+		condition.copyOperatorDto(operator);
+		
+		return queryInfo(condition);
+	}
 
 	@Override
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {	

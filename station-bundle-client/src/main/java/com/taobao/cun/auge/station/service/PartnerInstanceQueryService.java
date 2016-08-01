@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -23,6 +23,15 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
  *
  */
 public interface PartnerInstanceQueryService {
+	
+	/**
+	 * 根据stationId,查询当前村点上所属人，以及村点信息
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException;
 
 	/**
 	 * 查询合伙人实例信息

@@ -52,6 +52,15 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void auditSettleByManager(AuditSettleDto auditSettleDto) throws AugeServiceException;
+	
+	/**
+	 * 合伙人修改，人、服务站基础信息，只包含服务中
+	 * 
+	 * 目前只有合伙人修改淘帮手信息，调用
+	 * 
+	 * @throws AugeServiceException
+	 */
+	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
