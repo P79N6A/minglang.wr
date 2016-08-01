@@ -169,7 +169,10 @@
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
 		
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
-			<if test="partnerInstanceLevel != null" >
+			<if test="partnerInstanceLevel != null and  partnerInstanceLevel=='SP'">
+		   	 and level.expected_level is not null
+			</if>
+			<if test="partnerInstanceLevel != null and partnerInstanceLevel!='' and  partnerInstanceLevel!='SP'">
 		   	 and level.current_level = #{partnerInstanceLevel,jdbcType=VARCHAR}
 			</if>
 		</if>
