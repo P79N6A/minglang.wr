@@ -8,7 +8,11 @@ import java.util.Date;
 
 public class PartnerInstanceLevelDto implements Serializable {
 	/**
-	 * 合伙人实例id
+	 * 
+	 */
+	private static final long serialVersionUID = 4289981939113069738L;
+	/**
+	 * 合伙人实例id(仅供内部使用)
 	 */
 	private Long partnerInstanceId;
 	/**

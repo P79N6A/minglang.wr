@@ -149,7 +149,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		return sb.toString();
 	}
 
-
 	private void setSafedInfo(PartnerDto partnerDto) {
 		if (partnerDto != null) {
 			if (StringUtils.isNotBlank(partnerDto.getAlipayAccount())) {
@@ -375,5 +374,23 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public QuitStationApplyDto getQuitStationApply(Long instanceId) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
+	}
+
+	@Override
+	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
+			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+			return dto;
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 }

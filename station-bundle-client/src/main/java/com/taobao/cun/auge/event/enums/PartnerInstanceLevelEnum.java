@@ -16,10 +16,10 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	}
 
 	public static final PartnerInstanceLevelEnum S_4 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S4, "初级合伙人");
-	public static final PartnerInstanceLevelEnum S_5 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S5, "初级合伙人");
-	public static final PartnerInstanceLevelEnum S_6 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S6, "初级合伙人");
-	public static final PartnerInstanceLevelEnum S_7 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S7, "初级合伙人");
-	public static final PartnerInstanceLevelEnum S_8 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S8, "初级合伙人");
+	public static final PartnerInstanceLevelEnum S_5 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S5, "中级合伙人");
+	public static final PartnerInstanceLevelEnum S_6 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S6, "高级合伙人");
+	public static final PartnerInstanceLevelEnum S_7 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S7, "优秀合伙人");
+	public static final PartnerInstanceLevelEnum S_8 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S8, "明星合伙人");
 	public static final PartnerInstanceLevelEnum S_P = new PartnerInstanceLevelEnum(PartnerInstanceLevel.SP, "待评定");
 
 
@@ -31,7 +31,6 @@ public class PartnerInstanceLevelEnum implements Serializable {
 		mappings.put(PartnerInstanceLevel.S7, S_7);
 		mappings.put(PartnerInstanceLevel.S8, S_8);
 		mappings.put(PartnerInstanceLevel.SP, S_P);
-
 	}
 
 	public PartnerInstanceLevelEnum(PartnerInstanceLevel level, String description) {
