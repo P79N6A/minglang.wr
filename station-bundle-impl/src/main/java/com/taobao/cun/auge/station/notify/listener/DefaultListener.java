@@ -42,6 +42,7 @@ public class DefaultListener implements MessageListener {
 			handleMsg(strMessage, ob);
 		} catch (Exception e) {
 			logger.error("DefaultListener, " + (StringMessage)message, e);
+			throw new RuntimeException("DefaultListener, " + (StringMessage)message, e);
 		}
 	}
 	
