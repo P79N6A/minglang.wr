@@ -39,6 +39,11 @@ public class AttachementTypeIdEnum implements Serializable {
         mappings.put(7L, PROPERTY_PROVE);
         mappings.put(8L, GOV_PROTOCOL);
         mappings.put(9L, TPA_OPERATION_STUFF);
+        
+        mappings.put(10L, STATION_DECORATE_SYYJ);
+        mappings.put(11L, STATION_DECORATE_SYJJ);
+        mappings.put(12L, STATION_DECORATE_SNT);
+        
     }
     
     private Long code;
