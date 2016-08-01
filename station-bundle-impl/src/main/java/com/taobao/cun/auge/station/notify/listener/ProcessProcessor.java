@@ -43,7 +43,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.notify.message.StringMessage;
 
 
