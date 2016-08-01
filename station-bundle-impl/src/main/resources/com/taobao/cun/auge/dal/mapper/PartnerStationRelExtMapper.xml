@@ -30,6 +30,7 @@
     
     <!-- 合伙人层级 -->
     <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="expected_level" jdbcType="VARCHAR" property="expectedLevel" />
     
     
     <!-- pepole -->
