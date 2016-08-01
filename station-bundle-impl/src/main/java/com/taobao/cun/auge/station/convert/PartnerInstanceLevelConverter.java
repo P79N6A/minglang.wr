@@ -47,4 +47,13 @@ public class PartnerInstanceLevelConverter {
 		result.setTaobaoUserId(level.getTaobaoUserId());
 		return result;
 	}
+
+	public static PartnerInstanceLevelDto toPartnerInstanceLevelDtoWithoutId(PartnerInstanceLevel level) {
+		PartnerInstanceLevelDto dto = toPartnerInstanceLevelDto(level);
+		if (null != dto) {
+			dto.setPartnerInstanceId(null);
+		}
+		return dto;
+	}
+
 }

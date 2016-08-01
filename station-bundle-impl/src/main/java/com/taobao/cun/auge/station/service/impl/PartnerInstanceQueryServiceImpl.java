@@ -29,6 +29,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -380,8 +381,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException {
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
 			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
-			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+			if (null == level) {
+				throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+			}
+			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
 			return dto;
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
