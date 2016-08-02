@@ -1560,6 +1560,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		//发送评级变化事件: 类型为系统评定
 		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter.convertLevelChangeEvent(
 				PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
-		EventDispatcherUtil.dispatch("PARTNER_INSTANCE_LEVEL_CHANGE_EVENT", event);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
 	}
 }
