@@ -64,6 +64,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -1613,5 +1614,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+	}
+
+	@Override
+	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
+		// TODO Auto-generated method stub
+		//保存数据库
+		
+		//根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
+		
+		//发送评级变化事件(新定义)
+		
 	}
 }
