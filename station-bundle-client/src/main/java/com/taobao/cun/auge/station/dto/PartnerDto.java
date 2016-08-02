@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -69,6 +70,32 @@ public class PartnerDto extends OperatorDto implements Serializable{
     private PartnerStateEnum state;
     
     private List<AttachementDto> attachements;
+    
+    /**
+     * 是否固点
+     */
+    private String solidPoint;
+    
+    /**
+     * 可租赁门店面积
+     */
+    private BigDecimal leaseArea; 
+
+    public BigDecimal getLeaseArea() {
+		return leaseArea;
+	}
+
+	public void setLeaseArea(BigDecimal leaseArea) {
+		this.leaseArea = leaseArea;
+	}
+
+	public String getSolidPoint() {
+		return solidPoint;
+	}
+
+	public void setSolidPoint(String solidPoint) {
+		this.solidPoint = solidPoint;
+	}
 
 	public String getName() {
 		return name;

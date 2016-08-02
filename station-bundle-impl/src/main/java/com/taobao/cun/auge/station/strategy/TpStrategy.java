@@ -13,24 +13,31 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -42,22 +49,26 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -97,6 +108,15 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
+	@Autowired
+	PartnerPeixunBO partnerPeixunBO;
+	
+	@Autowired
+	StationDecorateBO stationDecorateBO;
+	
+	@Autowired
+	AppResourceBO appResourceBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -306,11 +326,68 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+		
+		//初始化装修中生命周期
+		initPartnerLifeCycleForDecorating(rel);
 
 		// 发送装修中事件
 		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, settleSuccessDto);
 		// 发送装修中事件，手机端使用
 		dispacthEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
+	}
+	
+	private  Boolean containCountyOrgId(Long countyOrgId) {
+		if (countyOrgId != null) {
+			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
+			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
+				return countyIdList.contains(countyOrgId);
+			}else {
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * 构建装修中生命周期
+	 * @param rel
+	 */
+	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
+		
+		Station s = stationBO.getStationById(rel.getStationId());
+		if(!containCountyOrgId(s.getApplyOrg())) {
+			return;
+		}
+		
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
+		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
+		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
+		
+		//培训
+		PartnerCourseRecord pcr = partnerPeixunBO.initPartnerApplyInRecord(rel.getTaobaoUserId());
+		if (PartnerPeixunStatusEnum.DONE.getCode().equals(pcr.getStatus())) {
+			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
+		}else {
+			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
+		}
+		
+		//装修
+		StationDecorateDto stationDecorateDto = new StationDecorateDto();
+		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+		stationDecorateDto.setStationId(rel.getStationId());
+		stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
+		
+		StationDecorate sd = stationDecorateBO.addStationDecorate(stationDecorateDto);
+		if (StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
+			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+		}else {
+			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
+		}
+		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,

@@ -214,5 +214,8 @@ public interface PartnerInstanceBO {
 	 */
 	public int  getActiveTpaByParentStationId(Long parentStationId) throws AugeServiceException;
 	
+	
+	public void finishCourse(Long taobaoUserId) throws AugeServiceException;
+	
 
 }

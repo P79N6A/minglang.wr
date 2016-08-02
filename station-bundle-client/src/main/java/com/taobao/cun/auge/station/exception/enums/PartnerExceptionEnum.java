@@ -38,7 +38,14 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_MOBILE_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_MOBILE_IS_NULL", "手机号不能为空");
 	
+	public static final PartnerExceptionEnum PARTNER_NOT_FINISH_COURSE = new PartnerExceptionEnum(
+			"PARTNER_NOT_FINISH_COURSE", "当前合伙人没有完成培训");
 	
+	public static final PartnerExceptionEnum PARTNER_SOLID_POINT_IS_NULL = new PartnerExceptionEnum(
+			"PARTNER_SOLID_POINT_IS_NULL", "固点标准化不能为空");
+	
+	public static final PartnerExceptionEnum PARTNER_LEASE_AREA_IS_NULL = new PartnerExceptionEnum(
+			"PARTNER_LEASE_AREA_IS_NULL", "可租赁门店面积不能为空");
 
 	static {
 		mappings.put("NO_RECORD", NO_RECORD);
@@ -54,6 +61,9 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_STATE_NOT_APPLICABLE", PARTNER_STATE_NOT_APPLICABLE);
 		mappings.put("PARTNER_MOBILE_CHECK_FAIL", PARTNER_MOBILE_CHECK_FAIL);
 		mappings.put("PARTNER_MOBILE_IS_NULL", PARTNER_MOBILE_IS_NULL);
+		mappings.put("PARTNER_NOT_FINISH_COURSE", PARTNER_NOT_FINISH_COURSE);
+		mappings.put("PARTNER_SOLID_POINT_IS_NULL", PARTNER_SOLID_POINT_IS_NULL);
+		mappings.put("PARTNER_LEASE_AREA_IS_NULL", PARTNER_LEASE_AREA_IS_NULL);
 
 	}
 
