@@ -1,12 +1,12 @@
 package com.taobao.cun.auge.station.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 
-public class PartnerInstanceLevelDto implements Serializable {
+public class PartnerInstanceLevelDto extends OperatorDto {
 	/**
 	 * 
 	 */
