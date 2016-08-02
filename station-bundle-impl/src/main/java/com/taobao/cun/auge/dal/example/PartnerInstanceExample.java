@@ -49,6 +49,8 @@ public class PartnerInstanceExample implements Serializable {
 
 	// 合伙人状态
 	private String partnerState;
+	
+	private String partnerInstanceLevel;
 
 	// ======生命週期========
 	// 业务类型
@@ -338,4 +340,14 @@ public class PartnerInstanceExample implements Serializable {
 	public void setSystemOp(boolean systemOp) {
 		this.systemOp = systemOp;
 	}
+
+	public String getPartnerInstanceLevel() {
+		return partnerInstanceLevel;
+	}
+
+	public void setPartnerInstanceLevel(String partnerInstanceLevel) {
+		this.partnerInstanceLevel = partnerInstanceLevel;
+	}
+	
+	
 }

@@ -13,11 +13,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
+import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableHSFProvider
+@EnableHSF
 public class Application extends SpringBootServletInitializer{
 
 	@Autowired

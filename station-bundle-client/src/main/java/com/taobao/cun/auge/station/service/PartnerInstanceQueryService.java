@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -125,5 +126,15 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
+	
+		
+	/**
+	 * 获取合伙人层级信息
+	 * @param taobaoUserId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException;
+	
 
 }
