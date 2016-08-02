@@ -48,6 +48,41 @@ public class PartnerInstanceLevelConverter {
 		return result;
 	}
 
+	public static PartnerInstanceLevel toPartnerInstanceLevel(PartnerInstanceLevelDto level) {
+		if (level == null) {
+			return null;
+		}
+		PartnerInstanceLevel result = new PartnerInstanceLevel();
+		result.setAppIncomePercent(level.getAppIncomePercent());
+		result.setAppIncomePercentScore(level.getAppIncomePercentScore());
+		result.setAvgBuyTimes(level.getAvgBuyTimes());
+		result.setAvgBuyTimesScore(level.getAvgBuyTimesScore());
+		result.setBuyVillagerCnt(level.getBuyVillagerCnt());
+		result.setBuyVillagerCntScore(level.getBuyVillagerCntScore());
+		result.setCountryPartnerInstanceCnt(level.getCountryPartnerInstanceCnt());
+		result.setCountryRank(level.getCountryRank());
+		result.setCountyOrgId(level.getCountyOrgId());
+		result.setCountyPartnerInstanceCnt(level.getCountyPartnerInstanceCnt());
+		result.setCountyRank(level.getCountyRank());
+		result.setCurrentLevel(level.getCurrentLevel().getLevel().name());
+		result.setEvaluateBy(level.getEvaluateBy());
+		result.setEvaluateDate(level.getEvaluateDate());
+		result.setExpectedLevel(level.getExpectedLevel().getLevel().name());
+		result.setGoods1Gmv(level.getGoods1Gmv());
+		result.setGoods1GmvScore(level.getGoods1GmvScore());
+		result.setLastEvaluateDate(level.getLastEvaluateDate());
+		result.setMonthlyIncome(level.getMonthlyIncome());
+		result.setMonthlyIncomeScore(level.getMonthlyIncomeScore());
+		result.setNewAppBindingCntScore(level.getNewAppBindingCntScore());
+		result.setNextEvaluateDate(level.getNextEvaluateDate());
+		result.setPartnerInstanceId(level.getPartnerInstanceId());
+		result.setPreLevel(level.getPreLevel().getLevel().name());
+		result.setScore(level.getScore());
+		result.setStationId(level.getStationId());
+		result.setTaobaoUserId(level.getTaobaoUserId());
+		return result;
+	}
+
 	public static PartnerInstanceLevelDto toPartnerInstanceLevelDtoWithoutId(PartnerInstanceLevel level) {
 		PartnerInstanceLevelDto dto = toPartnerInstanceLevelDto(level);
 		if (null != dto) {

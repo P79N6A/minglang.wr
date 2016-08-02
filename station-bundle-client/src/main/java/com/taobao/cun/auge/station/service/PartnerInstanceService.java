@@ -26,7 +26,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 暂存 人，服务站基础信息
 	 * 
-	 * @param condition
+	 * @param partnerInstanceDto
 	 * @return
 	 */
 	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
@@ -34,7 +34,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 暂存 人，服务站基础信息
 	 * 
-	 * @param condition
+	 * @param partnerInstanceDto
 	 * @return
 	 */
 	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
@@ -57,7 +57,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
 	 * 
-	 * @param condition
+	 * @param partnerInstanceUpdateServicingDto
 	 * @return
 	 */
 	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
@@ -65,7 +65,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 删除合伙人实例
 	 * 
-	 * @param instanceId
+	 * @param partnerInstanceDeleteDto
 	 * @return
 	 */
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException;
@@ -100,14 +100,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 开业
 	 * 
-	 * @param partnerInstanceId
-	 *            合伙人实例id
-	 * @param openDate
-	 *            开业时间
-	 * @param isImme
-	 *            是否立即开业
-	 * @param employeeId
-	 *            小二工号
+	 * @param openStationDto
 	 * @return
 	 */
 	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException;
@@ -123,9 +116,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 小二确认合伙人申请停业
 	 * 
-	 * @param partnerInstanceId
-	 * @param employeeId
-	 * @param isAgree
+	 * @param confirmCloseDto
 	 * @return
 	 */
 	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
@@ -133,8 +124,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 小二、TP商申请停业
 	 * 
-	 * @param forcedCloseCondition
-	 * @param employeeId
+	 * @param forcedCloseDto
 	 * @return
 	 */
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
@@ -142,8 +132,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 小二、TP商申请撤点
 	 * 
-	 * @param forcedCloseCondition
-	 * @param employeeId
+	 * @param quitDto
 	 * @return
 	 */
 	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException;
@@ -151,7 +140,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 申请入驻
 	 * 
-	 * @param condition
+	 * @param partnerInstanceDto
 	 * @return
 	 */
 	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
@@ -159,7 +148,7 @@ public interface PartnerInstanceService {
 	/**
 	 * 针对入驻失败的 申请入驻
 	 * 
-	 * @param condition
+	 * @param partnerInstanceDto
 	 * @return
 	 */
 	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
@@ -183,7 +172,7 @@ public interface PartnerInstanceService {
 	
 	/**
 	 * 降级合伙人
-	 * @param partnerInstanceDegradeDto
+	 * @param degradeDto
 	 * @throws AugeServiceException
 	 */
 	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto) throws AugeServiceException;
