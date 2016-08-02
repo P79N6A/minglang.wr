@@ -1608,13 +1608,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
-		// 保存数据库
-		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
-		// 根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
+		//根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
 		partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
-		// 发送评级变化事件: 类型为系统评定
-		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
-				.convertLevelChangeEvent(PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
+		//保存数据库
+		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
+		//发送评级变化事件: 类型为系统评定
+		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter.convertLevelChangeEvent(
+				PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
 	}
 }

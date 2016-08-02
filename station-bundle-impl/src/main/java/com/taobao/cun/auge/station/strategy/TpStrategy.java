@@ -33,6 +33,7 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -117,6 +118,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	AppResourceBO appResourceBO;
+	
+	@Autowired
+	PartnerInstanceLevelBO partnerInstanceLevelBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
