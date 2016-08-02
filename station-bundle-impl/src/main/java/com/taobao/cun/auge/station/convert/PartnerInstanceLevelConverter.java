@@ -64,10 +64,10 @@ public class PartnerInstanceLevelConverter {
 		result.setCountyOrgId(level.getCountyOrgId());
 		result.setCountyPartnerInstanceCnt(level.getCountyPartnerInstanceCnt());
 		result.setCountyRank(level.getCountyRank());
-		result.setCurrentLevel(level.getCurrentLevel().getLevel().name());
+		result.setCurrentLevel(levelToString(level.getCurrentLevel()));
 		result.setEvaluateBy(level.getEvaluateBy());
 		result.setEvaluateDate(level.getEvaluateDate());
-		result.setExpectedLevel(level.getExpectedLevel().getLevel().name());
+		result.setExpectedLevel(levelToString(level.getExpectedLevel()));
 		result.setGoods1Gmv(level.getGoods1Gmv());
 		result.setGoods1GmvScore(level.getGoods1GmvScore());
 		result.setLastEvaluateDate(level.getLastEvaluateDate());
@@ -76,11 +76,15 @@ public class PartnerInstanceLevelConverter {
 		result.setNewAppBindingCntScore(level.getNewAppBindingCntScore());
 		result.setNextEvaluateDate(level.getNextEvaluateDate());
 		result.setPartnerInstanceId(level.getPartnerInstanceId());
-		result.setPreLevel(level.getPreLevel().getLevel().name());
+		result.setPreLevel(levelToString(level.getPreLevel()));
 		result.setScore(level.getScore());
 		result.setStationId(level.getStationId());
 		result.setTaobaoUserId(level.getTaobaoUserId());
 		return result;
+	}
+
+	private static String levelToString(PartnerInstanceLevelEnum preLevel) {
+		return preLevel == null ? null : preLevel.getLevel().name();
 	}
 
 	public static PartnerInstanceLevelDto toPartnerInstanceLevelDtoWithoutId(PartnerInstanceLevel level) {
