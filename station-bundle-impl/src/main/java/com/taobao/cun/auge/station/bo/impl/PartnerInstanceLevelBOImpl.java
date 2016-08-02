@@ -42,8 +42,11 @@ public class PartnerInstanceLevelBOImpl implements PartnerInstanceLevelBO {
 		ValidateUtils.notNull(partnerInstanceLevelDto.getPartnerInstanceId());
 
 		PartnerInstanceLevel level = PartnerInstanceLevelConverter.toPartnerInstanceLevel(partnerInstanceLevelDto);
-		DomainUtils.beforeInsert(level, partnerInstanceLevelDto.getOperator());
+		String operator = partnerInstanceLevelDto.getOperator();
+		DomainUtils.beforeInsert(level, operator);
 		level.setIsValid("y");
+		level.setCreator(operator);
+		level.setModifier(operator);
 		partnerInstanceLevelMapper.insertSelective(level);
 	}
 
