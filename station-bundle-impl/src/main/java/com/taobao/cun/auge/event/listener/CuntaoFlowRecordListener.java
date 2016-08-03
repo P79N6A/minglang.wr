@@ -2,6 +2,7 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Date;
 
+import com.taobao.cun.auge.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
-import com.taobao.cun.auge.event.EventConstant;
-import com.taobao.cun.auge.event.PartnerChildMaxNumChangeEvent;
-import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
-import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -26,7 +23,8 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
-@EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT })
+@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
+		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT})
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -46,10 +44,56 @@ public class CuntaoFlowRecordListener implements EventListener {
 			processStateChangeEvent(event);
 		} else if (event.getValue() instanceof PartnerInstanceTypeChangeEvent) {
 			processTypeChangeEvent(event);
-		}else if (event.getValue() instanceof PartnerChildMaxNumChangeEvent) {
+		} else if (event.getValue() instanceof PartnerChildMaxNumChangeEvent) {
 			processChildMaxNumChangeEvent(event);
+		} else if (event.getValue() instanceof PartnerInstanceLevelChangeEvent) {
+			processLevelChangeEvent(event);
 		}
 
+	}
+
+	private void processLevelChangeEvent(Event event) {
+		PartnerInstanceLevelChangeEvent levelChangeEvent = (PartnerInstanceLevelChangeEvent) event.getValue();
+
+		logger.info("receive event." + JSON.toJSONString(levelChangeEvent));
+
+		String operator = levelChangeEvent.getOperator();
+		OperatorTypeEnum operatorType = levelChangeEvent.getOperatorType();
+
+		String buildOperatorName = buildOperatorName(operator, operatorType);
+
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+
+		cuntaoFlowRecord.setTargetId(levelChangeEvent.getPartnerInstanceId());
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.PARTNER_INSTANCE.getCode());
+		cuntaoFlowRecord.setNodeTitle("合伙人层级变更");
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecord.setRemarks(buildLevelChangeRecordContent(levelChangeEvent));
+
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+
+		logger.info("Finished to handle event." + JSON.toJSONString(levelChangeEvent));
+	}
+
+	private String buildLevelChangeRecordContent(PartnerInstanceLevelChangeEvent levelChangeEvent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("当前层级:");
+		sb.append(levelChangeEvent.getCurrentLevel());
+		sb.append(",评定人:");
+		sb.append(levelChangeEvent.getEvaluateBy());
+		sb.append(",评定类型:");
+		sb.append(levelChangeEvent.getEvaluateType());
+		sb.append(",上次评定层级:");
+		sb.append(levelChangeEvent.getPreLevel());
+		sb.append(",预授层级:");
+		sb.append(levelChangeEvent.getExpectedLevel());
+		sb.append(",评定日期:");
+		sb.append(levelChangeEvent.getEvaluateDate());
+		sb.append(",备注:");
+		sb.append(levelChangeEvent.getRemark());
+		return sb.toString();
 	}
 
 	private void processTypeChangeEvent(Event event) {
@@ -147,7 +191,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		}
 		return operator;
 	}
-	
+
 	private void processChildMaxNumChangeEvent(Event event) {
 		PartnerChildMaxNumChangeEvent changEvent = (PartnerChildMaxNumChangeEvent) event.getValue();
 

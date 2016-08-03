@@ -38,6 +38,7 @@ public class PartnerInstanceLevelConverter {
 		result.setLastEvaluateDate(level.getLastEvaluateDate());
 		result.setMonthlyIncome(level.getMonthlyIncome());
 		result.setMonthlyIncomeScore(level.getMonthlyIncomeScore());
+		result.setNewAppBindingCnt(level.getNewAppBindingCnt());
 		result.setNewAppBindingCntScore(level.getNewAppBindingCntScore());
 		result.setNextEvaluateDate(level.getNextEvaluateDate());
 		result.setPartnerInstanceId(level.getPartnerInstanceId());
@@ -73,6 +74,7 @@ public class PartnerInstanceLevelConverter {
 		result.setLastEvaluateDate(level.getLastEvaluateDate());
 		result.setMonthlyIncome(level.getMonthlyIncome());
 		result.setMonthlyIncomeScore(level.getMonthlyIncomeScore());
+		result.setNewAppBindingCnt(level.getNewAppBindingCnt());
 		result.setNewAppBindingCntScore(level.getNewAppBindingCntScore());
 		result.setNextEvaluateDate(level.getNextEvaluateDate());
 		result.setPartnerInstanceId(level.getPartnerInstanceId());
