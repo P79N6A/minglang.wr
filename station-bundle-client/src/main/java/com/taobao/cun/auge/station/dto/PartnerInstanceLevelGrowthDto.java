@@ -23,6 +23,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 */
 	private Double monthlyIncomeScore;
 	/**
+	 * 上次评定月收入得分
+	 */
+	private Double lastMonthlyIncomeScore;
+	/**
 	 * 月收入全国排名
 	 */
 	private Long monthlyIncomeRank;
@@ -35,6 +39,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 * 1.0商品GMV得分
 	 */
 	private Double goods1GmvScore;
+	/**
+	 * 上次评定1.0商品GMV得分
+	 */
+	private Double lastGoods1GmvScore;
 	/**
 	 * 1.0商品GMV全国排名
 	 */
@@ -49,6 +57,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 */
 	private Double appIncomePercentScore;
 	/**
+	 * 上次评定app收入占比得分
+	 */
+	private Double lastAppIncomePercentScore;
+	/**
 	 * app收入占比排名
 	 */
 	private Long appIncomePercentRank;
@@ -61,6 +73,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 * 购买村民数得分
 	 */
 	private Double buyVillagerCntScore;
+	/**
+	 * 上次购买村民数得分
+	 */
+	private Double lastBuyVillagerCntScore;
 	/**
 	 * 购买村民数全国排名
 	 */
@@ -75,6 +91,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 */
 	private Double avgBuyTimesScore;
 	/**
+	 * 上次评定人均购买次数得分
+	 */
+	private Double lastAvgBuyTimesScore;
+	/**
 	 * 人均购买次数全国排名
 	 */
 	private Double avgBuyTimesRank;
@@ -87,6 +107,10 @@ public class PartnerInstanceLevelGrowthDto {
 	 * 新增app绑定量得分
 	 */
 	private Double newAppBindingCntScore;
+	/**
+	 * 上次评定新增app绑定量得分
+	 */
+	private Double lastNewAppBindingCntScore;
 	/**
 	 * 新增app绑定量全国排名
 	 */
@@ -308,6 +332,54 @@ public class PartnerInstanceLevelGrowthDto {
 
 	public void setCountryPartnerInstanceCnt(Long countryPartnerInstanceCnt) {
 		this.countryPartnerInstanceCnt = countryPartnerInstanceCnt;
+	}
+
+	public Double getLastMonthlyIncomeScore() {
+		return lastMonthlyIncomeScore;
+	}
+
+	public void setLastMonthlyIncomeScore(Double lastMonthlyIncomeScore) {
+		this.lastMonthlyIncomeScore = lastMonthlyIncomeScore;
+	}
+
+	public Double getLastGoods1GmvScore() {
+		return lastGoods1GmvScore;
+	}
+
+	public void setLastGoods1GmvScore(Double lastGoods1GmvScore) {
+		this.lastGoods1GmvScore = lastGoods1GmvScore;
+	}
+
+	public Double getLastAppIncomePercentScore() {
+		return lastAppIncomePercentScore;
+	}
+
+	public void setLastAppIncomePercentScore(Double lastAppIncomePercentScore) {
+		this.lastAppIncomePercentScore = lastAppIncomePercentScore;
+	}
+
+	public Double getLastBuyVillagerCntScore() {
+		return lastBuyVillagerCntScore;
+	}
+
+	public void setLastBuyVillagerCntScore(Double lastBuyVillagerCntScore) {
+		this.lastBuyVillagerCntScore = lastBuyVillagerCntScore;
+	}
+
+	public Double getLastAvgBuyTimesScore() {
+		return lastAvgBuyTimesScore;
+	}
+
+	public void setLastAvgBuyTimesScore(Double lastAvgBuyTimesScore) {
+		this.lastAvgBuyTimesScore = lastAvgBuyTimesScore;
+	}
+
+	public Double getLastNewAppBindingCntScore() {
+		return lastNewAppBindingCntScore;
+	}
+
+	public void setLastNewAppBindingCntScore(Double lastNewAppBindingCntScore) {
+		this.lastNewAppBindingCntScore = lastNewAppBindingCntScore;
 	}
 
 }

@@ -20,6 +20,10 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 */
 	private Long stationId;
 	/**
+	 * 村点名称
+	 */
+	private String stationName;
+	/**
 	 * 用户淘宝id
 	 */
 	private Long taobaoUserId;
@@ -123,7 +127,6 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 * 全国合伙人总数
 	 */
 	private Long countryPartnerInstanceCnt;
-
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -348,4 +351,13 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	public void setNewAppBindingCnt(BigDecimal newAppBindingCnt) {
 		this.newAppBindingCnt = newAppBindingCnt;
 	}
+
+	public String getStationName() {
+		return stationName;
+	}
+
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+
 }
