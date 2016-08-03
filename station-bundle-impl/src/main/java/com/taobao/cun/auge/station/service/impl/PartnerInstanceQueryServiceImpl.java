@@ -430,8 +430,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
 			}
 			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
-			Station station = stationBO.getStationById(level.getStationId());
-			dto.setStationName(station.getName());
+//			Station station = stationBO.getStationById(level.getStationId());
+//			dto.setStationName(station.getName());
 			return dto;
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
