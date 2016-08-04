@@ -90,7 +90,7 @@ import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.CalendarUtil;
 
 @Service("partnerInstanceQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
+@HSFProvider(serviceInterface = PartnerInstanceQueryService.class, serviceVersion = "1.0.0.daily.level")
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
