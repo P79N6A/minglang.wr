@@ -2,6 +2,20 @@ package com.taobao.cun.auge.station.dto;
 
 public class PartnerInstanceLevelGrowthDto {
 	/**
+	 * 统计日期
+	 */
+	private String statDate;
+	
+	/**
+	 * 统计开始日期
+	 */
+	private String statStartDate;
+	/**
+	 * 统计截止日期
+	 * 
+	 */
+	private String statEndDate;
+	/**
 	 * 村点id
 	 */
 	private Long stationId;
@@ -382,4 +396,28 @@ public class PartnerInstanceLevelGrowthDto {
 		this.lastNewAppBindingCntScore = lastNewAppBindingCntScore;
 	}
 
+	public String getStatDate() {
+		return statDate;
+	}
+
+	public void setStatDate(String statDate) {
+		this.statDate = statDate;
+	}
+
+	public String getStatStartDate() {
+		return statStartDate;
+	}
+
+	public void setStatStartDate(String statStartDate) {
+		this.statStartDate = statStartDate;
+	}
+
+	public String getStatEndDate() {
+		return statEndDate;
+	}
+
+	public void setStatEndDate(String statEndDate) {
+		this.statEndDate = statEndDate;
+	}
+	
 }
