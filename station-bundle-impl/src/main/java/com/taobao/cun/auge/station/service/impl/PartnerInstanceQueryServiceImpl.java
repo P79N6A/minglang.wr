@@ -501,14 +501,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	private List<PartnerInstanceLevelGrowthStatDateDto> getRecentStatDateList() {
 		List<PartnerInstanceLevelGrowthStatDateDto> list = Lists.newArrayList();
-		// yesterday
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DATE, -1);
-		list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
-
-		// the day before yesterday
-		calendar.add(Calendar.DATE, -1);
-		list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
+		for (int i = 1; i <= 2; i++) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE, -1 * i);
+			list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
+		}
 		return list;
 	}
 
