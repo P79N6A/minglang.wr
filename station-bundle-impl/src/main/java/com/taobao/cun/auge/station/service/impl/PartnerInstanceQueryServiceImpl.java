@@ -499,25 +499,34 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		}
 	}
 
+	/**
+	 * 获得最近两天的时间参数
+	 * statDate=yesterday/the day before yesterday;statEndDate=statDate;statStartDate=statDate- DEFAULT_GROWTH_STAT_DAYS day
+	 * @return
+	 */
 	private List<PartnerInstanceLevelGrowthStatDateDto> getRecentStatDateList() {
 		List<PartnerInstanceLevelGrowthStatDateDto> list = Lists.newArrayList();
 		for (int i = 1; i <= 2; i++) {
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.DATE, -1 * i);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
 			list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
 		}
 		return list;
 	}
 
+	
 	private PartnerInstanceLevelGrowthStatDateDto buildPartnerInstanceLevelGrowthStatDateDto(Calendar calendar) {
 		PartnerInstanceLevelGrowthStatDateDto dto = new PartnerInstanceLevelGrowthStatDateDto();
-		Date today = calendar.getTime();
-		dto.setStatDate(CalendarUtil.formatDate(today, CalendarUtil.DATE_FMT_3));
-		dto.setStatEndDate(dto.getStatDate());
+		Date stateDate = calendar.getTime();
+		dto.setStatDate(CalendarUtil.formatDate(stateDate, CalendarUtil.DATE_FMT_3));
+		dto.setStatEndDate(stateDate);
 
-		calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_STAT_DAYS));
+		calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_STAT_DAYS ));
 		Date statStartDate = calendar.getTime();
-		dto.setStatStartDate(CalendarUtil.formatDate(statStartDate, CalendarUtil.DATE_FMT_3));
+		dto.setStatStartDate(statStartDate);
 		return dto;
 	}
 
