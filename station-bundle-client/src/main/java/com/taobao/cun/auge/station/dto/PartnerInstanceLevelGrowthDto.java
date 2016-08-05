@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PartnerInstanceLevelGrowthDto implements Serializable {
 
@@ -14,12 +15,12 @@ public class PartnerInstanceLevelGrowthDto implements Serializable {
 	/**
 	 * 统计开始日期
 	 */
-	private String statStartDate;
+	private Date statStartDate;
 	/**
 	 * 统计截止日期
 	 * 
 	 */
-	private String statEndDate;
+	private Date statEndDate;
 
 	/**
 	 * 村点id
@@ -159,19 +160,19 @@ public class PartnerInstanceLevelGrowthDto implements Serializable {
 		this.statDate = statDate;
 	}
 
-	public String getStatStartDate() {
+	public Date getStatStartDate() {
 		return statStartDate;
 	}
 
-	public void setStatStartDate(String statStartDate) {
+	public void setStatStartDate(Date statStartDate) {
 		this.statStartDate = statStartDate;
 	}
 
-	public String getStatEndDate() {
+	public Date getStatEndDate() {
 		return statEndDate;
 	}
 
-	public void setStatEndDate(String statEndDate) {
+	public void setStatEndDate(Date statEndDate) {
 		this.statEndDate = statEndDate;
 	}
 
