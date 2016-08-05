@@ -26,7 +26,7 @@ public class PartnerInstanceLevelGrowthTrendDto implements Serializable {
 	/**
 	 * 购买村全国民数
 	 */
-	private Double dailyBuyVillagerCnt;
+	private Long dailyBuyVillagerCnt;
 
 	/**
 	 * 人均购买次数
@@ -36,7 +36,7 @@ public class PartnerInstanceLevelGrowthTrendDto implements Serializable {
 	/**
 	 * 新增app绑定量
 	 */
-	private Double dailyNewAppBindingCnt;
+	private Long dailyNewAppBindingCnt;
 
 	public String getStatDate() {
 		return statDate;
@@ -70,11 +70,11 @@ public class PartnerInstanceLevelGrowthTrendDto implements Serializable {
 		this.dailyAppIncomePercent = dailyAppIncomePercent;
 	}
 
-	public Double getDailyBuyVillagerCnt() {
+	public Long getDailyBuyVillagerCnt() {
 		return dailyBuyVillagerCnt;
 	}
 
-	public void setDailyBuyVillagerCnt(Double dailyBuyVillagerCnt) {
+	public void setDailyBuyVillagerCnt(Long dailyBuyVillagerCnt) {
 		this.dailyBuyVillagerCnt = dailyBuyVillagerCnt;
 	}
 
@@ -86,11 +86,11 @@ public class PartnerInstanceLevelGrowthTrendDto implements Serializable {
 		this.dailyAvgBuyTimes = dailyAvgBuyTimes;
 	}
 
-	public Double getDailyNewAppBindingCnt() {
+	public Long getDailyNewAppBindingCnt() {
 		return dailyNewAppBindingCnt;
 	}
 
-	public void setDailyNewAppBindingCnt(Double dailyNewAppBindingCnt) {
+	public void setDailyNewAppBindingCnt(Long dailyNewAppBindingCnt) {
 		this.dailyNewAppBindingCnt = dailyNewAppBindingCnt;
 	}
 

@@ -1,11 +1,16 @@
 package com.taobao.cun.auge.station.dto;
 
-public class PartnerInstanceLevelGrowthDto {
+import java.io.Serializable;
+
+public class PartnerInstanceLevelGrowthDto implements Serializable {
+
+	private static final long serialVersionUID = -2876484522466697652L;
+
 	/**
 	 * 统计日期
 	 */
 	private String statDate;
-	
+
 	/**
 	 * 统计开始日期
 	 */
@@ -15,14 +20,12 @@ public class PartnerInstanceLevelGrowthDto {
 	 * 
 	 */
 	private String statEndDate;
+
 	/**
 	 * 村点id
 	 */
 	private Long stationId;
-	/**
-	 * 用户淘宝id
-	 */
-	private Long taobaoUserId;
+
 	/**
 	 * 分数
 	 */
@@ -82,7 +85,7 @@ public class PartnerInstanceLevelGrowthDto {
 	/**
 	 * 购买村全国民数
 	 */
-	private Double buyVillagerCnt;
+	private Long buyVillagerCnt;
 	/**
 	 * 购买村民数得分
 	 */
@@ -94,7 +97,7 @@ public class PartnerInstanceLevelGrowthDto {
 	/**
 	 * 购买村民数全国排名
 	 */
-	private Double buyVillagerCntRank;
+	private Long buyVillagerCntRank;
 
 	/**
 	 * 人均购买次数
@@ -111,12 +114,12 @@ public class PartnerInstanceLevelGrowthDto {
 	/**
 	 * 人均购买次数全国排名
 	 */
-	private Double avgBuyTimesRank;
+	private Long avgBuyTimesRank;
 
 	/**
 	 * 新增app绑定量
 	 */
-	private Double newAppBindingCnt;
+	private Long newAppBindingCnt;
 	/**
 	 * 新增app绑定量得分
 	 */
@@ -128,7 +131,7 @@ public class PartnerInstanceLevelGrowthDto {
 	/**
 	 * 新增app绑定量全国排名
 	 */
-	private Double newAppBindingCntRank;
+	private Long newAppBindingCntRank;
 
 	/**
 	 * 县排名
@@ -148,20 +151,36 @@ public class PartnerInstanceLevelGrowthDto {
 	 */
 	private Long countryPartnerInstanceCnt;
 
+	public String getStatDate() {
+		return statDate;
+	}
+
+	public void setStatDate(String statDate) {
+		this.statDate = statDate;
+	}
+
+	public String getStatStartDate() {
+		return statStartDate;
+	}
+
+	public void setStatStartDate(String statStartDate) {
+		this.statStartDate = statStartDate;
+	}
+
+	public String getStatEndDate() {
+		return statEndDate;
+	}
+
+	public void setStatEndDate(String statEndDate) {
+		this.statEndDate = statEndDate;
+	}
+
 	public Long getStationId() {
 		return stationId;
 	}
 
 	public void setStationId(Long stationId) {
 		this.stationId = stationId;
-	}
-
-	public Long getTaobaoUserId() {
-		return taobaoUserId;
-	}
-
-	public void setTaobaoUserId(Long taobaoUserId) {
-		this.taobaoUserId = taobaoUserId;
 	}
 
 	public Double getScore() {
@@ -188,6 +207,14 @@ public class PartnerInstanceLevelGrowthDto {
 		this.monthlyIncomeScore = monthlyIncomeScore;
 	}
 
+	public Double getLastMonthlyIncomeScore() {
+		return lastMonthlyIncomeScore;
+	}
+
+	public void setLastMonthlyIncomeScore(Double lastMonthlyIncomeScore) {
+		this.lastMonthlyIncomeScore = lastMonthlyIncomeScore;
+	}
+
 	public Long getMonthlyIncomeRank() {
 		return monthlyIncomeRank;
 	}
@@ -210,6 +237,14 @@ public class PartnerInstanceLevelGrowthDto {
 
 	public void setGoods1GmvScore(Double goods1GmvScore) {
 		this.goods1GmvScore = goods1GmvScore;
+	}
+
+	public Double getLastGoods1GmvScore() {
+		return lastGoods1GmvScore;
+	}
+
+	public void setLastGoods1GmvScore(Double lastGoods1GmvScore) {
+		this.lastGoods1GmvScore = lastGoods1GmvScore;
 	}
 
 	public Long getGoods1GmvRank() {
@@ -236,6 +271,14 @@ public class PartnerInstanceLevelGrowthDto {
 		this.appIncomePercentScore = appIncomePercentScore;
 	}
 
+	public Double getLastAppIncomePercentScore() {
+		return lastAppIncomePercentScore;
+	}
+
+	public void setLastAppIncomePercentScore(Double lastAppIncomePercentScore) {
+		this.lastAppIncomePercentScore = lastAppIncomePercentScore;
+	}
+
 	public Long getAppIncomePercentRank() {
 		return appIncomePercentRank;
 	}
@@ -244,11 +287,11 @@ public class PartnerInstanceLevelGrowthDto {
 		this.appIncomePercentRank = appIncomePercentRank;
 	}
 
-	public Double getBuyVillagerCnt() {
+	public Long getBuyVillagerCnt() {
 		return buyVillagerCnt;
 	}
 
-	public void setBuyVillagerCnt(Double buyVillagerCnt) {
+	public void setBuyVillagerCnt(Long buyVillagerCnt) {
 		this.buyVillagerCnt = buyVillagerCnt;
 	}
 
@@ -260,11 +303,19 @@ public class PartnerInstanceLevelGrowthDto {
 		this.buyVillagerCntScore = buyVillagerCntScore;
 	}
 
-	public Double getBuyVillagerCntRank() {
+	public Double getLastBuyVillagerCntScore() {
+		return lastBuyVillagerCntScore;
+	}
+
+	public void setLastBuyVillagerCntScore(Double lastBuyVillagerCntScore) {
+		this.lastBuyVillagerCntScore = lastBuyVillagerCntScore;
+	}
+
+	public Long getBuyVillagerCntRank() {
 		return buyVillagerCntRank;
 	}
 
-	public void setBuyVillagerCntRank(Double buyVillagerCntRank) {
+	public void setBuyVillagerCntRank(Long buyVillagerCntRank) {
 		this.buyVillagerCntRank = buyVillagerCntRank;
 	}
 
@@ -284,19 +335,27 @@ public class PartnerInstanceLevelGrowthDto {
 		this.avgBuyTimesScore = avgBuyTimesScore;
 	}
 
-	public Double getAvgBuyTimesRank() {
+	public Double getLastAvgBuyTimesScore() {
+		return lastAvgBuyTimesScore;
+	}
+
+	public void setLastAvgBuyTimesScore(Double lastAvgBuyTimesScore) {
+		this.lastAvgBuyTimesScore = lastAvgBuyTimesScore;
+	}
+
+	public Long getAvgBuyTimesRank() {
 		return avgBuyTimesRank;
 	}
 
-	public void setAvgBuyTimesRank(Double avgBuyTimesRank) {
+	public void setAvgBuyTimesRank(Long avgBuyTimesRank) {
 		this.avgBuyTimesRank = avgBuyTimesRank;
 	}
 
-	public Double getNewAppBindingCnt() {
+	public Long getNewAppBindingCnt() {
 		return newAppBindingCnt;
 	}
 
-	public void setNewAppBindingCnt(Double newAppBindingCnt) {
+	public void setNewAppBindingCnt(Long newAppBindingCnt) {
 		this.newAppBindingCnt = newAppBindingCnt;
 	}
 
@@ -308,11 +367,19 @@ public class PartnerInstanceLevelGrowthDto {
 		this.newAppBindingCntScore = newAppBindingCntScore;
 	}
 
-	public Double getNewAppBindingCntRank() {
+	public Double getLastNewAppBindingCntScore() {
+		return lastNewAppBindingCntScore;
+	}
+
+	public void setLastNewAppBindingCntScore(Double lastNewAppBindingCntScore) {
+		this.lastNewAppBindingCntScore = lastNewAppBindingCntScore;
+	}
+
+	public Long getNewAppBindingCntRank() {
 		return newAppBindingCntRank;
 	}
 
-	public void setNewAppBindingCntRank(Double newAppBindingCntRank) {
+	public void setNewAppBindingCntRank(Long newAppBindingCntRank) {
 		this.newAppBindingCntRank = newAppBindingCntRank;
 	}
 
@@ -348,76 +415,4 @@ public class PartnerInstanceLevelGrowthDto {
 		this.countryPartnerInstanceCnt = countryPartnerInstanceCnt;
 	}
 
-	public Double getLastMonthlyIncomeScore() {
-		return lastMonthlyIncomeScore;
-	}
-
-	public void setLastMonthlyIncomeScore(Double lastMonthlyIncomeScore) {
-		this.lastMonthlyIncomeScore = lastMonthlyIncomeScore;
-	}
-
-	public Double getLastGoods1GmvScore() {
-		return lastGoods1GmvScore;
-	}
-
-	public void setLastGoods1GmvScore(Double lastGoods1GmvScore) {
-		this.lastGoods1GmvScore = lastGoods1GmvScore;
-	}
-
-	public Double getLastAppIncomePercentScore() {
-		return lastAppIncomePercentScore;
-	}
-
-	public void setLastAppIncomePercentScore(Double lastAppIncomePercentScore) {
-		this.lastAppIncomePercentScore = lastAppIncomePercentScore;
-	}
-
-	public Double getLastBuyVillagerCntScore() {
-		return lastBuyVillagerCntScore;
-	}
-
-	public void setLastBuyVillagerCntScore(Double lastBuyVillagerCntScore) {
-		this.lastBuyVillagerCntScore = lastBuyVillagerCntScore;
-	}
-
-	public Double getLastAvgBuyTimesScore() {
-		return lastAvgBuyTimesScore;
-	}
-
-	public void setLastAvgBuyTimesScore(Double lastAvgBuyTimesScore) {
-		this.lastAvgBuyTimesScore = lastAvgBuyTimesScore;
-	}
-
-	public Double getLastNewAppBindingCntScore() {
-		return lastNewAppBindingCntScore;
-	}
-
-	public void setLastNewAppBindingCntScore(Double lastNewAppBindingCntScore) {
-		this.lastNewAppBindingCntScore = lastNewAppBindingCntScore;
-	}
-
-	public String getStatDate() {
-		return statDate;
-	}
-
-	public void setStatDate(String statDate) {
-		this.statDate = statDate;
-	}
-
-	public String getStatStartDate() {
-		return statStartDate;
-	}
-
-	public void setStatStartDate(String statStartDate) {
-		this.statStartDate = statStartDate;
-	}
-
-	public String getStatEndDate() {
-		return statEndDate;
-	}
-
-	public void setStatEndDate(String statEndDate) {
-		this.statEndDate = statEndDate;
-	}
-	
 }
