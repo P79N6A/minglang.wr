@@ -24,6 +24,7 @@ public class ProcessMsgTypeEnum implements Serializable {
 	static {
 		mappings.put("PROC_INST_START", PROC_INST_START);
 		mappings.put("PROC_INST_FINISH", PROC_INST_FINISH);
+		mappings.put("PROC_INST_TERMINATE", PROC_INST_TERMINATE);
 		mappings.put("ACT_INST_START", ACT_INST_START);
 		mappings.put("TASK_ACTIVATED", TASK_ACTIVATED);
 		mappings.put("TASK_COMPLETED", TASK_COMPLETED);
