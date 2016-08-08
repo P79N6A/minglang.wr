@@ -828,6 +828,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		dto.setNextEvaluateDate(c.getTime());
 		dto.copyOperatorDto(OperatorDto.defaultOperator());
+		
+		Station station = stationBO.getStationById(instance.getStationId());
+		dto.setCountyOrgId(station.getApplyOrg());
 		partnerInstanceLevelBO.addPartnerInstanceLevel(dto);
 	}
 
