@@ -4,6 +4,8 @@ import java.util.Date;
 
 import com.taobao.cun.auge.event.*;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,8 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
-@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
-		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT})
+@EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
+		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT })
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -80,20 +82,22 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	private String buildLevelChangeRecordContent(PartnerInstanceLevelChangeEvent levelChangeEvent) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("当前层级:");
+		sb.append("层级: ");
 		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getCurrentLevel()));
-		sb.append(",评定人:");
+		sb.append(", 评定人: ");
 		sb.append(levelChangeEvent.getEvaluateBy());
-		sb.append(",评定类型:");
+		sb.append(", 评定类型: ");
 		sb.append(null == levelChangeEvent.getEvaluateType() ? "-" : levelChangeEvent.getEvaluateType().getDesc());
-		sb.append(",上次评定层级:");
+		sb.append(", 上次评定层级: ");
 		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getPreLevel()));
-		sb.append(",预授层级:");
-		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getExpectedLevel()));
-		sb.append(",评定日期:");
-		sb.append(levelChangeEvent.getEvaluateDate());
-		sb.append(",备注:");
-		sb.append(levelChangeEvent.getRemark());
+		if (null != levelChangeEvent.getExpectedLevel()) {
+			sb.append(", 预授层级: ");
+			sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getExpectedLevel()));
+		}
+		if (StringUtils.isNotBlank(levelChangeEvent.getRemark())) {
+			sb.append(", 备注: ");
+			sb.append(levelChangeEvent.getRemark());
+		}
 		return sb.toString();
 	}
 
@@ -218,8 +222,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		if (StringUtil.isEmpty(bizMonth)) {
 			cuntaoFlowRecord.setRemarks(buildOperatorName + "修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
 		} else {
-			cuntaoFlowRecord
-					.setRemarks("根据淘帮手在" + bizMonth + "业绩，修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
+			cuntaoFlowRecord.setRemarks("根据淘帮手在" + bizMonth + "业绩，修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
 		}
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
