@@ -85,7 +85,7 @@ public class PartnerInstanceLevelConverter {
 		return result;
 	}
 
-	private static String levelToString(PartnerInstanceLevelEnum preLevel) {
+	public static String levelToString(PartnerInstanceLevelEnum preLevel) {
 		return preLevel == null ? null : preLevel.getLevel().name();
 	}
 

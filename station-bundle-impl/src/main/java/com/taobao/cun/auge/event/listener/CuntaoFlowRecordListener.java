@@ -3,6 +3,7 @@ package com.taobao.cun.auge.event.listener;
 import java.util.Date;
 
 import com.taobao.cun.auge.event.*;
+import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,15 +81,15 @@ public class CuntaoFlowRecordListener implements EventListener {
 	private String buildLevelChangeRecordContent(PartnerInstanceLevelChangeEvent levelChangeEvent) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("当前层级:");
-		sb.append(levelChangeEvent.getCurrentLevel());
+		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getCurrentLevel()));
 		sb.append(",评定人:");
 		sb.append(levelChangeEvent.getEvaluateBy());
 		sb.append(",评定类型:");
-		sb.append(levelChangeEvent.getEvaluateType());
+		sb.append(null == levelChangeEvent.getEvaluateType() ? "-" : levelChangeEvent.getEvaluateType().getDesc());
 		sb.append(",上次评定层级:");
-		sb.append(levelChangeEvent.getPreLevel());
+		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getPreLevel()));
 		sb.append(",预授层级:");
-		sb.append(levelChangeEvent.getExpectedLevel());
+		sb.append(PartnerInstanceLevelConverter.levelToString(levelChangeEvent.getExpectedLevel()));
 		sb.append(",评定日期:");
 		sb.append(levelChangeEvent.getEvaluateDate());
 		sb.append(",备注:");
