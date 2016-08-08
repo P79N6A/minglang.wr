@@ -20,7 +20,7 @@
 		<mapper.version>3.3.7</mapper.version>
 		<mysql.version>5.1.29</mysql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- 
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -150,7 +150,7 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-jdk8</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.taobao.notify</groupId>
 			<artifactId>notify-tr-client</artifactId>
@@ -218,6 +218,10 @@
 			<artifactId>bpm-client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>data-client</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
 		</dependency>
@@ -265,16 +269,16 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.alibaba.intl.sourcing.shared</groupId>
 			<artifactId>ivy.services</artifactId>
 		</dependency>
-		
+
 		<dependency>
-			  <groupId>com.alibaba.intl.base.fileserver</groupId>
-			  <artifactId>fileserver-commons-tool</artifactId>
-			 </dependency>
+			<groupId>com.alibaba.intl.base.fileserver</groupId>
+			<artifactId>fileserver-commons-tool</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-diamond</artifactId>

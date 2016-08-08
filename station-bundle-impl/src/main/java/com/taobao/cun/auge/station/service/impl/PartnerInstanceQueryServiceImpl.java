@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.base.Function;
+import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -49,6 +56,9 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthStatDateDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
@@ -73,14 +83,19 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
+import com.taobao.util.CalendarUtil;
 
 @Service("partnerInstanceQueryService")
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class, serviceVersion = "1.0.0.daily.level")
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
+	private static final int DEFAULT_GROWTH_STAT_DAYS = 180;
+	private static final int DEFAULT_GROWTH_TREND_STAT_DAYS = 30;
 
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
@@ -117,6 +132,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
+
+	@Autowired
+	PartnerInstanceLevelDataService partnerInstanceLevelDataService;
 
 	@Override
 	public PartnerInstanceDto queryInfo(Long stationId, OperatorDto operator) throws AugeServiceException {
@@ -441,4 +459,122 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+
+	@Override
+	public PartnerInstanceLevelGrowthDto getPartnerInstanceLevelGrowthData(Long taobaoUserId) {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
+			// 今天的数据没有则取昨天的数据
+			List<PartnerInstanceLevelGrowthStatDateDto> statDateList = getRecentStatDateList();
+			for (PartnerInstanceLevelGrowthStatDateDto statDate : statDateList) {
+				ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto> result = partnerInstanceLevelDataService
+						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
+				checkResult(result, "getPartnerInstanceLevelGrowthData");
+				if (null == result.getResult()) {
+					continue;
+				}
+				PartnerInstanceLevelGrowthDto dto = new PartnerInstanceLevelGrowthDto();
+				BeanCopyUtils.copyNotNullProperties(result.getResult(), dto);
+				BeanCopyUtils.copyNotNullProperties(statDate, dto);
+				return dto;
+			}
+			throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
+	private <T> void checkResult(ResultModel<T> rm, String msg) {
+		if (!rm.isSuccess()) {
+			if (rm.getException() != null) {
+				throw rm.getException();
+			} else {
+				throw new RuntimeException("get ResultModel failed: " + msg);
+			}
+		}
+	}
+
+	/**
+	 * 获得最近两天的时间参数 statDate=yesterday/the day before
+	 * yesterday;statEndDate=statDate;statStartDate=statDate-
+	 * DEFAULT_GROWTH_STAT_DAYS day
+	 * 
+	 * @return
+	 */
+	private List<PartnerInstanceLevelGrowthStatDateDto> getRecentStatDateList() {
+		List<PartnerInstanceLevelGrowthStatDateDto> list = Lists.newArrayList();
+		for (int i = 1; i <= 2; i++) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE, -1 * i);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
+		}
+		return list;
+	}
+
+	private PartnerInstanceLevelGrowthStatDateDto buildPartnerInstanceLevelGrowthStatDateDto(Calendar calendar) {
+		PartnerInstanceLevelGrowthStatDateDto dto = new PartnerInstanceLevelGrowthStatDateDto();
+		Date stateDate = calendar.getTime();
+		dto.setStatDate(CalendarUtil.formatDate(stateDate, CalendarUtil.DATE_FMT_3));
+		dto.setStatEndDate(stateDate);
+
+		calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_STAT_DAYS));
+		Date statStartDate = calendar.getTime();
+		dto.setStatStartDate(statStartDate);
+		return dto;
+	}
+
+	@Override
+	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate) {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
+			Calendar calendar = Calendar.getInstance();
+			if (StringUtils.isBlank(statDate)) {
+				statDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
+			}
+			calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_TREND_STAT_DAYS));
+			String statStartDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
+
+			ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> result = partnerInstanceLevelDataService
+					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(), statStartDate, statDate);
+			checkResult(result, "getPartnerInstanceLevelGrowthTrendData");
+			List<PartnerInstanceLevelGrowthTrendDto> list = Lists.transform(result.getResult(),
+					new Function<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto, PartnerInstanceLevelGrowthTrendDto>() {
+						@Override
+						public PartnerInstanceLevelGrowthTrendDto apply(
+								com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto input) {
+							PartnerInstanceLevelGrowthTrendDto dto = new PartnerInstanceLevelGrowthTrendDto();
+							BeanCopyUtils.copyNotNullProperties(input, dto);
+							return dto;
+						}
+					});
+
+			return list;
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthTrendData",
+					String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
+					e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
 }

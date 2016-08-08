@@ -124,7 +124,6 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 */
 	private Long countryPartnerInstanceCnt;
 
-
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
 	}
@@ -348,4 +347,5 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	public void setNewAppBindingCnt(BigDecimal newAppBindingCnt) {
 		this.newAppBindingCnt = newAppBindingCnt;
 	}
+
 }
