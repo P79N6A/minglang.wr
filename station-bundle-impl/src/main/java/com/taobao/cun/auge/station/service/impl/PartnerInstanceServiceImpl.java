@@ -2,10 +2,12 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -42,12 +45,14 @@ import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
@@ -61,6 +66,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -80,6 +86,8 @@ import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEvaluateTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -128,9 +136,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
 
-	private static final String TPAMAX_TYPE = "tpl_max";
-	private static final String TPAMAX_KEY = "tpl_max_num";
-	private static final Long TPAMAX_DEFAULT = 5L;
+	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
 
 	@Autowired
 	PartnerProtocolRelBO partnerProtocolRelBO;
@@ -169,9 +175,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	PartnerInstanceExtService partnerInstanceExtService;
-	
+
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
+	@Autowired
+	PartnerInstanceLevelBO partnerInstanceLevelBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -262,8 +270,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-
-
 	private void setTempCommonInfo(PartnerInstanceDto partnerInstanceDto) {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		stationDto.setState(StationStateEnum.INVALID);
@@ -288,7 +294,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 			return instanceId;
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("updateTemp", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("updateTemp", JSONObject.toJSONString(partnerInstanceDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -334,7 +341,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				.append(error);
 		return sb.toString();
 	}
-	
+
 	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PartnerInstanceService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
@@ -428,7 +435,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceDto.getId());
 			return partnerInstanceDto.getId();
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("updateSubmit", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("updateSubmit", JSONObject.toJSONString(partnerInstanceDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -437,22 +445,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException{
+	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
 		PartnerValidator.validateParnterUpdateInfoByPartner(partnerInstanceUpdateServicingDto.getPartnerDto());
 		StationValidator.validateStationUpdateInfoByPartner(partnerInstanceUpdateServicingDto.getStationDto());
 		Long stationId = partnerInstanceUpdateServicingDto.getStationDto().getStationId();
 		ValidateUtils.notNull(stationId);
-		
+
 		try {
 			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
 			partnerInstanceUpdateServicingDto.setId(instanceId);
 			updateInternal(partnerInstanceUpdateServicingDto);
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -477,15 +486,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
 			if (null != childNum) {
 				PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
-				
+
 				instanceExtDto.setInstanceId(partnerInstanceUpdateServicingDto.getId());
 				instanceExtDto.setMaxChildNum(childNum);
 				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
-				
+
 				partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 			}
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -525,7 +535,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 		StationDto stationDto = new StationDto();
 		// 判断服务站编号是否使用中
-		if(StringUtil.isNotBlank(sDto.getStationNum())){
+		if (StringUtil.isNotBlank(sDto.getStationNum())) {
 			checkStationNumDuplicate(stationId, sDto.getStationNum());
 			stationDto.setStationNum(sDto.getStationNum());
 		}
@@ -581,7 +591,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步删除
 			syncStationApplyBO.deleteStationApply(rel.getStationApplyId());
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -603,13 +614,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
 			Assert.notNull(items, "PartnerLifecycleItems not exists");
 
-			PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
+			PartnerLifecycleItemCheckResultEnum checkSettled = PartnerLifecycleRuleParser.parseExecutable(
+					PartnerInstanceTypeEnum.valueof(psRel.getType()), PartnerLifecycleItemCheckEnum.settledProtocol, items);
 			if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
 				return;
 			} else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE);
 			}
-			
+
 			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
 					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 
@@ -640,7 +652,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
 
 	private void addWaitFrozenMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
 		ValidateUtils.notNull(instanceId);
@@ -754,9 +765,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long instanceId = openStationDto.getPartnerInstanceId();
 		String operator = openStationDto.getOperator();
 		try {
-			//检查装修中的生命周期（装修，培训）完成后，才能开业
+			// 检查装修中的生命周期（装修，培训）完成后，才能开业
 			checkPartnerLifecycleForOpenStation(instanceId);
-			
+
 			if (openStationDto.isImme()) {// 立即开业
 				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 				if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
@@ -772,6 +783,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 						openStationDto.getOperator());
 				// 同步station_apply
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+
+				// 初始化合伙人层级
+				initPartnerInstanceLevel(rel);
+
 				// 记录村点状态变化
 				sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, openStationDto);
 				// 开业包项目事件
@@ -793,26 +808,53 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		return true;
 	}
+
+	private void initPartnerInstanceLevel(PartnerStationRel instance) {
+		PartnerInstanceLevelDto dto = new PartnerInstanceLevelDto();
+		dto.setPartnerInstanceId(instance.getId());
+		dto.setTaobaoUserId(instance.getTaobaoUserId());
+		dto.setStationId(instance.getStationId());
+		dto.setCurrentLevel(PartnerInstanceLevelEnum.S_4);
+		dto.setEvaluateBy(OperatorDto.DEFAULT_OPERATOR);
+		Calendar c = Calendar.getInstance();
+		Date today = c.getTime();
+		dto.setEvaluateDate(today);
+
+		c.add(Calendar.MONTH, DEFAULT_EVALUATE_INTERVAL);
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		if (day > 1) {
+			c.add(Calendar.MONTH, 1);
+		}
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		dto.setNextEvaluateDate(c.getTime());
+		dto.copyOperatorDto(OperatorDto.defaultOperator());
+		
+		Station station = stationBO.getStationById(instance.getStationId());
+		dto.setCountyOrgId(station.getApplyOrg());
+		partnerInstanceLevelBO.addPartnerInstanceLevel(dto);
+	}
+
 	/**
 	 * 检查装修中的生命周期（装修，培训）完成后，才能开业
+	 * 
 	 * @param instanceId
 	 */
-	private void checkPartnerLifecycleForOpenStation(Long instanceId)  throws AugeServiceException {
+	private void checkPartnerLifecycleForOpenStation(Long instanceId) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
-				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			//没有数据 认为是标准化项目之前的数据，直接可以开业
+			// 没有数据 认为是标准化项目之前的数据，直接可以开业
 			return;
 		}
 		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
 		}
-		
+
 		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
 			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
 		}
-		
+
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
@@ -857,7 +899,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void applyCloseByPartner(Long taobaoUserId) throws AugeServiceException {
 		try {
 			// 参数校验
-			Assert.notNull(taobaoUserId,"taobaoUserId is null");
+			Assert.notNull(taobaoUserId, "taobaoUserId is null");
 
 			// 合伙人实例状态校验
 			PartnerStationRel partnerInstance = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId,
@@ -1096,7 +1138,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 			// 失效tair
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
+			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),
+					e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1170,7 +1213,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 失效tair
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.toString());
+			String error = getAugeExceptionErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto),
+					e.toString());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -1223,7 +1267,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		try {
 			Long instanceId = partnerInstanceDto.getId();
 			if (instanceId == null) {
-				Assert.notNull(partnerInstanceDto.getType(),"partner instance type is null");
+				Assert.notNull(partnerInstanceDto.getType(), "partner instance type is null");
 				// 新增入驻
 				instanceId = addSubmit(partnerInstanceDto);
 
@@ -1235,8 +1279,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				syncStationApply(SyncStationApplyEnum.ADD, instanceId);
 			} else {
 				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-				Assert.notNull(rel,"partner instance is null");
-				Assert.notNull(rel.getType(),"partner instance type is null");
+				Assert.notNull(rel, "partner instance is null");
+				Assert.notNull(rel.getType(), "partner instance type is null");
 
 				// 暂存后，修改入驻
 				updateSubmit(partnerInstanceDto);
@@ -1293,7 +1337,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -1374,13 +1419,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-//	private Long getTpaMax() {
-//		AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE, TPAMAX_KEY);
-//		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-//			return Long.parseLong(resource.getValue());
-//		}
-//		return TPAMAX_DEFAULT;
-//	}
+	// private Long getTpaMax() {
+	// AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE,
+	// TPAMAX_KEY);
+	// if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+	// return Long.parseLong(resource.getValue());
+	// }
+	// return TPAMAX_DEFAULT;
+	// }
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -1424,7 +1470,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -1465,12 +1512,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				partnerInstanceBO.changeState(partnerInstanceId, PartnerInstanceStateEnum.SETTLING, PartnerInstanceStateEnum.SETTLE_FAIL,
 						auditSettleDto.getOperator());
 				PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
-                stationBO.changeState(rel.getStationId(), StationStatusEnum.NEW, StationStatusEnum.INVALID, auditSettleDto.getOperator());
+				stationBO.changeState(rel.getStationId(), StationStatusEnum.NEW, StationStatusEnum.INVALID, auditSettleDto.getOperator());
 			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -1559,5 +1607,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
+		//根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
+		partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
+		//保存数据库
+		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
+		//发送评级变化事件: 类型为系统评定
+		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter.convertLevelChangeEvent(
+				PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
 	}
 }

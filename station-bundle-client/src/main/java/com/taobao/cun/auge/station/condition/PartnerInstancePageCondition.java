@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.station.condition;
 
-import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
@@ -38,6 +38,8 @@ public class PartnerInstancePageCondition extends PageQuery{
 	// 合伙人类型
 //	@NotNull(message = "partnerType is null")
 	private PartnerInstanceTypeEnum partnerType;
+	
+	private PartnerInstanceLevelEnum partnerInstanceLevel;
 
 	// 所属TP商id
 	private Long providerId;
@@ -132,4 +134,14 @@ public class PartnerInstancePageCondition extends PageQuery{
 	public void setParentStationId(Long parentStationId) {
 		this.parentStationId = parentStationId;
 	}
+
+	public PartnerInstanceLevelEnum getPartnerInstanceLevel() {
+		return partnerInstanceLevel;
+	}
+
+	public void setPartnerInstanceLevel(PartnerInstanceLevelEnum partnerInstanceLevel) {
+		this.partnerInstanceLevel = partnerInstanceLevel;
+	}
+	
+	
 }
