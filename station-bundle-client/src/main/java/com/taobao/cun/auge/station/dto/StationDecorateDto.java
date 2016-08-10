@@ -12,111 +12,115 @@ import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
  *
  */
 public class StationDecorateDto  extends OperatorDto {
-	
+
 	private static final long serialVersionUID = -237618830587383870L;
 
 	/**
 	 * 主键id
 	 */
     private Long id;
-    
+
     /**
      * 服务站id
      */
     private Long stationId;
-    
+
     /**
      * 合伙人淘宝userid
      */
     private Long partnerUserId;
-    
+
     /**
      * 卖家淘宝userid
      */
     private String sellerTaobaoUserId;
-    
+
     /**
      * 淘宝订单号
      */
     private String taobaoOrderNum;
-    
+
     /**
      * 状态
      */
     private StationDecorateStatusEnum status;
-    
+
     /**
      * 装修反馈号
      */
     private String reflectOrderNum;
-    
+
     /**
      * 门头面积
      */
     private String doorArea;
-    
+
     /**
      * 墙贴面积
      */
     private String wallArea;
-    
+
     /**
      * 玻璃贴面积
      */
     private String glassArea;
-    
+
     /**
      * 室内围贴面积
      */
     private String insideArea;
-    
+
     /**
      * 室内装修面积
      */
     private String carpetArea;
-    
+
+	/**
+	 * 装修反馈新增是否满足标准化
+	 */
+	private String reflectSatisfySolid;
+
     /**
      * 附件
      */
     private List<AttachementDto> attachements;
-    
+
     /**
      * 装修反馈人
      */
     private Long reflectUserId;
-    
+
     /**
      * 审计意见
      */
     private String auditOpinion;
-    
+
     /**
      * 反馈人nick
      */
     private String reflectNick;
-    
+
     private StationDecorateIsValidEnum  isValid;
-    
+
     /**
      * 服务站基础信息
      */
     private StationDto stationDto;
-    
+
     /**
      * 装修订单信息
      */
     private StationDecorateOrderDto stationDecorateOrderDto;
-    
+
     /**
 	 * 淘宝订单详情
 	 */
 	private String taobaoOrderDetailUrl;
-	
+
 	/**
 	 * 淘宝商品
 	 */
 	private String taobaoItemUrl;
-    
 
 	public Long getId() {
 		return id;
@@ -285,5 +289,13 @@ public class StationDecorateDto  extends OperatorDto {
 
 	public void setCarpetArea(String carpetArea) {
 		this.carpetArea = carpetArea;
+	}
+
+	public String getReflectSatisfySolid() {
+		return reflectSatisfySolid;
+	}
+
+	public void setReflectSatisfySolid(String reflectSatisfySolid) {
+		this.reflectSatisfySolid = reflectSatisfySolid;
 	}
 }
