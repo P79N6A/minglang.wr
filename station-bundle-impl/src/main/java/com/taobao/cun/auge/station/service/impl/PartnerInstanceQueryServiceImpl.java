@@ -182,6 +182,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 			}
+
+			if (condition.getNeedPartnerLevelInfo()) {
+				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
+				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
+			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
