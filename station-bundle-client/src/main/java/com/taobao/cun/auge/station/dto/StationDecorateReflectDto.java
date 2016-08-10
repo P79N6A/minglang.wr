@@ -45,7 +45,12 @@ public class StationDecorateReflectDto extends OperatorDto {
      * 室内装修面积
      */
     private String carpetArea;
-    
+
+	/**
+	 * 装修反馈新增是否满足标准化
+	 */
+	private String reflectSatisfySolid;
+
     /**
      * 附件
      */
@@ -140,6 +145,12 @@ public class StationDecorateReflectDto extends OperatorDto {
 	public void setCarpetArea(String carpetArea) {
 		this.carpetArea = carpetArea;
 	}
-	
-	
+
+	public String getReflectSatisfySolid() {
+		return reflectSatisfySolid;
+	}
+
+	public void setReflectSatisfySolid(String reflectSatisfySolid) {
+		this.reflectSatisfySolid = reflectSatisfySolid;
+	}
 }
