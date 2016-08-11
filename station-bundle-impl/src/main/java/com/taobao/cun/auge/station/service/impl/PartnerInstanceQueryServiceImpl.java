@@ -166,7 +166,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			insDto.setPartnerLifecycleDto(lifecycleDto);
 			insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
 
-			if (condition.getNeedPartnerInfo()) {
+			if (null != condition.getNeedPartnerInfo() && condition.getNeedPartnerInfo()) {
 				Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
 				PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 				if (condition.getNeedDesensitization()) {
@@ -176,14 +176,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				insDto.setPartnerDto(partnerDto);
 			}
 
-			if (condition.getNeedStationInfo()) {
+			if (null != condition.getNeedStationInfo() && condition.getNeedStationInfo()) {
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 			}
 
-			if (condition.getNeedPartnerLevelInfo()) {
+			if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {
 				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
 				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
 				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
