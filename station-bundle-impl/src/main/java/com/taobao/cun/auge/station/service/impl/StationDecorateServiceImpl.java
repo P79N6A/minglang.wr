@@ -37,7 +37,7 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("stationDecorateService")
-@HSFProvider(serviceInterface = StationDecorateService.class, serviceVersion = "1.0.0.daily.gjx")
+@HSFProvider(serviceInterface = StationDecorateService.class)
 public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(StationDecorateService.class);
