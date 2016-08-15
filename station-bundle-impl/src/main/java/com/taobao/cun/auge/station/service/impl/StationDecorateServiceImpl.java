@@ -219,6 +219,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		sdDto.setReflectUserId(stationDecorateReflectDto.getReflectUserId());
 		sdDto.setWallArea(stationDecorateReflectDto.getWallArea());
 		sdDto.setCarpetArea(stationDecorateReflectDto.getCarpetArea());
+		sdDto.setReflectSatisfySolid(stationDecorateReflectDto.getReflectSatisfySolid());
 		sdDto.setAttachements(stationDecorateReflectDto.getAttachements());
 		sdDto.copyOperatorDto(stationDecorateReflectDto);
 		return sdDto;
