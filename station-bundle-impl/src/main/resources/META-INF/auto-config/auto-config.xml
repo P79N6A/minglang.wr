@@ -24,6 +24,7 @@
 		<property name="hsf.consumer.version.chronus.taskSubmitService" defaultValue="1.0.0.daily" description="chronus-task-version" />
 
 		<property name="hsf.consumer.version.crius.cuntaoWorkFlowService" defaultValue="1.0.0.daily" description="crius-version" />
+		<property name="hsf.consumer.version.crius.partnerInstanceLevelDataService" defaultValue="1.0.0.daily" description="crius-version" />
 
 		<property name="hsf.consumer.version.cuntaocenter.alipayAccountTagService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
@@ -8,6 +10,9 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -125,5 +130,32 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
+	
+		
+	/**
+	 * 获取合伙人层级信息
+	 * @param taobaoUserId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException;
+	
+	/**
+	 * 获取合伙人层级成长信息
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public PartnerInstanceLevelGrowthDto getPartnerInstanceLevelGrowthData(Long taobaoUserId);
+	
+	/**
+	 * 获取合伙人成长趋势指标数据
+	 * @param taobaoUserId
+	 * @param statDate
+	 * @return
+	 */
+	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate);
+
+
+	
 
 }

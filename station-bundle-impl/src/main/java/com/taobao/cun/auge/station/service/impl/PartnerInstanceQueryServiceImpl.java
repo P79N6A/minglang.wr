@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,17 +11,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.base.Function;
+import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -28,6 +36,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
@@ -37,6 +46,7 @@ import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
+import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
@@ -45,6 +55,10 @@ import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthStatDateDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
@@ -57,6 +71,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -68,14 +83,19 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
+import com.taobao.util.CalendarUtil;
 
 @Service("partnerInstanceQueryService")
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
+	private static final int DEFAULT_GROWTH_STAT_DAYS = 180;
+	private static final int DEFAULT_GROWTH_TREND_STAT_DAYS = 30;
 
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
@@ -109,30 +129,36 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
-	
+
+	@Autowired
+	PartnerInstanceLevelBO partnerInstanceLevelBO;
+
+	@Autowired
+	PartnerInstanceLevelDataService partnerInstanceLevelDataService;
+
 	@Override
-	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException{
+	public PartnerInstanceDto queryInfo(Long stationId, OperatorDto operator) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
-		
+
 		PartnerInstanceCondition condition = new PartnerInstanceCondition();
 		condition.setInstanceId(instanceId);
 		condition.setNeedPartnerInfo(Boolean.TRUE);
 		condition.setNeedStationInfo(Boolean.TRUE);
 		condition.setNeedDesensitization(Boolean.TRUE);
 		condition.copyOperatorDto(operator);
-		
+
 		return queryInfo(condition);
 	}
 
 	@Override
-	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {	
+	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(condition);
 			PartnerStationRel psRel = partnerInstanceBO.findPartnerInstanceById(condition.getInstanceId());
-			Assert.notNull(psRel,"partner instace not exists");
-			
+			Assert.notNull(psRel, "partner instace not exists");
+
 			// 获得生命周期数据
 			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
 					.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
@@ -140,7 +166,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			insDto.setPartnerLifecycleDto(lifecycleDto);
 			insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
 
-			if (condition.getNeedPartnerInfo()) {
+			if (null != condition.getNeedPartnerInfo() && condition.getNeedPartnerInfo()) {
 				Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
 				PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 				if (condition.getNeedDesensitization()) {
@@ -150,11 +176,17 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				insDto.setPartnerDto(partnerDto);
 			}
 
-			if (condition.getNeedStationInfo()) {
+			if (null != condition.getNeedStationInfo() && condition.getNeedStationInfo()) {
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
+			}
+
+			if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {
+				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
+				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
 			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
@@ -175,14 +207,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				.append("errorMessage:").append(error);
 		return sb.toString();
 	}
-	
+
 	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
 				.append(error);
 		return sb.toString();
 	}
-
 
 	private void setSafedInfo(PartnerDto partnerDto) {
 		if (partnerDto != null) {
@@ -343,7 +374,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			String error = getErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -386,7 +417,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			String error = getErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -410,4 +441,146 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(instanceId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
 	}
+
+	@Override
+	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
+			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
+			if (null == level) {
+				throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+			}
+			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
+			return dto;
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
+	@Override
+	public PartnerInstanceLevelGrowthDto getPartnerInstanceLevelGrowthData(Long taobaoUserId) {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
+			// 今天的数据没有则取昨天的数据
+			List<PartnerInstanceLevelGrowthStatDateDto> statDateList = getRecentStatDateList();
+			for (PartnerInstanceLevelGrowthStatDateDto statDate : statDateList) {
+				ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto> result = partnerInstanceLevelDataService
+						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
+				checkResult(result, "getPartnerInstanceLevelGrowthData");
+				if (null == result.getResult()) {
+					continue;
+				}
+				PartnerInstanceLevelGrowthDto dto = new PartnerInstanceLevelGrowthDto();
+				BeanCopyUtils.copyNotNullProperties(result.getResult(), dto);
+				BeanCopyUtils.copyNotNullProperties(statDate, dto);
+				return dto;
+			}
+			throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
+	private <T> void checkResult(ResultModel<T> rm, String msg) {
+		if (!rm.isSuccess()) {
+			if (rm.getException() != null) {
+				throw rm.getException();
+			} else {
+				throw new RuntimeException("get ResultModel failed: " + msg);
+			}
+		}
+	}
+
+	/**
+	 * 获得最近两天的时间参数 statDate=yesterday/the day before
+	 * yesterday;statEndDate=statDate;statStartDate=statDate-
+	 * DEFAULT_GROWTH_STAT_DAYS day
+	 * 
+	 * @return
+	 */
+	private List<PartnerInstanceLevelGrowthStatDateDto> getRecentStatDateList() {
+		List<PartnerInstanceLevelGrowthStatDateDto> list = Lists.newArrayList();
+		for (int i = 1; i <= 2; i++) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DATE, -1 * i);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			list.add(buildPartnerInstanceLevelGrowthStatDateDto(calendar));
+		}
+		return list;
+	}
+
+	private PartnerInstanceLevelGrowthStatDateDto buildPartnerInstanceLevelGrowthStatDateDto(Calendar calendar) {
+		PartnerInstanceLevelGrowthStatDateDto dto = new PartnerInstanceLevelGrowthStatDateDto();
+		Date stateDate = calendar.getTime();
+		dto.setStatDate(CalendarUtil.formatDate(stateDate, CalendarUtil.DATE_FMT_3));
+		dto.setStatEndDate(stateDate);
+
+		calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_STAT_DAYS));
+		Date statStartDate = calendar.getTime();
+		dto.setStatStartDate(statStartDate);
+		return dto;
+	}
+
+	@Override
+	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate) {
+		try {
+			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				return null;
+			}
+			Calendar calendar = Calendar.getInstance();
+			if (StringUtils.isBlank(statDate)) {
+				statDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
+			}
+			calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_TREND_STAT_DAYS));
+			String statStartDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
+
+			ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> result = partnerInstanceLevelDataService
+					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(), statStartDate, statDate);
+			checkResult(result, "getPartnerInstanceLevelGrowthTrendData");
+			List<PartnerInstanceLevelGrowthTrendDto> list = Lists.transform(result.getResult(),
+					new Function<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto, PartnerInstanceLevelGrowthTrendDto>() {
+						@Override
+						public PartnerInstanceLevelGrowthTrendDto apply(
+								com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto input) {
+							PartnerInstanceLevelGrowthTrendDto dto = new PartnerInstanceLevelGrowthTrendDto();
+							BeanCopyUtils.copyNotNullProperties(input, dto);
+							return dto;
+						}
+					});
+
+			return list;
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthTrendData",
+					String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
+			logger.error(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
+					e.getMessage());
+			logger.error(error, e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
 }

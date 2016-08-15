@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -210,5 +211,13 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradeSuccessDto) throws AugeServiceException;
+	
+	/**
+	 * 评定合伙人层级(定时钟和审批流程调用)
+	 * @param partnerInstanceLevelDto
+	 * @throws AugeServiceException
+	 */
+	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException;
+	
 	
 }
