@@ -14,6 +14,7 @@ import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -21,6 +22,7 @@ import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
@@ -306,6 +308,34 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 					+ business.getCode() + " applierId=" + stateChangeEvent.getOperator() + " operatorType="
 					+ stateChangeEvent.getOperatorType().getCode(), e);
 			throw new AugeServiceException("submitApproveProcessTask error: " + e.getMessage());
+		}
+	}
+	
+	
+	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, 
+			PartnerInstanceLevelProcessDto levelProcessDto) {
+		try {
+			GeneralTaskDto startProcessTask = new GeneralTaskDto();
+			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getPartnerTaobaoUserId()));
+			startProcessTask.setBusinessStepNo(1l);
+			startProcessTask.setBusinessType(business.getCode());
+			startProcessTask.setBusinessStepDesc(business.getDesc());
+			startProcessTask.setBeanName("processService");
+			startProcessTask.setMethodName("startLevelApproveProcess");
+			startProcessTask.setOperator(OperatorDto.DEFAULT_OPERATOR);
+
+			startProcessTask.setParameterType(StartProcessDto.class.getName());
+			startProcessTask.setParameter(JSON.toJSONString(levelProcessDto));
+
+			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
+			//20s执行一次
+			config.setIntervalTime(20000);
+			// 提交任务
+			taskSubmitService.submitTask(startProcessTask,config);
+			logger.info("submitLevelApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
+		}catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
+			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
 	}
 
