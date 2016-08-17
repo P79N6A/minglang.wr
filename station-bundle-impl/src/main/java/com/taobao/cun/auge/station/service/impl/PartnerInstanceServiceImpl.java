@@ -1629,7 +1629,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
 		// 发送评级变化事件: 类型为系统评定
 		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
-				.convertLevelChangeEvent(PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
+				.convertLevelChangeEvent(partnerInstanceLevelDto.getEvaluateType(), partnerInstanceLevelDto);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
 	}
 
@@ -1660,6 +1660,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			levelProcessDto.setStationName(instance.getStationDto().getName());
 			levelProcessDto.setScore(partnerInstanceLevelDto.getScore());
 			levelProcessDto.setMonthlyIncome(partnerInstanceLevelDto.getMonthlyIncome());
+			levelProcessDto.setEvaluateInfo(JSON.toJSONString(partnerInstanceLevelDto));
 
 			generalTaskSubmitService.submitLevelApproveProcessTask(ProcessBusinessEnum.partnerInstanceLevelAudit, levelProcessDto);
 		} catch (Exception e) {

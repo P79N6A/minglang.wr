@@ -92,6 +92,7 @@ public class ProcessServiceImpl implements ProcessService {
 		initData.put("monthlyIncome", levelProcessDto.getMonthlyIncome().toString());
 		initData.put("stationId", String.valueOf(levelProcessDto.getStationId()));
 		initData.put("stationName", levelProcessDto.getStationName());
+		initData.put("evaluateInfo", levelProcessDto.getEvaluateInfo());
 		
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);

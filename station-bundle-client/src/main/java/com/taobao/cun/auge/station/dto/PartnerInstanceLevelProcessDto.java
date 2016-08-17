@@ -72,6 +72,10 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 	 * 月收入
 	 */
 	private BigDecimal monthlyIncome;
+	/**
+	 * 评级的详细信息，JSON格式
+	 */
+	private String evaluateInfo;
 
 	public Long getCountyOrgId() {
 		return countyOrgId;
@@ -199,6 +203,14 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
+	}
+
+	public String getEvaluateInfo() {
+		return evaluateInfo;
+	}
+
+	public void setEvaluateInfo(String evaluateInfo) {
+		this.evaluateInfo = evaluateInfo;
 	}
 	
 
