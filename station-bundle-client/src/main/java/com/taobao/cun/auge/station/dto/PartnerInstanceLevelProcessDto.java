@@ -15,6 +15,8 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 
 	// 业务主键id
 	private Long businessId;
+	
+	private Long partnerInstanceId;
 
 	/**
 	 * 县服务中心组织id
@@ -27,7 +29,11 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 	/**
 	 * 县小二工号
 	 */
-	private Long employeeId;
+	private String employeeId;
+	/**
+	 * 县小二名字
+	 */
+	private String employeeName;
 	
 	/**
 	 * 申请事件
@@ -83,11 +89,11 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 		this.countyStationName = countyStationName;
 	}
 
-	public Long getEmployeeId() {
+	public String getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(Long employeeId) {
+	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
 
@@ -177,6 +183,22 @@ public class PartnerInstanceLevelProcessDto implements Serializable {
 
 	public void setStationName(String stationName) {
 		this.stationName = stationName;
+	}
+
+	public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	public Long getPartnerInstanceId() {
+		return partnerInstanceId;
+	}
+
+	public void setPartnerInstanceId(Long partnerInstanceId) {
+		this.partnerInstanceId = partnerInstanceId;
 	}
 	
 

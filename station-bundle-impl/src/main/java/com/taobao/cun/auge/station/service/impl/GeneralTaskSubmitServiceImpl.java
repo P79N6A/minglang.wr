@@ -316,7 +316,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			PartnerInstanceLevelProcessDto levelProcessDto) {
 		try {
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
-			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getPartnerTaobaoUserId()));
+			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getBusinessId()));
 			startProcessTask.setBusinessStepNo(1l);
 			startProcessTask.setBusinessType(business.getCode());
 			startProcessTask.setBusinessStepDesc(business.getDesc());
