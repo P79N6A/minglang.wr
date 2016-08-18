@@ -359,7 +359,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
-			throw new AugeServiceException(e.toString());
+			throw new AugeServiceException(e.getMessage());
 		}
 	}
 }
