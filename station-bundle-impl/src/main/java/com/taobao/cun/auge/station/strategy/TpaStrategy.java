@@ -56,11 +56,13 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.pandora.util.StringUtils;
@@ -96,6 +98,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
+	@Autowired
+	ProcessProcessor processProcessor;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -347,5 +352,14 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		try {
+			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
+		} catch (Exception e) {
+			throw new AugeServiceException(e.toString());
+		}
 	}
 }

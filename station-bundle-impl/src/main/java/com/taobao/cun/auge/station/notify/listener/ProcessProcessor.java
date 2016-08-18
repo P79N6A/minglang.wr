@@ -171,8 +171,13 @@ public class ProcessProcessor {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		closeApprove(partnerStationRel.getId(), approveResult);
+	}
+
+	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
-			PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 不是TPV，且开关未打开，直接返回
 			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(partnerStationRel.getType()) && !isOpen()) {
@@ -180,7 +185,6 @@ public class ProcessProcessor {
 			}
 
 			Long stationId = partnerStationRel.getStationId();
-			Long instanceId = partnerStationRel.getId();
 
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
 			String operator = operatorDto.getOperator();

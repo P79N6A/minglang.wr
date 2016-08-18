@@ -55,10 +55,12 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpvStrategy")
@@ -92,6 +94,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	StationApplySyncBO stationApplySyncBO;
+	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -330,4 +335,12 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		}
 		return false;
 	}
+	
+	@Override
+    public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+        PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+        ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+        // FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+        generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+    }
 }
