@@ -324,7 +324,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			startProcessTask.setMethodName("startLevelApproveProcess");
 			startProcessTask.setOperator(OperatorDto.DEFAULT_OPERATOR);
 
-			startProcessTask.setParameterType(StartProcessDto.class.getName());
+			startProcessTask.setParameterType(PartnerInstanceLevelProcessDto.class.getName());
 			startProcessTask.setParameter(JSON.toJSONString(levelProcessDto));
 
 			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
