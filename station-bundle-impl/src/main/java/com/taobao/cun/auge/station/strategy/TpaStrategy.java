@@ -362,4 +362,13 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			throw new AugeServiceException(e.getMessage());
 		}
 	}
+
+	@Override
+	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		try {
+			processProcessor.quitApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
+		} catch (Exception e) {
+			throw new AugeServiceException(e.getMessage());
+		}
+	}
 }

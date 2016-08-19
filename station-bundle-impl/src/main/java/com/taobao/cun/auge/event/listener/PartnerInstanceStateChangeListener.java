@@ -72,10 +72,8 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
-			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent, stateChangeEvent.getRemark());
 			//服务中
+			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			

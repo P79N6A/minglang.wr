@@ -343,4 +343,12 @@ public class TpvStrategy implements PartnerInstanceStrategy {
         // FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
         generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
     }
+
+	@Override
+	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+	}
 }

@@ -83,4 +83,6 @@ public interface PartnerInstanceStrategy {
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 	
 	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
+	
+	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
 }
