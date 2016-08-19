@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -129,5 +130,9 @@ public class PartnerInstanceHandler implements InitializingBean{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleSettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,PartnerStationRel rel) {
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
+	}
+	
+	public void startClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto, String remark)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).startClosing(instanceId, operatorDto, remark);
 	}
 }
