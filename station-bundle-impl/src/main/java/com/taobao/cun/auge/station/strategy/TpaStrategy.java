@@ -159,7 +159,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			Long stationId = rel.getStationId();
 			Station station = stationBO.getStationById(stationId);
 			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
-					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), rel.getState())
+					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getState())
 					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
 				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
 			}
