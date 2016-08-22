@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -166,7 +167,7 @@ public class ProcessProcessor {
 				level.setExpectedLevel(null);
 				String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
 				level.setRemark(remark);
-				partnerInstanceLevelBO.updatePartnerInstanceLevel(partnerInstanceLevelDto);
+				partnerInstanceLevelBO.updatePartnerInstanceLevel(PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level));
 			}
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + "monitorLevelApprove: " + ob.toJSONString(), e);

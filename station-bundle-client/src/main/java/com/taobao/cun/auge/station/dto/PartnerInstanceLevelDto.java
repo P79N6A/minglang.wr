@@ -12,6 +12,8 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 * 
 	 */
 	private static final long serialVersionUID = 4289981939113069738L;
+	private Long id;
+	
 	/**
 	 * 合伙人实例id(仅供内部使用)
 	 */
@@ -371,7 +373,12 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
-	
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }
