@@ -48,7 +48,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
 
-
 @Component("processProcessor")
 public class ProcessProcessor {
 
@@ -84,10 +83,10 @@ public class ProcessProcessor {
 
 	@Autowired
 	AppResourceBO appResourceBO;
-	
+
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -105,6 +104,8 @@ public class ProcessProcessor {
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
+			} else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
+				monitorLevelApprove(Long.valueOf(objectId), ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -117,21 +118,30 @@ public class ProcessProcessor {
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.QUITING);
 			}
-			//任务完成
-		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
-			//记录退出审批日志
+			// 任务完成
+		} else if (ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)) {
+			// 记录退出审批日志
 			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				recordQuitApproveLog(ob, stationApplyId);
 			}
-			//流程启动
-		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
-			//记录退出审批日志
+			// 流程启动
+		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
+			// 记录退出审批日志
 			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				recordQuitStartLog(ob, stationApplyId);
 			}
 		}
 	}
-	
+
+	private void monitorLevelApprove(Long instanceId, ProcessApproveResultEnum approveResult) {
+		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+			
+		}else{
+			
+		}
+	}
+
 	private void recordQuitStartLog(JSONObject ob, Long stationApplyId) {
 		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
 
@@ -141,7 +151,7 @@ public class ProcessProcessor {
 		cuntaoFlowRecord.setOperatorName(ob.getString("applierName"));
 		cuntaoFlowRecord.setOperatorWorkid(ob.getString("applierId"));
 		cuntaoFlowRecord.setOperateTime(new Date());
-		
+
 		cuntaoFlowRecord.setOperateOpinion("提交");
 		cuntaoFlowRecord.setRemarks(ob.getString("remark"));
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
@@ -156,7 +166,7 @@ public class ProcessProcessor {
 		cuntaoFlowRecord.setOperatorName(ob.getString("approverName"));
 		cuntaoFlowRecord.setOperatorWorkid(ob.getString("approver"));
 		cuntaoFlowRecord.setOperateTime(new Date());
-		
+
 		cuntaoFlowRecord.setOperateOpinion(ob.getString("result"));
 		cuntaoFlowRecord.setRemarks(ob.getString("taskRemark"));
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
