@@ -149,22 +149,28 @@ public class ProcessProcessor {
 	}
 
 	private void monitorLevelApprove(JSONObject ob, ProcessApproveResultEnum approveResult) {
-		PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			String adjustLevel = ob.getString("adjustLevel");
-			if (StringUtils.isNotBlank(adjustLevel)) {
-				String remark = "申请层级为: " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + ", 人工调整为 : " + adjustLevel;
-				partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
-				partnerInstanceLevelDto.setRemark(remark);
+		try {
+			PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
+			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+				String adjustLevel = ob.getString("adjustLevel");
+				if (StringUtils.isNotBlank(adjustLevel)) {
+					String remark = "申请层级为: " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + ", 人工调整为 : "
+							+ adjustLevel;
+					partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
+					partnerInstanceLevelDto.setRemark(remark);
+				}
+				partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
+			} else {
+				PartnerInstanceLevel level = partnerInstanceLevelBO
+						.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceLevelDto.getPartnerInstanceId());
+				level.setExpectedLevel(null);
+				String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
+				level.setRemark(remark);
+				partnerInstanceLevelBO.updatePartnerInstanceLevel(partnerInstanceLevelDto);
 			}
-			partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
-		} else {
-			PartnerInstanceLevel level = partnerInstanceLevelBO
-					.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceLevelDto.getPartnerInstanceId());
-			level.setExpectedLevel(null);
-			String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
-			level.setRemark(remark);
-			partnerInstanceLevelBO.updatePartnerInstanceLevel(partnerInstanceLevelDto);
+		} catch (Exception e) {
+			logger.error(ERROR_MSG + "monitorLevelApprove: " + ob.toJSONString(), e);
+			throw e;
 		}
 	}
 
