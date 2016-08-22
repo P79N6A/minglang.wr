@@ -105,7 +105,9 @@ public class ProcessProcessor {
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
 			} else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
+				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
 				monitorLevelApprove(Long.valueOf(objectId), ProcessApproveResultEnum.valueof(resultCode));
+
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -136,9 +138,9 @@ public class ProcessProcessor {
 	private void monitorLevelApprove(Long instanceId, ProcessApproveResultEnum approveResult) {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			
-		}else{
-			
+
+		} else {
+
 		}
 	}
 
