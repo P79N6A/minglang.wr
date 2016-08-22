@@ -1623,14 +1623,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
-		// 根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
-		partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
-		// 保存数据库
-		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
-		// 发送评级变化事件: 类型为系统评定
-		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
-				.convertLevelChangeEvent(partnerInstanceLevelDto.getEvaluateType(), partnerInstanceLevelDto);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+		try {
+			// 根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
+			partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
+			// 保存数据库
+			partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
+			// 发送评级变化事件: 类型为系统评定
+			PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
+					.convertLevelChangeEvent(partnerInstanceLevelDto.getEvaluateType(), partnerInstanceLevelDto);
+			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+		} catch (Exception e) {
+			logger.error("EvaluatePartnerInstanceLevelError:" + JSON.toJSONString(partnerInstanceLevelDto), e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 	@Override
@@ -1643,14 +1648,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Long instanceId = partnerInstanceLevelDto.getPartnerInstanceId();
 			levelProcessDto.setPartnerInstanceId(instanceId);
 			levelProcessDto.setBusinessId(instanceId);
-			PartnerInstanceDto  instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
 			Long countyOrgId = instance.getStationDto().getApplyOrg();
 			levelProcessDto.setCountyOrgId(countyOrgId);
 			CountyStation countyStation = countyStationBO.getCountyStationByOrgId(countyOrgId);
 			levelProcessDto.setCountyStationName(countyStation.getName());
 			levelProcessDto.setCurrentLevel(partnerInstanceLevelDto.getCurrentLevel());
 			levelProcessDto.setExpectedLevel(partnerInstanceLevelDto.getExpectedLevel());
-			List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(countyOrgId,UserRole.COUNTY_LEADER);
+			List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(countyOrgId, UserRole.COUNTY_LEADER);
 			CuntaoUser countyLeader = userLists.iterator().next();
 			levelProcessDto.setEmployeeId(countyLeader.getLoginId());
 			levelProcessDto.setEmployeeName(emp360Adapter.getName(countyLeader.getLoginId()));
@@ -1660,6 +1665,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			levelProcessDto.setStationName(instance.getStationDto().getName());
 			levelProcessDto.setScore(partnerInstanceLevelDto.getScore());
 			levelProcessDto.setMonthlyIncome(partnerInstanceLevelDto.getMonthlyIncome());
+			partnerInstanceLevelDto.setOperator(countyLeader.getLoginId());
+			partnerInstanceLevelDto.setOperatorType(OperatorTypeEnum.BUC);
 			levelProcessDto.setEvaluateInfo(JSON.toJSONString(partnerInstanceLevelDto));
 
 			generalTaskSubmitService.submitLevelApproveProcessTask(ProcessBusinessEnum.partnerInstanceLevelAudit, levelProcessDto);

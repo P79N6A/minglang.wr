@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -27,13 +30,18 @@ import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEvaluateTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -45,6 +53,7 @@ import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
 
@@ -87,6 +96,11 @@ public class ProcessProcessor {
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 
+	@Autowired
+	PartnerInstanceService partnerInstanceService;
+	@Autowired
+	PartnerInstanceLevelBO partnerInstanceLevelBO;
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -106,8 +120,7 @@ public class ProcessProcessor {
 				monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
 			} else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
-				monitorLevelApprove(Long.valueOf(objectId), ProcessApproveResultEnum.valueof(resultCode));
-
+				monitorLevelApprove(ob, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -135,12 +148,23 @@ public class ProcessProcessor {
 		}
 	}
 
-	private void monitorLevelApprove(Long instanceId, ProcessApproveResultEnum approveResult) {
-		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+	private void monitorLevelApprove(JSONObject ob, ProcessApproveResultEnum approveResult) {
+		PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-
+			String adjustLevel = ob.getString("adjustLevel");
+			if (StringUtils.isNotBlank(adjustLevel)) {
+				String remark = "申请层级为: " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + ", 人工调整为 : " + adjustLevel;
+				partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
+				partnerInstanceLevelDto.setRemark(remark);
+			}
+			partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
 		} else {
-
+			PartnerInstanceLevel level = partnerInstanceLevelBO
+					.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceLevelDto.getPartnerInstanceId());
+			level.setExpectedLevel(null);
+			String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
+			level.setRemark(remark);
+			partnerInstanceLevelBO.updatePartnerInstanceLevel(partnerInstanceLevelDto);
 		}
 	}
 

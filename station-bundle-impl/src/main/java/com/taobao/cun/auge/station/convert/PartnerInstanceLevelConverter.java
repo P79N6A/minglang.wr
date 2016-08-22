@@ -82,6 +82,7 @@ public class PartnerInstanceLevelConverter {
 		result.setScore(level.getScore());
 		result.setStationId(level.getStationId());
 		result.setTaobaoUserId(level.getTaobaoUserId());
+		result.setRemark(level.getRemark());
 		return result;
 	}
 

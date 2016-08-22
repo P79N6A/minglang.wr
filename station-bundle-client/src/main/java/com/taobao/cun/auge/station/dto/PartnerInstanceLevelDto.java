@@ -129,6 +129,8 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 * 评定类型
 	 */
 	private PartnerInstanceLevelEvaluateTypeEnum evaluateType;
+	
+	private String remark;
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -360,6 +362,14 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 
 	public void setEvaluateType(PartnerInstanceLevelEvaluateTypeEnum evaluateType) {
 		this.evaluateType = evaluateType;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	
 	

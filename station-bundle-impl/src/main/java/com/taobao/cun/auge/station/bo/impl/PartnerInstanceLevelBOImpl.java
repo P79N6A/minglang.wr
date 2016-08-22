@@ -64,4 +64,16 @@ public class PartnerInstanceLevelBOImpl implements PartnerInstanceLevelBO {
 		criteria.andIsValidEqualTo("y");
 		partnerInstanceLevelMapper.updateByExampleSelective(level, example);
 	}
+
+	@Override
+	public void updatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) {
+		ValidateUtils.notNull(partnerInstanceLevelDto);
+		ValidateUtils.notNull(partnerInstanceLevelDto.getPartnerInstanceId());
+
+		PartnerInstanceLevel level = PartnerInstanceLevelConverter.toPartnerInstanceLevel(partnerInstanceLevelDto);
+		String operator = partnerInstanceLevelDto.getOperator();
+		DomainUtils.beforeUpdate(level, operator);
+		partnerInstanceLevelMapper.updateByPrimaryKey(level);
+		
+	}
 }

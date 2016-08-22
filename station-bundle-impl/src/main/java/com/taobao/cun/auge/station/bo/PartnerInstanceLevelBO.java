@@ -29,4 +29,7 @@ public interface PartnerInstanceLevelBO {
 	 * @param partnerInstanceLevelDto 合伙人层级Dto
 	 */
 	void invalidatePartnerInstanceLevelBefore(PartnerInstanceLevelDto partnerInstanceLevelDto);
+
+
+	void updatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto);
 }
