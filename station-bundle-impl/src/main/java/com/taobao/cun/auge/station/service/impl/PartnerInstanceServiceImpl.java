@@ -1667,6 +1667,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			levelProcessDto.setMonthlyIncome(partnerInstanceLevelDto.getMonthlyIncome());
 			partnerInstanceLevelDto.setOperator(countyLeader.getLoginId());
 			partnerInstanceLevelDto.setOperatorType(OperatorTypeEnum.BUC);
+			partnerInstanceLevelDto.setEvaluateBy(countyLeader.getLoginId());
 			levelProcessDto.setEvaluateInfo(JSON.toJSONString(partnerInstanceLevelDto));
 
 			generalTaskSubmitService.submitLevelApproveProcessTask(ProcessBusinessEnum.partnerInstanceLevelAudit, levelProcessDto);
