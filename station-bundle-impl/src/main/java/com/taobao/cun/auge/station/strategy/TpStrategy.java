@@ -356,7 +356,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
 		
 		Station s = stationBO.getStationById(rel.getStationId());
-		if(!containCountyOrgId(s.getApplyOrg())) {
+		if(containCountyOrgId(s.getApplyOrg())) {
 			return;
 		}
 		
