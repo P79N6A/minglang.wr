@@ -12,6 +12,7 @@ import com.taobao.hsf.remoting.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -66,14 +67,11 @@ public class PartnerInstanceLevelBOImpl implements PartnerInstanceLevelBO {
 	}
 
 	@Override
-	public void updatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) {
-		ValidateUtils.notNull(partnerInstanceLevelDto);
-		ValidateUtils.notNull(partnerInstanceLevelDto.getPartnerInstanceId());
-
-		PartnerInstanceLevel level = PartnerInstanceLevelConverter.toPartnerInstanceLevel(partnerInstanceLevelDto);
-		String operator = partnerInstanceLevelDto.getOperator();
-		DomainUtils.beforeUpdate(level, operator);
-		partnerInstanceLevelMapper.updateByPrimaryKey(level);
+	public void updatePartnerInstanceLevel(PartnerInstanceLevel partnerInstanceLevel) {
+		ValidateUtils.notNull(partnerInstanceLevel);
+		ValidateUtils.notNull(partnerInstanceLevel.getPartnerInstanceId());
+		partnerInstanceLevel.setGmtModified(new Date());
+		partnerInstanceLevelMapper.updateByPrimaryKey(partnerInstanceLevel);
 		
 	}
 }

@@ -31,5 +31,5 @@ public interface PartnerInstanceLevelBO {
 	void invalidatePartnerInstanceLevelBefore(PartnerInstanceLevelDto partnerInstanceLevelDto);
 
 
-	void updatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto);
+	void updatePartnerInstanceLevel(PartnerInstanceLevel partnerInstanceLevel);
 }

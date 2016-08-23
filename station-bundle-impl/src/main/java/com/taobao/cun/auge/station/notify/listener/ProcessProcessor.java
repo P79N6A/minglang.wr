@@ -171,7 +171,7 @@ public class ProcessProcessor {
 				level.setExpectedLevel(null);
 				String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
 				level.setRemark(remark);
-				partnerInstanceLevelBO.updatePartnerInstanceLevel(PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level));
+				partnerInstanceLevelBO.updatePartnerInstanceLevel(level);
 			}
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + "monitorLevelApprove: " + ob.toJSONString(), e);
