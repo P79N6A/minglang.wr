@@ -155,11 +155,15 @@ public class ProcessProcessor {
 			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 				String adjustLevel = ob.getString("adjustLevel");
 				if (StringUtils.isNotBlank(adjustLevel)) {
-					String remark = "申请层级为: " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + ", 人工调整为 : "
+					String remark = "申请层级为: " + partnerInstanceLevelDto.getExpectedLevel().getLevel().toString() + ", 人工调整为 : "
 							+ adjustLevel;
 					partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
 					partnerInstanceLevelDto.setRemark(remark);
+				}else{
+					partnerInstanceLevelDto.setCurrentLevel(partnerInstanceLevelDto.getExpectedLevel());
 				}
+				partnerInstanceLevelDto.setPreLevel(partnerInstanceLevelDto.getCurrentLevel());
+				partnerInstanceLevelDto.setExpectedLevel(null);
 				partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
 			} else {
 				PartnerInstanceLevel level = partnerInstanceLevelBO
