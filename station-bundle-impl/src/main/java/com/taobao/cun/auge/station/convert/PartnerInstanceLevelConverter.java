@@ -55,6 +55,7 @@ public class PartnerInstanceLevelConverter {
 			return null;
 		}
 		PartnerInstanceLevel result = new PartnerInstanceLevel();
+		result.setId(level.getId());
 		result.setAppIncomePercent(level.getAppIncomePercent());
 		result.setAppIncomePercentScore(level.getAppIncomePercentScore());
 		result.setAvgBuyTimes(level.getAvgBuyTimes());
