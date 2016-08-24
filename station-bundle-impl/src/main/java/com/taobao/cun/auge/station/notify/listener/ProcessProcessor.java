@@ -169,12 +169,13 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		closeApprove(partnerStationRel.getId(), approveResult);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
