@@ -858,9 +858,7 @@
       and LOCATE(#{name,jdbcType=VARCHAR},s.name)>0
     </if>
     <if test="pageSize != null and pageSize != ''" >
-        <![CDATA[
-                  limit #pageStart# , #pageSize#
-		]]>
+                  limit #{pageStart,jdbcType=INTEGER} , #{pageSize,jdbcType=INTEGER}
     </if>
   </select>
 </mapper>
