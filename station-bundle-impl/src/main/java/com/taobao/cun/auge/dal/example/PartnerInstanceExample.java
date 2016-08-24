@@ -50,7 +50,11 @@ public class PartnerInstanceExample implements Serializable {
 	// 合伙人状态
 	private String partnerState;
 	
+	//合伙人级别
 	private String partnerInstanceLevel;
+	
+	//是否是当前人
+	private String isCurrent;
 
 	// ======生命週期========
 	// 业务类型
@@ -348,6 +352,12 @@ public class PartnerInstanceExample implements Serializable {
 	public void setPartnerInstanceLevel(String partnerInstanceLevel) {
 		this.partnerInstanceLevel = partnerInstanceLevel;
 	}
-	
-	
+
+	public String getIsCurrent() {
+		return isCurrent;
+	}
+
+	public void setIsCurrent(String isCurrent) {
+		this.isCurrent = isCurrent;
+	}
 }

@@ -392,6 +392,10 @@ public final class PartnerInstanceConverter {
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
 		}
+		
+		if (null != condition.getIsCurrent()) {
+			example.setIsCurrent(Boolean.TRUE.equals(condition.getIsCurrent()) ? "y" : "n");
+		}
 		return example;
 	}
 }

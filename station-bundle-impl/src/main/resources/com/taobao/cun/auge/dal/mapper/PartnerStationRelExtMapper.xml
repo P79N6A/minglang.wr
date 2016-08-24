@@ -226,6 +226,9 @@
 		<if test="partnerState != null and partnerState != ''" >
 			and instance.state = #{partnerState,jdbcType=VARCHAR}
 		</if>
+		<if test="isCurrent != null and isCurrent != ''" >
+			and instance.is_current = #{isCurrent,jdbcType=VARCHAR}
+		</if>
 		<if test="taobaoNick != null and taobaoNick != ''" >
 			and p.taobao_nick = #{taobaoNick,jdbcType=VARCHAR}
 		</if>
