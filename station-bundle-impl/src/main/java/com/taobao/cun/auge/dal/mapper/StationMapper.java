@@ -3,6 +3,8 @@ package com.taobao.cun.auge.dal.mapper;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
 import java.util.List;
+
+import com.taobao.cun.auge.dal.example.StationExtExample;
 import org.apache.ibatis.annotations.Param;
 
 public interface StationMapper {
@@ -93,4 +95,6 @@ public interface StationMapper {
      * @mbggenerated Fri Jul 15 12:43:49 CST 2016
      */
     int updateByPrimaryKey(Station record);
+
+    List<Station> getStationsByName(StationExtExample stationExtExample);
 }

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -161,6 +163,18 @@ public class StationBOImpl implements StationBO {
 		rel.setId(stationId);
 		DomainUtils.beforeDelete(rel, operator);
 		stationMapper.updateByPrimaryKeySelective(rel);
+	}
+
+	@Override
+	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException {
+		ValidateUtils.notNull(stationCondition);
+		StationExtExample stationExtExample = new StationExtExample();
+		stationExtExample.setName(stationCondition.getName());
+		stationExtExample.setOrgIdPath(stationCondition.getOrgIdPath());
+		stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
+		stationExtExample.setPageSize(stationCondition.getPageSize());
+		stationExtExample.setPageStart(stationCondition.getPageStart());
+		return stationMapper.getStationsByName(stationExtExample);
 	}
 
 

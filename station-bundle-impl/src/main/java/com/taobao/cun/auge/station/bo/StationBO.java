@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -81,5 +82,13 @@ public interface StationBO {
 	 * @throws AugeServiceException
 	 */
 	public void deleteStation(Long stationId, String operator) throws AugeServiceException;
+
+	/**
+	 * 根据name、orgIdPath、stationStatusEnum查询station
+	 * @param stationCondition
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException;
 	
 }
