@@ -48,6 +48,13 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		Long instanceId = parent.getId();
 		return partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
 	}
+	
+	@Override
+	public Integer findPartnerMaxChildNumByInsId(Long instanceId) {
+		ValidateUtils.notNull(instanceId);
+
+		return partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
+	}
 
 	@Override
 	public Boolean validateChildNum(Long parentStationId) {

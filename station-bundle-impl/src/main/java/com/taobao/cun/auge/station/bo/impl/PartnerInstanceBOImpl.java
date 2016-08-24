@@ -20,6 +20,7 @@ import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.ali.com.google.common.collect.Sets;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -45,6 +46,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
@@ -487,6 +489,16 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		}
 		return count;
+	}
+
+	@Override
+	public void finishCourse(Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		PartnerStationRel rel = this.getActivePartnerInstance(taobaoUserId);
+		if (rel == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y, OperatorDto.defaultOperator());
 	}
 
 }

@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-@Aspect
-@Order
-@Component
+//@Aspect
+//@Order
+//@Component
 public class AugeExceptionAspect {
 
 	

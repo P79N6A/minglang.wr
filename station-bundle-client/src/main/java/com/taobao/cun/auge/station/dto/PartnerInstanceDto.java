@@ -1,14 +1,10 @@
 package com.taobao.cun.auge.station.dto;
 
+import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.*;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
 public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
@@ -83,7 +79,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * station_aply表主键，供数据迁移使用
 	 */
 	private Long stationApplyId;
-	
+
 	/**
 	 * station_apply表的state 兼容老模型
 	 */
@@ -123,6 +119,11 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	 * 乐观锁版本
 	 */
 	private Long version;
+
+	/**
+	 * 合伙人分层dto
+	 */
+	private PartnerInstanceLevelDto partnerInstanceLevel;
 
 	public Long getId() {
 		return id;
@@ -298,6 +299,14 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setStationApplyState(StationApplyStateEnum stationApplyState) {
 		this.stationApplyState = stationApplyState;
+	}
+
+	public PartnerInstanceLevelDto getPartnerInstanceLevel() {
+		return partnerInstanceLevel;
+	}
+
+	public void setPartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevel) {
+		this.partnerInstanceLevel = partnerInstanceLevel;
 	}
 
 }

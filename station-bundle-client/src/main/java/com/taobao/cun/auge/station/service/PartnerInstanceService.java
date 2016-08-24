@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -52,6 +53,15 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void auditSettleByManager(AuditSettleDto auditSettleDto) throws AugeServiceException;
+	
+	/**
+	 * 合伙人修改，人、服务站基础信息，只包含服务中
+	 * 
+	 * 目前只有合伙人修改淘帮手信息，调用
+	 * 
+	 * @throws AugeServiceException
+	 */
+	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
@@ -201,5 +211,13 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradeSuccessDto) throws AugeServiceException;
+	
+	/**
+	 * 评定合伙人层级(定时钟和审批流程调用)
+	 * @param partnerInstanceLevelDto
+	 * @throws AugeServiceException
+	 */
+	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException;
+	
 	
 }

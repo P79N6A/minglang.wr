@@ -28,6 +28,11 @@
     <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
     <result column="version" jdbcType="BIGINT" property="version" />
     
+    <!-- 合伙人层级 -->
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="expected_level" jdbcType="VARCHAR" property="expectedLevel" />
+    
+    
     <!-- pepole -->
      <result column="partner_name" jdbcType="VARCHAR" property="partnerName" />
     <result column="alipay_account" jdbcType="VARCHAR" property="alipayAccount" />
@@ -131,6 +136,12 @@
 		s.fixed_type,
 		org.name as county_station_name
 		
+		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
+		,
+		level.current_level as level,
+		level.expected_level
+		</if>
+		
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			,
 			life.business_type as lifecycle_business_type,
@@ -143,12 +154,29 @@
 			life.confirm,
 			life.system
 		</if>
-		from partner_station_rel instance,partner p,station s,cuntao_org org
+		
+		from partner_station_rel instance
+		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
+			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		
+		,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			, partner_lifecycle_items life
 		</if>
+		
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
+		
+		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
+			<if test="partnerInstanceLevel != null and  partnerInstanceLevel=='SP'">
+		   	 and level.expected_level is not null
+			</if>
+			<if test="partnerInstanceLevel != null and partnerInstanceLevel!='' and  partnerInstanceLevel!='SP'">
+		   	 and level.current_level = #{partnerInstanceLevel,jdbcType=VARCHAR}
+			</if>
+		</if>
+		
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			and instance.id = life.partner_instance_id
 		</if>

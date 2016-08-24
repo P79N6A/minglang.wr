@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
@@ -60,6 +61,7 @@ public class StationConverter {
 		stationDto.setStationNum(station.getStationNum());
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
 		stationDto.setAddress(address);
+		stationDto.setFeature(FeatureUtil.toMap(station.getFeature()));
 		return stationDto;
 	}
 

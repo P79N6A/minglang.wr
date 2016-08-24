@@ -7,7 +7,9 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -82,6 +84,16 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
      * 系统任务
      */
     private PartnerLifecycleSystemEnum system;
+    
+    /**
+     * 装修状态
+     */
+    private PartnerLifecycleDecorateStatusEnum decorateStatus;
+    
+    /**
+     * 培训状态
+     */
+    private PartnerLifecycleCourseStatusEnum courseStatus;
     
 
 	public PartnerInstanceTypeEnum getPartnerType() {
@@ -180,6 +192,22 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
 
 	public void setSystem(PartnerLifecycleSystemEnum system) {
 		this.system = system;
+	}
+
+	public PartnerLifecycleDecorateStatusEnum getDecorateStatus() {
+		return decorateStatus;
+	}
+
+	public void setDecorateStatus(PartnerLifecycleDecorateStatusEnum decorateStatus) {
+		this.decorateStatus = decorateStatus;
+	}
+
+	public PartnerLifecycleCourseStatusEnum getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(PartnerLifecycleCourseStatusEnum courseStatus) {
+		this.courseStatus = courseStatus;
 	}
 
 }

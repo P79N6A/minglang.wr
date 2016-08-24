@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.StringUtil;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -17,8 +18,11 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 @Component("partnerLifecycleBO")
 public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
@@ -110,5 +114,57 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		criteria.andIsDeletedEqualTo("n");
 		
 		partnerLifecycleItemsMapper.updateByExampleSelective(record, example);
+	}
+
+	@Override
+	public void updateDecorateState(Long instanceId,
+			PartnerLifecycleDecorateStatusEnum decorateStateEnum,
+			OperatorDto operatorDto) throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operatorDto);
+		ValidateUtils.notNull(decorateStateEnum);
+		
+		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setDecorateStatus(decorateStateEnum);
+		param.setLifecycleId(items.getId());
+		param.copyOperatorDto(operatorDto);
+	/*	if (PartnerLifecycleCourseStatusEnum.DONE.getCode().equals(items.getCourseStatus())
+				&& PartnerLifecycleDecorateStatusEnum.DONE.equals(decorateStateEnum)) {
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		}*/
+		
+		this.updateLifecycle(param);
+	}
+
+	@Override
+	public void updateCourseState(Long instanceId,
+			PartnerLifecycleCourseStatusEnum courseStatusEnum, OperatorDto operatorDto)
+			throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operatorDto);
+		ValidateUtils.notNull(courseStatusEnum);
+		
+		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setCourseStatus(courseStatusEnum);
+		param.setLifecycleId(items.getId());
+		param.copyOperatorDto(operatorDto);
+/*		if (PartnerLifecycleCourseStatusEnum.DONE.equals(courseStatusEnum)
+				&& PartnerLifecycleDecorateStatusEnum.DONE.getCode().equals(items.getDecorateStatus())) {
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+		}*/
+		
+		this.updateLifecycle(param);
 	}
 }

@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.station.condition;
 
-import java.io.Serializable;
+import com.taobao.cun.auge.common.OperatorDto;
 
 import javax.validation.constraints.NotNull;
-
-import com.taobao.cun.auge.common.OperatorDto;
+import java.io.Serializable;
 
 /**
  * 查询实例条件
@@ -37,6 +36,11 @@ public class PartnerInstanceCondition extends OperatorDto implements Serializabl
 	 */
 	private Boolean needDesensitization = Boolean.FALSE;
 
+	/**
+	 * 是否需要合伙人分层信息
+	 */
+	private Boolean needPartnerLevelInfo = Boolean.FALSE;
+
 	public Long getInstanceId() {
 		return instanceId;
 	}
@@ -67,6 +71,14 @@ public class PartnerInstanceCondition extends OperatorDto implements Serializabl
 
 	public void setNeedDesensitization(Boolean needDesensitization) {
 		this.needDesensitization = needDesensitization;
+	}
+
+	public Boolean getNeedPartnerLevelInfo() {
+		return needPartnerLevelInfo;
+	}
+
+	public void setNeedPartnerLevelInfo(Boolean needPartnerLevelInfo) {
+		this.needPartnerLevelInfo = needPartnerLevelInfo;
 	}
 
 	public PartnerInstanceCondition() {

@@ -39,7 +39,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
+	public List<Long> addAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 批量修改,   先删除,后新增
@@ -48,7 +48,7 @@ public interface AttachementBO {
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException
 	 */
-	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
+	public List<Long> modifyAttachementBatch(List<AttachementDto> attachementDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 批量新增附件

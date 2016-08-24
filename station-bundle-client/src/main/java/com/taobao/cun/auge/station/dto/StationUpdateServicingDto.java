@@ -13,6 +13,11 @@ import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 public class StationUpdateServicingDto extends OperatorDto implements Serializable{
 
 	private static final long serialVersionUID = 5611747398839067505L;
+	
+	/**
+	 * 站点id
+	 */
+	private Long stationId;
 
     /**
      * 服务站名称
@@ -85,6 +90,14 @@ public class StationUpdateServicingDto extends OperatorDto implements Serializab
     private Address  address;
     
     private PartnerProtocolRelDto fixedProtocols;
+    
+	public Long getStationId() {
+		return stationId;
+	}
+
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
 
 	public String getName() {
 		return name;

@@ -52,8 +52,11 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 	public static final StationExceptionEnum STATION_ADDRESS_IS_NULL = new StationExceptionEnum(
 			"STATION_ADDRESS_IS_NULL", "服务站地址不能为空");
 	
-	public static final PartnerExceptionEnum STATION_DELETE_FAIL = new PartnerExceptionEnum(
+	public static final StationExceptionEnum STATION_DELETE_FAIL = new StationExceptionEnum(
 			"STATION_DELETE_FAIL", "当前状态的服务站信息不能删除");
+	
+	public static final StationExceptionEnum STATION_NOT_FINISH_DECORATE = new StationExceptionEnum(
+			"STATION_NOT_FINISH_DECORATE", "当前服务站没有完成装修");
 	
 	
 
@@ -75,6 +78,7 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 		mappings.put("STATION_ADDRESS_IS_NULL", STATION_ADDRESS_IS_NULL);
 		mappings.put("STATION_NUM_ILLEGAL", STATION_NUM_ILLEGAL);
 		mappings.put("STATION_DELETE_FAIL", STATION_DELETE_FAIL);
+		mappings.put("STATION_NOT_FINISH_DECORATE", STATION_NOT_FINISH_DECORATE);
 	}
 
 	public StationExceptionEnum(String code, String desc) {

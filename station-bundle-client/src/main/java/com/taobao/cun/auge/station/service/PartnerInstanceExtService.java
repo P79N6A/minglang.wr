@@ -13,6 +13,14 @@ public interface PartnerInstanceExtService {
 	 * @return
 	 */
 	public Integer findPartnerMaxChildNum(Long partnerStationId);
+	
+	/**
+	 * 根据合伙人的村点的id，查询子成员最大名额
+	 * 
+	 * @param instanceId
+	 * @return
+	 */
+	public Integer findPartnerMaxChildNumByInsId(Long instanceId);
 
 	/**
 	 * 校验下一级是否超过名额限制，没有超过返回false，超过，返回true

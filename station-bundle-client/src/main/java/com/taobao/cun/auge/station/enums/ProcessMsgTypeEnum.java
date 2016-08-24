@@ -12,15 +12,22 @@ public class ProcessMsgTypeEnum implements Serializable {
 
 	private String code;
 	private String desc;
-
+	
+	public static final ProcessMsgTypeEnum PROC_INST_START = new ProcessMsgTypeEnum("PROC_INST_START","流程实例启动");
 	public static final ProcessMsgTypeEnum PROC_INST_FINISH = new ProcessMsgTypeEnum("PROC_INST_FINISH","流程实例完成");
+	public static final ProcessMsgTypeEnum PROC_INST_TERMINATE = new ProcessMsgTypeEnum("PROC_INST_TERMINATE","流程实例终止");	
 	public static final ProcessMsgTypeEnum ACT_INST_START = new ProcessMsgTypeEnum("ACT_INST_START","流程节点被激活");
 	public static final ProcessMsgTypeEnum TASK_ACTIVATED = new ProcessMsgTypeEnum("TASK_ACTIVATED", "任务被激活");
+	public static final ProcessMsgTypeEnum TASK_COMPLETED = new ProcessMsgTypeEnum("TASK_COMPLETED", "任务完成");
+	
 
 	static {
+		mappings.put("PROC_INST_START", PROC_INST_START);
 		mappings.put("PROC_INST_FINISH", PROC_INST_FINISH);
+		mappings.put("PROC_INST_TERMINATE", PROC_INST_TERMINATE);
 		mappings.put("ACT_INST_START", ACT_INST_START);
 		mappings.put("TASK_ACTIVATED", TASK_ACTIVATED);
+		mappings.put("TASK_COMPLETED", TASK_COMPLETED);
 	}
 
 	public ProcessMsgTypeEnum(String code, String desc) {
