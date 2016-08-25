@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 public class ShutDownStationApplyDto extends OperatorDto{
@@ -7,6 +9,7 @@ public class ShutDownStationApplyDto extends OperatorDto{
 	private static final long serialVersionUID = 5198576840053716625L;
 	
 	//村点id
+	@NotNull(message = "stationId not null")
 	private Long stationId;
 	
 	//撤点原因

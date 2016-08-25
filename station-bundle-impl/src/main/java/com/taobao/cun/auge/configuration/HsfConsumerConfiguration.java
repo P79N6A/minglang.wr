@@ -16,6 +16,7 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
+import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -45,6 +46,13 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean taobaoTradeOrderQueryService(
 			@Value("${hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService}") String version) {
 		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	// cuntaocenter服务
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean cuntaoAssetMService (
+			@Value("${hsf.consumer.version.cuntaocenter.cuntaoAssetService}") String version) {
+		return getConsumerBean(CuntaoAssetService.class, HSFGroup.HSF, version, 3000);
 	}
 	
 	@Bean(initMethod = "init")

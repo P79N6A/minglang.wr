@@ -21,5 +21,5 @@ public interface StationService {
 	 * @param quitDto
 	 * @throws AugeServiceException
 	 */
-	public void applyShutDownStationByManager(ShutDownStationApplyDto quitDto) throws AugeServiceException;
+	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto) throws AugeServiceException;
 }
