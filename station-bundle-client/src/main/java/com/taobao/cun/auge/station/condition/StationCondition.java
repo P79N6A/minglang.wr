@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.condition;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
  * 
@@ -23,6 +24,55 @@ public class StationCondition extends OperatorDto implements Serializable {
 	 */
 	private Boolean needAttachementInfo = Boolean.TRUE;
 
+	private String name;
+
+	private String orgIdPath;
+
+	private StationStatusEnum stationStatusEnum;
+
+	private Integer pageStart; // 分页参数
+
+	private Integer pageSize;
+
+	public Integer getPageStart() {
+		return pageStart;
+	}
+
+	public void setPageStart(Integer pageStart) {
+		this.pageStart = pageStart;
+	}
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getOrgIdPath() {
+		return orgIdPath;
+	}
+
+	public void setOrgIdPath(String orgIdPath) {
+		this.orgIdPath = orgIdPath;
+	}
+
+	public StationStatusEnum getStationStatusEnum() {
+		return stationStatusEnum;
+	}
+
+	public void setStationStatusEnum(StationStatusEnum stationStatusEnum) {
+		this.stationStatusEnum = stationStatusEnum;
+	}
 
 	public Long getId() {
 		return id;

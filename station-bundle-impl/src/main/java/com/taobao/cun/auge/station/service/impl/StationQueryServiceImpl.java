@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,12 @@ public class StationQueryServiceImpl implements StationQueryService {
 
 		List<Station> stations = stationBO.getStationById(stationIds);
 		return StationConverter.toStationDtos(stations);
+	}
+
+	@Override
+	public List<StationDto> queryStationsByName(StationCondition stationCondition) throws AugeServiceException {
+		ValidateUtils.validateParam(stationCondition);
+		List<Station> stations = stationBO.getStationsByName(stationCondition);
+		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
 	}
 }

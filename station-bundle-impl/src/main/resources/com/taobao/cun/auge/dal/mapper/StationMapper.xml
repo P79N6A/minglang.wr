@@ -805,4 +805,60 @@
       version = #{version,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="getStationsByName" parameterType="com.taobao.cun.auge.dal.example.StationExtExample" resultMap="BaseResultMap">
+    select
+    s.id,
+    s.gmt_create,
+    s.gmt_modified,
+    s.creater,
+    s.modifier,
+    s.name,
+    s.description,
+    s.alipay_account,
+    s.taobao_nick,
+    s.state,
+    s.is_deleted,
+    s.province,
+    s.city,
+    s.county,
+    s.town,
+    s.province_detail,
+    s.city_detail,
+    s.county_detail,
+    s.town_detail,
+    s.address,
+    s.apply_org,
+    s.taobao_user_id,
+    s.station_num,
+    s.lng,
+    s.lat,
+    s.village,
+    s.village_detail,
+    s.covered,
+    s.products,
+    s.logistics_state,
+    s.format,
+    s.area_type,
+    s.manager_id,
+    s.provider_id,
+    s.feature,
+    s.status,
+    s.fixed_type,
+    s.version
+    from station s, cuntao_org org
+    where s.apply_org = org.id and s.is_deleted='n' and org.is_deleted='n'
+    <if test="orgIdPath != null and orgIdPath != ''" >
+      and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
+    </if>
+    <if test="status != null and status != ''" >
+      and s.status = #{status,jdbcType=VARCHAR}
+    </if>
+    <if test="name != null and name != ''" >
+      and LOCATE(#{name,jdbcType=VARCHAR},s.name)>0
+    </if>
+    <if test="pageSize != null and pageSize != ''" >
+                  limit #{pageStart,jdbcType=INTEGER} , #{pageSize,jdbcType=INTEGER}
+    </if>
+  </select>
 </mapper>
