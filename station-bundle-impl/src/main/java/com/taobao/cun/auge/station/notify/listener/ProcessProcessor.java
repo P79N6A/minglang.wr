@@ -45,6 +45,7 @@ import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
 
@@ -88,12 +89,15 @@ public class ProcessProcessor {
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 	
+	@Autowired
+	StationService stationService;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
 		String businessCode = ob.getString("businessCode");
 		String objectId = ob.getString("objectId");
-		Long stationApplyId = Long.valueOf(objectId);
+		Long businessId = Long.valueOf(objectId);
 		// 监听流程实例结束
 		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
@@ -101,10 +105,12 @@ public class ProcessProcessor {
 
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				monitorCloseApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
+				monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
+				monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
+				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -112,22 +118,22 @@ public class ProcessProcessor {
 		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.CLOSING);
+				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.CLOSING);
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.QUITING);
+				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.QUITING);
 			}
 			//任务完成
 		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
 			//记录退出审批日志
 			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				recordQuitApproveLog(ob, stationApplyId);
+				recordQuitApproveLog(ob, businessId);
 			}
 			//流程启动
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
 			//记录退出审批日志
 			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				recordQuitStartLog(ob, stationApplyId);
+				recordQuitStartLog(ob, businessId);
 			}
 		}
 	}

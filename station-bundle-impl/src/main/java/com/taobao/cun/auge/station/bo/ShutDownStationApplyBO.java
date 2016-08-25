@@ -26,6 +26,6 @@ public interface ShutDownStationApplyBO {
 	 * 
 	 * @param stationId
 	 */
-	public void deleteShutDownStationApply(Long instanceId, String operator);
+	public void deleteShutDownStationApply(Long stationId, String operator);
 	
 }

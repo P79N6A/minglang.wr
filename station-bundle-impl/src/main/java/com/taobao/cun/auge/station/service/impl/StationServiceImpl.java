@@ -69,6 +69,9 @@ public class StationServiceImpl implements StationService{
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
 			//FIXME FHH 关闭物流站
 		}else{
+			//删除撤点申请单
+			shutDownStationApplyBO.deleteShutDownStationApply(stationId, operator);
+			//村点状态变更为已停业
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
 		}
 	}
