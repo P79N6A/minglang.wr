@@ -111,6 +111,15 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
 	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException;
+	
+	/**
+	 * 查询一个村点上，所有的实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException;
 
 	/**
 	 * 状态流转

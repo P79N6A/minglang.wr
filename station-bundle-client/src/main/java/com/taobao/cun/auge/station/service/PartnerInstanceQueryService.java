@@ -45,7 +45,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
-
+	
 	/**
 	 * 使用stationapply state 查询
 	 * 
