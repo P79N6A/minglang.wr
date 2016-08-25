@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.station.adapter.CuntaoAssetAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -45,7 +45,7 @@ public class StationServiceImpl implements StationService{
 	PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Autowired
-	CuntaoAssetAdapter cuntaoAssetAdapter;
+	ShutDownStationApplyBO shutDownStationApplyBO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -74,12 +74,13 @@ public class StationServiceImpl implements StationService{
 		BeanValidator.validateWithThrowable(shutDownDto);
 		
 		Long stationId = shutDownDto.getStationId();
-		String operator = shutDownDto.getOperator();
 		// 校验村点上所有人是否都是退出待解冻、已退出的状态
 		validatePartnerHasQuit(stationId);
 		
+		//保存申请单
+		shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
 		//撤点申请中
-		stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, operator);
+		stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, shutDownDto.getOperator());
 	}
 
 	private void validatePartnerHasQuit(Long stationId) {

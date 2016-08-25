@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
-import com.taobao.cun.auge.dal.domain.ShutDownStationApply;
+import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 
 public interface ShutDownStationApplyBO {
 
@@ -11,7 +11,7 @@ public interface ShutDownStationApplyBO {
 	 * @param operator
 	 * @return
 	 */
-	public void saveShutDownStationApply(ShutDownStationApply shutDownStationApply, String operator);
+	public void saveShutDownStationApply(ShutDownStationApplyDto shutDownStationApply);
 
 	/**
 	 * 根据村点id，查询撤点申请单
@@ -19,7 +19,7 @@ public interface ShutDownStationApplyBO {
 	 * @param stationId
 	 * @return
 	 */
-	public ShutDownStationApply findShutDownStationApply(Long stationId);
+	public ShutDownStationApplyDto findShutDownStationApply(Long stationId);
 
 	/**
 	 * 根据村点id，删除撤点申请单

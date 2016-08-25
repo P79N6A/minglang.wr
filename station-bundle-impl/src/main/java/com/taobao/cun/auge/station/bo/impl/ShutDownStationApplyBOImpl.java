@@ -11,6 +11,8 @@ import com.taobao.cun.auge.dal.domain.ShutDownStationApplyExample;
 import com.taobao.cun.auge.dal.domain.ShutDownStationApplyExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.ShutDownStationApplyMapper;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
+import com.taobao.cun.auge.station.convert.ShutDownStationApplyConverter;
+import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 @Component("shutDownStationApplyBO")
@@ -20,13 +22,21 @@ public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{
 	ShutDownStationApplyMapper  shutDownStationApplyMapper;
 
 	@Override
-	public void saveShutDownStationApply(ShutDownStationApply shutDownStationApply, String operator) {
-		DomainUtils.beforeInsert(shutDownStationApply, operator);
-		shutDownStationApplyMapper.insertSelective(shutDownStationApply);
+	public void saveShutDownStationApply(ShutDownStationApplyDto dto) {
+		if(null == dto){
+			throw new IllegalArgumentException("ShutDownStationApplyDto is null");
+		}
+		ShutDownStationApply record = ShutDownStationApplyConverter.convert(dto);
+		
+		DomainUtils.beforeInsert(record, dto.getApplierId());
+		shutDownStationApplyMapper.insertSelective(record);
 	}
 
 	@Override
-	public ShutDownStationApply findShutDownStationApply(Long stationId) {
+	public ShutDownStationApplyDto findShutDownStationApply(Long stationId) {
+		if(null == stationId){
+			throw new IllegalArgumentException("stationId is null");
+		}
 		ShutDownStationApplyExample example = new ShutDownStationApplyExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
@@ -37,11 +47,14 @@ public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{
 			return null;
 		}
 
-		return applyes.get(0);
+		return ShutDownStationApplyConverter.convert(applyes.get(0));
 	}
 
 	@Override
 	public void deleteShutDownStationApply(Long stationId, String operator) {
+		if(null == stationId){
+			throw new IllegalArgumentException("stationId is null");
+		}
 		ShutDownStationApplyExample example = new ShutDownStationApplyExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andStationIdEqualTo(stationId);
