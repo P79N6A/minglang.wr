@@ -273,25 +273,31 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * @param remarks
 	 *            备注
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
-			PartnerInstanceStateChangeEvent stateChangeEvent) {
+	@Override
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,	PartnerInstanceStateChangeEvent stateChangeEvent) {
+		submitApproveProcessTask( business,  stationApplyId,stateChangeEvent.getRemark(), stateChangeEvent);
+	}
+	
+	@Override
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,String remark,
+			OperatorDto operatorDto) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
 
-			startProcessDto.setRemarks(stateChangeEvent.getRemark());
-			startProcessDto.setBusinessId(stationApplyId);
+			startProcessDto.setRemarks(remark);
+			startProcessDto.setBusinessId(businessId);
 			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.copyOperatorDto(stateChangeEvent);
+			startProcessDto.copyOperatorDto(operatorDto);
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
-			startProcessTask.setBusinessNo(String.valueOf(stationApplyId));
+			startProcessTask.setBusinessNo(String.valueOf(businessId));
 			startProcessTask.setBusinessStepNo(1l);
 			startProcessTask.setBusinessType(business.getCode());
 			startProcessTask.setBusinessStepDesc(business.getDesc());
 			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
-			startProcessTask.setOperator(stateChangeEvent.getOperator());
+			startProcessTask.setOperator(operatorDto.getOperator());
 			startProcessTask.setParameterType(StartProcessDto.class.getName());
 			startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
 
@@ -302,9 +308,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			taskSubmitService.submitTask(startProcessTask,config);
 			logger.info("submitApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
 		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] stationApplyId = " + stationApplyId + " business="
-					+ business.getCode() + " applierId=" + stateChangeEvent.getOperator() + " operatorType="
-					+ stateChangeEvent.getOperatorType().getCode(), e);
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] businessId = " + businessId + " business="
+					+ business.getCode() + " applierId=" + operatorDto.getOperator() + " operatorType="
+					+ operatorDto.getOperatorType().getCode(), e);
 			throw new AugeServiceException("submitApproveProcessTask error: " + e.getMessage());
 		}
 	}

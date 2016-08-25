@@ -25,6 +25,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -46,6 +47,9 @@ public class StationServiceImpl implements StationService{
 	
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
+
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -81,6 +85,9 @@ public class StationServiceImpl implements StationService{
 		shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
 		//撤点申请中
 		stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING, shutDownDto.getOperator());
+		
+		//插入启动撤点流程的任务
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
 	}
 
 	private void validatePartnerHasQuit(Long stationId) {
