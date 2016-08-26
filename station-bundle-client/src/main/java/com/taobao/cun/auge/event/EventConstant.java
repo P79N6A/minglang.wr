@@ -51,4 +51,9 @@ public final class EventConstant {
 	 */
 	public static final String PARTNER_STATION_STATE_CHANGE_EVENT = "PARTNER_STATION_STATE_CHANGE_EVENT";
 
+	/**
+	 * 淘帮手合伙人变更
+	 */
+	public static final String CHANGE_TP_EVENT = "CHANGE_TP_EVENT";
+
 }
