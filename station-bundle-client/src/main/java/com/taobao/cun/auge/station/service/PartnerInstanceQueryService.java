@@ -37,6 +37,16 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException;
+	
+	/**
+	 * 查询最后一个退出的合伙人实例
+	 * 
+	 * @param stationId
+	 * @param operator
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto queryLastQuitPartnerInstance(Long stationId) throws AugeServiceException;
 
 	/**
 	 * 查询合伙人实例信息

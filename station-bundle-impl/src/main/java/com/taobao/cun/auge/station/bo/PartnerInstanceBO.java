@@ -120,7 +120,16 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
 	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException;
-
+	
+	/**
+	 * 查询村点上，最后一个结束服务的实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerStationRel findLastQuitPartnerInstance(Long stationId) throws AugeServiceException;
+	
 	/**
 	 * 状态流转
 	 * 

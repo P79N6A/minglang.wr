@@ -191,6 +191,25 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.selectByExample(example);
 	}
+	
+	@Override
+	public PartnerStationRel findLastQuitPartnerInstance(Long stationId) throws AugeServiceException{
+		if (null == stationId) {
+			return null;
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsDeletedEqualTo("n");
+		
+		//按照服务结束时间倒序
+		example.setOrderByClause("service_end_time DESC");
+
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+
+		return ResultUtils.selectOne(instances);
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
