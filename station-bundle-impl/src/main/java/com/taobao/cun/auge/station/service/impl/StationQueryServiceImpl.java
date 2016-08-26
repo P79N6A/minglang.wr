@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.AttachementBO;
+import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -28,6 +30,9 @@ public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
 	AttachementBO attachementBO;
+	
+	@Autowired
+	ShutDownStationApplyBO shutDownStationApplyBO;
 
 	@Override
 	public StationDto queryStationInfo(StationCondition stationCondition)
@@ -58,5 +63,11 @@ public class StationQueryServiceImpl implements StationQueryService {
 		ValidateUtils.validateParam(stationCondition);
 		List<Station> stations = stationBO.getStationsByName(stationCondition);
 		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
+	}
+	
+	@Override
+	public ShutDownStationApplyDto findShutDownStationApply(Long stationId) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		return shutDownStationApplyBO.findShutDownStationApply(stationId);
 	}
 }
