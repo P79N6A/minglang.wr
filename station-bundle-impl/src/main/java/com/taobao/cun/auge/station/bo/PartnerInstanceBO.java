@@ -128,7 +128,7 @@ public interface PartnerInstanceBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerStationRel findLastQuitPartnerInstance(Long stationId) throws AugeServiceException;
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException;
 	
 	/**
 	 * 状态流转

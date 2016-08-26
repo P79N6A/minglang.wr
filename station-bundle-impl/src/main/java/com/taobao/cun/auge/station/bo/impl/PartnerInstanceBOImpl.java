@@ -193,7 +193,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public PartnerStationRel findLastQuitPartnerInstance(Long stationId) throws AugeServiceException{
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException{
 		if (null == stationId) {
 			return null;
 		}

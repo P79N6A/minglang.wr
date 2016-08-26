@@ -152,9 +152,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 	
 	@Override
-	public PartnerInstanceDto queryLastQuitPartnerInstance(Long stationId) throws AugeServiceException{
+	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException{
 		ValidateUtils.notNull(stationId);
-		PartnerStationRel psRel = partnerInstanceBO.findLastQuitPartnerInstance(stationId);
+		PartnerStationRel psRel = partnerInstanceBO.findLastClosePartnerInstance(stationId);
 		
 		return PartnerInstanceConverter.convert(psRel);
 	}
