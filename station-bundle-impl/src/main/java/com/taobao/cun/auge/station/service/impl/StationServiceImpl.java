@@ -83,7 +83,10 @@ public class StationServiceImpl implements StationService{
 
 		Long stationId = shutDownDto.getStationId();
 		// 校验村点上所有人是否都是退出待解冻、已退出的状态
-		validatePartnerHasQuit(stationId);
+		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
+		if(!isAllPartnerQuit){
+			throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
+		}
 
 		// 保存申请单
 		shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
@@ -96,32 +99,6 @@ public class StationServiceImpl implements StationService{
 				shutDownDto.getReason(), shutDownDto);
 	}
 
-	private void validatePartnerHasQuit(Long stationId) {
-		List<PartnerStationRel> instances = partnerInstanceBO.findPartnerInstances(stationId);
 
-		for (PartnerStationRel instance : instances) {
-			if (null == instance) {
-				continue;
-			}
-			// 退出
-			if (PartnerInstanceStateEnum.QUIT.getCode().equals(instance.getState())) {
-				continue;
-			}
-
-			// 退出申请中
-			if (PartnerInstanceStateEnum.QUITING.getCode().equals(instance.getState())) {
-				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(instance.getId(),
-						PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
-
-				// 退出待解冻
-				if (PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())
-						&& PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond())) {
-					continue;
-				}
-				throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
-			}
-			throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
-		}
-	}
 
 }

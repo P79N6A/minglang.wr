@@ -65,6 +65,15 @@ public interface PartnerInstanceQueryService {
 	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException;
 	
 	/**
+	 * 是否所有合伙人都已经处于退出待解冻、退出状态
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+	
+	/**
 	 * 使用stationapply state 查询
 	 * 
 	 * @param pageCondition

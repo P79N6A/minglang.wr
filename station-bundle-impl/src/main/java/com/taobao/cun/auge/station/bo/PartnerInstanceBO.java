@@ -235,5 +235,11 @@ public interface PartnerInstanceBO {
 	
 	public void finishCourse(Long taobaoUserId) throws AugeServiceException;
 	
-
+	/**
+	 * 是否所有合伙人都处于退出待解冻、已退出状态
+	 * 
+	 * @param stationId
+	 * @throws AugeServiceException
+	 */
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
 }

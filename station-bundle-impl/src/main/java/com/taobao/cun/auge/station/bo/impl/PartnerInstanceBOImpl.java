@@ -534,5 +534,34 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y, OperatorDto.defaultOperator());
 	}
+	
+	@Override
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException	{
+		List<PartnerStationRel> instances = findPartnerInstances(stationId);
 
+		for (PartnerStationRel instance : instances) {
+			if (null == instance) {
+				continue;
+			}
+			// 退出
+			if (PartnerInstanceStateEnum.QUIT.getCode().equals(instance.getState())) {
+				continue;
+			}
+
+			// 退出申请中
+			if (PartnerInstanceStateEnum.QUITING.getCode().equals(instance.getState())) {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+						PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+
+				// 退出待解冻
+				if (PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())
+						&& PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond())) {
+					continue;
+				}
+				return false;
+			}
+			return false;
+		}
+		return true;
+	}
 }

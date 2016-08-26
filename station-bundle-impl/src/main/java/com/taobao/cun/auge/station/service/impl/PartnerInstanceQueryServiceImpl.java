@@ -215,6 +215,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		
 		return PartnerInstanceConverter.convertRel2Dto(psRels);
 	}
+	
+	@Override
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		return partnerInstanceBO.isAllPartnerQuit(stationId);
+	}
 
 	private String getErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
