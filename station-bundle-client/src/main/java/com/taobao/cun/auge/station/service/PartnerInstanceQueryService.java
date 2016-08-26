@@ -37,6 +37,14 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException;
+
+	/**
+	 * 查询合伙人实例信息
+	 * 
+	 * @param condition
+	 * @return
+	 */
+	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
 	
 	/**
 	 * 查询最后一个退出的合伙人实例
@@ -47,14 +55,14 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException;
-
+	
 	/**
-	 * 查询合伙人实例信息
-	 * 
-	 * @param condition
+	 * 查询村点上，所有的入驻实例
+	 * @param stationId
 	 * @return
+	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
+	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException;
 	
 	/**
 	 * 使用stationapply state 查询

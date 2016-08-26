@@ -206,7 +206,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-
+	}
+	
+	@Override
+	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		List<PartnerStationRel> psRels = partnerInstanceBO.findPartnerInstances(stationId);
+		
+		return PartnerInstanceConverter.convertRel2Dto(psRels);
 	}
 
 	private String getErrorMessage(String methodName, String param, String error) {

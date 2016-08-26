@@ -112,6 +112,20 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
 		return lifecleDto;
 	}
+	
+	public static List<PartnerInstanceDto> convertRel2Dto(List<PartnerStationRel> psRels) {
+		if (CollectionUtils.isEmpty(psRels)) {
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstanceDto> instanceDtos = new ArrayList<PartnerInstanceDto>(psRels.size());
+		for (PartnerStationRel psRel : psRels) {
+			if (null == psRel) {
+				continue;
+			}
+			instanceDtos.add(convert(psRel));
+		}
+		return instanceDtos;
+	}
 
 	public static PartnerInstanceDto convert(PartnerStationRel psRel) {
 		if (null == psRel) {
