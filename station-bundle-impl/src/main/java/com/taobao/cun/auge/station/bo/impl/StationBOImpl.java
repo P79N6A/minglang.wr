@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,6 +42,9 @@ public class StationBOImpl implements StationBO {
 
 	@Autowired
 	StationMapper stationMapper;
+
+	@Autowired
+	StationExtMapper stationExtMapper;
 
 	@Override
 	public Station getStationById(Long stationId) throws AugeServiceException {
@@ -174,7 +178,7 @@ public class StationBOImpl implements StationBO {
 		stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
 		stationExtExample.setPageSize(stationCondition.getPageSize());
 		stationExtExample.setPageStart(stationCondition.getPageStart());
-		return stationMapper.getStationsByName(stationExtExample);
+		return stationExtMapper.getStationsByName(stationExtExample);
 	}
 
 
