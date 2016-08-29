@@ -88,7 +88,7 @@ public interface StationDecorateBO {
 	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds) throws AugeServiceException;
 	
 	/**
-	 * 进入装修中判断装修记录变更
+	 * 进入装修中判断装修记录是否可以完成
 	 */
-	public void handleAcessDecorating(Long stationId);
+	public boolean handleAcessDecorating(Long stationId);
 }

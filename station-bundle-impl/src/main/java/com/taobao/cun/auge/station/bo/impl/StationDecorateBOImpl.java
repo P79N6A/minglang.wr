@@ -307,7 +307,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	}
 
 	@Override
-	public void handleAcessDecorating(Long stationId) {
+	public boolean handleAcessDecorating(Long stationId) {
 		ValidateUtils.notNull(stationId);
 		StationDecorateExample example = new StationDecorateExample();
 		Criteria criteria = example.createCriteria();
@@ -321,8 +321,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 				sd.setModifier("SYSTEM");
 				sd.setStatus(StationDecorateStatusEnum.DONE.getCode());
 				stationDecorateMapper.updateByPrimaryKey(sd);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	
