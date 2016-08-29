@@ -213,6 +213,8 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException;
+
+
 	
 	
 }

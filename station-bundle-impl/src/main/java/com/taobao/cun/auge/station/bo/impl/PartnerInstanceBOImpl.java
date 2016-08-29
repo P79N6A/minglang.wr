@@ -342,6 +342,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return instances.get(0);
 	}
 
+	@Override
+	public List<PartnerStationRel> getPartnerStationRelByPartnerId(Long partnerId, String isCurrent) {
+		ValidateUtils.notNull(partnerId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andPartnerIdEqualTo(partnerId);
+		criteria.andIsCurrentEqualTo(isCurrent);
+		criteria.andIsDeletedEqualTo("n");
+		return partnerStationRelMapper.selectByExample(example);
+	}
+
 	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
@@ -563,5 +574,33 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, "y");
+		if (psRels.size() < 1){
+			return null;
+		}
+		//原则上系统只允许存在一条这样的数据
+		PartnerStationRel psRel = psRels.get(0);
+		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+		Station station = stationBO.getStationById(psRel.getStationId());
+		return PartnerInstanceConverter.convert(psRel, station, partner);
+	}
+
+	@Override
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, "n");
+		if (psRels.size() < 1){
+			return null;
+		}
+		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>();
+		for (PartnerStationRel psRel : psRels){
+			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+			Station station = stationBO.getStationById(psRel.getStationId());
+			partnerInstanceDtos.add(PartnerInstanceConverter.convert(psRel, station, partner));
+		}
+		return partnerInstanceDtos;
 	}
 }

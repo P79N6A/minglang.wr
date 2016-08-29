@@ -44,6 +44,14 @@ public interface PartnerInstanceBO {
 	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
 
 	/**
+	 *
+	 * @param partnerId
+	 * @param isCurrent
+	 * @return
+	 */
+	public List<PartnerStationRel> getPartnerStationRelByPartnerId(Long partnerId, String isCurrent);
+
+	/**
 	 * 根据stationapplyId查询实例id
 	 * 
 	 * @param stationApplyId
@@ -146,14 +154,12 @@ public interface PartnerInstanceBO {
 	/**
 	 * 更新实例
 	 * 
-	 * @param instanceId
-	 * @param instance
 	 */
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
-	 * 
+	 *
 	 * @param instanceId
 	 * @return
 	 * @throws AugeServiceException
@@ -242,4 +248,19 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
 	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+
+	/**
+	 * 获得当前人的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+
 }

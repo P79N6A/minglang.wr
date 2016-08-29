@@ -182,6 +182,20 @@ public interface PartnerInstanceQueryService {
 	 */
 	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate);
 
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+
+	/**
+	 * 获得当前人的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+
 
 	
 
