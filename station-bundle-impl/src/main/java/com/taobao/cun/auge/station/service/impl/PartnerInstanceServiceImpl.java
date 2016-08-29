@@ -54,11 +54,9 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
- * 
  * 合伙人实例服务接口
- * 
- * @author quanzhu.wangqz
  *
+ * @author quanzhu.wangqz
  */
 @Service("partnerInstanceService")
 @HSFProvider(serviceInterface = PartnerInstanceService.class)
@@ -114,32 +112,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 
-	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
-		StationDto stationDto = partnerInstanceDto.getStationDto();
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		stationDto.copyOperatorDto(partnerInstanceDto);
-		partnerDto.copyOperatorDto(partnerInstanceDto);
-
-		// 判断服务站编号是否使用中
-		checkStationNumDuplicate(null, stationDto.getStationNum());
-		bulidTaobaoUserId(partnerInstanceDto, stationDto, partnerDto);
-		stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
-
-		Long stationId = stationBO.addStation(stationDto);
-		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
-				partnerInstanceDto);
-		saveStationFixProtocol(stationDto, stationId);
-
-		Long partnerId = partnerBO.addPartner(partnerDto);
-		attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
-
-		partnerInstanceDto.setStationId(stationId);
-		partnerInstanceDto.setPartnerId(partnerId);
-		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
-		partnerInstanceDto.setVersion(0L);
-		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
-	}
-
 	private void bulidTaobaoUserId(PartnerInstanceDto partnerInstanceDto, StationDto stationDto, PartnerDto partnerDto) {
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
 			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
@@ -183,6 +155,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		throw new AugeServiceException("deprecated method, call applySettle() instead");
+		/*
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
@@ -210,11 +184,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		partnerDto.setState(PartnerStateEnum.TEMP);
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
+		*/
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		throw new AugeServiceException("deprecated method, call updateSettle() instead");
+		/*
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
@@ -236,11 +213,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+		*/
 	}
 
 	/**
 	 * 更新固点协议
-	 * 
+	 *
 	 * @param stationDto
 	 * @param stationId
 	 */
@@ -289,7 +267,35 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		try {
 			validateSettlable(partnerInstanceDto);
 			setSubmitCommonInfo(partnerInstanceDto);
-			Long instanceId = addCommon(partnerInstanceDto);
+			StationDto stationDto = partnerInstanceDto.getStationDto();
+			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+			stationDto.copyOperatorDto(partnerInstanceDto);
+			partnerDto.copyOperatorDto(partnerInstanceDto);
+
+			// 判断服务站编号是否使用中
+			Long stationId = partnerInstanceDto.getStationId();
+			checkStationNumDuplicate(stationId, stationDto.getStationNum());
+			bulidTaobaoUserId(partnerInstanceDto, stationDto, partnerDto);
+			stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+
+			// 判断是否需要新建站点
+			if (stationId == null) {
+				stationId = stationBO.addStation(stationDto);
+			} else {
+				stationBO.updateStation(stationDto);
+			}
+
+			attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
+			saveStationFixProtocol(stationDto, stationId);
+
+			Long partnerId = partnerBO.addPartner(partnerDto);
+			attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
+
+			partnerInstanceDto.setStationId(stationId);
+			partnerInstanceDto.setPartnerId(partnerId);
+			partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+			partnerInstanceDto.setVersion(0L);
+			Long instanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 			return instanceId;
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("addSubmit", JSONObject.toJSONString(partnerInstanceDto), augeException.toString());
@@ -761,7 +767,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		dto.setNextEvaluateDate(c.getTime());
 		dto.copyOperatorDto(OperatorDto.defaultOperator());
-		
+
 		Station station = stationBO.getStationById(instance.getStationId());
 		dto.setCountyOrgId(station.getApplyOrg());
 		partnerInstanceLevelBO.addPartnerInstanceLevel(dto);
@@ -769,7 +775,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 检查装修中的生命周期（装修，培训）完成后，才能开业
-	 * 
+	 *
 	 * @param instanceId
 	 */
 	private void checkPartnerLifecycleForOpenStation(Long instanceId) throws AugeServiceException {
@@ -796,7 +802,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
-			OperatorDto operator) {
+	                                                 OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
@@ -889,7 +895,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 添加停业协议
-	 * 
+	 *
 	 * @param taobaoUserId
 	 * @param instanceId
 	 * @param operatorDto
@@ -909,13 +915,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 合伙人实例 停业中
-	 * 
+	 *
 	 * @param partnerInstance
 	 * @param closeType
 	 * @param operatorDto
 	 */
 	private void closingPartnerInstance(PartnerStationRel partnerInstance, PartnerInstanceCloseTypeEnum closeType,
-			OperatorDto operatorDto) {
+	                                    OperatorDto operatorDto) {
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
 		partnerInstanceDto.setId(partnerInstance.getId());
@@ -1084,7 +1090,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 添加停业生命周期
-	 * 
+	 *
 	 * @param operatorDto
 	 * @param partnerStationRel
 	 * @param closeType
@@ -1159,7 +1165,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 校验申请退出的前置条件
-	 * 
+	 *
 	 * @param instance
 	 * @throws AugeServiceException
 	 */
@@ -1559,9 +1565,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException {
 		ValidateUtils.notNull(changeTPDto);
-		try{
+		try {
 			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getId());
-			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())){
+			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
 			}
 			partnerInstanceDto.setParentStationId(changeTPDto.getNewParentStationId());
@@ -1569,12 +1575,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 			//TODO cainiao
 			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto));
-		}catch (AugeServiceException augeException){
+		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),
 					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
-		}catch (Exception e){
+		} catch (Exception e) {
 			String error = getErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -1582,7 +1588,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	}
 
-	private ChangeTPEvent buildChangeTPEvent(ChangeTPDto changeTPDto){
+	private ChangeTPEvent buildChangeTPEvent(ChangeTPDto changeTPDto) {
 		ChangeTPEvent event = new ChangeTPEvent();
 		event.setStationId(changeTPDto.getNewParentStationId());
 		event.setOperator(changeTPDto.getOperator());
