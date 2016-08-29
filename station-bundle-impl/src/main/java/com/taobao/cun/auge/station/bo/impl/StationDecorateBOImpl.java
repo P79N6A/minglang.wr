@@ -39,6 +39,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -77,8 +78,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			//更新历史装修记录的有效性状态
 			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
-			//添加店铺id
-			if (record.getSellerTaobaoUserId() ==null) {
+			//添加店铺id,仅自费装修需要添加
+			if (record.getSellerTaobaoUserId() == null
+					&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+							record.getPaymentType())) {
 				record.setSellerTaobaoUserId(getSeller(stationId));
 			}
 			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
