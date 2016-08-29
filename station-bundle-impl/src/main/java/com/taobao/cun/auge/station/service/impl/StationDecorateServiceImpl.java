@@ -325,6 +325,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	@Override
 	public void judgeDecorateQuit(Long stationId) {
 		StationDecorateDto sdDto = getInfoByStationId(stationId);
+		if(sdDto==null){
+			return;
+		}
 		if (StationDecorateStatusEnum.DONE.getCode().equals(
 				sdDto.getStatus().getCode())) {
 			// 装修完成，允许退出
