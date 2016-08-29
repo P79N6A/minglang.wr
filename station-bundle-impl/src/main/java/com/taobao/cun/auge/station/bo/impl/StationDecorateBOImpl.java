@@ -64,16 +64,16 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(stationDecorateDto);
 		Long stationId = stationDecorateDto.getStationId();
-		ValidateUtils.notNull(stationId);
+		validateAddDecorate(stationDecorateDto);
 		StationDecorate record;
 		try {
 			StationDecorate sd = this.getStationDecorateByStationId(stationId);
 			if (sd != null) {
 				return sd;
 			}
-			
+			//更新历史装修记录的有效性状态
+			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
 			//添加店铺id
 			if (record.getSellerTaobaoUserId() ==null) {
@@ -89,6 +89,21 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		
+	}
+	
+	private void validateAddDecorate(StationDecorateDto stationDecorateDto){
+		ValidateUtils.notNull(stationDecorateDto);
+		Long stationId = stationDecorateDto.getStationId();
+		ValidateUtils.notNull(stationId);
+		ValidateUtils.notNull(stationDecorateDto.getPaymentType());
+		ValidateUtils.notNull(stationDecorateDto.getDecorateType());
+	}
+	
+	private void updateOldDecorateRecordInvalid(Long stationId){
+		Map<String,String> param=new HashMap<String,String>();
+		param.put("valid", StationDecorateIsValidEnum.N.getCode());
+		param.put("stationId", String.valueOf(stationId));
+		stationDecorateMapper.invalidOldDecorateRecord(param);
 	}
 	
 	private String getSeller(Long stationId) {
