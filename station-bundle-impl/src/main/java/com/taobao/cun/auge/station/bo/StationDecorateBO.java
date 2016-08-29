@@ -91,4 +91,10 @@ public interface StationDecorateBO {
 	 * 进入装修中判断装修记录是否可以完成
 	 */
 	public boolean handleAcessDecorating(Long stationId);
+	/**
+	 * 合伙人确认进入装修中
+	 * @param id
+	 */
+ 	public void confirmAcessDecorating(Long id);
+
 }

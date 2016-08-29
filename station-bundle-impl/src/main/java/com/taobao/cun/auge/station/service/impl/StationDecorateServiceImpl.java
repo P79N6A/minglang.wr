@@ -315,4 +315,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		}
 		return null;
 	}
+
+	@Override
+	public void confirmAcessDecorating(Long id) {
+		ValidateUtils.notNull(id);
+		stationDecorateBO.confirmAcessDecorating(id);
+	}
 }

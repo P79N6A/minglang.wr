@@ -71,10 +71,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		validateAddDecorate(stationDecorateDto);
 		StationDecorate record;
 		try {
-			StationDecorate sd = this.getStationDecorateByStationId(stationId);
-			if (sd != null) {
-				return sd;
-			}
+//			StationDecorate sd = this.getStationDecorateByStationId(stationId);
+//			if (sd != null) {
+//				return sd;
+//			}
 			//更新历史装修记录的有效性状态
 			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
@@ -332,6 +332,28 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void confirmAcessDecorating(Long id) {
+		StationDecorate sd = stationDecorateMapper.selectByPrimaryKey(id);
+		if (sd == null) {
+			throw new AugeServiceException("not find record "
+					+ String.valueOf(id));
+		}
+		// 只有政府出资的装修 合伙人才能确认
+		if (StationDecoratePaymentTypeEnum.GOV_ALL.getCode().equals(
+				sd.getPaymentType())
+				|| StationDecoratePaymentTypeEnum.GOV_PART.getCode().equals(
+						sd.getPaymentType())) {
+			sd.setGmtModified(new Date());
+			sd.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
+			stationDecorateMapper.updateByPrimaryKey(sd);
+		} else {
+			throw new AugeServiceException("非政府出资装修，无法确认。 "
+					+ sd.getPaymentType());
+		}
+
 	}
 
 	
