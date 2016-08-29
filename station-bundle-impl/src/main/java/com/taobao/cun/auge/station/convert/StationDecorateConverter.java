@@ -64,7 +64,8 @@ public class StationDecorateConverter {
 		stationDecorate.setWallArea(stationDecorateDto.getWallArea());
 		stationDecorate.setCarpetArea(stationDecorateDto.getCarpetArea());
 		stationDecorate.setReflectSatisfySolid(stationDecorateDto.getReflectSatisfySolid());
-	
+	    stationDecorate.setPaymentType(stationDecorateDto.getPaymentType().getCode());
+	    stationDecorate.setDecorateType(stationDecorateDto.getDecorateType().getCode());
 		return stationDecorate;
 	}
 
