@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -299,6 +301,25 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			return res;
 		}
 		return null;
+	}
+
+	@Override
+	public void handleAcessDecorating(Long stationId) {
+		ValidateUtils.notNull(stationId);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode()).andStationIdEqualTo(stationId);
+		List<StationDecorate> resList = stationDecorateMapper.selectByExample(example);
+		if(resList.size()>0){
+			StationDecorate sd=resList.get(0);
+			if(StationDecorateTypeEnum.ORIGIN.getCode().equals(sd.getDecorateType())){
+				//免装修，直接更新为装修完成
+				sd.setGmtModified(new Date());
+				sd.setModifier("SYSTEM");
+				sd.setStatus(StationDecorateStatusEnum.DONE.getCode());
+				stationDecorateMapper.updateByPrimaryKey(sd);
+			}
+		}
 	}
 
 	
