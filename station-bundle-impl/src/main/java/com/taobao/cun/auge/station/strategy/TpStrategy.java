@@ -247,6 +247,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 
 	@Override
@@ -442,7 +445,6 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 
-	 * @param PartnerStationRel
 	 * @param state
 	 */
 	private void dispacthEvent(PartnerStationRel rel, String state) {

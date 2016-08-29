@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.event.listener;
 
+import com.taobao.cun.auge.station.bo.PartnerApplyBO;
+import com.taobao.cun.auge.station.dto.PartnerApplyDto;
+import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,9 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 	@Autowired
 	PartnerInstanceExtService partnerInstanceExtService;
 
+	@Autowired
+	PartnerApplyBO partnerApplyBO;
+
 	@Override
 	public void onMessage(Event event) {
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
@@ -87,8 +93,16 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			instanceExtDto.copyOperatorDto(stateChangeEvent);
 			
 			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
+			//将生成合伙人按钮打开
+			if (PartnerInstanceTypeEnum.TP.equals(partnerType)){
+				PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+				partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+				partnerApplyDto.setOperator(stateChangeEvent.getOperator());
+				partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+			}
 		}
-
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
 }
