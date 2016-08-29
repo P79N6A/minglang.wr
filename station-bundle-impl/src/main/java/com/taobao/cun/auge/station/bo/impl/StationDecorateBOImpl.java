@@ -178,6 +178,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		statusList.add(StationDecorateStatusEnum.UNDECORATE.getCode());
 		statusList.add(StationDecorateStatusEnum.DECORATING.getCode());
 		criteria.andStatusIn(statusList);
+		List<String> paymentTypeList=new ArrayList<String>();
+		paymentTypeList.add(StationDecoratePaymentTypeEnum.SELF.getCode());
+		criteria.andPaymentTypeIn(paymentTypeList);
 		return example;
 	}
 	
@@ -241,6 +244,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public void syncStationDecorateFromTaobao(
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+		if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+				stationDecorateDto.getPaymentType().getCode())){
+			return;
+		}
 		StationDecorateDto updateDto = new StationDecorateDto();
 		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		updateDto.setId(stationDecorateDto.getId());

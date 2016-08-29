@@ -29,6 +29,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
@@ -257,9 +258,13 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			if (sdDto == null) {
 				return null;
 			}
+			if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+					sdDto.getPaymentType().getCode())){
+				return sdDto;
+			}
 			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
-			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) ||
-					StationDecorateStatusEnum.DECORATING.equals(sdDto.getStatus())) {
+			if ((StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) || StationDecorateStatusEnum.DECORATING
+					.equals(sdDto.getStatus()))) {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 			}

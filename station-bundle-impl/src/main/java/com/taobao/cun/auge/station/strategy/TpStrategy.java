@@ -376,13 +376,8 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		}
 		
 		//装修
-		StationDecorateDto stationDecorateDto = new StationDecorateDto();
-		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
-		stationDecorateDto.setStationId(rel.getStationId());
-		stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-		
-		StationDecorate sd = stationDecorateBO.addStationDecorate(stationDecorateDto);
-		if (StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
+		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
+		if (hasDecorateDone) {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
 		}else {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
