@@ -321,4 +321,34 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		ValidateUtils.notNull(id);
 		stationDecorateBO.confirmAcessDecorating(id);
 	}
+
+	@Override
+	public void judgeDecorateQuit(Long stationId) {
+		StationDecorateDto sdDto = getInfoByStationId(stationId);
+		if (StationDecorateStatusEnum.DONE.getCode().equals(
+				sdDto.getStatus().getCode())) {
+			// 装修完成，允许退出
+			return;
+		} else if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
+				sdDto.getStatus().getCode())) {
+			// 装修反馈待审核，需要小二审核完毕才能退出
+			throw new RuntimeException("村点装修状态不允许退出，请先审核装修反馈记录");
+		} else if (StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+				sdDto.getPaymentType().getCode())) {
+			// 自费装修需要判断装修订单，政府出资的不做判断
+			if (StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+					sdDto.getStatus().getCode())) {
+				// 未下单，允许退出
+				return;
+			} else if(StationDecorateStatusEnum.WAIT_PAY.getCode().equals(
+					sdDto.getStatus().getCode())){
+				throw new RuntimeException("存在未付款装修订单，请先关闭订单");
+			}else{
+				// 判断淘宝装修订单状态，非交易关闭或完结状态，不允许退出
+				stationDecorateOrderBO.judgeTcOrderStatusForQuit(
+						new Long(sdDto.getSellerTaobaoUserId()),
+						sdDto.getPartnerUserId());
+			}
+		}
+	}
 }

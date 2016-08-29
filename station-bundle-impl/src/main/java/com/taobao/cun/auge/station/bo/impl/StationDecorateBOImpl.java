@@ -356,5 +356,24 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	}
 
+	@Override
+	public void invalidStationDecorate(Long stationId) {
+		ValidateUtils.notNull(stationId);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n")
+				.andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode())
+				.andStationIdEqualTo(stationId);
+		List<StationDecorate> resList = stationDecorateMapper
+				.selectByExample(example);
+		if (resList.size() > 0) {
+			StationDecorate sd = resList.get(0);
+			sd.setGmtModified(new Date());
+			sd.setModifier("SYSTEM");
+			sd.setStatus(StationDecorateStatusEnum.INVALID.getCode());
+			stationDecorateMapper.updateByPrimaryKey(sd);
+		}
+	}
+
 	
 }

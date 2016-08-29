@@ -104,4 +104,8 @@ public interface StationDecorateService {
 	 */
 	public void confirmAcessDecorating(Long id);
 	
+	/**
+	 * 判断装修装状态是否允许合伙人退出
+	 */
+	public void judgeDecorateQuit(Long stationId);
 }

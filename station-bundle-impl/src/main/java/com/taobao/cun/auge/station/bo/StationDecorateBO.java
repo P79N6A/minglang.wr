@@ -97,4 +97,8 @@ public interface StationDecorateBO {
 	 */
  	public void confirmAcessDecorating(Long id);
 
+ 	/**
+ 	 * 作废装修记录
+ 	 */
+ 	public void invalidStationDecorate(Long stationId);
 }
