@@ -70,24 +70,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return getConsumerBean(TcBaseService.class, HSFGroup.HSF, version, 3000);
 	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean dataAccessControlService() {
-		return getConsumerBean(DataAccessControlService.class, HSFGroup.HSF, "2.0.0.daily", 3000);
-	}
 	
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean accessControlService() {
-		return getConsumerBean(AccessControlService.class, HSFGroup.HSF, "2.0.0.daily", 3000);
+	public HSFSpringConsumerBean accessControlService(@Value("${accessControlService.service.version}") String version) {
+		return getConsumerBean(AccessControlService.class, HSFGroup.HSF, version, 3000);
 	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean enhancedUserQueryService() {
-		return getConsumerBean(EnhancedUserQueryService.class,"DAILYGROUP", "1.0.0.daily", 3000);
-	}
-
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean dataOperationService() {
-		return getConsumerBean(DataOperationService.class,"HSF", "1.0.0.daily", 3000);
-	}
-
+	
 }

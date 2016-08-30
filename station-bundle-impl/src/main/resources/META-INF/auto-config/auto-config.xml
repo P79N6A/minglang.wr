@@ -63,6 +63,8 @@
 		
 		<property name="acl.accessKey" defaultValue="cuntaocenter-K6CG6v@b&$Oa6736v" description="acl.accessKey" />
 
+		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
+
 	</group>
 .
 	<script>
