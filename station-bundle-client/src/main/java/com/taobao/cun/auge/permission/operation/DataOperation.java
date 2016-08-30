@@ -34,6 +34,11 @@ public class DataOperation implements Serializable{
 	 */
 	private String condition;
 	
+	/**
+	 * 操作的code
+	 */
+	private String code;
+	
 	public String getName() {
 		return name;
 	}
@@ -72,6 +77,14 @@ public class DataOperation implements Serializable{
 
 	public void setCondition(String condition) {
 		this.condition = condition;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

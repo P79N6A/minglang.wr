@@ -21,6 +21,7 @@ import com.taobao.cun.auge.dal.mapper.AppResourceMapper;
 import com.taobao.cun.auge.permission.operation.DataOperation;
 import com.taobao.cun.auge.permission.operation.DataOperationService;
 import com.taobao.cun.auge.permission.operation.OperationData;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = DataOperationService.class)
@@ -48,9 +49,8 @@ public class DataOperationServiceImpl implements DataOperationService {
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
 		} catch (BucException e) {
-			e.printStackTrace();
+			throw new  AugeServiceException(e);
 		}
-		return null;
 	}
 
 	private CheckPermissionsResult getCheckPermissionResult(Integer bucUserId, List<DataOperation> operations) {
@@ -81,6 +81,7 @@ public class DataOperationServiceImpl implements DataOperationService {
 		operation.setName(resource.getName());
 		operation.setType(resource.getType());
 		operation.setValue(resource.getValue());
+		operation.setCode(resource.getCode());
 		return operation;
 	}
 
@@ -92,6 +93,9 @@ public class DataOperationServiceImpl implements DataOperationService {
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataPermissionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
 						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+					}
+					if(operation.getName()!= null){
+						operation.setName(valueResolver.resovlerValue(data, operation.getName()));
 					}
 					matchedOperations.add(operation);
 				}
