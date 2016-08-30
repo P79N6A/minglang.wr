@@ -366,6 +366,14 @@
 				<artifactId>spring-boot-starter-diamond</artifactId>
 				<version>1.0.2-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>acl.api</artifactId>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.platform.shared</groupId>
+			    <artifactId>buc.uc.api</artifactId>
+		    </dependency>
 		</dependencies>
 	</dependencyManagement>
 
