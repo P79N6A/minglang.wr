@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.notify.message.StringMessage;
 
@@ -37,4 +38,5 @@ public interface PartnerPeixunBO {
 	
 	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds);
 	
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
 }
