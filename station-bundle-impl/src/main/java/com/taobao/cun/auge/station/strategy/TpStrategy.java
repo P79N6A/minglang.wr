@@ -239,6 +239,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 
 	@Override
@@ -327,7 +330,6 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		// 发送装修中事件，手机端使用
 		dispatchEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
-
 	private Boolean containCountyOrgId(Long countyOrgId) {
 		if (countyOrgId != null) {
 			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
@@ -347,40 +349,39 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	 * @param rel
 	 */
 	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
-
-		Station station = stationBO.getStationById(rel.getStationId());
-		if (!containCountyOrgId(station.getApplyOrg())) {
+		
+		Station s = stationBO.getStationById(rel.getStationId());
+		if(!containCountyOrgId(s.getApplyOrg())) {
 			return;
 		}
-
+		
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
-
-		// 更新合伙人实例培训状态
-		Long partnerId = partnerBO.getNormalPartnerIdByTaobaoUserId(rel.getTaobaoUserId());
-		PartnerPeixunDto ppd = partnerPeixunBO.queryApplyInPeixunRecord(partnerId);
-		if (PartnerPeixunStatusEnum.DONE.getCode().equals(ppd.getStatus())) {
+		
+		//培训
+		PartnerCourseRecord pcr = partnerPeixunBO.initPartnerApplyInRecord(rel.getTaobaoUserId());
+		if (PartnerPeixunStatusEnum.DONE.getCode().equals(pcr.getStatus())) {
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
-		} else {
+		}else {
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
 		}
-
-		// 更新合伙人实例装修状态
-		StationDecorate sd = stationDecorateBO.getStationDecorateByStationId(station.getId());
-		if (StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
+		
+		//装修
+		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
+		if (hasDecorateDone) {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
-		} else {
+		}else {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
 
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
-	                                                 OperatorDto operator) {
+			OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
@@ -430,7 +431,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	/**
 	 * 发送装修中事件 给手机端使用
-	 *
+
 	 * @param rel
 	 * @param state
 	 */

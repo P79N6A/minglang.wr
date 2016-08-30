@@ -10,5 +10,5 @@ public interface StationDecorateOrderBO {
 
 	Optional<StationDecorateOrderDto> getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId);
 
-
+    public void judgeTcOrderStatusForQuit(Long sellerTaobaoUserId, Long buyerTaobaoUserId);
 }
