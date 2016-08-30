@@ -9,9 +9,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface DataProperty {
+public @interface OperationProperties {
 
-	String path() default "";
-	
-	String name() default "";
+	OperationProperty[] properties() default {};
 }

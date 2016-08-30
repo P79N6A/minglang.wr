@@ -9,19 +9,19 @@ import java.util.Map;
 import org.apache.commons.beanutils.PropertyUtils;
 
 
-public abstract class DataPropertyUtils {
+public abstract class OperationUtils {
 
 	
 	public static Map<String,Object> extractDataProperties(Object object){
 		Map<String,Object> properties = new HashMap<String,Object>();
 		Field[] fields = object.getClass().getDeclaredFields();
 		for(Field field : fields){
-			if(field.isAnnotationPresent(DataProperty.class)){
-				extractProperty(object, properties, field,field.getAnnotation(DataProperty.class)); 
+			if(field.isAnnotationPresent(OperationProperty.class)){
+				extractProperty(object, properties, field,field.getAnnotation(OperationProperty.class)); 
 			}
-			if(field.isAnnotationPresent(DataProperties.class)){
-				DataProperty[] dps = field.getAnnotation(DataProperties.class).properties();
-				for(DataProperty prop : dps){
+			if(field.isAnnotationPresent(OperationProperties.class)){
+				OperationProperty[] dps = field.getAnnotation(OperationProperties.class).properties();
+				for(OperationProperty prop : dps){
 					extractProperty(object, properties, field,prop); 
 				}
 			}
@@ -58,7 +58,7 @@ public abstract class DataPropertyUtils {
 		}
 	}
 	
-	private static void extractProperty(Object object, Map<String, Object> properties,Field field,DataProperty property) {
+	private static void extractProperty(Object object, Map<String, Object> properties,Field field,OperationProperty property) {
 		try {
 			field.setAccessible(true);
 			Object value = field.get(object);
