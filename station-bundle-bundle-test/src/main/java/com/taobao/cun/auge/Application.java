@@ -1,20 +1,14 @@
 package com.taobao.cun.auge;
 
-import javax.sql.DataSource;
-
+import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
-import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
-import com.taobao.hsf.app.spring.util.annotation.EnableHSFProvider;
+import javax.sql.DataSource;
 
 @SpringBootApplication
 @EnableTransactionManagement
