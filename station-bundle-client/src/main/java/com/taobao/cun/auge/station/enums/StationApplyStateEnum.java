@@ -340,4 +340,5 @@ public class StationApplyStateEnum implements Serializable {
 	private StationApplyStateEnum() {
 
 	}
+
 }

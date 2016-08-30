@@ -1,10 +1,5 @@
 package com.taobao.cun.auge.station.enums;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import javax.validation.constraints.NotNull;
-
 /**
  * Station状态在流程上的枚举
  * 
