@@ -29,23 +29,30 @@ public abstract class DataPropertyUtils {
 		return properties;
 	}
 
-	public static List<OperationData> buildOperationDatas(List<DataProfile> datas){
-		List<OperationData> operationDatas = new ArrayList<OperationData>();
-		for(Object data : datas){
-			if(data instanceof DataProfile){
-				 throw new RuntimeException("data is not instanceof DataProfile"); 
-			}
-			OperationData operationData = new OperationData();
-			DataProfile profile = (DataProfile)data;
-			operationData.setDataId(profile.getDataId());
-			operationData.setProperties(profile.getDataProperties());
+	public static List<PagedOperationData> buildPagedOperationDatas(List<PagedOperationSupport> operationSupports){
+		List<PagedOperationData> operationDatas = new ArrayList<PagedOperationData>();
+		for(PagedOperationSupport operationSupport : operationSupports){
+			PagedOperationData operationData = new PagedOperationData();
+			operationData.setDataId(operationSupport.getDataId());
+			operationData.setProperties(operationSupport.getDataProperties());
 			operationDatas.add(operationData);
 		}
 		return operationDatas;
 	}
 	
-	public static void mergeOperations(List<DataProfile> datas,Map<String,List<Operation>> operationsResult){
-		for(DataProfile data : datas){
+	public static List<PagedOperationData> buildOperationDatas(List<OperationSupport> operationSupports){
+		List<PagedOperationData> operationDatas = new ArrayList<PagedOperationData>();
+		for(OperationSupport operationSupport : operationSupports){
+			PagedOperationData operationData = new PagedOperationData();
+			operationData.setProperties(operationSupport.getDataProperties());
+			operationDatas.add(operationData);
+		}
+		return operationDatas;
+	}
+	
+	
+	public static void mergePagedOperations(List<PagedOperationSupport> datas,Map<String,List<Operation>> operationsResult){
+		for(PagedOperationSupport data : datas){
 			List<Operation> operations = operationsResult.get(data.getDataId());
 			data.setOperations(operations);
 		}

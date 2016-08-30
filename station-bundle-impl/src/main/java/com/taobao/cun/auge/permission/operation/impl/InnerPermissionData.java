@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.permission.operation.impl;
 
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult;
-import com.taobao.cun.auge.permission.operation.OperationData;
+import com.taobao.cun.auge.permission.operation.PagedOperationData;
 
-public class InnerPermissionData extends OperationData {
+public class InnerPermissionData extends PagedOperationData {
 
 	/**
 	 * 

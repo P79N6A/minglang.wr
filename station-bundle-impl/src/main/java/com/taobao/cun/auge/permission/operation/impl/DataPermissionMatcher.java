@@ -9,13 +9,14 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import com.taobao.cun.auge.permission.operation.Operation;
 import com.taobao.cun.auge.permission.operation.OperationData;
+import com.taobao.cun.auge.permission.operation.PagedOperationData;
 
 public class DataPermissionMatcher implements OperationMatcher{
 	
 	private final ExpressionParser parser = new SpelExpressionParser();  
 
 	@Override
-	public boolean match(OperationData operationData,Operation operation) {
+	public boolean match(OperationData operationData, Operation operation) {
 		if(StringUtils.isEmpty(operation.getCondition()))return false;
 		StandardEvaluationContext context = new StandardEvaluationContext(operationData);
 		Map<String,Object> variables = operationData.getProperties();
@@ -24,5 +25,6 @@ public class DataPermissionMatcher implements OperationMatcher{
 		}
 		return parser.parseExpression(operation.getCondition()).getValue(context, Boolean.class); 
 	}
+
 
 }

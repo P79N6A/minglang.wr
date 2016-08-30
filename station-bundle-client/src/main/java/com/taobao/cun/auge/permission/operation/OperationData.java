@@ -10,19 +10,9 @@ public class OperationData implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -4849124188289885417L;
-
-	private String dataId;
 	
     private Map<String,Object> properties = new HashMap<String,Object>();
     
-	public String getDataId() {
-		return dataId;
-	}
-
-	public void setDataId(String dataId) {
-		this.dataId = dataId;
-	}
-
 	public void addProperty(String propertyName,Object value){
 		properties.put(propertyName, value);
 	}

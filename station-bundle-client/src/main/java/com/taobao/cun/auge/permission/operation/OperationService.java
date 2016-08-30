@@ -13,5 +13,8 @@ public interface OperationService {
 	 * @param operationName
 	 * @return
 	 */
-	Map<String,List<Operation>> getDataOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
+	Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCode,List<PagedOperationData> operationDatas) throws AugeServiceException;
+	
+	List<Operation> getOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
+
 }
