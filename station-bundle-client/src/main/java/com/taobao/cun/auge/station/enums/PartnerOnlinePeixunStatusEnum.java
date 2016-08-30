@@ -4,17 +4,20 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PartnerPeixunCourseTypeEnum implements Serializable{
+public class PartnerOnlinePeixunStatusEnum implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	public static final PartnerPeixunCourseTypeEnum APPLY_IN = new PartnerPeixunCourseTypeEnum("APPLY_IN", "入驻培训 ");
-	public static final PartnerPeixunCourseTypeEnum UPGRADE = new PartnerPeixunCourseTypeEnum("UPGRADE", "成长营培训 ");
+	public static final PartnerOnlinePeixunStatusEnum WAIT_PEIXUN = new PartnerOnlinePeixunStatusEnum("WAIT_PEIXUN", "未培训");
+	public static final PartnerOnlinePeixunStatusEnum WAIT_EXAM = new PartnerOnlinePeixunStatusEnum("WAIT_EXAM", "考试未通过");
+	public static final PartnerOnlinePeixunStatusEnum DONE = new PartnerOnlinePeixunStatusEnum("DONE", "完成");
 
-	private static final Map<String, PartnerPeixunCourseTypeEnum> mappings = new HashMap<String, PartnerPeixunCourseTypeEnum>();
+	private static final Map<String, PartnerOnlinePeixunStatusEnum> mappings = new HashMap<String, PartnerOnlinePeixunStatusEnum>();
+
 	static {
-		mappings.put("APPLY_IN", APPLY_IN);
-		mappings.put("UPGRADE", UPGRADE);
+		mappings.put("WAIT_PEIXUN", WAIT_PEIXUN);
+		mappings.put("WAIT_EXAM", WAIT_EXAM);
+		mappings.put("DONE", DONE);
 	}
 
 	private String code;
@@ -54,19 +57,19 @@ public class PartnerPeixunCourseTypeEnum implements Serializable{
 		return objType.getCode().equals(this.getCode());
 	}
 
-	public PartnerPeixunCourseTypeEnum(String code, String desc) {
+	public PartnerOnlinePeixunStatusEnum(String code, String desc) {
 		this.code = code;
 		this.desc = desc;
 	}
 
-	public static PartnerPeixunCourseTypeEnum valueof(String code) {
+	public static PartnerOnlinePeixunStatusEnum valueof(String code) {
 		if (code == null)
 			return null;
 		return mappings.get(code);
 	}
 
-	public PartnerPeixunCourseTypeEnum() {
+	public PartnerOnlinePeixunStatusEnum() {
 
 	}
-
+	
 }

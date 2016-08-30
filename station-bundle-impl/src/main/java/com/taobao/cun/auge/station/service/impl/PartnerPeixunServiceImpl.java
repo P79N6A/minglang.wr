@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -30,6 +31,11 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds) {
 		return partnerPeixunBO.queryBatchPeixunRecord(userIds);
+	}
+
+	@Override
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId) {
+		return partnerPeixunBO.queryOnlinePeixunProcess(userId);
 	}
 
 }

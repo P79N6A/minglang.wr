@@ -38,6 +38,7 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
@@ -73,6 +74,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	@Value("${crm.peixun.order.url}")
 	private String orderUrl;
+	
+	@Value("${crm.peixun.online.couerse.url}")
+	private String onlineCourseUrl;
+	
+	@Value("${crm.peixun.online.code}")
+	private String onlineCourseCode;
+	
+	@Value("${crm.peixun.online.exam.url}")
+	private String onlineExamUrl;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
@@ -327,6 +337,22 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			result.add(dto);
 		}
 		return result;
+	}
+
+	@Override
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId) {
+		Assert.notNull(userId);
+		PartnerOnlinePeixunDto result=new PartnerOnlinePeixunDto();
+		result.setCourseUrl(onlineCourseUrl);
+		result.setTaobaoUserId(userId);
+		result.setCourseCode(onlineCourseCode);
+		result.setExamUrl(onlineExamUrl);
+		//查询在线培训记录
+		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(onlineCourseCode, userId);
+		if(trainRecords.size()==0){
+			
+		}
+		return null;
 	}
 
 }
