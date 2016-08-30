@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
@@ -48,6 +50,7 @@ import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
+import com.taobao.cun.auge.station.convert.ProcessedStationStatusConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -61,6 +64,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthStatDateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -581,6 +585,21 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+	
+	@Override
+	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(String orgIdPath){
+		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(orgIdPath);
+		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(orgIdPath);
+		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(orgIdPath);
+		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(orgIdPath);
+		List<ProcessedStationStatus> whole=new ArrayList<ProcessedStationStatus>();
+		whole.addAll(processingList);
+		whole.addAll(processedList);
+		whole.addAll(courseList);
+		whole.addAll(decorateList);
+		List<ProcessedStationStatusDto> statusDtoList=ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
+		return statusDtoList;
 	}
 
 }
