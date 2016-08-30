@@ -451,7 +451,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
 			if (null == level) {
-				throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
+					throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+				} else {
+					return null;
+				}
 			}
 			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
 			return dto;
@@ -487,7 +491,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				BeanCopyUtils.copyNotNullProperties(statDate, dto);
 				return dto;
 			}
-			throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+			if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
+				throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+			} else {
+				return null;
+			}
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
