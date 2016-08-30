@@ -46,12 +46,12 @@ public class StationApplyStateEnum implements Serializable {
 		public static final StationApplyStateEnum  QUIT = new StationApplyStateEnum("QUIT", "已退出");
 		
 		//维修状态
-		public static final ProcessedStationStatusEnum UNPAY_DECORATE=new ProcessedStationStatusEnum("UNPAY_DECORATE","待缴纳装修基金");
-		public static final ProcessedStationStatusEnum DEC_WAIT_AUDIT=new ProcessedStationStatusEnum("DEC_WAIT_AUDIT","装修反馈待审核");
+		public static final StationApplyStateEnum UNPAY_DECORATE=new StationApplyStateEnum("UNPAY_DECORATE","待缴纳装修基金");
+		public static final StationApplyStateEnum DEC_WAIT_AUDIT=new StationApplyStateEnum("DEC_WAIT_AUDIT","装修反馈待审核");
 		
 		//培训状态
-		public static final ProcessedStationStatusEnum UNPAY_COURSE=new ProcessedStationStatusEnum("UNPAY_COURSE","待购买培训基金");
-		public static final ProcessedStationStatusEnum UNSIGNED=new ProcessedStationStatusEnum("UNSIGNED","待培训签到");
+		public static final StationApplyStateEnum UNPAY_COURSE=new StationApplyStateEnum("UNPAY_COURSE","待购买培训基金");
+		public static final StationApplyStateEnum UNSIGNED=new StationApplyStateEnum("UNSIGNED","待培训签到");
 		
 		/**
 		 * 淘帮手状态生命周期
