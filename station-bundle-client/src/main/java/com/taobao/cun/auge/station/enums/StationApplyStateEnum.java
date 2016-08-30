@@ -45,6 +45,14 @@ public class StationApplyStateEnum implements Serializable {
 		//当小二确认完资产，到退出待审批状态，在这个状态上会有区域经理和省长来进行相关的审批，当省长完成审批之后，变为已退出状态，表示该申请单已经完成。
 		public static final StationApplyStateEnum  QUIT = new StationApplyStateEnum("QUIT", "已退出");
 		
+		//维修状态
+		public static final ProcessedStationStatusEnum UNPAY_DECORATE=new ProcessedStationStatusEnum("UNPAY_DECORATE","待缴纳装修基金");
+		public static final ProcessedStationStatusEnum DEC_WAIT_AUDIT=new ProcessedStationStatusEnum("DEC_WAIT_AUDIT","装修反馈待审核");
+		
+		//培训状态
+		public static final ProcessedStationStatusEnum UNPAY_COURSE=new ProcessedStationStatusEnum("UNPAY_COURSE","待购买培训基金");
+		public static final ProcessedStationStatusEnum UNSIGNED=new ProcessedStationStatusEnum("UNSIGNED","待培训签到");
+		
 		/**
 		 * 淘帮手状态生命周期
 		 */

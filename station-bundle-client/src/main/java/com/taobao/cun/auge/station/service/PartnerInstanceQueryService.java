@@ -14,6 +14,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -156,6 +157,12 @@ public interface PartnerInstanceQueryService {
 	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate);
 
 
-	
+	/**
+	 * 根据合伙人组织ID路径获取入驻/退出流程中不同状态村点的数量
+	 * @param orgIdPath
+	 * @return
+	 */
+	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(String orgIdPath);
+
 
 }

@@ -60,6 +60,8 @@
 		<property name="taobao.orderDetail.url" defaultValue="//buyertrade.daily.taobao.net/trade/detail/trade_item_detail.htm?bizOrderId=" description="淘宝订单详情url前缀" />
 		<property name="taobao.item.url" defaultValue="//item.taobao.com/item.htm?id=" description="淘宝商品url前缀" />
 		<property name="station.decorate.reflect.url" defaultValue="//cuntaoadmin.daily.taobao.net/my/h5/stationDecorateEdit.htm?stationId=" description="装修反馈url前缀" />
+		
+		<property name="acl.accessKey" defaultValue="cuntaocenter-K6CG6v@b&$Oa6736v" description="acl.accessKey" />
 
 	</group>
 .
