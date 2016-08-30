@@ -9,9 +9,8 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import com.taobao.cun.auge.permission.operation.Operation;
 import com.taobao.cun.auge.permission.operation.OperationData;
-import com.taobao.cun.auge.permission.operation.PagedOperationData;
 
-public class DataPermissionMatcher implements OperationMatcher{
+public class DataConditionMatcher implements OperationMatcher{
 	
 	private final ExpressionParser parser = new SpelExpressionParser();  
 

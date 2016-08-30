@@ -7,14 +7,23 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface OperationService {
 	/**
-	 * 绑定数据操作到数据定向上
-	 * @param bucUserId
-	 * @param operationScene Acl上配置的操作名称
-	 * @param operationName
+	 * 获取分页列表上的操作列表
+	 * @param bucUserId 
+	 * @param operationsCode
+	 * @param operationDatas
 	 * @return
+	 * @throws AugeServiceException
 	 */
 	Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCode,List<PagedOperationData> operationDatas) throws AugeServiceException;
 	
+	/**
+	 * 获取普通操作列表
+	 * @param bucUserId
+	 * @param operationsCode
+	 * @param operationDatas
+	 * @return
+	 * @throws AugeServiceException
+	 */
 	List<Operation> getOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
 
 }

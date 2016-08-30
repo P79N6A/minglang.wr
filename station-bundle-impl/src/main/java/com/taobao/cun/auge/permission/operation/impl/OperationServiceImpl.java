@@ -39,7 +39,7 @@ public class OperationServiceImpl implements OperationService {
 	
 	OperationMatcher permissionMatcher = new PermissionMatcher();
 	 
-	OperationMatcher dataPermissionMatcher = new DataPermissionMatcher();
+	OperationMatcher dataConditionMatcher = new DataConditionMatcher();
 	
 	DataOperationValueResolver valueResolver = new DataOperationValueResolver();
 	    
@@ -104,7 +104,7 @@ public class OperationServiceImpl implements OperationService {
 		List<Operation> matchedOperations = Lists.newArrayList();
 		for(PagedOperationData data : datas){
 			for(Operation operation : operations ){
-				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataPermissionMatcher.match(data, operation)){
+				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
 						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
 					}
@@ -124,7 +124,7 @@ public class OperationServiceImpl implements OperationService {
 		List<Operation> matchedOperations = Lists.newArrayList();
 		for(OperationData data : datas){
 			for(Operation operation : operations ){
-				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataPermissionMatcher.match(data, operation)){
+				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
 						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
 					}
