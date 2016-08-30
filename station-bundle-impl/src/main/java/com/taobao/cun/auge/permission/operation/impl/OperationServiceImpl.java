@@ -18,14 +18,14 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.AppResourceExample;
 import com.taobao.cun.auge.dal.mapper.AppResourceMapper;
-import com.taobao.cun.auge.permission.operation.DataOperation;
-import com.taobao.cun.auge.permission.operation.DataOperationService;
+import com.taobao.cun.auge.permission.operation.Operation;
+import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.cun.auge.permission.operation.OperationData;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
-@HSFProvider(serviceInterface = DataOperationService.class)
-public class DataOperationServiceImpl implements DataOperationService {
+@HSFProvider(serviceInterface = OperationService.class)
+public class OperationServiceImpl implements OperationService {
 
 	@Autowired
 	private AccessControlService accessControlService;
@@ -43,9 +43,9 @@ public class DataOperationServiceImpl implements DataOperationService {
 	DataOperationValueResolver valueResolver = new DataOperationValueResolver();
 	    
 	@Override
-	public Map<String,List<DataOperation>> getDataOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas){
+	public Map<String,List<Operation>> getDataOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas){
 		try {
-			List<DataOperation> operations = getDataOperations(operationsCode);
+			List<Operation> operations = getDataOperations(operationsCode);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
 		} catch (BucException e) {
@@ -53,7 +53,7 @@ public class DataOperationServiceImpl implements DataOperationService {
 		}
 	}
 
-	private CheckPermissionsResult getCheckPermissionResult(Integer bucUserId, List<DataOperation> operations) {
+	private CheckPermissionsResult getCheckPermissionResult(Integer bucUserId, List<Operation> operations) {
 		List<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toList());
 		if(CollectionUtils.isEmpty(permissionNames))return null;
 		CheckPermissionsParam checkPermissionsParam = new CheckPermissionsParam();
@@ -64,18 +64,18 @@ public class DataOperationServiceImpl implements DataOperationService {
 		return checkPermissionsResult;
 	}
 
-	private List<DataOperation> getDataOperations(List<String> operationsCode) throws BucException {
+	private List<Operation> getDataOperations(List<String> operationsCode) throws BucException {
 		AppResourceExample example = new AppResourceExample();
 		example.createCriteria().andTypeIn(operationsCode).andIsDeletedEqualTo("n");
 		List<AppResource> resources = appResourceMapper.selectByExample(example);
-		List<DataOperation> operations = resources.stream().map(resource -> {
+		List<Operation> operations = resources.stream().map(resource -> {
 			 return createOperation(resource);
 		}).collect(Collectors.toList());
 		return operations;
 	}
 
-	private DataOperation createOperation(AppResource resource) {
-		DataOperation operation = new DataOperation();
+	private Operation createOperation(AppResource resource) {
+		Operation operation = new Operation();
 		operation.setPermission(resource.getPermissionNames());
 		operation.setCondition(resource.getDataCondition());
 		operation.setName(resource.getName());
@@ -85,11 +85,11 @@ public class DataOperationServiceImpl implements DataOperationService {
 		return operation;
 	}
 
-	private Map<String,List<DataOperation>> matchOperations(List<DataOperation> operations,List<OperationData> datas,CheckPermissionsResult checkPermissionsResult){
-		Map<String,List<DataOperation>> result = Maps.newLinkedHashMap();
-		List<DataOperation> matchedOperations = Lists.newArrayList();
+	private Map<String,List<Operation>> matchOperations(List<Operation> operations,List<OperationData> datas,CheckPermissionsResult checkPermissionsResult){
+		Map<String,List<Operation>> result = Maps.newLinkedHashMap();
+		List<Operation> matchedOperations = Lists.newArrayList();
 		for(OperationData data : datas){
-			for(DataOperation operation : operations ){
+			for(Operation operation : operations ){
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataPermissionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
 						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));

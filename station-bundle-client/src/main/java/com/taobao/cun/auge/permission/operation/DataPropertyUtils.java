@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.permission.operation;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -27,7 +29,28 @@ public abstract class DataPropertyUtils {
 		return properties;
 	}
 
-
+	public static List<OperationData> buildOperationDatas(List<DataProfile> datas){
+		List<OperationData> operationDatas = new ArrayList<OperationData>();
+		for(Object data : datas){
+			if(data instanceof DataProfile){
+				 throw new RuntimeException("data is not instanceof DataProfile"); 
+			}
+			OperationData operationData = new OperationData();
+			DataProfile profile = (DataProfile)data;
+			operationData.setDataId(profile.getDataId());
+			operationData.setProperties(profile.getDataProperties());
+			operationDatas.add(operationData);
+		}
+		return operationDatas;
+	}
+	
+	public static void mergeOperations(List<DataProfile> datas,Map<String,List<Operation>> operationsResult){
+		for(DataProfile data : datas){
+			List<Operation> operations = operationsResult.get(data.getDataId());
+			data.setOperations(operations);
+		}
+	}
+	
 	private static void extractProperty(Object object, Map<String, Object> properties,Field field,DataProperty property) {
 		try {
 			field.setAccessible(true);

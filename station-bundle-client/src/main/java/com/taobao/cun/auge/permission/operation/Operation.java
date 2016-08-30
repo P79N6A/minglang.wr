@@ -2,7 +2,7 @@ package com.taobao.cun.auge.permission.operation;
 
 import java.io.Serializable;
 
-public class DataOperation implements Serializable{
+public class Operation implements Serializable{
 
 	/**
 	 * 

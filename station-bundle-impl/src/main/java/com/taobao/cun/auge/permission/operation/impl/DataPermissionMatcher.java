@@ -7,7 +7,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-import com.taobao.cun.auge.permission.operation.DataOperation;
+import com.taobao.cun.auge.permission.operation.Operation;
 import com.taobao.cun.auge.permission.operation.OperationData;
 
 public class DataPermissionMatcher implements OperationMatcher{
@@ -15,7 +15,7 @@ public class DataPermissionMatcher implements OperationMatcher{
 	private final ExpressionParser parser = new SpelExpressionParser();  
 
 	@Override
-	public boolean match(OperationData operationData,DataOperation operation) {
+	public boolean match(OperationData operationData,Operation operation) {
 		if(StringUtils.isEmpty(operation.getCondition()))return false;
 		StandardEvaluationContext context = new StandardEvaluationContext(operationData);
 		Map<String,Object> variables = operationData.getProperties();

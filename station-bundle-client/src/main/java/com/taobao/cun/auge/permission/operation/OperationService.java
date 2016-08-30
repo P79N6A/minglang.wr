@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-public interface DataOperationService {
+public interface OperationService {
 	/**
 	 * 绑定数据操作到数据定向上
 	 * @param bucUserId
@@ -13,5 +13,5 @@ public interface DataOperationService {
 	 * @param operationName
 	 * @return
 	 */
-	Map<String,List<DataOperation>> getDataOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
+	Map<String,List<Operation>> getDataOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
 }

@@ -16,7 +16,7 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
-import com.taobao.cun.auge.permission.operation.DataOperationService;
+import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 @Configuration
