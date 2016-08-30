@@ -41,7 +41,7 @@ public class OperationServiceImpl implements OperationService {
 	 
 	OperationMatcher dataConditionMatcher = new DataConditionMatcher();
 	
-	DataOperationValueResolver valueResolver = new DataOperationValueResolver();
+	OperationValueResolver valueResolver = new OperationValueResolver();
 	    
 	@Override
 	public Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCodes,List<PagedOperationData> operationDatas){

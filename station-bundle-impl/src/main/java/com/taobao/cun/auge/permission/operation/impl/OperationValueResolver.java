@@ -5,7 +5,7 @@ import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 
 import com.taobao.cun.auge.permission.operation.OperationData;
 
-public class DataOperationValueResolver {
+public class OperationValueResolver {
 
 	private PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{","}");
 	
