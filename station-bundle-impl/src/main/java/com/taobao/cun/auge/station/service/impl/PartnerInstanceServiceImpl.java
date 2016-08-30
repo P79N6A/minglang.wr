@@ -281,6 +281,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 判断是否需要新建站点
 			if (stationId == null) {
 				stationId = stationBO.addStation(stationDto);
+				if (partnerInstanceDto.getParentStationId() == null) {
+					// TP新建站点: parentStationId = stationId
+					partnerInstanceDto.setPartnerId(stationId);
+				}
 			} else {
 				stationBO.updateStation(stationDto);
 			}
@@ -1245,14 +1249,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
 		switch (type) {
-		case ADD:
-			syncStationApplyBO.addStationApply(instanceId);
-			break;
-		case DELETE:
-			throw new RuntimeException("delete id not support");
-		default:
-			syncStationApplyBO.updateStationApply(instanceId, type);
-			break;
+			case ADD:
+				syncStationApplyBO.addStationApply(instanceId);
+				break;
+			case DELETE:
+				throw new RuntimeException("delete id not support");
+			default:
+				syncStationApplyBO.updateStationApply(instanceId, type);
+				break;
 		}
 
 	}
