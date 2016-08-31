@@ -62,6 +62,9 @@
 		<property name="taobao.orderDetail.url" defaultValue="//buyertrade.daily.taobao.net/trade/detail/trade_item_detail.htm?bizOrderId=" description="淘宝订单详情url前缀" />
 		<property name="taobao.item.url" defaultValue="//item.taobao.com/item.htm?id=" description="淘宝商品url前缀" />
 		<property name="station.decorate.reflect.url" defaultValue="//cuntaoadmin.daily.taobao.net/my/h5/stationDecorateEdit.htm?stationId=" description="装修反馈url前缀" />
+		<property name="crm.peixun.online.couerse.url" defaultValue="crm.peixun.online.couerse.url" description="在线培训课程地址" />
+		<property name="crm.peixun.online.code" defaultValue="crm.peixun.online.code" description="在线培训code" />
+		<property name="crm.peixun.online.exam.url" defaultValue="crm.peixun.online.exam.url" description="在线考试地址" />
 
 	</group>
 .
