@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.common.resultmodel.ResultModel;
 import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
@@ -28,8 +29,8 @@ public class TradeAdapterImpl implements TradeAdapter {
 	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeServiceException {
 		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
         if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
-			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate));
-            throw new AugeServiceException(taobaoNoEndTradeDtoResultModel.getException());
+			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate),taobaoNoEndTradeDtoResultModel.getException());
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
         }
 
         TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoNoEndTradeDtoResultModel.getResult();
