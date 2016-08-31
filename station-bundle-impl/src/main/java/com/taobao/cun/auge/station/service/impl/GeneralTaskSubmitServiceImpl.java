@@ -264,7 +264,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * 
 	 * @param business
 	 *            业务类型
-	 * @param stationApplyId
+	 * @param businessId
 	 *            业务主键
 	 * @param applierId
 	 *            申请人
@@ -274,15 +274,13 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 *            备注
 	 */
 	@Override
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,	PartnerInstanceStateChangeEvent stateChangeEvent) {
-		submitApproveProcessTask( business,  stationApplyId,stateChangeEvent.getRemark(), stateChangeEvent);
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,	PartnerInstanceStateChangeEvent stateChangeEvent) {
+		submitApproveProcessTask(business, businessId, stateChangeEvent.getRemark(), stateChangeEvent);
 	}
 	
 	@Override
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,String remark,
-			OperatorDto operatorDto) {
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, String remark, OperatorDto operatorDto) {
 		try {
-
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setRemarks(remark);

@@ -40,10 +40,10 @@ public interface GeneralTaskSubmitService {
 	 * 提交流程
 	 * 
 	 * @param business
-	 * @param stationApplyId
+	 * @param businessId
 	 * @param stateChangeEvent
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,
 			PartnerInstanceStateChangeEvent stateChangeEvent);
 	
 	/**

@@ -73,8 +73,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
 			ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
-			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
+			generalTaskSubmitService.submitApproveProcessTask(business, instanceId, stateChangeEvent);
 
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
@@ -82,8 +81,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
 			ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
-			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
+			generalTaskSubmitService.submitApproveProcessTask(business, instanceId, stateChangeEvent);
 			//服务中
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
