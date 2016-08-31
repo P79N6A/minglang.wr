@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -14,6 +16,7 @@ import com.alibaba.buc.acl.api.input.check.CheckPermissionsParam;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult;
 import com.alibaba.buc.acl.api.service.AccessControlService;
 import com.alibaba.buc.api.exception.BucException;
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.AppResourceExample;
@@ -28,6 +31,9 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = OperationService.class)
 public class OperationServiceImpl implements OperationService {
 
+	public static final Log logger = LogFactory.getLog(OperationServiceImpl.class);
+
+	
 	@Autowired
 	private AccessControlService accessControlService;
 	
@@ -50,6 +56,7 @@ public class OperationServiceImpl implements OperationService {
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
 		} catch (BucException e) {
+			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
 			throw new  AugeServiceException(e);
 		}
 	}
@@ -62,6 +69,7 @@ public class OperationServiceImpl implements OperationService {
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
 		} catch (Exception e) {
+			logger.error("getOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
 			throw new  AugeServiceException(e);
 		}
 	}
@@ -101,8 +109,8 @@ public class OperationServiceImpl implements OperationService {
 
 	private Map<String,List<Operation>> matchPagedOperations(List<Operation> operations,List<PagedOperationData> datas,CheckPermissionsResult checkPermissionsResult){
 		Map<String,List<Operation>> result = Maps.newLinkedHashMap();
-		List<Operation> matchedOperations = Lists.newArrayList();
 		for(PagedOperationData data : datas){
+			List<Operation> matchedOperations = Lists.newArrayList();
 			for(Operation operation : operations ){
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
@@ -122,8 +130,8 @@ public class OperationServiceImpl implements OperationService {
 	
 	private List<Operation> matchOperations(List<Operation> operations,List<OperationData> datas,CheckPermissionsResult checkPermissionsResult){
 		List<Operation> matchedOperations = Lists.newArrayList();
-		for(OperationData data : datas){
-			for(Operation operation : operations ){
+		for(Operation operation : operations ){
+			for(OperationData data : datas){
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
 					if(operation.getValue() != null){
 						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
