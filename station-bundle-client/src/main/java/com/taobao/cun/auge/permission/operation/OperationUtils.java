@@ -40,10 +40,10 @@ public abstract class OperationUtils {
 		return operationDatas;
 	}
 	
-	public static List<PagedOperationData> buildOperationDatas(List<OperationSupport> operationSupports){
-		List<PagedOperationData> operationDatas = new ArrayList<PagedOperationData>();
+	public static List<OperationData> buildOperationDatas(List<OperationSupport> operationSupports){
+		List<OperationData> operationDatas = new ArrayList<OperationData>();
 		for(OperationSupport operationSupport : operationSupports){
-			PagedOperationData operationData = new PagedOperationData();
+			OperationData operationData = new OperationData();
 			operationData.setProperties(operationSupport.getDataProperties());
 			operationDatas.add(operationData);
 		}
@@ -51,10 +51,10 @@ public abstract class OperationUtils {
 	}
 	
 	
-	public static void mergePagedOperations(List<PagedOperationSupport> datas,Map<String,List<Operation>> operationsResult){
-		for(PagedOperationSupport data : datas){
-			List<Operation> operations = operationsResult.get(data.getDataId());
-			data.setOperations(operations);
+	public static void mergePagedOperations(List<PagedOperationSupport> operationSupports,Map<String,List<Operation>> operationsResult){
+		for(PagedOperationSupport operationSupport : operationSupports){
+			List<Operation> operations = operationsResult.get(operationSupport.getDataId());
+			operationSupport.setOperations(operations);
 		}
 	}
 	

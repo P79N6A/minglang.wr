@@ -1,11 +1,11 @@
 package com.taobao.cun.auge.permission.operation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractOperationSupport implements OperationSupport {
 
+	
 	private Map<String,Object> properties = new HashMap<String,Object>();
 	
 
