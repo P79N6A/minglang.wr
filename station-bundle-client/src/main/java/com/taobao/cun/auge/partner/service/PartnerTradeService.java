@@ -4,7 +4,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerTradeService {
 	/**
-	 * 校验是否有未结束的订单
+	 * 校验是否有未结束的订单1
 	 * 
 	 * @param instanceId
 	 * @throws AugeServiceException
