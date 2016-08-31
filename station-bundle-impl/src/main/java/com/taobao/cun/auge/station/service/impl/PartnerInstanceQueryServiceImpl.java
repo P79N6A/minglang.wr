@@ -221,6 +221,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(stationId);
 		return partnerInstanceBO.isAllPartnerQuit(stationId);
 	}
+	
+	@Override
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException{
+		ValidateUtils.notNull(instanceId);
+		return partnerInstanceBO.isOtherPartnerQuit(instanceId);
+	}
 
 	private String getErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();

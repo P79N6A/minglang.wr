@@ -250,6 +250,15 @@ public interface PartnerInstanceBO {
 	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
 
 	/**
+	 * 同一个站点，除instanceId的合伙人，其他合伙人是否都处于退出待解冻、已退出状态
+	 * 
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
+
+	/**
 	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
 	 *
 	 * @param partnerId

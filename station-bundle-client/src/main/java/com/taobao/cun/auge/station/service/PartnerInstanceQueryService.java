@@ -72,6 +72,15 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+
+	/**
+	 * 查询除instanceId外的，其他人是否都已经处于退出待解冻、退出状态
+	 * 
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
 	
 	/**
 	 * 使用stationapply state 查询

@@ -550,6 +550,10 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException	{
 		List<PartnerStationRel> instances = findPartnerInstances(stationId);
 
+		return isAllPartnerQuit(instances);
+	}
+
+	private boolean isAllPartnerQuit(List<PartnerStationRel> instances) {
 		for (PartnerStationRel instance : instances) {
 			if (null == instance) {
 				continue;
@@ -574,6 +578,22 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException{
+		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(partnerInstance.getStationId());
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdNotEqualTo(instanceId);
+
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+
+		return isAllPartnerQuit(instances);
 	}
 
 	@Override
