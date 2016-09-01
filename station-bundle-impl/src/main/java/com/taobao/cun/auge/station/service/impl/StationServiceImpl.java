@@ -87,9 +87,6 @@ public class StationServiceImpl implements StationService{
 
 		// 插入启动撤点流程的任务
 		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId,
-				shutDownDto.getReason(), shutDownDto);
+				shutDownDto,shutDownDto.getReason());
 	}
-
-
-
 }
