@@ -91,6 +91,10 @@ public class StationApplyStateEnum implements Serializable {
 		mappings.put("TO_AUDIT", TO_AUDIT);
 		mappings.put("TO_LOGISTICS_AUDIT", TO_LOGISTICS_AUDIT);
 		mappings.put("AUDIT_FAIL", AUDIT_FAIL);
+		mappings.put("UNPAY_DECORATE", UNPAY_DECORATE);
+		mappings.put("DEC_WAIT_AUDIT", DEC_WAIT_AUDIT);
+		mappings.put("UNPAY_COURSE", UNPAY_COURSE);
+		mappings.put("UNSIGNED", UNSIGNED);
 
 	}
 	private String code;
