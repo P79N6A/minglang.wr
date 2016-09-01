@@ -175,10 +175,16 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		closeApprove(partnerStationRel.getId(), approveResult);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
-			PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 不是TPV，且开关未打开，直接返回
 			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(partnerStationRel.getType()) && !isOpen()) {
@@ -186,7 +192,6 @@ public class ProcessProcessor {
 			}
 
 			Long stationId = partnerStationRel.getStationId();
-			Long instanceId = partnerStationRel.getId();
 
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
 			String operator = operatorDto.getOperator();
@@ -269,20 +274,25 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+		quitApprove(partnerStationRel.getId(), approveResult);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
 			String operator = operatorDto.getOperator();
 
-			PartnerStationRel instance = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 不是TPV，且开关未打开，直接返回
 			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType()) && !isOpen()) {
 				return;
 			}
 
-			Long instanceId = instance.getId();
 			Long stationId = instance.getStationId();
 
 			// 校验退出申请单是否存在

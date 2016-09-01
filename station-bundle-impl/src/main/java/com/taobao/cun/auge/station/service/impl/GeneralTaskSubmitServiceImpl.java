@@ -14,7 +14,6 @@ import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
@@ -273,14 +272,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * @param remarks
 	 *            备注
 	 */
-	@Override
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,	PartnerInstanceStateChangeEvent stateChangeEvent) {
-		submitApproveProcessTask(business, businessId, stateChangeEvent.getRemark(), stateChangeEvent);
-	}
-	
-	@Override
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, String remark, OperatorDto operatorDto) {
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark) {
 		try {
+
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setRemarks(remark);
