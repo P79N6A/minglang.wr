@@ -46,6 +46,7 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
@@ -252,7 +253,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			if (null == stationApplyState) {
 				buildLifecycleItems(page);
 			}
-			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+			PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+			return success;
 		} catch (Exception e) {
 			String error = getErrorMessage("queryByPage", JSONObject.toJSONString(pageCondition), e.getMessage());
 			logger.error(error, e);
@@ -588,7 +590,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 	
 	@Override
-	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(String orgIdPath){
+	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
+		String orgIdPath=condition.getOrgId();
 		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(orgIdPath);
 		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(orgIdPath);
 		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(orgIdPath);

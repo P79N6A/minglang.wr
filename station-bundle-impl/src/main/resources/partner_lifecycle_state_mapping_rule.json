@@ -33,12 +33,6 @@
             }
         },
         {
-            "stationApplyState": "DECORATING",
-            "desc": "合伙人station_apply DECORATING",
-            "partnerInstanceState": "DECORATING",
-            "condition": {}
-        },
-        {
             "stationApplyState": "SERVICING",
             "desc": "合伙人station_apply SERVICING",
             "partnerInstanceState": "SERVICING",
@@ -77,6 +71,28 @@
             "stationApplyState": "QUIT",
             "desc": "合伙人station_apply QUIT",
             "partnerInstanceState": "QUIT",
+            "condition": {}
+        },
+        {
+        	"stationApplyState": "UNPAY_DECORATE",
+            "desc": "合伙人station_apply UNPAY_DECORATE",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"decorateStatus":"UNDECORATE"
+            }
+        },
+        {
+        	"stationApplyState": "DEC_WAIT_AUDIT",
+            "desc": "合伙人station_apply DEC_WAIT_AUDIT",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"decorateStatus":"DECORATING"
+            }
+        },
+        {
+            "stationApplyState": "DECORATING",
+            "desc": "合伙人station_apply DECORATING",
+            "partnerInstanceState": "DECORATING",
             "condition": {}
         }
     ],

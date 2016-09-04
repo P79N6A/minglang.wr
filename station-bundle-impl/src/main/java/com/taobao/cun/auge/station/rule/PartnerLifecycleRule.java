@@ -51,6 +51,33 @@ public class PartnerLifecycleRule implements Serializable {
 	 * 系统任务
 	 */
 	private PartnerLifecycleRuleItem system;
+	
+	/**
+	 * 装修状态
+	 */
+	private PartnerLifecycleRuleItem decorateStatus;
+	
+	/**
+	 * 培训状态
+	 */
+	private PartnerLifecycleRuleItem courseStatus;
+	
+	
+	public PartnerLifecycleRuleItem getDecorateStatus() {
+		return decorateStatus;
+	}
+
+	public void setDecorateStatus(PartnerLifecycleRuleItem decorateStatus) {
+		this.decorateStatus = decorateStatus;
+	}
+
+	public PartnerLifecycleRuleItem getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(PartnerLifecycleRuleItem courseStatus) {
+		this.courseStatus = courseStatus;
+	}
 
 	public PartnerInstanceStateEnum getState() {
 		return state;

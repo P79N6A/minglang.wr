@@ -34,7 +34,7 @@ public final class PartnerInstanceConverter {
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
 		if (CollectionUtils.isEmpty(instances)) {
-			return Collections.<PartnerInstanceDto>emptyList();
+			return Collections.<PartnerInstanceDto> emptyList();
 		}
 		List<PartnerInstanceDto> instanceDtos = new ArrayList<PartnerInstanceDto>(instances.size());
 		for (PartnerInstance instance : instances) {
@@ -87,10 +87,10 @@ public final class PartnerInstanceConverter {
 		}
 
 		try {
-			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
-					.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
 			instanceDto.setStationApplyState(parseStationApplyState);
 		} catch (Exception e) {
+			System.out.println("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance) + e);
 			logger.error("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance), e);
 		}
 		return instanceDto;
@@ -110,6 +110,7 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
+		lifecleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.valueof(instance.getDecorateStatus()));
 		return lifecleDto;
 	}
 
@@ -325,7 +326,8 @@ public final class PartnerInstanceConverter {
 		}
 
 		StationApplyStateEnum stationApplyState = condition.getStationApplyState();
-		if (null != stationApplyState) {
+		boolean isCourseStatus=StationApplyStateEnum.UNPAY_COURSE.equals(stationApplyState)||StationApplyStateEnum.UNSIGNED.equals(stationApplyState);
+		if (null != stationApplyState && !isCourseStatus) {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
@@ -387,8 +389,22 @@ public final class PartnerInstanceConverter {
 				example.setSystem(system.getValue());
 				example.setSystemOp(system.getEqual());
 			}
+			
+			PartnerLifecycleRuleItem decorate=rule.getDecorateStatus();
+			if(null!=decorate){
+				example.setDecorateStatus(decorate.getValue());
+			}
 		}
 
+		if(isCourseStatus){
+			if(StationApplyStateEnum.UNPAY_COURSE.equals(stationApplyState)){
+				example.setCourseStatus(PartnerLifecycleCourseStatusEnum.NEW.getCode());
+			}
+			else if(StationApplyStateEnum.UNSIGNED.equals(stationApplyState)){
+				example.setCourseStatus(PartnerLifecycleCourseStatusEnum.PAY.getCode());
+			}
+		}
+		
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
 		}
