@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -162,7 +163,7 @@ public interface PartnerInstanceQueryService {
 	 * @param orgIdPath
 	 * @return
 	 */
-	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(String orgIdPath);
+	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition);
 
 
 }
