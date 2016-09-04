@@ -359,11 +359,23 @@
 	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	</if>
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
 	WHERE (concat_ws('_',instance.state) = 'QUIT'
 	OR concat_ws('_',instance.state) = 'CLOSED'
 	OR concat_ws('_',instance.state) = 'SERVICING'
 	)
 	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
 	GROUP BY concat_ws('_',instance.state);
 	</select>
 		
@@ -379,8 +391,20 @@
 	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	</if>
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
 	WHERE life.current_step ='PROCESSING'
 	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
 	GROUP BY
 	concat_ws('_',instance.state,life.settled_protocol,life.role_approve,life.bond,life.system)
 	</select>
@@ -397,9 +421,21 @@
 	INNER JOIN partner_course_record course on course.partner_user_id =
 	p.taobao_user_id AND course.is_deleted= 'n' and
 	course.course_type='APPLY_IN'
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
 	WHERE
 	life.current_step ='PROCESSING'
 	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
 	GROUP BY course.status ;
 	</select>
 	
@@ -415,10 +451,22 @@
 	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	</if>
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
 	WHERE life.current_step ='PROCESSING'
 	AND life.business_type='DECORATING'
 	AND instance.state='DECORATING'
 	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
 	GROUP BY decorate.status ;
 	</select>
 	
