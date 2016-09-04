@@ -592,10 +592,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
 		String orgIdPath=condition.getOrgId();
-		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(orgIdPath);
-		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(orgIdPath);
-		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(orgIdPath);
-		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(orgIdPath);
+		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
+		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
+		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
+		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(condition);
 		List<ProcessedStationStatus> whole=new ArrayList<ProcessedStationStatus>();
 		whole.addAll(processingList);
 		whole.addAll(processedList);

@@ -1,7 +1,11 @@
 package com.taobao.cun.auge.station.condition;
 
-public class StationStatisticsCondition {
+import java.io.Serializable;
 
+public class StationStatisticsCondition implements Serializable{
+
+	private static final long serialVersionUID = 6132005680479470741L;
+	
 	private String orgId;
 	private String stationName;
 	private String state;

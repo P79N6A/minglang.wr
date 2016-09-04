@@ -4,22 +4,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
+
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 
 public interface PartnerStationRelExtMapper {
 	
 	Page<PartnerInstance> selectPartnerInstancesByExample(PartnerInstanceExample example);
 	
-	List<ProcessedStationStatus> countProcessedStatus(@Param("orgIdPath") String orgIdPath);
+	List<ProcessedStationStatus> countProcessedStatus(StationStatisticsCondition condition);
 	
-	List<ProcessedStationStatus> countProcessingStatus(@Param("orgIdPath") String orgIdPath);
+	List<ProcessedStationStatus> countProcessingStatus(StationStatisticsCondition condition);
 	
-	List<ProcessedStationStatus> countCourseStatus(@Param("orgIdPath") String orgIdPath);
+	List<ProcessedStationStatus> countCourseStatus(StationStatisticsCondition condition);
 	
-	List<ProcessedStationStatus> countDecorateStatus(@Param("orgIdPath") String orgIdPath);
+	List<ProcessedStationStatus> countDecorateStatus(StationStatisticsCondition condition);
 	
 	Integer test();
 	
