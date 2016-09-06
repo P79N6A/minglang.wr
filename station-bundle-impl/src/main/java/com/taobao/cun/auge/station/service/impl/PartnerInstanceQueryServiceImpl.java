@@ -80,6 +80,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessedStationStatusEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -591,7 +592,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	
 	@Override
 	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
-		String orgIdPath=condition.getOrgId();
 		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
 		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
 		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
@@ -602,6 +602,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		whole.addAll(courseList);
 		whole.addAll(decorateList);
 		List<ProcessedStationStatusDto> statusDtoList=ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
+		int counter=0;
+		for (ProcessedStationStatusDto statusDto : statusDtoList) {
+			counter=counter+statusDto.getCount();
+		}
+		ProcessedStationStatusDto allStatus=new ProcessedStationStatusDto();
+		allStatus.setProcessedStationStatus(ProcessedStationStatusEnum.ALL.getCode());
+		allStatus.setCount(counter);
+		statusDtoList.add(allStatus);
 		return statusDtoList;
 	}
 

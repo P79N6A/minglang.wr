@@ -352,9 +352,10 @@
 </resultMap>
 
 	<select id="countProcessedStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
-	SELECT concat_ws('_',instance.state) as status,count(1) as count
+	SELECT concat_ws('_',"ED",instance.state) as status,count(1) as count
 	FROM partner_station_rel instance
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n' AND instance.is_deleted='n'
+	INNER JOIN partner p on instance.partner_id= p.id and p.is_deleted ='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
 	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
@@ -381,7 +382,7 @@
 		
 	<select id="countProcessingStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
 	SELECT
-	concat_ws('_',instance.state,life.settled_protocol,life.role_approve,life.bond,life.system) as status,count(1) as count
+	concat_ws('_',"ING",instance.state,life.settled_protocol,life.role_approve,life.bond,life.system) as status,count(1) as count
 	FROM partner_station_rel instance
 	INNER JOIN partner_lifecycle_items life on
 	life.partner_instance_id=instance.id AND life.is_deleted= 'n' AND
@@ -410,12 +411,9 @@
 	</select>
 		
 	<select id="countCourseStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
-	SELECT course.status as status,count(1) as count
+	SELECT concat_ws("_","COR",course.status) as status,count(1) as count
 	FROM partner_station_rel instance
-	INNER JOIN partner_lifecycle_items life on
-	life.partner_instance_id=instance.id AND life.is_deleted= 'n' AND
-	instance.is_deleted= 'n'
-	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
+	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n' 
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	INNER JOIN partner_course_record course on course.partner_user_id =
@@ -425,7 +423,7 @@
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 	</if>
 	WHERE
-	life.current_step ='PROCESSING'
+	instance.is_deleted= 'n'
 	<include refid="station_statistics_query_condition" />
 	
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
@@ -440,7 +438,7 @@
 	</select>
 	
 	<select id="countDecorateStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
-	SELECT decorate.status as status,count(1) as count
+	SELECT concat_ws("_","DEC",decorate.status) as status,count(1) as count
 	FROM partner_station_rel instance
 	INNER JOIN partner_lifecycle_items life on life.partner_instance_id=
 	instance.id AND life.is_deleted= 'n' AND instance.is_deleted= 'n'

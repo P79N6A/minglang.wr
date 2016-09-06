@@ -13,19 +13,20 @@ public class ProcessedStationStatusConverter {
 
 	private static final HashMap<String,String> mapping=new HashMap<String,String>();
 	static{
-		mapping.put("SETTLING_SIGNING_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.SUMITTED.getCode());
-		mapping.put("SETTLING_SIGNED_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.CONFIRMED.getCode());
-		mapping.put("NEW",ProcessedStationStatusEnum.UNPAY_COURSE.getCode());
-		mapping.put("UNDECORATE",ProcessedStationStatusEnum.UNPAY_DECORATE.getCode());
-		mapping.put("PAY",ProcessedStationStatusEnum.UNSIGNED.getCode());
-		mapping.put("DECORATING",ProcessedStationStatusEnum.DEC_WAIT_AUDIT.getCode());
-		mapping.put("SERVICING",ProcessedStationStatusEnum.SERVICING.getCode());
-		mapping.put("CLOSING",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
-		mapping.put("CLOSING_TO_AUDIT",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
-		mapping.put("CLOSED",ProcessedStationStatusEnum.QUIT_APPLY_CONFIRMED.getCode());
-		mapping.put("QUITING_TO_AUDIT_WAIT_THAW",ProcessedStationStatusEnum.QUITAUDITING.getCode());
-		mapping.put("QUITING_AUDIT_PASS_WAIT_THAW",ProcessedStationStatusEnum.CLOSED_WAIT_THAW.getCode());
-		mapping.put("QUIT",ProcessedStationStatusEnum.QUIT.getCode());
+		mapping.put("ING_SETTLING_SIGNING_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.SUMITTED.getCode());
+		mapping.put("ING_SETTLING_SIGNED_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.CONFIRMED.getCode());
+		mapping.put("COR_NEW",ProcessedStationStatusEnum.UNPAY_COURSE.getCode());
+		mapping.put("DEC_UNDECORATE",ProcessedStationStatusEnum.UNPAY_DECORATE.getCode());
+		mapping.put("COR_PAY",ProcessedStationStatusEnum.UNSIGNED.getCode());
+		mapping.put("DEC_DECORATING",ProcessedStationStatusEnum.DEC_WAIT_AUDIT.getCode());
+		mapping.put("ED_SERVICING",ProcessedStationStatusEnum.SERVICING.getCode());
+		mapping.put("ING_CLOSING",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
+		mapping.put("ING_CLOSING_TO_AUDIT",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
+		mapping.put("ING_CLOSING_TO_START",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
+		mapping.put("ED_CLOSED",ProcessedStationStatusEnum.QUIT_APPLY_CONFIRMED.getCode());
+		mapping.put("ING_QUITING_TO_AUDIT_WAIT_THAW",ProcessedStationStatusEnum.QUITAUDITING.getCode());
+		mapping.put("ING_QUITING_AUDIT_PASS_WAIT_THAW",ProcessedStationStatusEnum.CLOSED_WAIT_THAW.getCode());
+		mapping.put("ED_QUIT",ProcessedStationStatusEnum.QUIT.getCode());
 	}
 	
 	
