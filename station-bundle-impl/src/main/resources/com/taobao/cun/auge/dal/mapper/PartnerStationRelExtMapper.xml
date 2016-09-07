@@ -89,10 +89,6 @@
     
     <!-- 县服务中心-->
     <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
-    
-    <!-- 装修和培训状态 -->
-    <result column="decorateStatus" jdbcType="VARCHAR" property="decorateStatus" />
-    <result column="courseStatus" jdbcType="VARCHAR" property="courseStatus" />
   </resultMap>
   
   <select id="selectPartnerInstancesByExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceExample" >
@@ -138,9 +134,7 @@
 		s.feature,
 		s.status,
 		s.fixed_type,
-		org.name as county_station_name,
-		course.status as courseStatus,
-		decorate.status as decorateStatus
+		org.name as county_station_name
 		
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
 		,
@@ -166,9 +160,13 @@
 			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 		</if>
 		
+		<if test="courseStatus !=null and courseStatus !=''">
         left join partner_course_record course on instance.taobao_user_id=course.partner_user_id and course.is_deleted='n' and course.course_type='APPLY_IN'
- 
+ 		</if>
+ 		
+        <if test="decorateStatus != null and decorateStatus !=''">
         left join station_decorate decorate on instance.taobao_user_id=decorate.partner_user_id and decorate.is_deleted='n' and decorate.is_valid='y'
+		</if>
 		
 		,partner p,station s,cuntao_org org
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >

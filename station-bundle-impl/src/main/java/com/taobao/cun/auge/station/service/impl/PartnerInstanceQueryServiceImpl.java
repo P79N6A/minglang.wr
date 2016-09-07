@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -70,6 +71,7 @@ import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -591,7 +593,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 	
 	@Override
-	public List<ProcessedStationStatusDto> getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
+	public StationStatisticDto getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
 		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
 		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
 		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
@@ -601,15 +603,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		whole.addAll(processedList);
 		whole.addAll(courseList);
 		whole.addAll(decorateList);
-		List<ProcessedStationStatusDto> statusDtoList=ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
-		int counter=0;
-		for (ProcessedStationStatusDto statusDto : statusDtoList) {
-			counter=counter+statusDto.getCount();
-		}
-		ProcessedStationStatusDto allStatus=new ProcessedStationStatusDto();
-		allStatus.setProcessedStationStatus(ProcessedStationStatusEnum.ALL.getCode());
-		allStatus.setCount(counter);
-		statusDtoList.add(allStatus);
+		StationStatisticDto statusDtoList = ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
 		return statusDtoList;
 	}
 

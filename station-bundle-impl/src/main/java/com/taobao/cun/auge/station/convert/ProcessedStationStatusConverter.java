@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
+import com.taobao.cun.auge.station.dto.StationEnterStatusDto;
+import com.taobao.cun.auge.station.dto.StationQuitStatusDto;
+import com.taobao.cun.auge.station.dto.StationStatisticDto;
+import com.taobao.cun.auge.station.dto.StationStatusDto;
 import com.taobao.cun.auge.station.enums.ProcessedStationStatusEnum;
 
 public class ProcessedStationStatusConverter {
 
-	private static final HashMap<String,String> mapping=new HashMap<String,String>();
+	private static final Map<String,String> mapping=new HashMap<String,String>();
 	static{
 		mapping.put("ING_SETTLING_SIGNING_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.SUMITTED.getCode());
 		mapping.put("ING_SETTLING_SIGNED_WAIT_FROZEN_WAIT_PROCESS",ProcessedStationStatusEnum.CONFIRMED.getCode());
@@ -30,10 +35,9 @@ public class ProcessedStationStatusConverter {
 	}
 	
 	
-	public static List<ProcessedStationStatusDto> toProcessedStationStatusDtos(List<ProcessedStationStatus> statusList){
-		HashMap<String,Integer> map=new HashMap<String,Integer>();
+	public static StationStatisticDto toProcessedStationStatusDtos(List<ProcessedStationStatus> statusList){
+		Map<String,Integer> map=new HashMap<String,Integer>();
 		for (ProcessedStationStatus p : statusList) {
-			System.out.println(p.getStatus());
 			String key = mapping.get(p.getStatus());
 			if(key!=null){
 				if(map.containsKey(key)){
@@ -47,17 +51,38 @@ public class ProcessedStationStatusConverter {
 			}
 			
 		}
-		System.out.println(map.size());
-		List<ProcessedStationStatusDto> list=new ArrayList<>();
-		Iterator<String> iter=map.keySet().iterator();
-		while(iter.hasNext()){
-			String processedStationStatus=iter.next();
-			Integer count = map.get(processedStationStatus);
-			ProcessedStationStatusDto dto=new ProcessedStationStatusDto();
-			dto.setProcessedStationStatus(processedStationStatus);
-			dto.setCount(count);
-			list.add(dto);
-		}
-		return list;
+
+		StationStatisticDto stationStatisticDto =new StationStatisticDto();
+		
+		StationEnterStatusDto enterDto=new StationEnterStatusDto();
+		enterDto.setSumitted(getStatusDto(map,ProcessedStationStatusEnum.SUMITTED));
+		enterDto.setConfirmed(getStatusDto(map,ProcessedStationStatusEnum.CONFIRMED));
+		enterDto.setUnpayCourse(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_COURSE));
+		enterDto.setUnpayDecorate(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_DECORATE));
+		enterDto.setUnsigned(getStatusDto(map,ProcessedStationStatusEnum.UNSIGNED));
+		enterDto.setDecWaitAudit(getStatusDto(map,ProcessedStationStatusEnum.DEC_WAIT_AUDIT));
+		enterDto.setServicing(getStatusDto(map,ProcessedStationStatusEnum.SERVICING));
+		
+		StationQuitStatusDto quitDto=new StationQuitStatusDto();
+		quitDto.setQuitApplying(getStatusDto(map,ProcessedStationStatusEnum.QUIT_APPLYING));
+		quitDto.setQuitApplyConfirmed(getStatusDto(map,ProcessedStationStatusEnum.QUIT_APPLY_CONFIRMED));
+		quitDto.setQuitAuditing(getStatusDto(map,ProcessedStationStatusEnum.QUITAUDITING));
+		quitDto.setClosedWaitThaw(getStatusDto(map,ProcessedStationStatusEnum.CLOSED_WAIT_THAW));
+		quitDto.setQuit(getStatusDto(map,ProcessedStationStatusEnum.QUIT));
+		
+		stationStatisticDto.setEnterFlow(enterDto);
+		stationStatisticDto.setQuitFlow(quitDto);
+		return stationStatisticDto;
 	}
+
+
+	private static StationStatusDto getStatusDto(Map<String, Integer> map,ProcessedStationStatusEnum statusEnum) {
+		StationStatusDto statusDto=new StationStatusDto();
+		statusDto.setStatus(statusEnum);
+		Integer sumittedCnt = map.get(statusEnum.getCode());
+		statusDto.setCount(sumittedCnt==null?0:sumittedCnt);
+		return statusDto;
+	}
+
+	
 }

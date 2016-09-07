@@ -110,7 +110,6 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.valueof(instance.getRoleApprove()));
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
-		lifecleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.valueof(instance.getDecorateStatus()));
 		return lifecleDto;
 	}
 
