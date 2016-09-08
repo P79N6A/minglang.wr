@@ -41,8 +41,13 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
+import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
+import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
+import com.taobao.cun.crius.exam.service.ExamInstanceService;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.notify.message.StringMessage;
 @Component("partnerPeixunBO")
 public class PartnerPeixunBOImpl implements PartnerPeixunBO{
@@ -59,6 +64,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	CourseServiceFacade courseServiceFacade;
 	@Autowired
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
+	@Autowired
+	ExamUserDispatchService examUserDispatchService;
+	@Autowired
+	ExamInstanceService examInstanceService;
 	
 	@Value("${partner.apply.in.peixun.code}")
 	private String peixunCode;
@@ -83,6 +92,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	@Value("${crm.peixun.online.exam.url}")
 	private String onlineExamUrl;
+	
+	@Value("${crm.peixun.online.exam.paperId}")
+	private String paperId;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
@@ -350,9 +362,27 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		//查询在线培训记录
 		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(onlineCourseCode, userId);
 		if(trainRecords.size()==0){
+			result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN);
+			return result;
+		}else{
+		//查询考试成绩
 			
 		}
 		return null;
+	}
+
+	@Override
+	public void dispatchApplyInExamPaper(Long userId) {
+		Assert.notNull(userId);
+		ExamDispatchDto dto = new ExamDispatchDto();
+		dto.setDispatcher("SYSTEM");
+		dto.setPaperId(new Long(paperId));
+		dto.setUserId(userId);
+		ResultModel<Boolean> result = examUserDispatchService.dispatchExam(dto);
+		if (!result.isSuccess()) {
+			throw new RuntimeException("dispatch examPaper fail:"
+					+ result.getException());
+		}
 	}
 
 }
