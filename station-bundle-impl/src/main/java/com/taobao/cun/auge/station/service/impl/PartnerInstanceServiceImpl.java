@@ -1397,13 +1397,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
 		ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
-		Long instanceId = partnerInstanceDto.getId();
-		ValidateUtils.notNull(instanceId);
+
+		Long stationId = partnerInstanceDto.getStationId();
+		ValidateUtils.notNull(stationId);
 		try {
-			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 			Assert.notNull(rel, "partner instance not exists");
 			Assert.notNull(rel.getType(), "partner instance type is null");
 
+			Long instanceId = rel.getId();
 			boolean canUpdate = partnerInstanceHandler.handleValidateUpdateSettle(instanceId,
 					PartnerInstanceTypeEnum.valueof(rel.getType()));
 			if (!canUpdate) {

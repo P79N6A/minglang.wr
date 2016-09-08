@@ -283,6 +283,10 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-diamond</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>exam-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -65,6 +65,10 @@
 		<property name="crm.peixun.online.couerse.url" defaultValue="crm.peixun.online.couerse.url" description="在线培训课程地址" />
 		<property name="crm.peixun.online.code" defaultValue="crm.peixun.online.code" description="在线培训code" />
 		<property name="crm.peixun.online.exam.url" defaultValue="crm.peixun.online.exam.url" description="在线考试地址" />
+ 		<property name="crm.peixun.online.exam.paperId" defaultValue="crm.peixun.online.exam.paperId" description="试卷id" />
+  		<property name="hsf.consumer.version.crius.examUserDispatchService" defaultValue="1.0.0.daily" description="试卷分发服务" />
+  		<property name="hsf.consumer.version.crius.examInstanceService" defaultValue="1.0.0.daily" description="考试实例服务" />
+ 
 
 	</group>
 .

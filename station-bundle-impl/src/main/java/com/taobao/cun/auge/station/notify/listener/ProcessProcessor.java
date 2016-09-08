@@ -106,9 +106,10 @@ public class ProcessProcessor {
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
 				monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-				// 村点退出
+				// 合伙人退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+				//村点撤点
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}

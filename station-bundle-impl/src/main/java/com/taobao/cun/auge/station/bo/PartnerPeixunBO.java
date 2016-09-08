@@ -39,4 +39,6 @@ public interface PartnerPeixunBO {
 	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds);
 	
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
+	
+	public void dispatchApplyInExamPaper(Long userId);
 }

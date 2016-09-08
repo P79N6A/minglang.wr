@@ -14,6 +14,8 @@ import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
+import com.taobao.cun.crius.exam.service.ExamInstanceService;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
@@ -105,5 +107,17 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean augeCuntaoUserService(
 			@Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
 		return getConsumerBean(CuntaoUserService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean examUserDispatchService(
+			@Value("${hsf.consumer.version.crius.examUserDispatchService}") String version) {
+		return getConsumerBean(ExamUserDispatchService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean examInstanceService(
+			@Value("${hsf.consumer.version.crius.examInstanceService}") String version) {
+		return getConsumerBean(ExamInstanceService.class, HSFGroup.HSF, version, 3000);
 	}
 }
