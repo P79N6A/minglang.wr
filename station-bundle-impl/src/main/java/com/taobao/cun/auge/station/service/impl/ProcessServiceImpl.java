@@ -57,6 +57,7 @@ public class ProcessServiceImpl implements ProcessService {
 		if (null != startProcessDto.isInstanceId()) {
 			initData.put("isInstanceId", startProcessDto.isInstanceId().toString());
 		}
+
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {
