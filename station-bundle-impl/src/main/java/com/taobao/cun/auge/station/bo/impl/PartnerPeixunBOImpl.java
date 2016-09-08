@@ -46,6 +46,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
+import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.notify.message.StringMessage;
@@ -95,6 +96,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	@Value("${crm.peixun.online.exam.paperId}")
 	private String paperId;
+	
+	public static int examPassPoint=100;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
@@ -354,21 +357,28 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Override
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId) {
 		Assert.notNull(userId);
-		PartnerOnlinePeixunDto result=new PartnerOnlinePeixunDto();
+		PartnerOnlinePeixunDto result = new PartnerOnlinePeixunDto();
 		result.setCourseUrl(onlineCourseUrl);
 		result.setTaobaoUserId(userId);
 		result.setCourseCode(onlineCourseCode);
 		result.setExamUrl(onlineExamUrl);
-		//查询在线培训记录
-		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(onlineCourseCode, userId);
-		if(trainRecords.size()==0){
+		// 查询在线培训记录
+		List<TrainingRecordDTO> trainRecords = getRecordFromPeixun(
+				onlineCourseCode, userId);
+		if (trainRecords.size() == 0) {
 			result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN);
-			return result;
-		}else{
-		//查询考试成绩
-			
+		} else {
+			// 查询考试成绩
+			ResultModel<ExamInstanceDto> examResult = examInstanceService
+					.queryValidInstance(userId, new Long(paperId));
+			if (examResult.isSuccess() && examResult.getResult() != null
+					&& examResult.getResult().getPoint() == examPassPoint) {
+				result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
+			} else {
+				result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_EXAM);
+			}
 		}
-		return null;
+		return result;
 	}
 
 	@Override
