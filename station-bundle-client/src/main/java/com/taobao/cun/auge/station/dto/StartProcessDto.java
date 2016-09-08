@@ -16,7 +16,7 @@ public class StartProcessDto extends OperatorDto {
 	private String remarks;
 
 	// 重构，兼容
-	private Boolean isInstanceId;
+	private Long partnerInstanceId;
 
 	public String getBusinessCode() {
 		return businessCode;
@@ -42,11 +42,11 @@ public class StartProcessDto extends OperatorDto {
 		this.remarks = remarks;
 	}
 
-	public Boolean isInstanceId() {
-		return isInstanceId;
+	public Long getPartnerInstanceId() {
+		return partnerInstanceId;
 	}
 
-	public void setInstanceId(Boolean isInstanceId) {
-		this.isInstanceId = isInstanceId;
+	public void setPartnerInstanceId(Long partnerInstanceId) {
+		this.partnerInstanceId = partnerInstanceId;
 	}
 }
