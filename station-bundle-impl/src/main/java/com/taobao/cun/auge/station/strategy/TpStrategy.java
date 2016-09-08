@@ -136,14 +136,17 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 
+		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
 		// 生成培训记录
-		partnerPeixunBO.initPartnerApplyInRecord(partnerInstanceDto.getTaobaoUserId());
+		partnerPeixunBO.initPartnerApplyInRecord(taobaoUserId);
+		// 分发试卷
+		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId);
 
 		// 生成装修记录
 		StationDecorateDto stationDecorateDto = new StationDecorateDto();
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		stationDecorateDto.setStationId(partnerInstanceDto.getStationId());
-		stationDecorateDto.setPartnerUserId(partnerInstanceDto.getTaobaoUserId());
+		stationDecorateDto.setPartnerUserId(taobaoUserId);
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
 	}
 
