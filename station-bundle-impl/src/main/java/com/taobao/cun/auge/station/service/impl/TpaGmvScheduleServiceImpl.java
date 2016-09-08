@@ -3,18 +3,20 @@ package com.taobao.cun.auge.station.service.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.PageQuery;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
@@ -28,6 +30,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
+import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("tpaGmvScheduleService")
@@ -51,27 +54,23 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	PartnerInstanceExtService partnerInstanceExtService;
 
 	@Override
-	public List<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(int fetchNum) throws AugeServiceException {
-		if (fetchNum < 0) {
-			return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
-		}
-
-		DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
-
-		example.setBizMonths(findLastNMonth());
-		example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
-		example.setScale(PartnerInstanceExtConstant.SCALE);
-
+	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery pageQuery) throws AugeServiceException {
 		try {
-			PageHelper.startPage(1, fetchNum);
-			List<DwiCtStationTpaIncomeM> resList = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
-			if (CollectionUtils.isEmpty(resList)) {
-				return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
-			}
-			return DwiCtStationTpaIncomeMConverter.convert(resList);
+			// 参数校验
+			BeanValidator.validateWithThrowable(pageQuery);
+
+			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
+
+			example.setBizMonths(findLastNMonth());
+			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
+			example.setScale(PartnerInstanceExtConstant.SCALE);
+
+			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
+			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
+			return PageDtoUtil.success(page, DwiCtStationTpaIncomeMConverter.convert(page));
 		} catch (Exception e) {
 			logger.error("查询合伙人淘帮手连续n个月绩效失败", e);
-			return Collections.<DwiCtStationTpaIncomeMDto> emptyList();
+			return PageDtoUtil.unSuccess(pageQuery.getPageNum(), pageQuery.getPageSize());
 		}
 	}
 

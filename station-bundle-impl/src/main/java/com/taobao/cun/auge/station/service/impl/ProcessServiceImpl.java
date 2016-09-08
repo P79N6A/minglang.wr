@@ -49,10 +49,14 @@ public class ProcessServiceImpl implements ProcessService {
 		Long applierOrgId = startProcessDto.getOperatorOrgId();
 		OperatorTypeEnum operatorType = startProcessDto.getOperatorType();
 
-		// // 创建退出村点任务流程
+		//创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(applierOrgId));
 		initData.put("remarks", remarks);
+		//重构，兼容
+		if (null != startProcessDto.isInstanceId()) {
+			initData.put("isInstanceId", startProcessDto.isInstanceId().toString());
+		}
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {

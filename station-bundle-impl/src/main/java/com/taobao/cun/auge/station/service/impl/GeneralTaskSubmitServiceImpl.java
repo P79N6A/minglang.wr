@@ -258,21 +258,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
-	/**
-	 * 启动停业、退出流程审批流程
-	 * 
-	 * @param business
-	 *            业务类型
-	 * @param businessId
-	 *            业务主键
-	 * @param applierId
-	 *            申请人
-	 * @param applierOrgId
-	 *            申请人orgid
-	 * @param remarks
-	 *            备注
-	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark) {
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Boolean isInstanceId,OperatorDto operatorDto, String remark) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
@@ -280,6 +266,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			startProcessDto.setRemarks(remark);
 			startProcessDto.setBusinessId(businessId);
 			startProcessDto.setBusinessCode(business.getCode());
+			startProcessDto.setInstanceId(isInstanceId);
 			startProcessDto.copyOperatorDto(operatorDto);
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
@@ -305,6 +292,24 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 					+ operatorDto.getOperatorType().getCode(), e);
 			throw new AugeServiceException("submitApproveProcessTask error: " + e.getMessage());
 		}
+	}
+	
+	/**
+	 * 启动停业、退出流程审批流程
+	 * 
+	 * @param business
+	 *            业务类型
+	 * @param businessId
+	 *            业务主键
+	 * @param applierId
+	 *            申请人
+	 * @param applierOrgId
+	 *            申请人orgid
+	 * @param remarks
+	 *            备注
+	 */
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark) {
+		submitApproveProcessTask( business,  businessId, null, operatorDto,  remark);
 	}
 
 	/**

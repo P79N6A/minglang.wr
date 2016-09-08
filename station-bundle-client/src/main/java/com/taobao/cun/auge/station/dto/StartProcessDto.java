@@ -1,10 +1,8 @@
 package com.taobao.cun.auge.station.dto;
 
-import java.io.Serializable;
-
 import com.taobao.cun.auge.common.OperatorDto;
 
-public class StartProcessDto extends  OperatorDto{
+public class StartProcessDto extends OperatorDto {
 
 	private static final long serialVersionUID = 3154749325747973905L;
 
@@ -16,7 +14,10 @@ public class StartProcessDto extends  OperatorDto{
 
 	// 申请备注
 	private String remarks;
-	
+
+	// 重构，兼容
+	private Boolean isInstanceId;
+
 	public String getBusinessCode() {
 		return businessCode;
 	}
@@ -39,5 +40,13 @@ public class StartProcessDto extends  OperatorDto{
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public Boolean isInstanceId() {
+		return isInstanceId;
+	}
+
+	public void setInstanceId(Boolean isInstanceId) {
+		this.isInstanceId = isInstanceId;
 	}
 }
