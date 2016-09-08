@@ -346,7 +346,8 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 
 	@Override
 	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
-		generalTaskSubmitService.submitApproveProcessTask(business, instanceId, Boolean.TRUE, operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), instanceId, operatorDto, remark);
 	}
 }

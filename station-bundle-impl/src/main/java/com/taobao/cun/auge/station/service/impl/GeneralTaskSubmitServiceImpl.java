@@ -258,7 +258,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Boolean isInstanceId,OperatorDto operatorDto, String remark) {
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Long partnerInstanceId,OperatorDto operatorDto, String remark) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
@@ -266,7 +266,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			startProcessDto.setRemarks(remark);
 			startProcessDto.setBusinessId(businessId);
 			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.setInstanceId(isInstanceId);
+			startProcessDto.setPartnerInstanceId(partnerInstanceId);
 			startProcessDto.copyOperatorDto(operatorDto);
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();

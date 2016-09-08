@@ -42,7 +42,7 @@ public interface GeneralTaskSubmitService {
 	 * @param businessId
 	 * @param stateChangeEvent
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Boolean isInstanceId,OperatorDto operatorDto, String remark);
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Long partnerInstanceId,OperatorDto operatorDto, String remark);
 	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark);
 
 	/**
