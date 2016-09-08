@@ -15,6 +15,7 @@ import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
+import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
@@ -440,5 +441,75 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.error(error,e);
 			throw new AugeServiceException(error);
 	    }
+	}
+
+	@Override
+	public boolean unBindAdmin(Long cainiaoStationId) throws AugeServiceException {
+		if (cainiaoStationId == null) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.unBindAdmin.param.error:cainiaoStationId is null!");
+		}
+		try {
+			logger.info("unBindAdmin.info cainiaoStationId"+cainiaoStationId);
+			Result<Boolean> res = stationWriteService.unBindAdmin(cainiaoStationId, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("unBindAdmin", String.valueOf(cainiaoStationId),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
+
+	@Override
+	public boolean bindAdmin(CaiNiaoStationDto station)
+			throws AugeServiceException {
+		if (station == null) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.bindAdmin.param.error:station is null!");
+		}
+		try {
+			logger.info("bindAdmin.info param"+JSONObject.toJSONString(station));
+			BindAdminParam bindParam = buildBindAdminParam(station);
+			Result<Boolean> res = stationWriteService.bindAdmin(bindParam, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			}
+			return res.getData();
+	    } catch (Exception e) {
+			String error = getErrorMessage("bindAdmin", JSONObject.toJSONString(station),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
+	
+	
+	private  BindAdminParam  buildBindAdminParam(CaiNiaoStationDto dto) {
+		BindAdminParam  bindParam = new BindAdminParam();
+		bindParam.setContact(dto.getContact());
+		//bindParam.setEmail(dto.);
+		//bindParam.setFeatureDTO(featureDTO);
+		bindParam.setMobile(dto.getMobile());
+		bindParam.setPhone(dto.getTelephone());
+		bindParam.setStationId(dto.getStationId());
+		bindParam.setUserId(dto.getTaobaoUserId());
+		bindParam.setWangwang(dto.getLoginId());
+		return bindParam;
+	}
+
+	@Override
+	public boolean updateAdmin(CaiNiaoStationDto station)
+			throws AugeServiceException {
+		if (station == null) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.updateAdmin.param.error:station is null!");
+		}
+		if (station.getStationId() == 0) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.updateAdmin.param.error:dto.getStationId() is null!");
+		}
+		boolean unBindRes = unBindAdmin(station.getStationId());
+		if (!unBindRes) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.updateAdmin.param.error:unBindAdmin error!");
+		}
+		return bindAdmin(station);
 	}
 }

@@ -111,5 +111,29 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) throws AugeServiceException;
+	
+	
+	/**
+	 * 村站解绑合伙人
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean unBindAdmin(Long cainiaoStationId) throws AugeServiceException;
+	
+	/**
+	 * 村站绑定合伙人
+	 * @param station
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean bindAdmin(CaiNiaoStationDto station) throws AugeServiceException;
+	
+	/**
+	 * 村站修改合伙人
+	 * @param station
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean updateAdmin(CaiNiaoStationDto station) throws AugeServiceException;
 
 }

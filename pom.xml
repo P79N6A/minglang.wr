@@ -237,7 +237,7 @@
 			<dependency>
 				<groupId>com.alibaba.cainiao</groupId>
 				<artifactId>cuntaonetwork-client</artifactId>
-				<version>1.0.0</version>
+				<version>1.1.15.separate-SNAPSHOT</version>
 			</dependency>
 
 			<!-- uic -->
