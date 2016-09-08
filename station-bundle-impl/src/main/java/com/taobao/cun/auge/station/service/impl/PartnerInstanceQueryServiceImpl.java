@@ -593,7 +593,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 	
 	@Override
-	public StationStatisticDto getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition){
+	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition){
 		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
 		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
 		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);

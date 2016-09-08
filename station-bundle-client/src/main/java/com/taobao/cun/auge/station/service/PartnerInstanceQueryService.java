@@ -163,7 +163,7 @@ public interface PartnerInstanceQueryService {
 	 * @param orgIdPath
 	 * @return
 	 */
-	public StationStatisticDto getProcessedStationStatusByPartnerOrg(StationStatisticsCondition condition);
+	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition);
 
 
 }
