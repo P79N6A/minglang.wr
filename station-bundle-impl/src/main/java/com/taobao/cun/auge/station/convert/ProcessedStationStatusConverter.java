@@ -1,13 +1,10 @@
 package com.taobao.cun.auge.station.convert;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
-import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
 import com.taobao.cun.auge.station.dto.StationEnterStatusDto;
 import com.taobao.cun.auge.station.dto.StationQuitStatusDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
@@ -23,7 +20,7 @@ public class ProcessedStationStatusConverter {
 		mapping.put("COR_NEW",ProcessedStationStatusEnum.UNPAY_COURSE.getCode());
 		mapping.put("DEC_UNDECORATE",ProcessedStationStatusEnum.UNPAY_DECORATE.getCode());
 		mapping.put("COR_PAY",ProcessedStationStatusEnum.UNSIGNED.getCode());
-		mapping.put("DEC_DECORATING",ProcessedStationStatusEnum.DEC_WAIT_AUDIT.getCode());
+		mapping.put("DEC_WAIT_AUDIT",ProcessedStationStatusEnum.DEC_WAIT_AUDIT.getCode());
 		mapping.put("ED_SERVICING",ProcessedStationStatusEnum.SERVICING.getCode());
 		mapping.put("ING_CLOSING",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
 		mapping.put("ING_CLOSING_TO_AUDIT",ProcessedStationStatusEnum.QUIT_APPLYING.getCode());
@@ -32,6 +29,7 @@ public class ProcessedStationStatusConverter {
 		mapping.put("ING_QUITING_TO_AUDIT_WAIT_THAW",ProcessedStationStatusEnum.QUITAUDITING.getCode());
 		mapping.put("ING_QUITING_AUDIT_PASS_WAIT_THAW",ProcessedStationStatusEnum.CLOSED_WAIT_THAW.getCode());
 		mapping.put("ED_QUIT",ProcessedStationStatusEnum.QUIT.getCode());
+		mapping.put("ED_DECORATING", ProcessedStationStatusEnum.DECORATING.getCode());
 	}
 	
 	
@@ -59,6 +57,7 @@ public class ProcessedStationStatusConverter {
 		enterDto.setConfirmed(getStatusDto(map,ProcessedStationStatusEnum.CONFIRMED));
 		enterDto.setUnpayCourse(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_COURSE));
 		enterDto.setUnpayDecorate(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_DECORATE));
+		enterDto.setDecorating(getStatusDto(map, ProcessedStationStatusEnum.DECORATING));
 		enterDto.setUnsigned(getStatusDto(map,ProcessedStationStatusEnum.UNSIGNED));
 		enterDto.setDecWaitAudit(getStatusDto(map,ProcessedStationStatusEnum.DEC_WAIT_AUDIT));
 		enterDto.setServicing(getStatusDto(map,ProcessedStationStatusEnum.SERVICING));

@@ -17,7 +17,6 @@ public class StationStatisticsCondition implements Serializable{
 	private String stationNum;
 	private String applierName;
 	private String type;
-	private String parentStationId;
 	private String level;
 	
 	public String getOrgId() {
@@ -85,12 +84,6 @@ public class StationStatisticsCondition implements Serializable{
 	}
 	public void setType(String type) {
 		this.type = type;
-	}
-	public String getParentStationId() {
-		return parentStationId;
-	}
-	public void setParentStationId(String parentStationId) {
-		this.parentStationId = parentStationId;
 	}
 	public String getLevel() {
 		return level;

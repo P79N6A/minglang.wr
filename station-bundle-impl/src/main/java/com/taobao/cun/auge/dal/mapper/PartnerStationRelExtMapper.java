@@ -23,8 +23,6 @@ public interface PartnerStationRelExtMapper {
 	
 	List<ProcessedStationStatus> countDecorateStatus(StationStatisticsCondition condition);
 	
-	Integer test();
-	
 	/**
 	 * 查询待冻结保证金的数据
 	 */

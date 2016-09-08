@@ -355,15 +355,13 @@
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n' AND instance.is_deleted='n'
 	INNER JOIN partner p on instance.partner_id= p.id and p.is_deleted ='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
-	<if test="taobaoUserName!=null and taobaoUserName!=''">
-	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
-	</if>
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 	</if>
 	WHERE (concat_ws('_',instance.state) = 'QUIT'
 	OR concat_ws('_',instance.state) = 'CLOSED'
 	OR concat_ws('_',instance.state) = 'SERVICING'
+	OR concat_ws('_',instance.state) = 'DECORATING'
 	)
 	<include refid="station_statistics_query_condition" />
 	
@@ -387,9 +385,7 @@
 	instance.is_deleted= 'n'
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
-	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
-	</if>
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 	</if>
@@ -444,9 +440,7 @@
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted= 'n'
 	INNER JOIN station_decorate decorate on decorate.station_id =s.id AND
 	decorate.is_deleted= 'n' and decorate.is_valid ='Y'
-	<if test="taobaoUserName!=null and taobaoUserName!=''">
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
-	</if>
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 	</if>
@@ -464,10 +458,6 @@
 		</if>
 	</if>
 	GROUP BY decorate.status ;
-	</select>
-	
-	<select id="test" resultType="Integer">
-		select count(*) from partner_station_rel;
 	</select>
 	
 	<sql id="station_statistics_query_condition">
@@ -500,9 +490,6 @@
 	</if>
 	<if test="stationNum!=null and stationNum!=''">
 		and s.station_num = #{stationNum,jdbcType=VARCHAR}
-	</if>
-	<if test="parentStationId!=null and parentStationId!=''">
-		and instance.parent_station_id = #{parentStationId,jdbcType=BIGINT}
 	</if>
 	</sql>
 </mapper>

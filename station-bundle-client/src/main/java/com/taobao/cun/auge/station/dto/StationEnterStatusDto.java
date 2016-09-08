@@ -10,6 +10,8 @@ public class StationEnterStatusDto {
 
 	private StationStatusDto unpayDecorate;
 	
+	private StationStatusDto decorating;
+	
 	private StationStatusDto unsigned;
 	
 	private StationStatusDto decWaitAudit;
@@ -46,6 +48,14 @@ public class StationEnterStatusDto {
 
 	public void setUnpayDecorate(StationStatusDto unpayDecorate) {
 		this.unpayDecorate = unpayDecorate;
+	}
+	
+	public StationStatusDto getDecorating() {
+		return decorating;
+	}
+
+	public void setDecorating(StationStatusDto decorating) {
+		this.decorating = decorating;
 	}
 
 	public StationStatusDto getUnsigned() {
