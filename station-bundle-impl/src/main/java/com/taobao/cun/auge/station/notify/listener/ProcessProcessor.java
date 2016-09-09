@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -302,11 +301,6 @@ public class ProcessProcessor {
 
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			// 不是TPV，且开关未打开，直接返回
-			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType()) && !isOpen()) {
-				return;
-			}
-
 			Long stationId = instance.getStationId();
 
 			// 校验退出申请单是否存在
@@ -390,14 +384,5 @@ public class ProcessProcessor {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-	}
-
-	private Boolean isOpen() {
-		AppResource resource = appResourceBO.queryAppResource("auge_service_switch_center", "switch");
-		if (resource != null && "y".equals(resource.getValue())) {
-			return Boolean.TRUE;
-		} else {
-			return Boolean.FALSE;
-		}
 	}
 }
