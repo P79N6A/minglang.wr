@@ -113,13 +113,18 @@ public class OperationServiceImpl implements OperationService {
 			List<Operation> matchedOperations = Lists.newArrayList();
 			for(Operation operation : operations ){
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
+					Operation matchedOperation = new Operation();
+					 matchedOperation.setCode(operation.getCode());
+					 matchedOperation.setCondition(operation.getCondition());
+					 matchedOperation.setPermission(operation.getPermission());
+					 matchedOperation.setType(operation.getType());
 					if(operation.getValue() != null){
-						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+						matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
 					}
 					if(operation.getName()!= null){
-						operation.setName(valueResolver.resovlerValue(data, operation.getName()));
+						matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
 					}
-					matchedOperations.add(operation);
+					matchedOperations.add(matchedOperation);
 				}
 			}
 			result.put(data.getDataId(), matchedOperations);
@@ -133,13 +138,18 @@ public class OperationServiceImpl implements OperationService {
 		for(Operation operation : operations ){
 			for(OperationData data : datas){
 				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
+					 Operation matchedOperation = new Operation();
+					 matchedOperation.setCode(operation.getCode());
+					 matchedOperation.setCondition(operation.getCondition());
+					 matchedOperation.setPermission(operation.getPermission());
+					 matchedOperation.setType(operation.getType());
 					if(operation.getValue() != null){
-						operation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+						matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
 					}
 					if(operation.getName()!= null){
-						operation.setName(valueResolver.resovlerValue(data, operation.getName()));
+						matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
 					}
-					matchedOperations.add(operation);
+					matchedOperations.add(matchedOperation);
 				}
 			}
 		}
