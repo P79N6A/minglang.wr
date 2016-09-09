@@ -1,9 +1,10 @@
 package com.taobao.cun.auge.station.service;
 
-import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -36,4 +37,32 @@ public interface CaiNiaoService {
 	 * @param dddCainiaoStationFutureDto
 	 */
 	public void updateCainiaoStationFeatureForTPDegree(SyncTPDegreeCainiaoStationDto syncTPDegreeCainiaoStationDto);
+	
+	
+	/**
+	 * 村站解绑合伙人
+	 * @param station
+	 * @throws AugeServiceException
+	 */
+	public void unBindAdmin(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 村站绑定合伙人
+	 * @param udpateStationDto
+	 * @throws AugeServiceException
+	 */
+	public void bindAdmin(SyncAddCainiaoStationDto  syncAddCainiaoStationDto) throws AugeServiceException;
+	
+	/**
+	 * 村站修改合伙人
+	 * @param udpateStationDto
+	 * @throws AugeServiceException
+	 */
+	public void updateAdmin(SyncAddCainiaoStationDto syncAddCainiaoStationDto) throws AugeServiceException;
+	
+	/**
+	 * 淘帮手更换所属合伙人
+	 * @throws AugeServiceException
+	 */
+	public void updateBelongTPForTpa(SyncModifyBelongTPForTpaDto syncModifyBelongTPForTpaDto) throws AugeServiceException;
 }
