@@ -112,20 +112,26 @@ public class OperationServiceImpl implements OperationService {
 		for(PagedOperationData data : datas){
 			List<Operation> matchedOperations = Lists.newArrayList();
 			for(Operation operation : operations ){
-				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
-					Operation matchedOperation = new Operation();
-					 matchedOperation.setCode(operation.getCode());
-					 matchedOperation.setCondition(operation.getCondition());
-					 matchedOperation.setPermission(operation.getPermission());
-					 matchedOperation.setType(operation.getType());
-					if(operation.getValue() != null){
-						matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+				try {
+					if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
+						Operation matchedOperation = new Operation();
+						 matchedOperation.setCode(operation.getCode());
+						 matchedOperation.setCondition(operation.getCondition());
+						 matchedOperation.setPermission(operation.getPermission());
+						 matchedOperation.setType(operation.getType());
+						if(operation.getValue() != null){
+							matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+						}
+						if(operation.getName()!= null){
+							matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
+						}
+						matchedOperations.add(matchedOperation);
 					}
-					if(operation.getName()!= null){
-						matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
-					}
-					matchedOperations.add(matchedOperation);
+				} catch (Exception e) {
+					logger.error("match operation error!operationName:["+operation.getName()+"],operationData:["+JSON.toJSONString(data)+"]",e);
+					//ingore exception
 				}
+			
 			}
 			result.put(data.getDataId(), matchedOperations);
 		}
@@ -137,19 +143,24 @@ public class OperationServiceImpl implements OperationService {
 		List<Operation> matchedOperations = Lists.newArrayList();
 		for(Operation operation : operations ){
 			for(OperationData data : datas){
-				if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
-					 Operation matchedOperation = new Operation();
-					 matchedOperation.setCode(operation.getCode());
-					 matchedOperation.setCondition(operation.getCondition());
-					 matchedOperation.setPermission(operation.getPermission());
-					 matchedOperation.setType(operation.getType());
-					if(operation.getValue() != null){
-						matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+				try {
+					if(permissionMatcher.match(new InnerPermissionData(checkPermissionsResult), operation) && dataConditionMatcher.match(data, operation)){
+						 Operation matchedOperation = new Operation();
+						 matchedOperation.setCode(operation.getCode());
+						 matchedOperation.setCondition(operation.getCondition());
+						 matchedOperation.setPermission(operation.getPermission());
+						 matchedOperation.setType(operation.getType());
+						if(operation.getValue() != null){
+							matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+						}
+						if(operation.getName()!= null){
+							matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
+						}
+						matchedOperations.add(matchedOperation);
 					}
-					if(operation.getName()!= null){
-						matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
-					}
-					matchedOperations.add(matchedOperation);
+				} catch (Exception e) {
+					logger.error("match operation error!operationName:["+operation.getName()+"],operationData:["+JSON.toJSONString(data)+"]",e);
+					//ingore exception
 				}
 			}
 		}
