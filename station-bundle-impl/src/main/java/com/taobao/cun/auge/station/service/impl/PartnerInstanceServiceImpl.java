@@ -81,6 +81,7 @@ import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
+import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -117,6 +118,7 @@ import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -184,6 +186,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
+	
+	@Autowired
+	CaiNiaoService caiNiaoService;
 
 	private void bulidTaobaoUserId(PartnerInstanceDto partnerInstanceDto, StationDto stationDto, PartnerDto partnerDto) {
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
@@ -1611,14 +1616,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException {
 		ValidateUtils.notNull(changeTPDto);
 		try {
+			Long partnerInstanceId = changeTPDto.getId();
+			Long newParentStationId = changeTPDto.getNewParentStationId();
+			
 			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getId());
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
 			}
-			partnerInstanceDto.setParentStationId(changeTPDto.getNewParentStationId());
+			partnerInstanceDto.setParentStationId(newParentStationId);
 			partnerInstanceDto.setOperator(changeTPDto.getOperator());
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
-			//TODO cainiao
+			//菜鸟修改淘帮手归属合伙人关系
+			Long parentParnterInstanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(newParentStationId);
+			SyncModifyBelongTPForTpaDto belongTp =new SyncModifyBelongTPForTpaDto();
+			belongTp.setParentPartnerInstanceId(parentParnterInstanceId);
+			belongTp.setPartnerInstanceId(partnerInstanceId);
+			belongTp.copyOperatorDto(changeTPDto);
+			caiNiaoService.updateBelongTPForTpa(belongTp);
 			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto));
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),

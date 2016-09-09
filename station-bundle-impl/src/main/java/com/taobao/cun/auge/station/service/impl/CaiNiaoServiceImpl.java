@@ -29,6 +29,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
@@ -89,19 +90,26 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, instanceDto.getType().getCode());
 			} else if (PartnerInstanceTypeEnum.TP.equals(instanceDto.getType())) {
 				// 合伙人
-				Long caiNiaostationId = caiNiaoAdapter.addStation(caiNiaoStationDto);
-				if (caiNiaostationId == null) {
-					logger.error(
-							"caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
-					throw new RuntimeException("caiNiaoStationService.saveStation is null ");
+				Long caiNiaoStationId = null;
+				caiNiaoStationId = getCainiaoStationId(instanceDto.getStationDto().getId());
+				if (caiNiaoStationId != null) {//入驻已有服务站
+					caiNiaoStationDto.setStationId(caiNiaoStationId);
+					caiNiaoAdapter.updateAdmin(caiNiaoStationDto);
+				}else {
+					caiNiaoStationId = caiNiaoAdapter.addStation(caiNiaoStationDto);
+					if (caiNiaoStationId == null) {
+						logger.error(
+								"caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
+						throw new RuntimeException("caiNiaoStationService.saveStation is null ");
+					}
+					CuntaoCainiaoStationRelDto relDto = new CuntaoCainiaoStationRelDto();
+					relDto.setObjectId(instanceDto.getStationDto().getId());
+					relDto.setCainiaoStationId(caiNiaoStationId);
+					relDto.setType(CuntaoCainiaoStationRelTypeEnum.STATION);
+					relDto.setIsOwn("y");
+					relDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
+					cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDto);
 				}
-				CuntaoCainiaoStationRelDto relDto = new CuntaoCainiaoStationRelDto();
-				relDto.setObjectId(instanceDto.getStationDto().getId());
-				relDto.setCainiaoStationId(caiNiaostationId);
-				relDto.setType(CuntaoCainiaoStationRelTypeEnum.STATION);
-				relDto.setIsOwn("y");
-				relDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-				cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDto);
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("addCainiaoStation", String.valueOf(partnerInstanceId), e.getMessage());
@@ -297,5 +305,134 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			caiNiaoAdapter.updateStationUserRelFeature(taobaoUserId, featureMap1);
 		}
 
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void unBindAdmin(Long stationId) throws AugeServiceException {
+		if (stationId == null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long cnStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
+		if (cnStationId == null) {
+			String error = getErrorMessage("unBindAdmin", String.valueOf(stationId), "cnStationId is null");
+			logger.error(error);
+			throw new AugeServiceException(error);
+		}
+		try {
+			boolean res  = caiNiaoAdapter.unBindAdmin(cnStationId);
+			if (!res) {
+				throw new RuntimeException("res is false");
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("unBindAdmin", String.valueOf(stationId), e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
+		
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void bindAdmin(SyncAddCainiaoStationDto syncAddCainiaoStationDto) throws AugeServiceException {
+		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() == null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
+		try {
+			logger.info("CaiNiaoServiceImpl bindAdmin partnerInstanceId : {" + partnerInstanceId + "}");
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+			if (instanceDto == null) {
+				throw new AugeServiceException( "partnerInstance is null");
+			}
+			// 同步菜鸟
+			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
+			Long cainiaoStationId = getCainiaoStationId(instanceDto.getStationDto().getId());
+			caiNiaoStationDto.setStationId(cainiaoStationId);
+			caiNiaoAdapter.bindAdmin(caiNiaoStationDto);
+		} catch (Exception e) {
+			String error = getErrorMessage("bindAdmin", String.valueOf(partnerInstanceId), e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
+		
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void updateAdmin(
+			SyncAddCainiaoStationDto syncAddCainiaoStationDto)
+			throws AugeServiceException {
+		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() ==null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
+		
+		try {
+			logger.info("CaiNiaoServiceImpl updateAdmin partnerInstanceId : {" + partnerInstanceId + "}");
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+			if (instanceDto == null) {
+				throw new AugeServiceException( "partnerInstance is null");
+			}
+			Long stationId = instanceDto.getStationDto().getId();
+			Long cainiaoStationId = getCainiaoStationId(stationId);
+			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
+			caiNiaoStationDto.setStationId(cainiaoStationId);
+			caiNiaoAdapter.updateAdmin(caiNiaoStationDto);
+		} catch (Exception e) {
+			String error = getErrorMessage("updateAdmin", String.valueOf(partnerInstanceId), e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
+	}
+
+	@Override
+	public void updateBelongTPForTpa(
+			SyncModifyBelongTPForTpaDto syncModifyBelongTPForTpaDto)
+			throws AugeServiceException {
+		if (syncModifyBelongTPForTpaDto == null || syncModifyBelongTPForTpaDto.getPartnerInstanceId() ==null
+				|| syncModifyBelongTPForTpaDto.getParentPartnerInstanceId() == null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long partnerInstanceId = syncModifyBelongTPForTpaDto.getPartnerInstanceId();
+		Long parentPartnerInstanceId = syncModifyBelongTPForTpaDto.getParentPartnerInstanceId();
+		try {
+			logger.info("CaiNiaoServiceImpl updateBelongTPForTpa partnerInstanceId : {" + partnerInstanceId + "}"+"parentPartnerInstanceId:{"+parentPartnerInstanceId+"}");
+			PartnerInstanceDto tpaInstanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+			if (tpaInstanceDto == null) {
+				throw new AugeServiceException( "tpaInstanceDto is null");
+			}
+			PartnerInstanceDto parentInstanceDto = partnerInstanceBO.getPartnerInstanceById(parentPartnerInstanceId);
+			if (parentInstanceDto == null) {
+				throw new AugeServiceException( "parentInstanceDto is null");
+			}
+			
+			Long tpaStationId = tpaInstanceDto.getStationDto().getId();
+			Long parentStationId = parentInstanceDto.getStationDto().getId();
+			Long cainiaoStationId = getCainiaoStationId(tpaStationId);
+			if (cainiaoStationId != null) {//淘帮手有独立物流地址
+				LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
+				featureMap.put(CaiNiaoAdapter.CTP_TB_UID, String.valueOf(parentInstanceDto.getTaobaoUserId()));
+				featureMap.put(CaiNiaoAdapter.CTP_ORG_STA_ID, String.valueOf(parentStationId));
+				featureMap.put(CaiNiaoAdapter.CTP_TYPE, "CtPA1_0");
+				caiNiaoAdapter.updateStationFeatures(cainiaoStationId, featureMap);
+			}else {//淘帮手没有独立物流地址
+				CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(tpaInstanceDto);
+				Long cainiaoSId = getCainiaoStationId(parentInstanceDto.getStationId());
+				if (cainiaoSId == null) {
+					String error = getErrorMessage("updateBelongTPForTpa", String.valueOf(partnerInstanceId),
+							"ParentStationId no cainiaostation");
+					logger.error(error);
+					throw new AugeServiceException(error);
+				}
+				caiNiaoStationDto.setStationId(cainiaoSId);
+				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("updateBelongTPForTpa", "partnerInstanceId:" + partnerInstanceId +
+		" parentPartnerInstanceId:"+parentPartnerInstanceId, e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
 	}
 }

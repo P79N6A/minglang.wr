@@ -10,7 +10,10 @@ import java.io.Serializable;
 public class ChangeTPDto extends OperatorDto implements Serializable {
 
     private static final long serialVersionUID = -36421095928748724L;
-
+    
+    /**
+     * 实例id
+     */
     private Long id;
 
     private Long newParentStationId;
