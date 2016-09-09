@@ -69,7 +69,9 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		logger.info("partner instance." + JSON.toJSONString(instance));
-		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+		//小二强制停业，且状态是由装修中、或者服务中，变成停业申请中
+		if ((PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+				|| PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(stateChangeEnum))
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
 			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
 			// 已停业，去标

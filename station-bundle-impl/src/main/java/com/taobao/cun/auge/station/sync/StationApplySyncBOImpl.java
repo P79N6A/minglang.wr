@@ -260,7 +260,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 		List<ProtocolTypeEnum> protocolTypeList = Lists.newArrayList(ProtocolTypeEnum.SETTLE_PRO, ProtocolTypeEnum.MANAGE_PRO,
 				ProtocolTypeEnum.PARTNER_QUIT_PRO);
 		ProtocolExample pExample = new ProtocolExample();
-		pExample.createCriteria().andIsDeletedEqualTo("n");
+		pExample.createCriteria().andIsDeletedEqualTo("n").andStateEqualTo("VALID");
 		List<Protocol> pList = protocolMapper.selectByExample(pExample);
 
 		for (ProtocolTypeEnum p : protocolTypeList) {

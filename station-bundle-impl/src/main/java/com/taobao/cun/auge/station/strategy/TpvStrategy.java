@@ -182,16 +182,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		/*if(partnerInstanceQuitDto.getIsQuitStation()) {
-			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-			Station station = stationBO.getStationById(stationId);
-			if (station != null) {
-				if (StringUtils.equals(StationStatusEnum.QUITING.getCode(), station.getStatus())) {
-					stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceQuitDto.getOperator());
-				}
-			}
-		}*/
-		
 	}
 	
 	@Override

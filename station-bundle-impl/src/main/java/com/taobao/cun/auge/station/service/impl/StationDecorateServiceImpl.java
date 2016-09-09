@@ -10,15 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.cainiao.cuntaonetwork.constants.station.StationStatus;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -31,6 +34,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.StationDecorateService;
@@ -57,6 +61,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	AppResourceBO appResourceBO;
+	
+	@Autowired
+	StationBO stationBO;
 	
 	/**
 	 * 淘宝商品图片
@@ -196,6 +203,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 					StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
 				throw new AugeServiceException("当前状态不能提交反馈");
 			}
+			//判断村点是否装修中状态，非装修中状态 不允许反馈
+			Station station=stationBO.getStationById(sd.getStationId());
+			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
+				throw new AugeServiceException("当前村点非装修状态");
+			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
 		} catch (AugeServiceException augeException) {
@@ -328,30 +340,37 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		if(sdDto==null){
 			return;
 		}
-		if (StationDecorateStatusEnum.DONE.getCode().equals(
-				sdDto.getStatus().getCode())) {
-			// 装修完成，允许退出
-			return;
-		} else if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
+		if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
 				sdDto.getStatus().getCode())) {
 			// 装修反馈待审核，需要小二审核完毕才能退出
 			throw new RuntimeException("村点装修状态不允许退出，请先审核装修反馈记录");
-		} else if (StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-				sdDto.getPaymentType().getCode())) {
-			// 自费装修需要判断装修订单，政府出资的不做判断
-			if (StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-					sdDto.getStatus().getCode())) {
-				// 未下单，允许退出
-				return;
-			} else if(StationDecorateStatusEnum.WAIT_PAY.getCode().equals(
-					sdDto.getStatus().getCode())){
-				throw new RuntimeException("存在未付款装修订单，请先关闭订单");
-			}else{
-				// 判断淘宝装修订单状态，非交易关闭或完结状态，不允许退出
-				stationDecorateOrderBO.judgeTcOrderStatusForQuit(
-						new Long(sdDto.getSellerTaobaoUserId()),
-						sdDto.getPartnerUserId());
-			}
-		}
+		} 
+		//其他状态暂时不做判断，走线下流程
+//		if (StationDecorateStatusEnum.DONE.getCode().equals(
+//				sdDto.getStatus().getCode())) {
+//			// 装修完成，允许退出
+//			return;
+//		} else if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
+//				sdDto.getStatus().getCode())) {
+//			// 装修反馈待审核，需要小二审核完毕才能退出
+//			throw new RuntimeException("村点装修状态不允许退出，请先审核装修反馈记录");
+//		} 
+//		else if (StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+//				sdDto.getPaymentType().getCode())) {
+//			// 自费装修需要判断装修订单，政府出资的不做判断
+//			if (StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+//					sdDto.getStatus().getCode())) {
+//				// 未下单，允许退出
+//				return;
+//			} else if(StationDecorateStatusEnum.WAIT_PAY.getCode().equals(
+//					sdDto.getStatus().getCode())){
+//				throw new RuntimeException("存在未付款装修订单，请先关闭订单");
+//			}else{
+//				// 判断淘宝装修订单状态，非交易关闭或完结状态，不允许退出
+//				stationDecorateOrderBO.judgeTcOrderStatusForQuit(
+//						new Long(sdDto.getSellerTaobaoUserId()),
+//						sdDto.getPartnerUserId());
+//			}
+//		}
 	}
 }

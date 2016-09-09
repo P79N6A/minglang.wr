@@ -19,7 +19,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 	private PartnerInstanceStateEnum prePartnerInstanceState;
 
 	public enum ChangeEnum {
-		START_SETTLING, SETTLING_REFUSED, START_DECORATING, START_SERVICING, START_CLOSING, CLOSING_REFUSED, CLOSED, START_QUITTING, QUITTING_REFUSED, QUIT
+		START_SETTLING, SETTLING_REFUSED, START_DECORATING, START_SERVICING, DECORATING_CLOSING, START_CLOSING, CLOSING_REFUSED, CLOSED, START_QUITTING, QUITTING_REFUSED, QUIT
 	}
 
 	public static final PartnerInstanceStateChangeEnum START_SETTLING = new PartnerInstanceStateChangeEnum(ChangeEnum.START_SETTLING,
@@ -36,6 +36,9 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 
 	public static final PartnerInstanceStateChangeEnum START_CLOSING = new PartnerInstanceStateChangeEnum(ChangeEnum.START_CLOSING,
 			"申请停业: '服务中' -> '停业申请中'", PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING);
+	
+	public static final PartnerInstanceStateChangeEnum DECORATING_CLOSING = new PartnerInstanceStateChangeEnum(ChangeEnum.DECORATING_CLOSING,
+			"申请停业: '装修中' -> '停业申请中'", PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.DECORATING);
 
 	public static final PartnerInstanceStateChangeEnum CLOSING_REFUSED = new PartnerInstanceStateChangeEnum(ChangeEnum.CLOSING_REFUSED,
 			"停业申请打回:'停业申请中' ->'服务中'", PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSING);
@@ -59,6 +62,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 		mappings.put(ChangeEnum.START_DECORATING, START_DECORATING);
 		mappings.put(ChangeEnum.START_SERVICING, START_SERVICING);
 		mappings.put(ChangeEnum.START_CLOSING, START_CLOSING);
+		mappings.put(ChangeEnum.DECORATING_CLOSING, DECORATING_CLOSING);
 		mappings.put(ChangeEnum.CLOSING_REFUSED, CLOSING_REFUSED);
 		mappings.put(ChangeEnum.CLOSED, CLOSED);
 		mappings.put(ChangeEnum.START_QUITTING, START_QUITTING);

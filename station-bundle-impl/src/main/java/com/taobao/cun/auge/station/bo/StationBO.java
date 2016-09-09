@@ -50,6 +50,7 @@ public interface StationBO {
      * @throws AugeServiceException
      */
 	public void changeState(Long stationId, StationStatusEnum preStatus, StationStatusEnum postStatus, String operator)throws AugeServiceException;
+	
 	/**
 	 * 新增服务站
 	 * @param stationDto
