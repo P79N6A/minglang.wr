@@ -262,6 +262,15 @@ public class PartnerLifecycleRuleParser {
 			}
 		}
 		
+		if (null != partnerLifecycleRule.getCourseStatus()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getCourseStatus();
+			String itemCode = null == partnerLifecycle.getCourseStatus() ? null : partnerLifecycle.getCourseStatus().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 

@@ -90,6 +90,22 @@
             }
         },
         {
+        	"stationApplyState": "UNPAY_COURSE",
+            "desc": "合伙人station_apply UNPAY_COURSE",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"courseStatus":"NEW"
+            }
+        },
+        {
+        	"stationApplyState": "UNSIGNED",
+            "desc": "合伙人station_apply UNSIGNED",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"courseStatus":"PAY"
+            }
+        },
+        {
             "stationApplyState": "DECORATING",
             "desc": "合伙人station_apply DECORATING",
             "partnerInstanceState": "DECORATING",
