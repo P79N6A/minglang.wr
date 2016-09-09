@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.dal.domain.CloseStationApply;
+import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 
@@ -38,8 +40,23 @@ public class CloseStationApplyConverter {
 		closeStationApply.setOtherReason(closeStationApplyDto.getOtherReason());
 		closeStationApply.setPartnerInstanceId(closeStationApplyDto.getPartnerInstanceId());
 		closeStationApply.setType(closeStationApplyDto.getType() == null ? null:closeStationApplyDto.getType().getCode());
-		
+		if (null != closeStationApplyDto.getInstanceState()) {
+			closeStationApply.setInstanceState(closeStationApplyDto.getInstanceState().getCode());
+		}
 
 		return closeStationApply;
+	}
+	
+	public static CloseStationApplyDto toWorkCloseStationApplyDto(ForcedCloseDto forcedCloseDto,PartnerInstanceStateChangeEnum instanceStateChange) {
+		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
+		closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
+		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
+		closeStationApplyDto.setPartnerInstanceId(forcedCloseDto.getInstanceId());
+		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+		closeStationApplyDto.setOperator(forcedCloseDto.getOperator());
+		closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
+		closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());
+		closeStationApplyDto.setInstanceState(instanceStateChange.getPrePartnerInstanceState());
+		return closeStationApplyDto;
 	}
 }
