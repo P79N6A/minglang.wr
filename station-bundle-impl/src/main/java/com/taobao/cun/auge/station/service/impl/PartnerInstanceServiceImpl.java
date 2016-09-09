@@ -59,7 +59,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  */
 @Service("partnerInstanceService")
-@HSFProvider(serviceInterface = PartnerInstanceService.class)
+@HSFProvider(serviceInterface = PartnerInstanceService.class, serviceVersion = "${hsf.provider.version.partnerInstanceService}")
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -1124,10 +1124,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 记录村点状态变化
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 			return instanceId;
-		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), augeException.toString());
-			logger.error(error, augeException);
-			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), e.getMessage());
 			logger.error(error, e);
@@ -1341,11 +1337,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, rel.getId());
-		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto),
-					augeException.toString());
-			logger.error(error, augeException);
-			throw augeException;
 		} catch (Exception e) {
 			String error = getErrorMessage("updateSettle", JSONObject.toJSONString(partnerInstanceDto), e.getMessage());
 			logger.error(error, e);
