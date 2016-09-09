@@ -47,7 +47,7 @@ public class OperationServiceImpl implements OperationService {
 	 
 	OperationMatcher dataConditionMatcher = new DataConditionMatcher();
 	
-	OperationValueResolver valueResolver = new OperationValueResolver();
+	EmbeddedValueResolver valueResolver = new EmbeddedValueResolver();
 	    
 	@Override
 	public Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCodes,List<PagedOperationData> operationDatas){
@@ -120,10 +120,10 @@ public class OperationServiceImpl implements OperationService {
 						 matchedOperation.setPermission(operation.getPermission());
 						 matchedOperation.setType(operation.getType());
 						if(operation.getValue() != null){
-							matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+							matchedOperation.setValue(valueResolver.resovle(data, operation.getValue()));
 						}
 						if(operation.getName()!= null){
-							matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
+							matchedOperation.setName(valueResolver.resovle(data, operation.getName()));
 						}
 						matchedOperations.add(matchedOperation);
 					}
@@ -151,10 +151,10 @@ public class OperationServiceImpl implements OperationService {
 						 matchedOperation.setPermission(operation.getPermission());
 						 matchedOperation.setType(operation.getType());
 						if(operation.getValue() != null){
-							matchedOperation.setValue(valueResolver.resovlerValue(data, operation.getValue()));
+							matchedOperation.setValue(valueResolver.resovle(data, operation.getValue()));
 						}
 						if(operation.getName()!= null){
-							matchedOperation.setName(valueResolver.resovlerValue(data, operation.getName()));
+							matchedOperation.setName(valueResolver.resovle(data, operation.getName()));
 						}
 						matchedOperations.add(matchedOperation);
 					}

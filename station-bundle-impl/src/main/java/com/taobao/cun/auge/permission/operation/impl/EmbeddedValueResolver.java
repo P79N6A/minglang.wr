@@ -5,11 +5,11 @@ import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 
 import com.taobao.cun.auge.permission.operation.OperationData;
 
-public class OperationValueResolver {
+public class EmbeddedValueResolver {
 
 	private PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{","}");
 	
-	String resovlerValue(OperationData operationData,String value){
+	String resovle(OperationData operationData,String value){
 		return propertyPlaceholderHelper.replacePlaceholders(value, new PlaceholderResolver(){
 
 			@Override
