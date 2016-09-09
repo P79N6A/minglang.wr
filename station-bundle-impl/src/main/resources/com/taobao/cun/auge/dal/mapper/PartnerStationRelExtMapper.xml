@@ -418,6 +418,7 @@
 	</if>
 	WHERE
 	instance.is_deleted= 'n'
+	AND instance.state='DECORATING'
 	<include refid="station_statistics_query_condition" />
 	
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >

@@ -325,8 +325,7 @@ public final class PartnerInstanceConverter {
 		}
 
 		StationApplyStateEnum stationApplyState = condition.getStationApplyState();
-		boolean isCourseStatus=StationApplyStateEnum.UNPAY_COURSE.equals(stationApplyState)||StationApplyStateEnum.UNSIGNED.equals(stationApplyState);
-		if (null != stationApplyState && !isCourseStatus) {
+		if (null != stationApplyState) {
 			PartnerLifecycleRule rule = PartnerLifecycleRuleParser.parsePartnerLifecycleRule(partnerType,
 					stationApplyState.getCode());
 
@@ -393,14 +392,10 @@ public final class PartnerInstanceConverter {
 			if(null!=decorate){
 				example.setDecorateStatus(decorate.getValue());
 			}
-		}
-
-		if(isCourseStatus){
-			if(StationApplyStateEnum.UNPAY_COURSE.equals(stationApplyState)){
-				example.setCourseStatus(PartnerLifecycleCourseStatusEnum.NEW.getCode());
-			}
-			else if(StationApplyStateEnum.UNSIGNED.equals(stationApplyState)){
-				example.setCourseStatus(PartnerLifecycleCourseStatusEnum.PAY.getCode());
+			
+			PartnerLifecycleRuleItem course=rule.getCourseStatus();
+			if(null!=course){
+				example.setCourseStatus(course.getValue());
 			}
 		}
 		
