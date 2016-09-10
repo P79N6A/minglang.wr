@@ -163,7 +163,6 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		ValidateUtils.notNull(partnerInstanceDto.getId());
 		ValidateUtils.notNull(partnerInstanceDto.getTaobaoUserId());
 		ValidateUtils.notNull(partnerInstanceDto.getStationId());
-		ValidateUtils.notNull(partnerInstanceDto.getTaobaoUserId());
 
 		StationDecorateTypeEnum decorate = partnerInstanceDto.getStationDecorateTypeEnum();
 		StationDecoratePaymentTypeEnum pay = partnerInstanceDto.getStationDecoratePaymentTypeEnum();
