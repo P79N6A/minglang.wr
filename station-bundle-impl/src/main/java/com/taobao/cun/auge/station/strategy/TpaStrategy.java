@@ -383,4 +383,10 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			throw new AugeServiceException("资产未归还。");
 		}
 	}
+
+	@Override
+	public void validateOtherPartnerQuit(Long instanceId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

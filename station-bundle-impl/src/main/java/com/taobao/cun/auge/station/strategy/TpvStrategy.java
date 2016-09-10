@@ -346,4 +346,10 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	public void validateAssetBack(Long instanceId){
 		
 	}
+
+	@Override
+	public void validateOtherPartnerQuit(Long instanceId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

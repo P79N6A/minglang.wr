@@ -92,4 +92,11 @@ public interface PartnerInstanceStrategy {
 	 * @param instanceId
 	 */
 	public void validateAssetBack(Long instanceId);
+
+	/**
+	 * 校验村点上其他人是否都处于退出待解冻，已退出状态
+	 * 
+	 * @param instanceId
+	 */
+	public void validateOtherPartnerQuit(Long instanceId);
 }

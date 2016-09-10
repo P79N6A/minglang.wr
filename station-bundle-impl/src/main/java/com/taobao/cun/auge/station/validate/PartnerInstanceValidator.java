@@ -9,6 +9,7 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -35,7 +36,7 @@ public class PartnerInstanceValidator {
 	 * @param instance
 	 * @throws AugeServiceException
 	 */
-	public void validateApplyQuitPreCondition(PartnerStationRel instance) throws AugeServiceException {
+	public void validateApplyQuitPreCondition(PartnerStationRel instance,QuitStationApplyDto quitDto) throws AugeServiceException {
 		Long instanceId = instance.getId();
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
@@ -54,6 +55,12 @@ public class PartnerInstanceValidator {
 		//校验资产是否归还
 		partnerInstanceHandler.validateAssetBack(PartnerInstanceTypeEnum.valueof(instance.getType()),
 				instanceId);
+		
+		//校验是否可以同时撤点
+		Boolean isQuitStation = quitDto.getIsQuitStation();
+		//如果选择同时撤点，校验村点上其他人是否都处于退出待解冻、已退出状态
+		if(Boolean.TRUE.equals(isQuitStation)){
+			partnerInstanceHandler.validateOtherPartnerQuit(PartnerInstanceTypeEnum.valueof(instance.getType()),instanceId);
+		}
 	}
-
 }

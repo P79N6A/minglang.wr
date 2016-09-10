@@ -143,4 +143,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public void validateAssetBack(PartnerInstanceTypeEnum typeEnum, Long instanceId) {
 		strategy.get(typeEnum.getCode()).validateAssetBack(instanceId);
 	}
+
+	public void validateOtherPartnerQuit(PartnerInstanceTypeEnum typeEnum, Long instanceId) {
+		strategy.get(typeEnum.getCode()).validateOtherPartnerQuit(instanceId);
+	}
 }

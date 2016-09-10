@@ -1121,7 +1121,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-			partnerInstanceValidator.validateApplyQuitPreCondition(instance);
+			partnerInstanceValidator.validateApplyQuitPreCondition(instance,quitDto);
 
 			// 保存退出申请单
 			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));

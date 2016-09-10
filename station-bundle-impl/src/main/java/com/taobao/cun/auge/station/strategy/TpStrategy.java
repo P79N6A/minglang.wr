@@ -77,6 +77,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpStrategy")
@@ -122,6 +123,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	PartnerAssetService partnerAssetService;
+	
+	@Autowired
+    PartnerInstanceQueryService partnerInstanceQueryService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -535,6 +539,14 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
 		if(!isBackAsset){
 			throw new AugeServiceException("资产未归还。");
+		}
+	}
+
+	@Override
+	public void validateOtherPartnerQuit(Long instanceId) {
+		boolean isOtherPartnerQuit = partnerInstanceQueryService.isOtherPartnerQuit(instanceId);
+		if(!isOtherPartnerQuit){
+			throw new AugeServiceException("村点上存在未退出的合伙人，不能撤点。");
 		}
 	}
 }
