@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.partner.impl;
+package com.taobao.cun.auge.partner.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

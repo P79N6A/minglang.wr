@@ -27,6 +27,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -118,6 +119,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	AppResourceBO appResourceBO;
+	
+	@Autowired
+	PartnerAssetService partnerAssetService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -524,5 +528,13 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), instanceId, operatorDto, remark);
+	}
+	
+	@Override
+	public void validateAssetBack(Long instanceId){
+		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
+		if(!isBackAsset){
+			throw new AugeServiceException("资产未归还。");
+		}
 	}
 }

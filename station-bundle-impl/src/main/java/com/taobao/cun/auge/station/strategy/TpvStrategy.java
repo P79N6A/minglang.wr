@@ -341,4 +341,9 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), instanceId, operatorDto, remark);
 	}
+	
+	@Override
+	public void validateAssetBack(Long instanceId){
+		
+	}
 }

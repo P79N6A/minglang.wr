@@ -123,6 +123,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.auge.station.validate.PartnerInstanceValidator;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -189,6 +190,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	CaiNiaoService caiNiaoService;
+	
+	@Autowired
+	PartnerInstanceValidator partnerInstanceValidator;
 
 	private void bulidTaobaoUserId(PartnerInstanceDto partnerInstanceDto, StationDto stationDto, PartnerDto partnerDto) {
 		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
@@ -1117,7 +1121,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-			validateApplyQuitPreCondition(instance);
+			partnerInstanceValidator.validateApplyQuitPreCondition(instance);
 
 			// 保存退出申请单
 			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
@@ -1151,28 +1155,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-	}
-
-	/**
-	 * 校验申请退出的前置条件
-	 *
-	 * @param instance
-	 * @throws AugeServiceException
-	 */
-	private void validateApplyQuitPreCondition(PartnerStationRel instance) throws AugeServiceException {
-		Long instanceId = instance.getId();
-		// 校验是否已经存在退出申请单
-		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
-		if (quitStationApply != null) {
-			throw new RuntimeException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST.getDesc());
-		}
-
-		// 校验是否存在未结束的订单
-		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
-		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
-
-		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-		partnerInstanceHandler.validateExistChildrenForQuit(PartnerInstanceTypeEnum.valueof(instance.getType()), instanceId);
 	}
 
 	private String buildOperatorName(OperatorDto operatorDto) {

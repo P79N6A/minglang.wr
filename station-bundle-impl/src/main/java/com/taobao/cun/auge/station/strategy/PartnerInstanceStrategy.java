@@ -85,4 +85,11 @@ public interface PartnerInstanceStrategy {
 	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
 	
 	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
+
+	/**
+	 * 校验资产是否已经归还
+	 * 
+	 * @param instanceId
+	 */
+	public void validateAssetBack(Long instanceId);
 }

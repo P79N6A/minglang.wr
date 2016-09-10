@@ -22,6 +22,7 @@ import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -101,6 +102,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	ProcessProcessor processProcessor;
+	
+	@Autowired
+	PartnerAssetService partnerAssetService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -369,6 +373,14 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 			processProcessor.quitApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
 			throw new AugeServiceException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void validateAssetBack(Long instanceId){
+		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
+		if(!isBackAsset){
+			throw new AugeServiceException("资产未归还。");
 		}
 	}
 }
