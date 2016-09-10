@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
@@ -33,9 +32,6 @@ public class StationServiceImpl implements StationService{
 	
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
-	
-	@Autowired
-	PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
