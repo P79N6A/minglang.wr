@@ -43,6 +43,7 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -352,6 +353,18 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIsDeletedEqualTo("n");
 		return partnerStationRelMapper.selectByExample(example);
 	}
+	
+	@Override
+	public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent) {
+		ValidateUtils.notNull(stationId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsCurrentEqualTo(isCurrent);
+		criteria.andIsDeletedEqualTo("n");
+		return partnerStationRelMapper.selectByExample(example);
+	}
+	
 
 	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);
@@ -611,7 +624,23 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
-		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, "n");
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.N.getCode());
+		if (psRels.size() < 1){
+			return null;
+		}
+		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>();
+		for (PartnerStationRel psRel : psRels){
+			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+			Station station = stationBO.getStationById(psRel.getStationId());
+			partnerInstanceDtos.add(PartnerInstanceConverter.convert(psRel, station, partner));
+		}
+		return partnerInstanceDtos;
+	}
+
+	@Override
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(
+			Long stationId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByStationId(stationId, PartnerInstanceIsCurrentEnum.N.getCode());
 		if (psRels.size() < 1){
 			return null;
 		}

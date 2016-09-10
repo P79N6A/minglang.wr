@@ -621,5 +621,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(partnerId);
 		return partnerInstanceBO.getHistoryPartnerInstanceByPartnerId(partnerId);
 	}
+	
+	@Override
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
+		ValidateUtils.notNull(stationId);
+		return partnerInstanceBO.getHistoryPartnerInstanceByStationId(stationId);
+	}
 
 }

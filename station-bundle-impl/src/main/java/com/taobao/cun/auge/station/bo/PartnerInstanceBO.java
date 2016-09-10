@@ -50,6 +50,15 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public List<PartnerStationRel> getPartnerStationRelByPartnerId(Long partnerId, String isCurrent);
+	
+	/**
+	 *
+	 * @param stationId
+	 * @param isCurrent
+	 * @return
+	 */
+	public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent);
+	
 
 	/**
 	 * 根据stationapplyId查询实例id
@@ -271,5 +280,10 @@ public interface PartnerInstanceBO {
 	 * 获得当前人的历史对应关系
 	 */
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	
+	/**
+	 * 获得当前服务站的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
 
 }
