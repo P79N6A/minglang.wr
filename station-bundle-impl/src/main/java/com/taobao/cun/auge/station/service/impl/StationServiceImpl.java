@@ -72,6 +72,7 @@ public class StationServiceImpl implements StationService{
 		// 校验村点上所有人是否都是退出待解冻、已退出的状态
 		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
 		if(!isAllPartnerQuit){
+			logger.warn("存在非退出，或者退出待解冻的合伙人，不可以撤点");
 			throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
 		}
 
