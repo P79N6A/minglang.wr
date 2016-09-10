@@ -23,16 +23,16 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("stationService")
 @HSFProvider(serviceInterface = StationService.class)
-public class StationServiceImpl implements StationService{
-	
+public class StationServiceImpl implements StationService {
+
 	private static final Logger logger = LoggerFactory.getLogger(StationService.class);
-	
+
 	@Autowired
 	StationBO stationBO;
-	
+
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
-	
+
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
 
@@ -42,23 +42,23 @@ public class StationServiceImpl implements StationService{
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void auditQuitStation(Long stationId, ProcessApproveResultEnum approveResult) throws AugeServiceException {
-		if(null == stationId){
+		if (null == stationId) {
 			logger.error("stationId is null");
 			throw new IllegalArgumentException("stationId is null");
 		}
-		
-		//使用默认的系统操作人
+
+		// 使用默认的系统操作人
 		OperatorDto operatorDto = OperatorDto.defaultOperator();
 		String operator = operatorDto.getOperator();
-		
-		//审批结果
+
+		// 审批结果
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			//FIXME FHH 关闭物流站
-		}else{
-			//删除撤点申请单
+			// FIXME FHH 关闭物流站
+		} else {
+			// 删除撤点申请单
 			shutDownStationApplyBO.deleteShutDownStationApply(stationId, operator);
-			//村点状态变更为已停业
+			// 村点状态变更为已停业
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.CLOSED, operator);
 		}
 	}
@@ -71,7 +71,7 @@ public class StationServiceImpl implements StationService{
 		Long stationId = shutDownDto.getStationId();
 		// 校验村点上所有人是否都是退出待解冻、已退出的状态
 		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
-		if(!isAllPartnerQuit){
+		if (!isAllPartnerQuit) {
 			logger.warn("存在非退出，或者退出待解冻的合伙人，不可以撤点");
 			throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
 		}
@@ -83,7 +83,7 @@ public class StationServiceImpl implements StationService{
 				shutDownDto.getOperator());
 
 		// 插入启动撤点流程的任务
-		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId,
-				shutDownDto,shutDownDto.getReason());
+		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId, shutDownDto,
+				shutDownDto.getReason());
 	}
 }
