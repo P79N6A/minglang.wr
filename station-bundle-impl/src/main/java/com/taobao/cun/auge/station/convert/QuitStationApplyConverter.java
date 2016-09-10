@@ -19,8 +19,9 @@ public final class QuitStationApplyConverter {
 
 		quitStationApply.setRevocationAppFormFileName(quitDto.getRevocationAppFormFileName());
 		quitStationApply.setOtherDescription(quitDto.getOtherDescription());
-		//因为前面已经校验了，资产是否归还，不归还，是不让申请退出的
-		quitStationApply.setAssetType(AssertUseStateEnum.HAS_RETURN.getCode());
+		if (null != quitDto.getAssertUseState()) {
+			quitStationApply.setAssetType(quitDto.getAssertUseState().getCode());
+		}
 		quitStationApply.setLoanHasClose(quitDto.isLoanHasClose() ? "y" : "n");
 		quitStationApply.setState("FINISHED");
 		quitStationApply.setSubmittedPeopleName(operatorName);
