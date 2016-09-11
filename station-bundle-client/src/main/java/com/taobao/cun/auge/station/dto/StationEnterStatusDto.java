@@ -1,30 +1,23 @@
 package com.taobao.cun.auge.station.dto;
 
 public class StationEnterStatusDto {
-
-	private StationStatusDto sumitted;
 	
 	private StationStatusDto confirmed;
 	
-	private StationStatusDto unpayCourse;
-
-	private StationStatusDto unpayDecorate;
-	
 	private StationStatusDto decorating;
 	
+	private StationStatusDto unpayDecorate;
+	
+	private StationStatusDto unpayCourse;
+
 	private StationStatusDto unsigned;
+	
+	private StationStatusDto decFeedingBack;
 	
 	private StationStatusDto decWaitAudit;
 	
 	private StationStatusDto servicing;
 
-	public StationStatusDto getSumitted() {
-		return sumitted;
-	}
-
-	public void setSumitted(StationStatusDto sumitted) {
-		this.sumitted = sumitted;
-	}
 
 	public StationStatusDto getConfirmed() {
 		return confirmed;
@@ -82,5 +75,14 @@ public class StationEnterStatusDto {
 		this.servicing = servicing;
 	}
 
+	public StationStatusDto getDecFeedingBack() {
+		return decFeedingBack;
+	}
+
+	public void setDecFeedingBack(StationStatusDto decFeedingBack) {
+		this.decFeedingBack = decFeedingBack;
+	}
+
+	
 	
 }

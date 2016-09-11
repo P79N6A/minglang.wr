@@ -48,6 +48,7 @@ public class StationApplyStateEnum implements Serializable {
 		//维修状态
 		public static final StationApplyStateEnum UNPAY_DECORATE=new StationApplyStateEnum("UNPAY_DECORATE","待缴纳装修基金");
 		public static final StationApplyStateEnum DEC_WAIT_AUDIT=new StationApplyStateEnum("DEC_WAIT_AUDIT","装修反馈待审核");
+		public static final StationApplyStateEnum DEC_FEEDING_BACK=new StationApplyStateEnum("DEC_FEEDING_BACK","待装修反馈");
 		
 		//培训状态
 		public static final StationApplyStateEnum UNPAY_COURSE=new StationApplyStateEnum("UNPAY_COURSE","待购买培训基金");
@@ -95,6 +96,7 @@ public class StationApplyStateEnum implements Serializable {
 		mappings.put("DEC_WAIT_AUDIT", DEC_WAIT_AUDIT);
 		mappings.put("UNPAY_COURSE", UNPAY_COURSE);
 		mappings.put("UNSIGNED", UNSIGNED);
+		mappings.put("DEC_FEEDING_BACK", DEC_FEEDING_BACK);
 
 	}
 	private String code;
