@@ -382,12 +382,13 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 
 	@Override
-	public void dispatchApplyInExamPaper(Long userId) {
+	public void dispatchApplyInExamPaper(Long userId, String taobaoNick) {
 		Assert.notNull(userId);
 		ExamDispatchDto dto = new ExamDispatchDto();
 		dto.setDispatcher("SYSTEM");
 		dto.setPaperId(new Long(paperId));
 		dto.setUserId(userId);
+		dto.setTaobaoNick(taobaoNick);
 		ResultModel<Boolean> result = examUserDispatchService.dispatchExam(dto);
 		if (!result.isSuccess()) {
 			throw new RuntimeException("dispatch examPaper fail:"

@@ -40,5 +40,5 @@ public interface PartnerPeixunBO {
 	
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
 	
-	public void dispatchApplyInExamPaper(Long userId);
+	public void dispatchApplyInExamPaper(Long userId, String taobaoNick);
 }

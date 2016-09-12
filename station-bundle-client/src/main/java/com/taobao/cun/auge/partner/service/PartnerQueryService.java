@@ -12,7 +12,7 @@ public interface PartnerQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
 	
 	/**
 	 * 根据partnerId查询合伙人信息
@@ -21,6 +21,15 @@ public interface PartnerQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerDto queryPartner(Long partnerId) throws AugeServiceException;
+	PartnerDto queryPartner(Long partnerId) throws AugeServiceException;
+
+	/**
+	 * 根据stationId查询当前站点的合伙人信息
+	 *
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	PartnerDto queryPartnerByStationId(Long stationId) throws AugeServiceException;
 	
 }
