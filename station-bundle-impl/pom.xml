@@ -287,6 +287,10 @@
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>exam-client</artifactId>
 		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>dowjones.service.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
