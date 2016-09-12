@@ -369,10 +369,12 @@
 			<dependency>
 				<groupId>com.alibaba.platform.shared</groupId>
 				<artifactId>acl.api</artifactId>
+				<version>1.2.22</version>
 			</dependency>
 			<dependency>
 			    <groupId>com.alibaba.platform.shared</groupId>
 			    <artifactId>buc.uc.api</artifactId>
+			    <version>0.8.57</version>
 		    </dependency>
 		</dependencies>
 	</dependencyManagement>
