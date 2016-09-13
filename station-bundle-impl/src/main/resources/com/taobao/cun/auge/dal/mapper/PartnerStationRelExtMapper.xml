@@ -435,8 +435,6 @@
 	<select id="countDecorateStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
 	SELECT concat_ws("_","DEC",decorate.status) as status,count(1) as count
 	FROM partner_station_rel instance
-	INNER JOIN partner_lifecycle_items life on life.partner_instance_id=
-	instance.id AND life.is_deleted= 'n' AND instance.is_deleted= 'n'
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted= 'n'
 	INNER JOIN station_decorate decorate on decorate.station_id =s.id AND
@@ -445,8 +443,7 @@
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 	</if>
-	WHERE life.current_step ='PROCESSING'
-	AND life.business_type='DECORATING'
+	WHERE instance.is_deleted= 'n' 
 	AND instance.state='DECORATING'
 	<include refid="station_statistics_query_condition" />
 	
