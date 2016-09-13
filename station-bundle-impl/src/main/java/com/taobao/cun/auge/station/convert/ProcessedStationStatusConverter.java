@@ -59,7 +59,7 @@ public class ProcessedStationStatusConverter {
 		enterDto.setUnpayDecorate(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_DECORATE));
 		enterDto.setUnpayCourse(getStatusDto(map,ProcessedStationStatusEnum.UNPAY_COURSE));
 		enterDto.setUnsigned(getStatusDto(map,ProcessedStationStatusEnum.UNSIGNED));
-		enterDto.setUnsigned(getStatusDto(map,ProcessedStationStatusEnum.DEC_FEEDING_BACK));
+		enterDto.setDecFeedingBack(getStatusDto(map,ProcessedStationStatusEnum.DEC_FEEDING_BACK));
 		enterDto.setDecWaitAudit(getStatusDto(map,ProcessedStationStatusEnum.DEC_WAIT_AUDIT));
 		enterDto.setServicing(getStatusDto(map,ProcessedStationStatusEnum.SERVICING));
 		
