@@ -43,8 +43,7 @@ public interface GeneralTaskSubmitService {
 	 * @param stationApplyId
 	 * @param stateChangeEvent
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId,
-			PartnerInstanceStateChangeEvent stateChangeEvent);
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, OperatorDto operatorDto, String remark);
 
 	/**
 	 * 发短信

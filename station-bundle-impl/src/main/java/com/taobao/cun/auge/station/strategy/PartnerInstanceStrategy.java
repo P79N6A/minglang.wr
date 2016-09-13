@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.strategy;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -80,4 +81,8 @@ public interface PartnerInstanceStrategy {
 	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException;
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
+	
+	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
+	
+	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
 }

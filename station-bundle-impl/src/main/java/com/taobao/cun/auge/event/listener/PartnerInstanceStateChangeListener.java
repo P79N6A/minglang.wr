@@ -66,19 +66,13 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		logger.info("partner instance." + JSON.toJSONString(instance));
 		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
-			ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
-			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
-
+			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
-			// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-			generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), stateChangeEvent);
-			//服务中
+			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			

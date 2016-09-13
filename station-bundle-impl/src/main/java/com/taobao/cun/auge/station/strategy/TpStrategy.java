@@ -68,6 +68,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -469,5 +470,21 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+	}
+
+	@Override
+	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
 	}
 }
