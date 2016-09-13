@@ -156,6 +156,8 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		stationDecorateDto.setStationId(partnerInstanceDto.getStationId());
 		stationDecorateDto.setPartnerUserId(taobaoUserId);
+		stationDecorateDto.setDecorateType(partnerInstanceDto.getStationDecorateTypeEnum());
+		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
 	}
 
