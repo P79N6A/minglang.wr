@@ -35,6 +35,20 @@
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
         </dependency>
+        <dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

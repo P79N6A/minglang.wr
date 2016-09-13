@@ -155,9 +155,17 @@
 			life.system
 		</if>
 		
-		from partner_station_rel instance
+		  from partner_station_rel instance
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
 			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		
+		<if test="courseStatus !=null and courseStatus !=''">
+        left join partner_course_record course on instance.taobao_user_id=course.partner_user_id and course.is_deleted='n' and course.course_type='APPLY_IN'
+ 		</if>
+ 		
+        <if test="decorateStatus != null and decorateStatus !=''">
+        left join station_decorate decorate on instance.taobao_user_id=decorate.partner_user_id and decorate.is_deleted='n' and decorate.is_valid='y'
 		</if>
 		
 		,partner p,station s,cuntao_org org
@@ -180,6 +188,14 @@
 		<if test="partnerState == 'SETTLING' or partnerState == 'CLOSING' or partnerState == 'QUITING'" >
 			and instance.id = life.partner_instance_id
 		</if>
+		
+		<if test="courseStatus !=null and courseStatus !=''">
+        	and course.status=#{courseStatus,jdbcType=VARCHAR}
+    	</if>
+ 
+    	<if test="decorateStatus != null and decorateStatus !=''">
+    	    and decorate.status=#{decorateStatus,jdbcType=VARCHAR}
+    	</if>
 		
 		<include refid="partner_station_query_condition" />
 		
@@ -328,4 +344,150 @@
 		and psr.service_end_time <= #{serviceEndTime,jdbcType=TIMESTAMP}
 	 ]]>
    </select>
+   <resultMap id="StationStatusMap" type="com.taobao.cun.auge.dal.domain.ProcessedStationStatus">
+	<result column="status" jdbcType="VARCHAR" property="status" />
+	<result column="count" jdbcType="INTEGER" property="count" />
+</resultMap>
+
+	<select id="countProcessedStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
+	SELECT concat_ws('_',"ED",instance.state) as status,count(1) as count
+	FROM partner_station_rel instance
+	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n' AND instance.is_deleted='n'
+	INNER JOIN partner p on instance.partner_id= p.id and p.is_deleted ='n'
+	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
+	WHERE (concat_ws('_',instance.state) = 'QUIT'
+	OR concat_ws('_',instance.state) = 'CLOSED'
+	OR concat_ws('_',instance.state) = 'SERVICING'
+	OR concat_ws('_',instance.state) = 'DECORATING'
+	)
+	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
+	GROUP BY concat_ws('_',instance.state);
+	</select>
+		
+	<select id="countProcessingStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
+	SELECT
+	concat_ws('_',"ING",instance.state,life.settled_protocol,life.role_approve,life.bond,life.system) as status,count(1) as count
+	FROM partner_station_rel instance
+	INNER JOIN partner_lifecycle_items life on
+	life.partner_instance_id=instance.id AND life.is_deleted= 'n' AND
+	instance.is_deleted= 'n'
+	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
+	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
+	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
+	WHERE life.current_step ='PROCESSING'
+	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
+	GROUP BY
+	concat_ws('_',instance.state,life.settled_protocol,life.role_approve,life.bond,life.system)
+	</select>
+		
+	<select id="countCourseStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
+	SELECT concat_ws("_","COR",course.status) as status,count(1) as count
+	FROM partner_station_rel instance
+	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n' 
+	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted='n'
+	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
+	INNER JOIN partner_course_record course on course.partner_user_id =
+	p.taobao_user_id AND course.is_deleted= 'n' and
+	course.course_type='APPLY_IN'
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
+	WHERE
+	instance.is_deleted= 'n'
+	AND instance.state='DECORATING'
+	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
+	GROUP BY course.status ;
+	</select>
+	
+	<select id="countDecorateStatus" resultMap="StationStatusMap" parameterType="com.taobao.cun.auge.station.condition.StationStatisticsCondition">
+	SELECT concat_ws("_","DEC",decorate.status) as status,count(1) as count
+	FROM partner_station_rel instance
+	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
+	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted= 'n'
+	INNER JOIN station_decorate decorate on decorate.station_id =s.id AND
+	decorate.is_deleted= 'n' and decorate.is_valid ='Y'
+	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+	</if>
+	WHERE instance.is_deleted= 'n' 
+	AND instance.state='DECORATING'
+	<include refid="station_statistics_query_condition" />
+	
+	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
+		<if test="level != null and  level=='SP'">
+	   	 and level.expected_level is not null
+		</if>
+		<if test="level != null and level != '' and  level != 'SP'">
+	   	 and level.current_level = #{level,jdbcType=VARCHAR}
+		</if>
+	</if>
+	GROUP BY decorate.status ;
+	</select>
+	
+	<sql id="station_statistics_query_condition">
+	<if test="orgId!=null and orgId!=''">
+		and concat(org.temp_full_id_path, '/') like concat(#{orgId,jdbcType=VARCHAR}, '/%')
+	</if>
+	<if test="stationName!=null and stationName!=''">
+		and s.name like concat('%', #{stationName,jdbcType=VARCHAR}, '%')
+	</if>
+	<if test="state!=null and state!=''">
+		and instance.state = #{state,jdbcType=VARCHAR}
+	</if>
+	<if test="taobaoUserName!=null and taobaoUserName!=''">
+		and p.taobao_nick = #{taobaoUserName,jdbcType=VARCHAR}
+	</if>
+	<if test="province!=null and province!=''">
+		and s.province = #{province,jdbcType=VARCHAR}
+	</if>
+	<if test="city!=null and city!=''">
+		and s.city = #{city,jdbcType=VARCHAR}
+	</if>
+	<if test="county!=null and county!=''">
+		and s.county = #{county,jdbcType=VARCHAR}
+	</if>
+	<if test="town!=null and town!=''">
+		and s.town = #{town,jdbcType=VARCHAR}
+	</if>
+	<if test="type!=null and type!=''">
+		and instance.type = #{type,jdbcType=VARCHAR}
+	</if>
+	<if test="stationNum!=null and stationNum!=''">
+		and s.station_num = #{stationNum,jdbcType=VARCHAR}
+	</if>
+	</sql>
 </mapper>

@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,7 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
@@ -44,10 +47,12 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
+import com.taobao.cun.auge.station.convert.ProcessedStationStatusConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -61,10 +66,12 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthStatDateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -75,6 +82,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessedStationStatusEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -248,7 +256,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			if (null == stationApplyState) {
 				buildLifecycleItems(page);
 			}
-			return PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+			PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+			return success;
 		} catch (Exception e) {
 			String error = getErrorMessage("queryByPage", JSONObject.toJSONString(pageCondition), e.getMessage());
 			logger.error(error, e);
@@ -581,6 +590,21 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+	
+	@Override
+	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition){
+		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
+		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
+		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
+		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(condition);
+		List<ProcessedStationStatus> whole=new ArrayList<ProcessedStationStatus>();
+		whole.addAll(processingList);
+		whole.addAll(processedList);
+		whole.addAll(courseList);
+		whole.addAll(decorateList);
+		StationStatisticDto statusDtoList = ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
+		return statusDtoList;
 	}
 
 }
