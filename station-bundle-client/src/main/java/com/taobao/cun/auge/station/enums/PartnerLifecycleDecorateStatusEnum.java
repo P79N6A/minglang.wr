@@ -14,12 +14,17 @@ public class PartnerLifecycleDecorateStatusEnum  implements Serializable {
 	private static final long serialVersionUID = -119918219648000754L;
 	public static final PartnerLifecycleDecorateStatusEnum N  = new PartnerLifecycleDecorateStatusEnum("N", "未装修");
  	public static final PartnerLifecycleDecorateStatusEnum Y = new PartnerLifecycleDecorateStatusEnum("Y", "已装修");
+ 	
+ 	public static final PartnerLifecycleDecorateStatusEnum UNDECORATE  = new PartnerLifecycleDecorateStatusEnum("UNDECORATE", "待缴纳装修基金");
+ 	public static final PartnerLifecycleDecorateStatusEnum DECORATING = new PartnerLifecycleDecorateStatusEnum("DECORATING", "装修反馈待审核");
 	
 	private static final Map<String, PartnerLifecycleDecorateStatusEnum> mappings = new HashMap<String, PartnerLifecycleDecorateStatusEnum>();
 	
 	static {
 		mappings.put("N", N);
 		mappings.put("Y", Y);
+		mappings.put("UNDECORATE", UNDECORATE);
+		mappings.put("DECORATING", DECORATING);
 	}
 
 	private String code;

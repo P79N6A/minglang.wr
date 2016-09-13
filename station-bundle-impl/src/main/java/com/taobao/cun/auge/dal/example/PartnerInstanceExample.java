@@ -101,6 +101,31 @@ public class PartnerInstanceExample implements Serializable {
 	// 系统操作操作符
 	private boolean systemOp;
 	
+	// ======培训和课程========
+	
+	//培训状态
+	private String courseStatus;
+	
+	//课程状态
+	private String decorateStatus;
+	
+	
+	public String getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(String courseStatus) {
+		this.courseStatus = courseStatus;
+	}
+
+	public String getDecorateStatus() {
+		return decorateStatus;
+	}
+
+	public void setDecorateStatus(String decorateStatus) {
+		this.decorateStatus = decorateStatus;
+	}
+
 	public Long getParentStationId() {
 		return parentStationId;
 	}

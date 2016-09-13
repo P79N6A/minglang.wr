@@ -14,12 +14,17 @@ public class PartnerLifecycleCourseStatusEnum  implements Serializable {
 	private static final long serialVersionUID = -119918219648000754L;
 	public static final PartnerLifecycleCourseStatusEnum N  = new PartnerLifecycleCourseStatusEnum("N", "未培训");
  	public static final PartnerLifecycleCourseStatusEnum Y = new PartnerLifecycleCourseStatusEnum("Y", "已培训");
+ 	
+ 	public static final PartnerLifecycleCourseStatusEnum NEW  = new PartnerLifecycleCourseStatusEnum("NEW", "待购买培训");
+ 	public static final PartnerLifecycleCourseStatusEnum PAY = new PartnerLifecycleCourseStatusEnum("PAY", "待培训签到");
 	
 	private static final Map<String, PartnerLifecycleCourseStatusEnum> mappings = new HashMap<String, PartnerLifecycleCourseStatusEnum>();
 	
 	static {
 		mappings.put("N", N);
 		mappings.put("Y", Y);
+		mappings.put("NEW", NEW);
+		mappings.put("PAY", PAY);
 	}
 
 	private String code;

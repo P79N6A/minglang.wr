@@ -72,7 +72,6 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			//服务中
 			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
