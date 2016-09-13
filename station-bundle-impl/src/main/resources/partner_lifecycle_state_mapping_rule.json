@@ -74,6 +74,12 @@
             "condition": {}
         },
         {
+            "stationApplyState": "DECORATING",
+            "desc": "合伙人station_apply DECORATING",
+            "partnerInstanceState": "DECORATING",
+            "condition": {}
+        },
+        {
         	"stationApplyState": "UNPAY_DECORATE",
             "desc": "合伙人station_apply UNPAY_DECORATE",
             "partnerInstanceState": "DECORATING",
@@ -112,12 +118,6 @@
             "condition": {
             	"courseStatus":"PAY"
             }
-        },
-        {
-            "stationApplyState": "DECORATING",
-            "desc": "合伙人station_apply DECORATING",
-            "partnerInstanceState": "DECORATING",
-            "condition": {}
         }
     ],
     "TPA": [
