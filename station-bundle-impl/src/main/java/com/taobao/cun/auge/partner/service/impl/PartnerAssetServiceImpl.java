@@ -23,6 +23,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 public class PartnerAssetServiceImpl implements PartnerAssetService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerAssetService.class);
+	
 
 	@Autowired
 	CuntaoAssetService cuntaoAssetService;

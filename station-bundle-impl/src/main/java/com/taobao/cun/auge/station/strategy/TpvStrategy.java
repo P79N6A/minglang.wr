@@ -350,6 +350,5 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	@Override
 	public void validateOtherPartnerQuit(Long instanceId) {
 		// TODO Auto-generated method stub
-		
 	}
 }

@@ -2,13 +2,9 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.dal.example.StationExtExample;
-import com.taobao.cun.auge.dal.mapper.StationExtMapper;
-import com.taobao.cun.auge.station.condition.StationCondition;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,8 +22,11 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.domain.StationExample.Criteria;
+import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -180,6 +179,5 @@ public class StationBOImpl implements StationBO {
 		stationExtExample.setPageStart(stationCondition.getPageStart());
 		return stationExtMapper.getStationsByName(stationExtExample);
 	}
-
 
 }

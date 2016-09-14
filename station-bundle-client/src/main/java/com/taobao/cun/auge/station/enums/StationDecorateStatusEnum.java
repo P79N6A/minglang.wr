@@ -18,7 +18,6 @@ public class StationDecorateStatusEnum  implements Serializable {
 	public static final StationDecorateStatusEnum DONE = new StationDecorateStatusEnum("DONE", "已装修");
 	public static final StationDecorateStatusEnum INVALID = new StationDecorateStatusEnum("INVALID", "作废");
 
-	
 	//未装修时，对应淘宝订单状态
 	public static final StationDecorateStatusEnum NO_ORDER = new StationDecorateStatusEnum("NO_ORDER", "未下单");
 	public static final StationDecorateStatusEnum WAIT_PAY = new StationDecorateStatusEnum("WAIT_PAY", "待付款");
@@ -31,7 +30,6 @@ public class StationDecorateStatusEnum  implements Serializable {
 		mappings.put("WAIT_AUDIT", WAIT_AUDIT);
 		mappings.put("DONE", DONE);
 		mappings.put("INVALID", INVALID);
-
 		mappings.put("NO_ORDER", NO_ORDER);
 		mappings.put("WAIT_PAY", WAIT_PAY);
 	}

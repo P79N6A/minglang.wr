@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.alibaba.buc.acl.api.service.AccessControlService;
+import com.alibaba.buc.acl.api.service.DataAccessControlService;
+import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
@@ -13,6 +16,7 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 @Configuration
@@ -65,4 +69,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean tcBaseService (@Value("${tcBaseService.service.version}") String version) {
 		return getConsumerBean(TcBaseService.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean accessControlService(@Value("${accessControlService.service.version}") String version) {
+		return getConsumerBean(AccessControlService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	
 }

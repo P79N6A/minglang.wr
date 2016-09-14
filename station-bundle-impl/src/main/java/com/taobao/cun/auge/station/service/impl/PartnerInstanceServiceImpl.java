@@ -194,19 +194,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	PartnerInstanceValidator partnerInstanceValidator;
 
-	private void bulidTaobaoUserId(PartnerInstanceDto partnerInstanceDto, StationDto stationDto, PartnerDto partnerDto) {
-		if (StringUtils.isNotEmpty(partnerDto.getTaobaoNick())) {
-			Long taobaoUserId = uicReadAdapter.getTaobaoUserIdByTaobaoNick(partnerDto.getTaobaoNick());
-			if (taobaoUserId == null) {
-				throw new AugeServiceException(CommonExceptionEnum.TAOBAONICK_ERROR);
-			}
-			partnerDto.setTaobaoUserId(taobaoUserId);
-			partnerInstanceDto.setTaobaoUserId(taobaoUserId);
-			// station表历史字段 同步保存
-			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
-			stationDto.setTaobaoUserId(taobaoUserId);
-		}
-	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -231,17 +218,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-	}
-
-	private void setTempCommonInfo(PartnerInstanceDto partnerInstanceDto) {
-		StationDto stationDto = partnerInstanceDto.getStationDto();
-		stationDto.setState(StationStateEnum.INVALID);
-		stationDto.setStatus(StationStatusEnum.TEMP);
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		partnerDto.setState(PartnerStateEnum.TEMP);
-		partnerInstanceDto.setState(PartnerInstanceStateEnum.TEMP);
 		*/
 	}
+
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -748,7 +727,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		c.set(Calendar.DAY_OF_MONTH, 1);
 		dto.setNextEvaluateDate(c.getTime());
 		dto.copyOperatorDto(OperatorDto.defaultOperator());
-
 		Station station = stationBO.getStationById(instance.getStationId());
 		dto.setCountyOrgId(station.getApplyOrg());
 		partnerInstanceLevelBO.addPartnerInstanceLevel(dto);
@@ -756,7 +734,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 检查装修中的生命周期（装修，培训）完成后，才能开业
-	 *
 	 * @param instanceId
 	 */
 	private void checkPartnerLifecycleForOpenStation(Long instanceId) throws AugeServiceException {
@@ -876,7 +853,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 添加停业协议
-	 *
+
 	 * @param taobaoUserId
 	 * @param instanceId
 	 * @param operatorDto
@@ -896,7 +873,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	/**
 	 * 合伙人实例 停业中
-	 *
 	 * @param partnerInstance
 	 * @param closeType
 	 * @param operatorDto
@@ -1039,6 +1015,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
+
 			partnerInstanceHandler.validateExistChildrenForClose(partnerType, instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
@@ -1423,6 +1400,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Assert.notNull(rel.getType(), "partner instance type is null");
 
 			boolean canUpdate = partnerInstanceHandler.handleValidateUpdateSettle(rel.getId(),
+
 					PartnerInstanceTypeEnum.valueof(rel.getType()));
 			if (!canUpdate) {
 				throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);

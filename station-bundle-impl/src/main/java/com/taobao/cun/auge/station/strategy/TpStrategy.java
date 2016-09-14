@@ -211,7 +211,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			}
 		}
 	}
-
+	
 	@Override
 	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
@@ -298,6 +298,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
@@ -380,22 +381,26 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(settleSuccessDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-
+		
 		//初始化装修中生命周期
 		initPartnerLifeCycleForDecorating(rel);
 
 		// 发送装修中事件
 		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, settleSuccessDto);
 		// 发送装修中事件，手机端使用
-		dispatchEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
+
+		dispacthEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
 	private Boolean containCountyOrgId(Long countyOrgId) {
+
 		if (countyOrgId != null) {
 			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
 			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
 				return countyIdList.contains(countyOrgId);
+
 			} else {
+
 				return true;
 			}
 		}
@@ -490,11 +495,11 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	/**
 	 * 发送装修中事件 给手机端使用
-
-	 * @param rel
+	 * 
+	 * @param PartnerStationRel
 	 * @param state
 	 */
-	private void dispatchEvent(PartnerStationRel rel, String state) {
+	private void dispacthEvent(PartnerStationRel rel, String state) {
 		try {
 			if (rel != null) {
 				Station stationDto = stationBO.getStationById(rel.getStationId());

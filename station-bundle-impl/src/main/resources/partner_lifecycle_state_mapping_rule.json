@@ -33,12 +33,6 @@
             }
         },
         {
-            "stationApplyState": "DECORATING",
-            "desc": "合伙人station_apply DECORATING",
-            "partnerInstanceState": "DECORATING",
-            "condition": {}
-        },
-        {
             "stationApplyState": "SERVICING",
             "desc": "合伙人station_apply SERVICING",
             "partnerInstanceState": "SERVICING",
@@ -78,6 +72,52 @@
             "desc": "合伙人station_apply QUIT",
             "partnerInstanceState": "QUIT",
             "condition": {}
+        },
+        {
+            "stationApplyState": "DECORATING",
+            "desc": "合伙人station_apply DECORATING",
+            "partnerInstanceState": "DECORATING",
+            "condition": {}
+        },
+        {
+        	"stationApplyState": "UNPAY_DECORATE",
+            "desc": "合伙人station_apply UNPAY_DECORATE",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"decorateStatus":"UNDECORATE"
+            }
+        },
+        {
+        	"stationApplyState": "DEC_FEEDING_BACK",
+            "desc": "合伙人station_apply DEC_FEEDING_BACK",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"decorateStatus":"DECORATING"
+            }
+        },
+        {
+        	"stationApplyState": "DEC_WAIT_AUDIT",
+            "desc": "合伙人station_apply DEC_WAIT_AUDIT",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"decorateStatus":"WAIT_AUDIT"
+            }
+        },
+        {
+        	"stationApplyState": "UNPAY_COURSE",
+            "desc": "合伙人station_apply UNPAY_COURSE",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"courseStatus":"NEW"
+            }
+        },
+        {
+        	"stationApplyState": "UNSIGNED",
+            "desc": "合伙人station_apply UNSIGNED",
+            "partnerInstanceState": "DECORATING",
+            "condition": {
+            	"courseStatus":"PAY"
+            }
         }
     ],
     "TPA": [
