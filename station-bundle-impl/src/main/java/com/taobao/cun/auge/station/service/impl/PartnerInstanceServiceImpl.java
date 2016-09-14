@@ -317,7 +317,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 
-	private Long validateSettlable(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	private void validateSettlable(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerInstanceDto);
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
@@ -340,7 +340,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (null != existPartnerInstance) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_TAOBAOUSERID_HAS_USED);
 		}
-		return paDto.getTaobaoUserId();
+
+		// 入驻老村点，村点状态为已停业
+		Long stationId = stationDto.getId();
+		if (stationId != null) {
+			PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+			if (currentRel != null && PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
+				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
+			}
+		}
 	}
 
 	private void checkStationNumDuplicate(Long stationId, String newStationNum) {
@@ -1219,6 +1227,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setPartnerId(partnerId);
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 		partnerInstanceDto.setVersion(0L);
+		// 当前partner_station_rel.isCurrent = n, 并添加新的当前partner_station_rel
 		return partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
 	}
 

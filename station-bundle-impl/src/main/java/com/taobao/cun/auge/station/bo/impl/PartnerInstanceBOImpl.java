@@ -384,6 +384,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
+
+		PartnerStationRel updateInstance = new PartnerStationRel();
+		updateInstance.setStationId(partnerStationRel.getStationId());
+		updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
+		DomainUtils.beforeUpdate(updateInstance, partnerInstanceDto.getOperator());
+		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+
 		DomainUtils.beforeInsert(partnerStationRel, partnerInstanceDto.getOperator());
 		partnerStationRelMapper.insert(partnerStationRel);
 		return partnerStationRel.getId();
