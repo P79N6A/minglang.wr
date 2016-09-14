@@ -62,7 +62,7 @@
 			<dependency>
 				<groupId>com.aliexpress.boot</groupId>
 				<artifactId>spring-boot-starter-hsf</artifactId>
-				<version>1.1.0-SNAPSHOT</version>
+				<version>1.1.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.spring.platform</groupId>
@@ -371,6 +371,16 @@
 				<artifactId>spring-boot-starter-diamond</artifactId>
 				<version>1.0.2-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>acl.api</artifactId>
+				<version>1.2.22</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.platform.shared</groupId>
+			    <artifactId>buc.uc.api</artifactId>
+			    <version>0.8.57</version>
+		    </dependency>
 		</dependencies>
 	</dependencyManagement>
 

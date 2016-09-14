@@ -136,8 +136,7 @@ public class PartnerLifecycleRuleParser {
 		}
 		String msg = "parseStationApplyState error: " + partnerType + " , " + instatnceState + ", " + JSON.toJSONString(partnerLifecycle);
 		logger.error(ERROR_MSG + msg);
-		throw new RuntimeException(msg
-				);
+		throw new RuntimeException(msg);
 	}
 
 	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
@@ -254,6 +253,24 @@ public class PartnerLifecycleRuleParser {
 			}
 		}
 
+		if (null != partnerLifecycleRule.getDecorateStatus()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getDecorateStatus();
+			String itemCode = null == partnerLifecycle.getDecorateStatus() ? null : partnerLifecycle.getDecorateStatus().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+		
+		if (null != partnerLifecycleRule.getCourseStatus()) {
+			PartnerLifecycleRuleItem ruleItem = partnerLifecycleRule.getCourseStatus();
+			String itemCode = null == partnerLifecycle.getCourseStatus() ? null : partnerLifecycle.getCourseStatus().getCode();
+			boolean isMatch = ruleItem.getEqual() == (ruleItem.getValue().equals(itemCode));
+			if (!isMatch) {
+				return false;
+			}
+		}
+		
 		return true;
 	}
 
@@ -379,6 +396,7 @@ public class PartnerLifecycleRuleParser {
 		lifecycle.setBond("WAIT_THAW");
 		lifecycle.setRoleApprove("AUDIT_PASS");
 		lifecycle.setBusinessType("QUTING");
+		lifecycle.setDecorateStatus("");
 
 		// System.out.println("---" +
 		// parseExecutable(PartnerInstanceTypeEnum.TPA,
@@ -390,6 +408,8 @@ public class PartnerLifecycleRuleParser {
 
 		System.out.println("---" + parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
 
+		System.out.println(parseStationApplyState("TP", "DECORATING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)).getCode());
+		
 	}
 
 }

@@ -69,9 +69,13 @@
   		<property name="hsf.consumer.version.crius.examUserDispatchService" defaultValue="1.0.0.daily" description="试卷分发服务" />
   		<property name="hsf.consumer.version.crius.examInstanceService" defaultValue="1.0.0.daily" description="考试实例服务" />
  
+		
+		<property name="acl.accessKey" defaultValue="null" description="acl.accessKey" />
+
+		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
 
 	</group>
-.
+
 	<script>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
 		<generate template="event-client-context.xml.vm" destfile="application/beans-event-client-context.xml" charset="GBK" />

@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import reactor.core.support.Assert;
-
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.intl.fileserver.commons.tool.url.FileserverURLTools;
 import com.alibaba.intl.fileserver.commons.tool.url.SchemaEnum;
@@ -50,6 +48,8 @@ import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.notify.message.StringMessage;
+
+import reactor.core.support.Assert;
 @Component("partnerPeixunBO")
 public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
@@ -395,5 +395,4 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					+ result.getException());
 		}
 	}
-
 }

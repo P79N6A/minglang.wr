@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 @Service("stationQueryService")
 @HSFProvider(serviceInterface = StationQueryService.class)
 public class StationQueryServiceImpl implements StationQueryService {

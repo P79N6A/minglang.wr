@@ -35,9 +35,11 @@ public class ValidateUtils {
 	public static void validateParam(OperatorDto operatorDto) {
 		notNull(operatorDto);
 		operatorDto.validateOperator();
+
 		if (OperatorTypeEnum.BUC.equals(operatorDto.getOperatorType())) {
 			operatorDto.validateOperatorOrgId();
 		}
+
 		operatorDto.validateOperatorType();
     }
 }

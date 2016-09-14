@@ -37,5 +37,4 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId) {
 		return partnerPeixunBO.queryOnlinePeixunProcess(userId);
 	}
-
 }

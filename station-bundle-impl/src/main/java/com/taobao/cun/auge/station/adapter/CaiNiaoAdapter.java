@@ -112,7 +112,6 @@ public interface CaiNiaoAdapter {
 	 */
 	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) throws AugeServiceException;
 	
-	
 	/**
 	 * 村站解绑合伙人
 	 * @return

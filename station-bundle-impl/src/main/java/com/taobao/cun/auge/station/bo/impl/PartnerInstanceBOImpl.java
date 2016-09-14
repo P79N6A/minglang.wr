@@ -364,7 +364,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIsDeletedEqualTo("n");
 		return partnerStationRelMapper.selectByExample(example);
 	}
-	
 
 	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);

@@ -187,8 +187,6 @@ public class StationDecorate {
      *
      * @mbggenerated Tue Aug 09 16:50:31 CST 2016
      */
-    
-    
     private String paymentType;
     private String decorateType;
     

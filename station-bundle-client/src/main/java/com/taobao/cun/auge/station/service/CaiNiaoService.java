@@ -38,7 +38,6 @@ public interface CaiNiaoService {
 	 */
 	public void updateCainiaoStationFeatureForTPDegree(SyncTPDegreeCainiaoStationDto syncTPDegreeCainiaoStationDto);
 	
-	
 	/**
 	 * 村站解绑合伙人
 	 * @param station

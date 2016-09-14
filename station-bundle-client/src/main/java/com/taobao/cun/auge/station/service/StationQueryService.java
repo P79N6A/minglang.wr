@@ -10,7 +10,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 /**
  * 服务站查询接口
  * 
- * @author haihu.fhh
  *
  */
 public interface StationQueryService {
