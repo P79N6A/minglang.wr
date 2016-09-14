@@ -588,9 +588,9 @@
   
   <update id="invalidOldDecorateRecord" parameterType="map">
      update station_decorate
-     set is_valid=#valid
+     set is_valid=#{valid}
      where is_deleted='n'
-     and station_id=#stationId
+     and station_id=#{stationId}
   </update>
   
 </mapper>

@@ -288,10 +288,13 @@
 				<artifactId>exam-client</artifactId>
 		</dependency>
 		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>dowjones.service.api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.alibaba.platform.shared</groupId>
 			<artifactId>acl.api</artifactId>
 		</dependency>
-		
 		<dependency>
 	        <groupId>com.alibaba.platform.shared</groupId>
 	        <artifactId>buc.uc.api</artifactId>

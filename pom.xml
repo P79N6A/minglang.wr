@@ -372,6 +372,11 @@
 				<version>1.0.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>dowjones.service.api</artifactId>
+			  <version>1.9.179</version>
+			</dependency>
+			<dependency>
 				<groupId>com.alibaba.platform.shared</groupId>
 				<artifactId>acl.api</artifactId>
 				<version>1.2.22</version>

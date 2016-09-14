@@ -182,10 +182,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
-	
+
 	@Autowired
 	CaiNiaoService caiNiaoService;
-	
+
 	@Autowired
 	PartnerInstanceValidator partnerInstanceValidator;
 
@@ -834,15 +834,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setVersion(partnerInstance.getVersion());
 		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 	}
-	
+
 	/**
 	 * 村点 停业中
-	 * 
-	 * @param forcedCloseDto
+	 *
+	 * @param operatorDto
 	 * @param stationId
 	 * @param instanceStateChange
 	 */
-	private void closingStation(Long stationId, PartnerInstanceStateChangeEnum instanceStateChange,	OperatorDto operatorDto) {
+	private void closingStation(Long stationId, PartnerInstanceStateChangeEnum instanceStateChange, OperatorDto operatorDto) {
 		if (PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(instanceStateChange)) {
 			stationBO.changeState(stationId, StationStatusEnum.DECORATING, StationStatusEnum.CLOSING, operatorDto.getOperator());
 		} else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(instanceStateChange)) {
@@ -943,7 +943,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-	
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
@@ -955,7 +955,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			Long instanceId = forcedCloseDto.getInstanceId();
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-			
+
 			//生成状态变化枚举
 			PartnerInstanceStateChangeEnum instanceStateChange = buildInstanceClosingStateChange(partnerStationRel);
 
@@ -968,13 +968,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
 
 			// 村点停业中
-			closingStation(partnerStationRel.getStationId(), instanceStateChange,forcedCloseDto);
+			closingStation(partnerStationRel.getStationId(), instanceStateChange, forcedCloseDto);
 
 			// 添加停业生命周期记录
 			addClosingLifecycle(forcedCloseDto, partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 
 			// 新增停业申请单
-			CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toWorkCloseStationApplyDto(forcedCloseDto,instanceStateChange);
+			CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toWorkCloseStationApplyDto(forcedCloseDto, instanceStateChange);
 			closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
 			// 同步station_apply
@@ -1051,7 +1051,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-			partnerInstanceValidator.validateApplyQuitPreCondition(instance,quitDto);
+			partnerInstanceValidator.validateApplyQuitPreCondition(instance, quitDto);
 
 			// 保存退出申请单
 			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
@@ -1167,6 +1167,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setState(StationStateEnum.INVALID);
 		stationDto.setStatus(StationStatusEnum.NEW);
 		stationDto.copyOperatorDto(partnerInstanceDto);
+
+		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+		if (partnerDto != null) {
+			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+			stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+			stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+		}
+
 		// 判断服务站编号是否使用中
 		Long stationId = partnerInstanceDto.getStationId();
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
@@ -1522,7 +1530,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		try {
 			Long partnerInstanceId = changeTPDto.getId();
 			Long newParentStationId = changeTPDto.getNewParentStationId();
-			
+
 			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getId());
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
@@ -1532,7 +1540,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 			//菜鸟修改淘帮手归属合伙人关系
 			Long parentParnterInstanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(newParentStationId);
-			SyncModifyBelongTPForTpaDto belongTp =new SyncModifyBelongTPForTpaDto();
+			SyncModifyBelongTPForTpaDto belongTp = new SyncModifyBelongTPForTpaDto();
 			belongTp.setParentPartnerInstanceId(parentParnterInstanceId);
 			belongTp.setPartnerInstanceId(partnerInstanceId);
 			belongTp.copyOperatorDto(changeTPDto);

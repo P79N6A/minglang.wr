@@ -1,4 +1,10 @@
 package com.taobao.cun.auge.fuwu;
+
+import java.util.List;
+import java.util.Set;
+
+import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
+
 /**
  * 服务市场订单服务
  * @author yi.shaoy
@@ -6,8 +12,9 @@ package com.taobao.cun.auge.fuwu;
  */
 public interface FuwuOrderService {
 
-	//查询订单
-	
+	//根据userid和产品code和状态查询订单
+	public List<FuwuOrderDto> queryOrdersByUserIdAndCode(Long userId,List<String> productCode,Set<String> statuses);
+		
 	//创建订单
 	
 }
