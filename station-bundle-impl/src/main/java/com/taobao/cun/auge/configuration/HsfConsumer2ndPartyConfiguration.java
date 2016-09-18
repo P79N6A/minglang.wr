@@ -82,7 +82,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesProductService.service.version}") String version) {
-		return getConsumerBean(OrderPortalService.class, HSFGroup.HSF, version, 3000);
+		return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
 	}
 	
 }
