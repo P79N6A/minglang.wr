@@ -84,8 +84,14 @@ public interface GeneralTaskSubmitService {
 	 * @param stationId
 	 * @param taobaoUserId
 	 * @param isQuitStation
+	 */
+	public void submitQuitApprovedTask(Long instanceId,Long stationId, Long taobaoUserId, String isQuitStation);
+	
+	/**
+	 * 撤点审批通过后，删除物流站
+	 * 
+	 * @param stationId
 	 * @param operator
 	 */
-	public void submitQuitApprovedTask(Long instanceId,Long stationId, Long taobaoUserId, String isQuitStation, String operator);
-
+	public void submitShutdownApprovedTask(Long stationId);
 }

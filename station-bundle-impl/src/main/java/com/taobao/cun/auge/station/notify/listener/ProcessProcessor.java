@@ -273,7 +273,7 @@ public class ProcessProcessor {
 				partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
 				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
-						quitApply.getIsQuitStation(), operator);
+						quitApply.getIsQuitStation());
 			} else {
 				// 合伙人实例已停业
 				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);

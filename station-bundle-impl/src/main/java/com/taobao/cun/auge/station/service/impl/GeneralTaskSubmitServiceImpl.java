@@ -455,7 +455,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitQuitApprovedTask(Long instanceId, Long stationId,Long taobaoUserId, String isQuitStation, String operator) {
+	public void submitQuitApprovedTask(Long instanceId, Long stationId,Long taobaoUserId, String isQuitStation) {
 		try {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 			// 取消物流站点
@@ -465,7 +465,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			cainiaoTaskVo.setBusinessStepNo(1l);
 			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
 			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
-			cainiaoTaskVo.setOperator(operator);
+			cainiaoTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
 			
 			//不撤点
 			if ("n".equals(isQuitStation)) {
@@ -491,7 +491,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			dealStationTagTaskVo.setBusinessStepNo(2l);
 			dealStationTagTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
 			dealStationTagTaskVo.setBusinessStepDesc("取消支付宝标示");
-			dealStationTagTaskVo.setOperator(operator);
+			dealStationTagTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
 
 			AlipayTagDto alipayTagDto = new AlipayTagDto();
 			alipayTagDto.setTagName(AlipayTagDto.ALIPAY_CUNTAO_TAG_NAME);
@@ -515,4 +515,27 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
+	@Override
+	public void submitShutdownApprovedTask(Long stationId){
+		try {
+			// 关闭物流站点
+			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+			cainiaoTaskVo.setBusinessNo(String.valueOf(stationId));
+			cainiaoTaskVo.setBusinessStepNo(1l);
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.STATION_SHUTDOWN_APPROVED.getCode());
+			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
+			cainiaoTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
+			
+			cainiaoTaskVo.setBeanName("caiNiaoService");
+			cainiaoTaskVo.setMethodName("deleteNotUserdCainiaoStation");
+			cainiaoTaskVo.setParameterType(Long.class.getName());
+			cainiaoTaskVo.setParameter(String.valueOf(stationId));
+
+			taskSubmitService.submitTask(cainiaoTaskVo);
+			logger.info("submitShutdownApprovedTask : {}", JSON.toJSONString(cainiaoTaskVo));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitShutdownApprovedTask] stationId = {}, {}", stationId, e);
+			throw new AugeServiceException("submitShutdownApprovedTask error: " + e.getMessage());
+		}
+	}
 }

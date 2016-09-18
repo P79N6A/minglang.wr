@@ -39,9 +39,6 @@ public class StationServiceImpl implements StationService {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
-	
-	@Autowired
-	CaiNiaoService caiNiaoService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -58,7 +55,7 @@ public class StationServiceImpl implements StationService {
 		// 审批结果
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			caiNiaoService.deleteNotUserdCainiaoStation(stationId);
+			generalTaskSubmitService.submitShutdownApprovedTask(stationId, operator);
 		} else {
 			// 删除撤点申请单
 			shutDownStationApplyBO.deleteShutDownStationApply(stationId, operator);
