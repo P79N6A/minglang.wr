@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.intl.fileserver.commons.tool.url.FileserverURLTools;
 import com.alibaba.intl.fileserver.commons.tool.url.SchemaEnum;
@@ -30,10 +31,12 @@ import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
@@ -42,6 +45,7 @@ import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
@@ -69,6 +73,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	ExamUserDispatchService examUserDispatchService;
 	@Autowired
 	ExamInstanceService examInstanceService;
+	@Autowired
+	AppResourceBO appResourceBO;
 	
 	@Value("${partner.apply.in.peixun.code}")
 	private String peixunCode;
@@ -195,6 +201,39 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
 		return record;
+	}
+	
+	@Override
+	public void initPartnerRecords(Long userId) {
+		Assert.notNull(userId);
+		// 初始化启航班
+		initPeixunRecordDetail(
+				getValueFromResource("PARTNER_PEIXUN_CODE", "APPLY_IN"),
+				PartnerPeixunCourseTypeEnum.APPLY_IN.getCode(), userId);
+		// 初始化成长营
+		initPeixunRecordDetail(
+				getValueFromResource("PARTNER_PEIXUN_CODE", "UPGRADE"),
+				PartnerPeixunCourseTypeEnum.UPGRADE.getCode(), userId);
+	}
+	
+	private void initPeixunRecordDetail(String courseCode,String courseType,Long userId){
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andPartnerUserIdEqualTo(userId);
+		criteria.andCourseTypeEqualTo(courseType);
+		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
+		if(records.size()>0){
+			logger.warn("prixun record exists,"+userId.toString());
+			return;
+		}
+		PartnerCourseRecord record=new PartnerCourseRecord();
+		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
+		record.setPartnerUserId(userId);
+		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
+		record.setCourseCode(courseCode);
+		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
+		partnerCourseRecordMapper.insert(record);
 	}
 
 	@Override
@@ -395,4 +434,43 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					+ result.getException());
 		}
 	}
+	
+	private String getValueFromResource(String type,String key){
+		AppResource resource = appResourceBO.queryAppResource(type, key);
+		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
+			return resource.getValue();
+		}else{
+			throw new AugeServiceException("can not find resource:"+type+","+key);
+		}
+	}
+
+	@Override
+	public void invalidPeixunRecord(Long userId) {
+		// 作废启航班
+		invalidPeixunRecordDetail(getValueFromResource("PARTNER_PEIXUN_CODE", "APPLY_IN"),
+				PartnerPeixunCourseTypeEnum.APPLY_IN.getCode(), userId);
+		//作废成长营
+		invalidPeixunRecordDetail(getValueFromResource("PARTNER_PEIXUN_CODE", "UPGRADE"),
+				PartnerPeixunCourseTypeEnum.UPGRADE.getCode(), userId);
+		
+	}
+	
+	private void invalidPeixunRecordDetail(String courseType,String courseCode,Long userId){
+			PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andIsDeletedEqualTo("n");
+			criteria.andPartnerUserIdEqualTo(userId);
+			criteria.andCourseTypeEqualTo(courseType);
+			List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
+			if(records.size()>0){
+				PartnerCourseRecord record=records.get(0);
+				if(PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())){
+					record.setIsDeleted("y");
+					record.setGmtModified(new Date());
+					partnerCourseRecordMapper.updateByPrimaryKey(record);
+				}
+			}
+	}
+
+	
 }

@@ -21,6 +21,11 @@ public interface PartnerPeixunBO {
 	 * @return
 	 */
 	public PartnerCourseRecord initPartnerApplyInRecord(Long userId);
+	
+	/**
+	 * 打包初始化培训记录(包括启航班和成长营)
+	 */
+	public void initPartnerRecords(Long userId);
 
 	/**
 	 * 处理crm培训平台培训订单消息
@@ -41,4 +46,10 @@ public interface PartnerPeixunBO {
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
 	
 	public void dispatchApplyInExamPaper(Long userId, String taobaoNick);
+	
+	/**
+	 * 删除培训记录,仅处理未下单记录
+	 * @param userId
+	 */
+	public void invalidPeixunRecord(Long userId);
 }
