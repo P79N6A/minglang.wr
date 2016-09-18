@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ali.dowjones.service.dto.ProductDto;
 import com.ali.dowjones.service.dto.ProductQueryDto;
@@ -15,9 +16,11 @@ import com.ali.dowjones.service.portal.ProductService;
 import com.ali.dowjones.service.result.ResultModel;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@Service("fuwuProductService")
+@HSFProvider(serviceInterface = FuwuProductService.class)
 public class FuwuProductServiceImpl implements FuwuProductService{
 
 	private static final Logger logger = LoggerFactory.getLogger(FuwuProductServiceImpl.class);

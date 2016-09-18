@@ -7,6 +7,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.dto.OrderDto;
@@ -15,11 +16,14 @@ import com.ali.dowjones.service.result.ResultModel;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 /**
  * 
  * @author yi.shaoy
  *
  */
+@Service("fuwuOrderService")
+@HSFProvider(serviceInterface = FuwuOrderService.class)
 public class FuwuOrderServiceImpl implements FuwuOrderService{
 
 	private static final Logger logger = LoggerFactory.getLogger(FuwuOrderServiceImpl.class);
