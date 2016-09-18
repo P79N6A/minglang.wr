@@ -617,7 +617,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
-		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, "y");
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.Y.getCode());
 		if (psRels.size() < 1){
 			return null;
 		}
@@ -634,8 +634,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		if (psRels.size() < 1){
 			return null;
 		}
-		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>();
+		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>(psRels.size());
 		for (PartnerStationRel psRel : psRels){
+			if(null == psRel){
+				continue;
+			}
 			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
 			Station station = stationBO.getStationById(psRel.getStationId());
 			partnerInstanceDtos.add(PartnerInstanceConverter.convert(psRel, station, partner));
