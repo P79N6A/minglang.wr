@@ -237,38 +237,39 @@ public class TpStrategy implements PartnerInstanceStrategy {
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
-			//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
-			Long stationId = rel.getStationId();
-			Station station = stationBO.getStationById(stationId);
-			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
-					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
-					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
-			}
-			
-			List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
-			if (sList != null && sList.size()>1) {
-				stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSED, operator);
-			}else {
-				stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
-			}
+		//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
+		Long stationId = rel.getStationId();
+		Station station = stationBO.getStationById(stationId);
+		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
+				&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
+				&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
 		}
-		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
-			Long partnerId = rel.getPartnerId();
-			Partner partner = partnerBO.getPartnerById(partnerId);
-			if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
-			}
-			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+		
+		List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
+		if (sList != null && sList.size()>1) {
+			stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSED, operator);
+		}else {
+			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
 		}
-		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
-		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
+		//删除装修记录
+		stationDecorateBO.invalidStationDecorate(stationId);
+		//删除培训记录
+		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId());
+		
+		Long partnerId = rel.getPartnerId();
+		Partner partner = partnerBO.getPartnerById(partnerId);
+		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+		}
+		partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+	
+		partnerInstanceBO.deletePartnerStationRel(rel.getId(), operator);
+		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), operator);
 	}
 
 	private boolean isBondHasFrozen(Long id) {
