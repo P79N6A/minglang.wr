@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ProductService;
 import com.alibaba.buc.acl.api.service.AccessControlService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
@@ -77,6 +78,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean productService(@Value("${dowjonesProductService.service.version}") String version) {
 		return getConsumerBean(ProductService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesProductService.service.version}") String version) {
+		return getConsumerBean(OrderPortalService.class, HSFGroup.HSF, version, 3000);
 	}
 	
 }
