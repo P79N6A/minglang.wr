@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
@@ -31,6 +32,14 @@ public interface CaiNiaoService {
 	 * @throws AugeServiceException
 	 */
 	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto  syncDeleteCainiaoStationDto) throws AugeServiceException;
+	
+	
+	/**
+	 * 删除不可用的菜鸟服务站
+	 * @param deleteStationDto
+	 * @throws AugeServiceException
+	 */
+	public void deleteNotUserdCainiaoStation(Long stationId,OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 合伙人降级更新菜鸟station及用户关联关系

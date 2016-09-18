@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
@@ -267,14 +268,45 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				Long logisId = rel.getLogisticsStationId();
 				if (logisId != null) {
 					logisticsStationBO.changeState(logisId, syncCainiaoStationDto.getOperator(), "QUIT");
-				}else {
-					// 删除本地数据菜鸟驿站对应关系
-					cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 				}
+				// 删除本地数据菜鸟驿站对应关系
+				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 				
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("deleteCainiaoStation", String.valueOf(partnerInstanceId), e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
+	}
+	
+	@Override
+	public void deleteNotUserdCainiaoStation(
+			Long stationId,OperatorDto operatorDto)
+			throws AugeServiceException {
+		if (stationId == null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		try {
+			logger.info("CaiNiaoServiceImpl deleteNotUserdCainiaoStation start,stationId:{" + stationId + "}");
+			// 查询菜鸟物流站关系表
+			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+					CuntaoCainiaoStationRelTypeEnum.STATION);
+			if (rel == null || "n".equals(rel.getIsOwn())) {// 没有物流站,删除关系
+				throw new AugeServiceException(CommonExceptionEnum.RECORD_EXISTS);
+			} else {// 有物流站，删除物流站
+				caiNiaoAdapter.removeNotUserdStationById(rel.getCainiaoStationId());
+				
+				//删除logistics_station
+				Long logisId = rel.getLogisticsStationId();
+				if (logisId != null) {
+					logisticsStationBO.changeState(logisId, operatorDto.getOperator(), "QUIT");
+				}
+				// 删除本地数据菜鸟驿站对应关系
+				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("deleteNotUserdCainiaoStation", String.valueOf(stationId), e.getMessage());
 			logger.error(error, e);
 			throw new RuntimeException(error, e);
 		}

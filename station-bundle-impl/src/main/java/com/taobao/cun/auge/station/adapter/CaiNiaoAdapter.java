@@ -81,6 +81,17 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean removeStationById(Long cainiaoStationId, Long userId) throws AugeServiceException;
+	
+	
+	/**
+	 * 删除不可用村站( 没有人的情况调用 ，直接删除站点)
+	 * 
+	 * @param cainiaoStationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean removeNotUserdStationById(Long cainiaoStationId) throws AugeServiceException;
+	
 
 	/**
 	 * 删除买家

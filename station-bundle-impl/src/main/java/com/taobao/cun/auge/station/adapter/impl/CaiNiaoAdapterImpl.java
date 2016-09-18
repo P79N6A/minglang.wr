@@ -370,6 +370,27 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	    }
 	}
 	
+	@Override
+	public boolean removeNotUserdStationById(Long cainiaoStationId)
+			throws AugeServiceException {
+		if (cainiaoStationId == null) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.removeStationById.param.error:cainiaoStationId is null!");
+		}
+		try {
+			logger.info("removeStationById.info cainiaoStationId"+cainiaoStationId);
+			Result<Boolean> res = stationWriteService.removeStationById(cainiaoStationId,Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			}
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("removeStationById", cainiaoStationId.toString(),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
+	
+	
 	private String getErrorMessage(String methodName,String param,String error) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("CaiNiaoAdapterBO-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:").append(error);
@@ -512,4 +533,6 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		}
 		return bindAdmin(station);
 	}
+
+
 }
