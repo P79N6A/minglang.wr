@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -24,7 +23,6 @@ import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
@@ -61,9 +59,6 @@ public class ProcessProcessor {
 
 	@Autowired
 	StationBO stationBO;
-
-	@Autowired
-	PartnerBO partnerBO;
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
@@ -277,10 +272,8 @@ public class ProcessProcessor {
 				// 处理合伙人、淘帮手、村拍档不一样的业务
 				partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
-				// 提交去支付宝标任务
-				Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
-				String accountNo = partner.getAlipayAccount();
-				generalTaskSubmitService.submitQuitApprovedTask(instanceId, instance.getTaobaoUserId(), accountNo, operator);
+				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
+						quitApply.getIsQuitStation(), operator);
 			} else {
 				// 合伙人实例已停业
 				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);

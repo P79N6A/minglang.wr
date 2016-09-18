@@ -14,8 +14,10 @@ import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
@@ -55,6 +57,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 	@Value("${cuntao.alipay.standerBailTypeCode}")
 	String standerBailTypeCode;
+	
+	@Autowired
+	PartnerBO partnerBO;
 
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
@@ -450,25 +455,31 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator) {
+	public void submitQuitApprovedTask(Long instanceId, Long stationId,Long taobaoUserId, String isQuitStation, String operator) {
 		try {
-			//FIXME FHH 人村分离，改造点
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 			// 取消物流站点
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 			cainiaoTaskVo.setBeanName("caiNiaoService");
-			cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 			cainiaoTaskVo.setBusinessStepNo(1l);
 			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT_APPROVED.getCode());
 			cainiaoTaskVo.setBusinessStepDesc("关闭物流站点");
 			cainiaoTaskVo.setOperator(operator);
-
-			SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
-			syncDeleteCainiaoStationDto.copyOperatorDto(OperatorDto.defaultOperator());
-			syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
-			cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
-			cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
+			
+			//不撤点
+			if ("n".equals(isQuitStation)) {
+				cainiaoTaskVo.setMethodName("unBindAdmin");
+				cainiaoTaskVo.setParameterType(Long.class.getName());
+				cainiaoTaskVo.setParameter(String.valueOf(stationId));
+			} else {
+				cainiaoTaskVo.setMethodName("deleteCainiaoStation");
+				SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
+				syncDeleteCainiaoStationDto.copyOperatorDto(OperatorDto.defaultOperator());
+				syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+				cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
+				cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
+			}
 
 			taskLists.add(cainiaoTaskVo);
 
@@ -487,6 +498,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
 			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+			String accountNo = partner.getAlipayAccount();
 			if (StringUtils.isNotEmpty(accountNo)) {
 				alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			}

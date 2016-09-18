@@ -81,10 +81,11 @@ public interface GeneralTaskSubmitService {
 	 * 退出审批通过后去支付标和物流站点等任务
 	 * 
 	 * @param instanceId
+	 * @param stationId
 	 * @param taobaoUserId
-	 * @param accountNo
+	 * @param isQuitStation
 	 * @param operator
 	 */
-	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator);
+	public void submitQuitApprovedTask(Long instanceId,Long stationId, Long taobaoUserId, String isQuitStation, String operator);
 
 }
