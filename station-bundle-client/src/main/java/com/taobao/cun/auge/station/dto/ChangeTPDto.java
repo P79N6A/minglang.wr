@@ -14,19 +14,19 @@ public class ChangeTPDto extends OperatorDto implements Serializable {
     /**
      * 实例id
      */
-    private Long id;
+    private Long partnerInstanceId;
 
     private Long newParentStationId;
 
-    public Long getId() {
-        return id;
-    }
+    public Long getPartnerInstanceId() {
+		return partnerInstanceId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setPartnerInstanceId(Long partnerInstanceId) {
+		this.partnerInstanceId = partnerInstanceId;
+	}
 
-    public Long getNewParentStationId() {
+	public Long getNewParentStationId() {
         return newParentStationId;
     }
 
