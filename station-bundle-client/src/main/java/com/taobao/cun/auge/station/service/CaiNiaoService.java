@@ -39,7 +39,7 @@ public interface CaiNiaoService {
 	 * @param deleteStationDto
 	 * @throws AugeServiceException
 	 */
-	public void deleteNotUserdCainiaoStation(Long stationId,OperatorDto operatorDto) throws AugeServiceException;
+	public void deleteNotUserdCainiaoStation(Long stationId) throws AugeServiceException;
 	
 	/**
 	 * 合伙人降级更新菜鸟station及用户关联关系

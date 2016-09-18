@@ -281,9 +281,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 	
 	@Override
-	public void deleteNotUserdCainiaoStation(
-			Long stationId,OperatorDto operatorDto)
-			throws AugeServiceException {
+	public void deleteNotUserdCainiaoStation(Long stationId) throws AugeServiceException {
 		if (stationId == null) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
@@ -300,7 +298,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				//删除logistics_station
 				Long logisId = rel.getLogisticsStationId();
 				if (logisId != null) {
-					logisticsStationBO.changeState(logisId, operatorDto.getOperator(), "QUIT");
+					logisticsStationBO.changeState(logisId, OperatorDto.defaultOperator().getOperator(), "QUIT");
 				}
 				// 删除本地数据菜鸟驿站对应关系
 				cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);

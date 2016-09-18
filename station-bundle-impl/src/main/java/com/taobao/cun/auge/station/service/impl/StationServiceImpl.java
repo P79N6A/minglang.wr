@@ -58,7 +58,7 @@ public class StationServiceImpl implements StationService {
 		// 审批结果
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			caiNiaoService.deleteNotUserdCainiaoStation(stationId, operatorDto);
+			caiNiaoService.deleteNotUserdCainiaoStation(stationId);
 		} else {
 			// 删除撤点申请单
 			shutDownStationApplyBO.deleteShutDownStationApply(stationId, operator);
