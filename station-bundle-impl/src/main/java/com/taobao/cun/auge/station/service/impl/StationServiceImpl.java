@@ -16,6 +16,7 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -38,6 +39,9 @@ public class StationServiceImpl implements StationService {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	CaiNiaoService caiNiaoService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -54,7 +58,7 @@ public class StationServiceImpl implements StationService {
 		// 审批结果
 		if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 			stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
-			// FIXME FHH 关闭物流站
+			caiNiaoService.deleteNotUserdCainiaoStation(stationId, operatorDto);
 		} else {
 			// 删除撤点申请单
 			shutDownStationApplyBO.deleteShutDownStationApply(stationId, operator);
