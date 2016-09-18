@@ -44,7 +44,6 @@ public interface PartnerInstanceBO {
 	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
 
 	/**
-<<<<<<< HEAD
 	 *
 	 * @param partnerId
 	 * @param isCurrent
@@ -62,8 +61,6 @@ public interface PartnerInstanceBO {
 	
 
 	/**
-=======
->>>>>>> master
 	 * 根据stationapplyId查询实例id
 	 * 
 	 * @param stationApplyId

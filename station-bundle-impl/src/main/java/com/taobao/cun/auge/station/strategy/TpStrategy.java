@@ -56,6 +56,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -74,6 +75,7 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -226,7 +228,10 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto, PartnerStationRel rel) throws AugeServiceException {
-
+		String operator = partnerInstanceDeleteDto.getOperator();
+		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(rel.getIsCurrent())) {//历史数据不能删除
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
 		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
@@ -237,8 +242,8 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		if (isBondHasFrozen(rel.getId())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
+			//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
 			Long stationId = rel.getStationId();
 			Station station = stationBO.getStationById(stationId);
 			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
@@ -246,9 +251,14 @@ public class TpStrategy implements PartnerInstanceStrategy {
 					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
 				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
 			}
-			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
+			
+			List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
+			if (sList != null && sList.size()>1) {
+				stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSED, operator);
+			}else {
+				stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
+			}
 		}
-
 		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
 			Long partnerId = rel.getPartnerId();
 			Partner partner = partnerBO.getPartnerById(partnerId);
@@ -257,7 +267,6 @@ public class TpStrategy implements PartnerInstanceStrategy {
 			}
 			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
 		}
-
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
 		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
 	}
