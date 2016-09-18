@@ -22,10 +22,10 @@ public class PartnerApplyBOImpl implements PartnerApplyBO{
 
     @Override
     public void restartPartnerApplyByUserId(PartnerApplyDto partnerApplyDto) {
-        PartnerApplyExample example = new PartnerApplyExample();
         PartnerApply partnerApply = getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
         if (partnerApply != null){
             partnerApply.setState(partnerApplyDto.getState().getCode());
+            PartnerApplyExample example = new PartnerApplyExample();
             Criteria criteria = example.createCriteria();
             criteria.andTaobaoUserIdEqualTo(partnerApplyDto.getTaobaoUserId());
             criteria.andIsDeletedEqualTo("n");
