@@ -96,9 +96,9 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		CustomerDto customer = new CustomerDto();
 		customer.setSite(OrderItemSiteType.B2BCN.getValue());
 		customer.setUserIp(userIp);
-		ProductDto product = new ProductDto();
 		customer.setAliId(userId);
 		customer.setCustomerIdentity(customerIdentity);
+		ProductDto product = new ProductDto();
 		product.setKey(policyId.toString());
 		product.setType(ProductType.GROUP);
 		try {
