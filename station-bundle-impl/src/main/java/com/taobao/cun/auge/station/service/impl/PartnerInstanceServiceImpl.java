@@ -86,7 +86,6 @@ import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
@@ -193,7 +192,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Autowired
 	PartnerInstanceValidator partnerInstanceValidator;
-
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -940,7 +938,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (isAgree) {
 				// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 				PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
-				partnerInstanceHandler.validateExistChildrenForClose(partnerType, instanceId);
+				partnerInstanceHandler.validateClosePreCondition(partnerType, partnerInstance);
 
 				// 更新合伙人实例，已停业
 				PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
@@ -1016,7 +1014,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
 
-			partnerInstanceHandler.validateExistChildrenForClose(partnerType, instanceId);
+			partnerInstanceHandler.validateClosePreCondition(partnerType, partnerStationRel);
 
 			// 合伙人实例停业中,退出类型为强制清退
 			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
@@ -1035,13 +1033,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 			// 通过事件，定时钟，启动停业流程
-			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-					instanceStateChange, partnerInstanceBO.getPartnerInstanceById(instanceId), forcedCloseDto);
-
-			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason()) ? forcedCloseDto.getRemarks()
-					: forcedCloseDto.getReason().getDesc());
-
-			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			dispatchInstStateChangeEvent(instanceId, instanceStateChange, forcedCloseDto);
 			// 失效tair
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),

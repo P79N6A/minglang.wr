@@ -8,7 +8,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceStrategy {
@@ -75,14 +74,14 @@ public interface PartnerInstanceStrategy {
 	 * 
 	 * 停业时，校验
 	 * 
-	 * @param instanceId
+	 * @param partnerStationRel
 	 * @throws AugeServiceException
 	 */
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException;
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException;
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 	
-	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
+	public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException;
 	
 	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException;
 

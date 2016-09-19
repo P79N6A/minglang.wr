@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -70,8 +68,6 @@ import com.taobao.pandora.util.StringUtils;
 
 @Component("tpaStrategy")
 public class TpaStrategy implements PartnerInstanceStrategy {
-
-	private static final Logger logger = LoggerFactory.getLogger(TpaStrategy.class);
 
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
@@ -141,7 +137,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
 		// TODO Auto-generated method stub
 
 	}
@@ -359,7 +355,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
