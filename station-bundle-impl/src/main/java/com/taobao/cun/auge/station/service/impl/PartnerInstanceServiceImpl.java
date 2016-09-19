@@ -1583,10 +1583,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException {
 		ValidateUtils.notNull(changeTPDto);
 		try {
-			Long partnerInstanceId = changeTPDto.getId();
+			Long partnerInstanceId = changeTPDto.getPartnerInstanceId();
 			Long newParentStationId = changeTPDto.getNewParentStationId();
 
-			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getId());
+			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getPartnerInstanceId());
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
 			}
