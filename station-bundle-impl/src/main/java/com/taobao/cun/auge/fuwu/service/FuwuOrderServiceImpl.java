@@ -89,9 +89,9 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 
 	@Override
 	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,
-			Integer policyId,String userIp) {
+			String mkey,String userIp) {
 		Assert.notNull(userId);
-		Assert.notNull(policyId);
+		Assert.notNull(mkey);
 		Assert.notNull(userIp);
 		CustomerDto customer = new CustomerDto();
 		customer.setSite(OrderItemSiteType.B2BCN.getValue());
@@ -99,8 +99,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		customer.setAliId(userId);
 		customer.setCustomerIdentity(customerIdentity);
 		ProductDto product = new ProductDto();
-		product.setKey(policyId.toString());
-		product.setType(ProductType.GROUP);
+		product.setMkey(mkey);
 		try {
 			ResultModel<ArrayList<ShoppingCartDto>> result = shoppingCartPortalService
 					.addCartItemsQuick(customer, product);
@@ -114,7 +113,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 				throw new AugeServiceException(result.getExceptionDesc());
 			}
 		} catch (Exception e) {
-			logger.error("createOrder error,userId:"+String.valueOf(userId)+",policyId:"+policyId,e);
+			logger.error("createOrder error,userId:"+String.valueOf(userId)+",mkey:"+mkey,e);
 			throw new AugeServiceException("createOrder error,userId ,"+"userId:"+String.valueOf(userId),e);
 		}
 	}

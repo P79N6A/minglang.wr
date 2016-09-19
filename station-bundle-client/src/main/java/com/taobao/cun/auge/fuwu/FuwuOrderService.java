@@ -16,5 +16,5 @@ public interface FuwuOrderService {
 	public List<FuwuOrderDto> queryOrdersByUserIdAndCode(Long userId,List<String> productCode,Set<String> statuses);
 		
 	//根据套餐id创建订单, 客户id
-	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,Integer policyId,String userIp);
+	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,String mkey,String userIp);
 }
