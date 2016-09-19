@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.dowjones.service.constants.OrderItemSiteType;
+import com.ali.dowjones.service.constants.ProductType;
 import com.ali.dowjones.service.dto.CustomerDto;
 import com.ali.dowjones.service.dto.OrderDto;
 import com.ali.dowjones.service.dto.ProductDto;
@@ -87,16 +89,18 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 
 	@Override
 	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,
-			Integer policyId) {
+			Integer policyId,String userIp) {
 		Assert.notNull(userId);
 		Assert.notNull(policyId);
+		Assert.notNull(userIp);
 		CustomerDto customer = new CustomerDto();
+		customer.setSite(OrderItemSiteType.B2BCN.getValue());
+		customer.setUserIp(userIp);
 		ProductDto product = new ProductDto();
 		customer.setAliId(userId);
 		customer.setCustomerIdentity(customerIdentity);
-		product.setPolicyId(policyId);
-		String mkey = appResourceBO.queryAppValueNotAllowNull("CRM_ORDER_PARAM", "MKEY");
-		product.setMkey(mkey);
+		product.setKey(policyId.toString());
+		product.setType(ProductType.GROUP);
 		try {
 			ResultModel<ArrayList<ShoppingCartDto>> result = shoppingCartPortalService
 					.addCartItemsQuick(customer, product);

@@ -82,12 +82,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesProductService.service.version}") String version) {
+	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesOrderService.service.version}") String version) {
 		return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
 	}
 	
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean shoppingCartPortalService(@Value("${dowjonesOrderService.service.version}") String version) {
+	public HSFSpringConsumerBean shoppingCartPortalService(@Value("${dowjonesProductService.service.version}") String version) {
 		return getConsumerBean(ShoppingCartPortalService.class, HSFGroup.DUBBO, version, 3000);
 	}
 	
