@@ -124,14 +124,16 @@ public interface CaiNiaoAdapter {
 	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) throws AugeServiceException;
 	
 	/**
-	 * 村站解绑合伙人
+	 * 村站解绑合伙人  目前仅支持合伙人使用
+	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_unbind_admin
 	 * @return
 	 * @throws AugeServiceException
 	 */
 	public boolean unBindAdmin(Long cainiaoStationId) throws AugeServiceException;
 	
 	/**
-	 * 村站绑定合伙人
+	 * 村站绑定合伙人 目前仅支持合伙人使用 
+	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_bind_admin
 	 * @param station
 	 * @return
 	 * @throws AugeServiceException

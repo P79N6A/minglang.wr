@@ -510,14 +510,24 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
 	private  BindAdminParam  buildBindAdminParam(CaiNiaoStationDto dto) {
 		BindAdminParam  bindParam = new BindAdminParam();
-		bindParam.setContact(dto.getContact());
-		//bindParam.setEmail(dto.);
-		//bindParam.setFeatureDTO(featureDTO);
-		bindParam.setMobile(dto.getMobile());
-		bindParam.setPhone(dto.getTelephone());
 		bindParam.setStationId(dto.getStationId());
-		bindParam.setUserId(dto.getTaobaoUserId());
+		bindParam.setAuthUserId(dto.getTaobaoUserId());
+		bindParam.setContact(dto.getContact());
+		bindParam.setMobile(dto.getMobile());
+		//bindParam.setPhone(dto.getTelephone());
+		//bindParam.setEmail(dto.);
 		bindParam.setWangwang(dto.getLoginId());
+		//bindParam.setFeatureDTO(featureDTO);
+
+		
+		bindParam.setUserId(dto.getTaobaoUserId());
+		bindParam.setReceiverName(dto.getContact());
+		bindParam.setReceiverMobile(dto.getMobile());
+		bindParam.setReceiverPhone(dto.getTelephone());
+		//bindParam.setReceiverZipcode(receiverZipcode);
+		FeatureDTO relFeature = new FeatureDTO();
+		//现在只有合伙人能解绑，所以这里设置的是合伙人的淘宝userid
+		relFeature.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(dto.getTaobaoUserId()));
 		return bindParam;
 	}
 
