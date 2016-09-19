@@ -123,8 +123,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void validateExistChildrenForClose(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).validateExistChildrenForClose(instanceId);
+	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).validateClosePreCondition(partnerStationRel);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

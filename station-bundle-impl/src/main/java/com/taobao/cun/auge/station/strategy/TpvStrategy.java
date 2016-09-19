@@ -122,7 +122,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
 		// TODO Auto-generated method stub
 
 	}

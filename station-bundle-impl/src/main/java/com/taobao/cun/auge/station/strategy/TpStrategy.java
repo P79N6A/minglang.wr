@@ -80,6 +80,7 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpStrategy")
@@ -128,6 +129,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
     PartnerInstanceQueryService partnerInstanceQueryService;
+	
+	@Autowired
+	StationDecorateService stationDecorateService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -215,13 +219,18 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
 
 		if (CollectionUtils.isNotEmpty(children)) {
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+		}
+		
+		//如果是从装修中停业，则需要判断村点是否退出了装修
+		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
+			stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
 		}
 	}
 
