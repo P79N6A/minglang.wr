@@ -16,6 +16,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
+import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
@@ -471,7 +472,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		}
 		try {
 			logger.info("unBindAdmin.info cainiaoStationId"+cainiaoStationId);
-			Result<Boolean> res = stationWriteService.unBindAdmin(cainiaoStationId, Modifier.newSystem());
+			UnBindAdminParam unBind = new UnBindAdminParam();
+			unBind.setStationId(cainiaoStationId);
+			Result<Boolean> res = stationWriteService.unBindAdmin(unBind, Modifier.newSystem());
 			if (!res.isSuccess()) {
 				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
