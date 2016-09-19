@@ -17,4 +17,5 @@ public interface AppResourceBO {
 	
 	public String queryAppResourceValue(String type, String key);
 	
+	public String queryAppValueNotAllowNull(String type, String key);
 }

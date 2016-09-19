@@ -74,6 +74,7 @@
 
 		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
   		<property name="dowjonesProductService.service.version" defaultValue="1.0.0.daily" description="dowjones产品服务" />
+  		<property name="dowjonesOrderService.service.version" defaultValue="1.0.0.daily" description="dowjones订单服务" />
 
 
 	</group>

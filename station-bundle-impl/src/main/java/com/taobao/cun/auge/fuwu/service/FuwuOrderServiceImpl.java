@@ -10,11 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.dowjones.service.constants.OrderItemSiteType;
+import com.ali.dowjones.service.constants.ProductType;
+import com.ali.dowjones.service.dto.CustomerDto;
 import com.ali.dowjones.service.dto.OrderDto;
+import com.ali.dowjones.service.dto.ProductDto;
+import com.ali.dowjones.service.dto.ShoppingCartDto;
 import com.ali.dowjones.service.portal.OrderPortalService;
+import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.dowjones.service.result.ResultModel;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 /**
@@ -30,6 +37,10 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 
 	@Autowired
 	OrderPortalService orderPortalService;
+	@Autowired
+	ShoppingCartPortalService shoppingCartPortalService;
+	@Autowired
+	AppResourceBO appResourceBO;
 	
 	private static String customerIdentity="cuntao";
 	
@@ -48,7 +59,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 				throw new AugeServiceException(result.getExceptionDesc());
 			}
 		} catch (Exception e) {
-			logger.error("orderPortalService error,",e);
+			logger.error("orderPortalService error,userId:"+String.valueOf(userId)+",productCode:"+productCode,e);
 			throw new AugeServiceException("query dowjones error ,"+"userId:"+String.valueOf(userId),e);
 		}
 	}
@@ -74,7 +85,47 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		return results;
 		
 	}
+
+
+	@Override
+	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,
+			Integer policyId,String userIp) {
+		Assert.notNull(userId);
+		Assert.notNull(policyId);
+		Assert.notNull(userIp);
+		CustomerDto customer = new CustomerDto();
+		customer.setSite(OrderItemSiteType.B2BCN.getValue());
+		customer.setUserIp(userIp);
+		ProductDto product = new ProductDto();
+		customer.setAliId(userId);
+		customer.setCustomerIdentity(customerIdentity);
+		product.setKey(policyId.toString());
+		product.setType(ProductType.GROUP);
+		try {
+			ResultModel<ArrayList<ShoppingCartDto>> result = shoppingCartPortalService
+					.addCartItemsQuick(customer, product);
+			if(result.isSuccessed()){
+				List<FuwuOrderDto> returnResult=new ArrayList<FuwuOrderDto>();
+				for(ShoppingCartDto cartDto:result.getReturnValue()){
+					returnResult.add(convertToFuwuOrderDto(cartDto));
+				}
+				return returnResult;
+			}else{
+				throw new AugeServiceException(result.getExceptionDesc());
+			}
+		} catch (Exception e) {
+			logger.error("createOrder error,userId:"+String.valueOf(userId)+",policyId:"+policyId,e);
+			throw new AugeServiceException("createOrder error,userId ,"+"userId:"+String.valueOf(userId),e);
+		}
+	}
 	
 	
+	private FuwuOrderDto convertToFuwuOrderDto(ShoppingCartDto cart){
+		FuwuOrderDto dto=new FuwuOrderDto();
+//		dto.setUserId(cart.get);
+		dto.setExecutePrice(cart.getExecutePrice());
+        dto.setOrderNo(cart.getOrderNo());
+        return dto;
+	}
 	
 }
