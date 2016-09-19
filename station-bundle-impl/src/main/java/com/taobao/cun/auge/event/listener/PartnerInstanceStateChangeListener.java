@@ -73,7 +73,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		if ((PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				|| PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(stateChangeEnum))
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
-			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
+			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent);
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);

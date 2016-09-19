@@ -84,7 +84,7 @@ import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpStrategy")
-public class TpStrategy implements PartnerInstanceStrategy {
+public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(TpStrategy.class);
 
@@ -545,7 +545,9 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
+		String remark = findCloseReason(instanceId);
+
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例

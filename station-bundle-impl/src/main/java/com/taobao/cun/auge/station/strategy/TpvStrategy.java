@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,6 +33,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -45,6 +44,7 @@ import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
+import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -64,9 +64,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpvStrategy")
-public class TpvStrategy implements PartnerInstanceStrategy {
-	
-	private static final Logger logger = LoggerFactory.getLogger(TpvStrategy.class);
+public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
@@ -327,7 +325,17 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-    public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+    public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
+		// 获取停业原因
+		CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);
+		String remark;
+		if (null == forcedCloseDto) {
+			remark = "";
+		} else {
+			remark = CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getCloseReason())
+					? forcedCloseDto.getOtherReason() : forcedCloseDto.getCloseReason().getDesc();
+		}
+		
         PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
         ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
         // FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例

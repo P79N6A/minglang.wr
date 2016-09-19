@@ -86,7 +86,6 @@ import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
@@ -1034,13 +1033,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
 			// 通过事件，定时钟，启动停业流程
-			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
-					instanceStateChange, partnerInstanceBO.getPartnerInstanceById(instanceId), forcedCloseDto);
-
-			event.setRemark(CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getReason()) ? forcedCloseDto.getRemarks()
-					: forcedCloseDto.getReason().getDesc());
-
-			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			dispatchInstStateChangeEvent(instanceId, instanceStateChange, forcedCloseDto);
 			// 失效tair
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),
