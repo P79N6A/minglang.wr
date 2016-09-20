@@ -204,38 +204,33 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	@Override
-	public void initPartnerRecords(Long userId) {
+	public PartnerCourseRecord initPeixunRecord(Long userId,
+			PartnerPeixunCourseTypeEnum courseType, String courseCode) {
 		Assert.notNull(userId);
-		// 初始化启航班
-		initPeixunRecordDetail(
-				getValueFromResource("PARTNER_PEIXUN_CODE", "APPLY_IN"),
-				PartnerPeixunCourseTypeEnum.APPLY_IN.getCode(), userId);
-		// 初始化成长营
-		initPeixunRecordDetail(
-				getValueFromResource("PARTNER_PEIXUN_CODE", "UPGRADE"),
-				PartnerPeixunCourseTypeEnum.UPGRADE.getCode(), userId);
-	}
-	
-	private void initPeixunRecordDetail(String courseCode,String courseType,Long userId){
+		Assert.notNull(courseType);
+		Assert.notNull(courseCode);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andPartnerUserIdEqualTo(userId);
-		criteria.andCourseTypeEqualTo(courseType);
+		criteria.andCourseTypeEqualTo(courseType.getCode());
+		criteria.andCourseCodeEqualTo(courseCode);
 		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
 		if(records.size()>0){
 			logger.warn("prixun record exists,"+userId.toString());
-			return;
+			return records.get(0);
 		}
 		PartnerCourseRecord record=new PartnerCourseRecord();
-		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
+		record.setCourseType(courseType.getCode());
 		record.setPartnerUserId(userId);
 		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
 		record.setCourseCode(courseCode);
 		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
 		partnerCourseRecordMapper.insert(record);
+		return record;
 	}
-
+	
+	
 	@Override
 	public PartnerPeixunDto queryApplyInPeixunRecord(Long userId) {
 		Assert.notNull(userId);
@@ -445,32 +440,22 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 
 	@Override
-	public void invalidPeixunRecord(Long userId) {
-		// 作废启航班
-		invalidPeixunRecordDetail(getValueFromResource("PARTNER_PEIXUN_CODE", "APPLY_IN"),
-				PartnerPeixunCourseTypeEnum.APPLY_IN.getCode(), userId);
-		//作废成长营
-		invalidPeixunRecordDetail(getValueFromResource("PARTNER_PEIXUN_CODE", "UPGRADE"),
-				PartnerPeixunCourseTypeEnum.UPGRADE.getCode(), userId);
+	public void invalidPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode) {
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andPartnerUserIdEqualTo(userId);
+		criteria.andCourseTypeEqualTo(courseType.getCode());
+		criteria.andCourseCodeEqualTo(courseCode);
+		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
+		if(records.size()>0){
+			PartnerCourseRecord record=records.get(0);
+			if(PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())){
+				record.setIsDeleted("y");
+				record.setGmtModified(new Date());
+				partnerCourseRecordMapper.updateByPrimaryKey(record);
+			}
+		}
 		
 	}
-	
-	private void invalidPeixunRecordDetail(String courseType,String courseCode,Long userId){
-			PartnerCourseRecordExample example = new PartnerCourseRecordExample();
-			Criteria criteria = example.createCriteria();
-			criteria.andIsDeletedEqualTo("n");
-			criteria.andPartnerUserIdEqualTo(userId);
-			criteria.andCourseTypeEqualTo(courseType);
-			List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
-			if(records.size()>0){
-				PartnerCourseRecord record=records.get(0);
-				if(PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())){
-					record.setIsDeleted("y");
-					record.setGmtModified(new Date());
-					partnerCourseRecordMapper.updateByPrimaryKey(record);
-				}
-			}
-	}
-
-	
 }

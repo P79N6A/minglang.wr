@@ -67,6 +67,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -152,8 +153,15 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
 		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
-		// 生成培训记录
-		partnerPeixunBO.initPartnerApplyInRecord(taobaoUserId);
+		// 生成启航班培训记录和成长营培训记录
+		partnerPeixunBO.initPeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"APPLY_IN"));
+		partnerPeixunBO.initPeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"UPGRADE"));
 		// 分发启航班试卷
 		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick);
 
@@ -267,9 +275,15 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		}
 		//删除装修记录
 		stationDecorateBO.invalidStationDecorate(stationId);
-		//删除培训记录
-		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId());
-		
+		//删除启航班培训记录和成长营培训记录
+		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"APPLY_IN"));
+		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"UPGRADE"));
 		Long partnerId = rel.getPartnerId();
 		Partner partner = partnerBO.getPartnerById(partnerId);
 		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {

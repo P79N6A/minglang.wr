@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.notify.message.StringMessage;
 
 /**
@@ -23,9 +24,9 @@ public interface PartnerPeixunBO {
 	public PartnerCourseRecord initPartnerApplyInRecord(Long userId);
 	
 	/**
-	 * 打包初始化培训记录(包括启航班和成长营)
+	 * 根据培训类型、课程code初始化培训记录,若存在，不重复创建
 	 */
-	public void initPartnerRecords(Long userId);
+	public PartnerCourseRecord initPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode);
 
 	/**
 	 * 处理crm培训平台培训订单消息
@@ -51,5 +52,6 @@ public interface PartnerPeixunBO {
 	 * 删除培训记录,仅处理未下单记录
 	 * @param userId
 	 */
-	public void invalidPeixunRecord(Long userId);
+	public void invalidPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode);
+
 }
