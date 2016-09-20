@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 
 /**
  * 合伙人培训服务
@@ -12,12 +13,17 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
  */
 public interface PartnerPeixunService {
 
-	public PartnerPeixunDto queryPartnerPeixunProcess(Long userId);
 	
 	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds);
 	
 	/**
-	 * 启航班在线培训状态查询
+	 * 在线培训状态查询
+	 * 可包含连带考试状态，也可不包含
 	 */
-	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId,String courseType);
+	
+	/**
+	 * 线下训状态查询
+	 */
+	public PartnerPeixunDto queryOfflinePeixunProcess(Long userId,String courseCode,PartnerPeixunCourseTypeEnum courseType);
 }

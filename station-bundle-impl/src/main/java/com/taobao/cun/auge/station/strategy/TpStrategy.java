@@ -163,8 +163,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
 								"UPGRADE"));
 		// 分发启航班试卷
-		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick);
-
+		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick,
+				appResourceBO.queryAppValueNotAllowNull(
+						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));
 		// 生成装修记录
 		StationDecorateDto stationDecorateDto = new StationDecorateDto();
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
@@ -460,10 +461,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
 		
 		//培训
-		PartnerCourseRecord pcr = partnerPeixunBO.initPartnerApplyInRecord(rel.getTaobaoUserId());
-		if (PartnerPeixunStatusEnum.DONE.getCode().equals(pcr.getStatus())) {
+		PartnerCourseRecord record = partnerPeixunBO.queryOfflinePeixunRecord(
+				rel.getTaobaoUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
+				appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+						"APPLY_IN"));
+		if(record!=null&&PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
-		}else {
+		}else{
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
 		}
 		

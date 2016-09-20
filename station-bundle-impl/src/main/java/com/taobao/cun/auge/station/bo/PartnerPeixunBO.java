@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
-import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.notify.message.StringMessage;
@@ -35,23 +34,37 @@ public interface PartnerPeixunBO {
 	 */
 	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob);
 	
-	/**
-	 * 根据合伙人id查询入驻培训记录
-	 * @param userId
-	 * @return
-	 */
-	public PartnerPeixunDto queryApplyInPeixunRecord(Long userId);
 	
 	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds);
 	
-	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId);
-	
-	public void dispatchApplyInExamPaper(Long userId, String taobaoNick);
+	public void dispatchApplyInExamPaper(Long userId, String taobaoNick,String paperId);
 	
 	/**
 	 * 删除培训记录,仅处理未下单记录
 	 * @param userId
 	 */
 	public void invalidPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode);
+	
+	/**
+	 * 查询在线培训记录
+	 * @param userId
+	 * @param courseCode
+	 * @return
+	 */
+	public PartnerPeixunDto queryOnlineCourseRecord(Long userId, String courseCode);
+			
+	/**
+	 * 根据课程code、userId、课程类型查询线下课程的培训记录 
+	 */
+	public PartnerCourseRecord queryOfflinePeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode);
+	
+	/**
+	 * 获取签到码
+	 * @param userId
+	 * @param courseCode
+	 * @param orderNum
+	 * @return
+	 */
+	public String getPeixunTicket(Long userId,String courseCode,String orderNum);
 
 }
