@@ -20,8 +20,6 @@ import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
-import com.alibaba.ivy.service.course.dto.CourseDTO;
-import com.alibaba.ivy.service.course.query.CourseQueryDTO;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
@@ -201,54 +199,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		partnerCourseRecordMapper.insert(record);
 		return record;
 	}
-	
-	
-	
-	private String getTicketNo(List<TrainingRecordDTO> trainRecords,String orderNum){
-		AppAuthDTO auth = new AppAuthDTO();
-		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunClientCode);
-		for(TrainingRecordDTO dto:trainRecords){
-			if(orderNum.equals(getOrderNoByOrderItem(dto.getOrderItemNum()))){
-				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
-				if(ticketDto.isSuccess()){
-					if(ticketDto.getData() != null && ticketDto.getData().size()>0){
-						return ticketDto.getData().get(0).getTicketNo();
-					}else {
-						return "";
-					}
-				}else{
-					logger.error("getByTrainingRecordId error param:"+dto.getId()+"message:"+JSONObject.toJSONString(ticketDto));
-					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
-				}
-			}
-		}
-		return null;
-	}
-	
-	private CourseDTO getCourseFromPeixun(String code) {
-		AppAuthDTO auth = new AppAuthDTO();
-		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunClientCode);
-		CourseQueryDTO courseQuery = new CourseQueryDTO();
-		courseQuery.setCodes(Lists.newArrayList(code));
-		try {
-			ResultDTO<PageDTO<CourseDTO>> courseResult = courseServiceFacade
-					.find(auth, courseQuery, 100, 1);
-			if (courseResult.isSuccess()
-					&& courseResult.getData().getRows().size() > 0) {
-				return courseResult.getData().getRows().get(0);
-			} else {
-				throw new RuntimeException("query course error,"
-						+ courseResult.getMsg());
-			}
-		} catch (Exception e) {
-			logger.error("queryApplyInPeixunList error", e);
-			throw new RuntimeException(e);
-		}
-	}
-	
-	
 	
 	public String getPeixunTicket(Long userId,String courseCode,String orderNum){
 		AppAuthDTO auth = new AppAuthDTO();
