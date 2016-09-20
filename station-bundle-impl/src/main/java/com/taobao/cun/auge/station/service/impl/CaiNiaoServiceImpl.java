@@ -457,6 +457,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				}
 				caiNiaoStationDto.setStationId(cainiaoSId);
 				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
+				
+				LinkedHashMap<String, String> featureMap1 = new LinkedHashMap<String, String>();
+				featureMap1.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(parentInstanceDto.getTaobaoUserId()));
+				caiNiaoAdapter.updateStationUserRelFeature(tpaInstanceDto.getTaobaoUserId(), featureMap1);
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("updateBelongTPForTpa", "partnerInstanceId:" + partnerInstanceId +

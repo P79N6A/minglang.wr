@@ -517,7 +517,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		//bindParam.setPhone(dto.getTelephone());
 		//bindParam.setEmail(dto.);
 		bindParam.setWangwang(dto.getLoginId());
-		//bindParam.setFeatureDTO(featureDTO);
+		FeatureDTO feature = new FeatureDTO();
+		feature.put(CaiNiaoAdapter.CUNTAO_CODE, dto.getStationNum());
+		bindParam.setFeatureDTO(feature);
 
 		
 		bindParam.setUserId(dto.getTaobaoUserId());
