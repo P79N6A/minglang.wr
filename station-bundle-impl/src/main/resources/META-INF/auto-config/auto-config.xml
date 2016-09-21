@@ -68,13 +68,14 @@
  		<property name="crm.peixun.online.exam.paperId" defaultValue="crm.peixun.online.exam.paperId" description="试卷id" />
   		<property name="hsf.consumer.version.crius.examUserDispatchService" defaultValue="1.0.0.daily" description="试卷分发服务" />
   		<property name="hsf.consumer.version.crius.examInstanceService" defaultValue="1.0.0.daily" description="考试实例服务" />
- 
-		
 		<property name="acl.accessKey" defaultValue="null" description="acl.accessKey" />
-
 		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
   		<property name="dowjonesProductService.service.version" defaultValue="1.0.0.daily" description="dowjones产品服务" />
   		<property name="dowjonesOrderService.service.version" defaultValue="1.0.0.daily" description="dowjones订单服务" />
+  		<property name="spring.notify.publisher.groupId" defaultValue="P-auge-test" description="notify发送" />
+  		<property name="spring.notify.publisher.topics.ORDER_CHANGE_TOPIC" defaultValue="ORDER_CHANGE_PAYMENT_SUCESS" description="notify发送" />
+  		<property name="spring.notify.publisher.topics" defaultValue="ORDER_CHANGE_TOPIC" description="notify发送" />
+  		<property name="spring.notify.subscriber.topics.b2b-crm-order" defaultValue="payment.arrived.msg.type" description="notify消费售中订单到款消息" />
 
 
 	</group>
