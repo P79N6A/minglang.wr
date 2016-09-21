@@ -386,6 +386,11 @@
 			    <artifactId>buc.uc.api</artifactId>
 			    <version>0.8.57</version>
 		    </dependency>
+			<dependency>
+				<groupId>com.alibaba.crm.shared</groupId>
+				<artifactId>order.service</artifactId>
+				<version>1.2.57</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

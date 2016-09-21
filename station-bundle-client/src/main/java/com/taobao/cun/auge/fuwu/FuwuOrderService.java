@@ -17,4 +17,7 @@ public interface FuwuOrderService {
 		
 	//根据套餐id创建订单, 客户id
 	public List<FuwuOrderDto> createOrderByPolicyId(Long userId,String mkey,String userIp);
+	
+	//服务完成，关闭crm订单
+	public void closeOrder(String orderNum);
 }

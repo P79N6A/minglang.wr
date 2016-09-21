@@ -16,23 +16,22 @@ import com.taobao.notify.message.StringMessage;
 public interface PartnerPeixunBO {
 	
 	/**
-	 * 初始化入驻培训记录
-	 * @param userId
-	 * @return
-	 */
-	public PartnerCourseRecord initPartnerApplyInRecord(Long userId);
-	
-	/**
 	 * 根据培训类型、课程code初始化培训记录,若存在，不重复创建
 	 */
 	public PartnerCourseRecord initPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode);
 
 	/**
-	 * 处理crm培训平台培训订单消息
+	 * 处理培训签到消息
 	 * @param strMessage
 	 * @param ob
 	 */
-	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob);
+	public void handlePeixunFinishSucess(StringMessage strMessage, JSONObject ob);
+	/**
+	 * 处理培训订单付款成功消息
+	 * @param strMessage
+	 * @param ob
+	 */
+	public void handlePeixunPaymentProcess(StringMessage strMessage, JSONObject ob);
 	
 	
 	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds);

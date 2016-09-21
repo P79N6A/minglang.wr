@@ -27,13 +27,19 @@ import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
+import com.taobao.cun.auge.fuwu.FuwuOrderService;
+import com.taobao.cun.auge.notify.DefaultNotifyPublish;
+import com.taobao.cun.auge.notify.NotifyFuwuOrderChangeVo;
+import com.taobao.cun.auge.partner.service.PartnerQueryService;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
@@ -64,9 +70,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	ExamInstanceService examInstanceService;
 	@Autowired
 	AppResourceBO appResourceBO;
-	
-	@Value("${partner.apply.in.peixun.code}")
-	private String peixunCode;
+	@Autowired
+	DefaultNotifyPublish defaultNotifyPublish;
+	@Autowired
+	PartnerQueryService partnerQueryService;
+	@Autowired
+	FuwuOrderService fuwuOrderService;
 	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
@@ -76,25 +85,57 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void handlePeixunProcess(StringMessage strMessage, JSONObject ob) {
-		//判断是否是村淘入驻培训订单
-		String code=ob.getString("serviceCode");
-		if(!peixunCode.equals(code)){
-			return;
-		}
+	public void handlePeixunFinishSucess(StringMessage strMessage, JSONObject ob) {
 		String messageType=strMessage.getMessageType();
-		if(NotifyContents.PARTNER_PEIXUN_PAYMENT_SUCCESS.equals(messageType)){
-			//处理付款成功消息
-			handlePaymentSucess(ob);
-		}else if(NotifyContents.PARTNER_PEIXUN_COMPLETE.equals(messageType)){
-			//处理签到消息
-			handleComplete(ob);
-		}else{
-			logger.warn("messageType not need handle,"+strMessage.toExtString());
+		if(!NotifyContents.PARTNER_PEIXUN_PAYMENT_SUCCESS.equals(messageType)){
+			//不需要处理的消息类型
+            return;
+		}
+		String courseType=getCourseTypeByCode(ob.getString("serviceCode"));
+		if(StringUtils.isNotEmpty(courseType)){
+			PartnerCourseRecord pc=handleComplete(ob,courseType);
+			//通知售中关闭订单
+			fuwuOrderService.closeOrder(pc.getOrderNum());
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void handlePeixunPaymentProcess(StringMessage strMessage,
+			JSONObject ob) {
+		String messageType=strMessage.getMessageType();
+		if(!NotifyContents.CRM_ORDER_PAYMENT_SUCESS_MESSAGETYPE.equals(messageType)){
+			//不需要处理的消息类型
+            return;
+		}
+		String courseType=getCourseTypeByCode(ob.getString("serviceCode"));
+		if(StringUtils.isNotEmpty(courseType)){
+			handlePaymentSucess(ob,courseType);
+			//获取合伙人信息
+			PartnerDto partner=partnerQueryService.queryPartnerByTaobaoUserId(new Long("taobaousrId"));
+			//notify crm peixun
+			NotifyFuwuOrderChangeVo vo =new NotifyFuwuOrderChangeVo();
+			vo.setMessageType(NotifyContents.FUWU_ORDER_PAYMENT_MESSAGETYPE);
+			vo.setTopic(NotifyContents.FUWU_ORDER_PAYMENT_TOPIC);
+			vo.setPartnerName(partner.getName());
+			vo.setPartnerPhone(partner.getMobile());
+			vo.setProductCode(ob.getString("serviceCode"));
+			defaultNotifyPublish.publish(vo);
 		}
 	}
 	
-	private void handlePaymentSucess(JSONObject ob){
+	private String getCourseTypeByCode(String code){
+		List<AppResource> apps=appResourceBO.queryAppResourceList("PARTNER_PEIXUN_CODE");
+		for(AppResource app:apps){
+			if(app.getValue().equals(code)){
+				return app.getName();
+			}
+		}
+		logger.info("handle code not match:"+code);
+		return null;
+	}
+	
+	
+	private void handlePaymentSucess(JSONObject ob,String courseType){
 		Long userId=ob.getLong("buyerAliId");
 		String orderNum=ob.getString("orderNo");
 		String code=ob.getString("serviceCode");
@@ -106,16 +147,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andPartnerUserIdEqualTo(userId);
-		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
+		criteria.andCourseTypeEqualTo(courseType);
+		criteria.andCourseCodeEqualTo(code);
 		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
 		if(records.size()==0){
 			//初始化培训记录
-			record=initPartnerApplyInRecord(userId);
+			record=initPeixunRecord(userId,PartnerPeixunCourseTypeEnum.valueof(courseType), code);
 		}else{
 			record=records.get(0);
 		}
 		if(record.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())){
-			record.setCourseCode(code);
 			record.setStatus(PartnerPeixunStatusEnum.PAY.getCode());
 			record.setOrderNum(orderNum);
 			DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
@@ -126,16 +167,17 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		
 	}
 
-	private void handleComplete(JSONObject ob){
+	private PartnerCourseRecord handleComplete(JSONObject ob,String courseType){
 		Long userId=ob.getLong("buyerAliId");
-		String orderNum=ob.getString("orderNo");
+		String code=ob.getString("code");
 		Assert.notNull(userId);
-		Assert.notNull(orderNum);
+		Assert.notNull(code);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andPartnerUserIdEqualTo(userId);
-		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
+		criteria.andCourseTypeEqualTo(courseType);
+		criteria.andCourseCodeEqualTo(code);
 		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
 		if(records.size()==0){
 			throw new RuntimeException("not find peixunRecord "+userId.toString());
@@ -143,37 +185,14 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		PartnerCourseRecord record=records.get(0);
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
         record.setGmtDone(new Date());
-        record.setOrderNum(orderNum);
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle
         partnerInstanceBO.finishCourse(userId);
+        return record;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public PartnerCourseRecord initPartnerApplyInRecord(Long userId) {
-		Assert.notNull(userId);
-		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andPartnerUserIdEqualTo(userId);
-		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
-		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
-		if(records.size()>0){
-			logger.warn("prixun record exists,"+userId.toString());
-			return records.get(0);
-		}
-		PartnerCourseRecord record=new PartnerCourseRecord();
-		record.setCourseType(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
-		record.setPartnerUserId(userId);
-		record.setStatus(PartnerPeixunStatusEnum.NEW.getCode());
-		record.setCourseCode(peixunCode);
-		DomainUtils.beforeInsert(record, DomainUtils.DEFAULT_OPERATOR);
-		partnerCourseRecordMapper.insert(record);
-		return record;
-	}
-	
-	@Override
 	public PartnerCourseRecord initPeixunRecord(Long userId,
 			PartnerPeixunCourseTypeEnum courseType, String courseCode) {
 		Assert.notNull(userId);
@@ -240,7 +259,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 
-	protected String getOrderNoByOrderItem(String orderItem) {
+	private String getOrderNoByOrderItem(String orderItem) {
 		if (StringUtils.isBlank(orderItem))
 			return null;
 		int lastIndex = orderItem.lastIndexOf("_");
@@ -288,7 +307,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 	
-	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void invalidPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode) {
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
 		Criteria criteria = example.createCriteria();
