@@ -52,6 +52,8 @@ public class DefaultListener implements MessageListener {
 			processProcessor.handleProcessMsg(strMessage,ob);
 		}else if(NotifyContents.PARTNER_PEIXUN_TOPIC.equals(strMessage.getTopic())){
 			partnerPeixunBO.handlePeixunProcess(strMessage, ob);
+		}else if(NotifyContents.CRM_ORDER_PAYMENT_SUCESS.equals(strMessage.getTopic())){
+			System.out.println(strMessage);
 		}else{
 			logger.warn("unknow msgTopic:"+strMessage.getTopic());
 		}
