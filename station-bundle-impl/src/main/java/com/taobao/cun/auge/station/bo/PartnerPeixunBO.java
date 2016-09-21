@@ -34,7 +34,7 @@ public interface PartnerPeixunBO {
 	public void handlePeixunPaymentProcess(StringMessage strMessage, JSONObject ob);
 	
 	
-	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds);
+	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds,String courseType,String courseCode);
 	
 	public void dispatchApplyInExamPaper(Long userId, String taobaoNick,String paperId);
 	

@@ -269,7 +269,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 
 	@Override
-	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds) {
+	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds,String courseType,String courseCode) {
 		List<PartnerPeixunDto> result=new ArrayList<PartnerPeixunDto>();
 		if(userIds==null||userIds.size()==0){
 			return result;
@@ -278,8 +278,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andPartnerUserIdIn(userIds);
-		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN
-				.getCode());
+		criteria.andCourseTypeEqualTo(courseType);
+		criteria.andCourseCodeEqualTo(courseCode);
 		List<PartnerCourseRecord> records = partnerCourseRecordMapper
 				.selectByExample(example);
 		for(PartnerCourseRecord record:records){

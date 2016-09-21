@@ -14,7 +14,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 public interface PartnerPeixunService {
 
 	
-	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds);
+	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds,String courseType,String courseCode);
 	
 	/**
 	 * 在线培训状态查询

@@ -62,8 +62,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
 	@Override
-	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds) {
-		return partnerPeixunBO.queryBatchPeixunRecord(userIds);
+	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds,String courseType,String courseCode) {
+		return partnerPeixunBO.queryBatchPeixunRecord(userIds,courseType,courseCode);
 	}
 
 	@Override
