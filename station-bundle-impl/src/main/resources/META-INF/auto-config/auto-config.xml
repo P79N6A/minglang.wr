@@ -73,8 +73,7 @@
   		<property name="dowjonesProductService.service.version" defaultValue="1.0.0.daily" description="dowjones产品服务" />
   		<property name="dowjonesOrderService.service.version" defaultValue="1.0.0.daily" description="dowjones订单服务" />
   		<property name="spring.notify.publisher.groupId" defaultValue="P-auge-test" description="notify发送" />
-  		<property name="spring.notify.publisher.topics.ORDER_CHANGE_TOPIC" defaultValue="ORDER_CHANGE_PAYMENT_SUCESS" description="notify发送" />
-  		<property name="spring.notify.publisher.topics" defaultValue="ORDER_CHANGE_TOPIC" description="notify发送" />
+  		<property name="spring.notify.publisher.topics.orderChangeTopic" defaultValue="ORDER_CHANGE_PAYMENT_SUCESS" description="notify发送" />
   		<property name="spring.notify.subscriber.topics.b2b-crm-order" defaultValue="payment.arrived.msg.type" description="notify消费售中订单到款消息" />
 
 
