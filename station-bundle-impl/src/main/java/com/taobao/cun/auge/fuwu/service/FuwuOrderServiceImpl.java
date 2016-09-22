@@ -45,7 +45,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	@Autowired
 	OrderItemFacade orderItemFacade;
 	
-	private static String customerIdentity="cuntao";
+	private static String customerIdentity="cun_tao";
 	
 	@Override
 	public  List<FuwuOrderDto>  queryOrdersByUserIdAndCode(Long userId,
