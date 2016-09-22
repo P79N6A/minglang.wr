@@ -3,8 +3,10 @@ package com.taobao.cun.auge.station.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -157,6 +159,32 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		List<String> productCodes=new ArrayList<String>();
 		productCodes.addAll(productCodes);
 		return fuwuOrderService.queryOrdersByUserIdAndCode(userId, productCodes, orderStatus);
+	}
+
+	@Override
+	public Map<String, PartnerOnlinePeixunDto> queryBatchOnlinePeixunProcess(
+			Long userId, List<String> courseCodes) {
+		Assert.notNull(userId);
+		Assert.notNull(courseCodes);
+		List<PartnerPeixunDto> dtos= partnerPeixunBO.queryBatchOnlinePeixunProcess(userId, courseCodes);
+		Map<String,PartnerOnlinePeixunDto> result=new HashMap<String,PartnerOnlinePeixunDto>();
+		l1:for(String code:courseCodes){
+			if(result.get(code)!=null){
+				continue;
+			}
+			PartnerOnlinePeixunDto re=new PartnerOnlinePeixunDto();
+			re.setCourseCode(code);
+			for(PartnerPeixunDto dto:dtos){
+				if(dto.getCourseCode().equals(code)){
+					re.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
+					result.put(code, re);
+					continue l1;
+				}
+			}
+			re.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN);
+			result.put(code, re);
+		}
+		return result;
 	}
 	
 }

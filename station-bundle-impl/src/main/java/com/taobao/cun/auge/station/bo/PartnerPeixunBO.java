@@ -65,5 +65,10 @@ public interface PartnerPeixunBO {
 	 * @return
 	 */
 	public String getPeixunTicket(Long userId,String courseCode,String orderNum);
-
+	
+	/**
+	 * 
+	 */
+    public List<PartnerPeixunDto> queryBatchOnlinePeixunProcess(Long userId, List<String> courseCodes);
+	
 }

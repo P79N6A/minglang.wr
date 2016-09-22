@@ -223,7 +223,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
 		auth.setCode(peixunClientCode);
-		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(auth,courseCode,userId);
+		List<String> codes=new ArrayList<String>();
+		codes.add(courseCode);
+		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(auth,codes,userId);
 		for(TrainingRecordDTO dto:trainRecords){
 			if(orderNum.equals(getOrderNoByOrderItem(dto.getOrderItemNum()))){
 				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
@@ -240,9 +242,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		return null;
 	}
 	
-	private List<TrainingRecordDTO> getRecordFromPeixun(AppAuthDTO auth,String code, Long userId) {
+	private List<TrainingRecordDTO> getRecordFromPeixun(AppAuthDTO auth,List<String> codes, Long userId) {
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
-		query.addCourseCode(code);
+		query.getCourseCodes().addAll(codes);
 		query.addTrainee(String.valueOf(userId));
 		try {
 			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
@@ -332,7 +334,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
 		auth.setCode(peixunClientCode);
-		List<TrainingRecordDTO> trainRecords = getRecordFromPeixun(auth,courseCode,
+		List<String> codes=new ArrayList<String>();
+		List<TrainingRecordDTO> trainRecords = getRecordFromPeixun(auth,codes,
 				userId);
 		if (trainRecords.size() == 0) {
 			return null;
@@ -365,6 +368,31 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			return records.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	public List<PartnerPeixunDto> queryBatchOnlinePeixunProcess(Long userId,
+			List<String> courseCodes) {
+		AppAuthDTO auth = new AppAuthDTO();
+		auth.setAuthkey(peixunClientKey);
+		auth.setCode(peixunClientCode);
+		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(auth,courseCodes,userId);
+		List<PartnerPeixunDto> result=new ArrayList<PartnerPeixunDto>();
+		l1:for(TrainingRecordDTO dto:trainRecords){
+			for(PartnerPeixunDto re:result){
+				if(dto.getTrainee().equals(String.valueOf(re.getUserId()))){
+				continue l1;
+			  }
+			}
+			PartnerPeixunDto dt=new PartnerPeixunDto();
+			dt.setUserId(new Long(dto.getTrainee()));
+			dt.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
+			dt.setStatusDesc(PartnerPeixunStatusEnum.DONE.getDesc());
+			dt.setGmtDone(dto.getEndDate());
+			dt.setCourseCode(dto.getCourseCode());
+			result.add(dt);
+		}
+		return result;
 	}
 
 }
