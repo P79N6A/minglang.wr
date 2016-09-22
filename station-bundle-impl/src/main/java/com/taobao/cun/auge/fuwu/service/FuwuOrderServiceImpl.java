@@ -54,7 +54,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		try {
 			ResultModel<ArrayList<OrderDto>> result = orderPortalService
 					.getOrdersFromProductCodes(userId, new ArrayList<String>(
-							productCode), statuses, customerIdentity);
+							productCode), statuses, null);
 			if(result.isSuccessed()){
 				return convertOrderDtoToFuwuDto(result.getReturnValue());
 			}else{
@@ -99,7 +99,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		customer.setSite(OrderItemSiteType.B2BCN.getValue());
 		customer.setUserIp(userIp);
 		customer.setAliId(userId);
-		customer.setCustomerIdentity(customerIdentity);
+//		customer.setCustomerIdentity(customerIdentity);
 		ProductDto product = new ProductDto();
 		product.setMkey(mkey);
 		try {
