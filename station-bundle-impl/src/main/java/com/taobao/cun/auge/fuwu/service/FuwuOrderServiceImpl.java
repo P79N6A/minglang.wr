@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import com.ali.dowjones.service.constants.OrderItemSiteType;
 import com.ali.dowjones.service.dto.CustomerDto;
 import com.ali.dowjones.service.dto.OrderDto;
+import com.ali.dowjones.service.dto.OrderItemDto;
 import com.ali.dowjones.service.dto.ProductDto;
 import com.ali.dowjones.service.dto.ShoppingCartDto;
 import com.ali.dowjones.service.portal.OrderPortalService;
@@ -73,14 +74,15 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			return results;
 		}
 		for(OrderDto dto:dtos){
+			OrderItemDto itemDto=dto.getOrderItems().get(0);
 			FuwuOrderDto fuwu=new FuwuOrderDto();
-			fuwu.setId(dto.getId());
-			fuwu.setBasePrice(dto.getBasePrice());
-			fuwu.setExecutePrice(dto.getExecutePrice());
-			fuwu.setOrderNo(dto.getOrderNo());
-			fuwu.setOrderTitle(dto.getOrderTitle());
-			fuwu.setPaymentAmount(dto.getPaymentAmount());
-			fuwu.setUserId(dto.getAliId());
+			fuwu.setId(itemDto.getId());
+			fuwu.setBasePrice(itemDto.getBasePrice());
+			fuwu.setExecutePrice(itemDto.getExecutePrice());
+			fuwu.setOrderNo(itemDto.getOrderNo());
+			fuwu.setOrderItemNo(itemDto.getItemNum());
+			fuwu.setOrderTitle(itemDto.getProductName());
+			fuwu.setPaymentAmount(itemDto.getPaymentAmount());
 			fuwu.setComments(dto.getComments());
 			results.add(fuwu);
 		}
@@ -123,9 +125,11 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	
 	private FuwuOrderDto convertToFuwuOrderDto(ShoppingCartDto cart){
 		FuwuOrderDto dto=new FuwuOrderDto();
-//		dto.setUserId(cart.get);
 		dto.setExecutePrice(cart.getExecutePrice());
         dto.setOrderNo(cart.getOrderNo());
+        dto.setOrderItemNo(cart.getItemNo());
+        dto.setOrderName(cart.getItemName());
+        dto.setProductCode(cart.getProductCode());
         return dto;
 	}
 

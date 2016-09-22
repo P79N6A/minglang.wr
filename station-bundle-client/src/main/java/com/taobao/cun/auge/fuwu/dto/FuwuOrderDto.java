@@ -9,6 +9,7 @@ public class FuwuOrderDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String orderNo;
+	private String orderItemNo;
 	private Long userId;
 	private String orderTitle;
 	private String status;
@@ -17,7 +18,10 @@ public class FuwuOrderDto implements Serializable {
 	private BigDecimal executePrice;
 	private String comments;
 	private Date gmtOrder;
-
+	private String productCode;
+	private String orderName;
+	private String paymentStatus;
+	
 	public Date getGmtOrder() {
 		return gmtOrder;
 	}
@@ -96,6 +100,38 @@ public class FuwuOrderDto implements Serializable {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public String getOrderItemNo() {
+		return orderItemNo;
+	}
+
+	public void setOrderItemNo(String orderItemNo) {
+		this.orderItemNo = orderItemNo;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getOrderName() {
+		return orderName;
+	}
+
+	public void setOrderName(String orderName) {
+		this.orderName = orderName;
+	}
+
+	public String getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(String paymentStatus) {
+		this.paymentStatus = paymentStatus;
 	}
 
 }
