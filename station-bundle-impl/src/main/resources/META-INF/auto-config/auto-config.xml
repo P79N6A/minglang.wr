@@ -48,7 +48,6 @@
 		<property name="spring.notify.subscriber.groupId" defaultValue="a36f3e7c-7187-4cc8-bbf9-0810c11ea2ed" description="notify groupId" />
 		<property name="spring.notify.subscriber.topics.CUNTAO_CRIUS_PROCESS" defaultValue="a36f3e7c-7187-4cc8-bbf9-0810c11ea2ed" description="notify message type" />
 		<property name="spring.notify.subscriber.topics.CASTLE_ORDER_OPERATOR_TOPIC" defaultValue="ORDER_PAYMENT_SUCCESS_MSG_TYPE,ORDER_COMPLETE_MSG_TYPE" description="notify message type" />
-		<property name="partner.apply.in.peixun.code" defaultValue="PXF4O6R0" description="合伙人入驻培训code" />
 		<property name="partner.peixun.client.code" defaultValue="TWTP1YC" description="培训平台交互code" />
 		<property name="partner.peixun.client.key" defaultValue="666L83IJ06RD" description="培训平台交互key" />
 		<property name="partner.peixun.service.version" defaultValue="1.0.0.daily" description="培训平台交互version" />
@@ -56,25 +55,20 @@
 		<property name="tcBaseService.service.version" defaultValue="1.0.0.daily" description="淘宝订单服务" />
 		
 		<property name="stationDecorateOrder.amount" defaultValue="350000" description="装修订单价格" />
-		<property name="crm.peixun.course.url" defaultValue="//cunxuexi.taobao.com" description="课程详情页面" />
-		<property name="crm.peixun.order.url" defaultValue="//fuwu.alibaba.com/account/my_orders.htm" description="我的订单" />
 		<property name="taobao.image.url" defaultValue="//img.daily.taobaocdn.net/bao/uploaded/" description="淘宝订单图片url前缀" />
 		<property name="taobao.orderDetail.url" defaultValue="//buyertrade.daily.taobao.net/trade/detail/trade_item_detail.htm?bizOrderId=" description="淘宝订单详情url前缀" />
 		<property name="taobao.item.url" defaultValue="//item.taobao.com/item.htm?id=" description="淘宝商品url前缀" />
 		<property name="station.decorate.reflect.url" defaultValue="//cuntaoadmin.daily.taobao.net/my/h5/stationDecorateEdit.htm?stationId=" description="装修反馈url前缀" />
-		<property name="crm.peixun.online.couerse.url" defaultValue="crm.peixun.online.couerse.url" description="在线培训课程地址" />
-		<property name="crm.peixun.online.code" defaultValue="crm.peixun.online.code" description="在线培训code" />
-		<property name="crm.peixun.online.exam.url" defaultValue="crm.peixun.online.exam.url" description="在线考试地址" />
- 		<property name="crm.peixun.online.exam.paperId" defaultValue="crm.peixun.online.exam.paperId" description="试卷id" />
   		<property name="hsf.consumer.version.crius.examUserDispatchService" defaultValue="1.0.0.daily" description="试卷分发服务" />
   		<property name="hsf.consumer.version.crius.examInstanceService" defaultValue="1.0.0.daily" description="考试实例服务" />
- 
-		
 		<property name="acl.accessKey" defaultValue="null" description="acl.accessKey" />
-
 		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
   		<property name="dowjonesProductService.service.version" defaultValue="1.0.0.daily" description="dowjones产品服务" />
   		<property name="dowjonesOrderService.service.version" defaultValue="1.0.0.daily" description="dowjones订单服务" />
+  		<property name="spring.notify.publisher.groupId" defaultValue="P-auge-test" description="notify发送" />
+  		<property name="spring.notify.publisher.topics.orderChangeTopic" defaultValue="ORDER_CHANGE_PAYMENT_SUCESS" description="notify发送" />
+  		<property name="spring.notify.subscriber.topics.b2b-crm-order" defaultValue="payment.arrived.msg.type" description="notify消费售中订单到款消息" />
+  		<property name="crm.order.service.version" defaultValue="crm.order.service.version" description="crm订单关闭服务" />
 
 
 	</group>

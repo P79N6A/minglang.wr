@@ -51,7 +51,9 @@ public class DefaultListener implements MessageListener {
 		if(NotifyContents.CUNTAO_CRIUS_PROCESS.equals(strMessage.getTopic())){
 			processProcessor.handleProcessMsg(strMessage,ob);
 		}else if(NotifyContents.PARTNER_PEIXUN_TOPIC.equals(strMessage.getTopic())){
-			partnerPeixunBO.handlePeixunProcess(strMessage, ob);
+			partnerPeixunBO.handlePeixunFinishSucess(strMessage, ob);
+		}else if(NotifyContents.CRM_ORDER_PAYMENT_SUCESS.equals(strMessage.getTopic())){
+			partnerPeixunBO.handlePeixunPaymentProcess(strMessage, ob);
 		}else{
 			logger.warn("unknow msgTopic:"+strMessage.getTopic());
 		}

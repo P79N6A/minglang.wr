@@ -67,8 +67,8 @@ public class StationDecorateConverter {
 		stationDecorate.setWallArea(stationDecorateDto.getWallArea());
 		stationDecorate.setCarpetArea(stationDecorateDto.getCarpetArea());
 		stationDecorate.setReflectSatisfySolid(stationDecorateDto.getReflectSatisfySolid());
-	    stationDecorate.setPaymentType(stationDecorateDto.getPaymentType().getCode());
-	    stationDecorate.setDecorateType(stationDecorateDto.getDecorateType().getCode());
+	    stationDecorate.setPaymentType(stationDecorateDto.getPaymentType()==null?null:stationDecorateDto.getPaymentType().getCode());
+	    stationDecorate.setDecorateType(stationDecorateDto.getDecorateType()==null?null:stationDecorateDto.getDecorateType().getCode());
 		return stationDecorate;
 	}
 

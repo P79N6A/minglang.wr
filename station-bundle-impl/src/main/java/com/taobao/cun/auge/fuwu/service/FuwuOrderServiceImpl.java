@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemSiteType;
-import com.ali.dowjones.service.constants.ProductType;
 import com.ali.dowjones.service.dto.CustomerDto;
 import com.ali.dowjones.service.dto.OrderDto;
 import com.ali.dowjones.service.dto.ProductDto;
@@ -19,6 +18,7 @@ import com.ali.dowjones.service.dto.ShoppingCartDto;
 import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.dowjones.service.result.ResultModel;
+import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
@@ -41,6 +41,8 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	ShoppingCartPortalService shoppingCartPortalService;
 	@Autowired
 	AppResourceBO appResourceBO;
+	@Autowired
+	OrderItemFacade orderItemFacade;
 	
 	private static String customerIdentity="cuntao";
 	
@@ -125,6 +127,18 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		dto.setExecutePrice(cart.getExecutePrice());
         dto.setOrderNo(cart.getOrderNo());
         return dto;
+	}
+
+
+	@Override
+	public void closeOrder(String orderNum) {
+		Assert.notNull(orderNum);
+		try {
+			orderItemFacade.serviceWasFinished(orderNum);
+		} catch (Exception e) {
+			logger.error("crm close order error " + orderNum, e);
+			throw new AugeServiceException("crm close order error " + orderNum);
+		}
 	}
 	
 }
