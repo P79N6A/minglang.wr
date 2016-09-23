@@ -91,7 +91,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			//不需要处理的消息类型
             return;
 		}
-		String courseType=getCourseTypeByCode(ob.getString("serviceCode"));
+		String courseType=getCourseTypeByCode(ob.getString("productCode"));
 		if(StringUtils.isNotEmpty(courseType)){
 			PartnerCourseRecord pc=handleComplete(ob,courseType);
 			//通知售中关闭订单
@@ -169,7 +169,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 
 	private PartnerCourseRecord handleComplete(JSONObject ob,String courseType){
 		Long userId=ob.getLong("buyerAliId");
-		String code=ob.getString("code");
+		String code=ob.getString("productCode");
 		Assert.notNull(userId);
 		Assert.notNull(code);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
