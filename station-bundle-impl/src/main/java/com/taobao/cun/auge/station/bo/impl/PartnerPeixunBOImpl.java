@@ -87,7 +87,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunFinishSucess(StringMessage strMessage, JSONObject ob) {
 		String messageType=strMessage.getMessageType();
-		if(!NotifyContents.PARTNER_PEIXUN_PAYMENT_SUCCESS.equals(messageType)){
+		if(!NotifyContents.CUNXUEXI_PEIXUN_COMPLETE_MST.equals(messageType)){
 			//不需要处理的消息类型
             return;
 		}

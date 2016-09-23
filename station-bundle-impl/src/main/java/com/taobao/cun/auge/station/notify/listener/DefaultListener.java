@@ -50,7 +50,7 @@ public class DefaultListener implements MessageListener {
 	private void handleMsg(StringMessage strMessage,JSONObject ob) throws Exception{
 		if(NotifyContents.CUNTAO_CRIUS_PROCESS.equals(strMessage.getTopic())){
 			processProcessor.handleProcessMsg(strMessage,ob);
-		}else if(NotifyContents.PARTNER_PEIXUN_TOPIC.equals(strMessage.getTopic())){
+		}else if(NotifyContents.CUNXUEXI_PEIXUN_COMPLETE_TOPIC.equals(strMessage.getTopic())){
 			partnerPeixunBO.handlePeixunFinishSucess(strMessage, ob);
 		}else if(NotifyContents.CRM_ORDER_PAYMENT_SUCESS.equals(strMessage.getTopic())){
 			partnerPeixunBO.handlePeixunPaymentProcess(strMessage, ob);
