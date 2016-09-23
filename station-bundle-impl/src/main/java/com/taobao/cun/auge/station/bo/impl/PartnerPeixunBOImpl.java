@@ -244,7 +244,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	private List<TrainingRecordDTO> getRecordFromPeixun(AppAuthDTO auth,List<String> codes, Long userId) {
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
-		query.getCourseCodes().addAll(codes);
+		query.setCourseCodes(codes);
 		query.addTrainee(String.valueOf(userId));
 		try {
 			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
