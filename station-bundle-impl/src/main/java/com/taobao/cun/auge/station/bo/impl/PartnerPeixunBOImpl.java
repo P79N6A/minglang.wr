@@ -335,6 +335,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		auth.setAuthkey(peixunClientKey);
 		auth.setCode(peixunClientCode);
 		List<String> codes=new ArrayList<String>();
+		codes.add(courseCode);
 		List<TrainingRecordDTO> trainRecords = getRecordFromPeixun(auth,codes,
 				userId);
 		if (trainRecords.size() == 0) {
