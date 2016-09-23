@@ -139,9 +139,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	
 	private void handlePaymentSucess(JSONObject ob,String courseType){
-		Long userId=ob.getLong("buyerAliId");
-		String orderNum=ob.getString("orderNo");
-		String code=ob.getString("serviceCode");
+		Long userId=ob.getLong("taobaoUserId");
+		String orderNum=ob.getString("itemNum");
+		String code=ob.getString("productCode");
 		Assert.notNull(userId);
 		Assert.notNull(orderNum);
 		Assert.notNull(code);
