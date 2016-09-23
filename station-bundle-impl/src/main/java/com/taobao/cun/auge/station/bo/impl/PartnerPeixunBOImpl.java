@@ -107,7 +107,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			//不需要处理的消息类型
             return;
 		}
-		String courseType=getCourseTypeByCode(ob.getString("serviceCode"));
+		String courseType=getCourseTypeByCode(ob.getString("productCode"));
 		if(StringUtils.isNotEmpty(courseType)){
 			handlePaymentSucess(ob,courseType);
 			//获取合伙人信息
