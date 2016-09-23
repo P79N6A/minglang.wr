@@ -119,6 +119,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			vo.setPartnerName(partner.getName());
 			vo.setPartnerPhone(partner.getMobile());
 			vo.setProductCode(ob.getString("serviceCode"));
+			vo.setOrderNum(ob.getString("itemNum"));
+			vo.setProductCode(ob.getString("productCode"));
+			vo.setUserId(new Long(ob.getString("taobaoUserId")));
 			defaultNotifyPublish.publish(vo);
 		}
 	}

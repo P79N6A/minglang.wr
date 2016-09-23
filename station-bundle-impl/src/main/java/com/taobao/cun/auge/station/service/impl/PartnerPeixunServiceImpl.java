@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.support.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
@@ -36,6 +38,7 @@ import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.notify.message.StringMessage;
 /**
  * 
  * @author yi.shaoy
@@ -144,6 +147,17 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			result.setGmtOrderDesc(sdf.format(result.getGmtOrder()));
 		}
 		result.setCourseDetailUrl(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
+		
+		//mock
+		StringMessage msg = new StringMessage();
+		Map<String,Object> pp=new HashMap<String,Object>();
+		pp.put("productCode", courseCode);
+		pp.put("taobaoUserId", userId);
+		pp.put("itemNum", "mockNum001");
+		msg.setBody(JSON.toJSONString(pp));
+		msg.setMessageType("payment.arrived.msg.type");
+		JSONObject ob = (JSONObject) JSONObject.parse(msg.getBody());
+		partnerPeixunBO.handlePeixunPaymentProcess(msg, ob);
 		return result;
 	}
 	
