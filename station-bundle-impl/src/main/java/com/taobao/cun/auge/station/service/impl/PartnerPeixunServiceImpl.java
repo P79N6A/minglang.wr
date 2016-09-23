@@ -171,7 +171,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	private List<FuwuOrderDto> getCourseOrders(Long userId,String productCode,Set<String> orderStatus){
 		List<String> productCodes=new ArrayList<String>();
-		productCodes.addAll(productCodes);
+		productCodes.add(productCode);
 		return fuwuOrderService.queryOrdersByUserIdAndCode(userId, productCodes, orderStatus);
 	}
 
