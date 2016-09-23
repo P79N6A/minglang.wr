@@ -230,7 +230,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		codes.add(courseCode);
 		List<TrainingRecordDTO> trainRecords=getRecordFromPeixun(auth,codes,userId);
 		for(TrainingRecordDTO dto:trainRecords){
-			if(orderNum.equals(getOrderNoByOrderItem(dto.getOrderItemNum()))){
+			if(orderNum.equals(dto.getOrderItemNum())){
 				ResultDTO<List<TrainingTicketDTO>> ticketDto=trainingTicketServiceFacade.getByTrainingRecordId(auth, dto.getId());
 				if(ticketDto.isSuccess()){
 					if(ticketDto.getData() != null && ticketDto.getData().size()>0){
