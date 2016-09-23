@@ -55,7 +55,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		try {
 			ResultModel<ArrayList<OrderDto>> result = orderPortalService
 					.getOrdersFromProductCodes(userId, new ArrayList<String>(
-							productCode), statuses, null);
+							productCode), statuses, customerIdentity);
 			if(result.isSuccessed()){
 				return convertOrderDtoToFuwuDto(result.getReturnValue());
 			}else{
