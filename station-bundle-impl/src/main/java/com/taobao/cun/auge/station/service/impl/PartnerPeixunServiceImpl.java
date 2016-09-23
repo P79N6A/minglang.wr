@@ -92,7 +92,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			ResultModel<ExamInstanceDto> examResult = examInstanceService
 					.queryValidInstance(userId, new Long(examId));
 			if (examResult.isSuccess() && examResult.getResult() != null
-					&& ExamInstanceStatusEnum.PASS.getCode().equals(examResult.getResult().getStatus())) {
+					&& ExamInstanceStatusEnum.PASS.getCode().equals(examResult.getResult().getStatus().getCode())) {
 				result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
 			} else {
 				result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_EXAM);
