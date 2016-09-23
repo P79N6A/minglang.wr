@@ -111,7 +111,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		if(StringUtils.isNotEmpty(courseType)){
 			handlePaymentSucess(ob,courseType);
 			//获取合伙人信息
-			PartnerDto partner=partnerQueryService.queryPartnerByTaobaoUserId(new Long("taobaoUsrId"));
+			PartnerDto partner=partnerQueryService.queryPartnerByTaobaoUserId(new Long(ob.getString("taobaoUsrId")));
 			//notify crm peixun
 			NotifyFuwuOrderChangeVo vo =new NotifyFuwuOrderChangeVo();
 			vo.setMessageType(NotifyContents.FUWU_ORDER_PAYMENT_MESSAGETYPE);
