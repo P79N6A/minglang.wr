@@ -407,6 +407,17 @@ public class PartnerInstance {
 	 * 县服务中心名称
 	 */
 	private String countyStationName;
+	
+	/**
+	 * 装修状态
+	 */
+	private String decorateStatus;
+	
+	/**
+	 * 课程状态
+	 */
+	private String courseStatus;
+	
 
 	/**
 	 * 获取主键
@@ -1614,6 +1625,22 @@ public class PartnerInstance {
 
 	public void setExpectedLevel(String expectedLevel) {
 		this.expectedLevel = expectedLevel;
+	}
+
+	public String getDecorateStatus() {
+		return decorateStatus;
+	}
+
+	public void setDecorateStatus(String decorateStatus) {
+		this.decorateStatus = decorateStatus;
+	}
+
+	public String getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(String courseStatus) {
+		this.courseStatus = courseStatus;
 	}
 	
 	

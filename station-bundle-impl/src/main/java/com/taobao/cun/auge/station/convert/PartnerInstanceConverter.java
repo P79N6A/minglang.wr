@@ -34,7 +34,7 @@ public final class PartnerInstanceConverter {
 
 	public static List<PartnerInstanceDto> convert(List<PartnerInstance> instances) {
 		if (CollectionUtils.isEmpty(instances)) {
-			return Collections.<PartnerInstanceDto>emptyList();
+			return Collections.<PartnerInstanceDto> emptyList();
 		}
 		List<PartnerInstanceDto> instanceDtos = new ArrayList<PartnerInstanceDto>(instances.size());
 		for (PartnerInstance instance : instances) {
@@ -87,10 +87,10 @@ public final class PartnerInstanceConverter {
 		}
 
 		try {
-			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
-					.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
 			instanceDto.setStationApplyState(parseStationApplyState);
 		} catch (Exception e) {
+			System.out.println("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance) + e);
 			logger.error("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance), e);
 		}
 		return instanceDto;
@@ -387,8 +387,18 @@ public final class PartnerInstanceConverter {
 				example.setSystem(system.getValue());
 				example.setSystemOp(system.getEqual());
 			}
+			
+			PartnerLifecycleRuleItem decorate=rule.getDecorateStatus();
+			if(null!=decorate){
+				example.setDecorateStatus(decorate.getValue());
+			}
+			
+			PartnerLifecycleRuleItem course=rule.getCourseStatus();
+			if(null!=course){
+				example.setCourseStatus(course.getValue());
+			}
 		}
-
+		
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
 		}
