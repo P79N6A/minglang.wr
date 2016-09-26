@@ -84,6 +84,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			fuwu.setOrderTitle(itemDto.getProductName());
 			fuwu.setPaymentAmount(itemDto.getPaymentAmount());
 			fuwu.setComments(dto.getComments());
+			fuwu.setStatus(dto.getStatus());
 			results.add(fuwu);
 		}
 		return results;

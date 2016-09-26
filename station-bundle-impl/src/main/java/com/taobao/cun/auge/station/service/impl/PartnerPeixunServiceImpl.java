@@ -134,6 +134,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 				result.setStatus(PartnerPeixunStatusEnum.WAIT_PAY.getCode());
 				result.setStatusDesc(PartnerPeixunStatusEnum.WAIT_PAY.getDesc());
 				result.setGmtOrder(orders.get(0).getGmtOrder());
+				result.setCourseAmount(orders.get(0).getExecutePrice());
 			}
 		}
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
