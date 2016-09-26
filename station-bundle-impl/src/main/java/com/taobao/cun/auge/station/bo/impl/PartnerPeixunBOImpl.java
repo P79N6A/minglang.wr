@@ -111,17 +111,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		if(StringUtils.isNotEmpty(courseType)){
 			handlePaymentSucess(ob,courseType);
 			//获取合伙人信息
-			PartnerDto partner=partnerQueryService.queryPartnerByTaobaoUserId(new Long(ob.getString("taobaoUserId")));
+			PartnerDto partner=partnerQueryService.queryPartnerByTaobaoUserId(new Long(ob.getString("benefitCustomerAliId")));
 			//notify crm peixun
 			NotifyFuwuOrderChangeVo vo =new NotifyFuwuOrderChangeVo();
 			vo.setMessageType(NotifyContents.FUWU_ORDER_PAYMENT_MESSAGETYPE);
 			vo.setTopic(NotifyContents.FUWU_ORDER_PAYMENT_TOPIC);
 			vo.setPartnerName(partner.getName());
 			vo.setPartnerPhone(partner.getMobile());
-			vo.setProductCode(ob.getString("serviceCode"));
 			vo.setOrderNum(ob.getString("itemNum"));
 			vo.setProductCode(ob.getString("productCode"));
-			vo.setUserId(new Long(ob.getString("taobaoUserId")));
+			vo.setUserId(new Long(ob.getString("benefitCustomerAliId")));
 			defaultNotifyPublish.publish(vo);
 		}
 	}
@@ -139,7 +138,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	
 	private void handlePaymentSucess(JSONObject ob,String courseType){
-		Long userId=ob.getLong("taobaoUserId");
+		Long userId=ob.getLong("benefitCustomerAliId");
 		String orderNum=ob.getString("itemNum");
 		String code=ob.getString("productCode");
 		Assert.notNull(userId);
