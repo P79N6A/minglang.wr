@@ -107,10 +107,12 @@ public class FuwuProductServiceImpl implements FuwuProductService{
 		result.setIconLarge(dto.getIconLarge());
 		result.setIconMiddle(dto.getIconMiddle());
 		result.setIconSmall(dto.getIconSmall());
+		result.setDescription(dto.getDescription());
 		List<FuwuProductDto> pr=new ArrayList<FuwuProductDto>();
 		for(ProductDto pd:dto.getMandatoryProducts()){
 			pr.add(convertToProductDto(pd));
 		}
+		result.setProducts(pr);
 		return result;
 	}
 }
