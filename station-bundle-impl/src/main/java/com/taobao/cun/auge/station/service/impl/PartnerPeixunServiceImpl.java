@@ -119,11 +119,20 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
 		if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
-				result.setGmtDone(record.getGmtDone());
-				result.setOrderNum(record.getOrderNum());
-				result.setGmtOrder(record.getGmtCreate());
-				//获取签到码
-				result.setTicketNo(partnerPeixunBO.getPeixunTicket(userId,courseCode,record.getOrderNum()));
+			List<FuwuOrderDto> orders = getCourseOrders(userId, courseCode,
+					null);
+			// 获得订单售卖价格
+			for (FuwuOrderDto order : orders) {
+				if (order.getOrderItemNo().equals(record.getOrderNum())) {
+					result.setCourseAmount(order.getExecutePrice());
+					break;
+				}
+			}
+			result.setGmtDone(record.getGmtDone());
+			result.setOrderNum(record.getOrderNum());
+			result.setGmtOrder(record.getGmtCreate());
+			// 获取签到码
+			result.setTicketNo(partnerPeixunBO.getPeixunTicket(userId,courseCode, record.getOrderNum()));
 		}else{
 			//查询有没有未付款订单信息
 			Set<String> orderStatus=new HashSet<String>();
