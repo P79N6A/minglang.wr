@@ -32,6 +32,7 @@ public class PartnerConverter {
 		partnerDto.setEmail(partner.getEmail());
 		partnerDto.setSolidPoint(partner.getSolidPoint());
 		partnerDto.setLeaseArea(partner.getLeaseArea());
+		partnerDto.setAliLangUserId(partner.getAlilangUserId());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
@@ -61,6 +62,7 @@ public class PartnerConverter {
 		partner.setEmail(parnterDto.getEmail());
 		partner.setSolidPoint(parnterDto.getSolidPoint());
 		partner.setLeaseArea(parnterDto.getLeaseArea());
+		partner.setAlilangUserId(parnterDto.getAliLangUserId());
 		if (parnterDto.getBusinessType() != null) {
 			partner.setBusinessType(parnterDto.getBusinessType().getCode());
 		}

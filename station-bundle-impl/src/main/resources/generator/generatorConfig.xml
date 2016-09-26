@@ -106,12 +106,9 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 		 -->
-				<table tableName="app_resource" enableCountByExample="true" enableUpdateByExample="true"
-			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+		<table tableName="partner" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true"
+			enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
-
-
-
 	</context>
 </generatorConfiguration>

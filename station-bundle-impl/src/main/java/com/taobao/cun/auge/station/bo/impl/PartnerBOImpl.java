@@ -86,4 +86,14 @@ public class PartnerBOImpl implements PartnerBO {
 		DomainUtils.beforeDelete(rel, operator);
 		partnerMapper.updateByPrimaryKeySelective(rel);
 	}
+
+	@Override
+	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException {
+		ValidateUtils.notNull(aliLangUserId);
+		PartnerExample example = new PartnerExample();
+		example.createCriteria()
+				.andAlilangUserIdEqualTo(aliLangUserId)
+				.andIsDeletedEqualTo("n");
+		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
+	}
 }

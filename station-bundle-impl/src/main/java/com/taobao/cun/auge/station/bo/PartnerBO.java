@@ -54,4 +54,12 @@ public interface PartnerBO {
 	 */
 	public void deletePartner(Long partnerId,String operator) throws AugeServiceException;
 	
+	/**
+	 * 根据阿里郎用户ID查询partner
+	 * @param aliLangUserId
+	 * @return partner
+	 * @throws AugeServiceException
+	 */
+	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException;
+	
 }

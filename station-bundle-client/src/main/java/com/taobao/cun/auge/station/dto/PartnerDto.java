@@ -80,8 +80,18 @@ public class PartnerDto extends OperatorDto implements Serializable{
      * 可租赁门店面积
      */
     private BigDecimal leaseArea; 
+    
+    private String aliLangUserId;
+    
+    public String getAliLangUserId() {
+		return aliLangUserId;
+	}
 
-    public BigDecimal getLeaseArea() {
+	public void setAliLangUserId(String aliLangUserId) {
+		this.aliLangUserId = aliLangUserId;
+	}
+
+	public BigDecimal getLeaseArea() {
 		return leaseArea;
 	}
 
