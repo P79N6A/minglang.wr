@@ -12,7 +12,7 @@ public  class NotifyContents{
 	public static String CUNXUEXI_PEIXUN_COMPLETE_MST="Cunxuexi_Train_Over";
 
 	public static String CRM_ORDER_PAYMENT_SUCESS="b2b-crm-order";
-	public static String CRM_ORDER_PAYMENT_SUCESS_MESSAGETYPE="payment.arrived.msg.type";
+	public static String CRM_ORDER_PAYMENT_SUCESS_MESSAGETYPE="payment_arrived_msg_type";
 	
 	public static String FUWU_ORDER_PAYMENT_MESSAGETYPE="ORDER_CHANGE_PAYMENT_SUCESS";
 	public static String FUWU_ORDER_PAYMENT_TOPIC="ORDER_CHANGE_TOPIC";
