@@ -71,4 +71,10 @@ public class StationQueryServiceImpl implements StationQueryService {
 		ValidateUtils.notNull(stationId);
 		return shutDownStationApplyBO.findShutDownStationApply(stationId);
 	}
+	
+	@Override
+	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId) throws AugeServiceException{
+		ValidateUtils.notNull(applyId);
+		return shutDownStationApplyBO.findShutDownStationApplyById(applyId);
+	}
 }

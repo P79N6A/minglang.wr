@@ -42,8 +42,7 @@ public interface GeneralTaskSubmitService {
 	 * @param businessId
 	 * @param stateChangeEvent
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Long partnerInstanceId,OperatorDto operatorDto, String remark);
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark);
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, Long applyId);
 
 	/**
 	 * 发短信

@@ -263,15 +263,28 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, Long partnerInstanceId,OperatorDto operatorDto, String remark) {
+	/**
+	 * 启动停业、退出流程审批流程
+	 * 
+	 * @param business
+	 *            业务类型
+	 * @param businessId
+	 *            业务主键
+	 * @param applierId
+	 *            申请人
+	 * @param applierOrgId
+	 *            申请人orgid
+	 * @param remarks
+	 *            备注
+	 */
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,OperatorDto operatorDto, Long applyId) {
 		try {
 
 			StartProcessDto startProcessDto = new StartProcessDto();
 
-			startProcessDto.setRemarks(remark);
+			startProcessDto.setApplyId(applyId);
 			startProcessDto.setBusinessId(businessId);
 			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.setPartnerInstanceId(partnerInstanceId);
 			startProcessDto.copyOperatorDto(operatorDto);
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
@@ -299,24 +312,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 	
-	/**
-	 * 启动停业、退出流程审批流程
-	 * 
-	 * @param business
-	 *            业务类型
-	 * @param businessId
-	 *            业务主键
-	 * @param applierId
-	 *            申请人
-	 * @param applierOrgId
-	 *            申请人orgid
-	 * @param remarks
-	 *            备注
-	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, String remark) {
-		submitApproveProcessTask( business,  businessId, null, operatorDto,  remark);
-	}
-
 	/**
 	 * 发短信
 	 * 

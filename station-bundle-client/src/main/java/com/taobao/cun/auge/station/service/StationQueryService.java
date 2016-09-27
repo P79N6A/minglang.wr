@@ -9,8 +9,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 服务站查询接口
- * 
- *
  */
 public interface StationQueryService {
 	/**
@@ -48,4 +46,13 @@ public interface StationQueryService {
 	 * @throws AugeServiceException
 	 */
 	public ShutDownStationApplyDto findShutDownStationApply(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 查询撤点申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId) throws AugeServiceException;
 }

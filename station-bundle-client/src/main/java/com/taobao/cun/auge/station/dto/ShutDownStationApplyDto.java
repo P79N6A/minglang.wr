@@ -10,6 +10,9 @@ public class ShutDownStationApplyDto extends OperatorDto{
 
 	private static final long serialVersionUID = 5198576840053716625L;
 	
+	//申请单主键id
+	private Long id;
+	
 	//村点id
 	@NotNull(message = "stationId not null")
 	private Long stationId;
@@ -22,6 +25,14 @@ public class ShutDownStationApplyDto extends OperatorDto{
     
     //申请时间
     private Date applyTime;
+    
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getStationId() {
 		return stationId;
