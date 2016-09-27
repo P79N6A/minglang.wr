@@ -8,4 +8,6 @@ public  class NotifyContents{
 	
 	public static String PARTNER_PEIXUN_PAYMENT_SUCCESS="ORDER_PAYMENT_SUCCESS_MSG_TYPE";
 	public static String PARTNER_PEIXUN_COMPLETE="ORDER_COMPLETE_MSG_TYPE";
+	
+	public static String ALILANG_REGISTER_TOPIC="ALILANG_REGISTER_TOPIC";
 }

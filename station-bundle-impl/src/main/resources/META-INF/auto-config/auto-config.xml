@@ -64,7 +64,7 @@
 		<property name="acl.accessKey" defaultValue="null" description="acl.accessKey" />
 
 		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
-
+		<property name="jingwei.taskid.partner" defaultValue="D_T_RC_59906" description="jingwei-partner" />
 	</group>
 .
 	<script>
