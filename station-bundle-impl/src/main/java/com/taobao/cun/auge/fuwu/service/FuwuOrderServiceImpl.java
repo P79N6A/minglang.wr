@@ -118,7 +118,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 					FuwuOrderDto fdto=convertToFuwuOrderDto(cartDto);
 					fdto.setUserId(userId);
 					fdto.setPayUrl(getPayUrl(String.valueOf(userId), fdto.getOrderItemNo()));
-					returnResult.add(convertToFuwuOrderDto(cartDto));
+					returnResult.add(fdto);
 				}
 				return returnResult;
 			}else{
