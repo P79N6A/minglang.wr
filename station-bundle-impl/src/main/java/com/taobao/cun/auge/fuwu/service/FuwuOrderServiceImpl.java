@@ -88,7 +88,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			fuwu.setComments(dto.getComments());
 			fuwu.setStatus(dto.getStatus());
 			fuwu.setUserId(userId);
-			fuwu.setPayUrl(getPayUrl(String.valueOf(userId), itemDto.getItemNum()));
+			fuwu.setPayUrl(getPayUrl(String.valueOf(userId), itemDto.getOrderNo()));
 			results.add(fuwu);
 		}
 		return results;
@@ -117,7 +117,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 				for(ShoppingCartDto cartDto:result.getReturnValue()){
 					FuwuOrderDto fdto=convertToFuwuOrderDto(cartDto);
 					fdto.setUserId(userId);
-					fdto.setPayUrl(getPayUrl(String.valueOf(userId), fdto.getOrderItemNo()));
+					fdto.setPayUrl(getPayUrl(String.valueOf(userId), fdto.getOrderNo()));
 					returnResult.add(fdto);
 				}
 				return returnResult;

@@ -26,4 +26,6 @@ public class PayUtil {
 		StringBuilder sb=new StringBuilder(param.getGetway());
 		return sb.append("?").append(queryString).toString();
 	}
+	
+	
 }
