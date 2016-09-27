@@ -65,6 +65,7 @@
 
 		<property name="accessControlService.service.version" defaultValue="2.0.0.daily" description="accessControlService.service.version" />
 		<property name="jingwei.taskid.partner" defaultValue="D_T_RC_59906" description="jingwei-partner" />
+		<property name="jingwei.taskid.bond" defaultValue="D_T_RC_59932" description="jingwei-bond" />
 	</group>
 .
 	<script>
