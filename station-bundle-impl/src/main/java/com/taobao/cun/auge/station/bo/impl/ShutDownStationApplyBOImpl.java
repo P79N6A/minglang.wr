@@ -22,7 +22,7 @@ public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{
 	ShutDownStationApplyMapper  shutDownStationApplyMapper;
 
 	@Override
-	public void saveShutDownStationApply(ShutDownStationApplyDto dto) {
+	public Long saveShutDownStationApply(ShutDownStationApplyDto dto) {
 		if(null == dto){
 			throw new IllegalArgumentException("ShutDownStationApplyDto is null");
 		}
@@ -30,6 +30,7 @@ public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{
 		
 		DomainUtils.beforeInsert(record, dto.getApplierId());
 		shutDownStationApplyMapper.insertSelective(record);
+		return record.getId();
 	}
 
 	@Override
@@ -48,6 +49,15 @@ public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{
 		}
 
 		return ShutDownStationApplyConverter.convert(applyes.get(0));
+	}
+	
+	@Override
+	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId){
+		if(null == applyId){
+			throw new IllegalArgumentException("applyId is null");
+		}
+		ShutDownStationApply apply = shutDownStationApplyMapper.selectByPrimaryKey(applyId);
+		return ShutDownStationApplyConverter.convert(apply);
 	}
 
 	@Override

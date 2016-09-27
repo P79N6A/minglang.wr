@@ -31,6 +31,7 @@ public final class ShutDownStationApplyConverter {
 
 		ShutDownStationApplyDto dto = new ShutDownStationApplyDto();
 
+		dto.setId(record.getId());
 		dto.setStationId(record.getStationId());
 		dto.setReason(record.getReason());
 		dto.setApplierId(record.getApplierId());

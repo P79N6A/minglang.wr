@@ -43,7 +43,7 @@ public class ProcessServiceImpl implements ProcessService {
 	public void startApproveProcess(StartProcessDto startProcessDto) {
 		String businessCode = startProcessDto.getBusinessCode();
 		Long businessId = startProcessDto.getBusinessId();
-		String remarks = startProcessDto.getRemarks();
+		Long applyId = startProcessDto.getApplyId();
 
 		String applierId = startProcessDto.getOperator();
 		Long applierOrgId = startProcessDto.getOperatorOrgId();
@@ -52,17 +52,13 @@ public class ProcessServiceImpl implements ProcessService {
 		//创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(applierOrgId));
-		initData.put("remarks", remarks);
-		//重构，兼容
-//		if (null != startProcessDto.getPartnerInstanceId()) {
-//			initData.put("partnerInstanceId", String.valueOf(startProcessDto.getPartnerInstanceId()));
-//		}
+		initData.put("applyId", String.valueOf(applyId));
 
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
 				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
-					+ applierId + " applierOrgId = " + applierOrgId + " remarks = " + remarks, rm.getException());
+					+ applierId + " applierOrgId = " + applierOrgId + " applyId = " + applyId, rm.getException());
 			throw new AugeServiceException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
 					rm.getException());
 		}

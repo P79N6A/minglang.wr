@@ -564,20 +564,22 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
-		String remark = findCloseReason(instanceId);
-
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+		
+		Long applyId = findCloseApplyId(instanceId);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startQuiting(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+		
+		Long applyId = findQuitApplyId(instanceId);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), instanceId, operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
 	}
 	
 	@Override

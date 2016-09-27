@@ -23,6 +23,7 @@ public class CloseStationApplyConverter {
 
 		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
 
+		closeStationApplyDto.setId(closeStationApply.getId());
 		closeStationApplyDto.setCloseReason(CloseStationApplyCloseReasonEnum.valueof(closeStationApply.getCloseReason()));
 		closeStationApplyDto.setOtherReason(closeStationApply.getOtherReason());
 		closeStationApplyDto.setPartnerInstanceId(closeStationApply.getPartnerInstanceId());

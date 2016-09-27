@@ -80,7 +80,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
 			//服务中
-			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
+			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent);
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			

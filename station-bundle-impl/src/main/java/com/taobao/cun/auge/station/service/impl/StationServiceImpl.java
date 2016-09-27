@@ -76,14 +76,14 @@ public class StationServiceImpl implements StationService {
 			throw new AugeServiceException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
 		}
 
-		// 保存申请单
-		shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
 		// 撤点申请中
 		stationBO.changeState(stationId, StationStatusEnum.CLOSED, StationStatusEnum.QUITING,
 				shutDownDto.getOperator());
 
+		// 保存申请单
+		Long applyId = shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
+		
 		// 插入启动撤点流程的任务
-		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId, shutDownDto,
-				shutDownDto.getReason());
+		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId, shutDownDto, applyId);
 	}
 }
