@@ -17,6 +17,7 @@ import reactor.core.support.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
+import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
@@ -85,6 +86,14 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setTaobaoUserId(userId);
 		result.setCourseCode(code);
 		result.setExamUrl(examUrl+examId);
+		//针对2.0用户特殊判断，若没有分发试卷，则返回null
+		if(StringUtil.isNotEmpty(examId)){
+			//判断是否分发过试卷
+			ResultModel<UserDispatchDto> dp=examUserDispatchService.queryExamUserDispatch(new Long(examId), userId);
+			if(dp.isSuccess()&&dp.getResult()==null){
+				return null;
+			}
+		}
 		// 查询在线培训记录;
 		PartnerPeixunDto peixunDto=partnerPeixunBO.queryOnlineCourseRecord(userId,code);
 		if(peixunDto==null){
@@ -94,11 +103,6 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
 		}else{
 			// 查询考试成绩
-			//判断是否分发过试卷
-			ResultModel<UserDispatchDto> dp=examUserDispatchService.queryExamUserDispatch(new Long(examId), userId);
-			if(dp.isSuccess()&&dp.getResult()==null){
-				return null;
-			}
 			ResultModel<ExamInstanceDto> examResult = examInstanceService
 					.queryValidInstance(userId, new Long(examId));
 			if (examResult.isSuccess() && examResult.getResult() != null
