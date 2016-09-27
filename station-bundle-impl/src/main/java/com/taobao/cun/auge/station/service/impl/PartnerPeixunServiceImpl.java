@@ -144,6 +144,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 				result.setStatusDesc(PartnerPeixunStatusEnum.WAIT_PAY.getDesc());
 				result.setGmtOrder(orders.get(0).getGmtOrder());
 				result.setCourseAmount(orders.get(0).getExecutePrice());
+				result.setPayUrl(orders.get(0).getPayUrl());
 			}
 		}
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
@@ -153,6 +154,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		if(result.getGmtOrder()!=null){
 			result.setGmtOrderDesc(sdf.format(result.getGmtOrder()));
 		}
+		//组装下单地址
 		result.setCourseDetailUrl(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
 		return result;
 	}

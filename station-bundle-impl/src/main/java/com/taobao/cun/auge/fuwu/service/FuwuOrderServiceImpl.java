@@ -20,6 +20,8 @@ import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.dowjones.service.result.ResultModel;
 import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
+import com.taobao.cun.auge.common.utils.PayParam;
+import com.taobao.cun.auge.common.utils.PayUtil;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
@@ -57,7 +59,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 					.getOrdersFromProductCodes(userId, new ArrayList<String>(
 							productCode), statuses, customerIdentity);
 			if(result.isSuccessed()){
-				return convertOrderDtoToFuwuDto(result.getReturnValue());
+				return convertOrderDtoToFuwuDto(result.getReturnValue(),userId);
 			}else{
 				throw new AugeServiceException(result.getExceptionDesc());
 			}
@@ -68,7 +70,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	}
 	
 	
-	private List<FuwuOrderDto> convertOrderDtoToFuwuDto(ArrayList<OrderDto> dtos){
+	private List<FuwuOrderDto> convertOrderDtoToFuwuDto(ArrayList<OrderDto> dtos,Long userId){
 		List<FuwuOrderDto> results=new ArrayList<FuwuOrderDto>();
 		if(dtos==null||dtos.size()==0){
 			return results;
@@ -85,6 +87,8 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			fuwu.setPaymentAmount(itemDto.getPaymentAmount());
 			fuwu.setComments(dto.getComments());
 			fuwu.setStatus(dto.getStatus());
+			fuwu.setUserId(userId);
+			fuwu.setPayUrl(getPayUrl(String.valueOf(userId), itemDto.getItemNum()));
 			results.add(fuwu);
 		}
 		return results;
@@ -111,6 +115,9 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			if(result.isSuccessed()){
 				List<FuwuOrderDto> returnResult=new ArrayList<FuwuOrderDto>();
 				for(ShoppingCartDto cartDto:result.getReturnValue()){
+					FuwuOrderDto fdto=convertToFuwuOrderDto(cartDto);
+					fdto.setUserId(userId);
+					fdto.setPayUrl(getPayUrl(String.valueOf(userId), fdto.getOrderItemNo()));
 					returnResult.add(convertToFuwuOrderDto(cartDto));
 				}
 				return returnResult;
@@ -133,6 +140,25 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
         dto.setProductCode(cart.getProductCode());
         return dto;
 	}
+	
+	private String getPayUrl(String aliId, String itemNum) {
+		PayParam param = new PayParam();
+		param.setAliId(aliId);
+		param.setItemNum(itemNum);
+		param.setSite(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+				"SYSTEM"));
+		param.setKey(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+				"KEY"));
+		param.setGetway(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+				"URL"));
+		param.setSystem(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+				"SYSTEM"));
+		param.setReturnUrl(appResourceBO.queryAppValueNotAllowNull(
+				"NASDAQ_PAY", "RETURN_URL"));
+		return PayUtil.createUrl(param);
+	}
+	
+	
 
 
 	@Override

@@ -21,6 +21,7 @@ public class FuwuOrderDto implements Serializable {
 	private String productCode;
 	private String orderName;
 	private String paymentStatus;
+	private String payUrl;
 	
 	public Date getGmtOrder() {
 		return gmtOrder;
@@ -133,5 +134,14 @@ public class FuwuOrderDto implements Serializable {
 	public void setPaymentStatus(String paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
+
+	public String getPayUrl() {
+		return payUrl;
+	}
+
+	public void setPayUrl(String payUrl) {
+		this.payUrl = payUrl;
+	}
+	
 
 }
