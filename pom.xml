@@ -386,6 +386,16 @@
 				<artifactId>jingwei-client</artifactId>
 				<version>3.1.8</version>
 			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>3.6.3.Final</version>
+			</dependency>
+			<dependency>
+			  <groupId>org.jboss.netty</groupId>
+			  <artifactId>netty</artifactId>
+			  <version>999-not-exist-v3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
