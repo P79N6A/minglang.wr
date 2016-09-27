@@ -33,8 +33,10 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
+import com.taobao.cun.crius.exam.dto.UserDispatchDto;
 import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 /**
  * 
@@ -63,6 +65,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Autowired
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
+	@Autowired
+	ExamUserDispatchService examUserDispatchService;
+	
 	@Override
 	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds,String courseType,String courseCode) {
 		return partnerPeixunBO.queryBatchPeixunRecord(userIds,courseType,courseCode);
@@ -89,6 +94,11 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
 		}else{
 			// 查询考试成绩
+			//判断是否分发过试卷
+			ResultModel<UserDispatchDto> dp=examUserDispatchService.queryExamUserDispatch(new Long(examId), userId);
+			if(dp.isSuccess()&&dp.getResult()==null){
+				return null;
+			}
 			ResultModel<ExamInstanceDto> examResult = examInstanceService
 					.queryValidInstance(userId, new Long(examId));
 			if (examResult.isSuccess() && examResult.getResult() != null
