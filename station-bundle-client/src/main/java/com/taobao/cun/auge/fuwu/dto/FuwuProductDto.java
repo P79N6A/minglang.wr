@@ -25,6 +25,8 @@ public class FuwuProductDto implements Serializable {
 	private double basePrice;
     private String description;
     private String descDetail;
+    private String payUrl;
+    
     
 	public String getMkey() {
 		return mkey;
@@ -98,6 +100,12 @@ public class FuwuProductDto implements Serializable {
 	}
 	public void setDescDetail(String descDetail) {
 		this.descDetail = descDetail;
+	}
+	public String getPayUrl() {
+		return payUrl;
+	}
+	public void setPayUrl(String payUrl) {
+		this.payUrl = payUrl;
 	}
     
 	
