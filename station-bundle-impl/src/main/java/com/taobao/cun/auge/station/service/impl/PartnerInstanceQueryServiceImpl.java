@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +65,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthStatDateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.dto.ProcessedStationStatusDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -82,7 +80,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.ProcessedStationStatusEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -359,6 +356,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException {
 		return closeStationApplyBO.getCloseStationApply(partnerInstanceId);
 	}
+	
+	@Override
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException{
+		return closeStationApplyBO.getCloseStationApplyById(applyId);
+	}
 
 	@Override
 	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException {
@@ -476,6 +478,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public QuitStationApplyDto getQuitStationApply(Long instanceId) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
+	}
+	
+	@Override
+	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException{
+		ValidateUtils.notNull(applyId);
+		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.getQuitStationApplyById(applyId));
 	}
 
 	@Override

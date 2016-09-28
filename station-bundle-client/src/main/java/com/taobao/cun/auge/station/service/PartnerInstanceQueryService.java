@@ -134,7 +134,16 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException;
-
+	
+	/**
+	 * 根据每次申请单id，查询停业申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException;
+	
 	/**
 	 * 获取待冻结保证金信息
 	 * 
@@ -169,7 +178,15 @@ public interface PartnerInstanceQueryService {
 	 */
 	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
 	
-		
+	/**
+	 * 根据每次申请单id，查询退出申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException;
+	
 	/**
 	 * 获取合伙人层级信息
 	 * @param taobaoUserId
