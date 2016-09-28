@@ -322,7 +322,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long stationId = stationDto.getId();
 		if (stationId != null) {
 			PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			if (currentRel != null && PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
+			if (currentRel != null && !PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
 			}
 		}
