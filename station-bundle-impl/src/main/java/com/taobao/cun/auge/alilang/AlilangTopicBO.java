@@ -15,4 +15,6 @@ public interface AlilangTopicBO {
 	 void saveTopics(List<AlilangTopicDto> alilangTopics);
 	 
 	 List<AlilangTopicDto> getTopics();
+	 
+	 List<AlilangTopicDto> getPersistenceTopic();
 }

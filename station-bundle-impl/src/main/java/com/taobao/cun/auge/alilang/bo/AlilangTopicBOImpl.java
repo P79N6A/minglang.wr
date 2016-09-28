@@ -1,9 +1,8 @@
 package com.taobao.cun.auge.alilang.bo;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +10,7 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.alilang.AlilangTopicBO;
 import com.taobao.cun.auge.alilang.AlilangTopicDto;
 import com.taobao.cun.auge.dal.domain.AlilangTopic;
+import com.taobao.cun.auge.dal.domain.AlilangTopicExample;
 import com.taobao.cun.auge.dal.mapper.AlilangTopicMapper;
 import com.taobao.diamond.client.Diamond;
 
@@ -23,6 +23,7 @@ public class AlilangTopicBOImpl implements AlilangTopicBO {
 	
 	private static BeanCopier copy = BeanCopier.create(AlilangTopicDto.class, AlilangTopic.class, false);
 	
+	private static BeanCopier reverseCopy = BeanCopier.create(AlilangTopic.class, AlilangTopicDto.class, false);
 	private AlilangTopicMapper alilangTopicMapper;
 	@Override
 	public void receiveTopics(List<AlilangTopicDto> alilangTopics) {
@@ -56,6 +57,16 @@ public class AlilangTopicBOImpl implements AlilangTopicBO {
 
 	public List<AlilangTopicDto> getTopics() {
 		return topics;
+	}
+
+
+	@Override
+	public List<AlilangTopicDto> getPersistenceTopic() {
+		return alilangTopicMapper.selectByExample(new AlilangTopicExample()).stream().map(topic -> {
+			AlilangTopicDto dto = new AlilangTopicDto();
+			reverseCopy.copy(topic, dto, null);
+			return dto;
+		}).collect(Collectors.toList());
 	}
 
 }

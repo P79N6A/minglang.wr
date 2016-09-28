@@ -30,6 +30,7 @@ public class AlilangTopicDto implements Serializable{
 
     private Integer orderNum;
 
+    public AlilangTopicDto(){};
 	public Long getId() {
 		return id;
 	}
