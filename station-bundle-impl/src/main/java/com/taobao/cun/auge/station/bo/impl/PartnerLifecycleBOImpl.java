@@ -167,4 +167,8 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		
 		this.updateLifecycle(param);
 	}
+	
+	public PartnerLifecycleItems getLifecycleItems(long id){
+		return partnerLifecycleItemsMapper.selectByPrimaryKey(id);
+	}
 }
