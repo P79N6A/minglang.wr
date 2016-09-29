@@ -1164,6 +1164,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (stationId == null) {
 				stationId = addStation(partnerInstanceDto);
 			} else {
+				StationDto stationDto = partnerInstanceDto.getStationDto();
+				stationDto.setState(StationStateEnum.INVALID);
+				stationDto.setStatus(StationStatusEnum.NEW);
 				updateStation(stationId, partnerInstanceDto);
 			}
 
@@ -1425,6 +1428,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setId(stationId);
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
+		
 		stationBO.updateStation(stationDto);
 		saveStationFixProtocol(stationDto, stationId);
 		attachementBO.modifyAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
