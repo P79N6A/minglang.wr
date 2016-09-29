@@ -383,16 +383,30 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
-
-		PartnerStationRel updateInstance = new PartnerStationRel();
-		updateInstance.setStationId(partnerStationRel.getStationId());
-		updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
-		DomainUtils.beforeUpdate(updateInstance, partnerInstanceDto.getOperator());
-		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+		
+		//设置上一个合伙人 当前服务站所属关系为N
+		setIsCurrentToN(partnerStationRel.getStationId(),partnerInstanceDto.getOperator());
 
 		DomainUtils.beforeInsert(partnerStationRel, partnerInstanceDto.getOperator());
 		partnerStationRelMapper.insert(partnerStationRel);
 		return partnerStationRel.getId();
+	}
+	
+	private void setIsCurrentToN(Long stationId,String operator) {
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andStationIdEqualTo(stationId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (resList != null && resList.size()>0) {
+			for (PartnerStationRel rel: resList) {
+				PartnerStationRel updateInstance = new PartnerStationRel();
+				updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
+				updateInstance.setId(rel.getId());
+				DomainUtils.beforeUpdate(updateInstance, operator);
+				partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+			}
+		}
 	}
 
 	@Override
