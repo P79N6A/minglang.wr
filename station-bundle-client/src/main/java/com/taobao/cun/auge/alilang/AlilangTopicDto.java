@@ -30,6 +30,10 @@ public class AlilangTopicDto implements Serializable{
 
     private Integer orderNum;
 
+    private String name;
+    
+    private String moreLink;
+    
     public AlilangTopicDto(){};
 	public Long getId() {
 		return id;
@@ -109,5 +113,17 @@ public class AlilangTopicDto implements Serializable{
 
 	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getMoreLink() {
+		return moreLink;
+	}
+	public void setMoreLink(String moreLink) {
+		this.moreLink = moreLink;
 	}
 }
