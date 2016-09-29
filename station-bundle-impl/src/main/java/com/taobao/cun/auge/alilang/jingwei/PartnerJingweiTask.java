@@ -62,6 +62,7 @@ public class PartnerJingweiTask extends JingweiTask {
             					partnerMessage.setMobile(mobile);
             					partnerMessage.setAction("update");
             					partnerMessage.setName((String) row.get("name"));
+            					partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
             					String str = JSONObject.toJSONString(partnerMessage);
             					
             					logger.info("update alilang user:{}", str);
