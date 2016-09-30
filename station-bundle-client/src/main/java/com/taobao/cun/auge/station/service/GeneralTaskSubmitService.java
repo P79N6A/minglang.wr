@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -86,5 +87,12 @@ public interface GeneralTaskSubmitService {
 	 * @param operator
 	 */
 	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator);
-
+	
+	/**
+	 * 启动合伙人层级晋升流程
+	 * 
+	 * @param business
+	 * @param levelProcessDto
+	 */
+	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto);
 }
