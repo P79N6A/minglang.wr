@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.station.bo.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -38,18 +39,6 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
-import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
@@ -180,6 +169,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	PartnerInstanceExtBO partnerInstanceExtBO;
 	@Autowired
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
+
+	@Autowired
+	private StationApplyBO stationApplyBO;
 
 	private Long addCommon(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
@@ -1620,5 +1612,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter.convertLevelChangeEvent(
 				PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+	}
+
+	@Override
+	@Transactional
+	public void reService(Long instanceId, String operator) throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operator);
+		PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		partnerInstanceBO.reService(instanceId, operator);
+		stationApplyBO.reService(psl.getStationApplyId(), operator);
+		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
 	}
 }
