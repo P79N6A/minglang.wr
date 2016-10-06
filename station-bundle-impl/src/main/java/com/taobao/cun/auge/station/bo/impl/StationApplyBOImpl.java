@@ -34,14 +34,16 @@ public class StationApplyBOImpl implements StationApplyBO {
 	}
 
 	@Override
-	public void reService(Long stationApplyId, String operator) throws AugeServiceException {
+	public void changeState(Long stationApplyId, StationApplyStateEnum preState, StationApplyStateEnum postState, String operator) throws AugeServiceException {
 		StationApply stationApply = stationApplyMapper.selectByPrimaryKey(stationApplyId);
 
-		if (null == stationApply) {
-			logger.error("station apply is not exist.instance id " + stationApplyId);
-			throw new AugeServiceException(StationExceptionEnum.STATION_APPLY_NOT_EXIST);
+		if (null == stationApply || !stationApply.getState().equals(preState.getCode())) {
+			logger.error("station apply state error" + stationApplyId);
+			throw new AugeServiceException("station apply state error");
 		}
-		stationApply.setState(StationApplyStateEnum.SERVICING.getCode());
+		StationApply updateStationApply = new StationApply();
+		updateStationApply.setId(stationApplyId);
+		stationApply.setState(postState.getCode());
 		DomainUtils.beforeUpdate(stationApply, operator);
 		stationApplyMapper.updateByPrimaryKeySelective(stationApply);
 	}
