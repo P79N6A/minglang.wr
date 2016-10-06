@@ -1595,8 +1595,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
 		stationApplyBO.changeState(psl.getStationApplyId(), StationApplyStateEnum.QUIT_APPLY_CONFIRMED, StationApplyStateEnum.SERVICING, operator);
 		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
-		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
 		generalTaskSubmitService.submitCloseToServiceTask(instanceId, psl.getTaobaoUserId(),PartnerInstanceTypeEnum.valueof(psl.getType()), operator);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 }
