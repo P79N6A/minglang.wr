@@ -2,8 +2,14 @@ package com.taobao.cun.auge.station.condition;
 
 import java.io.Serializable;
 
-import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
+import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * 提供给外部查询课程query对象
+ * @author xujianhui 2016年9月29日 下午4:10:24
+ */
 public class LevelCourseCondition implements Serializable {
 
     private static final long   serialVersionUID = -2099914015955210345L;
@@ -11,42 +17,32 @@ public class LevelCourseCondition implements Serializable {
     /**
      * 合伙人userId
      */
-    private Long                userId;
+    @NotNull
+    protected Long                userId;
 
     /**
-     * 合伙人层级
+     * 合伙人层级 com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel
      */
-    private String              userLevel;
+    @NotNull
+    protected String              userLevel;
 
     /**
-     * 课程分类标示：如果按照tag查找，那么不要跟层级挂钩
+     * 课程分类查找,注意课程分类和层级两个查询维度都设置的话是取并集而不是交集.
      */
-    private String              tag;
-
-    /**
-     * 课程类型
-     */
-    private LevelCourseTypeEnum courseType;
-
-    /**
-     * 按照指标查询课程
-     */
-    public static LevelCourseCondition getTagQueryCondition(Long userId, String tag){
-        LevelCourseCondition lcc = new LevelCourseCondition();
-        lcc.setTag(tag);
-        lcc.setCourseType(LevelCourseTypeEnum.ELECTIVE);
-        lcc.setUserId(userId);
-        return lcc;
-    }
+    protected String              tag;
     
+    /**
+     * 指标分类展示前多少个课程
+     */
+    protected int                    groupCount = 3;
+
     /**
      * 按照用户层级查询课程
      */
-    public static LevelCourseCondition getUserCourseCondition(Long userId, String userLevel, LevelCourseTypeEnum courseType){
+    public static LevelCourseCondition getUserLevelQueryCondition(Long userId, String userLevel){
         LevelCourseCondition lcc = new LevelCourseCondition();
-        lcc.setUserId(userId);
-        lcc.setUserLevel(userLevel);
-        lcc.setCourseType(courseType);
+        lcc.userLevel = userLevel;
+        lcc.userId = userId;
         return lcc;
     }
     
@@ -54,39 +50,40 @@ public class LevelCourseCondition implements Serializable {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public String getUserLevel() {
         return userLevel;
-    }
-
-    public void setUserLevel(String userLevel) {
-        this.userLevel = userLevel;
     }
 
     public String getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
+    public void setUserLevel(String userLevel) {
+        this.userLevel = userLevel;
+    }
+    
+    public LevelCourseCondition setTag(String tag) {
         this.tag = tag;
+        return this;
     }
-
-    public LevelCourseTypeEnum getCourseType() {
-        return courseType;
+    
+    public int getGroupCount() {
+        return groupCount;
     }
-
-    public void setCourseType(LevelCourseTypeEnum courseType) {
-        this.courseType = courseType;
+    
+    public LevelCourseCondition setGroupCount(int groupCount) {
+        this.groupCount = groupCount;
+        return this;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((courseType == null) ? 0 : courseType.hashCode());
         result = prime * result + ((tag == null) ? 0 : tag.hashCode());
         result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         result = prime * result + ((userLevel == null) ? 0 : userLevel.hashCode());
@@ -99,7 +96,6 @@ public class LevelCourseCondition implements Serializable {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         LevelCourseCondition other = (LevelCourseCondition) obj;
-        if (courseType != other.courseType) return false;
         if (tag == null) {
             if (other.tag != null) return false;
         } else if (!tag.equals(other.tag)) return false;
@@ -112,10 +108,16 @@ public class LevelCourseCondition implements Serializable {
         return true;
     }
 
+    /**
+     * condtion不为空且usrId userLevel tag不全为空
+     */
+    public static boolean isValid(LevelCourseCondition condition){
+        return condition!=null && null != condition.userId && StringUtils.isNotBlank(condition.userLevel);
+    }
+    
     @Override
     public String toString() {
-        return "LevelCourseCondition [userId=" + userId + ", userLevel=" + userLevel + ", tag=" + tag + ", courseType="
-               + courseType + "]";
+        return "LevelCourseCondition [userId=" + userId + ", userLevel=" + userLevel + ", tag=" + tag +  "]";
     }
 
 }

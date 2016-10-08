@@ -13,11 +13,17 @@ import com.taobao.cun.auge.station.dto.LevelCourseLearningStatisticsDto;
 public interface LevelCourseQueryService {
 
     /**
-     * 根据condition查询层级课程列表
-     * @param condition
-     * @return
+     * 查询当前层级课程学习统计信息以及指标分类课程信息
      */
-    List<LevelCourseLearningDto> queryLevelCourse(LevelCourseCondition condition);
+    LevelCourseLearningStatisticsDto getCourseLearningInfo(LevelCourseCondition condition);
     
-    LevelCourseLearningStatisticsDto queryStatisticsInfo(Long userId, String userLevel);
+    /**
+     * 按照层级搜索培训课程
+     */
+    List<LevelCourseLearningDto> searchCourseLearningInfoByUserLevel(Long userId, String userLevel);
+    
+    /**
+     * 指标分类查找培训课程
+     */
+    List<LevelCourseLearningDto> searchCourseLearningInfoByTag(Long userId, String tag);
 }

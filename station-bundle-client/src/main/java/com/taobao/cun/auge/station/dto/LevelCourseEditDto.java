@@ -1,12 +1,14 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class LevelCourseEditDto implements Serializable {
 
     private static final long serialVersionUID = -7714014267792112685L;
 
+    private Date    gmtCreate;
     /**
      * 课程名称(运营小二填写的，不是培训课程本身的)
      */
@@ -67,6 +69,14 @@ public class LevelCourseEditDto implements Serializable {
     
     public void setGrowthIndex(String growthIndex) {
         this.growthIndex = growthIndex;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
     @Override

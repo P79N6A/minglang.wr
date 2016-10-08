@@ -1,57 +1,44 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class LevelCourseLearningStatisticsDto implements Serializable {
 
-    private static final long serialVersionUID = 7260272084970323348L;
+    private static final long                         serialVersionUID = 7260272084970323348L;
+    private static final LevelCourseLearningStatisticsDto nullDto = new LevelCourseLearningStatisticsDto();
 
-    private int               requiredCourseCount;
+    private Map<String, List<LevelCourseLearningDto>> growthIndexCourseMap;
 
-    private int               electiveCourseCount;
-
-    private int               learnedRequiredCount;
-
-    private int               learnedElectiveCount;
+    private int                                       requiredCourseToLearningCount;
 
     public LevelCourseLearningStatisticsDto(){}
     
-    public LevelCourseLearningStatisticsDto(int rcc, int ecc, int lrc, int lec) {
-        this.requiredCourseCount = rcc;
-        this.electiveCourseCount = ecc;
-        this.learnedRequiredCount = lrc;
-        this.learnedElectiveCount = lec;
-    }
-    
-    public int getRequiredCourseCount() {
-        return requiredCourseCount;
+    public LevelCourseLearningStatisticsDto(Map<String, List<LevelCourseLearningDto>> growthIndexCourseMap,  int requiredCourseToLearningCount) {
+        super();
+        this.growthIndexCourseMap = growthIndexCourseMap;
+        this.requiredCourseToLearningCount = requiredCourseToLearningCount;
     }
 
-    public int getElectiveCourseCount() {
-        return electiveCourseCount;
+    public Map<String, List<LevelCourseLearningDto>> getGrowthIndexCourseMap() {
+        return growthIndexCourseMap;
     }
 
-    public int getLearnedRequiredCount() {
-        return learnedRequiredCount;
+    public void setGrowthIndexCourseMap(Map<String, List<LevelCourseLearningDto>> growthIndexCourseMap) {
+        this.growthIndexCourseMap = growthIndexCourseMap;
     }
 
-    public int getLearnedElectiveCount() {
-        return learnedElectiveCount;
+    public int getRequiredCourseToLearningCount() {
+        return requiredCourseToLearningCount;
     }
 
-    public int getUnlearnedRequiredCount(){
-        return requiredCourseCount - learnedRequiredCount;
-    }
-    
-    public int getUnlearnedElectiveCount(){
-        return electiveCourseCount - learnedElectiveCount;
+    public void setRequiredCourseToLearningCount(int requiredCourseToLearningCount) {
+        this.requiredCourseToLearningCount = requiredCourseToLearningCount;
     }
 
-    @Override
-    public String toString() {
-        return "LevelCourseLearningStatisticsDto [requiredCourseCount=" + requiredCourseCount + ", electiveCourseCount="
-               + electiveCourseCount + ", learnedRequiredCount=" + learnedRequiredCount + ", learnedElectiveCount="
-               + learnedElectiveCount + "]";
+    public static LevelCourseLearningStatisticsDto getNullDto(){
+        return nullDto;
     }
     
 }

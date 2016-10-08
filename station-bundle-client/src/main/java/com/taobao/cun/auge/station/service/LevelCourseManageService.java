@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
 import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 
 public interface LevelCourseManageService {
@@ -19,6 +20,7 @@ public interface LevelCourseManageService {
     /**
      * list所有层级晋升的培训课程
      * 课程暂时很少不需要分页，最多输出200条
+     * 按照创建日期降序排列
      */
-    List<LevelCourseEditDto> listLevelCourses();
+    List<LevelCourseEditDto> queryManageLevelCourses(LevelCourseManageCondition condition);
 }

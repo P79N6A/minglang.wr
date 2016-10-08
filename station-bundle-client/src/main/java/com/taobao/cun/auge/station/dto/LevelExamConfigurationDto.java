@@ -6,8 +6,9 @@ import java.util.Map;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 
 public class LevelExamConfigurationDto {
-
-    Map<String, String> levelExamPaperIdMap = new HashMap<String, String>();
+    
+    private boolean isDeleted;
+    private Map<String, String> levelExamPaperIdMap = new HashMap<String, String>();
     
     public LevelExamConfigurationDto configureS4(String examPaperId){
         levelExamPaperIdMap.put(PartnerInstanceLevel.S4.name(), examPaperId);
@@ -42,6 +43,20 @@ public class LevelExamConfigurationDto {
         return levelExamPaperIdMap;
     }
     
+    public LevelExamConfigurationDto setLevelExamMap(Map<String, String>configMap){
+        this.levelExamPaperIdMap = configMap;
+        return this;
+    }
+    
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public LevelExamConfigurationDto setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "LevelExamConfigurationDto [levelExamPaperIdMap=" + levelExamPaperIdMap + "]";
