@@ -101,8 +101,8 @@
     s.status,
     s.fixed_type,
     s.version
-    from station s, cuntao_org org
-    where s.apply_org = org.id and s.is_deleted='n' and org.is_deleted='n'
+    from station s, cuntao_org org, partner_station_rel p
+    where s.apply_org = org.id and s.is_deleted='n' and org.is_deleted='n' and p.station_id = s.id and p.type = 'TP'
     <if test="orgIdPath != null and orgIdPath != ''" >
       and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
     </if>
