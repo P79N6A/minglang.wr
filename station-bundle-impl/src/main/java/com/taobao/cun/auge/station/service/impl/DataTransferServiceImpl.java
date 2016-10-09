@@ -22,7 +22,13 @@ import com.alibaba.crm.finance.dataobject.contract.ContractDto;
 import com.alibaba.crm.finance.dataobject.draft.RefundOrShiftDraftMaterialDto;
 import com.alibaba.crm.finance.dataobject.draft.ShiftDraftMaterialDetailDto;
 import com.alibaba.ivy.common.AppAuthDTO;
+import com.alibaba.ivy.common.PageDTO;
+import com.alibaba.ivy.common.ResultDTO;
+import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
+import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
+import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -60,7 +66,8 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
-	
+	@Autowired
+	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
 	@Override
 	public List<PartnerCourseRecordDto> getAllRecords(String status,String courseCode) {
@@ -82,6 +89,13 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Override
 	public Boolean createOrder(PartnerCourseRecordDto dto) {
+		if(dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())){
+			//判断老订单是否下过单
+			 List<TrainingRecordDTO> trains=getRecordFromPeixun(dto.getCourseCode(),dto.getPartnerUserId());
+			 if(trains.size()==0){
+				 return true;
+			 }
+		}
 		//判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
 		String courseCode=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
 		Long userId=dto.getPartnerUserId();
@@ -184,5 +198,25 @@ public class DataTransferServiceImpl implements DataTransferService{
 		return null;
 	}
 
-
+	private List<TrainingRecordDTO> getRecordFromPeixun(String code, Long userId) {
+	      AppAuthDTO auth = new AppAuthDTO();
+	      auth.setAuthkey(peixunClientKey);
+	      auth.setCode(peixunClientCode);
+	      TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
+	      query.addCourseCode(code);
+	      query.addTrainee(String.valueOf(userId));
+//	      query.addStatus(TrainStatus.NotEffect.value());
+	      try {
+	         ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
+	               .find(auth, query, 100, 1);
+	         if (result.isSuccess()) {
+	            return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
+	         } else {
+	            throw new RuntimeException("query record error,"
+	                  + result.getMsg());
+	         }
+	      } catch (Exception e) {
+	         throw new RuntimeException(e);
+	      }
+	   }
 }
