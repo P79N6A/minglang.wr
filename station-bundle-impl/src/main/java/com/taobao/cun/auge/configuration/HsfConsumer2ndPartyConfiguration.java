@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -96,4 +97,10 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean orderItemFacade(@Value("${crm.order.service.version}") String version) {
 		return getConsumerBean(OrderItemFacade.class, HSFGroup.DUBBO, version, 3000);
 	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean esbFinanceAuditAdapter(@Value("${crm.finance.service.version}") String version) {
+		return getConsumerBean(EsbFinanceAuditAdapter.class, HSFGroup.DUBBO, version, 3000);
+	}
+	
 }

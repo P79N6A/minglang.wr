@@ -70,7 +70,9 @@
   		<property name="spring.notify.subscriber.topics.b2b.crm.order" defaultValue="payment.arrived.msg.type" description="notify消费售中订单到款消息" />
   		<property name="crm.order.service.version" defaultValue="crm.order.service.version" description="crm订单关闭服务" />
   		<property name="spring.notify.subscriber.topics.Cunxuexi_Train_Status_Change" defaultValue="Cunxuexi_Train_Over" description="cunxuexi培训签到消息" />
-
+        <property name="crm.finance.service.version" defaultValue="3.0.0" description="财务服务版本" />
+        
+crm.finance.service.version
 	</group>
 
 	<script>
