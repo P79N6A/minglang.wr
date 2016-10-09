@@ -87,4 +87,14 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator);
 
+	/**
+	 * 已停业村点回到服务中,uic、旺旺打标
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param taobaoNick
+	 * @param partnerType
+	 * @param operator
+	 */
+	public void submitCloseToServiceTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operator);
+
 }

@@ -216,6 +216,8 @@ public interface PartnerInstanceBO {
 	
 	
 	public void finishCourse(Long taobaoUserId) throws AugeServiceException;
-	
+
+	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
+			throws AugeServiceException;
 
 }

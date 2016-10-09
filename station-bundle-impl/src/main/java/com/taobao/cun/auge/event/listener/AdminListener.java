@@ -106,7 +106,8 @@ public class AdminListener implements EventListener {
 		if ((PartnerInstanceStateChangeEnum.START_DECORATING.equals(stateChangeEnum)
 				&& PartnerInstanceTypeEnum.TP.equals(partnerType))
 				|| (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)
-						&& PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
+						&& PartnerInstanceTypeEnum.TPA.equals(partnerType))
+				|| PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)) {
 			addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
 		}
 

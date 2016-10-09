@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +32,4 @@ public class StationApplyBOImpl implements StationApplyBO {
 		return stationApply;
 
 	}
-
 }
