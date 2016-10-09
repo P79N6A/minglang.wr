@@ -313,6 +313,10 @@
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>esb.services.nasdaq</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.alibaba.crm.shared</groupId>
+				<artifactId>finance.service.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
