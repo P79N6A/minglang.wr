@@ -1593,8 +1593,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(operator);
 		PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
-		stationApplyBO.changeState(psl.getStationApplyId(), StationApplyStateEnum.QUIT_APPLY_CONFIRMED, StationApplyStateEnum.SERVICING, operator);
 		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 		generalTaskSubmitService.submitCloseToServiceTask(instanceId, psl.getTaobaoUserId(),PartnerInstanceTypeEnum.valueof(psl.getType()), operator);
+		//发送已停业到服务中事件
+		PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(psl, operator);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+	}
+
+	private PartnerInstanceStateChangeEvent buildCloseToServiceEvent(PartnerStationRel psl, String operator){
+		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
+		event.setPartnerType(PartnerInstanceTypeEnum.valueof(psl.getType()));
+		event.setTaobaoUserId(psl.getTaobaoUserId());
+		event.setStationId(psl.getStationId());
+		event.setPartnerInstanceId(psl.getId());
+		event.setStateChangeEnum(PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE);
+        event.setOperator(operator);
+        event.setOperatorType(OperatorTypeEnum.SYSTEM);
+		return event;
 	}
 }

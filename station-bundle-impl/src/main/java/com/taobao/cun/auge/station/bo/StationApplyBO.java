@@ -8,5 +8,4 @@ public interface StationApplyBO {
 
 	public StationApply findStationApplyById(Long stationApplyId)throws AugeServiceException;
 
-	public void changeState(Long stationApplyId, StationApplyStateEnum preState, StationApplyStateEnum postState, String operator) throws AugeServiceException;
 }
