@@ -183,6 +183,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
 			return "";
+		} else if (PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)) {
+			return "";
 		}
 		return "";
 	}
