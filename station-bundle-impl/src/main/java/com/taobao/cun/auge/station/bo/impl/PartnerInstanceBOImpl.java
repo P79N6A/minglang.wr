@@ -384,13 +384,35 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
 		
+		String operator = partnerInstanceDto.getOperator();
+		//设置合伙人的历史服务站  is_current 为n
+		setIsCurrentToNForParnter(partnerStationRel.getTaobaoUserId(),operator);
+		
 		//设置上一个合伙人 当前服务站所属关系为N
-		setIsCurrentToN(partnerStationRel.getStationId(),partnerInstanceDto.getOperator());
+		setIsCurrentToN(partnerStationRel.getStationId(),operator);
 
-		DomainUtils.beforeInsert(partnerStationRel, partnerInstanceDto.getOperator());
+		DomainUtils.beforeInsert(partnerStationRel, operator);
 		partnerStationRelMapper.insert(partnerStationRel);
 		return partnerStationRel.getId();
 	}
+	
+	private void setIsCurrentToNForParnter(Long taobaoUserId,String operator) {
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (resList != null && resList.size()>0) {
+			for (PartnerStationRel rel: resList) {
+				PartnerStationRel updateInstance = new PartnerStationRel();
+				updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
+				updateInstance.setId(rel.getId());
+				DomainUtils.beforeUpdate(updateInstance, operator);
+				partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+			}
+		}
+	}
+
 	
 	private void setIsCurrentToN(Long stationId,String operator) {
 		
