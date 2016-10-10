@@ -120,6 +120,14 @@ public interface PartnerInstanceQueryService {
 	public Long getPartnerInstanceId(Long stationApplyId);
 	
 	/**
+	 * 根据stationId查询，当前村上的实例id
+	 * 
+	 * @param stationId
+	 * @return
+	 */
+	public Long getPartnerInstanceIdByStationId(Long stationId);
+	
+	/**
 	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
 	 * 
 	 * @param instanceId
