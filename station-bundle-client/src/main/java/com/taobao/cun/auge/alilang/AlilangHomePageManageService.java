@@ -11,4 +11,8 @@ public interface AlilangHomePageManageService {
 	void saveTopic(List<AlilangTopicDto> topics);
 	
 	void publishTopic();
+	
+	AlilangTopicDto getTopicById(Long id);
+	
+	void updateTopic(AlilangTopicDto topic);
 }

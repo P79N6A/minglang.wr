@@ -3,7 +3,12 @@ package com.taobao.cun.auge.alilang;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
+@Service("alilangHomePageManageService")
+@HSFProvider(serviceInterface= AlilangHomePageManageService.class)
 public class AlilangHomePageManageServiceImpl implements AlilangHomePageManageService {
 
 	@Autowired
@@ -28,6 +33,16 @@ public class AlilangHomePageManageServiceImpl implements AlilangHomePageManageSe
 	@Override
 	public void publishTopic() {
 		alilangBO.publishTopics(alilangBO.getPersistenceTopic());
+	}
+
+	@Override
+	public AlilangTopicDto getTopicById(Long id) {
+		return alilangBO.getTopicById(id);
+	}
+
+	@Override
+	public void updateTopic(AlilangTopicDto topic) {
+		alilangBO.updateTopic(topic);
 	}
 
 }
