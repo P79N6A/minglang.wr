@@ -53,15 +53,25 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 
 	@Override
 	public UserProfile getUserProfile(Long taobaoUserId) {
-		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		Date start = partnerInstance.getServiceBeginTime();
-		Integer joinDays = Days.daysBetween(new DateTime(start), new DateTime(new Date())).getDays();  
-		Station station = stationBO.getStationById(partnerInstance.getStationId());
-		Partner partner = partnerBO.getPartnerById(partnerInstance.getPartnerId());
 		UserProfile profile = new UserProfile();
-		profile.setJoinDays(joinDays);
-		profile.setStationName(station.getName());
-		profile.setUserName(partner.getName());
+		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if(partnerInstance != null && partnerInstance.getServiceBeginTime() != null){
+			Date start = partnerInstance.getServiceBeginTime();
+			Integer joinDays = Days.daysBetween(new DateTime(start), new DateTime(new Date())).getDays();
+			profile.setJoinDays(joinDays);
+		}
+		if(partnerInstance != null && partnerInstance.getStationId() != null){
+			Station station = stationBO.getStationById(partnerInstance.getStationId());
+			if(station != null){
+				profile.setStationName(station.getName());
+			}
+		}
+		if(partnerInstance != null && partnerInstance.getPartnerId() != null){
+			Partner partner = partnerBO.getPartnerById(partnerInstance.getPartnerId());
+			if(partner != null){
+				profile.setUserName(partner.getName());
+			}
+		}
 		return profile;
 	}
 
