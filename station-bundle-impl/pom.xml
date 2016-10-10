@@ -47,7 +47,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+			</dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
@@ -78,9 +79,9 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
 		</dependency>
- 		<dependency>
-		     <groupId>com.alibaba.boot</groupId>
-		     <artifactId>diamond-spring-boot-starter</artifactId>
+		<dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>diamond-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.cuntao.boot</groupId>
@@ -260,23 +261,32 @@
 			<artifactId>acl.api</artifactId>
 		</dependency>
 		<dependency>
-	        <groupId>com.alibaba.platform.shared</groupId>
-	        <artifactId>buc.uc.api</artifactId>
-	        <exclusions>
-	            <exclusion>
-	                <artifactId>commons-codec</artifactId>
-	                <groupId>commons-codec</groupId>
-	            </exclusion>
-	        </exclusions>
-    	</dependency>
-    	<dependency>
+			<groupId>com.alibaba.platform.shared</groupId>
+			<artifactId>buc.uc.api</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>com.alibaba.middleware.jingwei</groupId>
 			<artifactId>jingwei-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.crius</groupId>
-				<artifactId>exam-client</artifactId>
-			</dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>exam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>motion-client</artifactId>
+			<version>1.0.6</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
