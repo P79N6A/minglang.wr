@@ -68,6 +68,7 @@
 		<property name="jingwei.taskid.bond" defaultValue="D_T_RC_60018" description="jingwei-bond" />
 		<property name="jingwei.taskid.partnerrel" defaultValue="D_T_RC_60016"/>
 		<property name="notify.alilang.topic" defaultValue="S-auge-alilang"/>
+		<property name="examUserDispatchService.service.version" defaultValue="1.0.0.daily"/>
 	</group>
 .
 	<script>

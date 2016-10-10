@@ -273,6 +273,10 @@
 			<groupId>com.alibaba.middleware.jingwei</groupId>
 			<artifactId>jingwei-client</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>exam-client</artifactId>
+			</dependency>
 	</dependencies>
 	<build>
 		<plugins>

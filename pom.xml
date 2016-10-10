@@ -38,7 +38,8 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency collision issues. -->
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
+				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
 				<groupId>com.aliexpress.boot</groupId>
@@ -71,11 +72,11 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-		    <dependency>
-		        <groupId>com.alibaba.boot</groupId>
-		        <artifactId>diamond-spring-boot-starter</artifactId>
-		        <version>1.0.3-SNAPSHOT</version>
-		    </dependency>
+			<dependency>
+				<groupId>com.alibaba.boot</groupId>
+				<artifactId>diamond-spring-boot-starter</artifactId>
+				<version>1.0.3-SNAPSHOT</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-expression</artifactId>
@@ -278,10 +279,10 @@
 				<artifactId>logback-classic</artifactId>
 				<version>999-not-exist-v3</version>
 			</dependency>
-				<dependency>
-		  		<groupId>ch.qos.logback</groupId>
-		  		<artifactId>logback-core</artifactId>
-	  			<version>999-not-exist-v1</version>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>999-not-exist-v1</version>
 			</dependency>
 			<dependency>
 				<groupId>xml-apis</groupId>
@@ -382,11 +383,11 @@
 				<version>1.2.22</version>
 			</dependency>
 			<dependency>
-			    <groupId>com.alibaba.platform.shared</groupId>
-			    <artifactId>buc.uc.api</artifactId>
-			    <version>0.8.57</version>
-		    </dependency>
-		    <dependency>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>buc.uc.api</artifactId>
+				<version>0.8.57</version>
+			</dependency>
+			<dependency>
 				<groupId>com.alibaba.middleware.jingwei</groupId>
 				<artifactId>jingwei-client</artifactId>
 				<version>3.1.8</version>
@@ -397,14 +398,19 @@
 				<version>3.6.3.Final</version>
 			</dependency>
 			<dependency>
-			  <groupId>org.jboss.netty</groupId>
-			  <artifactId>netty</artifactId>
-			  <version>999-not-exist-v3</version>
+				<groupId>org.jboss.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>999-not-exist-v3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
 				<artifactId>protobuf-java</artifactId>
 				<version>2.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>exam-client</artifactId>
+				<version>1.0-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -532,10 +538,11 @@
 			</plugin>
 
 			<!-- generate git.properties -->
-			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> <version>2.2.0</version> 
-				<executions> <execution> <goals> <goal>revision</goal> </goals> </execution> </executions> <configuration> <verbose>true</verbose> 
-				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> <failOnNoGitDirectory>false</failOnNoGitDirectory> 
-				</configuration> </plugin> -->
+			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
+				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
+				</goals> </execution> </executions> <configuration> <verbose>true</verbose> 
+				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> 
+				<failOnNoGitDirectory>false</failOnNoGitDirectory> </configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>

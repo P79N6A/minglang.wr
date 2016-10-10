@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("alilangHomePageService")
@@ -14,7 +15,8 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 	
 	@Autowired
 	private AlilangTopicBO alilangBO;
-	
+	@Autowired
+	private ExamUserDispatchService examUserDispatchService;
 	@Override
 	public List<AlilangTopicDto> getTopics() {
 		return alilangBO.getTopics();
@@ -22,6 +24,9 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 
 
 
+	public Integer getUnJoinExamCount(Long taobaoUserId){
+		return examUserDispatchService.queryUserExamCal(taobaoUserId).getResult().getUnJoinExamNums();
+	}
 
 
 
