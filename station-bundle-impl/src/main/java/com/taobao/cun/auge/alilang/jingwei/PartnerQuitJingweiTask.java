@@ -21,27 +21,28 @@ import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManager;
 import com.taobao.notify.remotingclient.SendResult;
 
 /**
- * 合伙人冻结保证金，同步到阿里郎
+ * 合伙人退出时通知到阿里郎
  * 
  * @author chengyu.zhoucy
  *
  */
 @Component
-public class BondJingweiTask extends JingweiTask {
+public class PartnerQuitJingweiTask extends JingweiTask {
 	private Logger logger = LoggerFactory.getLogger(getClass());
-	@Value("${jingwei.taskid.bond}")
+	@Value("${jingwei.taskid.partnerrel}")
 	private String taskId;
-	
-	private Client client;
 	@Value("${notify.alilang.topic}")
 	private String topic;
+	
+	private Client client;
+	
 	@Resource
 	private PartnerInstanceBO partnerInstanceBO;
 	@Autowired
@@ -61,19 +62,20 @@ public class BondJingweiTask extends JingweiTask {
             				Map<String, Serializable> modifiedRow = modifiedRows.get(index);
             				Map<String, Serializable> row = updateEvent.getRowDataMaps().get(index);
             				
-            				String bond = (String) modifiedRow.get("bond");
-            				if(PartnerLifecycleBondEnum.HAS_FROZEN.getCode().equals(bond)){
-            					PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById((Long) row.get("partner_instance_id"));
+            				String state = (String) modifiedRow.get("state");
+            				if(PartnerInstanceStateEnum.QUIT.getCode().equals(state)){
+            					PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById((Long) row.get("id"));
             					PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
             					if(PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
 	            					PartnerMessage partnerMessage = new PartnerMessage();
 	            					partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
 	            					partnerMessage.setMobile(partnerDto.getMobile());
-	            					partnerMessage.setAction("new");
+	            					partnerMessage.setAlilangUserId(partnerDto.getAliLangUserId());
 	            					partnerMessage.setName(partnerDto.getName());
+	            					partnerMessage.setAction("quit");
 	            					String str = JSONObject.toJSONString(partnerMessage);
 	            					
-	            					logger.info("new alilang user:{}", str);
+	            					logger.info("quit alilang user:{}", str);
 	            					
 	            					StringMessage stringMessage = new StringMessage();
 	            					stringMessage.setBody(str);
@@ -90,7 +92,6 @@ public class BondJingweiTask extends JingweiTask {
             			}
             		}
             	}
-            	//partnerInstanceBO.getPartnerInstanceById(instanceId)
                 return Result.ACK_AND_NEXT;
             }
         });
