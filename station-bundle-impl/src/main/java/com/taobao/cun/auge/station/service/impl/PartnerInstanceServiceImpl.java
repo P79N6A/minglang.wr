@@ -373,7 +373,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceUpdateServicingDto);
 		ValidateUtils.notNull(partnerInstanceUpdateServicingDto.getId());
-		ValidateUtils.notNull(partnerInstanceUpdateServicingDto.getVersion());
 		PartnerValidator.validateParnterCanUpdateInfo(partnerInstanceUpdateServicingDto.getPartnerDto());
 		StationValidator.validateStationCanUpdateInfo(partnerInstanceUpdateServicingDto.getStationDto());
 		try {
