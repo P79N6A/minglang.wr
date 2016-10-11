@@ -62,7 +62,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Autowired
 	EsbFinanceAuditAdapter esbFinanceAuditAdapter;
 	
-	@Autowired
+//	@Autowired
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
 	@Autowired
@@ -74,7 +74,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
 	
-	@Autowired 
+//	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
 	@Override
@@ -193,7 +193,6 @@ public class DataTransferServiceImpl implements DataTransferService{
         	String ticketNo=peixun.getTicketNo();
         	sign(ticketNo);
         }
-		//		ResultDTO<Boolean> result=trainingTicketServiceFacade.edit(auth, "cuntao_trans", TrainingTicketDTO trainingTicket);
 		return null;
 	}
 
