@@ -62,4 +62,12 @@ public interface PartnerBO {
 	 */
 	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException;
 	
+	/**
+	 * 根据手机号获取合伙人
+	 * @param mobile
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Partner getPartnerByMobile(String mobile) throws AugeServiceException;
+	
 }

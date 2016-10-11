@@ -93,6 +93,18 @@ public class PartnerBOImpl implements PartnerBO {
 		PartnerExample example = new PartnerExample();
 		example.createCriteria()
 				.andAlilangUserIdEqualTo(aliLangUserId)
+				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
+				.andIsDeletedEqualTo("n");
+		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
+	}
+
+	@Override
+	public Partner getPartnerByMobile(String mobile) throws AugeServiceException {
+		ValidateUtils.notNull(mobile);
+		PartnerExample example = new PartnerExample();
+		example.createCriteria()
+				.andMobileEqualTo(mobile)
+				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
 				.andIsDeletedEqualTo("n");
 		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
 	}

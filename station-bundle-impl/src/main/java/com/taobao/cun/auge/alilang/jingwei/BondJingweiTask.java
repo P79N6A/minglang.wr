@@ -90,7 +90,6 @@ public class BondJingweiTask extends JingweiTask {
             			}
             		}
             	}
-            	//partnerInstanceBO.getPartnerInstanceById(instanceId)
                 return Result.ACK_AND_NEXT;
             }
         });
