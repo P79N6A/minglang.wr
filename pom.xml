@@ -376,7 +376,12 @@
 			    <artifactId>buc.uc.api</artifactId>
 			    <version>0.8.57</version>
 		    </dependency>
-		</dependencies>
+            <dependency>
+                  <groupId>com.taobao.crius</groupId>
+                  <artifactId>exam-client</artifactId>
+                  <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
 	</dependencyManagement>
 
 	<build>

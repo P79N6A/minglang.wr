@@ -15,4 +15,5 @@ public interface LevelExamManageService {
      * 查询层级考试配置
      */
     LevelExamConfigurationDto queryConfigure();
+    
 }

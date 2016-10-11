@@ -18,7 +18,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelExamManageServiceImpl.class);
 
-    private static final TypeReference<Map<String, String>> TYPE_REFERENCE = new TypeReference<Map<String, String>>(){};
     private static final LevelExamConfigurationDto EMPTY_CONFIG_OBJECT = new LevelExamConfigurationDto(); 
     private static final String LEVEL_EXAM_CONFIG = "level_exam_config";
     private static final String LEVEL_EXAM_KEY = "level_to_exam";
@@ -42,7 +41,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
         if(appResource==null || StringUtils.isBlank(appResource.getValue())){
             return EMPTY_CONFIG_OBJECT; 
         }
-        Map<String,String> levelExamMap =  JSON.parseObject(appResource.getValue(), TYPE_REFERENCE);
+        Map<String,Long> levelExamMap =  JSON.parseObject(appResource.getValue(), new TypeReference<Map<String, Long>>(){});
         return new LevelExamConfigurationDto().setLevelExamMap(levelExamMap);
     }
 }
