@@ -122,7 +122,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Override
 	public Boolean transferMoney(PartnerCourseRecordDto dto) {
 		PartnerCourseRecord record=partnerCourseRecordMapper.selectByPrimaryKey(dto.getId());
-		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())||!record.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
+		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())&&!record.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
 			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新订单是否已经创建
