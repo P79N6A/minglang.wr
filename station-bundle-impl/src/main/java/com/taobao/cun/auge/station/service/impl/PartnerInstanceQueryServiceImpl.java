@@ -322,6 +322,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(stationApplyId);
 		return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 	}
+	
+	@Override
+	public Long getPartnerInstanceIdByStationId(Long stationId){
+		ValidateUtils.notNull(stationId);
+		return partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+	}
 
 	@Override
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException {

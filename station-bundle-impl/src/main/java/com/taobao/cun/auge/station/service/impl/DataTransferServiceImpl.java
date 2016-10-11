@@ -24,9 +24,11 @@ import com.alibaba.crm.finance.dataobject.draft.ShiftDraftMaterialDetailDto;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
+import com.alibaba.ivy.enums.TicketStatus;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
+import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -37,10 +39,12 @@ import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
+import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
@@ -61,12 +65,16 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Autowired
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
+	@Autowired
+	PartnerPeixunService partnerPeixunService;
+	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
 	
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
-	@Autowired
+	
+	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
 	@Override
@@ -179,22 +187,12 @@ public class DataTransferServiceImpl implements DataTransferService{
 		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())){
 			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
-		//判断新的培训记录是不是已付款状态
-		String courseCode=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
-		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
-		criteria.andCourseCodeEqualTo(courseCode);
-		criteria.andStatusEqualTo("PAY");
-		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
-		if(records==null||records.size()==0){
-			throw new AugeServiceException("未找到已付款的新培训记录  "+String.valueOf(dto.getPartnerUserId()));
-		}
-		AppAuthDTO auth = new AppAuthDTO();
-		auth.setAuthkey(peixunClientKey);
-		auth.setCode(peixunClientCode);
-//		ResultDTO<Boolean> result=trainingTicketServiceFacade.edit(auth, "cuntao_trans", TrainingTicketDTO trainingTicket);
+		//判断新的培训记录是不是已付款状态,若是，则获取签到码
+		PartnerPeixunDto peixun=partnerPeixunService.queryOfflinePeixunProcess(dto.getPartnerUserId(), appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN"), PartnerPeixunCourseTypeEnum.APPLY_IN);
+        if(peixun!=null&&peixun.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
+        	String ticketNo=peixun.getTicketNo();
+        	sign(ticketNo);
+        }
 		return null;
 	}
 
@@ -219,4 +217,26 @@ public class DataTransferServiceImpl implements DataTransferService{
 	         throw new RuntimeException(e);
 	      }
 	   }
+	
+	private void sign(String ticketNo){
+		 AppAuthDTO auth = new AppAuthDTO();
+	      auth.setAuthkey(peixunClientKey);
+	      auth.setCode(peixunClientCode);
+		ResultDTO<TrainingTicketDTO> resultDTO = trainingTicketServiceFacade.getByTicketNo(auth, ticketNo);
+	    if(!resultDTO.isSuccess() || resultDTO.getData() == null){
+	        throw new IllegalStateException("券号无效");
+	    }
+	    TrainingTicketDTO trainingTicketDTO = resultDTO.getData();
+	    if(trainingTicketDTO.getTicketStatus()!=TicketStatus.UnUsed){
+	       return;
+	    }
+	    //修改ticket状态
+	    trainingTicketDTO.setTicketStatus(TicketStatus.Used);
+	    trainingTicketDTO.setSignDate(new Date());
+	    ResultDTO<Boolean> resultDTOVar2 = trainingTicketServiceFacade.edit(auth, "system-SignIn", trainingTicketDTO);
+	    if(!resultDTOVar2.isSuccess()){
+	        throw new IllegalStateException("系统异常,签到失败,稍后重试"+resultDTOVar2.getMsg());
+	    }
+	}
+
 }

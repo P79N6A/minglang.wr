@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.support.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
-import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
@@ -62,9 +61,6 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	@Autowired
 	FuwuOrderService fuwuOrderService;
-	
-	@Autowired
-	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
 	@Autowired
 	ExamUserDispatchService examUserDispatchService;
