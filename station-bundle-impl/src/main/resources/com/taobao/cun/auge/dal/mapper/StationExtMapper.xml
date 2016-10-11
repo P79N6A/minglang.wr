@@ -61,48 +61,14 @@
   </sql>
 
 
-  <select id="getStationsByName" parameterType="com.taobao.cun.auge.dal.example.StationExtExample" resultMap="BaseResultMap">
+  <select id="getTpStationsByName" parameterType="com.taobao.cun.auge.dal.example.StationExtExample" resultMap="BaseResultMap">
     select
+    distinct
     s.id,
-    s.gmt_create,
-    s.gmt_modified,
-    s.creater,
-    s.modifier,
     s.name,
-    s.description,
-    s.alipay_account,
-    s.taobao_nick,
-    s.state,
-    s.is_deleted,
-    s.province,
-    s.city,
-    s.county,
-    s.town,
-    s.province_detail,
-    s.city_detail,
-    s.county_detail,
-    s.town_detail,
-    s.address,
-    s.apply_org,
-    s.taobao_user_id,
-    s.station_num,
-    s.lng,
-    s.lat,
-    s.village,
-    s.village_detail,
-    s.covered,
-    s.products,
-    s.logistics_state,
-    s.format,
-    s.area_type,
-    s.manager_id,
-    s.provider_id,
-    s.feature,
-    s.status,
-    s.fixed_type,
-    s.version
+    s.station_num
     from station s, cuntao_org org, partner_station_rel p
-    where s.apply_org = org.id and s.is_deleted='n' and org.is_deleted='n' and p.station_id = s.id and p.type = 'TP'
+    where s.apply_org = org.id and s.is_deleted='n' and org.is_deleted='n' and p.station_id = s.id and p.type = 'TP' and p.is_deleted='n'
     <if test="orgIdPath != null and orgIdPath != ''" >
       and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
     </if>

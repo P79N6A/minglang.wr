@@ -177,7 +177,7 @@ public class StationBOImpl implements StationBO {
 		stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
 		stationExtExample.setPageSize(stationCondition.getPageSize());
 		stationExtExample.setPageStart(stationCondition.getPageStart());
-		return stationExtMapper.getStationsByName(stationExtExample);
+		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
 
 }

@@ -85,7 +85,7 @@ public interface StationBO {
 	public void deleteStation(Long stationId, String operator) throws AugeServiceException;
 
 	/**
-	 * 根据name、orgIdPath、stationStatusEnum查询station
+	 * 根据name、orgIdPath、stationStatusEnum查询station  为搜索tp服务站使用  只返回名字，id,村点编号
 	 * @param stationCondition
 	 * @return
 	 * @throws AugeServiceException
