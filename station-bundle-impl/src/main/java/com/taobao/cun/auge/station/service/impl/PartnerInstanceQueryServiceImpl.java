@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -474,9 +473,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 					.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
 			if (null == level) {
 				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
-					logger.error("PartnerInstaceLevel not exists: " + taobaoUserId);
+					throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+				} else {
+					return null;
 				}
-				return null;
 			}
 			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
 			return dto;
@@ -515,9 +515,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				return dto;
 			}
 			if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
-				logger.error("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+				throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+			} else {
+				return null;
 			}
-			return null;
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData",
 					String.valueOf(taobaoUserId), e.getMessage());
