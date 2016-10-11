@@ -218,6 +218,11 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException;
-	
-	
+
+	/**
+	 * 已停业村点恢复服务中
+	 * @param instanceDto
+	 * @throws AugeServiceException
+	 */
+	public void reService(Long instanceId, String operator) throws AugeServiceException;
 }

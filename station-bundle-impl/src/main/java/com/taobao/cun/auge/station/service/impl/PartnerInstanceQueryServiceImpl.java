@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +173,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 					.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
 			PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
 			insDto.setPartnerLifecycleDto(lifecycleDto);
-			insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+			insDto.setStationApplyState(
+					PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
 
 			if (null != condition.getNeedPartnerInfo() && condition.getNeedPartnerInfo()) {
 				Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
@@ -180,25 +182,30 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				if (condition.getNeedDesensitization()) {
 					setSafedInfo(partnerDto);
 				}
-				partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
+				partnerDto.setAttachements(
+						attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 				insDto.setPartnerDto(partnerDto);
 			}
 
 			if (null != condition.getNeedStationInfo() && condition.getNeedStationInfo()) {
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
-				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
+				stationDto.setAttachements(
+						attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 			}
 
 			if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {
-				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
-				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
+				PartnerInstanceLevel level = partnerInstanceLevelBO
+						.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
+				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter
+						.toPartnerInstanceLevelDto(level);
 				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
 			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
+			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition),
+					augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -218,8 +225,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
-				.append(error);
+		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").")
+				.append("errorMessage:").append(error);
 		return sb.toString();
 	}
 
@@ -229,7 +236,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				partnerDto.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
 			}
 			if (StringUtils.isNotBlank(partnerDto.getName())) {
-				partnerDto.setName(SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
+				partnerDto.setName(
+						SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
 			}
 			if (StringUtil.isNotBlank(partnerDto.getIdenNum())) {
 				partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
@@ -334,7 +342,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException {
+	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type)
+			throws AugeServiceException {
 		try {
 			ProtocolSigningInfoDto info = new ProtocolSigningInfoDto();
 			PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -380,7 +389,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return info;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
+			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type,
+					e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -406,9 +416,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PartnerInstanceDto instance = queryInfo(condition);
 			AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
-					instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
+			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
+					ProtocolTypeEnum.SETTLE_PRO, instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			if (null == instance || null == bondMoney || null == settleProtocol
+					|| null == settleProtocol.getConfirmTime()) {
 				throw new NullPointerException("bond money or settle protocol not exist");
 			}
 			info.setPartnerInstance(instance);
@@ -423,7 +434,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return info;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
+			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId),
+					e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -440,8 +452,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type)
-			throws AugeServiceException {
+	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType,
+			ProtocolTypeEnum type) throws AugeServiceException {
 		return partnerProtocolRelBO.getPartnerProtocolRelDto(type, objectId, targetType);
 	}
 
@@ -455,17 +467,22 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException {
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
 				return null;
 			}
-			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
+			PartnerInstanceLevel level = partnerInstanceLevelBO
+					.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
 			if (null == level) {
-				throw new NullPointerException("PartnerInstaceLevel not exists: " + taobaoUserId);
+				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
+					logger.error("PartnerInstaceLevel not exists: " + taobaoUserId);
+				}
+				return null;
 			}
 			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
 			return dto;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId),
+					e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -479,14 +496,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public PartnerInstanceLevelGrowthDto getPartnerInstanceLevelGrowthData(Long taobaoUserId) {
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
 				return null;
 			}
 			// 今天的数据没有则取昨天的数据
 			List<PartnerInstanceLevelGrowthStatDateDto> statDateList = getRecentStatDateList();
 			for (PartnerInstanceLevelGrowthStatDateDto statDate : statDateList) {
 				ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto> result = partnerInstanceLevelDataService
-						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
+						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(),
+								statDate.getStatDate());
 				checkResult(result, "getPartnerInstanceLevelGrowthData");
 				if (null == result.getResult()) {
 					continue;
@@ -496,13 +514,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				BeanCopyUtils.copyNotNullProperties(statDate, dto);
 				return dto;
 			}
-			throw new RuntimeException("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+			if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
+				logger.error("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+			}
+			return null;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData",
+					String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId),
+					e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -551,10 +574,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate) {
+	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId,
+			String statDate) {
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			if (!PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
 				return null;
 			}
 			Calendar calendar = Calendar.getInstance();
@@ -565,8 +589,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String statStartDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
 
 			ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> result = partnerInstanceLevelDataService
-					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(), statStartDate, statDate);
+					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(),
+							statStartDate, statDate);
 			checkResult(result, "getPartnerInstanceLevelGrowthTrendData");
+			if (CollectionUtils.isEmpty(result.getResult())) {
+				return null;
+			}
 			List<PartnerInstanceLevelGrowthTrendDto> list = Lists.transform(result.getResult(),
 					new Function<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto, PartnerInstanceLevelGrowthTrendDto>() {
 						@Override
@@ -585,20 +613,20 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
-					e.getMessage());
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData",
+					String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-	
+
 	@Override
-	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition){
+	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition) {
 		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
 		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
 		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
 		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(condition);
-		List<ProcessedStationStatus> whole=new ArrayList<ProcessedStationStatus>();
+		List<ProcessedStationStatus> whole = new ArrayList<ProcessedStationStatus>();
 		whole.addAll(processingList);
 		whole.addAll(processedList);
 		whole.addAll(courseList);
