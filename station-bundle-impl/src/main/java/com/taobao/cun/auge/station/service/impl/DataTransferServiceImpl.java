@@ -46,8 +46,8 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-//@Service("dataTransferService")
-//@HSFProvider(serviceInterface = DataTransferService.class)
+@Service("dataTransferService")
+@HSFProvider(serviceInterface = DataTransferService.class)
 public class DataTransferServiceImpl implements DataTransferService{
 
 	@Autowired
