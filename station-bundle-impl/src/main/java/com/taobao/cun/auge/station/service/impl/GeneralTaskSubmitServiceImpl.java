@@ -522,7 +522,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			cainiaoTaskVo.setOperator(OperatorDto.defaultOperator().getOperator());
 			
 			cainiaoTaskVo.setBeanName("caiNiaoService");
-			cainiaoTaskVo.setMethodName("deleteNotUserdCainiaoStation");
+			cainiaoTaskVo.setMethodName("deleteNotUsedCainiaoStation");
 			cainiaoTaskVo.setParameterType(Long.class.getName());
 			cainiaoTaskVo.setParameter(String.valueOf(stationId));
 
