@@ -281,7 +281,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 	
 	@Override
-	public void deleteNotUserdCainiaoStation(Long stationId) throws AugeServiceException {
+	public void deleteNotUsedCainiaoStation(Long stationId) throws AugeServiceException {
 		if (stationId == null) {
 			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
 		}
