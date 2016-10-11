@@ -50,22 +50,22 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = DataTransferService.class)
 public class DataTransferServiceImpl implements DataTransferService{
 
-	@Autowired
+//	@Autowired
 	PartnerCourseRecordMapper partnerCourseRecordMapper;
 	
 //	@Autowired
 	AppResourceBO appResourceBO;
 	
-//	@Autowired
+	@Autowired
 	FuwuOrderService fuwuOrderService;
 	
-//	@Autowired
+	@Autowired
 	EsbFinanceAuditAdapter esbFinanceAuditAdapter;
 	
-//	@Autowired
+	@Autowired
 	TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
-//	@Autowired
+	@Autowired
 	PartnerPeixunService partnerPeixunService;
 	
 	@Value("${partner.peixun.client.code}")
@@ -74,7 +74,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
 	
-//	@Autowired 
+	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
 	@Override
