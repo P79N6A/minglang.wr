@@ -162,7 +162,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		dto1.setFromContract(fromDto1);
 		ContractDto toDto1 = new ContractDto();
 		toDto1.setContractNo(newOrderNum);
-		toDto1.setDomainFrom(BaseDto.MARTINI);
+		toDto1.setDomainFrom(BaseDto.BOSS);
 		List<ContractDto> contractList = new ArrayList<ContractDto>();
 		contractList.add(toDto1);
 		dto1.setToContracts(contractList);
