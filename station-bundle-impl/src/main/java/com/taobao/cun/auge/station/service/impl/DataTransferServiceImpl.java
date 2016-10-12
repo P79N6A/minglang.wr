@@ -109,23 +109,21 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Override
 	public Boolean createOrder(PartnerCourseRecordDto dto) {
 		if (dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())) {
+			// 初始化 新培训记录
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
+					PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+							.queryAppValueNotAllowNull(
+									"PARTNER_PEIXUN_CODE", "APPLY_IN"));
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
+					PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+							.queryAppValueNotAllowNull(
+									"PARTNER_PEIXUN_CODE", "UPGRADE"));
 			// 判断老订单是否下过单
 			List<TrainingRecordDTO> trains = getRecordFromPeixun(
 					dto.getCourseCode(), dto.getPartnerUserId());
 			if (trains.size() == 0) {
 				return true;
-			} else {
-				// 初始化 新培训记录
-				partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-						PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-								.queryAppValueNotAllowNull(
-										"PARTNER_PEIXUN_CODE", "APPLY_IN"));
-				partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-						PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-								.queryAppValueNotAllowNull(
-										"PARTNER_PEIXUN_CODE", "UPGRADE"));
-
-			}
+			} 
 		}
 		//判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
 		String courseCode=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
