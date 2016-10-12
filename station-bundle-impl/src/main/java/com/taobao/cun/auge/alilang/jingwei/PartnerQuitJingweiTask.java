@@ -38,8 +38,6 @@ public class PartnerQuitJingweiTask extends JingweiTask {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Value("${jingwei.taskid.partnerrel}")
 	private String taskId;
-	@Value("${notify.alilang.topic}")
-	private String topic;
 	
 	private Client client;
 	
@@ -80,7 +78,7 @@ public class PartnerQuitJingweiTask extends JingweiTask {
 	            					StringMessage stringMessage = new StringMessage();
 	            					stringMessage.setBody(str);
 	            					stringMessage.setTopic(topic);
-	            					stringMessage.setMessageType("sync-alilang-user");
+	            					stringMessage.setMessageType(messageType);
 	            					SendResult sendResult = notifyManager.sendMessage(stringMessage);
 	            					if(sendResult.isSuccess()){
 	            						logger.info("messageId:{}", sendResult.getMessageId());

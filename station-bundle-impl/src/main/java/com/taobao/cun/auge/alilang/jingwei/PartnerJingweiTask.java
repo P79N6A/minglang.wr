@@ -33,9 +33,6 @@ public class PartnerJingweiTask extends JingweiTask {
 	@Value("${jingwei.taskid.partner}")
 	private String taskId;
 	
-	@Value("${notify.alilang.topic}")
-	private String topic;
-	
 	private Client client;
 	@Autowired
     private NotifyManager notifyManager;
@@ -70,7 +67,7 @@ public class PartnerJingweiTask extends JingweiTask {
             					StringMessage stringMessage = new StringMessage();
             					stringMessage.setBody(str);
             					stringMessage.setTopic(topic);
-            					stringMessage.setMessageType("sync-alilang-user");
+            					stringMessage.setMessageType(messageType);
             					SendResult sendResult = notifyManager.sendMessage(stringMessage);
             					if(sendResult.isSuccess()){
             						logger.info("messageId:{}", sendResult.getMessageId());
