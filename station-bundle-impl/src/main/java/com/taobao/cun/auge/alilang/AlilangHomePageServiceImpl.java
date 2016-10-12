@@ -40,13 +40,9 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 
 
 
-	public Integer getUnJoinExamCount(Long taobaoUserId){
-		return examUserDispatchService.queryUserExamCal(taobaoUserId).getResult().getUnJoinExamNums();
-	}
-
 
 	@Override
-	public UserExamProfile getUnFinishExamCount(Long taobaoUserId) {
+	public UserExamProfile getUserExamProfile(Long taobaoUserId) {
 		UserExamCalDto examDto = examUserDispatchService.queryUserExamCal(taobaoUserId).getResult();
 		UserExamProfile profile = new UserExamProfile();
 		profile.setUnFinishExamCount(examDto.getUnJoinExamNums());

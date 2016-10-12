@@ -6,7 +6,7 @@ public interface AlilangHomePageService {
 
 	List<AlilangTopicDto> getTopics();
 	
-	UserExamProfile getUnFinishExamCount(Long taobaoUserId);
+	UserExamProfile getUserExamProfile(Long taobaoUserId);
 	
 	UserProfile getUserProfile(Long taobaoUserId);
 	
