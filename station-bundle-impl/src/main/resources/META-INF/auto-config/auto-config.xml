@@ -67,8 +67,12 @@
 		<property name="jingwei.taskid.partner" defaultValue="D_T_RC_59906" description="jingwei-partner" />
 		<property name="jingwei.taskid.bond" defaultValue="D_T_RC_60018" description="jingwei-bond" />
 		<property name="jingwei.taskid.partnerrel" defaultValue="D_T_RC_60016"/>
-		<property name="notify.alilang.topic" defaultValue="S-auge-alilang"/>
+		<property name="notify.alilang.topic" defaultValue="CUNTAO_AUGE_ALILANG"/>
+		<property name="notify.alilang.messageType" defaultValue="sync-alilang-user"/>
+		<property name="spring.notify.publisher.groupId" defaultValue="P-CUNTAO-AUGE"/>
+		<property name="spring.notify.publisher.topics" defaultValue="CUNTAO_AUGE_ALILANG"/>
 		<property name="examUserDispatchService.service.version" defaultValue="1.0.0.daily"/>
+		<property name="spring.notify.subscriber.topics.alilang.registered" defaultValue="NM-cuntao-user,NM-alilang-to-cuntao-user,NM-alilang-user"/>
 	</group>
 .
 	<script>

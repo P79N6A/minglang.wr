@@ -18,14 +18,14 @@ public class AlilangUserRegister {
 	@Resource
 	private PartnerBO partnerBO;
 	
-	public void register(long taobaoUserId, String alilangUserId){
-		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+	public void register(String mobile, String alilangUserId){
+		Partner partner = partnerBO.getPartnerByMobile(mobile);
 		if(partner == null){
-			logger.warn("cann't find partner, taobao_user_id={}", taobaoUserId);
+			logger.warn("cann't find partner, mobile={}", mobile);
 			return;
 		}
 		
-		logger.info("register alilanguser, taobao_user_id={}, alilangUserId = {}", new Object[]{taobaoUserId, alilangUserId});
+		logger.info("register alilanguser, taobao_user_id={}, alilangUserId = {}", new Object[]{partner.getTaobaoUserId(), alilangUserId});
 		PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 		partnerDto.setAliLangUserId(alilangUserId);
 		partnerBO.updatePartner(partnerDto);

@@ -38,10 +38,7 @@ public class BondJingweiTask extends JingweiTask {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Value("${jingwei.taskid.bond}")
 	private String taskId;
-	
 	private Client client;
-	@Value("${notify.alilang.topic}")
-	private String topic;
 	@Resource
 	private PartnerInstanceBO partnerInstanceBO;
 	@Autowired
@@ -78,7 +75,7 @@ public class BondJingweiTask extends JingweiTask {
 	            					StringMessage stringMessage = new StringMessage();
 	            					stringMessage.setBody(str);
 	            					stringMessage.setTopic(topic);
-	            					stringMessage.setMessageType("sync-alilang-user");
+	            					stringMessage.setMessageType(messageType);
 	            					SendResult sendResult = notifyManager.sendMessage(stringMessage);
 	            					if(sendResult.isSuccess()){
 	            						logger.info("messageId:{}", sendResult.getMessageId());
@@ -90,7 +87,6 @@ public class BondJingweiTask extends JingweiTask {
             			}
             		}
             	}
-            	//partnerInstanceBO.getPartnerInstanceById(instanceId)
                 return Result.ACK_AND_NEXT;
             }
         });
