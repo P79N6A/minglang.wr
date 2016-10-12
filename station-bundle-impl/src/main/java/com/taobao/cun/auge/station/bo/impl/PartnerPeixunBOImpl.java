@@ -95,7 +95,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		if(StringUtils.isNotEmpty(courseType)){
 			PartnerCourseRecord pc=handleComplete(ob,courseType);
 			//通知售中关闭订单
-			fuwuOrderService.closeOrder(pc.getOrderNum());
+			try{
+				fuwuOrderService.closeOrder(pc.getOrderNum());
+			}catch(Exception e){
+				//通知售中失败 不影响自己处理逻辑
+				logger.error("call martini closeOrder error ",e);
+			}
 		}
 	}
 
