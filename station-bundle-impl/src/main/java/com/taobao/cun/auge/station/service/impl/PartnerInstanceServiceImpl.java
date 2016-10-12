@@ -1182,7 +1182,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 记录村点状态变化
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 			return instanceId;
-		} catch (Exception e) {
+		} catch (AugeServiceException augeException) {
+			String error = getAugeExceptionErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto),
+					augeException.toString());
+			logger.error(error, augeException);
+			throw augeException;
+		}  catch (Exception e) {
 			String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
