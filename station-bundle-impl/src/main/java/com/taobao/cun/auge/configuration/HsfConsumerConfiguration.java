@@ -10,6 +10,7 @@ import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.service.CuntaoOrgService;
+import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -98,4 +99,11 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 			@Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
 		return getConsumerBean(CuntaoUserService.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean busiWorkBaseInfoService(
+			@Value("${hsf.consumer.version.auge.busiWorkBaseInfoService}") String version) {
+		return getConsumerBean(BusiWorkBaseInfoService.class, HSFGroup.HSF, version, 3000);
+	}
+	
 }
