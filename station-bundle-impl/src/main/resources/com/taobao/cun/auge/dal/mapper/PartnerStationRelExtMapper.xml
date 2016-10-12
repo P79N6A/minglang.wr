@@ -443,7 +443,7 @@
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted= 'n'
 	INNER JOIN station_decorate decorate on decorate.station_id =s.id AND
-	decorate.is_deleted= 'n' and decorate.is_valid ='Y'
+	decorate.is_deleted= 'n' AND decorate.is_valid ='Y' AND instance.taobao_user_id=decorate.partner_user_id
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
