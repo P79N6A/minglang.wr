@@ -14,6 +14,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -45,8 +46,12 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 
 
 	@Override
-	public Integer getUnFinishExamCount(Long taobaoUserId) {
-		return examUserDispatchService.queryUserExamCal(taobaoUserId).getResult().getUnJoinExamNums();
+	public UserExamProfile getUnFinishExamCount(Long taobaoUserId) {
+		UserExamCalDto examDto = examUserDispatchService.queryUserExamCal(taobaoUserId).getResult();
+		UserExamProfile profile = new UserExamProfile();
+		profile.setUnFinishExamCount(examDto.getUnJoinExamNums());
+		profile.setUnFinishExamNames(examDto.getUnJoinExamNames());
+		return profile;
 	}
 
 
