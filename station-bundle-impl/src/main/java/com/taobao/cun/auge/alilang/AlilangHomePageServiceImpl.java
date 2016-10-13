@@ -45,8 +45,10 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 	public UserExamProfile getUserExamProfile(Long taobaoUserId) {
 		UserExamCalDto examDto = examUserDispatchService.queryUserExamCal(taobaoUserId).getResult();
 		UserExamProfile profile = new UserExamProfile();
-		profile.setUnFinishExamCount(examDto.getUnJoinExamNums());
-		profile.setUnFinishExamNames(examDto.getUnJoinExamNames());
+		if(examDto != null){
+			profile.setUnFinishExamCount(examDto.getUnJoinExamNums());
+			profile.setUnFinishExamNames(examDto.getUnJoinExamNames());
+		}
 		return profile;
 	}
 
