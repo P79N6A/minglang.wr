@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
@@ -31,8 +32,9 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
             logger.error("invalid configuration, dto:{}, configurePerson:{}", configurationDto, configurePerson);
             return false;
         }
-        String value = JSON.toJSONString(configurationDto.getLevelExamMap());
-        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, value, configurationDto.isDeleted(), configurePerson);
+        LevelConfiguration configuration = new LevelConfiguration(configurationDto.isOpenEvaluate(), configurationDto.isDispatch(), configurationDto.getLevelExamMap());
+        String value = JSON.toJSONString(configuration);
+        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, value, false, configurePerson);
     }
 
     @Override
@@ -41,7 +43,57 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
         if(appResource==null || StringUtils.isBlank(appResource.getValue())){
             return EMPTY_CONFIG_OBJECT; 
         }
-        Map<String,Long> levelExamMap =  JSON.parseObject(appResource.getValue(), new TypeReference<Map<String, Long>>(){});
-        return new LevelExamConfigurationDto().setLevelExamMap(levelExamMap);
+        LevelConfiguration configuration =  JSON.parseObject(appResource.getValue(), LevelConfiguration.class);
+        return new LevelExamConfigurationDto().setLevelExamMap(configuration.getLevelExamPaperIdMap())
+                .setDispatch(configuration.isDispatch)
+                .setOpenEvaluate(configuration.isOpenEvaluate());
+    }
+    
+    public static class LevelConfiguration implements Serializable {
+
+        private static final long serialVersionUID = 5209263287154537277L;
+        /**
+         * 是否打开开关 晋升时必须通过考试
+         */
+        private boolean isOpenEvaluate;
+        /**
+         * 是否分发晋升试卷
+         */
+        private boolean isDispatch;
+        private Map<String, Long> levelExamPaperIdMap = new HashMap<String, Long>();
+        
+        public LevelConfiguration(){};
+        
+        public LevelConfiguration(boolean isOpenEvaluate, boolean isDispatch, Map<String, Long> levelExamPaperIdMap) {
+            super();
+            this.isOpenEvaluate = isOpenEvaluate;
+            this.isDispatch = isDispatch;
+            this.levelExamPaperIdMap = levelExamPaperIdMap;
+        }
+
+        public boolean isOpenEvaluate() {
+            return isOpenEvaluate;
+        }
+        
+        public void setOpenEvaluate(boolean isOpenEvaluate) {
+            this.isOpenEvaluate = isOpenEvaluate;
+        }
+        
+        public boolean isDispatch() {
+            return isDispatch;
+        }
+        
+        public void setDispatch(boolean isDispatch) {
+            this.isDispatch = isDispatch;
+        }
+        
+        public Map<String, Long> getLevelExamPaperIdMap() {
+            return levelExamPaperIdMap;
+        }
+        
+        public void setLevelExamPaperIdMap(Map<String, Long> levelExamPaperIdMap) {
+            this.levelExamPaperIdMap = levelExamPaperIdMap;
+        }
+        
     }
 }
