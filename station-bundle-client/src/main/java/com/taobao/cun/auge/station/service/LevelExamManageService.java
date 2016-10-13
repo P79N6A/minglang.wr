@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 
 public interface LevelExamManageService {
 
@@ -15,5 +16,14 @@ public interface LevelExamManageService {
      * 查询层级考试配置
      */
     LevelExamConfigurationDto queryConfigure();
+    
+    /**
+     * 根据当前合伙人层级,进行试卷分发,针对taobaoUserId+level 试卷分发满足幂等性要求
+     * @param taobaoUserId
+     * @param nickName
+     * @param leve:当前预估层级:从鹊桥读取该合伙人当前指标数据计算而来
+     * @return
+     */
+    public boolean dispatchExamPaper(Long taobaoUserId, String nickName, PartnerInstanceLevel leve);
     
 }
