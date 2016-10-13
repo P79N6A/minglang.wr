@@ -268,14 +268,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 
-	private String getOrderNoByOrderItem(String orderItem) {
-		if (StringUtils.isBlank(orderItem))
-			return null;
-		int lastIndex = orderItem.lastIndexOf("_");
-		if (lastIndex <= 0)
-			return null;
-		return orderItem.substring(0, lastIndex);
-	}
 
 	@Override
 	public List<PartnerPeixunDto> queryBatchPeixunRecord(List<Long> userIds,String courseType,String courseCode) {
@@ -403,11 +395,4 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		return result;
 	}
 
-	public static void main(String[] args) {
-		StringBuilder sb=new StringBuilder("(");
-		for(int i=1;i<=60;i++){
-			sb.append("'SSX0").append(i<10?"0"+i:i).append("',");
-		}
-		System.out.println(sb.toString());
-	}
 }
