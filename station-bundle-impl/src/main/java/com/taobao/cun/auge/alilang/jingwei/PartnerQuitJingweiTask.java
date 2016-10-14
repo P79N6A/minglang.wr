@@ -71,6 +71,7 @@ public class PartnerQuitJingweiTask extends JingweiTask {
 	            					partnerMessage.setAlilangUserId(partnerDto.getAliLangUserId());
 	            					partnerMessage.setName(partnerDto.getName());
 	            					partnerMessage.setAction("quit");
+	            					partnerMessage.setAlilangOrgId(alilangOrgId);
 	            					String str = JSONObject.toJSONString(partnerMessage);
 	            					
 	            					logger.info("quit alilang user:{}", str);

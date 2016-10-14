@@ -18,6 +18,7 @@ import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
+import com.google.common.base.Strings;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -62,12 +63,14 @@ public class BondJingweiTask extends JingweiTask {
             				if(PartnerLifecycleBondEnum.HAS_FROZEN.getCode().equals(bond)){
             					PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById((Long) row.get("partner_instance_id"));
             					PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-            					if(PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
+            					if(Strings.isNullOrEmpty(partnerDto.getAliLangUserId()) && PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
 	            					PartnerMessage partnerMessage = new PartnerMessage();
 	            					partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
 	            					partnerMessage.setMobile(partnerDto.getMobile());
 	            					partnerMessage.setAction("new");
+	            					partnerMessage.setEmail(partnerDto.getEmail());
 	            					partnerMessage.setName(partnerDto.getName());
+	            					partnerMessage.setAlilangOrgId(alilangOrgId);
 	            					String str = JSONObject.toJSONString(partnerMessage);
 	            					
 	            					logger.info("new alilang user:{}", str);

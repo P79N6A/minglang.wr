@@ -8,8 +8,11 @@ public abstract class JingweiTask implements InitializingBean{
 	protected String topic;
 	@Value("${notify.alilang.messageType}")
 	protected String messageType;
+	@Value("${alilang.orgId}")
+	protected long alilangOrgId;
+	
 	public abstract void start();
-
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		start();

@@ -73,6 +73,7 @@
 		<property name="spring.notify.publisher.topics" defaultValue="CUNTAO_AUGE_ALILANG"/>
 		<property name="examUserDispatchService.service.version" defaultValue="1.0.0.daily"/>
 		<property name="spring.notify.subscriber.topics.alilang.registered" defaultValue="NM-cuntao-user,NM-alilang-to-cuntao-user,NM-alilang-user"/>
+		<property name="alilang.orgId" defaultValue="1"/>
 	</group>
 .
 	<script>
