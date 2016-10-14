@@ -36,7 +36,7 @@ public class PartnerInstanceValidator {
 	 * @param instance
 	 * @throws AugeServiceException
 	 */
-	public void validateApplyQuitPreCondition(PartnerStationRel instance,QuitStationApplyDto quitDto) throws AugeServiceException {
+	public void validateApplyQuitPreCondition(PartnerStationRel instance, QuitStationApplyDto quitDto) throws AugeServiceException {
 		Long instanceId = instance.getId();
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
@@ -49,18 +49,17 @@ public class PartnerInstanceValidator {
 		tradeAdapter.validateNoEndTradeOrders(partner.getTaobaoUserId(), instance.getServiceEndTime());
 
 		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-		partnerInstanceHandler.validateExistChildrenForQuit(PartnerInstanceTypeEnum.valueof(instance.getType()),
-				instanceId);
-		
-		//校验资产是否归还
-		partnerInstanceHandler.validateAssetBack(PartnerInstanceTypeEnum.valueof(instance.getType()),
-				instanceId);
-		
-		//校验是否可以同时撤点
+		PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
+		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instanceId);
+
+		// 校验资产是否归还
+		partnerInstanceHandler.validateAssetBack(instanceType, instanceId);
+
+		// 校验是否可以同时撤点
 		Boolean isQuitStation = quitDto.getIsQuitStation();
-		//如果选择同时撤点，校验村点上其他人是否都处于退出待解冻、已退出状态
-		if(Boolean.TRUE.equals(isQuitStation)){
-			partnerInstanceHandler.validateOtherPartnerQuit(PartnerInstanceTypeEnum.valueof(instance.getType()),instanceId);
+		// 如果选择同时撤点，校验村点上其他人是否都处于退出待解冻、已退出状态
+		if (Boolean.TRUE.equals(isQuitStation)) {
+			partnerInstanceHandler.validateOtherPartnerQuit(instanceType, instanceId);
 		}
 	}
 }

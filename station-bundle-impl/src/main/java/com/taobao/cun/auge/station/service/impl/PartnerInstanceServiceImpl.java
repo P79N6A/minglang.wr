@@ -1005,14 +1005,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			forcedCloseDto.validateOperatorOrgId();
 
 			Long instanceId = forcedCloseDto.getInstanceId();
+			//查询实例是否存在，不存在会抛异常
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			//生成状态变化枚举
+			//生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
 			PartnerInstanceStateChangeEnum instanceStateChange = buildInstanceClosingStateChange(partnerStationRel);
 
-			// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
+			// 校验停业前置条件。例如校验合伙人是否还存在淘帮手存在
 			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
-
 			partnerInstanceHandler.validateClosePreCondition(partnerType, partnerStationRel);
 
 			// 合伙人实例停业中,退出类型为强制清退
@@ -1092,7 +1092,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			Long instanceId = quitDto.getInstanceId();
 			String operator = quitDto.getOperator();
-
+			//查询实例是否存在，不存在会抛异常
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
