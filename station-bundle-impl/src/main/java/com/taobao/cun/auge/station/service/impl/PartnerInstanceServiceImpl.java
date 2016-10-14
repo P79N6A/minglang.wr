@@ -1357,15 +1357,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	// private Long getTpaMax() {
-	// AppResource resource = appResourceBO.queryAppResource(TPAMAX_TYPE,
-	// TPAMAX_KEY);
-	// if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-	// return Long.parseLong(resource.getValue());
-	// }
-	// return TPAMAX_DEFAULT;
-	// }
-
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto) throws AugeServiceException {
