@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -47,6 +45,7 @@ import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
@@ -77,6 +76,9 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Autowired
 	PartnerPeixunService partnerPeixunService;
 	
+	@Autowired
+	PartnerPeixunBO partnerPeixunBO;
+	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
 	
@@ -106,12 +108,22 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Override
 	public Boolean createOrder(PartnerCourseRecordDto dto) {
-		if(dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())){
-			//判断老订单是否下过单
-			 List<TrainingRecordDTO> trains=getRecordFromPeixun(dto.getCourseCode(),dto.getPartnerUserId());
-			 if(trains.size()==0){
-				 return true;
-			 }
+		if (dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())) {
+			// 初始化 新培训记录
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
+					PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+							.queryAppValueNotAllowNull(
+									"PARTNER_PEIXUN_CODE", "APPLY_IN"));
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
+					PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+							.queryAppValueNotAllowNull(
+									"PARTNER_PEIXUN_CODE", "UPGRADE"));
+			// 判断老订单是否下过单
+			List<TrainingRecordDTO> trains = getRecordFromPeixun(
+					dto.getCourseCode(), dto.getPartnerUserId());
+			if (trains.size() == 0) {
+				return true;
+			} 
 		}
 		//判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
 		String courseCode=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
