@@ -36,6 +36,8 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 	private AccountMoneyMapper accountMoneyMapper;
 	@Autowired
     private NotifyManager notifyManager;
+	@Value("${alilang.orgId}")
+	protected long alilangOrgId;
 	
 	@Override
 	public void init() {
@@ -62,6 +64,8 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 		partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
 		partnerMessage.setMobile(partnerDto.getMobile());
 		partnerMessage.setAction("new");
+		partnerMessage.setAlilangOrgId(alilangOrgId);
+		partnerMessage.setEmail(partnerDto.getEmail());
 		partnerMessage.setName(partnerDto.getName());
 		String str = JSONObject.toJSONString(partnerMessage);
 		
