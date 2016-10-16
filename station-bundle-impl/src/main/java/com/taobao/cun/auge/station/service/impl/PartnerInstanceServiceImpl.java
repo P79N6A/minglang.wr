@@ -1166,6 +1166,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				StationDto stationDto = partnerInstanceDto.getStationDto();
 				stationDto.setState(StationStateEnum.INVALID);
 				stationDto.setStatus(StationStatusEnum.NEW);
+				PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+				if (partnerDto != null) {
+					stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+					stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+					stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+				}
 				updateStation(stationId, partnerInstanceDto);
 			}
 
