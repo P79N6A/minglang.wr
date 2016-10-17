@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,11 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
 import org.springframework.beans.BeanUtils;
@@ -268,28 +265,47 @@ public class DataTransferServiceImpl implements DataTransferService{
 	    }
 	}
 
+//	public static void main(String[] args) throws Exception{
+//		 BufferedReader b = new BufferedReader(new FileReader("D://shujuqianyi.txt"));
+//		 String l=null;
+//		 while((l=b.readLine())!=null){
+//		 String queryString = ("ticket="+l+"&&code=bc471");
+//         String lisReq = "http://cunxuexi.daily.taobao.net/user/sign/signin.json"+"?"+queryString;
+//         HttpClient httpClient = new HttpClient();
+//         HttpMethod method = new GetMethod(lisReq);
+//         HttpClientParams params = new HttpClientParams();
+//         params.setConnectionManagerTimeout(3000);
+//         httpClient.setParams(params);
+//         try {
+//             httpClient.executeMethod(method);
+//             if(method.getStatusCode() == HttpStatus.SC_OK) {
+//            	 System.out.println("sign ok");
+//            	 System.out.println(method.getResponseBodyAsString());
+//             } else {
+//            	 System.out.println("error");
+//             }
+//         } catch (Exception e) {
+//        	 System.out.println("error");
+//         }
+//		 }
+//	}
+	
 	public static void main(String[] args) throws Exception{
-		 BufferedReader b = new BufferedReader(new FileReader("D://shujuqianyi.txt"));
+		 BufferedReader b = new BufferedReader(new FileReader("D://shujushengji1.txt"));
+		 PrintWriter pw1=new PrintWriter(new File("D://shujushengji2.txt"));
 		 String l=null;
 		 while((l=b.readLine())!=null){
-		 String queryString = ("ticket="+l+"&&code=bc471");
-         String lisReq = "http://cunxuexi.daily.taobao.net/user/sign/signin.json"+"?"+queryString;
-         HttpClient httpClient = new HttpClient();
-         HttpMethod method = new GetMethod(lisReq);
-         HttpClientParams params = new HttpClientParams();
-         params.setConnectionManagerTimeout(3000);
-         httpClient.setParams(params);
-         try {
-             httpClient.executeMethod(method);
-             if(method.getStatusCode() == HttpStatus.SC_OK) {
-            	 System.out.println("sign ok");
-            	 System.out.println(method.getResponseBodyAsString());
-             } else {
-            	 System.out.println("error");
+			 String[] temps=l.split(",");
+			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','APPLY_IN','bc471','NEW','"+temps[0]+"');");
+			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','UPGRADE','bc467','NEW','"+temps[0]+"');");
+             String sell=null;
+             if(temps[2].contains("500003")||temps[2].contains("500002")){
+            	 sell="2927051613";
+             }else{
+            	 sell="795246961";
              }
-         } catch (Exception e) {
-        	 System.out.println("error");
-         }
+			 pw1.println("insert into station_decorate (gmt_create, gmt_modified, creator, modifier, is_deleted, station_id,  partner_user_id, seller_taobao_user_id, status,is_valid,payment_type,decorate_type)values (now(),now(),'yi.shaoy','yi.shaoy','n','"+temps[1]+"','"+temps[0]+"', '"+sell+"','UNDECORATE','Y','SELF','NEW');");
+		     pw1.flush();
 		 }
 	}
 }
