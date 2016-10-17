@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
+import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,9 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Autowired
 	PartnerPeixunBO partnerPeixunBO;
+	
+	@Autowired
+	EsbFinanceContractAdapter esbFinanceContractAdapter;
 	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
@@ -204,6 +208,24 @@ public class DataTransferServiceImpl implements DataTransferService{
 				auditDto, "cuntao" + userId+System.currentTimeMillis());
 		if(!result.isSuccessed()){
 			throw new AugeServiceException("transfer error "+result.getExceptionDesc());
+		}
+		//关闭财务订单
+		ContractDto closeDto=new ContractDto();
+		closeDto.setContractNo(oldOrderNum);
+		closeDto.setStatus("E");
+		closeDto.setDomainFrom(BaseDto.PALOS);
+		closeDto.setDomainTo(BaseDto.FINANCE);
+		closeDto.setExecAmount(new BigDecimal(0));
+		ContractDto[] contractDtos=new ContractDto[1];
+		contractDtos[0]=closeDto;
+		EsbResultModel  closeResult= esbFinanceContractAdapter.modifyFinContractStatusAndServiceDate(contractDtos);
+		if(!closeResult.isSuccessed()){
+			throw new AugeServiceException("close Order error "+result.getExceptionDesc());
+		}
+		//更新财务订单执行金额
+		EsbResultModel  exeResult= esbFinanceContractAdapter.modifyFinContractExecAmount(contractDtos);
+		if(!exeResult.isSuccessed()){
+			throw new AugeServiceException("update ExecuteAmont error "+result.getExceptionDesc());
 		}
 	}
 
