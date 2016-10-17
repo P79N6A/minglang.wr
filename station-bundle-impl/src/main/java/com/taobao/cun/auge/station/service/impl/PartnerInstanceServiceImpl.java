@@ -675,7 +675,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 更新村点状态为服务中
 				stationBO.changeState(rel.getStationId(), StationStatusEnum.DECORATING, StationStatusEnum.SERVICING, operator);
 				// 更新开业时间
-				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), new Date(),
+				partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 						openStationDto.getOperator());
 				// 同步station_apply
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
