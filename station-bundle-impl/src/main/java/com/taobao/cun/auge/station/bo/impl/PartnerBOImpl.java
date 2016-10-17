@@ -13,7 +13,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.PartnerExample.Criteria;
-import com.taobao.cun.auge.dal.mapper.PartnerMapper;
+import com.taobao.cun.auge.dal.mapper.ExPartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -24,7 +24,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public class PartnerBOImpl implements PartnerBO {
 	
 	@Autowired
-	PartnerMapper partnerMapper;
+	ExPartnerMapper exPartnerMapper;
 	
 	
 	@Override
@@ -36,7 +36,7 @@ public class PartnerBOImpl implements PartnerBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
 		criteria.andStateEqualTo(PartnerStateEnum.NORMAL.getCode());
-		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
+		return ResultUtils.selectOne(exPartnerMapper.selectByExample(example)); 
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class PartnerBOImpl implements PartnerBO {
 		ValidateUtils.notNull(partnerDto);
 		Partner record = PartnerConverter.toParnter(partnerDto);
 		DomainUtils.beforeInsert(record, partnerDto.getOperator());
-		partnerMapper.insert(record);
+		exPartnerMapper.insert(record);
 		return record.getId();
 	}
 	
@@ -69,13 +69,13 @@ public class PartnerBOImpl implements PartnerBO {
 		ValidateUtils.notNull(partnerDto.getId());
 		Partner record = PartnerConverter.toParnter(partnerDto);
 		DomainUtils.beforeUpdate(record, partnerDto.getOperator());
-		partnerMapper.updateByPrimaryKeySelective(record);
+		exPartnerMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
 	public Partner getPartnerById(Long partnerId) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);
-		return partnerMapper.selectByPrimaryKey(partnerId);
+		return exPartnerMapper.selectByPrimaryKey(partnerId);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -86,18 +86,13 @@ public class PartnerBOImpl implements PartnerBO {
 		Partner rel = new Partner();
 		rel.setId(partnerId);
 		DomainUtils.beforeDelete(rel, operator);
-		partnerMapper.updateByPrimaryKeySelective(rel);
+		exPartnerMapper.updateByPrimaryKeySelective(rel);
 	}
 
 	@Override
 	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException {
 		ValidateUtils.notNull(aliLangUserId);
-		PartnerExample example = new PartnerExample();
-		example.createCriteria()
-				.andAlilangUserIdEqualTo(aliLangUserId)
-				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
-				.andIsDeletedEqualTo("n");
-		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
+		return exPartnerMapper.selectByAlilangUserId(aliLangUserId); 
 	}
 
 	@Override
@@ -108,6 +103,6 @@ public class PartnerBOImpl implements PartnerBO {
 				.andMobileEqualTo(mobile)
 				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
 				.andIsDeletedEqualTo("n");
-		return partnerMapper.selectByExample(example); 
+		return exPartnerMapper.selectByExample(example); 
 	}
 }
