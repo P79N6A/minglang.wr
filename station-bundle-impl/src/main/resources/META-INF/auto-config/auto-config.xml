@@ -36,8 +36,8 @@
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.alipayStandardBailService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-
-		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily" description="cuntaocenter-version" />
+		<property name="hsf.consumer.version.auge.busiWorkBaseInfoService" defaultValue="1.0.0.daily" description="hsf.consumer.version.auge.busiWorkBaseInfoService" />
+		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily" description="hsf.consumer.version.auge.messageService" />
 		<property name="hsf.consumer.version.admin.partnerLifecycleCallbackService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.admin.stationLifecycleCallbackService" defaultValue="1.0.0.daily"

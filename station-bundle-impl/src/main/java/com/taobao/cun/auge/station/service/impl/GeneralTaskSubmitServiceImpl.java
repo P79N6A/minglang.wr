@@ -270,12 +270,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 *            业务类型
 	 * @param businessId
 	 *            业务主键
-	 * @param applierId
-	 *            申请人
-	 * @param applierOrgId
-	 *            申请人orgid
-	 * @param remarks
-	 *            备注
 	 */
 	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,OperatorDto operatorDto, Long applyId) {
 		try {
@@ -531,6 +525,62 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitShutdownApprovedTask] stationId = {}, {}", stationId, e);
 			throw new AugeServiceException("submitShutdownApprovedTask error: " + e.getMessage());
+		}
+	}
+	
+	@Override
+	public void submitCloseToServiceTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operator) {
+		try {
+			// 异构系统交互提交后台任务
+			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
+
+			String businessNo = String.valueOf(instanceId);
+			UserTagDto userTagDto = new UserTagDto();
+			userTagDto.setPartnerType(partnerType);
+			userTagDto.setTaobaoUserId(taobaoUserId);
+
+
+			// uic打标 begin
+			GeneralTaskDto uicGeneralTaskDto = new GeneralTaskDto();
+			uicGeneralTaskDto.setBusinessNo(businessNo);
+			uicGeneralTaskDto.setBeanName("uicTagService");
+			uicGeneralTaskDto.setMethodName("addUserTag");
+			uicGeneralTaskDto.setBusinessStepNo(1l);
+			uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.CLOSE_TO_SERVICE.getCode());
+			uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
+			uicGeneralTaskDto.setOperator(operator);
+			uicGeneralTaskDto.setParameterType(UserTagDto.class.getName());
+			uicGeneralTaskDto.setParameter(JSON.toJSONString(userTagDto));
+			uicGeneralTaskDto.setPriority(TaskPriority.HIGH);
+			taskDtos.add(uicGeneralTaskDto);
+			// uic打标 end
+
+			// 旺旺打标 begin
+			GeneralTaskDto wangwangGeneralTaskDto = new GeneralTaskDto();
+			wangwangGeneralTaskDto.setBusinessNo(businessNo);
+			wangwangGeneralTaskDto.setBeanName("wangWangTagService");
+			wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
+			wangwangGeneralTaskDto.setBusinessStepNo(2l);
+			wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.CLOSE_TO_SERVICE.getCode());
+			wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
+			wangwangGeneralTaskDto.setOperator(operator);
+			wangwangGeneralTaskDto.setParameterType(String.class.getName());
+			String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(taobaoUserId);
+			wangwangGeneralTaskDto.setParameter(taobaoNick);
+			GeneralTaskRetryConfigDto retry = new GeneralTaskRetryConfigDto();
+			retry.setIntervalTime(6 * 3600);// 失败5小时重试
+			retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
+			retry.setIntervalIncrement(false);
+			wangwangGeneralTaskDto.setRetryTaskConfig(retry);
+			wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
+			taskDtos.add(wangwangGeneralTaskDto);
+			// 旺旺打标 end
+
+			taskSubmitService.submitTasks(taskDtos);
+			logger.info("closeToServiceTasks : {}", JSON.toJSONString(taskDtos));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + "[closeToServiceTasks] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("closeToServiceTasks error: " + e.getMessage());
 		}
 	}
 }

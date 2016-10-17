@@ -19,7 +19,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 	private PartnerInstanceStateEnum prePartnerInstanceState;
 
 	public enum ChangeEnum {
-		START_SETTLING, SETTLING_REFUSED, START_DECORATING, START_SERVICING, DECORATING_CLOSING, START_CLOSING, CLOSING_REFUSED, CLOSED, START_QUITTING, QUITTING_REFUSED, QUIT
+		START_SETTLING, SETTLING_REFUSED, START_DECORATING, START_SERVICING, START_CLOSING, CLOSING_REFUSED, CLOSED, START_QUITTING, QUITTING_REFUSED, QUIT, CLOSE_TO_SERVICE,DECORATING_CLOSING
 	}
 
 	public static final PartnerInstanceStateChangeEnum START_SETTLING = new PartnerInstanceStateChangeEnum(ChangeEnum.START_SETTLING,
@@ -54,6 +54,9 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 
 	public static final PartnerInstanceStateChangeEnum QUIT = new PartnerInstanceStateChangeEnum(ChangeEnum.QUIT, "已退出 :'退出申请中'->'已退出'",
 			PartnerInstanceStateEnum.QUIT, PartnerInstanceStateEnum.QUITING);
+
+	public static final PartnerInstanceStateChangeEnum CLOSE_TO_SERVICE = new PartnerInstanceStateChangeEnum(ChangeEnum.CLOSE_TO_SERVICE, "已停业恢复服务 :'已停业'->'服务中'",
+			PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.CLOSED);
 	
 	private static final Map<ChangeEnum, PartnerInstanceStateChangeEnum> mappings = new HashMap<ChangeEnum, PartnerInstanceStateChangeEnum>();
 	static {
@@ -68,7 +71,7 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 		mappings.put(ChangeEnum.START_QUITTING, START_QUITTING);
 		mappings.put(ChangeEnum.QUITTING_REFUSED, QUITTING_REFUSED);
 		mappings.put(ChangeEnum.QUIT, QUIT);
-
+		mappings.put(ChangeEnum.CLOSE_TO_SERVICE, CLOSE_TO_SERVICE);
 	}
 
 	public String getDescription() {

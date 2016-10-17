@@ -20,6 +20,8 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
+import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
@@ -46,7 +48,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
-
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -77,16 +78,18 @@ public class ProcessProcessor {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	@Autowired
+	BusiWorkBaseInfoService busiWorkBaseInfoService;
 
 	@Autowired
 	StationService stationService;
 	
 	@Autowired
 	AppResourceBO appResourceBO;
-	
+
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -109,7 +112,10 @@ public class ProcessProcessor {
 				}else{
 					monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 				}
-				//村点撤点
+			} else if (ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)) {
+				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
+			//村点撤点
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}
@@ -132,6 +138,12 @@ public class ProcessProcessor {
 		}
 	}
 
+	private void monitorHomepageShowApprove(String objectId, String businessCode, ProcessApproveResultEnum approveResult) {
+		busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
+				ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult));
+		
+	}
+	
 	/**
 	 * 处理停业审批结果
 	 * 
@@ -139,12 +151,12 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	
+
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		closeApprove(partnerStationRel.getId(), approveResult);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
@@ -243,7 +255,7 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	
+
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		quitApprove(partnerStationRel.getId(), approveResult);
