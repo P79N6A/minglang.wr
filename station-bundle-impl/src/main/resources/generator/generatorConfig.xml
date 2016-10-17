@@ -106,7 +106,7 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 		 -->
-				<table tableName="app_resource" enableCountByExample="true" enableUpdateByExample="true"
+				<table tableName="wisdom_county_apply" enableCountByExample="true" enableUpdateByExample="true"
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
