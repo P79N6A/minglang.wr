@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -99,13 +101,13 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public Partner getPartnerByMobile(String mobile) throws AugeServiceException {
+	public List<Partner> getPartnerByMobile(String mobile) throws AugeServiceException {
 		ValidateUtils.notNull(mobile);
 		PartnerExample example = new PartnerExample();
 		example.createCriteria()
 				.andMobileEqualTo(mobile)
 				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
 				.andIsDeletedEqualTo("n");
-		return ResultUtils.selectOne(partnerMapper.selectByExample(example)); 
+		return partnerMapper.selectByExample(example); 
 	}
 }

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -68,6 +70,6 @@ public interface PartnerBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public Partner getPartnerByMobile(String mobile) throws AugeServiceException;
+	public List<Partner> getPartnerByMobile(String mobile) throws AugeServiceException;
 	
 }
