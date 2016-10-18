@@ -65,7 +65,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		OperatorTypeEnum operatorTypeEnum = changeTPEvent.getOperatorType();
 		String buildOperatorName = buildOperatorName(operator, operatorTypeEnum);
 		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-		cuntaoFlowRecord.setTargetId(changeTPEvent.getStationId());
+		cuntaoFlowRecord.setTargetId(changeTPEvent.getNewParentStationId());
 		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
 		cuntaoFlowRecord.setNodeTitle("淘帮手合伙人变更");
 		cuntaoFlowRecord.setOperatorName(buildOperatorName);

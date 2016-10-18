@@ -174,7 +174,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	private void transfer(String oldOrderNum,String newOrderNum,Long userId){
 		AuditDto auditDto = new AuditDto();
 		auditDto.setBizObjectId("cuntao" + userId+System.currentTimeMillis());// 转款任务id，标示一次转款
-		auditDto.setBizObject("EXECUTE_SHIFT_DRAFT_NO_AUDIT");// 批示类型
+		auditDto.setBizObject("CUNTAO_SHIFT_DRAFT");// 批示类型
 		auditDto.setDomainFrom(BaseDto.BOSS);// 域
 		auditDto.setApplyDate(new Date());// 申请时间
 		auditDto.setApplier("cuntao");// 申请人
