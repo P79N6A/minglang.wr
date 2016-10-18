@@ -1603,6 +1603,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			belongTp.setPartnerInstanceId(partnerInstanceId);
 			belongTp.copyOperatorDto(changeTPDto);
 			caiNiaoService.updateBelongTPForTpa(belongTp);
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
 			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto, oldParentStationId, stationId));
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),
