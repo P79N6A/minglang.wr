@@ -42,7 +42,9 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -693,9 +695,25 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		for (PartnerStationRel psRel : psRels){
 			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
 			Station station = stationBO.getStationById(psRel.getStationId());
-			partnerInstanceDtos.add(PartnerInstanceConverter.convert(psRel, station, partner));
+			
+			PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel, station, partner);
+			
+			// 获得生命周期数据
+			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
+								.toPartnerLifecycleDto(getLifecycleItemforHisPartner(psRel.getId(), psRel.getState()));
+			insDto.setPartnerLifecycleDto(lifecycleDto);
+			insDto.setStationApplyState(
+					PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+			partnerInstanceDtos.add(insDto);
 		}
 		return partnerInstanceDtos;
+	}
+	
+	private PartnerLifecycleItems getLifecycleItemforHisPartner(Long id, String state) {
+		if (PartnerInstanceStateEnum.QUITING.getCode().equals(state)) {
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.QUITING);
+		}
+		return null;
 	}
 	
 	@Override
