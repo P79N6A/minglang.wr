@@ -195,7 +195,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle
+        if(code.equals(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				"APPLY_IN"))){
 //        partnerInstanceBO.finishCourse(userId);
+        }
         return record;
 	}
 
