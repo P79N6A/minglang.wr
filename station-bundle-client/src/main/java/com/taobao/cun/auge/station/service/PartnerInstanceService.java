@@ -1,6 +1,19 @@
 package com.taobao.cun.auge.station.service;
 
-import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.ChangeTPDto;
+import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
+import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
+import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 
@@ -213,8 +226,11 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException;
-
-
 	
-	
+	/**
+	 * 已停业村点恢复服务中
+	 * @param instanceDto
+	 * @throws AugeServiceException
+	 */
+	public void reService(Long instanceId, String operator) throws AugeServiceException;
 }

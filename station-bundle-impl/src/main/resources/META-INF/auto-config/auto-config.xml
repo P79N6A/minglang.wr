@@ -36,8 +36,8 @@
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.alipayStandardBailService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-
-		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily" description="cuntaocenter-version" />
+		<property name="hsf.consumer.version.auge.busiWorkBaseInfoService" defaultValue="1.0.0.daily" description="hsf.consumer.version.auge.busiWorkBaseInfoService" />
+		<property name="hsf.consumer.version.auge.messageService" defaultValue="1.0.0.daily" description="hsf.consumer.version.auge.messageService" />
 		<property name="hsf.consumer.version.admin.partnerLifecycleCallbackService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.admin.stationLifecycleCallbackService" defaultValue="1.0.0.daily"
@@ -72,7 +72,6 @@
   		<property name="spring.notify.subscriber.topics.Cunxuexi_Train_Status_Change" defaultValue="Cunxuexi_Train_Over" description="cunxuexi培训签到消息" />
         <property name="crm.finance.service.version" defaultValue="3.0.0" description="财务服务版本" />
         
-crm.finance.service.version
 	</group>
 
 	<script>

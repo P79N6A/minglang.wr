@@ -697,4 +697,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return partnerInstanceDtos;
 	}
+	
+	@Override
+	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator) throws AugeServiceException {
+		changeState(instanceId, preState, postState, operator);
+		PartnerStationRel updateInstance = new PartnerStationRel();
+		updateInstance.setId(instanceId);
+		updateInstance.setCloseType("");
+		DomainUtils.beforeUpdate(updateInstance, operator);
+		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+	}
 }

@@ -285,4 +285,16 @@ public interface PartnerInstanceBO {
 	 */
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
 
+	/**
+	 * 停业中，重新进入服务中
+	 * 
+	 * @param instanceId
+	 * @param preState
+	 * @param postState
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
+			throws AugeServiceException;
+
 }

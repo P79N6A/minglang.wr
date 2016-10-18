@@ -39,6 +39,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 	
 	public static final TaskBusinessTypeEnum STATION_SHUTDOWN_APPROVED = new TaskBusinessTypeEnum("STATION_SHUTDOWN_APPROVED","关闭物流站");
 
+	public static final TaskBusinessTypeEnum CLOSE_TO_SERVICE = new TaskBusinessTypeEnum("CLOSE_TO_SERVICE", "已停业回到服务中");
+
 	static {
 		mappings.put("SETTLING_SYS_PROCESS", SETTLING_SYS_PROCESS);
 		mappings.put("UPDATE_SERVICING_CAINIAO", UPDATE_SERVICING_CAINIAO);
@@ -50,6 +52,7 @@ public class TaskBusinessTypeEnum implements Serializable {
 		mappings.put("TP_DEGRADE", TP_DEGRADE);
 		mappings.put("SMS", SMS);
 		mappings.put("STATION_SHUTDOWN_APPROVED", STATION_SHUTDOWN_APPROVED);
+		mappings.put("CLOSE_TO_SERVICE", CLOSE_TO_SERVICE);
 	}
 
 	public TaskBusinessTypeEnum(String code, String desc) {

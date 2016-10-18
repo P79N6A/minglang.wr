@@ -1622,4 +1622,37 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		event.setStationId(stationId);
 		return event;
 	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void reService(Long instanceId, String operator) throws AugeServiceException {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operator);
+		PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
+        if (psl.getIsCurrent().equals("n")){
+            throw new AugeServiceException("the partner is not current");
+        }
+		partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
+		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
+		// 同步station_apply
+		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+		generalTaskSubmitService.submitCloseToServiceTask(instanceId, psl.getTaobaoUserId(),PartnerInstanceTypeEnum.valueof(psl.getType()), operator);
+		// 删除原有停业申请记录
+        closeStationApplyBO.deleteCloseStationApply(instanceId, operator);
+        //发送已停业到服务中事件
+		PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(psl, operator);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+	}
+
+	private PartnerInstanceStateChangeEvent buildCloseToServiceEvent(PartnerStationRel psl, String operator){
+		PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
+		event.setPartnerType(PartnerInstanceTypeEnum.valueof(psl.getType()));
+		event.setTaobaoUserId(psl.getTaobaoUserId());
+		event.setStationId(psl.getStationId());
+		event.setPartnerInstanceId(psl.getId());
+		event.setStateChangeEnum(PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE);
+        event.setOperator(operator);
+        event.setOperatorType(OperatorTypeEnum.SYSTEM);
+		return event;
+	}
 }
