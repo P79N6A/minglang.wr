@@ -1587,8 +1587,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
 			}
+			Long oldParentStationId = partnerInstanceDto.getParentStationId();
+			Long stationId = partnerInstanceDto.getStationId();
 			partnerInstanceDto.setParentStationId(newParentStationId);
-			partnerInstanceDto.setOperator(changeTPDto.getOperator());
+            partnerInstanceDto.copyOperatorDto(changeTPDto);
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 			//菜鸟修改淘帮手归属合伙人关系
 			Long parentParnterInstanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(newParentStationId);
@@ -1597,7 +1599,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			belongTp.setPartnerInstanceId(partnerInstanceId);
 			belongTp.copyOperatorDto(changeTPDto);
 			caiNiaoService.updateBelongTPForTpa(belongTp);
-			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto));
+			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto, oldParentStationId, stationId));
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),
 					augeException.toString());
@@ -1611,12 +1613,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	}
 
-	private ChangeTPEvent buildChangeTPEvent(ChangeTPDto changeTPDto) {
+	private ChangeTPEvent buildChangeTPEvent(ChangeTPDto changeTPDto, Long oldParentStationId, Long stationId) {
 		ChangeTPEvent event = new ChangeTPEvent();
-		event.setStationId(changeTPDto.getNewParentStationId());
-		event.setOperator(changeTPDto.getOperator());
-		event.setOperatorOrgId(changeTPDto.getOperatorOrgId());
-		event.setOperatorType(changeTPDto.getOperatorType());
+		event.setNewParentStationId(changeTPDto.getNewParentStationId());
+		event.copyOperatorDto(changeTPDto);
+		event.setInstanceId(changeTPDto.getPartnerInstanceId());
+		event.setOldParentStationId(oldParentStationId);
+		event.setStationId(stationId);
 		return event;
 	}
 }
