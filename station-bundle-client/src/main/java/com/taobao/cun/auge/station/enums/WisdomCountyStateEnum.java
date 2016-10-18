@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.enums;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,6 +77,15 @@ public class WisdomCountyStateEnum implements Serializable{
         if (code == null)
             return null;
         return mappings.get(code);
+    }
+
+    public static List<WisdomCountyStateEnum> enums(){
+        List<WisdomCountyStateEnum> enums = new ArrayList<WisdomCountyStateEnum>();
+        enums.add(UNAPPLY);
+        enums.add(APPLY);
+        enums.add(AUDIT_PASS);
+        enums.add(AUDIT_FAIL);
+        return enums;
     }
 
     @SuppressWarnings("unused")
