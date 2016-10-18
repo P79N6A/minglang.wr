@@ -247,9 +247,9 @@ public class AdminListener implements EventListener {
             onquitCallbackParam.setUserId(taobaoUserId);
             partnerLifecycleCallbackService.onQuit(onquitCallbackParam);
             stationLifecycleCallbackService.onStop(stationId, gmtEnd);
-            logger.info("addQuitRelation end,stationId=" + stationId);
+            logger.info("quitTPARelation end,stationId=" + stationId);
         } catch (Throwable e) {
-            logger.error("addRelation exception,stationId=" + stationId, e);
+            logger.error("quitTPARelation exception,stationId=" + stationId, e);
         }
     }
 
