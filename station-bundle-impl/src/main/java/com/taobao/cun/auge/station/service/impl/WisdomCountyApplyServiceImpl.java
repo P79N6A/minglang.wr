@@ -27,4 +27,10 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
         WisdomCountyApply wisdomCountyApply = wisdomCountyApplyBO.getWisdomCountyApplyByCountyId(countyId);
         return WisdomCountyApplyConverter.toDto(wisdomCountyApply);
     }
+
+    @Override
+    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+        ValidateUtils.notNull(wisdomCountyApplyDto);
+        return wisdomCountyApplyBO.addWisdomCountyApply(wisdomCountyApplyDto);
+    }
 }

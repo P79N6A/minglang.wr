@@ -1,11 +1,14 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExample;
 import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
+import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,5 +30,14 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         criteria.andIsDeletedEqualTo("n");
         criteria.andCountyIdEqualTo(countyId);
         return ResultUtils.selectOne(wisdomCountyApplyMapper.selectByExample(example));
+    }
+
+    @Override
+    public Long addWisdomCountyApply(WisdomCountyApplyDto dto) throws AugeServiceException {
+        ValidateUtils.notNull(dto);
+        WisdomCountyApply wisdomCountyApply = WisdomCountyApplyConverter.dtoTo(dto);
+        DomainUtils.beforeInsert(wisdomCountyApply, dto.getOperator());
+        wisdomCountyApplyMapper.insert(wisdomCountyApply);
+        return wisdomCountyApply.getId();
     }
 }

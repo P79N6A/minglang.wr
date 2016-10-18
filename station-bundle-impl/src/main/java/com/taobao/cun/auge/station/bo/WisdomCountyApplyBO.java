@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -9,5 +10,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 public interface WisdomCountyApplyBO {
 
     public WisdomCountyApply getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException;
+
+    public Long addWisdomCountyApply(WisdomCountyApplyDto dto) throws AugeServiceException;
 
 }

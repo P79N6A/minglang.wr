@@ -20,4 +20,14 @@ public class WisdomCountyApplyConverter {
         return dto;
     }
 
+    public static WisdomCountyApply dtoTo(WisdomCountyApplyDto dto){
+        if (dto == null){
+            return null;
+        }
+        WisdomCountyApply wisdomCountyApply = new WisdomCountyApply();
+        BeanCopyUtils.copyNotNullProperties(dto, wisdomCountyApply);
+        wisdomCountyApply.setState(dto.getState().getCode());
+        return wisdomCountyApply;
+    }
+
 }

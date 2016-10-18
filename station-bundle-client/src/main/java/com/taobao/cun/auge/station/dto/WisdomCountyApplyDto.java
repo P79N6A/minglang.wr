@@ -11,6 +11,7 @@ import java.util.Date;
  */
 public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
 
+    private static final long serialVersionUID = -2909250274438543672L;
 
     private Long id;
 

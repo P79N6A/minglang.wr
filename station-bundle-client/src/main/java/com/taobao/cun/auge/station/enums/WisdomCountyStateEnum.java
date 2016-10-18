@@ -1,13 +1,15 @@
 package com.taobao.cun.auge.station.enums;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by xiao on 16/10/17.
  */
-public class WisdomCountyStateEnum {
+public class WisdomCountyStateEnum implements Serializable{
 
+    private static final long serialVersionUID = 4983117822794087359L;
 
     public static final WisdomCountyStateEnum UNAPPLY = new WisdomCountyStateEnum(
             "UNAPPLY", "未报名");

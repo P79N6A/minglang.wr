@@ -10,4 +10,6 @@ public interface WisdomCountyApplyService {
 
     public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException;
 
+    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
+
 }
