@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.convert;
 
 import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
+import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExtExample;
+import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 
@@ -28,6 +30,23 @@ public class WisdomCountyApplyConverter {
         BeanCopyUtils.copyNotNullProperties(dto, wisdomCountyApply);
         wisdomCountyApply.setState(dto.getState().getCode());
         return wisdomCountyApply;
+    }
+
+    public static WisdomCountyApplyExtExample conditonToExtExample(WisdomCountyApplyCondition condition){
+        WisdomCountyApplyExtExample extExample = new WisdomCountyApplyExtExample();
+        if (condition.getState() != null){
+            extExample.setStatus(condition.getState().getCode());
+        }
+        if (condition.getOrgIdPath() != null){
+            extExample.setOrgIdPath(condition.getOrgIdPath());
+        }
+        if (condition.getPageSize() != null){
+            extExample.setPageSize(condition.getPageSize());
+        }
+        if (condition.getPageStart() != null){
+            extExample.setPageStart(condition.getPageStart());
+        }
+        return extExample;
     }
 
 }
