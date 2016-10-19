@@ -36,7 +36,9 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException {
         ValidateUtils.notNull(countyId);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyByCountyId(countyId);
-        dto.setAttachementDtos(attachementBO.getAttachementList(dto.getId(), AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+        if (dto != null){
+            dto.setAttachementDtos(attachementBO.getAttachementList(dto.getId(), AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+        }
         return dto;
     }
 
@@ -54,7 +56,9 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException {
         ValidateUtils.notNull(id);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyById(id);
-        dto.setAttachementDtos(attachementBO.getAttachementList(id, AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+        if (dto != null){
+            dto.setAttachementDtos(attachementBO.getAttachementList(id, AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+        }
         return dto;
     }
 
