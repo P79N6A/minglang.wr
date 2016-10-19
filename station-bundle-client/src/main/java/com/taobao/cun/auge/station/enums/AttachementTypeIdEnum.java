@@ -30,6 +30,9 @@ public class AttachementTypeIdEnum implements Serializable {
 	public static final AttachementTypeIdEnum STATION_DECORATE_SYJJ = new AttachementTypeIdEnum(11L, "服务站装修记录-室外近景");
 	public static final AttachementTypeIdEnum STATION_DECORATE_SNT = new AttachementTypeIdEnum(12L, "服务站装修记录-室内图");
 
+	public static final AttachementTypeIdEnum WISDOM_COUNTY_APPLY = new AttachementTypeIdEnum(15L, "报名表");
+	public static final AttachementTypeIdEnum WISDOM_COUNTY_FUNCTION = new AttachementTypeIdEnum(16L, "服务功能确认表");
+
     static {
         mappings.put(1L, IDCARD_IMG);
         mappings.put(2L, CURRENT_STATUS_IMG);
@@ -43,7 +46,9 @@ public class AttachementTypeIdEnum implements Serializable {
         mappings.put(10L, STATION_DECORATE_SYYJ);
         mappings.put(11L, STATION_DECORATE_SYJJ);
         mappings.put(12L, STATION_DECORATE_SNT);
-        
+        mappings.put(15L, WISDOM_COUNTY_APPLY);
+        mappings.put(16L, WISDOM_COUNTY_FUNCTION);
+
     }
     
     private Long code;

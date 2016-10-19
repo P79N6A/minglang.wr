@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by xiao on 16/10/17.
@@ -40,6 +41,16 @@ public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
     private Long functionAttachmentId;
 
     private WisdomCountyStateEnum state;
+
+    private List<AttachementDto> attachementDtos;
+
+    public List<AttachementDto> getAttachementDtos() {
+        return attachementDtos;
+    }
+
+    public void setAttachementDtos(List<AttachementDto> attachementDtos) {
+        this.attachementDtos = attachementDtos;
+    }
 
     public Long getId() {
         return id;
