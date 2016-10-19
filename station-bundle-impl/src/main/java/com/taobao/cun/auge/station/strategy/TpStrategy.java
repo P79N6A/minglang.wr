@@ -271,6 +271,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
 		if (sList != null && sList.size()>1) {
 			stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSED, operator);
+			
+			updateIsCurrentForPreInstance(rel, sList);
+			
 		}else {
 			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
 		}
@@ -294,6 +297,29 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), operator);
 		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), operator);
+	}
+	
+	/**
+	 * 固点的村点，如果当前人删除，把上一个合伙人设置为当前人（上一个合伙人入驻其他村点，不设置）
+	 * @param rel
+	 * @param sList
+	 */
+	private void updateIsCurrentForPreInstance(PartnerStationRel rel,
+			List<PartnerStationRel> sList) {
+		Long preTaobaoUserId = null;
+		Long preInstanceId = null;
+		for (PartnerStationRel r : sList) {
+			if (r.getId().longValue() != rel.getId().longValue()) {
+				preTaobaoUserId = r.getTaobaoUserId();
+				preInstanceId = r.getId();
+				break;
+			}
+		}
+		
+		PartnerStationRel preCurRel = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(preTaobaoUserId);
+		if (preCurRel == null) {//没有入驻其他服务站
+			partnerInstanceBO.updateIsCurrentByInstanceId(preInstanceId,PartnerInstanceIsCurrentEnum.Y);
+		}
 	}
 
 	private boolean isBondHasFrozen(Long id) {

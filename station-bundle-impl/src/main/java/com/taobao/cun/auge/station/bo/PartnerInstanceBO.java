@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -296,5 +297,18 @@ public interface PartnerInstanceBO {
 	 */
 	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
 			throws AugeServiceException;
+	
+	
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	
+	
+	public void updateIsCurrentByInstanceId(Long instanceId,PartnerInstanceIsCurrentEnum isCurrentEnum)throws AugeServiceException;
 
 }
