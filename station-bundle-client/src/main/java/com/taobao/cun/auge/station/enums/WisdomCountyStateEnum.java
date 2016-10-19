@@ -16,7 +16,7 @@ public class WisdomCountyStateEnum implements Serializable{
     public static final WisdomCountyStateEnum UNAPPLY = new WisdomCountyStateEnum(
             "UNAPPLY", "未报名");
     public static final WisdomCountyStateEnum APPLY = new WisdomCountyStateEnum(
-            "APPLY", "报名");
+            "APPLY", "已报名");
     public static final WisdomCountyStateEnum AUDIT_PASS = new WisdomCountyStateEnum(
             "AUDIT_PASS", "审核通过");
     public static final WisdomCountyStateEnum AUDIT_FAIL = new WisdomCountyStateEnum(
@@ -27,8 +27,8 @@ public class WisdomCountyStateEnum implements Serializable{
     static {
         mappings.put("UNAPPLY", UNAPPLY);
         mappings.put("APPLY", APPLY);
-        mappings.put("AUDIT_PASS", AUDIT_PASS);
         mappings.put("AUDIT_FAIL", AUDIT_FAIL);
+        mappings.put("AUDIT_PASS", AUDIT_PASS);
     }
 
     private String code;

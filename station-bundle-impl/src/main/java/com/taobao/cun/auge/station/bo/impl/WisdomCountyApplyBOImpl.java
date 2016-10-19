@@ -13,10 +13,12 @@ import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -64,5 +66,19 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         WisdomCountyApplyExtExample extExample = WisdomCountyApplyConverter.conditonToExtExample(condition);
         List<WisdomCountyApply> wisdomCountyApply = wisdomCountyApplyExtMapper.getPageWisdomCountyApply(extExample);
         return wisdomCountyApply.stream().map(WisdomCountyApplyConverter::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException {
+        ValidateUtils.notEmpty(ids);
+        WisdomCountyApplyExample example = new WisdomCountyApplyExample();
+        WisdomCountyApplyExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andCountyIdIn(ids);
+        List<WisdomCountyApply> wisdomCountyApplies = wisdomCountyApplyMapper.selectByExample(example);
+        if (CollectionUtils.isNotEmpty(wisdomCountyApplies)){
+            return wisdomCountyApplies.stream().collect(Collectors.toMap(WisdomCountyApply::getCountyId, WisdomCountyApplyConverter::toDto));
+        }
+        return null;
     }
 }

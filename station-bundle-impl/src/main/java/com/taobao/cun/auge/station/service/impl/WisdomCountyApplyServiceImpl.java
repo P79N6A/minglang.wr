@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by xiao on 16/10/17.
@@ -46,5 +47,11 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public List<WisdomCountyApplyDto> getPageWisdomCountyApply(WisdomCountyApplyCondition condition) throws AugeServiceException {
         ValidateUtils.notNull(condition);
         return wisdomCountyApplyBO.getPageWisdomCountyApply(condition);
+    }
+
+    @Override
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException {
+        ValidateUtils.notEmpty(ids);
+        return wisdomCountyApplyBO.getWisdomCountyApplyByCountyIds(ids);
     }
 }
