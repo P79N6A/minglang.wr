@@ -321,10 +321,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		// 入驻老村点，村点状态为已停业
 		Long stationId = stationDto.getId();
 		if (stationId != null) {
-			PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			if (currentRel != null && !PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
+			Station station = stationBO.getStationById(stationId);
+			if (station != null && !StationStatusEnum.CLOSED.getCode().equals(station.getStatus())) {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
 			}
+			/*PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+			if (currentRel != null && !PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
+				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
+			}*/
 		}
 	}
 

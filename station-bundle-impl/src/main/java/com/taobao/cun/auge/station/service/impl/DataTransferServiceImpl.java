@@ -1,9 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
@@ -109,24 +112,23 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Override
 	public Boolean createOrder(PartnerCourseRecordDto dto) {
-		if (dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())) {
-			// 判断是否已经初始化过新培训记录
-			PartnerCourseRecord pcr = partnerPeixunBO.queryOfflinePeixunRecord(
-					dto.getPartnerUserId(),
+		// 判断是否已经初始化过新培训记录
+		PartnerCourseRecord pcr = partnerPeixunBO.queryOfflinePeixunRecord(dto
+				.getPartnerUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
+				appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+						"APPLY_IN"));
+		if (pcr == null) {
+			// 初始化 新培训记录
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
 					PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
 							.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
 									"APPLY_IN"));
-			if (pcr == null) {
-				// 初始化 新培训记录
-				partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-						PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-								.queryAppValueNotAllowNull(
-										"PARTNER_PEIXUN_CODE", "APPLY_IN"));
-				partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-						PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-								.queryAppValueNotAllowNull(
-										"PARTNER_PEIXUN_CODE", "UPGRADE"));
-			}
+			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
+					PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+							.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+									"UPGRADE"));
+		}
+		if (dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())) {
 			// 判断老订单是否下过单
 			List<TrainingRecordDTO> trains = getRecordFromPeixun(
 					dto.getCourseCode(), dto.getPartnerUserId());
@@ -134,17 +136,20 @@ public class DataTransferServiceImpl implements DataTransferService{
 				return true;
 			}
 		}
-		//判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
-		String courseCode=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
-		Long userId=dto.getPartnerUserId();
-		List<String> courseCodes=new ArrayList<String>();
+		// 判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
+		String courseCode = appResourceBO.queryAppValueNotAllowNull(
+				"PARTNER_PEIXUN_CODE", "APPLY_IN");
+		Long userId = dto.getPartnerUserId();
+		List<String> courseCodes = new ArrayList<String>();
 		courseCodes.add(courseCode);
-		List<FuwuOrderDto> orders=fuwuOrderService.queryOrdersByUserIdAndCode(userId, courseCodes, null);
-		if(orders.size()>0){
+		List<FuwuOrderDto> orders = fuwuOrderService
+				.queryOrdersByUserIdAndCode(userId, courseCodes, null);
+		if (orders.size() > 0) {
 			return true;
-		}else{
-			String mkey=appResourceBO.queryAppValueNotAllowNull("CRM_ORDER_PARAM", "MKEY");
-			fuwuOrderService.createOrderByPolicyId(userId, mkey,"0.0.0.0");
+		} else {
+			String mkey = appResourceBO.queryAppValueNotAllowNull(
+					"CRM_ORDER_PARAM", "MKEY");
+			fuwuOrderService.createOrderByPolicyId(userId, mkey, "0.0.0.0");
 		}
 		return true;
 	}
@@ -287,47 +292,47 @@ public class DataTransferServiceImpl implements DataTransferService{
 	    }
 	}
 
-//	public static void main(String[] args) throws Exception{
-//		 BufferedReader b = new BufferedReader(new FileReader("D://shujuqianyi.txt"));
-//		 String l=null;
-//		 while((l=b.readLine())!=null){
-//		 String queryString = ("ticket="+l+"&&code=bc471");
-//         String lisReq = "http://cunxuexi.daily.taobao.net/user/sign/signin.json"+"?"+queryString;
-//         HttpClient httpClient = new HttpClient();
-//         HttpMethod method = new GetMethod(lisReq);
-//         HttpClientParams params = new HttpClientParams();
-//         params.setConnectionManagerTimeout(3000);
-//         httpClient.setParams(params);
-//         try {
-//             httpClient.executeMethod(method);
-//             if(method.getStatusCode() == HttpStatus.SC_OK) {
-//            	 System.out.println("sign ok");
-//            	 System.out.println(method.getResponseBodyAsString());
-//             } else {
-//            	 System.out.println("error");
-//             }
-//         } catch (Exception e) {
-//        	 System.out.println("error");
-//         }
-//		 }
-//	}
-	
 	public static void main(String[] args) throws Exception{
-		 BufferedReader b = new BufferedReader(new FileReader("D://shujushengji1.txt"));
-		 PrintWriter pw1=new PrintWriter(new File("D://shujushengji2.txt"));
+		 BufferedReader b = new BufferedReader(new FileReader("D://shujuqianyi.txt"));
 		 String l=null;
 		 while((l=b.readLine())!=null){
-			 String[] temps=l.split(",");
-			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','APPLY_IN','bc471','NEW','"+temps[0]+"');");
-			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','UPGRADE','bc467','NEW','"+temps[0]+"');");
-             String sell=null;
-             if(temps[2].contains("500003")||temps[2].contains("500002")){
-            	 sell="2927051613";
-             }else{
-            	 sell="795246961";
+		 String queryString = ("ticket="+l+"&&code=bc471");
+         String lisReq = "http://cunxuexi.daily.taobao.net/user/sign/signin.json"+"?"+queryString;
+         HttpClient httpClient = new HttpClient();
+         HttpMethod method = new GetMethod(lisReq);
+         HttpClientParams params = new HttpClientParams();
+         params.setConnectionManagerTimeout(3000);
+         httpClient.setParams(params);
+         try {
+             httpClient.executeMethod(method);
+             if(method.getStatusCode() == HttpStatus.SC_OK) {
+            	 System.out.println("sign ok");
+            	 System.out.println(method.getResponseBodyAsString());
+             } else {
+            	 System.out.println("error");
              }
-			 pw1.println("insert into station_decorate (gmt_create, gmt_modified, creator, modifier, is_deleted, station_id,  partner_user_id, seller_taobao_user_id, status,is_valid,payment_type,decorate_type)values (now(),now(),'yi.shaoy','yi.shaoy','n','"+temps[1]+"','"+temps[0]+"', '"+sell+"','UNDECORATE','Y','SELF','NEW');");
-		     pw1.flush();
+         } catch (Exception e) {
+        	 System.out.println("error");
+         }
 		 }
 	}
+	
+//	public static void main(String[] args) throws Exception{
+//		 BufferedReader b = new BufferedReader(new FileReader("D://shujushengji1.txt"));
+//		 PrintWriter pw1=new PrintWriter(new File("D://shujushengji2.txt"));
+//		 String l=null;
+//		 while((l=b.readLine())!=null){
+//			 String[] temps=l.split(",");
+//			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','APPLY_IN','bc471','NEW','"+temps[0]+"');");
+//			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','UPGRADE','bc467','NEW','"+temps[0]+"');");
+//             String sell=null;
+//             if(temps[2].contains("500003")||temps[2].contains("500002")){
+//            	 sell="2927051613";
+//             }else{
+//            	 sell="795246961";
+//             }
+//			 pw1.println("insert into station_decorate (gmt_create, gmt_modified, creator, modifier, is_deleted, station_id,  partner_user_id, seller_taobao_user_id, status,is_valid,payment_type,decorate_type)values (now(),now(),'yi.shaoy','yi.shaoy','n','"+temps[1]+"','"+temps[0]+"', '"+sell+"','UNDECORATE','Y','SELF','NEW');");
+//		     pw1.flush();
+//		 }
+//	}
 }
