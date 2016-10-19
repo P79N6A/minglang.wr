@@ -1591,6 +1591,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
 			}
+			if (partnerInstanceExtService.validateChildNum(newParentStationId)){
+				throw new AugeServiceException("the partner's tpa number is upper limit");
+			}
 			Long oldParentStationId = partnerInstanceDto.getParentStationId();
 			Long stationId = partnerInstanceDto.getStationId();
 			partnerInstanceDto.setParentStationId(newParentStationId);
