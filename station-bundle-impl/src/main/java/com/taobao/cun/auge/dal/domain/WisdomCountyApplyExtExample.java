@@ -9,10 +9,6 @@ public class WisdomCountyApplyExtExample {
 
     private String orgIdPath;
 
-    private Integer pageStart; // 分页参数
-
-    private Integer pageSize;
-
     public String getStatus() {
         return status;
     }
@@ -29,19 +25,4 @@ public class WisdomCountyApplyExtExample {
         this.orgIdPath = orgIdPath;
     }
 
-    public Integer getPageStart() {
-        return pageStart;
-    }
-
-    public void setPageStart(Integer pageStart) {
-        this.pageStart = pageStart;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
 }

@@ -32,19 +32,13 @@ public class WisdomCountyApplyConverter {
         return wisdomCountyApply;
     }
 
-    public static WisdomCountyApplyExtExample conditonToExtExample(WisdomCountyApplyCondition condition){
+    public static WisdomCountyApplyExtExample conditionToExtExample(WisdomCountyApplyCondition condition){
         WisdomCountyApplyExtExample extExample = new WisdomCountyApplyExtExample();
         if (condition.getState() != null){
             extExample.setStatus(condition.getState().getCode());
         }
         if (condition.getOrgIdPath() != null){
             extExample.setOrgIdPath(condition.getOrgIdPath());
-        }
-        if (condition.getPageSize() != null){
-            extExample.setPageSize(condition.getPageSize());
-        }
-        if (condition.getPageStart() != null){
-            extExample.setPageStart(condition.getPageStart());
         }
         return extExample;
     }

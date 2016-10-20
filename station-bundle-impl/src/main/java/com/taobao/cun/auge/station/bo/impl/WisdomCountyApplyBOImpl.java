@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
@@ -61,11 +65,12 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public List<WisdomCountyApplyDto> getPageWisdomCountyApply(WisdomCountyApplyCondition condition) throws AugeServiceException {
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException {
         ValidateUtils.notNull(condition);
-        WisdomCountyApplyExtExample extExample = WisdomCountyApplyConverter.conditonToExtExample(condition);
-        List<WisdomCountyApply> wisdomCountyApply = wisdomCountyApplyExtMapper.getPageWisdomCountyApply(extExample);
-        return wisdomCountyApply.stream().map(WisdomCountyApplyConverter::toDto).collect(Collectors.toList());
+        WisdomCountyApplyExtExample extExample = WisdomCountyApplyConverter.conditionToExtExample(condition);
+        PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+        Page<WisdomCountyApply> page = wisdomCountyApplyExtMapper.getPageWisdomCountyApply(extExample);
+        return PageDtoUtil.success(page, page.stream().map(WisdomCountyApplyConverter::toDto).collect(Collectors.toList()));
     }
 
     @Override

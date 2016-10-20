@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExtExample;
 
@@ -10,6 +11,6 @@ import java.util.List;
  */
 public interface WisdomCountyApplyExtMapper {
 
-    List<WisdomCountyApply> getPageWisdomCountyApply(WisdomCountyApplyExtExample wisdomCountyApplyExtExample);
+    Page<WisdomCountyApply> getPageWisdomCountyApply(WisdomCountyApplyExtExample wisdomCountyApplyExtExample);
 
 }

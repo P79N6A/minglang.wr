@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by xiao on 16/10/18.
  */
-public class WisdomCountyApplyCondition extends OperatorDto implements Serializable {
+public class WisdomCountyApplyCondition extends PageQuery {
 
     private static final long serialVersionUID = -290307014766266472L;
 
@@ -17,32 +17,12 @@ public class WisdomCountyApplyCondition extends OperatorDto implements Serializa
 
     private String orgIdPath;
 
-    private Integer pageStart; // 分页参数
-
-    private Integer pageSize;
-
     public String getOrgIdPath() {
         return orgIdPath;
     }
 
     public void setOrgIdPath(String orgIdPath) {
         this.orgIdPath = orgIdPath;
-    }
-
-    public Integer getPageStart() {
-        return pageStart;
-    }
-
-    public void setPageStart(Integer pageStart) {
-        this.pageStart = pageStart;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
     }
 
     public WisdomCountyStateEnum getState() {

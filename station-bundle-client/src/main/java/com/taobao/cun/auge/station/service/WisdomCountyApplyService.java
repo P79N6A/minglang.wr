@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -18,7 +19,7 @@ public interface WisdomCountyApplyService {
 
     public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException;
 
-    public List<WisdomCountyApplyDto> getPageWisdomCountyApply(WisdomCountyApplyCondition condition) throws AugeServiceException;
+    public PageDto<WisdomCountyApplyDto> queryBypage(WisdomCountyApplyCondition condition) throws AugeServiceException;
 
     public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException;
 

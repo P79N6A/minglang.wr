@@ -47,9 +47,6 @@
     <if test="status != null and status != ''" >
       and w.status = #{status,jdbcType=VARCHAR}
     </if>
-    <if test="pageSize != null and pageSize != ''" >
-      limit #{pageStart,jdbcType=INTEGER} , #{pageSize,jdbcType=INTEGER}
-    </if>
   </select>
 
 </mapper>

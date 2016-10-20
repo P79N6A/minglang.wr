@@ -1,12 +1,10 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
-import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
-import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -63,9 +61,9 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     }
 
     @Override
-    public List<WisdomCountyApplyDto> getPageWisdomCountyApply(WisdomCountyApplyCondition condition) throws AugeServiceException {
+    public PageDto<WisdomCountyApplyDto> queryBypage(WisdomCountyApplyCondition condition) throws AugeServiceException {
         ValidateUtils.notNull(condition);
-        return wisdomCountyApplyBO.getPageWisdomCountyApply(condition);
+        return wisdomCountyApplyBO.queryByPage(condition);
     }
 
     @Override
