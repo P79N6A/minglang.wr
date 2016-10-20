@@ -906,12 +906,12 @@ public class StationDecorateExample {
         }
         
         public Criteria andPaymentTypeIn(List<String> values) {
-            addCriterion("paymentType in", values, "status");
+            addCriterion("payment_type in", values, "status");
             return (Criteria) this;
         }
 
         public Criteria andPaymentTypeNotIn(List<String> values) {
-            addCriterion("paymentType not in", values, "status");
+            addCriterion("payment_type not in", values, "status");
             return (Criteria) this;
         }
 
