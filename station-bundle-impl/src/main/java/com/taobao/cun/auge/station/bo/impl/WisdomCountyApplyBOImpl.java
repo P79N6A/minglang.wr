@@ -86,4 +86,12 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         }
         return null;
     }
+
+    @Override
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+        ValidateUtils.notNull(wisdomCountyApplyDto.getId());
+        WisdomCountyApply apply = WisdomCountyApplyConverter.dtoTo(wisdomCountyApplyDto);
+        DomainUtils.beforeUpdate(apply, wisdomCountyApplyDto.getOperator());
+        wisdomCountyApplyMapper.updateByPrimaryKeySelective(apply);
+    }
 }

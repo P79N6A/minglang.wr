@@ -5,16 +5,16 @@ package com.taobao.cun.auge.dal.domain;
  */
 public class WisdomCountyApplyExtExample {
 
-    private String status;
+    private String state;
 
     private String orgIdPath;
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getOrgIdPath() {

@@ -61,7 +61,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     }
 
     @Override
-    public PageDto<WisdomCountyApplyDto> queryBypage(WisdomCountyApplyCondition condition) throws AugeServiceException {
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException {
         ValidateUtils.notNull(condition);
         return wisdomCountyApplyBO.queryByPage(condition);
     }
@@ -70,5 +70,11 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException {
         ValidateUtils.notEmpty(ids);
         return wisdomCountyApplyBO.getWisdomCountyApplyByCountyIds(ids);
+    }
+
+    @Override
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+        ValidateUtils.notNull(wisdomCountyApplyDto.getId());
+        wisdomCountyApplyBO.updateWisdomCountyApply(wisdomCountyApplyDto);
     }
 }

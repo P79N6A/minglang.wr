@@ -19,8 +19,10 @@ public interface WisdomCountyApplyService {
 
     public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException;
 
-    public PageDto<WisdomCountyApplyDto> queryBypage(WisdomCountyApplyCondition condition) throws AugeServiceException;
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException;
 
     public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException;
+
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
 
 }

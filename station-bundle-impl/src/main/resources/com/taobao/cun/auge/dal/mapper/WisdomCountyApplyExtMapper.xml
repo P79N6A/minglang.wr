@@ -44,8 +44,8 @@
     <if test="orgIdPath != null and orgIdPath != ''" >
       and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
     </if>
-    <if test="status != null and status != ''" >
-      and w.status = #{status,jdbcType=VARCHAR}
+    <if test="state != null and state != ''" >
+      and w.state = #{state,jdbcType=VARCHAR}
     </if>
   </select>
 

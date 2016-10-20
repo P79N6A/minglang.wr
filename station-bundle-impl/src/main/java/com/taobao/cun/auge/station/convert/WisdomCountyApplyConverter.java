@@ -35,7 +35,7 @@ public class WisdomCountyApplyConverter {
     public static WisdomCountyApplyExtExample conditionToExtExample(WisdomCountyApplyCondition condition){
         WisdomCountyApplyExtExample extExample = new WisdomCountyApplyExtExample();
         if (condition.getState() != null){
-            extExample.setStatus(condition.getState().getCode());
+            extExample.setState(condition.getState().getCode());
         }
         if (condition.getOrgIdPath() != null){
             extExample.setOrgIdPath(condition.getOrgIdPath());
