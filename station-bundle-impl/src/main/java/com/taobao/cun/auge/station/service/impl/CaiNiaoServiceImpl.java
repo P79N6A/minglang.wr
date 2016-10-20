@@ -446,6 +446,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				featureMap.put(CaiNiaoAdapter.CTP_ORG_STA_ID, String.valueOf(parentStationId));
 				featureMap.put(CaiNiaoAdapter.CTP_TYPE, "CtPA1_0");
 				caiNiaoAdapter.updateStationFeatures(cainiaoStationId, featureMap);
+				
+				LinkedHashMap<String, String> featureMap1 = new LinkedHashMap<String, String>();
+				featureMap1.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(parentInstanceDto.getTaobaoUserId()));
+				caiNiaoAdapter.updateStationUserRelFeature(tpaInstanceDto.getTaobaoUserId(), featureMap1);
 			}else {//淘帮手没有独立物流地址
 				CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(tpaInstanceDto);
 				Long cainiaoSId = getCainiaoStationId(parentInstanceDto.getStationId());

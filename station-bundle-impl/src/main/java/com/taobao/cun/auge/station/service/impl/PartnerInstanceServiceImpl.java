@@ -698,7 +698,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 			}
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
