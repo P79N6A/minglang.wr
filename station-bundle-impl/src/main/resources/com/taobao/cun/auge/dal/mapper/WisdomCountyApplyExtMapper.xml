@@ -36,7 +36,7 @@
     w.county_id,
     w.remark,
     w.leader_phone,
-    w.apply_attachment_id
+    w.apply_attachment_id,
     w.function_attachment_id,
     w.state
     from wisdom_county_apply w, county_station s, cuntao_org org
