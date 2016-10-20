@@ -418,7 +418,6 @@ public class PartnerInstance {
 	 */
 	private String courseStatus;
 	
-
 	/**
 	 * 获取主键
 	 *
@@ -1642,8 +1641,4 @@ public class PartnerInstance {
 	public void setCourseStatus(String courseStatus) {
 		this.courseStatus = courseStatus;
 	}
-	
-	
-	
-	
 }

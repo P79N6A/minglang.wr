@@ -87,10 +87,10 @@ public final class PartnerInstanceConverter {
 		}
 
 		try {
-			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
+			StationApplyStateEnum parseStationApplyState = PartnerLifecycleRuleParser
+					.parseStationApplyState(instance.getType(), instance.getState(), convertLifecycleDto);
 			instanceDto.setStationApplyState(parseStationApplyState);
 		} catch (Exception e) {
-			System.out.println("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance) + e);
 			logger.error("新老状态转换失败。PartnerInstance= " + JSONObject.toJSONString(instance), e);
 		}
 		return instanceDto;
@@ -111,6 +111,20 @@ public final class PartnerInstanceConverter {
 		lifecleDto.setConfirm(PartnerLifecycleConfirmEnum.valueof(instance.getConfirm()));
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(instance.getSystem()));
 		return lifecleDto;
+	}
+	
+	public static List<PartnerInstanceDto> convertRel2Dto(List<PartnerStationRel> psRels) {
+		if (CollectionUtils.isEmpty(psRels)) {
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstanceDto> instanceDtos = new ArrayList<PartnerInstanceDto>(psRels.size());
+		for (PartnerStationRel psRel : psRels) {
+			if (null == psRel) {
+				continue;
+			}
+			instanceDtos.add(convert(psRel));
+		}
+		return instanceDtos;
 	}
 
 	public static PartnerInstanceDto convert(PartnerStationRel psRel) {
@@ -401,6 +415,10 @@ public final class PartnerInstanceConverter {
 		
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
+		}
+		
+		if (null != condition.getIsCurrent()) {
+			example.setIsCurrent(Boolean.TRUE.equals(condition.getIsCurrent()) ? "y" : "n");
 		}
 		return example;
 	}

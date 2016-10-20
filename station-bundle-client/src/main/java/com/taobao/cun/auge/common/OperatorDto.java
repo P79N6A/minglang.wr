@@ -4,9 +4,13 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 
 /**
  * 
@@ -16,6 +20,8 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 public class OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 2739466182498801975L;
+	
+	private static final Logger logger = LoggerFactory.getLogger(OperatorDto.class);
 
 	public static final String DEFAULT_OPERATOR = "system";
 
@@ -78,12 +84,10 @@ public class OperatorDto implements Serializable {
 	}
 
 	public void validateOperatorOrgId() throws AugeServiceException {
-		if (OperatorTypeEnum.BUC.equals(operatorType)) {
-			if (operatorOrgId == null || operatorOrgId < 0L) {
-				throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
-			}
+		if (null == operatorOrgId || operatorOrgId <= 0L) {
+			logger.error("operatorOrgId not null");
+			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
 		}
-
 	}
 
 	public void copyOperatorDto(OperatorDto source) {

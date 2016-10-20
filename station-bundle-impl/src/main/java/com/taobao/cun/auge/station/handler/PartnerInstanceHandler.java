@@ -123,8 +123,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void validateExistChildrenForClose(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).validateExistChildrenForClose(instanceId);
+	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).validateClosePreCondition(partnerStationRel);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -132,11 +132,19 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
 	}
 	
-	public void startClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto, String remark)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).startClosing(instanceId, operatorDto, remark);
+	public void startClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).startClosing(instanceId, operatorDto);
 	}
 	
-	public void startQuiting(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto, String remark)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).startQuiting(instanceId, operatorDto, remark);
+	public void startQuiting(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).startQuiting(instanceId, operatorDto);
+	}
+
+	public void validateAssetBack(PartnerInstanceTypeEnum typeEnum, Long instanceId) {
+		strategy.get(typeEnum.getCode()).validateAssetBack(instanceId);
+	}
+
+	public void validateOtherPartnerQuit(PartnerInstanceTypeEnum typeEnum, Long instanceId) {
+		strategy.get(typeEnum.getCode()).validateOtherPartnerQuit(instanceId);
 	}
 }

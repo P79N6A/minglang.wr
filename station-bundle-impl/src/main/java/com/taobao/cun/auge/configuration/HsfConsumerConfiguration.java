@@ -15,8 +15,11 @@ import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
+import com.taobao.cun.crius.exam.service.ExamInstanceService;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
+import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -46,6 +49,13 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean taobaoTradeOrderQueryService(
 			@Value("${hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService}") String version) {
 		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	// cuntaocenter服务
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean cuntaoAssetMService (
+			@Value("${hsf.consumer.version.cuntaocenter.cuntaoAssetService}") String version) {
+		return getConsumerBean(CuntaoAssetService.class, HSFGroup.HSF, version, 3000);
 	}
 	
 	@Bean(initMethod = "init")
@@ -101,9 +111,20 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	}
 	
 	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean examUserDispatchService(
+			@Value("${hsf.consumer.version.crius.examUserDispatchService}") String version) {
+		return getConsumerBean(ExamUserDispatchService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean examInstanceService(
+			@Value("${hsf.consumer.version.crius.examInstanceService}") String version) {
+		return getConsumerBean(ExamInstanceService.class, HSFGroup.HSF, version, 3000);
+	}
+
+	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean busiWorkBaseInfoService(
 			@Value("${hsf.consumer.version.auge.busiWorkBaseInfoService}") String version) {
 		return getConsumerBean(BusiWorkBaseInfoService.class, HSFGroup.HSF, version, 3000);
 	}
-	
 }

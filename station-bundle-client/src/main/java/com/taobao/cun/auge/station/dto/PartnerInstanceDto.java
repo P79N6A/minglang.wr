@@ -116,6 +116,16 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private PartnerLifecycleDto partnerLifecycleDto;
 
 	/**
+	 * 站点装修类型
+	 */
+	private StationDecorateTypeEnum stationDecorateTypeEnum;
+
+	/**
+	 * 站点装修出资类型
+	 */
+	private StationDecoratePaymentTypeEnum stationDecoratePaymentTypeEnum;
+
+	/**
 	 * 乐观锁版本
 	 */
 	private Long version;
@@ -283,6 +293,22 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
+	}
+
+	public StationDecorateTypeEnum getStationDecorateTypeEnum() {
+		return stationDecorateTypeEnum;
+	}
+
+	public void setStationDecorateTypeEnum(StationDecorateTypeEnum stationDecorateTypeEnum) {
+		this.stationDecorateTypeEnum = stationDecorateTypeEnum;
+	}
+
+	public StationDecoratePaymentTypeEnum getStationDecoratePaymentTypeEnum() {
+		return stationDecoratePaymentTypeEnum;
+	}
+
+	public void setStationDecoratePaymentTypeEnum(StationDecoratePaymentTypeEnum stationDecoratePaymentTypeEnum) {
+		this.stationDecoratePaymentTypeEnum = stationDecoratePaymentTypeEnum;
 	}
 
 	public Long getVersion() {

@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -22,64 +25,25 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.AttachementDto;
-import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.StationStateEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpStrategy")
-public class TpStrategy implements PartnerInstanceStrategy {
+public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(TpStrategy.class);
 
@@ -109,19 +73,32 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
-	
+
 	@Autowired
 	PartnerPeixunBO partnerPeixunBO;
-	
+
 	@Autowired
 	StationDecorateBO stationDecorateBO;
-	
+
 	@Autowired
 	AppResourceBO appResourceBO;
+	
+	@Autowired
+	PartnerAssetService partnerAssetService;
+	
+	@Autowired
+    PartnerInstanceQueryService partnerInstanceQueryService;
+	
+	@Autowired
+	StationDecorateService stationDecorateService;
+
+	@Autowired
+	PartnerApplyBO partnerApplyBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		validateDecorateAndPaymentType(partnerInstanceDto);
 
 		// 构建入驻生命周期
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
@@ -134,12 +111,61 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
+
+		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
+		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
+		// 生成启航班培训记录和成长营培训记录
+		partnerPeixunBO.initPeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"APPLY_IN"));
+		partnerPeixunBO.initPeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"UPGRADE"));
+		// 分发启航班试卷
+		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick,
+				appResourceBO.queryAppValueNotAllowNull(
+						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));
+		// 生成装修记录
+		StationDecorateDto stationDecorateDto = new StationDecorateDto();
+		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+		stationDecorateDto.setStationId(partnerInstanceDto.getStationId());
+		stationDecorateDto.setPartnerUserId(taobaoUserId);
+		stationDecorateDto.setDecorateType(partnerInstanceDto.getStationDecorateTypeEnum());
+		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
+		stationDecorateBO.addStationDecorate(stationDecorateDto);
+	}
+
+	private void validateDecorateAndPaymentType(PartnerInstanceDto partnerInstanceDto) {
+		ValidateUtils.notNull(partnerInstanceDto);
+		ValidateUtils.notNull(partnerInstanceDto.getId());
+		ValidateUtils.notNull(partnerInstanceDto.getTaobaoUserId());
+		ValidateUtils.notNull(partnerInstanceDto.getStationId());
+
+		StationDecorateTypeEnum decorate = partnerInstanceDto.getStationDecorateTypeEnum();
+		StationDecoratePaymentTypeEnum pay = partnerInstanceDto.getStationDecoratePaymentTypeEnum();
+		ValidateUtils.notNull(decorate);
+		ValidateUtils.notNull(pay);
+
+		if (decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.SELF)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_PART)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
+			throw new AugeServiceException("illegal decorate_type & payment_type combination");
+		}
+	}
+
+	private boolean decoratePaymentTypeEquals(StationDecorateTypeEnum decorate, StationDecorateTypeEnum decorateExpect,
+	                                          StationDecoratePaymentTypeEnum pay, StationDecoratePaymentTypeEnum payExpect) {
+		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
 	}
 
 	@Override
 	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId,states);
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
 
 		if (CollectionUtils.isEmpty(children)) {
 			return;
@@ -149,7 +175,7 @@ public class TpStrategy implements PartnerInstanceStrategy {
 				logger.warn("合伙人存在淘帮手");
 				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
 			} else {
-				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(),PartnerLifecycleBusinessTypeEnum.QUITING);
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
 				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
 						item.getCurrentStep())) {
 					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
@@ -163,53 +189,98 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
 
 		if (CollectionUtils.isNotEmpty(children)) {
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+		}
+		
+		//如果是从装修中停业，则需要判断村点是否退出了装修
+		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
+			stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
 		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto, PartnerStationRel rel) throws AugeServiceException {
-
+		String operator = partnerInstanceDeleteDto.getOperator();
+		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(rel.getIsCurrent())) {//历史数据不能删除
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
 		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-
-		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
-			Long stationId = rel.getStationId();
-			Station station = stationBO.getStationById(stationId);
-			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
-					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
-					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-				throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
-			}
+		//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
+		Long stationId = rel.getStationId();
+		Station station = stationBO.getStationById(stationId);
+		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
+				&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
+				&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
+		}
+		
+		List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
+		if (sList != null && sList.size()>1) {
+			stationBO.changeState(stationId, StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSED, operator);
+			
+			updateIsCurrentForPreInstance(rel, sList);
+			
+		}else {
 			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
 		}
-
-		if (partnerInstanceDeleteDto.getIsDeletePartner()) {
-			Long partnerId = rel.getPartnerId();
-			Partner partner = partnerBO.getPartnerById(partnerId);
-			if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-				throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
-			}
-			partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+		//删除装修记录
+		stationDecorateBO.invalidStationDecorate(stationId);
+		//删除启航班培训记录和成长营培训记录
+		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"APPLY_IN"));
+		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
+						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+								"UPGRADE"));
+		Long partnerId = rel.getPartnerId();
+		Partner partner = partnerBO.getPartnerById(partnerId);
+		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
+			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
-
-		partnerInstanceBO.deletePartnerStationRel(rel.getId(), partnerInstanceDeleteDto.getOperator());
-		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), partnerInstanceDeleteDto.getOperator());
+		partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
+	
+		partnerInstanceBO.deletePartnerStationRel(rel.getId(), operator);
+		partnerLifecycleBO.deleteLifecycleItems(rel.getId(), operator);
+	}
+	
+	/**
+	 * 固点的村点，如果当前人删除，把上一个合伙人设置为当前人（上一个合伙人入驻其他村点，不设置）
+	 * @param rel
+	 * @param sList
+	 */
+	private void updateIsCurrentForPreInstance(PartnerStationRel rel,
+			List<PartnerStationRel> sList) {
+		Long preTaobaoUserId = null;
+		Long preInstanceId = null;
+		for (PartnerStationRel r : sList) {
+			if (r.getId().longValue() != rel.getId().longValue()) {
+				preTaobaoUserId = r.getTaobaoUserId();
+				preInstanceId = r.getId();
+				break;
+			}
+		}
+		
+		PartnerStationRel preCurRel = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(preTaobaoUserId);
+		if (preCurRel == null) {//没有入驻其他服务站
+			partnerInstanceBO.updateIsCurrentByInstanceId(preInstanceId,PartnerInstanceIsCurrentEnum.Y);
+		}
 	}
 
 	private boolean isBondHasFrozen(Long id) {
@@ -248,6 +319,10 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 
 	@Override
@@ -282,6 +357,18 @@ public class TpStrategy implements PartnerInstanceStrategy {
 
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
+
+		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+		try{
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+			partnerApplyDto.setOperator("system");
+			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+		} catch(Exception e){
+			logger.error("handler quit error " + partnerInstanceId,e);
+		}
+
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -334,24 +421,28 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		// 发送装修中事件
 		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, settleSuccessDto);
 		// 发送装修中事件，手机端使用
+
 		dispacthEvent(rel, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
-	
-	private  Boolean containCountyOrgId(Long countyOrgId) {
+	private Boolean containCountyOrgId(Long countyOrgId) {
+
 		if (countyOrgId != null) {
 			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
 			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
 				return countyIdList.contains(countyOrgId);
-			}else {
+
+			} else {
+
 				return true;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 构建装修中生命周期
+	 *
 	 * @param rel
 	 */
 	private void initPartnerLifeCycleForDecorating(PartnerStationRel rel) {
@@ -369,21 +460,19 @@ public class TpStrategy implements PartnerInstanceStrategy {
 		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
 		
 		//培训
-		PartnerCourseRecord pcr = partnerPeixunBO.initPartnerApplyInRecord(rel.getTaobaoUserId());
-		if (PartnerPeixunStatusEnum.DONE.getCode().equals(pcr.getStatus())) {
+		PartnerCourseRecord record = partnerPeixunBO.queryOfflinePeixunRecord(
+				rel.getTaobaoUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
+				appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+						"APPLY_IN"));
+		if(record!=null&&PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
-		}else {
+		}else{
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
 		}
 		
 		//装修
-		StationDecorateDto stationDecorateDto = new StationDecorateDto();
-		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
-		stationDecorateDto.setStationId(rel.getStationId());
-		stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-		
-		StationDecorate sd = stationDecorateBO.addStationDecorate(stationDecorateDto);
-		if (StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
+		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
+		if (hasDecorateDone) {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
 		}else {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
@@ -473,18 +562,38 @@ public class TpStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+		
+		Long applyId = findCloseApplyId(instanceId);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startQuiting(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+		
+		Long applyId = findQuitApplyId(instanceId);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
+	}
+	
+	@Override
+	public void validateAssetBack(Long instanceId){
+		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
+		if(!isBackAsset){
+			throw new AugeServiceException("资产未归还。");
+		}
+	}
+
+	@Override
+	public void validateOtherPartnerQuit(Long instanceId) {
+		boolean isOtherPartnerQuit = partnerInstanceQueryService.isOtherPartnerQuit(instanceId);
+		if(!isOtherPartnerQuit){
+			throw new AugeServiceException("村点上存在未退出的合伙人，不能撤点。");
+		}
 	}
 }

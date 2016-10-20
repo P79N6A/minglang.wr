@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 
 /**
  * 停业申请dto
@@ -17,6 +18,9 @@ public class CloseStationApplyDto  extends OperatorDto implements Serializable {
 	
 	
 	private static final long serialVersionUID = -6320982530549407257L;
+	
+	//申请单主键
+	private Long id;
 
 	/**
 	 * 合伙人实例id
@@ -41,6 +45,17 @@ public class CloseStationApplyDto  extends OperatorDto implements Serializable {
      * 其他原因
      */
     private String otherReason;
+    
+    //合伙人实例当前状态
+    private PartnerInstanceStateEnum instanceState;
+    
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -72,5 +87,13 @@ public class CloseStationApplyDto  extends OperatorDto implements Serializable {
 
 	public void setType(PartnerInstanceCloseTypeEnum type) {
 		this.type = type;
+	}
+
+	public PartnerInstanceStateEnum getInstanceState() {
+		return instanceState;
+	}
+
+	public void setInstanceState(PartnerInstanceStateEnum instanceState) {
+		this.instanceState = instanceState;
 	}
 }

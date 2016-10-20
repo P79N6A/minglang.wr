@@ -47,7 +47,43 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
+	
+	/**
+	 * 查询最后一个退出的合伙人实例
+	 * 
+	 * @param stationId
+	 * @param operator
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 查询村点上，所有的入驻实例
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 是否所有合伙人都已经处于退出待解冻、退出状态
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
 
+	/**
+	 * 查询除instanceId外的，其他人是否都已经处于退出待解冻、退出状态
+	 * 
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
+	
 	/**
 	 * 使用stationapply state 查询
 	 * 
@@ -84,6 +120,14 @@ public interface PartnerInstanceQueryService {
 	public Long getPartnerInstanceId(Long stationApplyId);
 	
 	/**
+	 * 根据stationId查询，当前村上的实例id
+	 * 
+	 * @param stationId
+	 * @return
+	 */
+	public Long getPartnerInstanceIdByStationId(Long stationId);
+	
+	/**
 	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
 	 * 
 	 * @param instanceId
@@ -98,7 +142,16 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException;
-
+	
+	/**
+	 * 根据每次申请单id，查询停业申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException;
+	
 	/**
 	 * 获取待冻结保证金信息
 	 * 
@@ -133,7 +186,15 @@ public interface PartnerInstanceQueryService {
 	 */
 	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
 	
-		
+	/**
+	 * 根据每次申请单id，查询退出申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException;
+	
 	/**
 	 * 获取合伙人层级信息
 	 * @param taobaoUserId
@@ -157,13 +218,32 @@ public interface PartnerInstanceQueryService {
 	 */
 	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate);
 
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
 
 	/**
-	 * 根据合伙人组织ID路径获取入驻/退出流程中不同状态村点的数量
+	 * 获得当前人的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	
+	/**
+	 * 获得当前服务站的历史对应关系
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	
+	 /* 根据合伙人组织ID路径获取入驻/退出流程中不同状态村点的数量
 	 * @param orgIdPath
 	 * @return
 	 */
 	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition);
-
 
 }

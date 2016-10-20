@@ -16,6 +16,7 @@ import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.tair.deploy.Main;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
+import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.domain.dataobject.PayOrderDO;
 import com.taobao.tc.domain.query.QueryBizOrderDO;
 import com.taobao.tc.domain.result.BatchQueryOrderInfoResultDO;
@@ -112,5 +113,28 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	public static void main(String[] args) {
 		List<String> s1 = Stream.of(1l,2l,3l).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
 		System.out.println(s1);
+	}
+
+	@Override
+	public void judgeTcOrderStatusForQuit(Long sellerTaobaoUserId,
+			Long buyerTaobaoUserId) {
+		try {
+			QueryBizOrderDO query = new QueryBizOrderDO();
+			query.setSellerNumId(new long[] { sellerTaobaoUserId });
+			query.setBuyerNumId(new long[] { buyerTaobaoUserId });
+			BatchQueryOrderInfoResultDO batchQueryResult = tcBaseService
+					.queryMainAndDetail(query);
+			List<OrderInfoTO> orderList = batchQueryResult.getOrderList();
+			for (OrderInfoTO infoTo : orderList) {
+				BizOrderDO bizOrderDO = infoTo.getBizOrderDO();
+				if (bizOrderDO.getAuctionPrice() == orderAmount
+						&& bizOrderDO.isPaid()
+						&& bizOrderDO.getPayStatus() != PayOrderDO.STATUS_TRANSFERED) {
+					throw new RuntimeException("存在未完结的淘宝装修订单");
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

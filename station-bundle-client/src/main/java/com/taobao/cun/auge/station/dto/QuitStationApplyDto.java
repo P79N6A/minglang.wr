@@ -8,6 +8,9 @@ import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 public class QuitStationApplyDto extends OperatorDto {
 
 	private static final long serialVersionUID = -449672555158774209L;
+	
+	//申请单主键
+	private Long id;
 
 	@NotNull(message = "instanceId not null")
 	private Long instanceId;
@@ -34,8 +37,16 @@ public class QuitStationApplyDto extends OperatorDto {
 	@NotNull(message = "isQuitStation not null")
 	private Boolean isQuitStation;
 	
-	
+	//提交人
 	private String submittedPeopleName;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getInstanceId() {
 		return instanceId;

@@ -34,6 +34,14 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	@Override
 	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException {
 		ValidateUtils.notNull(partnerLifecycleDto);
+		ValidateUtils.notNull(partnerLifecycleDto.getPartnerInstanceId());
+		ValidateUtils.notNull(partnerLifecycleDto.getBusinessType());
+		ValidateUtils.notNull(partnerLifecycleDto.getCurrentStep());
+		
+		Long lifeId = getLifecycleItemsId(partnerLifecycleDto.getPartnerInstanceId(),partnerLifecycleDto.getBusinessType(),partnerLifecycleDto.getCurrentStep());
+		if (lifeId != null) {
+			return;
+		}
 		
 		PartnerLifecycleItems items = PartnerLifecycleConverter.toPartnerLifecycleItems(partnerLifecycleDto);
 		if(StringUtil.isEmpty(partnerLifecycleDto.getOperator())){
