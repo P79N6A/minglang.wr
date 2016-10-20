@@ -81,6 +81,17 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean removeStationById(Long cainiaoStationId, Long userId) throws AugeServiceException;
+	
+	
+	/**
+	 * 删除不可用村站( 没有人的情况调用 ，直接删除站点)
+	 * 
+	 * @param cainiaoStationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean removeNotUserdStationById(Long cainiaoStationId) throws AugeServiceException;
+	
 
 	/**
 	 * 删除买家
@@ -111,5 +122,30 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) throws AugeServiceException;
+	
+	/**
+	 * 村站解绑合伙人  目前仅支持合伙人使用
+	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_unbind_admin
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean unBindAdmin(Long cainiaoStationId) throws AugeServiceException;
+	
+	/**
+	 * 村站绑定合伙人 目前仅支持合伙人使用 
+	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_bind_admin
+	 * @param station
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean bindAdmin(CaiNiaoStationDto station) throws AugeServiceException;
+	
+	/**
+	 * 村站修改合伙人
+	 * @param station
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean updateAdmin(CaiNiaoStationDto station) throws AugeServiceException;
 
 }

@@ -27,10 +27,6 @@ public class PartnerInstanceDeleteDto extends OperatorDto implements Serializabl
      */
     private Boolean isDeletePartner = Boolean.TRUE;
     
-    
-    //private Boolean is
-    
-    
 
 	public Long getInstanceId() {
 		return instanceId;

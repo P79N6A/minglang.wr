@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,17 @@ import org.springframework.stereotype.Service;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.AttachementBO;
+import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 @Service("stationQueryService")
 @HSFProvider(serviceInterface = StationQueryService.class)
 public class StationQueryServiceImpl implements StationQueryService {
@@ -27,6 +31,9 @@ public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
 	AttachementBO attachementBO;
+	
+	@Autowired
+	ShutDownStationApplyBO shutDownStationApplyBO;
 
 	@Override
 	public StationDto queryStationInfo(StationCondition stationCondition)
@@ -50,5 +57,24 @@ public class StationQueryServiceImpl implements StationQueryService {
 
 		List<Station> stations = stationBO.getStationById(stationIds);
 		return StationConverter.toStationDtos(stations);
+	}
+
+	@Override
+	public List<StationDto> queryStationsByName(StationCondition stationCondition) throws AugeServiceException {
+		ValidateUtils.validateParam(stationCondition);
+		List<Station> stations = stationBO.getStationsByName(stationCondition);
+		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
+	}
+	
+	@Override
+	public ShutDownStationApplyDto findShutDownStationApply(Long stationId) throws AugeServiceException{
+		ValidateUtils.notNull(stationId);
+		return shutDownStationApplyBO.findShutDownStationApply(stationId);
+	}
+	
+	@Override
+	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId) throws AugeServiceException{
+		ValidateUtils.notNull(applyId);
+		return shutDownStationApplyBO.findShutDownStationApplyById(applyId);
 	}
 }

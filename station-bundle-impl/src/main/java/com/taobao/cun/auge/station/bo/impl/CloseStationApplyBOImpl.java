@@ -64,4 +64,9 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 		return  CloseStationApplyConverter.toCloseStationApplyDto(ResultUtils.selectOne(closeStationApplyMapper.selectByExample(example)));
 	}
 
+	@Override
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException {
+		ValidateUtils.notNull(applyId);
+		return  CloseStationApplyConverter.toCloseStationApplyDto(closeStationApplyMapper.selectByPrimaryKey(applyId));
+	}
 }

@@ -32,4 +32,13 @@ public interface CloseStationApplyBO {
 	 * @throws AugeServiceException
 	 */
 	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException;
+
+	/**
+	 * 根据每次申请单id，查询停业申请单
+	 * 
+	 * @param applyId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId);
 }

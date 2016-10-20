@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +22,11 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationExample;
 import com.taobao.cun.auge.dal.domain.StationExample.Criteria;
+import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -39,6 +41,9 @@ public class StationBOImpl implements StationBO {
 
 	@Autowired
 	StationMapper stationMapper;
+
+	@Autowired
+	StationExtMapper stationExtMapper;
 
 	@Override
 	public Station getStationById(Long stationId) throws AugeServiceException {
@@ -163,5 +168,16 @@ public class StationBOImpl implements StationBO {
 		stationMapper.updateByPrimaryKeySelective(rel);
 	}
 
+	@Override
+	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException {
+		ValidateUtils.notNull(stationCondition);
+		StationExtExample stationExtExample = new StationExtExample();
+		stationExtExample.setName(stationCondition.getName());
+		stationExtExample.setOrgIdPath(stationCondition.getOrgIdPath());
+		stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
+		stationExtExample.setPageSize(stationCondition.getPageSize());
+		stationExtExample.setPageStart(stationCondition.getPageStart());
+		return stationExtMapper.getTpStationsByName(stationExtExample);
+	}
 
 }

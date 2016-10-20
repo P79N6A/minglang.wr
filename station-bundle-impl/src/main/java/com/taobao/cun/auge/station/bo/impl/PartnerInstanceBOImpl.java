@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,10 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
+import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -176,6 +180,42 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		return partnerStationRelMapper.selectByExample(example);
 	}
+	
+	@Override
+	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException {
+		if (null == stationId) {
+			return Collections.<PartnerStationRel> emptyList();
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsDeletedEqualTo("n");
+		
+		//按照主键倒序
+		example.setOrderByClause("id DESC");
+
+		return partnerStationRelMapper.selectByExample(example);
+	}
+	
+	@Override
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException{
+		if (null == stationId) {
+			return null;
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsDeletedEqualTo("n");
+		
+		//按照服务结束时间倒序
+		example.setOrderByClause("service_end_time DESC");
+
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+
+		return ResultUtils.selectOne(instances);
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -308,6 +348,28 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return instances.get(0);
 	}
 
+	@Override
+	public List<PartnerStationRel> getPartnerStationRelByPartnerId(Long partnerId, String isCurrent) {
+		ValidateUtils.notNull(partnerId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andPartnerIdEqualTo(partnerId);
+		criteria.andIsCurrentEqualTo(isCurrent);
+		criteria.andIsDeletedEqualTo("n");
+		return partnerStationRelMapper.selectByExample(example);
+	}
+	
+	@Override
+	public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent) {
+		ValidateUtils.notNull(stationId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andStationIdEqualTo(stationId);
+		criteria.andIsCurrentEqualTo(isCurrent);
+		criteria.andIsDeletedEqualTo("n");
+		return partnerStationRelMapper.selectByExample(example);
+	}
+
 	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
 		ValidateUtils.notNull(partnerId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
@@ -326,9 +388,52 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
-		DomainUtils.beforeInsert(partnerStationRel, partnerInstanceDto.getOperator());
+		
+		String operator = partnerInstanceDto.getOperator();
+		//设置合伙人的历史服务站  is_current 为n
+		setIsCurrentToNForParnter(partnerStationRel.getTaobaoUserId(),operator);
+		
+		//设置上一个合伙人 当前服务站所属关系为N
+		setIsCurrentToN(partnerStationRel.getStationId(),operator);
+
+		DomainUtils.beforeInsert(partnerStationRel, operator);
 		partnerStationRelMapper.insert(partnerStationRel);
 		return partnerStationRel.getId();
+	}
+	
+	private void setIsCurrentToNForParnter(Long taobaoUserId,String operator) {
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (resList != null && resList.size()>0) {
+			for (PartnerStationRel rel: resList) {
+				PartnerStationRel updateInstance = new PartnerStationRel();
+				updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
+				updateInstance.setId(rel.getId());
+				DomainUtils.beforeUpdate(updateInstance, operator);
+				partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+			}
+		}
+	}
+
+	
+	private void setIsCurrentToN(Long stationId,String operator) {
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andStationIdEqualTo(stationId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		if (resList != null && resList.size()>0) {
+			for (PartnerStationRel rel: resList) {
+				PartnerStationRel updateInstance = new PartnerStationRel();
+				updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
+				updateInstance.setId(rel.getId());
+				DomainUtils.beforeUpdate(updateInstance, operator);
+				partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+			}
+		}
 	}
 
 	@Override
@@ -500,7 +605,120 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y, OperatorDto.defaultOperator());
 	}
+	
+	@Override
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException	{
+		List<PartnerStationRel> instances = findPartnerInstances(stationId);
 
+		return isAllPartnerQuit(instances);
+	}
+
+	private boolean isAllPartnerQuit(List<PartnerStationRel> instances) {
+		for (PartnerStationRel instance : instances) {
+			if (null == instance) {
+				continue;
+			}
+			// 退出
+			if (PartnerInstanceStateEnum.QUIT.getCode().equals(instance.getState())) {
+				continue;
+			}
+
+			// 退出申请中
+			if (PartnerInstanceStateEnum.QUITING.getCode().equals(instance.getState())) {
+				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+						PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+
+				// 退出待解冻
+				if (PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())
+						&& PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond())) {
+					continue;
+				}
+				return false;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException{
+		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
+		
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+
+		criteria.andStationIdEqualTo(partnerInstance.getStationId());
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdNotEqualTo(instanceId);
+
+		List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
+
+		return isAllPartnerQuit(instances);
+	}
+
+	@Override
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.Y.getCode());
+		if (psRels.size() < 1){
+			return null;
+		}
+		//原则上系统只允许存在一条这样的数据
+		PartnerStationRel psRel = psRels.get(0);
+		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+		Station station = stationBO.getStationById(psRel.getStationId());
+		return PartnerInstanceConverter.convert(psRel, station, partner);
+	}
+
+	@Override
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.N.getCode());
+		if (psRels.size() < 1){
+			return null;
+		}
+		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>(psRels.size());
+		for (PartnerStationRel psRel : psRels){
+			if(null == psRel){
+				continue;
+			}
+			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+			Station station = stationBO.getStationById(psRel.getStationId());
+			partnerInstanceDtos.add(PartnerInstanceConverter.convert(psRel, station, partner));
+		}
+		return partnerInstanceDtos;
+	}
+
+	@Override
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(
+			Long stationId) throws AugeServiceException {
+		List<PartnerStationRel> psRels = getPartnerStationRelByStationId(stationId, PartnerInstanceIsCurrentEnum.N.getCode());
+		if (psRels.size() < 1){
+			return null;
+		}
+		List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>();
+		for (PartnerStationRel psRel : psRels){
+			Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
+			Station station = stationBO.getStationById(psRel.getStationId());
+			
+			PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel, station, partner);
+			
+			// 获得生命周期数据
+			PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
+								.toPartnerLifecycleDto(getLifecycleItemforHisPartner(psRel.getId(), psRel.getState()));
+			insDto.setPartnerLifecycleDto(lifecycleDto);
+			insDto.setStationApplyState(
+					PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+			partnerInstanceDtos.add(insDto);
+		}
+		return partnerInstanceDtos;
+	}
+	
+	private PartnerLifecycleItems getLifecycleItemforHisPartner(Long id, String state) {
+		if (PartnerInstanceStateEnum.QUITING.getCode().equals(state)) {
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.QUITING);
+		}
+		return null;
+	}
+	
 	@Override
 	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator) throws AugeServiceException {
 		changeState(instanceId, preState, postState, operator);
@@ -511,4 +729,27 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
 	}
 
+	@Override
+	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(
+			Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		criteria.andIsDeletedEqualTo("n");
+		return ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example));
+	}
+
+	@Override
+	public void updateIsCurrentByInstanceId(Long instanceId,
+			PartnerInstanceIsCurrentEnum isCurrentEnum)
+			throws AugeServiceException {
+		PartnerStationRel updateInstance = new PartnerStationRel();
+		updateInstance.setIsCurrent(isCurrentEnum.getCode());
+		updateInstance.setId(instanceId);
+		DomainUtils.beforeUpdate(updateInstance, OperatorDto.defaultOperator().getOperator());
+		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+		
+	}
 }

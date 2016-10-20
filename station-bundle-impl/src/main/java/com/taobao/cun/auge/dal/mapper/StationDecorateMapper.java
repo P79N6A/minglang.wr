@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface StationDecorateMapper {
     /**
@@ -93,4 +96,6 @@ public interface StationDecorateMapper {
      * @mbggenerated Tue Aug 09 16:50:31 CST 2016
      */
     int updateByPrimaryKey(StationDecorate record);
+    
+    int invalidOldDecorateRecord(Map<String,String> param);
 }
