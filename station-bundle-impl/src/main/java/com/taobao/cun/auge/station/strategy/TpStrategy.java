@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.station.bo.*;
+import com.taobao.cun.auge.station.dto.*;
+import com.taobao.cun.auge.station.enums.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,53 +31,8 @@ import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
-import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.AttachementDto;
-import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
-import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
-import com.taobao.cun.auge.station.dto.StationDecorateDto;
-import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStateEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
@@ -133,6 +91,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Autowired
 	StationDecorateService stationDecorateService;
+
+	@Autowired
+	PartnerApplyBO partnerApplyBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -370,6 +331,18 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
+
+		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+		try{
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+			partnerApplyDto.setOperator("system");
+			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+		} catch(Exception e){
+			logger.error("handler quit error " + partnerInstanceId,e);
+		}
+
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
