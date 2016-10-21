@@ -62,9 +62,9 @@ public class WisdomCountyStateEnum implements Serializable{
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
-        if (!(obj instanceof StationStateEnum))
+        if (!(obj instanceof WisdomCountyStateEnum))
             return false;
-        StationStateEnum objType = (StationStateEnum) obj;
+        WisdomCountyStateEnum objType = (WisdomCountyStateEnum) obj;
         return objType.getCode().equals(this.getCode());
     }
 
