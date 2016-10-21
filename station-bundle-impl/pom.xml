@@ -287,6 +287,22 @@
 			<artifactId>motion-client</artifactId>
 			<version>1.0.6</version>
 		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>dowjones.service.api</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>com.alibaba.crm.shared</groupId>
+				<artifactId>order.service</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>esb.services.nasdaq</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>com.alibaba.crm.shared</groupId>
+				<artifactId>finance.service.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

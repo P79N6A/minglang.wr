@@ -3,6 +3,7 @@ package com.taobao.cun.auge.common.utils;
 import java.util.Collection;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -34,7 +35,11 @@ public class ValidateUtils {
 	public static void validateParam(OperatorDto operatorDto) {
 		notNull(operatorDto);
 		operatorDto.validateOperator();
-		operatorDto.validateOperatorOrgId();
+
+		if (OperatorTypeEnum.BUC.equals(operatorDto.getOperatorType())) {
+			operatorDto.validateOperatorOrgId();
+		}
+
 		operatorDto.validateOperatorType();
     }
 }

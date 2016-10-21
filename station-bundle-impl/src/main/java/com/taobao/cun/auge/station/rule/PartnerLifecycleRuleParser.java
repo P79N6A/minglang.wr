@@ -393,6 +393,9 @@ public class PartnerLifecycleRuleParser {
 		PartnerLifecycleItems lifecycle = new PartnerLifecycleItems();
 		// lifecycle.setSettledProtocol("SIGNED");
 		// lifecycle.setSystem("WAIT_PROCESS");
+		lifecycle.setBond("WAIT_THAW");
+		lifecycle.setRoleApprove("AUDIT_PASS");
+		lifecycle.setBusinessType("QUTING");
 		lifecycle.setDecorateStatus("");
 
 		// System.out.println("---" +
@@ -403,8 +406,9 @@ public class PartnerLifecycleRuleParser {
 		// JSON.toJSONString(parsePartnerLifecycleRule(PartnerInstanceTypeEnum.TP,
 		// "SUMITTED")));
 
-		System.out.println(parseStationApplyState("TP", "DECORATING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)).getCode());
+		System.out.println("---" + parseStationApplyState("TP", "QUITING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)));
 
+		System.out.println(parseStationApplyState("TP", "DECORATING", PartnerLifecycleConverter.toPartnerLifecycleDto(lifecycle)).getCode());
 		
 	}
 

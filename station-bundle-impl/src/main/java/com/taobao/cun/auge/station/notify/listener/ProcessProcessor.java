@@ -10,10 +10,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.AppResource;
-import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -22,18 +20,19 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
+import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -43,11 +42,12 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
-
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -60,9 +60,6 @@ public class ProcessProcessor {
 
 	@Autowired
 	StationBO stationBO;
-
-	@Autowired
-	PartnerBO partnerBO;
 
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
@@ -81,19 +78,25 @@ public class ProcessProcessor {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+	@Autowired
+	BusiWorkBaseInfoService busiWorkBaseInfoService;
 
 	@Autowired
-	AppResourceBO appResourceBO;
+	StationService stationService;
 	
 	@Autowired
+	AppResourceBO appResourceBO;
+
+	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
 		String businessCode = ob.getString("businessCode");
 		String objectId = ob.getString("objectId");
-		Long stationApplyId = Long.valueOf(objectId);
+		String partnerInstanceId = ob.getString("partnerInstanceId");
+		Long businessId = Long.valueOf(objectId);
 		// 监听流程实例结束
 		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
@@ -101,10 +104,20 @@ public class ProcessProcessor {
 
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				monitorCloseApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
-				// 村点退出
+				monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+				// 合伙人退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				monitorQuitApprove(stationApplyId, ProcessApproveResultEnum.valueof(resultCode));
+				if(StringUtil.isNotBlank(partnerInstanceId)){
+					quitApprove(Long.valueOf(partnerInstanceId), ProcessApproveResultEnum.valueof(resultCode));
+				}else{
+					monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+				}
+			} else if (ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)) {
+				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
+			//村点撤点
+			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
+				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -112,56 +125,25 @@ public class ProcessProcessor {
 		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.CLOSING);
+				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.CLOSING);
 				// 村点退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				monitorTaskStarted(stationApplyId, PartnerLifecycleBusinessTypeEnum.QUITING);
+				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.QUITING);
 			}
 			//任务完成
 		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
-			//记录退出审批日志
-			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				recordQuitApproveLog(ob, stationApplyId);
-			}
 			//流程启动
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
-			//记录退出审批日志
-			if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				recordQuitStartLog(ob, stationApplyId);
-			}
+			
 		}
 	}
+
+	private void monitorHomepageShowApprove(String objectId, String businessCode, ProcessApproveResultEnum approveResult) {
+		busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
+				ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult));
+		
+	}
 	
-	private void recordQuitStartLog(JSONObject ob, Long stationApplyId) {
-		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-
-		cuntaoFlowRecord.setTargetId(stationApplyId);
-		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION_QUIT.getCode());
-		cuntaoFlowRecord.setNodeTitle("提交");
-		cuntaoFlowRecord.setOperatorName(ob.getString("applierName"));
-		cuntaoFlowRecord.setOperatorWorkid(ob.getString("applierId"));
-		cuntaoFlowRecord.setOperateTime(new Date());
-		
-		cuntaoFlowRecord.setOperateOpinion("提交");
-		cuntaoFlowRecord.setRemarks(ob.getString("remark"));
-		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-	}
-
-	private void recordQuitApproveLog(JSONObject ob, Long stationApplyId) {
-		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-
-		cuntaoFlowRecord.setTargetId(stationApplyId);
-		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION_QUIT.getCode());
-		cuntaoFlowRecord.setNodeTitle("大区管理员");
-		cuntaoFlowRecord.setOperatorName(ob.getString("approverName"));
-		cuntaoFlowRecord.setOperatorWorkid(ob.getString("approver"));
-		cuntaoFlowRecord.setOperateTime(new Date());
-		
-		cuntaoFlowRecord.setOperateOpinion(ob.getString("result"));
-		cuntaoFlowRecord.setRemarks(ob.getString("taskRemark"));
-		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-	}
-
 	/**
 	 * 处理停业审批结果
 	 * 
@@ -169,21 +151,16 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	
+
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		closeApprove(partnerStationRel.getId(), approveResult);
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-
-			// 不是TPV，且开关未打开，直接返回
-			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(partnerStationRel.getType()) && !isOpen()) {
-				return;
-			}
 
 			Long stationId = partnerStationRel.getStationId();
 
@@ -215,11 +192,21 @@ public class ProcessProcessor {
 				// 通知admin，合伙人退出。让他们监听村点状态变更事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
 			} else {
+				//获取停业申请单
+				CloseStationApplyDto closeStationApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
+				PartnerInstanceStateEnum sourceInstanceState = closeStationApplyDto.getInstanceState();
+		
 				// 合伙人实例已停业
-				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, operator);
+				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, sourceInstanceState, operator);
 
 				// 村点已停业
-				stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
+				if (PartnerInstanceStateEnum.SERVICING.equals(sourceInstanceState)) {
+					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.SERVICING, operator);
+				} else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
+					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.DECORATING, operator);
+				} else {
+					throw new AugeServiceException("partner state is not decorating or servicing.");
+				}
 
 				// 删除停业申请表
 				closeStationApplyBO.deleteCloseStationApply(instanceId, operator);
@@ -268,7 +255,7 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-	
+
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		quitApprove(partnerStationRel.getId(), approveResult);
@@ -281,11 +268,6 @@ public class ProcessProcessor {
 			String operator = operatorDto.getOperator();
 
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-
-			// 不是TPV，且开关未打开，直接返回
-			if (!PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType()) && !isOpen()) {
-				return;
-			}
 
 			Long stationId = instance.getStationId();
 
@@ -302,10 +284,8 @@ public class ProcessProcessor {
 				// 处理合伙人、淘帮手、村拍档不一样的业务
 				partnerInstanceHandler.handleDifferQuitAuditPass(instanceId, PartnerInstanceTypeEnum.valueof(instance.getType()));
 
-				// 提交去支付宝标任务
-				Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(instance.getTaobaoUserId());
-				String accountNo = partner.getAlipayAccount();
-				generalTaskSubmitService.submitQuitApprovedTask(instanceId, instance.getTaobaoUserId(), accountNo, operator);
+				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
+						quitApply.getIsQuitStation());
 			} else {
 				// 合伙人实例已停业
 				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);
@@ -370,14 +350,5 @@ public class ProcessProcessor {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
-	}
-
-	private Boolean isOpen() {
-		AppResource resource = appResourceBO.queryAppResource("auge_service_switch_center", "switch");
-		if (resource != null && "y".equals(resource.getValue())) {
-			return Boolean.TRUE;
-		} else {
-			return Boolean.FALSE;
-		}
 	}
 }

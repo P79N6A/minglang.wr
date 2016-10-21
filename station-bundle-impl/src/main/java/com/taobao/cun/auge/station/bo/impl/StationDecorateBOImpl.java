@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,9 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -64,19 +67,21 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
 			throws AugeServiceException {
-		ValidateUtils.notNull(stationDecorateDto);
 		Long stationId = stationDecorateDto.getStationId();
-		ValidateUtils.notNull(stationId);
+		validateAddDecorate(stationDecorateDto);
 		StationDecorate record;
 		try {
-			StationDecorate sd = this.getStationDecorateByStationId(stationId);
-			if (sd != null) {
-				return sd;
-			}
-			
+//			StationDecorate sd = this.getStationDecorateByStationId(stationId);
+//			if (sd != null) {
+//				return sd;
+//			}
+			//更新历史装修记录的有效性状态
+			updateOldDecorateRecordInvalid(stationId);
 			record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
-			//添加店铺id
-			if (record.getSellerTaobaoUserId() ==null) {
+			//添加店铺id,仅自费装修需要添加
+			if (record.getSellerTaobaoUserId() == null
+					&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+							record.getPaymentType())) {
 				record.setSellerTaobaoUserId(getSeller(stationId));
 			}
 			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
@@ -89,6 +94,21 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 		
+	}
+	
+	private void validateAddDecorate(StationDecorateDto stationDecorateDto){
+		ValidateUtils.notNull(stationDecorateDto);
+		Long stationId = stationDecorateDto.getStationId();
+		ValidateUtils.notNull(stationId);
+		ValidateUtils.notNull(stationDecorateDto.getPaymentType());
+		ValidateUtils.notNull(stationDecorateDto.getDecorateType());
+	}
+	
+	private void updateOldDecorateRecordInvalid(Long stationId){
+		Map<String,String> param=new HashMap<String,String>();
+		param.put("valid", StationDecorateIsValidEnum.N.getCode());
+		param.put("stationId", String.valueOf(stationId));
+		stationDecorateMapper.invalidOldDecorateRecord(param);
 	}
 	
 	private String getSeller(Long stationId) {
@@ -158,6 +178,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		statusList.add(StationDecorateStatusEnum.UNDECORATE.getCode());
 		statusList.add(StationDecorateStatusEnum.DECORATING.getCode());
 		criteria.andStatusIn(statusList);
+		List<String> paymentTypeList=new ArrayList<String>();
+		paymentTypeList.add(StationDecoratePaymentTypeEnum.SELF.getCode());
+		criteria.andPaymentTypeIn(paymentTypeList);
 		return example;
 	}
 	
@@ -221,6 +244,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Override
 	public void syncStationDecorateFromTaobao(
 			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+		if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+				stationDecorateDto.getPaymentType().getCode())){
+			return;
+		}
 		StationDecorateDto updateDto = new StationDecorateDto();
 		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		updateDto.setId(stationDecorateDto.getId());
@@ -284,6 +311,68 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			return res;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean handleAcessDecorating(Long stationId) {
+		ValidateUtils.notNull(stationId);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode()).andStationIdEqualTo(stationId);
+		List<StationDecorate> resList = stationDecorateMapper.selectByExample(example);
+		if(resList.size()>0){
+			StationDecorate sd=resList.get(0);
+			if(StationDecorateTypeEnum.ORIGIN.getCode().equals(sd.getDecorateType())){
+				//免装修，直接更新为装修完成
+				sd.setGmtModified(new Date());
+				sd.setModifier("SYSTEM");
+				sd.setStatus(StationDecorateStatusEnum.DONE.getCode());
+				stationDecorateMapper.updateByPrimaryKey(sd);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void confirmAcessDecorating(Long id) {
+		StationDecorate sd = stationDecorateMapper.selectByPrimaryKey(id);
+		if (sd == null) {
+			throw new AugeServiceException("not find record "
+					+ String.valueOf(id));
+		}
+		// 只有政府出资的装修 合伙人才能确认
+		if (StationDecoratePaymentTypeEnum.GOV_ALL.getCode().equals(
+				sd.getPaymentType())
+				|| StationDecoratePaymentTypeEnum.GOV_PART.getCode().equals(
+						sd.getPaymentType())) {
+			sd.setGmtModified(new Date());
+			sd.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
+			stationDecorateMapper.updateByPrimaryKey(sd);
+		} else {
+			throw new AugeServiceException("非政府出资装修，无法确认。 "
+					+ sd.getPaymentType());
+		}
+
+	}
+
+	@Override
+	public void invalidStationDecorate(Long stationId) {
+		ValidateUtils.notNull(stationId);
+		StationDecorateExample example = new StationDecorateExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n")
+				.andIsValidEqualTo(StationDecorateIsValidEnum.Y.getCode())
+				.andStationIdEqualTo(stationId);
+		List<StationDecorate> resList = stationDecorateMapper
+				.selectByExample(example);
+		if (resList.size() > 0) {
+			StationDecorate sd = resList.get(0);
+			sd.setGmtModified(new Date());
+			sd.setModifier("SYSTEM");
+			sd.setStatus(StationDecorateStatusEnum.INVALID.getCode());
+			stationDecorateMapper.updateByPrimaryKey(sd);
+		}
 	}
 
 	

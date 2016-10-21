@@ -904,6 +904,16 @@ public class StationDecorateExample {
             addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
+        
+        public Criteria andPaymentTypeIn(List<String> values) {
+            addCriterion("payment_type in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andPaymentTypeNotIn(List<String> values) {
+            addCriterion("payment_type not in", values, "status");
+            return (Criteria) this;
+        }
 
         public Criteria andStatusBetween(String value1, String value2) {
             addCriterion("status between", value1, value2, "status");

@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 
 /**
  * 服务站装修记录dto
@@ -121,6 +123,10 @@ public class StationDecorateDto  extends OperatorDto {
 	 * 淘宝商品
 	 */
 	private String taobaoItemUrl;
+	
+	private StationDecoratePaymentTypeEnum paymentType;
+	
+	private StationDecorateTypeEnum decorateType;
 
 	public Long getId() {
 		return id;
@@ -298,4 +304,21 @@ public class StationDecorateDto  extends OperatorDto {
 	public void setReflectSatisfySolid(String reflectSatisfySolid) {
 		this.reflectSatisfySolid = reflectSatisfySolid;
 	}
+
+	public StationDecoratePaymentTypeEnum getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(StationDecoratePaymentTypeEnum paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public StationDecorateTypeEnum getDecorateType() {
+		return decorateType;
+	}
+
+	public void setDecorateType(StationDecorateTypeEnum decorateType) {
+		this.decorateType = decorateType;
+	}
+	
 }

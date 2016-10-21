@@ -2,6 +2,8 @@ package com.taobao.cun.auge.common;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = -3987732618970128485L;
@@ -134,5 +136,31 @@ public class Address implements Serializable {
 
 	public void setLat(String lat) {
 		this.lat = lat;
+	}
+	
+	public String buildAddressDetail() {
+		StringBuilder sBuilder = new StringBuilder();
+
+		if (StringUtils.isNotEmpty(provinceDetail)) {
+			sBuilder.append(provinceDetail);
+		}
+		if (StringUtils.isNotEmpty(cityDetail)) {
+			sBuilder.append(cityDetail);
+		}
+		if (StringUtils.isNotEmpty(countyDetail)) {
+			sBuilder.append(countyDetail);
+		}
+		if (StringUtils.isNotEmpty(townDetail)) {
+			sBuilder.append(townDetail);
+		}
+
+		if (StringUtils.isNotEmpty(villageDetail)) {
+			sBuilder.append(villageDetail);
+		}
+
+		if (StringUtils.isNotEmpty(addressDetail)) {
+			sBuilder.append(addressDetail);
+		}
+		return sBuilder.toString();
 	}
 }

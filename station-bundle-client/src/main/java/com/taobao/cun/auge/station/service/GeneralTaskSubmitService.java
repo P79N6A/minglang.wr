@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -40,10 +39,10 @@ public interface GeneralTaskSubmitService {
 	 * 提交流程
 	 * 
 	 * @param business
-	 * @param stationApplyId
+	 * @param businessId
 	 * @param stateChangeEvent
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long stationApplyId, OperatorDto operatorDto, String remark);
+	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, Long applyId);
 
 	/**
 	 * 发短信
@@ -81,10 +80,28 @@ public interface GeneralTaskSubmitService {
 	 * 退出审批通过后去支付标和物流站点等任务
 	 * 
 	 * @param instanceId
+	 * @param stationId
 	 * @param taobaoUserId
-	 * @param accountNo
+	 * @param isQuitStation
+	 */
+	public void submitQuitApprovedTask(Long instanceId,Long stationId, Long taobaoUserId, String isQuitStation);
+	
+	/**
+	 * 撤点审批通过后，删除物流站
+	 * 
+	 * @param stationId
 	 * @param operator
 	 */
-	public void submitQuitApprovedTask(Long instanceId, Long taobaoUserId, String accountNo, String operator);
+	public void submitShutdownApprovedTask(Long stationId);
+
+	/**
+	 * 已停业村点回到服务中,uic、旺旺打标
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param taobaoNick
+	 * @param partnerType
+	 * @param operator
+	 */
+	public void submitCloseToServiceTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operator);
 
 }

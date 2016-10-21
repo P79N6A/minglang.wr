@@ -27,7 +27,9 @@ import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
-		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT })
+		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
+		EventConstant.CHANGE_TP_EVENT})
+
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -51,8 +53,26 @@ public class CuntaoFlowRecordListener implements EventListener {
 			processChildMaxNumChangeEvent(event);
 		} else if (event.getValue() instanceof PartnerInstanceLevelChangeEvent) {
 			processLevelChangeEvent(event);
+		} else if (event.getValue() instanceof ChangeTPEvent){
+			processChangeTPEvent(event);
 		}
 
+	}
+
+	private void processChangeTPEvent(Event event){
+		ChangeTPEvent changeTPEvent = (ChangeTPEvent) event.getValue();
+		String operator = changeTPEvent.getOperator();
+		OperatorTypeEnum operatorTypeEnum = changeTPEvent.getOperatorType();
+		String buildOperatorName = buildOperatorName(operator, operatorTypeEnum);
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		cuntaoFlowRecord.setTargetId(changeTPEvent.getStationId());
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle("淘帮手合伙人变更");
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+		logger.info("Finished to handle event." + JSON.toJSONString(changeTPEvent));
 	}
 
 	private void processLevelChangeEvent(Event event) {
@@ -172,7 +192,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		} else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
-			return stateChangeEvent.getRemark();
+			return "";
 		} else if (PartnerInstanceStateChangeEnum.CLOSING_REFUSED.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
@@ -182,6 +202,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 		} else if (PartnerInstanceStateChangeEnum.QUITTING_REFUSED.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
+			return "";
+		} else if (PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)) {
 			return "";
 		}
 		return "";

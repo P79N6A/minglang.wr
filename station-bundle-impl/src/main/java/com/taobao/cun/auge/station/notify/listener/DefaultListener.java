@@ -56,8 +56,10 @@ public class DefaultListener implements MessageListener {
 	private void handleMsg(StringMessage strMessage,JSONObject ob) throws Exception{
 		if(NotifyContents.CUNTAO_CRIUS_PROCESS.equals(strMessage.getTopic())){
 			processProcessor.handleProcessMsg(strMessage,ob);
-		}else if(NotifyContents.PARTNER_PEIXUN_TOPIC.equals(strMessage.getTopic())){
-			partnerPeixunBO.handlePeixunProcess(strMessage, ob);
+		}else if(NotifyContents.CUNXUEXI_PEIXUN_COMPLETE_TOPIC.equals(strMessage.getTopic())){
+			partnerPeixunBO.handlePeixunFinishSucess(strMessage, ob);
+		}else if(NotifyContents.CRM_ORDER_PAYMENT_SUCESS.equals(strMessage.getTopic())){
+			partnerPeixunBO.handlePeixunPaymentProcess(strMessage, ob);
 		}else if(NotifyContents.ALILANG_REGISTER_TOPIC.equals(strMessage.getTopic())){ 
 			alilangUserRegister.register(ob.getString("mobile"), ob.getString("alilangUid"));
 		}else{

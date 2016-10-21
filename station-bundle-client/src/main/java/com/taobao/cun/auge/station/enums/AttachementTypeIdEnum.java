@@ -29,6 +29,8 @@ public class AttachementTypeIdEnum implements Serializable {
 	public static final AttachementTypeIdEnum STATION_DECORATE_SYYJ = new AttachementTypeIdEnum(10L, "服务站装修记录-室外远景");
 	public static final AttachementTypeIdEnum STATION_DECORATE_SYJJ = new AttachementTypeIdEnum(11L, "服务站装修记录-室外近景");
 	public static final AttachementTypeIdEnum STATION_DECORATE_SNT = new AttachementTypeIdEnum(12L, "服务站装修记录-室内图");
+    public static final AttachementTypeIdEnum STATION_DECORATE_FRAME = new AttachementTypeIdEnum(13L, "服务站装修记录-框架图");
+    public static final AttachementTypeIdEnum STATION_DECORATE_LOGO = new AttachementTypeIdEnum(14L, "服务站装修记录-LOGO墙图");
 
     static {
         mappings.put(1L, IDCARD_IMG);
@@ -43,6 +45,8 @@ public class AttachementTypeIdEnum implements Serializable {
         mappings.put(10L, STATION_DECORATE_SYYJ);
         mappings.put(11L, STATION_DECORATE_SYJJ);
         mappings.put(12L, STATION_DECORATE_SNT);
+        mappings.put(13L, STATION_DECORATE_FRAME);
+        mappings.put(14L, STATION_DECORATE_LOGO);
         
     }
     

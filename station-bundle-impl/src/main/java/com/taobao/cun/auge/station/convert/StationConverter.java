@@ -99,7 +99,7 @@ public class StationConverter {
 		station.setState(stationDto.getState() ==null? null: stationDto.getState().getCode());
 		station.setStationNum(stationDto.getStationNum());
 		station.setStatus(stationDto.getStatus() ==null? null: stationDto.getStatus().getCode());
-		
+		station.setFeature(FeatureUtil.toString(stationDto.getFeature()));
 		
 		//老字段，人相关信息继续同步
 		station.setTaobaoNick(stationDto.getTaobaoNick());

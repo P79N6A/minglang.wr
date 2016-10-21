@@ -37,6 +37,7 @@ public final class QuitStationApplyConverter {
 
 		QuitStationApplyDto quitStationApplyDto = new QuitStationApplyDto();
 
+		quitStationApplyDto.setId(quitStationApply.getId());
 		quitStationApplyDto.setApprovalFileName(quitStationApply.getApprovalFileName());
 		quitStationApplyDto.setAssertUseState(AssertUseStateEnum.valueof(quitStationApply.getAssetType()));
 		quitStationApplyDto.setInstanceId(quitStationApply.getPartnerInstanceId());

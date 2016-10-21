@@ -99,4 +99,13 @@ public interface StationDecorateService {
 	 */
 	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException;
 	
+	/**
+	 * 合伙人确认进入装修中
+	 */
+	public void confirmAcessDecorating(Long id);
+	
+	/**
+	 * 判断装修装状态是否允许合伙人退出
+	 */
+	public void judgeDecorateQuit(Long stationId);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
@@ -42,6 +43,23 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+
+	/**
+	 *
+	 * @param partnerId
+	 * @param isCurrent
+	 * @return
+	 */
+	public List<PartnerStationRel> getPartnerStationRelByPartnerId(Long partnerId, String isCurrent);
+	
+	/**
+	 *
+	 * @param stationId
+	 * @param isCurrent
+	 * @return
+	 */
+	public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent);
+	
 
 	/**
 	 * 根据stationapplyId查询实例id
@@ -111,7 +129,25 @@ public interface PartnerInstanceBO {
 	 * @throws AugeServiceException
 	 */
 	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException;
-
+	
+	/**
+	 * 查询一个村点上，所有的实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException;
+	
+	/**
+	 * 查询村点上，最后一个结束服务的实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException;
+	
 	/**
 	 * 状态流转
 	 * 
@@ -128,14 +164,11 @@ public interface PartnerInstanceBO {
 	/**
 	 * 更新实例
 	 * 
-	 * @param instanceId
-	 * @param instance
 	 */
 	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
 
 	/**
 	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
-	 * 
 	 * @param instanceId
 	 * @return
 	 * @throws AugeServiceException
@@ -217,6 +250,65 @@ public interface PartnerInstanceBO {
 	
 	public void finishCourse(Long taobaoUserId) throws AugeServiceException;
 	
+	/**
+	 * 是否所有合伙人都处于退出待解冻、已退出状态
+	 * 
+	 * @param stationId
+	 * @throws AugeServiceException
+	 */
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+
+	/**
+	 * 同一个站点，除instanceId的合伙人，其他合伙人是否都处于退出待解冻、已退出状态
+	 * 
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
+
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+
+	/**
+	 * 获得当前人的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
 	
+	/**
+	 * 获得当前服务站的历史对应关系
+	 */
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+
+	/**
+	 * 停业中，重新进入服务中
+	 * 
+	 * @param instanceId
+	 * @param preState
+	 * @param postState
+	 * @param operator
+	 * @throws AugeServiceException
+	 */
+	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
+			throws AugeServiceException;
+	
+	
+	/**
+	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 *
+	 * @param partnerId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	
+	
+	public void updateIsCurrentByInstanceId(Long instanceId,PartnerInstanceIsCurrentEnum isCurrentEnum)throws AugeServiceException;
 
 }
