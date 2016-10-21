@@ -5,6 +5,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -76,5 +77,12 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
         ValidateUtils.notNull(wisdomCountyApplyDto.getId());
         wisdomCountyApplyBO.updateWisdomCountyApply(wisdomCountyApplyDto);
+    }
+
+    @Override
+    public boolean audit(WisdomCountyApplyAuditDto dto) throws AugeServiceException {
+        ValidateUtils.notNull(dto.getId());
+        ValidateUtils.notNull(dto.getState());
+        return false;
     }
 }

@@ -15,6 +15,7 @@ import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import org.apache.commons.collections.CollectionUtils;
@@ -93,5 +94,18 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         WisdomCountyApply apply = WisdomCountyApplyConverter.dtoTo(wisdomCountyApplyDto);
         DomainUtils.beforeUpdate(apply, wisdomCountyApplyDto.getOperator());
         wisdomCountyApplyMapper.updateByPrimaryKeySelective(apply);
+    }
+
+    @Override
+    public boolean audit(WisdomCountyApplyAuditDto auditDto) throws AugeServiceException {
+        ValidateUtils.notNull(auditDto.getId());
+        ValidateUtils.notNull(auditDto.getState());
+        WisdomCountyApply wisdomCountyApply = wisdomCountyApplyMapper.selectByPrimaryKey(auditDto.getId());
+        if (!"APPLY".equals(wisdomCountyApply.getState())){
+            throw new AugeServiceException("该县点不处于报名状态中");
+        }
+        wisdomCountyApply.setState(auditDto.getState().getCode());
+        DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());
+        return wisdomCountyApplyMapper.updateByPrimaryKeySelective(wisdomCountyApply) == 1;
     }
 }
