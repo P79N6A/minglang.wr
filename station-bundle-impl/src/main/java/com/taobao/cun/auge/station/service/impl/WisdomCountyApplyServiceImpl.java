@@ -2,6 +2,10 @@ package com.taobao.cun.auge.station.service.impl;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
@@ -83,6 +87,8 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     public boolean audit(WisdomCountyApplyAuditDto dto) throws AugeServiceException {
         ValidateUtils.notNull(dto.getId());
         ValidateUtils.notNull(dto.getState());
-        return false;
+        return wisdomCountyApplyBO.audit(dto);
     }
+
+
 }

@@ -51,4 +51,6 @@ public final class EventConstant {
 	 */
 	public static final String PARTNER_STATION_STATE_CHANGE_EVENT = "PARTNER_STATION_STATE_CHANGE_EVENT";
 
+	public static final String WISDOM_COUNTY_APPLY_EVENT = "WISDOM_COUNTY_APPLY_EVENT";
+
 }
