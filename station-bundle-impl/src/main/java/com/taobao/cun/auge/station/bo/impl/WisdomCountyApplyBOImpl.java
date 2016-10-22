@@ -109,8 +109,11 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         }
         wisdomCountyApply.setState(auditDto.getState().getCode());
         DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());
-        dispatchAuditEvent(auditDto);
-        return wisdomCountyApplyMapper.updateByPrimaryKeySelective(wisdomCountyApply) == 1;
+        if (wisdomCountyApplyMapper.updateByPrimaryKeySelective(wisdomCountyApply) == 1){
+            dispatchAuditEvent(auditDto);
+            return true;
+        }
+        return false;
     }
 
     private void dispatchAuditEvent(WisdomCountyApplyAuditDto dto){
