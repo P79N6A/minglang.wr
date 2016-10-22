@@ -26,5 +26,7 @@ public interface WisdomCountyApplyBO {
 
     public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
 
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException;
+
     public boolean audit(WisdomCountyApplyAuditDto auditDto) throws AugeServiceException;
 }

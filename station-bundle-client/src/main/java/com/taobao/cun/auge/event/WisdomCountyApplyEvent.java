@@ -7,6 +7,8 @@ import com.taobao.cun.auge.common.OperatorDto;
  */
 public class WisdomCountyApplyEvent extends OperatorDto {
 
+    private static final long serialVersionUID = 5100919814119306345L;
+
     private Long applyId;
 
     private String remark;

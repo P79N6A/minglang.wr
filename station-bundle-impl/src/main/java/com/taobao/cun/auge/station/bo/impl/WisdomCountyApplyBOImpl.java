@@ -22,6 +22,8 @@ import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ import java.util.stream.Collectors;
  */
 @Component("wisdomCountyApplyBO")
 public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
+
+    private static final Logger logger = LoggerFactory.getLogger(WisdomCountyApplyBOImpl.class);
 
     @Autowired
     WisdomCountyApplyMapper wisdomCountyApplyMapper;
@@ -100,6 +104,19 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException {
+        ValidateUtils.notNull(countyId);
+        ValidateUtils.notNull(operator);
+        WisdomCountyApply apply = new WisdomCountyApply();
+        DomainUtils.beforeDelete(apply, operator);
+        WisdomCountyApplyExample example = new WisdomCountyApplyExample();
+        WisdomCountyApplyExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andCountyIdEqualTo(countyId);
+        wisdomCountyApplyMapper.updateByExampleSelective(apply, example);
+    }
+
+    @Override
     public boolean audit(WisdomCountyApplyAuditDto auditDto) throws AugeServiceException {
         ValidateUtils.notNull(auditDto.getId());
         ValidateUtils.notNull(auditDto.getState());
@@ -110,7 +127,11 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         wisdomCountyApply.setState(auditDto.getState().getCode());
         DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());
         if (wisdomCountyApplyMapper.updateByPrimaryKeySelective(wisdomCountyApply) == 1){
-            dispatchAuditEvent(auditDto);
+            try {
+                dispatchAuditEvent(auditDto);
+            } catch (Exception e){
+                logger.error("dispatch wisdom county apply event error", e);
+            }
             return true;
         }
         return false;

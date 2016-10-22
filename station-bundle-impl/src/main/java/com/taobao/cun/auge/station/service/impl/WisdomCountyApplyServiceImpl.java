@@ -84,10 +84,25 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     }
 
     @Override
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException {
+        ValidateUtils.notNull(countyId);
+        ValidateUtils.notNull(operator);
+        wisdomCountyApplyBO.deleteWisdomCountyApplyByCountyId(countyId, operator);
+    }
+
+    @Override
     public boolean audit(WisdomCountyApplyAuditDto dto) throws AugeServiceException {
         ValidateUtils.notNull(dto.getId());
         ValidateUtils.notNull(dto.getState());
         return wisdomCountyApplyBO.audit(dto);
+    }
+
+    @Transactional
+    @Override
+    public void apply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+        ValidateUtils.notNull(wisdomCountyApplyDto);
+        deleteWisdomCountyApplyByCountyId(wisdomCountyApplyDto.getCountyId(), wisdomCountyApplyDto.getOperator());
+        addWisdomCountyApply(wisdomCountyApplyDto);
     }
 
 
