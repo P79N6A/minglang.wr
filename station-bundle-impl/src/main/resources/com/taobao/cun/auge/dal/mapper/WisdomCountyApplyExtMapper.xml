@@ -18,8 +18,6 @@
     <result column="county_id" property="countyId" jdbcType="BIGINT" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="leader_phone" property="leaderPhone" jdbcType="VARCHAR" />
-    <result column="apply_attachment_id" property="applyAttachmentId" jdbcType="BIGINT" />
-    <result column="function_attachment_id" property="functionAttachmentId" jdbcType="BIGINT" />
     <result column="state" property="state" jdbcType="VARCHAR" />
   </resultMap>
 
@@ -36,8 +34,6 @@
     w.county_id,
     w.remark,
     w.leader_phone,
-    w.apply_attachment_id,
-    w.function_attachment_id,
     w.state
     from wisdom_county_apply w, county_station s, cuntao_org org
     where w.county_id = s.id and s.org_id = org.id and s.is_deleted='n' and org.is_deleted='n' and w.is_deleted='n'
