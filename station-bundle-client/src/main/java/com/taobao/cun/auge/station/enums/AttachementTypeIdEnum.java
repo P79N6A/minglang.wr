@@ -48,15 +48,11 @@ public class AttachementTypeIdEnum implements Serializable {
         mappings.put(10L, STATION_DECORATE_SYYJ);
         mappings.put(11L, STATION_DECORATE_SYJJ);
         mappings.put(12L, STATION_DECORATE_SNT);
-<<<<<<< HEAD
         mappings.put(13L, STATION_DECORATE_FRAME);
         mappings.put(14L, STATION_DECORATE_LOGO);
         
-=======
         mappings.put(15L, WISDOM_COUNTY_APPLY);
         mappings.put(16L, WISDOM_COUNTY_FUNCTION);
-
->>>>>>> feature/20161017_184438_wisdom_1
     }
     
     private Long code;
