@@ -51,9 +51,13 @@ public final class EventConstant {
 	 */
 	public static final String PARTNER_STATION_STATE_CHANGE_EVENT = "PARTNER_STATION_STATE_CHANGE_EVENT";
 
+<<<<<<< HEAD
 	/**
 	 * 淘帮手合伙人变更
 	 */
 	public static final String CHANGE_TP_EVENT = "CHANGE_TP_EVENT";
+=======
+	public static final String WISDOM_COUNTY_APPLY_EVENT = "WISDOM_COUNTY_APPLY_EVENT";
+>>>>>>> feature/20161017_184438_wisdom_1
 
 }

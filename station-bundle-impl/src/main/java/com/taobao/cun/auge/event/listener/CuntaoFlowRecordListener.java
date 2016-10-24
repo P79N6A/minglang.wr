@@ -27,9 +27,13 @@ import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
+<<<<<<< HEAD
 		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
 		EventConstant.CHANGE_TP_EVENT})
 
+=======
+		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT })
+>>>>>>> feature/20161017_184438_wisdom_1
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -53,12 +57,18 @@ public class CuntaoFlowRecordListener implements EventListener {
 			processChildMaxNumChangeEvent(event);
 		} else if (event.getValue() instanceof PartnerInstanceLevelChangeEvent) {
 			processLevelChangeEvent(event);
+<<<<<<< HEAD
 		} else if (event.getValue() instanceof ChangeTPEvent){
 			processChangeTPEvent(event);
+=======
+		} else if (event.getValue() instanceof WisdomCountyApplyEvent) {
+			processWisdomCountyApplyEvent(event);
+>>>>>>> feature/20161017_184438_wisdom_1
 		}
 
 	}
 
+<<<<<<< HEAD
 	private void processChangeTPEvent(Event event){
 		ChangeTPEvent changeTPEvent = (ChangeTPEvent) event.getValue();
 		String operator = changeTPEvent.getOperator();
@@ -73,6 +83,26 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperateTime(new Date());
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 		logger.info("Finished to handle event." + JSON.toJSONString(changeTPEvent));
+=======
+	private void processWisdomCountyApplyEvent(Event event){
+		WisdomCountyApplyEvent applyEvent = (WisdomCountyApplyEvent) event.getValue();
+		logger.info("receive event." + JSON.toJSONString(applyEvent));
+		String operator = applyEvent.getOperator();
+		OperatorTypeEnum operatorType = applyEvent.getOperatorType();
+		String buildOperatorName = buildOperatorName(operator, operatorType);
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		cuntaoFlowRecord.setTargetId(applyEvent.getApplyId());
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.WISDOM_COUNTY_APPLY.getCode());
+		cuntaoFlowRecord.setNodeTitle("智慧县域报名审核");
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecord.setRemarks(applyEvent.getRemark());
+		cuntaoFlowRecord.setOperateOpinion(applyEvent.getOpinion());
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+
+		logger.info("Finished to handle event." + JSON.toJSONString(applyEvent));
+>>>>>>> feature/20161017_184438_wisdom_1
 	}
 
 	private void processLevelChangeEvent(Event event) {
