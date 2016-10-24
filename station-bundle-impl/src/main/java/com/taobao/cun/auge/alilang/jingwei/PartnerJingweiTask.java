@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,10 @@ import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
-import com.google.common.base.Strings;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManager;
 import com.taobao.notify.remotingclient.SendResult;
@@ -36,6 +41,8 @@ public class PartnerJingweiTask extends JingweiTask {
 	private Client client;
 	@Autowired
     private NotifyManager notifyManager;
+	@Resource
+	private PartnerInstanceBO partnerInstanceBO;
 	
 	@Override
 	public void start() {
@@ -50,13 +57,17 @@ public class PartnerJingweiTask extends JingweiTask {
             			for(int index = 0; index < modifiedRows.size(); index++){
             				Map<String, Serializable> modifiedRow = modifiedRows.get(index);
             				Map<String, Serializable> row = updateEvent.getRowDataMaps().get(index);
-            				
-            				String mobile = (String) modifiedRow.get("mobile");
-            				String alilangUserId = (String) row.get("alilang_user_id");
-            				if(!Strings.isNullOrEmpty(mobile) && !Strings.isNullOrEmpty(alilangUserId)){
+            				PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getCurrentPartnerInstanceByPartnerId((long) row.get("id"));
+            				if(	partnerInstanceDto != null 
+            						&& partnerInstanceDto.getType().getCode().equals(PartnerInstanceTypeEnum.TP.getCode()) 
+            						&& (partnerInstanceDto.getState().getCode().equals(PartnerInstanceStateEnum.DECORATING.getCode())
+            						|| partnerInstanceDto.getState().getCode().equals(PartnerInstanceStateEnum.SERVICING.getCode()))){
+            					String mobile = (String) modifiedRow.get("mobile"); //new mobile
+            					String omobile = (String) row.get("mobile");    //old mobile
             					PartnerMessage partnerMessage = new PartnerMessage();
             					partnerMessage.setTaobaoUserId((long) row.get("taobao_user_id"));
             					partnerMessage.setMobile(mobile);
+            					partnerMessage.setOmobile(omobile);
             					partnerMessage.setAction("update");
             					partnerMessage.setEmail((String) row.get("email"));
             					partnerMessage.setName((String) row.get("name"));

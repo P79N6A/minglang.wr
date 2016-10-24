@@ -6,12 +6,19 @@ public class PartnerMessage {
 	private long taobaoUserId;
 	private String name;
 	private String mobile;
+	private String omobile;
 	private String alilangUserId;
 	private String email;
 	private String action;
 	@JSONField(name="orgId")
 	private long alilangOrgId;
 	
+	public String getOmobile() {
+		return omobile;
+	}
+	public void setOmobile(String omobile) {
+		this.omobile = omobile;
+	}
 	public long getAlilangOrgId() {
 		return alilangOrgId;
 	}
