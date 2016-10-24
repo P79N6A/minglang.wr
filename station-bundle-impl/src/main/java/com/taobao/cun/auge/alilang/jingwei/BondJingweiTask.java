@@ -25,7 +25,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.notify.message.StringMessage;
-import com.taobao.notify.remotingclient.NotifyManager;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
 import com.taobao.notify.remotingclient.SendResult;
 
 /**
@@ -43,7 +43,7 @@ public class BondJingweiTask extends JingweiTask {
 	@Resource
 	private PartnerInstanceBO partnerInstanceBO;
 	@Autowired
-    private NotifyManager notifyManager;
+    private NotifyManagerBean notifyPublisherManagerBean;
 	
 	@Override
 	public void start() {
@@ -79,7 +79,7 @@ public class BondJingweiTask extends JingweiTask {
 	            					stringMessage.setBody(str);
 	            					stringMessage.setTopic(topic);
 	            					stringMessage.setMessageType(messageType);
-	            					SendResult sendResult = notifyManager.sendMessage(stringMessage);
+	            					SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
 	            					if(sendResult.isSuccess()){
 	            						logger.info("messageId:{}", sendResult.getMessageId());
 	            					}else{

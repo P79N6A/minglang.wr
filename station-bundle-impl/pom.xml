@@ -54,11 +54,12 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-metaq</artifactId>
 		</dependency>
-
+		<!--  
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-maven</artifactId>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-endpoints</artifactId>
@@ -96,6 +97,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>

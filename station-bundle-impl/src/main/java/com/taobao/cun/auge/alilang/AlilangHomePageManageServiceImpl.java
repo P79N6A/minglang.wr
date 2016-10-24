@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
-@Service("alilangHomePageManageService")
+//@Service("alilangHomePageManageService")
 @HSFProvider(serviceInterface= AlilangHomePageManageService.class)
 public class AlilangHomePageManageServiceImpl implements AlilangHomePageManageService {
 

@@ -22,7 +22,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.message.StringMessage;
-import com.taobao.notify.remotingclient.NotifyManager;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
 import com.taobao.notify.remotingclient.SendResult;
 
 @HSFProvider(serviceInterface = AlilangUserInitService.class)
@@ -35,7 +35,7 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 	@Autowired
 	private AccountMoneyMapper accountMoneyMapper;
 	@Autowired
-    private NotifyManager notifyManager;
+    private NotifyManagerBean notifyPublisherManagerBean;
 	@Value("${alilang.orgId}")
 	protected long alilangOrgId;
 	
@@ -75,7 +75,7 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 		stringMessage.setBody(str);
 		stringMessage.setTopic(topic);
 		stringMessage.setMessageType("sync-alilang-user");
-		SendResult sendResult = notifyManager.sendMessage(stringMessage);
+		SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
 		if(sendResult.isSuccess()){
 			logger.info("messageId:{}", sendResult.getMessageId());
 		}else{

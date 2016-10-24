@@ -18,7 +18,7 @@ import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 import com.google.common.base.Strings;
 import com.taobao.notify.message.StringMessage;
-import com.taobao.notify.remotingclient.NotifyManager;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
 import com.taobao.notify.remotingclient.SendResult;
 
 /**
@@ -35,7 +35,7 @@ public class PartnerJingweiTask extends JingweiTask {
 	
 	private Client client;
 	@Autowired
-    private NotifyManager notifyManager;
+    private NotifyManagerBean notifyPublisherManagerBean;
 	
 	@Override
 	public void start() {
@@ -70,7 +70,7 @@ public class PartnerJingweiTask extends JingweiTask {
             					stringMessage.setBody(str);
             					stringMessage.setTopic(topic);
             					stringMessage.setMessageType(messageType);
-            					SendResult sendResult = notifyManager.sendMessage(stringMessage);
+            					SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
             					if(sendResult.isSuccess()){
             						logger.info("messageId:{}", sendResult.getMessageId());
             					}else{
