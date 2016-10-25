@@ -77,7 +77,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         ValidateUtils.notNull(condition);
         WisdomCountyApplyExtExample extExample = WisdomCountyApplyConverter.conditionToExtExample(condition);
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
-        PageHelper.orderBy("gmt_create desc");
+        PageHelper.orderBy("id desc");
         Page<WisdomCountyApply> page = wisdomCountyApplyExtMapper.getPageWisdomCountyApply(extExample);
         return PageDtoUtil.success(page, page.stream().map(WisdomCountyApplyConverter::toDto).collect(Collectors.toList()));
     }

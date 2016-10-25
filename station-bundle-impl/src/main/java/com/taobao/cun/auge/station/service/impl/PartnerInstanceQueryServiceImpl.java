@@ -526,6 +526,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				return null;
 			}
 			dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
+			//防止缓存雪崩
 			int expireTime = 60 * 60 * 1 + RandomUtil.getInt(1, 100);
 			putLevelToCache(cacheKey, dto, expireTime);
 			return dto;
