@@ -95,6 +95,7 @@ import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.CalendarUtil;
+import com.taobao.util.RandomUtil;
 
 @Service("partnerInstanceQueryService")
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
@@ -525,7 +526,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				return null;
 			}
 			dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
-			putLevelToCache(cacheKey, dto, 60 * 60 * 12);
+			int expireTime = 60 * 60 * 1 + RandomUtil.getInt(1, 100);
+			putLevelToCache(cacheKey, dto, expireTime);
 			return dto;
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
