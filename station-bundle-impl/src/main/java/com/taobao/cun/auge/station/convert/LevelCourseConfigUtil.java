@@ -16,9 +16,24 @@ import com.google.common.collect.Sets;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 
+/**
+ * 类LevelCourseConfigUtil.java的实现描述：层级课程配置相关工具方法
+ * 层级课程关系配置在appResource表,其中app_resource表的type为@LevelCourseConfigUtil.LEVEL_COURSE_RELATION;
+ * name为level_LevelCourseTypeEnum如:S4_REQUIRED,S6_ELECTIVE,value为该层级选修或必修courseCode,code之间通过SPLITTER分割;
+ * @author xujianhui 2016年10月24日 上午10:43:47
+ */
 public class LevelCourseConfigUtil {
+    /**
+     * 层级跟课程类型连接符(构造appResource的name)
+     */
    private static final String LEVEL_COURSETYPE_SPLITTER = "_";
-   private static final String SPLITTER = ",";
+   /**
+    * courseCode分隔符
+    */
+   private static final String COURSECODE_SPLITTER = ",";
+   /**
+    * appResource中的type值
+    */
    public static final String LEVEL_COURSE_RELATION = "LevelToCourse";
     
    public static String getResourceType(){
@@ -36,12 +51,16 @@ public class LevelCourseConfigUtil {
             return new ResourceValueUpdateResult(false, resourceValue);
         }
         Set<String> codeSet = parseCourseCodeSet(resourceValue);
-        codeSet.remove(courseCode);
-        return new ResourceValueUpdateResult(true, toResourceValue(codeSet));
+        boolean removed = codeSet.remove(courseCode);
+        if(removed){
+            resourceValue = toResourceValue(codeSet);
+        }
+        return new ResourceValueUpdateResult(removed, resourceValue);
     }
     
     /**
      * 将此courseCode添加到resourceValue中(如果没有包含的话)
+     * 此方法对相同的courseCode和resourceValue保证幂等
      */
     public static ResourceValueUpdateResult addCourseCodeToResourceValue(String courseCode, String resourceValue){
         Set<String> codeSet = parseCourseCodeSet(resourceValue);
@@ -52,12 +71,17 @@ public class LevelCourseConfigUtil {
         return new ResourceValueUpdateResult(true, toResourceValue(codeSet));
     }
     
+    /**
+     * 将courseCode解析成集合返回
+     * @param resourceValue
+     * @return
+     */
     public static Set<String> parseCourseCodeSet(String resourceValue) {
         Set<String> codeSet = Sets.newLinkedHashSet();
         if(StringUtils.isBlank(resourceValue)){
             return codeSet;
         }
-        Collections.addAll(codeSet, resourceValue.split(SPLITTER));
+        Collections.addAll(codeSet, resourceValue.split(COURSECODE_SPLITTER));
         return codeSet;
     }
     
@@ -67,7 +91,7 @@ public class LevelCourseConfigUtil {
         }
         StringBuilder s = new StringBuilder("");
         for(String code:courseCodes){
-            s.append(code).append(SPLITTER);
+            s.append(code).append(COURSECODE_SPLITTER);
         }
         return s.substring(0, s.length() - 1);
     }
@@ -167,6 +191,12 @@ public class LevelCourseConfigUtil {
             }
             return resourceName.split(LEVEL_COURSETYPE_SPLITTER);
         }
+
+        @Override
+        public String toString() {
+            return "CourseLevelInfo [requiredLevels=" + requiredLevels + ", electiveLevels=" + electiveLevels + "]";
+        }
+        
     }
     
 }

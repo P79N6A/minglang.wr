@@ -1,12 +1,14 @@
 package com.taobao.cun.auge.station.dto;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 
-public class LevelExamConfigurationDto {
+public class LevelExamConfigurationDto implements Serializable {
     
+    private static final long serialVersionUID = 5978697568719760679L;
     /**
      * 是否打开开关 晋升时必须通过考试
      */
