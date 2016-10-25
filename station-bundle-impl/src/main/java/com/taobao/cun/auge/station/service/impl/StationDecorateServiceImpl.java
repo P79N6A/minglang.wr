@@ -208,10 +208,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				throw new AugeServiceException("当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
-			Station station=stationBO.getStationById(sd.getStationId());
-			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
-				throw new AugeServiceException("当前村点非装修状态");
-			}
+//			Station station=stationBO.getStationById(sd.getStationId());
+//			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
+//				throw new AugeServiceException("当前村点非装修状态");
+//			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
 		} catch (AugeServiceException augeException) {
