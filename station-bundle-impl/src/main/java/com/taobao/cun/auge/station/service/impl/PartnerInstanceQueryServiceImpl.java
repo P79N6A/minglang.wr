@@ -506,7 +506,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PartnerInstanceLevelDto dto = (PartnerInstanceLevelDto) tairCache.get(cacheKey);
 			if (null != dto) {
 				//防止缓存击穿
-				if (null == dto.getTaobaoUserId()) {
+				if (null == dto.getTaobaoUserId() || null == dto.getCurrentLevel()) {
 					return null;
 				}
 				return dto;
