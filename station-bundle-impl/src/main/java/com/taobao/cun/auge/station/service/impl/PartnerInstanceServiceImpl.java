@@ -748,10 +748,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
 		}
-
-		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
-		}
+        //装修改成不作为强制节点
+//		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+//			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+//		}
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());

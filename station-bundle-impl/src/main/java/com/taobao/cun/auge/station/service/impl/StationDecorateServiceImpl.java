@@ -129,6 +129,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
 				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		//固点3.0 特殊流程，允许先开业，再装修反馈
+		if(items==null){
+			 items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
+					PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.END);
+		}
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
 		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
