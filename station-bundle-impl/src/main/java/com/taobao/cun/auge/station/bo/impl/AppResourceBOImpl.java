@@ -64,6 +64,7 @@ public class AppResourceBOImpl implements AppResourceBO {
         if(existResource!=null){
             AppResource newResource = toAppResource(type, key, value, configurePerson, isDelete);
             newResource.setId(existResource.getId());
+            newResource.setGmtCreate(existResource.getGmtCreate());
             int count = appResourceMapper.updateByPrimaryKey(newResource);
             return count > 0;
         }else{

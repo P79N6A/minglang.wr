@@ -92,10 +92,10 @@
   </sql>
   
   <select id="groupCoursesByTag" resultMap="BaseResultMap" parameterType="int" >
-  <![CDATA[
   	select <include refid="Base_Column_List" /> from level_course
+  <![CDATA[
   	where ( select count(*) from level_course as ilc
-   				   where ilc.course_code = course_code and ilc.id <= id ) <= $topN
+   				   where ilc.course_code = course_code and ilc.id <= id ) <= #{topN}
    ]]>
   </select>
   

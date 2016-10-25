@@ -41,6 +41,7 @@ public class LevelCourseConvertor {
         List<LevelCourseEditDto> dtoList = Lists.newArrayList();
         for(LevelCourse course:courseList){
             LevelCourseEditDto editDto = new LevelCourseEditDto();
+            editDto.setGmtCreate(course.getGmtCreate());
             editDto.setCourseCode(course.getCourseCode());
             editDto.setCourseName(course.getCourseName());
             editDto.setGrowthIndex(course.getTag());
@@ -48,6 +49,9 @@ public class LevelCourseConvertor {
                 CourseLevelInfo info = courseLevelInfoMap.get(course.getCourseCode());
                 editDto.setElectiveLevels(info.getElectiveLevels());
                 editDto.setRequiredLevels(info.getRequiredLevels());
+                
+                Collections.sort(editDto.getRequiredLevels());
+                Collections.sort(editDto.getElectiveLevels());
             }
             dtoList.add(editDto);
         }
@@ -153,13 +157,13 @@ public class LevelCourseConvertor {
      * 计算待学习课程数
      */
     public static int computeLearningCount(Set<String> requiredCourseList, Map<String, PartnerPeixunDto> courseStatusMap) {
-        if(CollectionUtils.isEmpty(requiredCourseList) ){
+        if(CollectionUtils.isEmpty(requiredCourseList) || CollectionUtils.isEmpty(courseStatusMap) ){
             return 0;
         }
         int toLearningCount = 0;
         for(String courseCode:requiredCourseList){
-            String learningStatus = courseStatusMap.get(courseCode).getStatus();
-            if(CourseStatus.NEW.name().equals(learningStatus)){
+            PartnerPeixunDto partnerPeixunDto = courseStatusMap.get(courseCode);
+            if(partnerPeixunDto!=null && CourseStatus.NEW.name().equals(partnerPeixunDto.getStatus())) {
                 toLearningCount++;
             }
         }

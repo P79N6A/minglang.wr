@@ -31,6 +31,23 @@ public class LevelCourseEditDto implements Serializable {
 
     private String            growthIndex;
 
+    public LevelCourseEditDto(){}
+    
+    public LevelCourseEditDto(String courseName, String courseCode, String growthIndex) {
+        super();
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        this.growthIndex = growthIndex;
+    }
+
+    public LevelCourseEditDto(String courseName, String courseCode, List<String> requiredLevels,  List<String> electiveLevels) {
+        super();
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        this.requiredLevels = requiredLevels;
+        this.electiveLevels = electiveLevels;
+    }
+
     public String getCourseName() {
         return courseName;
     }

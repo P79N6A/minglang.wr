@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.LevelCourse;
 import com.taobao.cun.auge.dal.domain.LevelCourseExample;
@@ -13,6 +14,7 @@ import com.taobao.cun.auge.dal.mapper.LevelCourseMapper;
 import com.taobao.cun.auge.station.bo.LevelCourseBO;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
+@Component("levelCourseBO")
 public class LevelCourseBOImpl implements LevelCourseBO {
 
     @Autowired
@@ -33,6 +35,7 @@ public class LevelCourseBOImpl implements LevelCourseBO {
             LevelCourse existCourse = courses.get(0);
             levelCourse.setId(existCourse.getId());
             levelCourse.setGmtModified(new Date());
+            levelCourse.setGmtCreate(existCourse.getGmtModified());
             levelCourseMapper.updateByPrimaryKey(levelCourse);
         }
         return true;

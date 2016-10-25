@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
@@ -34,7 +36,10 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import com.taobao.cun.auge.station.service.LevelCourseQueryService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@Service("levelCourseQueryService")
+@HSFProvider(serviceInterface = LevelCourseQueryService.class)
 public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCourseQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelCourseBOImpl.class);
@@ -55,7 +60,10 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         if(!CollectionUtils.isEmpty(courseBo.queryLevelCourse(example))){
             return false;
         }
-        boolean isSaveSuccess = courseBo.saveLevelCourse(LevelCourseConvertor.toLevelCourse(course));
+        LevelCourse levelCourse = LevelCourseConvertor.toLevelCourse(course);
+        levelCourse.setGmtCreate(new Date());
+        levelCourse.setGmtModified(new Date());
+        boolean isSaveSuccess = courseBo.saveLevelCourse(levelCourse);
         return isSaveSuccess 
                 && addLevelCourseCode(course.getRequiredLevels(), LevelCourseTypeEnum.REQUIRED, course.getCourseCode())
                 && addLevelCourseCode(course.getElectiveLevels(), LevelCourseTypeEnum.ELECTIVE, course.getCourseCode());

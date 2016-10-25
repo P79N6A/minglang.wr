@@ -14,6 +14,7 @@ import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.alipay.AlipayAccountTagService;
 import com.taobao.cun.service.alipay.AlipayStandardBailService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
@@ -39,6 +40,11 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean partnerInstanceLevelDataService(@Value("${hsf.consumer.version.crius.partnerInstanceLevelDataService}") String version) {
 		return getConsumerBean(PartnerInstanceLevelDataService.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	@Bean(initMethod = "init")
+    public HSFSpringConsumerBean examUserDispatchService(@Value("${hsf.consumer.version.crius.examUserDispatchService}") String version) {
+        return getConsumerBean(ExamUserDispatchService.class, HSFGroup.HSF, version, 3000);
+    }
 
 	// cuntaocenter服务
 	@Bean(initMethod = "init")

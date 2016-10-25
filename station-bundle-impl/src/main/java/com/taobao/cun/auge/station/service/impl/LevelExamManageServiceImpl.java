@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
@@ -29,7 +30,10 @@ import com.taobao.cun.crius.exam.dto.UserDispatchDto;
 import com.taobao.cun.crius.exam.enums.ExamDispatchSourceEnum;
 import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@Service("levelExamManageService")
+@HSFProvider(serviceInterface = LevelExamManageService.class)
 public class LevelExamManageServiceImpl implements LevelExamManageService, LevelExamResultQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelExamManageServiceImpl.class);
@@ -119,16 +123,19 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
      * @return
      */
     private boolean dispatchExamPapers(Long taobaoUserId, String nickName, List<PartnerInstanceLevel>dispatchLevels){
-        if(CollectionUtils.isEmpty(dispatchLevels)){
-            return true;
-        }
         LevelExamConfigurationDto configurationDto = this.queryConfigure();
-        if(configurationDto==null || configurationDto.isDispatch()){
-            logger.error("LevelExamDispatchServiceImpl LevelExamConfigurationDto is null or is deleted, configurationDto:{}", configurationDto);
+        if(configurationDto==null){
+            logger.error("LevelExamDispatchServiceImpl LevelExamConfigurationDto is null");
             return false;
+        }
+        if(CollectionUtils.isEmpty(dispatchLevels) || !configurationDto.isDispatch()){
+            return true;
         }
         for(PartnerInstanceLevel level:dispatchLevels){
             Long paperId = configurationDto.getExamPaperId(PartnerInstanceLevel.valueOf(level.name()));
+            if(paperId == null){
+                continue;
+            }
             String extendInfo = JSON.toJSONString(new ExamLevelExtendInfo(level.name()));
             ExamDispatchDto newExamDispatchDto = newExamDispatchDto(taobaoUserId, nickName, paperId, extendInfo, "PartnerServicingLevelExamDispatchStrategy");
             ResultModel<Boolean> result = examUserDispatchService.dispatchExam(newExamDispatchDto);
