@@ -18,6 +18,7 @@ import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
+import com.google.common.base.Strings;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -58,11 +59,11 @@ public class PartnerJingweiTask extends JingweiTask {
             				Map<String, Serializable> modifiedRow = modifiedRows.get(index);
             				Map<String, Serializable> row = updateEvent.getRowDataMaps().get(index);
             				PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getCurrentPartnerInstanceByPartnerId((long) row.get("id"));
-            				if(	partnerInstanceDto != null 
+            				String mobile = (String) modifiedRow.get("mobile"); //new mobile
+            				if(!Strings.isNullOrEmpty(mobile) && partnerInstanceDto != null 
             						&& partnerInstanceDto.getType().getCode().equals(PartnerInstanceTypeEnum.TP.getCode()) 
             						&& (partnerInstanceDto.getState().getCode().equals(PartnerInstanceStateEnum.DECORATING.getCode())
             						|| partnerInstanceDto.getState().getCode().equals(PartnerInstanceStateEnum.SERVICING.getCode()))){
-            					String mobile = (String) modifiedRow.get("mobile"); //new mobile
             					String omobile = (String) row.get("mobile");    //old mobile
             					PartnerMessage partnerMessage = new PartnerMessage();
             					partnerMessage.setTaobaoUserId((long) row.get("taobao_user_id"));
