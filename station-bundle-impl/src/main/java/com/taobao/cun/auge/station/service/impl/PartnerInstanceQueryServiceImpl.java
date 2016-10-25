@@ -505,7 +505,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String cacheKey = LEVEL_CACHE_PRE + taobaoUserId;
 			PartnerInstanceLevelDto dto = (PartnerInstanceLevelDto) tairCache.get(cacheKey);
 			if (null != dto) {
-				//防止缓存击穿
+				// 防止缓存击穿
 				if (null == dto.getTaobaoUserId() || null == dto.getCurrentLevel()) {
 					return null;
 				}
@@ -513,7 +513,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
-				tairCache.put(cacheKey, new PartnerInstanceLevelDto(), 300);
+				putLevelToCache(cacheKey, new PartnerInstanceLevelDto(), 300);
 				return null;
 			}
 			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
@@ -521,11 +521,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
 					logger.error("PartnerInstaceLevel not exists: " + taobaoUserId);
 				}
-				tairCache.put(cacheKey, new PartnerInstanceLevelDto(), 300);
+				putLevelToCache(cacheKey, new PartnerInstanceLevelDto(), 300);
 				return null;
 			}
 			dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
-			tairCache.put(cacheKey, dto, 60 * 60 * 12);
+			putLevelToCache(cacheKey, dto, 60 * 60 * 12);
 			return dto;
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
@@ -536,6 +536,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	private void putLevelToCache(String cacheKey, PartnerInstanceLevelDto partnerInstanceLevelDto, int i) {
+		tairCache.put(cacheKey, partnerInstanceLevelDto, 300);
 	}
 
 	@Override
