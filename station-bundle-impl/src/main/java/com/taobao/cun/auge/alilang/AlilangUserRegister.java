@@ -39,6 +39,7 @@ public class AlilangUserRegister {
 				PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 				partnerDto.setAliLangUserId(alilangUserId);
 				partnerBO.updatePartner(partnerDto);
+				break;
 			}
 		}
 	}
