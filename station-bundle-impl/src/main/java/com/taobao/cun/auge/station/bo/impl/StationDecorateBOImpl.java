@@ -84,12 +84,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 							record.getPaymentType())) {
 				record.setSellerTaobaoUserId(getSeller(stationId));
 			}
-			if(StationDecoratePaymentTypeEnum.NONE.getCode().equals(
-					record.getPaymentType())){
-				record.setStatus(StationDecorateStatusEnum.DONE.getCode());
-			}else{
-				record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
-			}
+			record.setStatus(StationDecorateStatusEnum.UNDECORATE.getCode());
 			record.setIsValid(StationDecorateIsValidEnum.Y.getCode());
 			DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
 			stationDecorateMapper.insert(record);
