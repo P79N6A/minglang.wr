@@ -197,7 +197,13 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
         //更新lifecycle
         if(code.equals(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
 				"APPLY_IN"))){
-        partnerInstanceBO.finishCourse(userId);
+			try {
+				partnerInstanceBO.finishCourse(userId);
+			} catch (Exception e) {
+				logger.error(
+						"finish partnerInstance peixun error,"
+								+ ob.getLong("buyerAliId"), e);
+			}
         }
         return record;
 	}
