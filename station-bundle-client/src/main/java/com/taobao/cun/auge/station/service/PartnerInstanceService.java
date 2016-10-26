@@ -233,12 +233,14 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void reService(Long instanceId, String operator) throws AugeServiceException;
-
+	
+	public void upgradeDecorateLifeCycle(Long instanceId, String operator);
+	
 	/**
 	 * S7、S8合伙人层级晋升
 	 * @param partnerInstanceLevelDto
 	 * @throws AugeServiceException
 	 */
 	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException ;
-
+	
 }
