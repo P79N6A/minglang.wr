@@ -35,7 +35,7 @@ public class TairCacheImpl implements TairCache {
 			} else {
 				logger.debug("get(String) failed, key=[{}], Result:{}", key, result);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.error("get(String) failed, key=[" + key + "]", e);
 		}
 		return null;
@@ -51,7 +51,7 @@ public class TairCacheImpl implements TairCache {
 			} else {
 				logger.debug("get(String, int) failed, key=[{}], Result:{}", key, result);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.error("get(String, int) failed, key=[" + key + "]", e);
 		}
 		return null;
@@ -74,7 +74,7 @@ public class TairCacheImpl implements TairCache {
 			} else {
 				logger.debug("mget(List<String>) failed, keyList={}, Result:{}", keyList, result);
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.error("mget(List<String>) failed, keyList=" + keyList, e);
 		}
 		return null;

@@ -23,7 +23,7 @@ public class EventDispatcherUtil {
 	public static void dispatch(final String eventName, final Object obj) {
 		try {
 			// TransactionSynchronizationManager.isActualTransactionActive()暂时只支持事务开启时使用
-			boolean isActualTransactionActive = true;
+			boolean isActualTransactionActive = TransactionSynchronizationManager.isActualTransactionActive();
 			dispatctEvent(eventName, obj, isActualTransactionActive);
 		} catch (Exception e) {
 			String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
