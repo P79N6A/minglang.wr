@@ -129,6 +129,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
 				PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		//固点3.0 特殊流程，允许先开业，再装修反馈
+		if(items==null){
+			 items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
+					PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.END);
+		}
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
 		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
@@ -203,10 +208,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				throw new AugeServiceException("当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
-			Station station=stationBO.getStationById(sd.getStationId());
-			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
-				throw new AugeServiceException("当前村点非装修状态");
-			}
+//			Station station=stationBO.getStationById(sd.getStationId());
+//			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
+//				throw new AugeServiceException("当前村点非装修状态");
+//			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
 		} catch (AugeServiceException augeException) {

@@ -87,6 +87,7 @@ import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
+import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -144,6 +145,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	PartnerInstanceLevelDataService partnerInstanceLevelDataService;
+	
+	@Autowired
+	PartnerInstanceHandler partnerInstanceHandler;
 
 	@Autowired
 	TairCache tairCache;
@@ -701,4 +705,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		return partnerInstanceBO.getHistoryPartnerInstanceByStationId(stationId);
 	}
 
+	@Override
+	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException {
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+
+		PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
+		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instanceId);
+	}
 }
