@@ -233,4 +233,6 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void reService(Long instanceId, String operator) throws AugeServiceException;
+	
+	public void upgradeDecorateLifeCycle(Long instanceId, String operator);
 }
