@@ -30,6 +30,8 @@ public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
 
     private String job;
 
+    private String mail;
+
     private Long countyId;
 
     private String remark;
@@ -43,6 +45,14 @@ public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
     private WisdomCountyStateEnum state;
 
     private List<AttachementDto> attachementDtos;
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
 
     public List<AttachementDto> getAttachementDtos() {
         return attachementDtos;
