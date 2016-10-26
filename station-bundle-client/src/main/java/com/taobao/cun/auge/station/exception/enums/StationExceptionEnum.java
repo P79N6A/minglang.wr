@@ -16,7 +16,7 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 			"SIGN_MANAGE_PROTOCOL_FAIL", "签署管理协议失败");
 	
 	public static final StationExceptionEnum HAS_CHILDREN_TPA = new StationExceptionEnum(
-			"HAS_CHILDREN_TPA", "该合伙人下存在运营中的淘帮手");
+			"HAS_CHILDREN_TPA", "该合伙人下存在未退出的淘帮手，请先将其淘帮手退出后，才可以退出合伙人");
 	
 	public static final StationExceptionEnum PARTNER_INSTANCE_NOT_EXIST = new StationExceptionEnum(
 			"PARTNER_INSTANCE_NOT_EXIST", "合伙人实例不存在");
