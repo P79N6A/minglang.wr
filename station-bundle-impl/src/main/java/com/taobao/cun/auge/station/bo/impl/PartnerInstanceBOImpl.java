@@ -191,6 +191,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 		criteria.andStationIdEqualTo(stationId);
 		criteria.andIsDeletedEqualTo("n");
+		
+		//按照主键倒序
+		example.setOrderByClause("id DESC");
 
 		return partnerStationRelMapper.selectByExample(example);
 	}
@@ -724,5 +727,29 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		updateInstance.setCloseType("");
 		DomainUtils.beforeUpdate(updateInstance, operator);
 		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+	}
+
+	@Override
+	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(
+			Long taobaoUserId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
+		criteria.andIsDeletedEqualTo("n");
+		return ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example));
+	}
+
+	@Override
+	public void updateIsCurrentByInstanceId(Long instanceId,
+			PartnerInstanceIsCurrentEnum isCurrentEnum)
+			throws AugeServiceException {
+		PartnerStationRel updateInstance = new PartnerStationRel();
+		updateInstance.setIsCurrent(isCurrentEnum.getCode());
+		updateInstance.setId(instanceId);
+		DomainUtils.beforeUpdate(updateInstance, OperatorDto.defaultOperator().getOperator());
+		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+		
 	}
 }

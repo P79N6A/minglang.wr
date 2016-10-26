@@ -89,16 +89,17 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			instanceExtDto.copyOperatorDto(stateChangeEvent);
 			
 			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
-		}else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
-			//将生成合伙人按钮打开
-			if (PartnerInstanceTypeEnum.TP.equals(partnerType)){
-				PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
-				partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
-				partnerApplyDto.setOperator(stateChangeEvent.getOperator());
-				partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
-			}
 		}
+//		else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
+//			//将生成合伙人按钮打开
+//			if (PartnerInstanceTypeEnum.TP.equals(partnerType)){
+//				PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+//				partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+//				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+//				partnerApplyDto.setOperator(stateChangeEvent.getOperator());
+//				partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+//			}
+//		}
 
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}

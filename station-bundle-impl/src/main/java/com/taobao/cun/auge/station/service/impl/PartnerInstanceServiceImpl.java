@@ -698,7 +698,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 			}
 		} catch (AugeServiceException augeException) {
-			String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
+			String error = getAugeExceptionErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -1590,6 +1590,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getPartnerInstanceId());
 			if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
 				throw new AugeServiceException("type is not tpa");
+			}
+			if (partnerInstanceExtService.validateChildNum(newParentStationId)){
+				throw new AugeServiceException("the partner's tpa number is upper limit");
 			}
 			Long oldParentStationId = partnerInstanceDto.getParentStationId();
 			Long stationId = partnerInstanceDto.getStationId();

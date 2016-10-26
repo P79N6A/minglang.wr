@@ -297,7 +297,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		 String l=null;
 		 while((l=b.readLine())!=null){
 		 String queryString = ("ticket="+l+"&&code=bc471");
-         String lisReq = "http://cunxuexi.daily.taobao.net/user/sign/signin.json"+"?"+queryString;
+         String lisReq = "http://cunxuexi.taobao.com/user/sign/signin.json"+"?"+queryString;
          HttpClient httpClient = new HttpClient();
          HttpMethod method = new GetMethod(lisReq);
          HttpClientParams params = new HttpClientParams();
