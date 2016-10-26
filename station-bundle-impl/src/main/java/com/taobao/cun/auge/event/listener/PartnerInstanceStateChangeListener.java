@@ -10,13 +10,15 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
+import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
@@ -44,6 +46,9 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 	
 	@Autowired
 	PartnerInstanceExtService partnerInstanceExtService;
+	
+	@Autowired
+	PartnerApplyBO partnerApplyBO;
 
 	@Override
 	public void onMessage(Event event) {
@@ -64,15 +69,18 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		logger.info("partner instance." + JSON.toJSONString(instance));
-		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+		//小二强制停业，且状态是由装修中、或者服务中，变成停业申请中
+		if ((PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+				|| PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(stateChangeEnum))
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
-			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
+			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent);
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent, stateChangeEvent.getRemark());
+			//服务中
+			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent);
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			
@@ -82,6 +90,16 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			
 			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
 		}
+//		else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
+//			//将生成合伙人按钮打开
+//			if (PartnerInstanceTypeEnum.TP.equals(partnerType)){
+//				PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
+//				partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+//				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+//				partnerApplyDto.setOperator(stateChangeEvent.getOperator());
+//				partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+//			}
+//		}
 
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}

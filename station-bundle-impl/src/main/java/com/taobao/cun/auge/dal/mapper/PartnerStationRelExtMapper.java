@@ -3,8 +3,6 @@ package com.taobao.cun.auge.dal.mapper;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;

@@ -155,11 +155,12 @@
 			life.system
 		</if>
 		
-		  from partner_station_rel instance
+		from partner_station_rel instance
 		<if test="partnerType == null or partnerType == '' or partnerType == 'TP' or partnerType == 'tp' " >
 			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
 		</if>
 		
+
 		<if test="courseStatus !=null and courseStatus !=''">
         left join partner_course_record course on instance.taobao_user_id=course.partner_user_id and course.is_deleted='n' and course.course_type='APPLY_IN'
  		</if>
@@ -241,6 +242,9 @@
 		</if>
 		<if test="partnerState != null and partnerState != ''" >
 			and instance.state = #{partnerState,jdbcType=VARCHAR}
+		</if>
+		<if test="isCurrent != null and isCurrent != ''" >
+			and instance.is_current = #{isCurrent,jdbcType=VARCHAR}
 		</if>
 		<if test="taobaoNick != null and taobaoNick != ''" >
 			and p.taobao_nick = #{taobaoNick,jdbcType=VARCHAR}
@@ -344,6 +348,7 @@
 		and psr.service_end_time <= #{serviceEndTime,jdbcType=TIMESTAMP}
 	 ]]>
    </select>
+
    <resultMap id="StationStatusMap" type="com.taobao.cun.auge.dal.domain.ProcessedStationStatus">
 	<result column="status" jdbcType="VARCHAR" property="status" />
 	<result column="count" jdbcType="INTEGER" property="count" />
@@ -438,7 +443,7 @@
 	INNER JOIN station s on instance.station_id= s.id AND s.is_deleted='n'
 	INNER JOIN cuntao_org org on org.id= s.apply_org AND org.is_deleted= 'n'
 	INNER JOIN station_decorate decorate on decorate.station_id =s.id AND
-	decorate.is_deleted= 'n' and decorate.is_valid ='Y'
+	decorate.is_deleted= 'n' AND decorate.is_valid ='Y' AND instance.taobao_user_id=decorate.partner_user_id
 	INNER JOIN partner p on p.id = instance.partner_id AND p.is_deleted='n'
 	<if test="type == null or type == '' or type == 'TP' or type == 'tp' " >
 	LEFT JOIN partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'

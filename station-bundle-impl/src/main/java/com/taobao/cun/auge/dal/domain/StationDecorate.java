@@ -187,6 +187,9 @@ public class StationDecorate {
      *
      * @mbggenerated Tue Aug 09 16:50:31 CST 2016
      */
+    private String paymentType;
+    private String decorateType;
+    
     public Long getId() {
         return id;
     }
@@ -706,4 +709,21 @@ public class StationDecorate {
     public void setReflectSatisfySolid(String reflectSatisfySolid) {
         this.reflectSatisfySolid = reflectSatisfySolid;
     }
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public String getDecorateType() {
+		return decorateType;
+	}
+
+	public void setDecorateType(String decorateType) {
+		this.decorateType = decorateType;
+	}
+    
 }

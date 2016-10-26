@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -220,17 +221,16 @@ public interface PartnerInstanceService {
 	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException;
 
 	/**
+	 * 更换TPA的TP
+	 * @param changeTPDto
+	 * @throws AugeServiceException
+	 */
+	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException;
+	
+	/**
 	 * 已停业村点恢复服务中
 	 * @param instanceDto
 	 * @throws AugeServiceException
 	 */
 	public void reService(Long instanceId, String operator) throws AugeServiceException;
-	
-	/**
-	 * S7、S8合伙人层级晋升
-	 * @param partnerInstanceLevelDto
-	 * @throws AugeServiceException
-	 */
-	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException ;
-
 }

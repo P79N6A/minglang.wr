@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.QuitStationApplyExample;
 import com.taobao.cun.auge.dal.domain.QuitStationApplyExample.Criteria;
@@ -54,5 +55,11 @@ public class QuitStationApplyBOImpl implements QuitStationApplyBO {
 		
 		DomainUtils.beforeDelete(record, operator);
 		quitStationApplyMapper.updateByExampleSelective(record, example);
+	}
+	
+	@Override
+	public QuitStationApply getQuitStationApplyById(Long applyId) {
+		ValidateUtils.notNull(applyId);
+		return quitStationApplyMapper.selectByPrimaryKey(applyId);
 	}
 }

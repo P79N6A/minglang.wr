@@ -25,6 +25,7 @@ public class PartnerPeixunDto implements Serializable{
 	
 	private String courseDetailUrl;
 	private String myOrderUrl;
+	private String payUrl;
 	
 	public Long getUserId() {
 		return userId;
@@ -127,6 +128,12 @@ public class PartnerPeixunDto implements Serializable{
 	}
 	public void setGmtOrderDesc(String gmtOrderDesc) {
 		this.gmtOrderDesc = gmtOrderDesc;
+	}
+	public String getPayUrl() {
+		return payUrl;
+	}
+	public void setPayUrl(String payUrl) {
+		this.payUrl = payUrl;
 	}
 	
 	

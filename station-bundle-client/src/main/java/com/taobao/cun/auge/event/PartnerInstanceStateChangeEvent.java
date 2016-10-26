@@ -58,11 +58,6 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 	 */
 	private Long ownOrgId;
 
-	/**
-	 * 备注
-	 */
-	private String remark;
-
 	public Long getStationId() {
 		return stationId;
 	}
@@ -125,14 +120,6 @@ public class PartnerInstanceStateChangeEvent extends OperatorDto {
 
 	public void setPartnerInstanceId(Long partnerInstanceId) {
 		this.partnerInstanceId = partnerInstanceId;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
 	}
 
 	public String getStationName() {

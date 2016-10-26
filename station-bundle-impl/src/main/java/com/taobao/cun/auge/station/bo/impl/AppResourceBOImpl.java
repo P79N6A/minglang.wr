@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.AppResourceExample;
 import com.taobao.cun.auge.dal.domain.AppResourceExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AppResourceMapper;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("appResourceBO")
 public class AppResourceBOImpl implements AppResourceBO {
@@ -105,4 +107,15 @@ public class AppResourceBOImpl implements AppResourceBO {
         }
         return resourceMap;
     }
+
+    @Override
+	public String queryAppValueNotAllowNull(String type, String key) {
+		String value=queryAppResourceValue(type,key);
+		if(StringUtils.isEmpty(value)){
+			throw new AugeServiceException("query resource null:type:"+type+",key:"+key);
+		}else{
+			return value;
+		}
+	}
+
 }

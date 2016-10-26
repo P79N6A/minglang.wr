@@ -29,6 +29,9 @@
     <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
     <result column="carpet_area" jdbcType="VARCHAR" property="carpetArea" />
     <result column="reflect_satisfy_solid" jdbcType="VARCHAR" property="reflectSatisfySolid" />
+    <result column="payment_type" jdbcType="VARCHAR" property="paymentType" />
+    <result column="decorate_type" jdbcType="VARCHAR" property="decorateType" />
+    
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -107,7 +110,7 @@
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, station_id, partner_user_id, 
     seller_taobao_user_id, taobao_order_num, status, reflect_order_num, door_area, wall_area, 
     glass_area, inside_area, reflect_user_id, audit_opinion, reflect_nick, is_valid, 
-    carpet_area, reflect_satisfy_solid
+    carpet_area, reflect_satisfy_solid,payment_type,decorate_type
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationDecorateExample" resultMap="BaseResultMap">
     <!--
@@ -175,7 +178,7 @@
       status, reflect_order_num, door_area, 
       wall_area, glass_area, inside_area, 
       reflect_user_id, audit_opinion, reflect_nick, 
-      is_valid, carpet_area, reflect_satisfy_solid
+      is_valid, carpet_area, reflect_satisfy_solid,payment_type,decorate_type
       )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{stationId,jdbcType=BIGINT}, 
@@ -183,7 +186,7 @@
       #{status,jdbcType=VARCHAR}, #{reflectOrderNum,jdbcType=VARCHAR}, #{doorArea,jdbcType=VARCHAR}, 
       #{wallArea,jdbcType=VARCHAR}, #{glassArea,jdbcType=VARCHAR}, #{insideArea,jdbcType=VARCHAR}, 
       #{reflectUserId,jdbcType=BIGINT}, #{auditOpinion,jdbcType=VARCHAR}, #{reflectNick,jdbcType=VARCHAR}, 
-      #{isValid,jdbcType=VARCHAR}, #{carpetArea,jdbcType=VARCHAR}, #{reflectSatisfySolid,jdbcType=VARCHAR}
+      #{isValid,jdbcType=VARCHAR}, #{carpetArea,jdbcType=VARCHAR}, #{reflectSatisfySolid,jdbcType=VARCHAR}, #{paymentType,jdbcType=VARCHAR}, #{decorateType,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.StationDecorate">
@@ -260,6 +263,12 @@
       <if test="reflectSatisfySolid != null">
         reflect_satisfy_solid,
       </if>
+      <if test="paymentType != null">
+        payment_type,
+      </if>
+      <if test="decorateType != null">
+        decorate_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -324,6 +333,12 @@
       </if>
       <if test="reflectSatisfySolid != null">
         #{reflectSatisfySolid,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentType != null">
+        #{paymentType,jdbcType=VARCHAR},
+      </if>
+      <if test="decorateType != null">
+        #{decorateType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -412,6 +427,12 @@
       <if test="record.reflectSatisfySolid != null">
         reflect_satisfy_solid = #{record.reflectSatisfySolid,jdbcType=VARCHAR},
       </if>
+       <if test="record.paymentType != null">
+        payment_type = #{record.paymentType,jdbcType=VARCHAR},
+      </if>
+       <if test="record.decorateType != null">
+        decorate_type = #{record.decorateType,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -445,7 +466,9 @@
       reflect_nick = #{record.reflectNick,jdbcType=VARCHAR},
       is_valid = #{record.isValid,jdbcType=VARCHAR},
       carpet_area = #{record.carpetArea,jdbcType=VARCHAR},
-      reflect_satisfy_solid = #{record.reflectSatisfySolid,jdbcType=VARCHAR}
+      reflect_satisfy_solid = #{record.reflectSatisfySolid,jdbcType=VARCHAR},
+       payment_type = #{record.payment_type,jdbcType=VARCHAR},
+        decorate_type = #{record.decorateType,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -521,6 +544,12 @@
       <if test="reflectSatisfySolid != null">
         reflect_satisfy_solid = #{reflectSatisfySolid,jdbcType=VARCHAR},
       </if>
+      <if test="paymentType != null">
+        payment_type = #{paymentType,jdbcType=VARCHAR},
+      </if>
+      <if test="decorateType != null">
+        decorate_type = #{decorateType,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -551,7 +580,17 @@
       reflect_nick = #{reflectNick,jdbcType=VARCHAR},
       is_valid = #{isValid,jdbcType=VARCHAR},
       carpet_area = #{carpetArea,jdbcType=VARCHAR},
-      reflect_satisfy_solid = #{reflectSatisfySolid,jdbcType=VARCHAR}
+      reflect_satisfy_solid = #{reflectSatisfySolid,jdbcType=VARCHAR},
+      payment_type = #{paymentType,jdbcType=VARCHAR},
+      decorate_type = #{decorateType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <update id="invalidOldDecorateRecord" parameterType="map">
+     update station_decorate
+     set is_valid=#{valid}
+     where is_deleted='n'
+     and station_id=#{stationId}
+  </update>
+  
 </mapper>

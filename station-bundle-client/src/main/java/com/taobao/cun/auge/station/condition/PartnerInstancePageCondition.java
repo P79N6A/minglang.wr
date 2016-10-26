@@ -39,6 +39,7 @@ public class PartnerInstancePageCondition extends PageQuery{
 //	@NotNull(message = "partnerType is null")
 	private PartnerInstanceTypeEnum partnerType;
 	
+	//合伙人的级别
 	private PartnerInstanceLevelEnum partnerInstanceLevel;
 
 	// 所属TP商id
@@ -46,6 +47,9 @@ public class PartnerInstancePageCondition extends PageQuery{
 	
 	// 父站点id
 	private Long parentStationId;
+	
+	//是否是当前人
+	private Boolean isCurrent;
 
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -142,6 +146,12 @@ public class PartnerInstancePageCondition extends PageQuery{
 	public void setPartnerInstanceLevel(PartnerInstanceLevelEnum partnerInstanceLevel) {
 		this.partnerInstanceLevel = partnerInstanceLevel;
 	}
-	
-	
+
+	public Boolean getIsCurrent() {
+		return isCurrent;
+	}
+
+	public void setIsCurrent(Boolean isCurrent) {
+		this.isCurrent = isCurrent;
+	}
 }

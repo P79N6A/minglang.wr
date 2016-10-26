@@ -24,4 +24,5 @@ public interface AppResourceBO {
 	
 	public boolean configAppResource(@NotNull String type,@NotNull  String key, @NotNull String value, boolean isDelete, @NotNull String configurePerson);
 	
+	public String queryAppValueNotAllowNull(String type, String key);
 }

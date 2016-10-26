@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -64,9 +62,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
 @Component("tpvStrategy")
-public class TpvStrategy implements PartnerInstanceStrategy {
-	
-	private static final Logger logger = LoggerFactory.getLogger(TpvStrategy.class);
+public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
@@ -122,7 +118,7 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void validateExistChildrenForClose(Long instanceId) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
 		// TODO Auto-generated method stub
 
 	}
@@ -182,16 +178,6 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		/*if(partnerInstanceQuitDto.getIsQuitStation()) {
-			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
-			Station station = stationBO.getStationById(stationId);
-			if (station != null) {
-				if (StringUtils.equals(StationStatusEnum.QUITING.getCode(), station.getStatus())) {
-					stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceQuitDto.getOperator());
-				}
-			}
-		}*/
-		
 	}
 	
 	@Override
@@ -337,18 +323,32 @@ public class TpvStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-    public void startClosing(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+    public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
         PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
         ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
+        
+        Long applyId = findCloseApplyId(instanceId);
         // FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-        generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+        generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
     }
 
 	@Override
-	public void startQuiting(Long instanceId, OperatorDto operatorDto, String remark) throws AugeServiceException {
+	public void startQuiting(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
+		
+		Long applyId = findQuitApplyId(instanceId);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, remark);
+		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
+	}
+	
+	@Override
+	public void validateAssetBack(Long instanceId){
+		
+	}
+
+	@Override
+	public void validateOtherPartnerQuit(Long instanceId) {
+		// TODO Auto-generated method stub
 	}
 }
