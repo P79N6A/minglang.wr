@@ -245,5 +245,13 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition);
+	
+	/**
+	 * 是否存在未退出的下一级的合伙人，例如，合伙人下面是否还有淘帮手
+	 * 
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException;
 
 }
