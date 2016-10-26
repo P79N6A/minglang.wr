@@ -83,7 +83,7 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	}
 
 	public static PartnerInstanceLevelEnum valueof(String levelStr) {
-		if (levelStr == null)
+		if (levelStr == null || levelStr.length() == 0)
 			return null;
 		PartnerInstanceLevel level = PartnerInstanceLevel.valueOf(levelStr);
 		if (null == level) {
