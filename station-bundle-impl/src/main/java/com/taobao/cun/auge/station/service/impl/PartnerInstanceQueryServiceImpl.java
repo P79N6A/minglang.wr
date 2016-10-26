@@ -19,6 +19,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.BeanCopyUtils;
@@ -95,6 +96,7 @@ import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.CalendarUtil;
+import com.taobao.util.RandomUtil;
 
 @Service("partnerInstanceQueryService")
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
@@ -103,6 +105,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
 	private static final int DEFAULT_GROWTH_STAT_DAYS = 180;
 	private static final int DEFAULT_GROWTH_TREND_STAT_DAYS = 30;
+	private static final String LEVEL_CACHE_PRE = "CUN_TP_LEVEL_";
 
 	@Autowired
 	PartnerStationRelExtMapper partnerStationRelExtMapper;
@@ -146,6 +149,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
 
+	@Autowired
+	TairCache tairCache;
+
 	@Override
 	public PartnerInstanceDto queryInfo(Long stationId, OperatorDto operator) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
@@ -160,12 +166,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 		return queryInfo(condition);
 	}
-	
+
 	@Override
-	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException{
+	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		PartnerStationRel psRel = partnerInstanceBO.findLastClosePartnerInstance(stationId);
-		
+
 		return PartnerInstanceConverter.convert(psRel);
 	}
 
@@ -182,8 +188,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 					.toPartnerLifecycleDto(getLifecycleItem(psRel.getId(), psRel.getState()));
 			PartnerInstanceDto insDto = PartnerInstanceConverter.convert(psRel);
 			insDto.setPartnerLifecycleDto(lifecycleDto);
-			insDto.setStationApplyState(
-					PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
+			insDto.setStationApplyState(PartnerLifecycleRuleParser.parseStationApplyState(psRel.getType(), psRel.getState(), lifecycleDto));
 
 			if (null != condition.getNeedPartnerInfo() && condition.getNeedPartnerInfo()) {
 				Partner partner = partnerBO.getPartnerById(insDto.getPartnerId());
@@ -191,30 +196,25 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				if (condition.getNeedDesensitization()) {
 					setSafedInfo(partnerDto);
 				}
-				partnerDto.setAttachements(
-						attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
+				partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 				insDto.setPartnerDto(partnerDto);
 			}
 
 			if (null != condition.getNeedStationInfo() && condition.getNeedStationInfo()) {
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
-				stationDto.setAttachements(
-						attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
+				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 			}
 
 			if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {
-				PartnerInstanceLevel level = partnerInstanceLevelBO
-						.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
-				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter
-						.toPartnerInstanceLevelDto(level);
+				PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(insDto.getId());
+				PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
 				insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
 			}
 			return insDto;
 		} catch (AugeServiceException augeException) {
-			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition),
-					augeException.toString());
+			String error = getAugeExceptionErrorMessage("queryInfo", JSONObject.toJSONString(condition), augeException.toString());
 			logger.error(error, augeException);
 			throw augeException;
 		} catch (Exception e) {
@@ -223,23 +223,23 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-	
+
 	@Override
-	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException{
+	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		List<PartnerStationRel> psRels = partnerInstanceBO.findPartnerInstances(stationId);
-		
+
 		return PartnerInstanceConverter.convertRel2Dto(psRels);
 	}
-	
+
 	@Override
-	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException{
+	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
 		return partnerInstanceBO.isAllPartnerQuit(stationId);
 	}
-	
+
 	@Override
-	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException{
+	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException {
 		ValidateUtils.notNull(instanceId);
 		return partnerInstanceBO.isOtherPartnerQuit(instanceId);
 	}
@@ -253,8 +253,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").")
-				.append("errorMessage:").append(error);
+		sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
+				.append(error);
 		return sb.toString();
 	}
 
@@ -264,8 +264,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				partnerDto.setAlipayAccount(SensitiveDataUtil.alipayLogonIdHide(partnerDto.getAlipayAccount()));
 			}
 			if (StringUtils.isNotBlank(partnerDto.getName())) {
-				partnerDto.setName(
-						SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
+				partnerDto.setName(SensitiveDataUtil.customizeHide(partnerDto.getName(), 0, partnerDto.getName().length() - 1, 1));
 			}
 			if (StringUtil.isNotBlank(partnerDto.getIdenNum())) {
 				partnerDto.setIdenNum(IdCardUtil.idCardNoHide(partnerDto.getIdenNum()));
@@ -334,9 +333,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(stationApplyId);
 		return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
 	}
-	
+
 	@Override
-	public Long getPartnerInstanceIdByStationId(Long stationId){
+	public Long getPartnerInstanceIdByStationId(Long stationId) {
 		ValidateUtils.notNull(stationId);
 		return partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
 	}
@@ -374,15 +373,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException {
 		return closeStationApplyBO.getCloseStationApply(partnerInstanceId);
 	}
-	
+
 	@Override
-	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException{
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException {
 		return closeStationApplyBO.getCloseStationApplyById(applyId);
 	}
 
 	@Override
-	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type)
-			throws AugeServiceException {
+	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException {
 		try {
 			ProtocolSigningInfoDto info = new ProtocolSigningInfoDto();
 			PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -428,8 +426,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return info;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type,
-					e.getMessage());
+			String error = getAugeExceptionErrorMessage("getProtocolSigningInfo", taobaoUserId + ":" + type, e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -455,10 +452,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PartnerInstanceDto instance = queryInfo(condition);
 			AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(
-					ProtocolTypeEnum.SETTLE_PRO, instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			if (null == instance || null == bondMoney || null == settleProtocol
-					|| null == settleProtocol.getConfirmTime()) {
+			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
+					instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
 				throw new NullPointerException("bond money or settle protocol not exist");
 			}
 			info.setPartnerInstance(instance);
@@ -473,8 +469,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return info;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId),
-					e.getMessage());
+			String error = getAugeExceptionErrorMessage("getBondFreezingInfoDto", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -491,8 +486,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType,
-			ProtocolTypeEnum type) throws AugeServiceException {
+	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type)
+			throws AugeServiceException {
 		return partnerProtocolRelBO.getPartnerProtocolRelDto(type, objectId, targetType);
 	}
 
@@ -501,9 +496,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(instanceId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.findQuitStationApply(instanceId));
 	}
-	
+
 	@Override
-	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException{
+	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException {
 		ValidateUtils.notNull(applyId);
 		return QuitStationApplyConverter.tQuitStationApplyDto(quitStationApplyBO.getQuitStationApplyById(applyId));
 	}
@@ -511,23 +506,36 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Override
 	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException {
 		try {
+			Assert.notNull(taobaoUserId);
+			String cacheKey = LEVEL_CACHE_PRE + taobaoUserId;
+			PartnerInstanceLevelDto dto = (PartnerInstanceLevelDto) tairCache.get(cacheKey);
+			if (null != dto) {
+				// 防止缓存击穿
+				if (null == dto.getTaobaoUserId() || null == dto.getCurrentLevel()) {
+					return null;
+				}
+				return dto;
+			}
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
+				putLevelToCache(cacheKey, new PartnerInstanceLevelDto(), 300);
 				return null;
 			}
-			PartnerInstanceLevel level = partnerInstanceLevelBO
-					.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
+			PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(instance.getId());
 			if (null == level) {
 				if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
 					logger.error("PartnerInstaceLevel not exists: " + taobaoUserId);
 				}
+				putLevelToCache(cacheKey, new PartnerInstanceLevelDto(), 300);
 				return null;
 			}
-			PartnerInstanceLevelDto dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
+			dto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDtoWithoutId(level);
+			//防止缓存雪崩
+			int expireTime = 60 * 60 * 1 + RandomUtil.getInt(1, 100);
+			putLevelToCache(cacheKey, dto, expireTime);
 			return dto;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId),
-					e.getMessage());
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevel", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
@@ -535,6 +543,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+	private void putLevelToCache(String cacheKey, PartnerInstanceLevelDto partnerInstanceLevelDto, int i) {
+		tairCache.put(cacheKey, partnerInstanceLevelDto, 300);
 	}
 
 	@Override
@@ -548,8 +560,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			List<PartnerInstanceLevelGrowthStatDateDto> statDateList = getRecentStatDateList();
 			for (PartnerInstanceLevelGrowthStatDateDto statDate : statDateList) {
 				ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto> result = partnerInstanceLevelDataService
-						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(),
-								statDate.getStatDate());
+						.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
 				checkResult(result, "getPartnerInstanceLevelGrowthData");
 				if (null == result.getResult()) {
 					continue;
@@ -564,13 +575,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			return null;
 		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData",
-					String.valueOf(taobaoUserId), e.getMessage());
+			String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId),
-					e.getMessage());
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -619,8 +628,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
 	@Override
-	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId,
-			String statDate) {
+	public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate) {
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
@@ -634,8 +642,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			String statStartDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
 
 			ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> result = partnerInstanceLevelDataService
-					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(),
-							statStartDate, statDate);
+					.getPartnerInstanceLevelGrowthTrendData(instance.getTaobaoUserId(), instance.getStationId(), statStartDate, statDate);
 			checkResult(result, "getPartnerInstanceLevelGrowthTrendData");
 			if (CollectionUtils.isEmpty(result.getResult())) {
 				return null;
@@ -658,8 +665,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			logger.error(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData",
-					String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
+			String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
+					e.getMessage());
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
@@ -691,7 +698,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(partnerId);
 		return partnerInstanceBO.getHistoryPartnerInstanceByPartnerId(partnerId);
 	}
-	
+
 	@Override
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
