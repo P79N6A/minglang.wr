@@ -12,7 +12,7 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	private String description;
 
 	public enum PartnerInstanceLevel {
-		S4, S5, S6, S7, S8,SP;
+		S4, S5, S6, S7, S8, SP;
 	}
 
 	public static final PartnerInstanceLevelEnum S_4 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S4, "初级合伙人");
@@ -21,7 +21,6 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	public static final PartnerInstanceLevelEnum S_7 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S7, "优秀合伙人");
 	public static final PartnerInstanceLevelEnum S_8 = new PartnerInstanceLevelEnum(PartnerInstanceLevel.S8, "明星合伙人");
 	public static final PartnerInstanceLevelEnum S_P = new PartnerInstanceLevelEnum(PartnerInstanceLevel.SP, "待评定");
-
 
 	private static final Map<PartnerInstanceLevel, PartnerInstanceLevelEnum> mappings = new HashMap<PartnerInstanceLevel, PartnerInstanceLevelEnum>();
 	static {
@@ -85,8 +84,13 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	public static PartnerInstanceLevelEnum valueof(String levelStr) {
 		if (levelStr == null || levelStr.length() == 0)
 			return null;
-		PartnerInstanceLevel level = PartnerInstanceLevel.valueOf(levelStr);
-		if (null == level) {
+		PartnerInstanceLevel level = null;
+		try {
+			level = PartnerInstanceLevel.valueOf(levelStr);
+			if (null == level) {
+				return null;
+			}
+		} catch (Exception e) {
 			return null;
 		}
 		return mappings.get(level);
