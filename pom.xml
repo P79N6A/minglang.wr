@@ -29,7 +29,7 @@
 		<spring-cloud.version>Brixton.M5</spring-cloud.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
-		<ague.station.client.version>1.4.5-SNAPSHOT</ague.station.client.version>
+		<ague.station.client.version>1.4.8</ague.station.client.version>
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
 	</properties>
