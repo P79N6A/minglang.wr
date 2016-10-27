@@ -31,6 +31,7 @@ public class PartnerInstanceLevelEventConverter {
 		result.setOperator(partnerInstanceLevelDto.getOperator());
 		result.setOperatorOrgId(partnerInstanceLevelDto.getOperatorOrgId());
 		result.setOperatorType(partnerInstanceLevelDto.getOperatorType());
+		result.setRemark(partnerInstanceLevelDto.getRemark());
 
 		return result;
 	}

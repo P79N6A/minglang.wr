@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
@@ -20,6 +24,7 @@ import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.util.CalendarUtil;
 
 @Service("processService")
 @HSFProvider(serviceInterface = ProcessService.class)
@@ -60,6 +65,44 @@ public class ProcessServiceImpl implements ProcessService {
 			logger.error("启动审批流程失败。businessCode=" + businessCode + " businessId =" + businessId + "applier = "
 					+ applierId + " applierOrgId = " + applierOrgId + " applyId = " + applyId, rm.getException());
 			throw new AugeServiceException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
+					rm.getException());
+		}
+	}
+		
+	
+	public void startLevelApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto){
+		String businessCode = levelProcessDto.getBusinessCode();
+		Long businessId = levelProcessDto.getBusinessId();
+
+		String applierId = String.valueOf(levelProcessDto.getEmployeeId());
+		Long applierOrgId = levelProcessDto.getCountyOrgId();
+		OperatorTypeEnum operatorType = OperatorTypeEnum.BUC;
+
+		//  创建村点任务流程
+		Map<String, String> initData = new HashMap<String, String>();
+		initData.put("orgId", String.valueOf(applierOrgId));
+		initData.put("countyStationName", levelProcessDto.getCountyStationName());
+		initData.put("applyTime", CalendarUtil.formatDate(levelProcessDto.getApplyTime(),CalendarUtil.TIME_PATTERN));
+		initData.put("partnerTaobaoUserId", String.valueOf(levelProcessDto.getPartnerTaobaoUserId()));
+		initData.put("partnerName", levelProcessDto.getPartnerName());
+		initData.put("currentLevel", levelProcessDto.getCurrentLevel().getLevel().toString());
+		initData.put("currentLevelDesc", levelProcessDto.getCurrentLevel().getDescription());
+		initData.put("expectedLevel", levelProcessDto.getExpectedLevel().getLevel().toString());
+		initData.put("expectedLevelDesc", levelProcessDto.getExpectedLevel().getDescription());
+		initData.put("score", levelProcessDto.getScore().toString());
+		initData.put("monthlyIncome", levelProcessDto.getMonthlyIncome().toString());
+		initData.put("stationId", String.valueOf(levelProcessDto.getStationId()));
+		initData.put("stationName", levelProcessDto.getStationName());
+		initData.put("employeeName", levelProcessDto.getEmployeeName());
+		initData.put("employeeId", levelProcessDto.getEmployeeId());
+		initData.put("evaluateInfo", levelProcessDto.getEvaluateInfo());
+
+		
+		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
+				String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
+		if (!rm.isSuccess()) {
+			logger.error("启动审批流程失败。param=" + JSON.toJSONString(levelProcessDto) , rm.getException());
+			throw new AugeServiceException("启动流程失败。param = " + JSON.toJSONString(levelProcessDto),
 					rm.getException());
 		}
 	}

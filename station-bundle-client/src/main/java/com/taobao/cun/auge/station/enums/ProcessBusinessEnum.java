@@ -17,11 +17,13 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum stationForcedClosure = new ProcessBusinessEnum("stationForcedClosure","合伙人强制停业");
 	public static final ProcessBusinessEnum stationQuitRecord = new ProcessBusinessEnum("stationQuitRecord", "合伙人退出");
 	public static final ProcessBusinessEnum SHUT_DOWN_STATION = new ProcessBusinessEnum("SHUT_DOWN_STATION", "村点退出");
+	public static final ProcessBusinessEnum partnerInstanceLevelAudit = new ProcessBusinessEnum("partnerInstanceLevelAudit", "合伙人层级审批");
 
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
 		mappings.put("stationQuitRecord", stationQuitRecord);
 		mappings.put("SHUT_DOWN_STATION", SHUT_DOWN_STATION);
+		mappings.put("partnerInstanceLevelAudit", partnerInstanceLevelAudit);
 	}
 
 	public ProcessBusinessEnum(String code, String desc) {
