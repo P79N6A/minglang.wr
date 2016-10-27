@@ -4,10 +4,9 @@ import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
 import com.taobao.cun.auge.station.dto.SampleInstance;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @MessagingGateway
-@HSFProvider(serviceInterface = SampleInternalService.class)
+//@HSFProvider(serviceInterface = SampleInternalService.class)
 public interface SampleInternalService {
 
 	public static final String ADD_SAMPLE_CHANNEL = "addSample.input";

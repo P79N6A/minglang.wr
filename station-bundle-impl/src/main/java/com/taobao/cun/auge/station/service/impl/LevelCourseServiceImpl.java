@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Lists;
+import com.ali.com.google.common.collect.Maps;
 import com.ali.com.google.common.collect.Sets;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.LevelCourse;
@@ -32,10 +33,12 @@ import com.taobao.cun.auge.station.convert.LevelCourseConvertor;
 import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningStatisticsDto;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import com.taobao.cun.auge.station.service.LevelCourseQueryService;
+import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("levelCourseQueryService")
@@ -49,6 +52,9 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
     
     @Autowired
     private AppResourceBO appResourceBo;
+    
+    @Autowired
+    private PartnerPeixunService partnerPeixunService;
     
     @Override
     public boolean saveCourse(LevelCourseEditDto course) {
@@ -112,7 +118,7 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
             courseCodeSet = LevelCourseConfigUtil.parseCourseCodeSet(resource.getValue());
             totalCodeSet.addAll(courseCodeSet);
         }
-        Map<String, PartnerPeixunDto> courseCodePeixunDtoMap = queryBatchOnlinePeixunProcess(condition.getUserId(), Lists.newArrayList(totalCodeSet));
+        Map<String, PartnerOnlinePeixunDto> courseCodePeixunDtoMap = queryBatchOnlinePeixunProcess(condition.getUserId(), Lists.newArrayList(totalCodeSet));
         Map<String, List<LevelCourseLearningDto>> groupedLearningCourseList = LevelCourseConvertor.toGroupedLearningDtoMap(tagCourseList, courseCodePeixunDtoMap);
         int toLearningCount = LevelCourseConvertor.computeLearningCount(courseCodeSet, courseCodePeixunDtoMap);
         return new LevelCourseLearningStatisticsDto(groupedLearningCourseList, toLearningCount);
@@ -131,7 +137,7 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         if(totalCourseCodeList.size()>0){
             lce.createCriteria().andCourseCodeIn(totalCourseCodeList);
             List<LevelCourse> levelCourseList = courseBo.queryLevelCourse(lce);
-            Map<String, PartnerPeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(totalCourseCodeList));
+            Map<String, PartnerOnlinePeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(totalCourseCodeList));
             return LevelCourseConvertor.convertToCourseLearningDto(levelCourseList, peixunDtoMap);
         }
         return Collections.emptyList();
@@ -147,7 +153,7 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         lce.createCriteria().andTagEqualTo(tag);
         List<LevelCourse> tagCourseList = courseBo.queryLevelCourse(lce);
         Set<String> courseCodeSet = LevelCourseConvertor.extractCourseCode(tagCourseList);
-        Map<String, PartnerPeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(courseCodeSet));
+        Map<String, PartnerOnlinePeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(courseCodeSet));
         return LevelCourseConvertor.convertToCourseLearningDto(tagCourseList, peixunDtoMap);
     }
     
@@ -190,8 +196,11 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         return LevelCourseConfigUtil.parseCourseCodeSet(resource.getValue());
     }
     
-    public Map<String, PartnerPeixunDto> queryBatchOnlinePeixunProcess(Long userId, List<String> courseCodes){
-        return LevelCourseConvertor.toCourseCodePeixunDtoMap(new ArrayList<>());
+    public Map<String, PartnerOnlinePeixunDto> queryBatchOnlinePeixunProcess(Long userId, List<String> courseCodes){
+        if(userId == null || CollectionUtils.isEmpty(courseCodes)){
+            return Maps.newHashMap();
+        }
+        return partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
     }
 
 }

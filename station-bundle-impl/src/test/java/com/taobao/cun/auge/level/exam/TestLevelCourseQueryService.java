@@ -21,7 +21,7 @@ import mockit.Expectations;
 public class TestLevelCourseQueryService {
 
     @Autowired
-    private LevelCourseQueryService levelCourseQueryService;
+    private LevelCourseServiceImpl levelCourseQueryService;
     
     @Test
     public void testGetCourseLearningInfo(){

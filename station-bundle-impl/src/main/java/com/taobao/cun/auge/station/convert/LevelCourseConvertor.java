@@ -20,7 +20,9 @@ import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.CourseLevelInfo;
 import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 
 public class LevelCourseConvertor {
 
@@ -89,7 +91,7 @@ public class LevelCourseConvertor {
         return codeSet;
     }
     
-    public static Map<String, List<LevelCourseLearningDto>> toGroupedLearningDtoMap(List<LevelCourse> courseList, Map<String, PartnerPeixunDto> courseCodePeixunMap){
+    public static Map<String, List<LevelCourseLearningDto>> toGroupedLearningDtoMap(List<LevelCourse> courseList, Map<String, PartnerOnlinePeixunDto> courseCodePeixunMap){
         List<LevelCourseLearningDto> learningDtoList = convertToCourseLearningDto(courseList, courseCodePeixunMap);
         return groupByGrowthIndex(learningDtoList);
     }
@@ -113,7 +115,7 @@ public class LevelCourseConvertor {
     /**
      * 将课程列表对象以及PartnerPeixunDto的课程状态和课程detail链接  一起转成对外输出的dto对象 
      */
-    public static List<LevelCourseLearningDto> convertToCourseLearningDto(List<LevelCourse> courseList, Map<String, PartnerPeixunDto> courseCodePeixunMap){
+    public static List<LevelCourseLearningDto> convertToCourseLearningDto(List<LevelCourse> courseList, Map<String, PartnerOnlinePeixunDto> courseCodePeixunMap){
         if(CollectionUtils.isEmpty(courseList) ){
             return Collections.emptyList();
         }
@@ -123,9 +125,11 @@ public class LevelCourseConvertor {
             learningDto.setCourseName(course.getCourseName());
             learningDto.setGrowthIndex(course.getTag());
             if(!CollectionUtils.isEmpty(courseCodePeixunMap) && courseCodePeixunMap.get(course.getCourseCode())!=null){
-            PartnerPeixunDto partnerPeixunDto = courseCodePeixunMap.get(course.getCourseCode());
-                learningDto.setStatus(partnerPeixunDto.getStatus());
-                learningDto.setCourseDetailUrl(partnerPeixunDto.getCourseDetailUrl());
+                PartnerOnlinePeixunDto partnerPeixunDto = courseCodePeixunMap.get(course.getCourseCode());
+                if(partnerPeixunDto.getStatus()!=null){
+                    learningDto.setStatus(partnerPeixunDto.getStatus().getCode());
+                }
+                learningDto.setCourseDetailUrl(partnerPeixunDto.getCourseUrl());
             }
             learningDtoList.add(learningDto);
         }
@@ -156,14 +160,15 @@ public class LevelCourseConvertor {
     /**
      * 计算待学习课程数
      */
-    public static int computeLearningCount(Set<String> requiredCourseList, Map<String, PartnerPeixunDto> courseStatusMap) {
+    public static int computeLearningCount(Set<String> requiredCourseList, Map<String, PartnerOnlinePeixunDto> courseStatusMap) {
         if(CollectionUtils.isEmpty(requiredCourseList) || CollectionUtils.isEmpty(courseStatusMap) ){
             return 0;
         }
         int toLearningCount = 0;
         for(String courseCode:requiredCourseList){
-            PartnerPeixunDto partnerPeixunDto = courseStatusMap.get(courseCode);
-            if(partnerPeixunDto!=null && CourseStatus.NEW.name().equals(partnerPeixunDto.getStatus())) {
+            PartnerOnlinePeixunDto partnerPeixunDto = courseStatusMap.get(courseCode);
+            if(partnerPeixunDto!=null && partnerPeixunDto.getStatus()!=null 
+                    && PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN.getCode().equals(partnerPeixunDto.getStatus().getCode())) {
                 toLearningCount++;
             }
         }
