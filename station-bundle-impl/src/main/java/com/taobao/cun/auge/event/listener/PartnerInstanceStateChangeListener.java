@@ -14,9 +14,7 @@ import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
-import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
-import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
@@ -65,7 +63,8 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String taobaoNick = stateChangeEvent.getTaobaoNick();
 		String operatorId = stateChangeEvent.getOperator();
-
+		String stationName = stateChangeEvent.getStationName();
+		
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		logger.info("partner instance." + JSON.toJSONString(instance));
@@ -73,14 +72,14 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		if ((PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				|| PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(stateChangeEnum))
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
-			partnerInstanceHandler.startClosing(instanceId, partnerType, stateChangeEvent);
+			partnerInstanceHandler.startClosing(instanceId, stationName, partnerType, stateChangeEvent);
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, partnerType, operatorId);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
 			//服务中
-			partnerInstanceHandler.startQuiting(instanceId, partnerType, stateChangeEvent);
+			partnerInstanceHandler.startQuiting(instanceId, stationName, partnerType, stateChangeEvent);
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
 			

@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
@@ -39,11 +40,9 @@ public interface GeneralTaskSubmitService {
 	/**
 	 * 提交流程
 	 * 
-	 * @param business
-	 * @param businessId
-	 * @param stateChangeEvent
+	 * @param processTask
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId, OperatorDto operatorDto, Long applyId);
+	public void submitApproveProcessTask(ApproveProcessTask processTask);
 
 	/**
 	 * 发短信

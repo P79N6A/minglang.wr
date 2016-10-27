@@ -109,7 +109,7 @@ public interface PartnerInstanceQueryService {
 	 * @param type
 	 * @return
 	 */
-	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type) throws AugeServiceException;;
+	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type) throws AugeServiceException;
 
 	/**
 	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
