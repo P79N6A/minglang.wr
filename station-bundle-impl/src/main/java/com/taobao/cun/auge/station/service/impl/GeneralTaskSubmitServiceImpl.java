@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
@@ -36,6 +37,7 @@ import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -581,6 +583,33 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + "[closeToServiceTasks] instanceId = {}, {}", instanceId, e);
 			throw new AugeServiceException("closeToServiceTasks error: " + e.getMessage());
+		}
+	}
+	
+	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, 
+			PartnerInstanceLevelProcessDto levelProcessDto) {
+		try {
+			GeneralTaskDto startProcessTask = new GeneralTaskDto();
+			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getBusinessId()));
+			startProcessTask.setBusinessStepNo(1l);
+			startProcessTask.setBusinessType(business.getCode());
+			startProcessTask.setBusinessStepDesc(business.getDesc());
+			startProcessTask.setBeanName("processService");
+			startProcessTask.setMethodName("startLevelApproveProcess");
+			startProcessTask.setOperator(OperatorDto.DEFAULT_OPERATOR);
+
+			startProcessTask.setParameterType(PartnerInstanceLevelProcessDto.class.getName());
+			startProcessTask.setParameter(JSON.toJSONString(levelProcessDto));
+
+			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
+			//20s执行一次
+			config.setIntervalTime(20000);
+			// 提交任务
+			taskSubmitService.submitTask(startProcessTask,config);
+			logger.info("submitLevelApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
+		}catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
+			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
 	}
 }
