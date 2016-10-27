@@ -9,9 +9,15 @@ public class StartProcessDto extends OperatorDto {
 
 	// 业务类型
 	private ProcessBusinessEnum business;
+	
+	// 业务code
+	private String businessCode;
 
 	// 业务主键id
 	private Long businessId;
+	
+	//申请单id
+	private Long applyId;
 
 	//业务名称
 	private String businessName;
@@ -60,5 +66,21 @@ public class StartProcessDto extends OperatorDto {
 
 	public void setJsonParams(String jsonParams) {
 		this.jsonParams = jsonParams;
+	}
+
+	public String getBusinessCode() {
+		return businessCode;
+	}
+
+	public void setBusinessCode(String businessCode) {
+		this.businessCode = businessCode;
+	}
+
+	public Long getApplyId() {
+		return applyId;
+	}
+
+	public void setApplyId(Long applyId) {
+		this.applyId = applyId;
 	}
 }
