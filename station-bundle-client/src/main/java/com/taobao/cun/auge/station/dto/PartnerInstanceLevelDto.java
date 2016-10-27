@@ -5,12 +5,15 @@ import java.util.Date;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEvaluateTypeEnum;
 
 public class PartnerInstanceLevelDto extends OperatorDto {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4289981939113069738L;
+	private Long id;
+	
 	/**
 	 * 合伙人实例id(仅供内部使用)
 	 */
@@ -123,6 +126,13 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 	 * 全国合伙人总数
 	 */
 	private Long countryPartnerInstanceCnt;
+	
+	/**
+	 * 评定类型
+	 */
+	private PartnerInstanceLevelEvaluateTypeEnum evaluateType;
+	
+	private String remark;
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -348,4 +358,27 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 		this.newAppBindingCnt = newAppBindingCnt;
 	}
 
+	public PartnerInstanceLevelEvaluateTypeEnum getEvaluateType() {
+		return evaluateType;
+	}
+
+	public void setEvaluateType(PartnerInstanceLevelEvaluateTypeEnum evaluateType) {
+		this.evaluateType = evaluateType;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }
