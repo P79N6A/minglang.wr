@@ -16,6 +16,7 @@
 		<module>./station-bundle-client</module>
 	</modules>
 
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -29,7 +30,7 @@
 		<spring-cloud.version>Brixton.M5</spring-cloud.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
-		<ague.station.client.version>1.4.1</ague.station.client.version>
+		<ague.station.client.version>1.5.1</ague.station.client.version>
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
 	</properties>

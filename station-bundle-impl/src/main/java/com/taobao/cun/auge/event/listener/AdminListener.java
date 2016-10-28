@@ -122,6 +122,14 @@ public class AdminListener implements EventListener {
                 && PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
             addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
         }
+        
+        //已停业回到服务中，淘帮手和 合伙人 都可以
+        if ((PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)
+                && PartnerInstanceTypeEnum.TP.equals(partnerType))
+                || (PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE.equals(stateChangeEnum)
+                && PartnerInstanceTypeEnum.TPA.equals(partnerType))) {
+            addOpenRelation(partnerType, taobaoUserId, stationId, instanceId);
+        }
 
         logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 

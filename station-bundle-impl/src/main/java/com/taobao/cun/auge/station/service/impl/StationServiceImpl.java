@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +11,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
@@ -69,6 +74,13 @@ public class StationServiceImpl implements StationService {
 		BeanValidator.validateWithThrowable(shutDownDto);
 
 		Long stationId = shutDownDto.getStationId();
+		
+		Station station = stationBO.getStationById(stationId);
+		if (null == station) {
+			logger.warn("村点不存在。stationId=" + stationId);
+			throw new AugeServiceException("村点不存在");
+		}
+	    
 		// 校验村点上所有人是否都是退出待解冻、已退出的状态
 		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
 		if (!isAllPartnerQuit) {
@@ -82,8 +94,16 @@ public class StationServiceImpl implements StationService {
 
 		// 保存申请单
 		Long applyId = shutDownStationApplyBO.saveShutDownStationApply(shutDownDto);
-		
+
 		// 插入启动撤点流程的任务
-		generalTaskSubmitService.submitApproveProcessTask(ProcessBusinessEnum.SHUT_DOWN_STATION, stationId, shutDownDto, applyId);
+		ApproveProcessTask processTask = new ApproveProcessTask();
+		processTask.setBusiness(ProcessBusinessEnum.SHUT_DOWN_STATION);
+		processTask.setBusinessId(stationId);
+		processTask.setBusinessName(station.getName());
+		processTask.copyOperatorDto(shutDownDto);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("applyId", String.valueOf(applyId));
+		processTask.setParams(params);
+		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
 }

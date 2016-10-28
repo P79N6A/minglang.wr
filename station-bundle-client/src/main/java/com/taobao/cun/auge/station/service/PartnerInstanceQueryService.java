@@ -109,7 +109,7 @@ public interface PartnerInstanceQueryService {
 	 * @param type
 	 * @return
 	 */
-	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type) throws AugeServiceException;;
+	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type) throws AugeServiceException;
 
 	/**
 	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
@@ -245,5 +245,13 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition);
+	
+	/**
+	 * 是否存在未退出的下一级的合伙人，例如，合伙人下面是否还有淘帮手
+	 * 
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException;
 
 }
