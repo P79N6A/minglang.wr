@@ -61,7 +61,7 @@ public  class AlilangHomePageServiceImpl implements AlilangHomePageService {
 		if(partnerInstance != null && partnerInstance.getServiceBeginTime() != null){
 			Date start = partnerInstance.getServiceBeginTime();
 			Integer joinDays = Days.daysBetween(new DateTime(start), new DateTime(new Date())).getDays();
-			profile.setJoinDays(joinDays);
+			profile.setJoinDays(joinDays+1);
 		}
 		if(partnerInstance != null && partnerInstance.getStationId() != null){
 			Station station = stationBO.getStationById(partnerInstance.getStationId());
