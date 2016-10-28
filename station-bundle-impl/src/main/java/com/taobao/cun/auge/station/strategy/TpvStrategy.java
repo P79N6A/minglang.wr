@@ -178,9 +178,6 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
-						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 	
 	@Override

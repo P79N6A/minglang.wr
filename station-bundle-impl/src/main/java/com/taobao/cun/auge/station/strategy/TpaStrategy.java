@@ -190,6 +190,9 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 
 	@Override
