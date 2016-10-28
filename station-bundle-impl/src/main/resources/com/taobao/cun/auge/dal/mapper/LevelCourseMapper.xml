@@ -92,11 +92,12 @@
   </sql>
   
   <select id="groupCoursesByTag" resultMap="BaseResultMap" parameterType="int" >
-  	select <include refid="Base_Column_List" /> from level_course
+  	select <include refid="Base_Column_List" /> from level_course a
   <![CDATA[
   	where ( select count(*) from level_course as ilc
-   				   where ilc.course_code = course_code and ilc.id <= id ) <= #{topN}
+   				   where ilc.course_code = a.course_code and ilc.id >= a.id ) <= #{topN}
    ]]>
+    order by a.tag asc, a.id desc 
   </select>
   
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.LevelCourseExample" >

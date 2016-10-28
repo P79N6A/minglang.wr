@@ -16,7 +16,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Lists;
-import com.ali.com.google.common.collect.Maps;
 import com.ali.com.google.common.collect.Sets;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.LevelCourse;
@@ -34,7 +33,6 @@ import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningStatisticsDto;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import com.taobao.cun.auge.station.service.LevelCourseQueryService;
@@ -56,6 +54,10 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
     @Autowired
     private PartnerPeixunService partnerPeixunService;
     
+    /**
+     * 新增一个晋升培训课程,目前不支持更新课程所以如果已存在则直接返回false;
+     * 保存课程信息,在按照层级更新层级课程配置信息;
+     */
     @Override
     public boolean saveCourse(LevelCourseEditDto course) {
         if(!LevelCourseConvertor.isValidLevelCourse(course)){
@@ -75,6 +77,11 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
                 && addLevelCourseCode(course.getElectiveLevels(), LevelCourseTypeEnum.ELECTIVE, course.getCourseCode());
     }
 
+    /**
+     * 删除一个课程
+     * 1.删除level_course表中基本课程信息
+     * 2.从层级课程配置中删除此课程
+     */
     @Override
     public boolean deleteCourse(String courseCode) {
         Assert.notNull(courseCode, "course code can not null!");
@@ -82,6 +89,11 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
          return isDeleteSuccess && removeLevelCourseCode(courseCode);
     }
 
+    /**
+     * 搜索课程:按照用户层级搜索或者按照课程本身信息搜索,结果由下面两部组装而成
+     * 1.基本课程数据
+     * 2.层级课程呢配置
+     */
     @Override
     public List<LevelCourseEditDto> queryManageLevelCourses(LevelCourseManageCondition condition) {
         if(!LevelCourseManageCondition.isValidManageCondition(condition)){
@@ -89,7 +101,8 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         }
         LevelCourseExample example = new LevelCourseExample();
         if(condition.isSearchByLevel()){
-            Set<String> courseCodeSet = getCourseCodeList(condition.getUserLevel(), condition.getCourseType());
+            LevelCourseTypeEnum courseType = condition.getCourseType() != null ? condition.getCourseType() : LevelCourseTypeEnum.REQUIRED;
+            Set<String> courseCodeSet = getCourseCodeList(condition.getUserLevel(), courseType);
             if(CollectionUtils.isEmpty(courseCodeSet)){
                 return Collections.emptyList();
             }
@@ -103,6 +116,9 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         return LevelCourseConvertor.toCourseEditDto(levelCourseList, courseLevelInfoMap);
     }
 
+    /**
+     * 获取合伙人必修课程学习数据以及课程指标分类数据
+     */
     @Override
     public LevelCourseLearningStatisticsDto getCourseLearningInfo(LevelCourseCondition condition) {
         if(!LevelCourseCondition.isValid(condition)){
@@ -197,10 +213,15 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
     }
     
     public Map<String, PartnerOnlinePeixunDto> queryBatchOnlinePeixunProcess(Long userId, List<String> courseCodes){
-        if(userId == null || CollectionUtils.isEmpty(courseCodes)){
-            return Maps.newHashMap();
+        try{
+            if(userId == null || CollectionUtils.isEmpty(courseCodes)){
+                return Collections.emptyMap();
+            }
+            return partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
+        }catch(Throwable t){
+            logger.error("LevelCourseServiceImpl.queryBatchOnlinePeixunProcess error!", t);
+            return Collections.emptyMap();
         }
-        return partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
     }
 
 }

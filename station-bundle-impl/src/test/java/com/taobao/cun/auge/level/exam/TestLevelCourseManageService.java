@@ -51,6 +51,11 @@ public class TestLevelCourseManageService {
         LevelCourseEditDto course = levelCourses.get(0);
         Assert.assertArrayEquals(Lists.newArrayList("S7", "S8").toArray(), course.getRequiredLevels().toArray());
         Assert.assertArrayEquals(Lists.newArrayList("S5", "S6").toArray(), course.getElectiveLevels().toArray());
+        
+        condition = new LevelCourseManageCondition();
+        condition.setCourseName("pei");
+        levelCourses = levelCourseManageService.queryManageLevelCourses(condition);
+        Assert.assertNotNull(levelCourses);
     }
     
     private String insertCourse(List<String> requiredCourses, List<String> electiveCourses) {
