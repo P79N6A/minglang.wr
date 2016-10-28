@@ -12,7 +12,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>./station-bundle-impl</module>
-		<module>./station-bundle-bundle-test</module>
 		<module>./station-bundle-client</module>
 	</modules>
 
