@@ -56,4 +56,9 @@ public final class EventConstant {
 	 */
 	public static final String CHANGE_TP_EVENT = "CHANGE_TP_EVENT";
 
+	/**
+	 * 智慧县域报名
+	 */
+	public static final String WISDOM_COUNTY_APPLY_EVENT = "WISDOM_COUNTY_APPLY_EVENT";
+
 }

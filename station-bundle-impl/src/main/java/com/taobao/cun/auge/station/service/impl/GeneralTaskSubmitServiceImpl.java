@@ -14,14 +14,17 @@ import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
@@ -38,6 +41,7 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
 import com.taobao.cun.chronus.enums.TaskPriority;
@@ -266,29 +270,29 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	/**
 	 * 启动停业、退出流程审批流程
 	 * 
-	 * @param business
-	 *            业务类型
-	 * @param businessId
-	 *            业务主键
+	 * @param processTask
 	 */
-	public void submitApproveProcessTask(ProcessBusinessEnum business, Long businessId,OperatorDto operatorDto, Long applyId) {
+	public void submitApproveProcessTask(ApproveProcessTask processTask) {
+		BeanValidator.validateWithThrowable(processTask);
+		//校验操作人的组织id
+		processTask.validateOperatorOrgId();
 		try {
-
 			StartProcessDto startProcessDto = new StartProcessDto();
 
-			startProcessDto.setApplyId(applyId);
-			startProcessDto.setBusinessId(businessId);
-			startProcessDto.setBusinessCode(business.getCode());
-			startProcessDto.copyOperatorDto(operatorDto);
+			startProcessDto.setBusiness(processTask.getBusiness());
+			startProcessDto.setBusinessId(processTask.getBusinessId());
+			startProcessDto.setBusinessName(processTask.getBusinessName());
+			startProcessDto.copyOperatorDto(processTask);
+			startProcessDto.setJsonParams(FeatureUtil.toStringUnencode(processTask.getParams()));
 			// 启动流程
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
-			startProcessTask.setBusinessNo(String.valueOf(businessId));
+			startProcessTask.setBusinessNo(String.valueOf(processTask.getBusinessId()));
 			startProcessTask.setBusinessStepNo(1l);
-			startProcessTask.setBusinessType(business.getCode());
-			startProcessTask.setBusinessStepDesc(business.getDesc());
+			startProcessTask.setBusinessType(processTask.getBusiness().getCode());
+			startProcessTask.setBusinessStepDesc(processTask.getBusiness().getDesc());
 			startProcessTask.setBeanName("processService");
 			startProcessTask.setMethodName("startApproveProcess");
-			startProcessTask.setOperator(operatorDto.getOperator());
+			startProcessTask.setOperator(processTask.getOperator());
 			startProcessTask.setParameterType(StartProcessDto.class.getName());
 			startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
 
@@ -299,10 +303,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			taskSubmitService.submitTask(startProcessTask,config);
 			logger.info("submitApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
 		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] businessId = " + businessId + " business="
-					+ business.getCode() + " applierId=" + operatorDto.getOperator() + " operatorType="
-					+ operatorDto.getOperatorType().getCode(), e);
-			throw new AugeServiceException("submitApproveProcessTask error: " + e.getMessage());
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] ApproveProcessTask = " + JSON.toJSONString(processTask), e);
+			throw new AugeServiceException(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] ApproveProcessTask = " + JSON.toJSONString(processTask), e);
 		}
 	}
 	
@@ -581,6 +583,33 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + "[closeToServiceTasks] instanceId = {}, {}", instanceId, e);
 			throw new AugeServiceException("closeToServiceTasks error: " + e.getMessage());
+		}
+	}
+	
+	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, 
+			PartnerInstanceLevelProcessDto levelProcessDto) {
+		try {
+			GeneralTaskDto startProcessTask = new GeneralTaskDto();
+			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getBusinessId()));
+			startProcessTask.setBusinessStepNo(1l);
+			startProcessTask.setBusinessType(business.getCode());
+			startProcessTask.setBusinessStepDesc(business.getDesc());
+			startProcessTask.setBeanName("processService");
+			startProcessTask.setMethodName("startLevelApproveProcess");
+			startProcessTask.setOperator(OperatorDto.DEFAULT_OPERATOR);
+
+			startProcessTask.setParameterType(PartnerInstanceLevelProcessDto.class.getName());
+			startProcessTask.setParameter(JSON.toJSONString(levelProcessDto));
+
+			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
+			//20s执行一次
+			config.setIntervalTime(20000);
+			// 提交任务
+			taskSubmitService.submitTask(startProcessTask,config);
+			logger.info("submitLevelApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
+		}catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
+			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
 	}
 }

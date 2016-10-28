@@ -12,6 +12,7 @@ import com.taobao.hsf.remoting.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,5 +64,14 @@ public class PartnerInstanceLevelBOImpl implements PartnerInstanceLevelBO {
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andIsValidEqualTo("y");
 		partnerInstanceLevelMapper.updateByExampleSelective(level, example);
+	}
+	
+	@Override
+	public void updatePartnerInstanceLevel(PartnerInstanceLevel partnerInstanceLevel) {
+		ValidateUtils.notNull(partnerInstanceLevel);
+		ValidateUtils.notNull(partnerInstanceLevel.getPartnerInstanceId());
+		partnerInstanceLevel.setGmtModified(new Date());
+		partnerInstanceLevelMapper.updateByPrimaryKey(partnerInstanceLevel);
+		
 	}
 }

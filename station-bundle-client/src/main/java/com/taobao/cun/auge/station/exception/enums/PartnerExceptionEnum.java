@@ -26,7 +26,7 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_PERSION_INFO_NOTEQUAL = new PartnerExceptionEnum(
 			"PARTNER_PERSION_INFO_NOTEQUAL", "目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
 	public static final PartnerExceptionEnum PARTNER_TAOBAOUSERID_HAS_USED = new PartnerExceptionEnum(
-			"PARTNER_TAOBAOUSERID_HAS_USED", "该账号已经存在活动的加盟申请");
+			"PARTNER_TAOBAOUSERID_HAS_USED", "该账号已经入驻农村淘宝，请核实！");
 	public static final PartnerExceptionEnum PARTNER_DELETE_FAIL = new PartnerExceptionEnum(
 			"PARTNER_DELETE_FAIL", "当前状态合伙人信息不能删除");
 	public static final PartnerExceptionEnum PARTNER_STATE_NOT_APPLICABLE = new PartnerExceptionEnum(
