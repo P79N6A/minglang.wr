@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -35,6 +36,7 @@ import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
@@ -43,6 +45,7 @@ import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
+import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -73,6 +76,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
@@ -112,6 +116,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
@@ -133,6 +138,8 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.validate.PartnerInstanceValidator;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.user.service.CuntaoUserService;
+import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -206,6 +213,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	StationDecorateBO stationDecorateBO;
+	
+	@Autowired
+	CountyStationBO countyStationBO;
+	@Autowired
+	CuntaoUserService cuntaoUserService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -1583,14 +1595,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
-		//根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
-		partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
-		//保存数据库
-		partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
-		//发送评级变化事件: 类型为系统评定
-		PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter.convertLevelChangeEvent(
-				PartnerInstanceLevelEvaluateTypeEnum.SYSTEM, partnerInstanceLevelDto);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+		try {
+			// 根据taobao_user_id和station_id失效以前的评级is_valid＝'n'
+			partnerInstanceLevelBO.invalidatePartnerInstanceLevelBefore(partnerInstanceLevelDto);
+			// 保存数据库
+			partnerInstanceLevelBO.addPartnerInstanceLevel(partnerInstanceLevelDto);
+			// 发送评级变化事件: 类型为系统评定
+			PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
+					.convertLevelChangeEvent(partnerInstanceLevelDto.getEvaluateType(), partnerInstanceLevelDto);
+			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+		} catch (Exception e) {
+			logger.error("EvaluatePartnerInstanceLevelError:" + JSON.toJSONString(partnerInstanceLevelDto), e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1721,5 +1738,44 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDecorateBO.addStationDecorate(stationDecorateDto);
 		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
+	}
+	
+	@Override
+	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException {
+		try {
+			PartnerInstanceLevelProcessDto levelProcessDto = new PartnerInstanceLevelProcessDto();
+			Date now = new Date();
+			levelProcessDto.setApplyTime(now);
+			levelProcessDto.setBusinessCode(ProcessBusinessEnum.partnerInstanceLevelAudit.getCode());
+			Long instanceId = partnerInstanceLevelDto.getPartnerInstanceId();
+			levelProcessDto.setPartnerInstanceId(instanceId);
+			levelProcessDto.setBusinessId(instanceId);
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			Long countyOrgId = instance.getStationDto().getApplyOrg();
+			levelProcessDto.setCountyOrgId(countyOrgId);
+			CountyStation countyStation = countyStationBO.getCountyStationByOrgId(countyOrgId);
+			levelProcessDto.setCountyStationName(countyStation.getName());
+			levelProcessDto.setCurrentLevel(partnerInstanceLevelDto.getCurrentLevel());
+			levelProcessDto.setExpectedLevel(partnerInstanceLevelDto.getExpectedLevel());
+			List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(countyOrgId, UserRole.COUNTY_LEADER);
+			CuntaoUser countyLeader = userLists.iterator().next();
+			levelProcessDto.setEmployeeId(countyLeader.getLoginId());
+			levelProcessDto.setEmployeeName(emp360Adapter.getName(countyLeader.getLoginId()));
+			levelProcessDto.setPartnerName(instance.getPartnerDto().getName());
+			levelProcessDto.setPartnerTaobaoUserId(partnerInstanceLevelDto.getTaobaoUserId());
+			levelProcessDto.setStationId(instance.getStationDto().getId());
+			levelProcessDto.setStationName(instance.getStationDto().getName());
+			levelProcessDto.setScore(partnerInstanceLevelDto.getScore());
+			levelProcessDto.setMonthlyIncome(partnerInstanceLevelDto.getMonthlyIncome());
+			partnerInstanceLevelDto.setOperator(countyLeader.getLoginId());
+			partnerInstanceLevelDto.setOperatorType(OperatorTypeEnum.BUC);
+			partnerInstanceLevelDto.setEvaluateBy(countyLeader.getLoginId());
+			levelProcessDto.setEvaluateInfo(JSON.toJSONString(partnerInstanceLevelDto));
+
+			generalTaskSubmitService.submitLevelApproveProcessTask(ProcessBusinessEnum.partnerInstanceLevelAudit, levelProcessDto);
+		} catch (Exception e) {
+			logger.error("PromotePartnerInstanceLevelError:" + JSON.toJSONString(partnerInstanceLevelDto), e);
+			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 }

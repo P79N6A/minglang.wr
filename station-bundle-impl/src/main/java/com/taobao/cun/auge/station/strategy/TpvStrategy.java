@@ -2,7 +2,9 @@ package com.taobao.cun.auge.station.strategy;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +34,7 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -323,23 +326,37 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-    public void startClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
-        PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-        ProcessBusinessEnum business = ProcessBusinessEnum.stationForcedClosure;
-        
-        Long applyId = findCloseApplyId(instanceId);
-        // FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-        generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
-    }
+	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		Long applyId = findCloseApplyId(instanceId);
+		
+		ApproveProcessTask processTask = new ApproveProcessTask();
+		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
+		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
+		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessName(stationName);
+		processTask.copyOperatorDto(operatorDto);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("applyId", String.valueOf(applyId));
+		processTask.setParams(params);
+		generalTaskSubmitService.submitApproveProcessTask(processTask);
+	}
 
 	@Override
-	public void startQuiting(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
-		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		ProcessBusinessEnum business = ProcessBusinessEnum.stationQuitRecord;
-		
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 		Long applyId = findQuitApplyId(instanceId);
+		
+		ApproveProcessTask processTask = new ApproveProcessTask();
+		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		generalTaskSubmitService.submitApproveProcessTask(business, instance.getStationApplyId(), operatorDto, applyId);
+		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessName(stationName);
+		processTask.copyOperatorDto(operatorDto);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("applyId", String.valueOf(applyId));
+		processTask.setParams(params);
+		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
 	
 	@Override
