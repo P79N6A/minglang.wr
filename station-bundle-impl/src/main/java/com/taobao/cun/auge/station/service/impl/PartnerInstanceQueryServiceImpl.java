@@ -324,6 +324,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.CLOSING);
 		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(state)) {
 			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.QUITING);
+		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(state)) {
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.DECORATING);
 		}
 		return null;
 	}
