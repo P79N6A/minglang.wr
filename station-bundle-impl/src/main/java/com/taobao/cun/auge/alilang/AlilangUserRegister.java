@@ -13,8 +13,12 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 
 @Component
 public class AlilangUserRegister {
@@ -24,6 +28,8 @@ public class AlilangUserRegister {
 	private PartnerBO partnerBO;
 	@Resource
 	private PartnerInstanceBO partnerInstanceBO;
+	@Resource
+	private PartnerLifecycleBO partnerLifecycleBO;
 	
 	public void register(String mobile, String alilangUserId){
 		List<Partner> partners = partnerBO.getPartnerByMobile(mobile);
@@ -34,12 +40,15 @@ public class AlilangUserRegister {
 		
 		for(Partner partner : partners){
 			PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(partner.getTaobaoUserId());
-			if(partnerStationRel != null){
-				logger.info("register alilanguser, taobao_user_id={}, alilangUserId = {}", new Object[]{partner.getTaobaoUserId(), alilangUserId});
-				PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
-				partnerDto.setAliLangUserId(alilangUserId);
-				partnerBO.updatePartner(partnerDto);
-				break;
+			if(partnerStationRel != null && PartnerInstanceTypeEnum.TP.getCode().equals(partnerStationRel.getType())){
+				PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(partnerStationRel.getId());
+				if(partnerInstanceDto.getPartnerLifecycleDto().getBond() != null && PartnerLifecycleBondEnum.HAS_FROZEN.getCode().equals(partnerInstanceDto.getPartnerLifecycleDto().getBond().getCode())){
+					logger.info("register alilanguser, taobao_user_id={}, alilangUserId = {}", new Object[]{partner.getTaobaoUserId(), alilangUserId});
+					PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
+					partnerDto.setAliLangUserId(alilangUserId);
+					partnerBO.updatePartner(partnerDto);
+					break;
+				}
 			}
 		}
 	}
