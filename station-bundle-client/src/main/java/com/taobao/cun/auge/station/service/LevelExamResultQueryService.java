@@ -1,15 +1,12 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 
 public interface LevelExamResultQueryService {
 
     /**
-     * 合伙人是否通过当前level包括该level以下的所有晋升考试
-     * @param taobaoUserId
-     * @param nickName
-     * @param leve
-     * @return
+     * 合伙人是否通过当前level包括该level以下的所有分发的晋升考试
      */
-    public boolean isPassAllLevelExam(Long taobaoUserId, PartnerInstanceLevel leve);
+    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel leve);
 }

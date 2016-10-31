@@ -20,6 +20,7 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.convert.LevelExamUtil.ExamLevelExtendInfo;
 import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
+import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.service.LevelExamManageService;
 import com.taobao.cun.auge.station.service.LevelExamResultQueryService;
@@ -99,19 +100,20 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
      * 如果没有那么打印日志
      */
     @Override
-    public boolean isPassAllLevelExam(Long taobaoUserId, PartnerInstanceLevel level) {
+    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel level) {
         Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
         if(dispatchedExamLevelAndPaper==null) {
             logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
-            return false;
+            return new LevelExamingResult(true, Lists.newArrayList());
         }
-        List<PartnerInstanceLevel> passedLevels = Lists.newArrayList(), notPassExamLevels = Lists.newArrayList();
+        List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
+        List<String> notPassExamLevels = Lists.newArrayList();
         for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
             ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
             if(isPassExam(resultModel)){
                 passedLevels.add(entry.getKey());
             }else {
-                notPassExamLevels.add(entry.getKey());
+                notPassExamLevels.add(entry.getKey().name());
             }
         }
         boolean isPassAllDispatchedExam = passedLevels.containsAll(dispatchedExamLevelAndPaper.keySet());
@@ -119,9 +121,9 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         boolean isPassAllLevelExam = passedLevels.containsAll(allLevelExams);
         if(!isPassAllDispatchedExam || !isPassAllLevelExam){
             allLevelExams.removeAll(passedLevels);
-            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass dispatched level exam are:{}, not dispatch levels:{}", taobaoUserId,  level, notPassExamLevels, allLevelExams);
+            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass dispatched level:{}, not dispatch levels:{}", taobaoUserId,  level, notPassExamLevels, allLevelExams);
         }
-        return isPassAllDispatchedExam;
+        return new LevelExamingResult(isPassAllDispatchedExam, notPassExamLevels);
     }
     
     /**
