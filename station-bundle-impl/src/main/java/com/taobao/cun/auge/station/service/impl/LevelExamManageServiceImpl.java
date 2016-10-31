@@ -1,10 +1,10 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -84,12 +84,14 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     public boolean dispatchExamPaper(Long taobaoUserId, String nickName, PartnerInstanceLevel level) {
         Assert.notNull(taobaoUserId);
         Assert.notNull(level);
-        DispatchedLevelExamResult examResult  = computeDispatchExamResult(taobaoUserId, level);
-        if(examResult==null) {
+        Map<PartnerInstanceLevel, Long> dispatchedResult  = getDispatchedPaperInfo(taobaoUserId);
+        if(dispatchedResult==null) {
             logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
             return false;
         }
-        return dispatchExamPapers(taobaoUserId, nickName, examResult.getToDispatchExamLevels());
+        List<PartnerInstanceLevel> shouldPassExamLevels = LevelExamUtil.computeShouldTakeExamList(level);
+        shouldPassExamLevels.removeAll(dispatchedResult.keySet());
+        return dispatchExamPapers(taobaoUserId, nickName, shouldPassExamLevels);
     }
     
     /**
@@ -98,20 +100,28 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
      */
     @Override
     public boolean isPassAllLevelExam(Long taobaoUserId, PartnerInstanceLevel level) {
-        LevelExamConfigurationDto configurationDto = this.queryConfigure();
-        if(configurationDto==null || configurationDto.isOpenEvaluate()){
-            return true;
-        }
-        
-        DispatchedLevelExamResult examResult = computeDispatchExamResult(taobaoUserId, level);
-        if(examResult==null) {
+        Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
+        if(dispatchedExamLevelAndPaper==null) {
             logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
             return false;
         }
-        if(!examResult.isPassAllExams){
-            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass level exam are:{}", taobaoUserId,  level, examResult.getNotPassExamLevels());
+        List<PartnerInstanceLevel> passedLevels = Lists.newArrayList(), notPassExamLevels = Lists.newArrayList();
+        for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
+            ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
+            if(isPassExam(resultModel)){
+                passedLevels.add(entry.getKey());
+            }else {
+                notPassExamLevels.add(entry.getKey());
+            }
         }
-        return examResult.isPassAllExams;
+        boolean isPassAllDispatchedExam = passedLevels.containsAll(dispatchedExamLevelAndPaper.keySet());
+        List<PartnerInstanceLevel> allLevelExams = LevelExamUtil.computeShouldTakeExamList(level);
+        boolean isPassAllLevelExam = passedLevels.containsAll(allLevelExams);
+        if(!isPassAllDispatchedExam || !isPassAllLevelExam){
+            allLevelExams.removeAll(passedLevels);
+            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass dispatched level exam are:{}, not dispatch levels:{}", taobaoUserId,  level, notPassExamLevels, allLevelExams);
+        }
+        return isPassAllDispatchedExam;
     }
     
     /**
@@ -148,34 +158,18 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     }
     
     /**
-    * 根据当前层级应该通过哪些晋升考试 以及已经分发试卷考试情况计算出
-    * 1.是否通过所有level层级晋升需要通过的所有考试
-    * 2.还没有分发试卷的晋升层级
+    * 查询某个合伙人分发的晋升试卷<层级,paperId>
     */
-   private DispatchedLevelExamResult computeDispatchExamResult (Long taobaoUserId, PartnerInstanceLevel level){
+   private Map<PartnerInstanceLevel, Long> getDispatchedPaperInfo (Long taobaoUserId){
        ResultModel<List<ExamDispatchDto>>result = examUserDispatchService.listExamDispatchDto(taobaoUserId, ExamDispatchSourceEnum.promotion, 0, 100);
        if(result==null || !result.isSuccess()){
            return null;
        }
        List<ExamDispatchDto> dispatchedExamList = result.getResult();
        if(CollectionUtils.isEmpty(dispatchedExamList)){
-           return new DispatchedLevelExamResult(true, true);
+           return Collections.emptyMap();
        }
-       List<PartnerInstanceLevel> shouldPassExamLevels = LevelExamUtil.computeShouldTakeExamList(level);
-       List<PartnerInstanceLevel> passedLevels = Lists.newArrayList(), notPassExamLevels = Lists.newArrayList();
-       Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper = LevelExamUtil.parseDispatchedExamLevels(dispatchedExamList);
-       for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
-           ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
-           if(isPassExam(resultModel)){
-               passedLevels.add(entry.getKey());
-           }else {
-               notPassExamLevels.add(entry.getKey());
-           }
-       }
-       boolean isPassAllExams  = passedLevels.containsAll(shouldPassExamLevels);
-       List<PartnerInstanceLevel> toDispatchLevelList = Lists.newArrayList(shouldPassExamLevels);
-       toDispatchLevelList.removeAll(dispatchedExamLevelAndPaper.keySet());
-       return new DispatchedLevelExamResult(isPassAllExams, toDispatchLevelList, notPassExamLevels);
+       return LevelExamUtil.parseDispatchedExamLevels(dispatchedExamList);
    }
    
    /**
@@ -203,73 +197,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         edd.setDispatchSource(ExamDispatchSourceEnum.promotion);
         edd.setDispatchExtendInfo(extendInfo);
         return edd;
-    }
-    
-    static class DispatchedLevelExamResult {
-        /**
-         * 是否通过所在层级的所有晋升考试,存在两种情况:
-         * 1.没有分发试卷,这种也算通过
-         * 2.分发试卷而且考试全部通过了
-         */
-        private boolean isPassAllExams;
-        
-        private boolean notDispatchExam;
-        
-        /**
-         * 还未分发试卷的层级
-         */
-        private List<PartnerInstanceLevel> toDispatchExamLevels;
-        
-        /**
-         * 没有通过的考试层级
-         */
-        private List<PartnerInstanceLevel> notPassExamLevels;
-        
-        public DispatchedLevelExamResult(boolean notDispatchExam, boolean isPassAllExams){
-            super();
-            this.notDispatchExam = notDispatchExam;
-            this.isPassAllExams = isPassAllExams;
-        }
-        
-        public DispatchedLevelExamResult(boolean isPassAllExams, List<PartnerInstanceLevel> toPassExamLevels, List<PartnerInstanceLevel> notPassExamLevels) {
-            super();
-            this.isPassAllExams = isPassAllExams;
-            this.toDispatchExamLevels = toPassExamLevels;
-            this.notPassExamLevels = notPassExamLevels;
-        }
-
-        public boolean isPassAllExams() {
-            return isPassAllExams;
-        }
-        
-        public void setPassAllExams(boolean isPassAllExams) {
-            this.isPassAllExams = isPassAllExams;
-        }
-        
-        public List<PartnerInstanceLevel> getToDispatchExamLevels() {
-            return toDispatchExamLevels;
-        }
-        
-        public void setToDispatchExamLevels(List<PartnerInstanceLevel> toDispatchExamLevels) {
-            this.toDispatchExamLevels = toDispatchExamLevels;
-        }
-        
-        public List<PartnerInstanceLevel> getNotPassExamLevels() {
-            return notPassExamLevels;
-        }
-        
-        public void setNotPassExamLevels(List<PartnerInstanceLevel> notPassExamLevels) {
-            this.notPassExamLevels = notPassExamLevels;
-        }
-        
-        public boolean isNotDispatchExam() {
-            return notDispatchExam;
-        }
-
-        public void setNotDispatchExam(boolean notDispatchExam) {
-            this.notDispatchExam = notDispatchExam;
-        }
-        
     }
     
     public static class LevelConfiguration implements Serializable {
