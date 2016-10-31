@@ -104,7 +104,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
         if(dispatchedExamLevelAndPaper==null) {
             logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
-            return new LevelExamingResult(true, Lists.newArrayList());
+            return new LevelExamingResult(false, Lists.newArrayList());
         }
         List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
         List<String> notPassExamLevels = Lists.newArrayList();
