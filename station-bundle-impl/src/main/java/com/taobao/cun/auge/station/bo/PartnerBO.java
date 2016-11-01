@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -53,5 +55,21 @@ public interface PartnerBO {
 	 * @throws AugeServiceException
 	 */
 	public void deletePartner(Long partnerId,String operator) throws AugeServiceException;
+	
+	/**
+	 * 根据阿里郎用户ID查询partner
+	 * @param aliLangUserId
+	 * @return partner
+	 * @throws AugeServiceException
+	 */
+	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException;
+	
+	/**
+	 * 根据手机号获取合伙人
+	 * @param mobile
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<Partner> getPartnerByMobile(String mobile) throws AugeServiceException;
 	
 }
