@@ -82,15 +82,15 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
      * 2.查询历史晋升试卷分发记录失败或者其他错误也部分发
      */
     @Override
-    public boolean dispatchExamPaper(Long taobaoUserId, String nickName, PartnerInstanceLevel level) {
+    public boolean dispatchExamPaper(Long taobaoUserId, String nickName, PartnerInstanceLevel partnerLevel) {
         Assert.notNull(taobaoUserId);
-        Assert.notNull(level);
+        Assert.notNull(partnerLevel);
         Map<PartnerInstanceLevel, Long> dispatchedResult  = getDispatchedPaperInfo(taobaoUserId);
         if(dispatchedResult==null) {
             logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
             return false;
         }
-        List<PartnerInstanceLevel> shouldPassExamLevels = LevelExamUtil.computeShouldTakeExamList(level);
+        List<PartnerInstanceLevel> shouldPassExamLevels = LevelExamUtil.computeShouldTakeExamList(partnerLevel);
         shouldPassExamLevels.removeAll(dispatchedResult.keySet());
         return dispatchExamPapers(taobaoUserId, nickName, shouldPassExamLevels);
     }
