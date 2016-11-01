@@ -20,6 +20,7 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 @Configuration
@@ -108,5 +109,4 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean esbFinanceContractAdapter(@Value("${crm.finance.service.version}") String version) {
 		return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
 	}
-	
 }

@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.notify.message.StringMessage;
-import com.taobao.notify.remotingclient.NotifyManager;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
 
 @Component("defaultNotifyPublish")
 public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
@@ -20,7 +20,7 @@ public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
 	private static final Logger logger = LoggerFactory.getLogger(DefaultNotifyPublish.class);
 
 	@Autowired
-	NotifyManager notifyManager;
+	NotifyManagerBean notifyPublisherManagerBean;
 
 	public void publish(DefaultNotifyPublishVo vo){
 		Assert.notNull(vo.getTopic());
@@ -45,11 +45,11 @@ public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
 						.registerSynchronization(new TransactionSynchronizationAdapter() {
 							@Override
 							public void afterCommit() {
-								notifyManager.sendMessage(msg);
+								notifyPublisherManagerBean.sendMessage(msg);
 							}
 						});
 			} else {
-				notifyManager.sendMessage(msg);
+				notifyPublisherManagerBean.sendMessage(msg);
 			}
 		} catch (Exception e) {
 			logger.error("publish notify error " + JSON.toJSONString(vo), e);

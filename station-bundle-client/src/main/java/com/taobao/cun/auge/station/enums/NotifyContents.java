@@ -16,6 +16,5 @@ public  class NotifyContents{
 	
 	public static String FUWU_ORDER_PAYMENT_MESSAGETYPE="ORDER_CHANGE_PAYMENT_SUCESS";
 	public static String FUWU_ORDER_PAYMENT_TOPIC="ORDER_CHANGE_TOPIC";
-
-
+	public static String ALILANG_REGISTER_TOPIC="T-ALILANG-REGISTERED";
 }

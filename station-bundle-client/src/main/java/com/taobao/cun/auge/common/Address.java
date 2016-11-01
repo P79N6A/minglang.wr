@@ -2,7 +2,7 @@ package com.taobao.cun.auge.common;
 
 import java.io.Serializable;
 
-import com.alibaba.common.lang.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 
 public class Address implements Serializable {
 
@@ -141,24 +141,24 @@ public class Address implements Serializable {
 	public String buildAddressDetail() {
 		StringBuilder sBuilder = new StringBuilder();
 
-		if (StringUtil.isNotEmpty(provinceDetail)) {
+		if (StringUtils.isNotEmpty(provinceDetail)) {
 			sBuilder.append(provinceDetail);
 		}
-		if (StringUtil.isNotEmpty(cityDetail)) {
+		if (StringUtils.isNotEmpty(cityDetail)) {
 			sBuilder.append(cityDetail);
 		}
-		if (StringUtil.isNotEmpty(countyDetail)) {
+		if (StringUtils.isNotEmpty(countyDetail)) {
 			sBuilder.append(countyDetail);
 		}
-		if (StringUtil.isNotEmpty(townDetail)) {
+		if (StringUtils.isNotEmpty(townDetail)) {
 			sBuilder.append(townDetail);
 		}
 
-		if (StringUtil.isNotEmpty(villageDetail)) {
+		if (StringUtils.isNotEmpty(villageDetail)) {
 			sBuilder.append(villageDetail);
 		}
 
-		if (StringUtil.isNotEmpty(addressDetail)) {
+		if (StringUtils.isNotEmpty(addressDetail)) {
 			sBuilder.append(addressDetail);
 		}
 		return sBuilder.toString();
