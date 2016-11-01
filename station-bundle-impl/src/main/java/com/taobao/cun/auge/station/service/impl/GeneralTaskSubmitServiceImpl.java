@@ -508,14 +508,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			operatorDto.setOperatorOrgId(0L);
 			PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
 			String accountNo = accountDto.getAccountNo();
-			if (StringUtils.isNotEmpty(accountNo)) {
-				alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
-				dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
-				dealStationTagTaskVo.setParameter(JSON.toJSONString(alipayTagDto));
-				taskLists.add(dealStationTagTaskVo);
-			} else {
-				logger.error(TASK_SUBMIT_ERROR_MSG + " [remove alipay tag error, accountNo not exists] instanceId = {}, {}", instanceId);
-			}
+			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
+			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
+			dealStationTagTaskVo.setParameter(JSON.toJSONString(alipayTagDto));
+			taskLists.add(dealStationTagTaskVo);
 
 			// 提交任务
 			taskSubmitService.submitTasks(taskLists);
