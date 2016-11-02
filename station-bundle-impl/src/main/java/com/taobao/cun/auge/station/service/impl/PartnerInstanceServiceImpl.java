@@ -632,7 +632,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
-
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException{
+		FreezeBondDto freezeBondDto = new FreezeBondDto();
+		freezeBondDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		freezeBondDto.setOperator(String.valueOf(taobaoUserId));
+		freezeBondDto.setAccountNo("");
+		freezeBondDto.setAlipayAccount("");
+		freezeBondDto.setTaobaoUserId(taobaoUserId);
+		return freezeBond(freezeBondDto);
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException {
