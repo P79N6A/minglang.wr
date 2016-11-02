@@ -162,6 +162,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		condition.setNeedPartnerInfo(Boolean.TRUE);
 		condition.setNeedStationInfo(Boolean.TRUE);
 		condition.setNeedDesensitization(Boolean.TRUE);
+		condition.setNeedPartnerLevelInfo(Boolean.TRUE);
 		condition.copyOperatorDto(operator);
 
 		return queryInfo(condition);
