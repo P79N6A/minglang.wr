@@ -51,7 +51,8 @@ public class AccountMoneyConverter {
 		accountMoney.setTargetType(accountMoneyDto.getTargetType().getCode());
 		accountMoney.setThawTime(accountMoneyDto.getThawTime());
 		accountMoney.setType(accountMoneyDto.getType().getCode());
-
+		accountMoney.setAccountNo(accountMoneyDto.getAccountNo());
+		
 		return accountMoney;
 	}
 

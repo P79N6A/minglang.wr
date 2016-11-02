@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -101,11 +102,10 @@ public interface PartnerInstanceService {
 	/**
 	 * 冻结保证金
 	 * 
-	 * @param taobaoUserId
-	 * @param frozenMoney
-	 * @return
+	 * @param freezeBondDto
+	 * @return boolean
 	 */
-	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
 
 	/**
 	 * 开业
