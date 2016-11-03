@@ -31,7 +31,7 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 			"STATION_STATUS_CHANGED", "村点状态已变更");
 	
 	public static final StationExceptionEnum QUIT_STATION_APPLY_EXIST = new StationExceptionEnum(
-			"QUIT_STATION_APPLY_EXIST", "退出申请单已经存在");
+			"QUIT_STATION_APPLY_EXIST", "您已经提交了退出申请");
 	
 	public static final StationExceptionEnum KAYE_PACKAGE_NOT_EXIST = new StationExceptionEnum(
 			"KAYE_PACKAGE_NOT_EXIST", "必须存在开业包");

@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.validate;
+package com.taobao.cun.auge.station.check.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,16 +8,24 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
-import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
+import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 
-@Component("partnerInstanceValidator")
-public class PartnerInstanceValidator {
+@Component("partnerInstanceChecker")
+public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
+
+	@Autowired
+	PartnerInstanceHandler partnerInstanceHandler;
+	
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
@@ -27,21 +35,28 @@ public class PartnerInstanceValidator {
 	@Autowired
 	TradeAdapter tradeAdapter;
 
-	@Autowired
-	PartnerInstanceHandler partnerInstanceHandler;
+	@Override
+	public void checkCloseApply(Long instanceId) {
+		// 查询实例是否存在，不存在会抛异常
+		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-	/**
-	 * 校验申请退出的前置条件
-	 *
-	 * @param instance
-	 * @throws AugeServiceException
-	 */
-	public void validateApplyQuitPreCondition(PartnerStationRel instance, QuitStationApplyDto quitDto) throws AugeServiceException {
-		Long instanceId = instance.getId();
+		// 生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
+		PartnerInstanceConverter.convertClosingStateChange(partnerStationRel);
+
+		// 校验停业前置条件。例如校验合伙人是否还存在淘帮手存在
+		PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
+		partnerInstanceHandler.validateClosePreCondition(partnerType, partnerStationRel);
+	}
+
+	@Override
+	public void checkQuitApply(Long instanceId) {
+		// 查询实例是否存在，不存在会抛异常
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
 		if (quitStationApply != null) {
-			throw new RuntimeException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST.getDesc());
+			throw new AugeBusinessException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST.getDesc());
 		}
 
 		// 校验是否存在未结束的订单
@@ -54,12 +69,5 @@ public class PartnerInstanceValidator {
 
 		// 校验资产是否归还
 		partnerInstanceHandler.validateAssetBack(instanceType, instanceId);
-
-		// 校验是否可以同时撤点
-		Boolean isQuitStation = quitDto.getIsQuitStation();
-		// 如果选择同时撤点，校验村点上其他人是否都处于退出待解冻、已退出状态
-		if (Boolean.TRUE.equals(isQuitStation)) {
-			partnerInstanceHandler.validateOtherPartnerQuit(instanceType, instanceId);
-		}
 	}
 }

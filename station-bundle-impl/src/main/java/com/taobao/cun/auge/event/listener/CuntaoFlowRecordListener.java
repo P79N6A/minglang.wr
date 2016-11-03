@@ -2,9 +2,6 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Date;
 
-import com.taobao.cun.auge.event.*;
-import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +11,21 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
+import com.taobao.cun.auge.event.ChangeTPEvent;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.PartnerChildMaxNumChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
+import com.taobao.cun.auge.event.StationStatusChangeEvent;
+import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
+import com.taobao.cun.auge.event.enums.StationStatusChangeEnum;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
+import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
 import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.crius.event.Event;
@@ -28,7 +35,7 @@ import com.taobao.cun.crius.event.client.EventListener;
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
 		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
-		EventConstant.CHANGE_TP_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT})
+		EventConstant.CHANGE_TP_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT,EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT})
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -56,7 +63,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 			processChangeTPEvent(event);
 		} else if (event.getValue() instanceof WisdomCountyApplyEvent) {
 			processWisdomCountyApplyEvent(event);
-		}
+		}else if (event.getValue() instanceof StationStatusChangeEvent) {
+		      processStationStatusChangeEvent(event);
+	    }
 
 	}
 
@@ -269,5 +278,31 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(changEvent));
+	}
+	
+	private void processStationStatusChangeEvent(Event event) {
+		StationStatusChangeEvent statusChangeEvent = (StationStatusChangeEvent) event.getValue();
+
+		logger.info("receive event." + JSON.toJSONString(statusChangeEvent));
+
+		StationStatusChangeEnum statusChangeEnum = statusChangeEvent.getStatusChangeEnum();
+		Long stationId = statusChangeEvent.getStationId();
+		String operator = statusChangeEvent.getOperator();
+		OperatorTypeEnum operatorType = statusChangeEvent.getOperatorType();
+
+		String buildOperatorName = buildOperatorName(operator, operatorType);
+
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+
+		cuntaoFlowRecord.setTargetId(stationId);
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle(statusChangeEnum.getDescription());
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(operator);
+		cuntaoFlowRecord.setOperateTime(new Date());
+		cuntaoFlowRecord.setRemarks("");
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+
+		logger.info("Finished to handle event." + JSON.toJSONString(statusChangeEvent));
 	}
 }

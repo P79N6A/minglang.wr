@@ -81,6 +81,7 @@ import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
@@ -211,7 +212,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException {
+	public void validateExistChildrenForQuit(Long instanceId) {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
 		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
 
@@ -221,7 +222,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		for (PartnerStationRel rel : children) {
 			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
 				logger.warn("合伙人存在淘帮手");
-				throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
 				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
@@ -230,25 +231,29 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 						continue;
 					}
 					logger.warn("合伙人存在淘帮手");
-					throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
 				}
 			}
 		}
 	}
 	
 	@Override
-	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
 		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
 
 		if (CollectionUtils.isNotEmpty(children)) {
 			logger.warn("合伙人存在淘帮手");
-			throw new AugeServiceException(StationExceptionEnum.HAS_CHILDREN_TPA);
+			throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
 		}
 		
 		//如果是从装修中停业，则需要判断村点是否退出了装修
 		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
-			stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
+			try {
+				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
+			} catch (Exception e) {
+				throw new AugeBusinessException("村点装修状态不允许退出，请先审核装修反馈记录");
+			}
 		}
 	}
 
@@ -649,7 +654,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	public void validateAssetBack(Long instanceId){
 		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
 		if(!isBackAsset){
-			throw new AugeServiceException("资产未归还。");
+			throw new AugeBusinessException("3件资产尚未回收，请用小二APP回收资产。");
 		}
 	}
 
@@ -657,7 +662,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	public void validateOtherPartnerQuit(Long instanceId) {
 		boolean isOtherPartnerQuit = partnerInstanceQueryService.isOtherPartnerQuit(instanceId);
 		if(!isOtherPartnerQuit){
-			throw new AugeServiceException("村点上存在未退出的合伙人，不能撤点。");
+			throw new AugeBusinessException("村点上存在未退出的合伙人，不能撤点。");
 		}
 	}
 }
