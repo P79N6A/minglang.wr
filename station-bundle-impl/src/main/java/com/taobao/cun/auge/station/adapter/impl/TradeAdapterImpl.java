@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.common.resultmodel.ResultModel;
 import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
@@ -26,11 +27,11 @@ public class TradeAdapterImpl implements TradeAdapter {
 	TaobaoTradeOrderQueryService taobaoTradeOrderQueryService;
 
 	@Override
-	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeServiceException {
+	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeBusinessException,AugeSystemException{
 		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
         if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
 			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate),taobaoNoEndTradeDtoResultModel.getException());
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
         }
 
         TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoNoEndTradeDtoResultModel.getResult();
@@ -49,7 +50,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 				build.append("\n");
 			}
 			logger.warn("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
-			throw new AugeServiceException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
+			throw new AugeBusinessException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 		}
 	}
 }

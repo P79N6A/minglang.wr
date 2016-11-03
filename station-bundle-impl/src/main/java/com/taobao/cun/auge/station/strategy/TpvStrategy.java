@@ -121,7 +121,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
 		// TODO Auto-generated method stub
 
 	}
