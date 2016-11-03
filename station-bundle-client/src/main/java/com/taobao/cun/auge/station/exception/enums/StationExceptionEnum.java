@@ -15,8 +15,11 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 	public static final StationExceptionEnum SIGN_MANAGE_PROTOCOL_FAIL = new StationExceptionEnum(
 			"SIGN_MANAGE_PROTOCOL_FAIL", "签署管理协议失败");
 	
-	public static final StationExceptionEnum HAS_CHILDREN_TPA = new StationExceptionEnum(
-			"HAS_CHILDREN_TPA", "该合伙人下存在未退出的淘帮手，请先将其淘帮手退出后，才可以退出合伙人");
+	public static final StationExceptionEnum HAS_CHILDREN_TPA_QUIT = new StationExceptionEnum(
+			"HAS_CHILDREN_TPA_QUIT", "该合伙人下存在未退出的淘帮手，请先将其淘帮手退出后，才可以退出合伙人");
+	
+	public static final StationExceptionEnum HAS_CHILDREN_TPA_FOR_CLOSE = new StationExceptionEnum(
+			"HAS_CHILDREN_TPA_FOR_CLOSE", "该合伙人下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 	
 	public static final StationExceptionEnum PARTNER_INSTANCE_NOT_EXIST = new StationExceptionEnum(
 			"PARTNER_INSTANCE_NOT_EXIST", "合伙人实例不存在");
@@ -64,7 +67,8 @@ public class StationExceptionEnum extends CommonExceptionEnum {
 		mappings.put("STATION_NUM_IS_DUPLICATE", STATION_NUM_IS_DUPLICATE);
 		mappings.put("SIGN_SETTLE_PROTOCOL_FAIL", SIGN_SETTLE_PROTOCOL_FAIL);
 		mappings.put("SIGN_MANAGE_PROTOCOL_FAIL", SIGN_MANAGE_PROTOCOL_FAIL);
-		mappings.put("HAS_CHILDREN_TPA", HAS_CHILDREN_TPA);
+		mappings.put("HAS_CHILDREN_TPA_QUIT", HAS_CHILDREN_TPA_QUIT);
+		mappings.put("HAS_CHILDREN_TPA_FOR_CLOSE", HAS_CHILDREN_TPA_FOR_CLOSE);
 		mappings.put("PARTNER_INSTANCE_NOT_EXIST", PARTNER_INSTANCE_NOT_EXIST);
 		mappings.put("STATION_NOT_EXIST", STATION_NOT_EXIST);
 		mappings.put("STATION_STATUS_CHANGED", STATION_STATUS_CHANGED);

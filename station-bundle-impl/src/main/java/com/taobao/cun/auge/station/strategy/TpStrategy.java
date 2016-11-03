@@ -222,7 +222,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		for (PartnerStationRel rel : children) {
 			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
 				logger.warn("合伙人存在淘帮手");
-				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
+				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
 			} else {
 				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
 				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
@@ -231,7 +231,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 						continue;
 					}
 					logger.warn("合伙人存在淘帮手");
-					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
+					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
 				}
 			}
 		}
@@ -244,7 +244,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 		if (CollectionUtils.isNotEmpty(children)) {
 			logger.warn("合伙人存在淘帮手");
-			throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA);
+			throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_FOR_CLOSE);
 		}
 		
 		//如果是从装修中停业，则需要判断村点是否退出了装修
