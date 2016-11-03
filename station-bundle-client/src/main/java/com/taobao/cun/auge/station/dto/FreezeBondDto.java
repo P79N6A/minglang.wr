@@ -27,7 +27,6 @@ public class FreezeBondDto extends OperatorDto{
 	/**
 	 * 支付宝登录账号
 	 */
-	@NotNull(message="alipayAccount not null")
 	private String alipayAccount;
 	
 	public Long getTaobaoUserId() {
