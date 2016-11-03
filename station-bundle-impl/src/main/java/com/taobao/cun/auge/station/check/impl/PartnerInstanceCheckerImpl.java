@@ -14,6 +14,7 @@ import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 
@@ -25,7 +26,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
-	
+
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
@@ -36,7 +37,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	TradeAdapter tradeAdapter;
 
 	@Override
-	public void checkCloseApply(Long instanceId) {
+	public void checkCloseApply(Long instanceId) throws AugeBusinessException, AugeSystemException {
 		// 查询实例是否存在，不存在会抛异常
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
@@ -49,10 +50,10 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	}
 
 	@Override
-	public void checkQuitApply(Long instanceId) {
+	public void checkQuitApply(Long instanceId) throws AugeBusinessException, AugeSystemException {
 		// 查询实例是否存在，不存在会抛异常
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		
+
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
 		if (quitStationApply != null) {
