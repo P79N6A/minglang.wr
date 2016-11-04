@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -54,6 +56,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
@@ -91,6 +94,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
+	
 	
 	@Override
 	public List<PartnerCourseRecordDto> getAllRecords(String status,String courseCode) {
@@ -315,6 +319,31 @@ public class DataTransferServiceImpl implements DataTransferService{
         	 System.out.println("error");
          }
 		 }
+	}
+
+	@Override
+	public Long queryInstances(Long id,Long detailId) {
+		if(id==null){
+			return null;
+		}
+		Long returnLong=null;
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("id", id);
+		param.put("detailId", detailId);
+		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
+		if(instances.size()==0){
+			return null;
+		}else{
+			for(ExamInstanceDto dto:instances){
+				returnLong=dto.getUserId();
+				param.clear();
+				param.put("userId", dto.getUserId());
+				param.put("status", dto.getStatus());
+				param.put("point", dto.getPoint());
+				partnerCourseRecordMapper.updateApplyExamPoint(param);
+			}
+		}
+		return returnLong;
 	}
 	
 //	public static void main(String[] args) throws Exception{

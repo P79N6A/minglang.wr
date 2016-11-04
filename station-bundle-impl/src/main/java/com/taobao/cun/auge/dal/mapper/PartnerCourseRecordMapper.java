@@ -1,9 +1,13 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
+import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 
 public interface PartnerCourseRecordMapper {
     /**
@@ -93,4 +97,9 @@ public interface PartnerCourseRecordMapper {
      * @mbggenerated Tue Jul 12 20:13:50 CST 2016
      */
     int updateByPrimaryKey(PartnerCourseRecord record);
+    /**
+     * 数据迁移临时用
+     */
+    List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
+    int updateApplyExamPoint(Map<String,Object> param);
 }
