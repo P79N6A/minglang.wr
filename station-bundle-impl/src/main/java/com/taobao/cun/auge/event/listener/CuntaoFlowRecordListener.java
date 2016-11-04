@@ -26,9 +26,9 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("cuntaoFlowRecordListener")
-@EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
-		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
-		EventConstant.CHANGE_TP_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT})
+@EventSub({ StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
+    StationBundleEventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, StationBundleEventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
+    StationBundleEventConstant.CHANGE_TP_EVENT, StationBundleEventConstant.WISDOM_COUNTY_APPLY_EVENT})
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);

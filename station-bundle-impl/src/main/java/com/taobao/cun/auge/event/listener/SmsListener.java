@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
@@ -22,7 +22,7 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("smsListener")
-@EventSub(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
+@EventSub(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
 public class SmsListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsListener.class);

@@ -20,7 +20,7 @@ import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -34,8 +34,8 @@ import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
 @Component("adminListener")
-@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT
-        , EventConstant.CHANGE_TP_EVENT})
+@EventSub({StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT
+        , StationBundleEventConstant.CHANGE_TP_EVENT})
 public class AdminListener implements EventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminListener.class);

@@ -12,7 +12,7 @@ import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExample;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExtExample;
 import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyExtMapper;
 import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
@@ -144,6 +144,6 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         event.setRemark(dto.getRemark());
         event.setApplyId(dto.getId());
         event.setOpinion(dto.getState().getDesc());
-        EventDispatcherUtil.dispatch(EventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
+        EventDispatcherUtil.dispatch(StationBundleEventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
     }
 }
