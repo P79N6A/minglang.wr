@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.station.condition;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 

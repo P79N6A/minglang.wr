@@ -11,11 +11,6 @@ public class PartnerInstanceLevelEnum implements Serializable {
 	private PartnerInstanceLevel level;
 	private String description;
 
-	/**
-	 * 依赖此枚举的ordinal 因此不要改变枚举顺序
-	 * 类PartnerInstanceLevelEnum.java的实现描述：TODO 类实现描述 
-	 * @author xujianhui 2016年10月13日 下午4:03:21
-	 */
 	public enum PartnerInstanceLevel {
 		S4, S5, S6, S7, S8, SP;
 	}

@@ -83,5 +83,12 @@ public interface PartnerLifecycleBO {
 	 * @param operator
 	 * @throws AugeServiceException
 	 */
-	public void updateCourseState(Long instanceId, PartnerLifecycleCourseStatusEnum courseStatusEnum,OperatorDto operatorDto) throws AugeServiceException; 
+	public void updateCourseState(Long instanceId, PartnerLifecycleCourseStatusEnum courseStatusEnum,OperatorDto operatorDto) throws AugeServiceException;
+
+	/**
+	 * 根据ID获取PartnerLifecycleItems对象
+	 * @param id
+	 * @return
+	 */
+	public PartnerLifecycleItems getLifecycleItems(long id); 
 }

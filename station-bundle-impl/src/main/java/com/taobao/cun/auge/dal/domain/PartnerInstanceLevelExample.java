@@ -3178,4 +3178,5 @@ public class PartnerInstanceLevelExample {
             this(condition, value, secondValue, null);
         }
     }
+
 }

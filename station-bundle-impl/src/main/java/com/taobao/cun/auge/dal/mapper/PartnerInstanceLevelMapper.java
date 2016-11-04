@@ -93,4 +93,5 @@ public interface PartnerInstanceLevelMapper {
      * @mbggenerated Wed Nov 02 17:55:28 CST 2016
      */
     int updateByPrimaryKey(PartnerInstanceLevel record);
+
 }

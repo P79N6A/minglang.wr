@@ -153,6 +153,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		condition.setNeedPartnerInfo(Boolean.TRUE);
 		condition.setNeedStationInfo(Boolean.TRUE);
 		condition.setNeedDesensitization(Boolean.TRUE);
+		condition.setNeedPartnerLevelInfo(Boolean.TRUE);
 		condition.copyOperatorDto(operator);
 
 		return queryInfo(condition);
@@ -315,6 +316,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.CLOSING);
 		} else if (PartnerInstanceStateEnum.QUITING.getCode().equals(state)) {
 			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.QUITING);
+		} else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(state)) {
+			return partnerLifecycleBO.getLifecycleItems(id, PartnerLifecycleBusinessTypeEnum.DECORATING);
 		}
 		return null;
 	}

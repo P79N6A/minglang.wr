@@ -47,17 +47,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+			</dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-metaq</artifactId>
 		</dependency>
-
+		<!--  
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-maven</artifactId>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-endpoints</artifactId>
@@ -78,7 +80,10 @@
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-hsf</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>diamond-spring-boot-starter</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.cuntao.boot</groupId>
 			<artifactId>spring-boot-starter-mybatis</artifactId>
@@ -92,6 +97,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
@@ -150,7 +156,6 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-jdk8</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.taobao.notify</groupId>
 			<artifactId>notify-tr-client</artifactId>
@@ -162,32 +167,6 @@
 		<dependency>
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>biz-base-bundle.client</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-java-dsl</artifactId>
-			<version>1.1.2.RELEASE</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-integration</artifactId>
-			<version>1.4.0.M1</version>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-stream</artifactId>
-			<version>2.0.7.RELEASE</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.projectreactor.spring</groupId>
-			<artifactId>reactor-spring-context</artifactId>
-			<version>2.0.7.RELEASE</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
@@ -280,43 +259,41 @@
 			<artifactId>fileserver-commons-tool</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.aliexpress.boot</groupId>
-			<artifactId>spring-boot-starter-diamond</artifactId>
+			<groupId>com.alibaba.platform.shared</groupId>
+			<artifactId>acl.api</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.crius</groupId>
-				<artifactId>exam-client</artifactId>
+			<groupId>com.alibaba.platform.shared</groupId>
+			<artifactId>buc.uc.api</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.middleware.jingwei</groupId>
+			<artifactId>jingwei-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>exam-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>motion-client</artifactId>
+			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>dowjones.service.api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.alibaba.platform.shared</groupId>
-			<artifactId>acl.api</artifactId>
-		</dependency>
-		<dependency>
-	        <groupId>com.alibaba.platform.shared</groupId>
-	        <artifactId>buc.uc.api</artifactId>
-	        <exclusions>
-	            <exclusion>
-	                <artifactId>commons-codec</artifactId>
-	                <groupId>commons-codec</groupId>
-	            </exclusion>
-	        </exclusions>
-    	</dependency>
-    	<dependency>
-			<groupId>com.taobao.crius</groupId>
-			<artifactId>exam-client</artifactId>
-		</dependency>
-		
-		<dependency>
-		   <groupId>org.jmockit</groupId> 
-		   <artifactId>jmockit</artifactId> 
-		   <version>1.28</version>
-		   <scope>test</scope>
-        </dependency>
-           <dependency>
 				<groupId>com.alibaba.crm.shared</groupId>
 				<artifactId>order.service</artifactId>
 		</dependency>
@@ -328,6 +305,16 @@
 				<groupId>com.alibaba.crm.shared</groupId>
 				<artifactId>finance.service.api</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+		   <groupId>org.jmockit</groupId> 
+		   <artifactId>jmockit</artifactId> 
+		   <version>1.28</version>
+		   <scope>test</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

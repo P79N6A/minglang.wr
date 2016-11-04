@@ -1475,4 +1475,5 @@ public class PartnerInstanceLevel {
     public void setVisitedProductCntScore(BigDecimal visitedProductCntScore) {
         this.visitedProductCntScore = visitedProductCntScore;
     }
+
 }

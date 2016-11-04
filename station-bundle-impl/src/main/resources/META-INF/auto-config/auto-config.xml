@@ -32,6 +32,8 @@
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
+			<property name="hsf.consumer.version.cuntaocenter.cuntaoAssetService" defaultValue="1.0.0.daily"
+			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.cuntaoAssetService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.alipayStandardBailService" defaultValue="1.0.0.daily"
@@ -72,8 +74,17 @@
   		<property name="spring.notify.subscriber.topics.Cunxuexi_Train_Status_Change" defaultValue="Cunxuexi_Train_Over" description="cunxuexi培训签到消息" />
         <property name="crm.finance.service.version" defaultValue="3.0.0" description="财务服务版本" />
         
-	</group>
-
+	
+		<property name="jingwei.taskid.partner" defaultValue="D_T_RC_59906" description="jingwei-partner" />
+		<property name="jingwei.taskid.bond" defaultValue="D_T_RC_60018" description="jingwei-bond" />
+		<property name="jingwei.taskid.partnerrel" defaultValue="D_T_RC_60016"/>
+		<property name="notify.alilang.topic" defaultValue="CUNTAO_AUGE_ALILANG"/>
+		<property name="notify.alilang.messageType" defaultValue="sync-alilang-user"/>
+		<property name="spring.notify.publisher.groupId" defaultValue="P-CUNTAO-AUGE"/>
+		<property name="spring.notify.publisher.topics" defaultValue="CUNTAO_AUGE_ALILANG"/>
+		<property name="spring.notify.subscriber.topics.alilang.registered" defaultValue="NM-cuntao-user,NM-alilang-to-cuntao-user,NM-alilang-user"/>
+		<property name="alilang.orgId" defaultValue="1"/>
+		</group>
 	<script>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
 		<generate template="event-client-context.xml.vm" destfile="application/beans-event-client-context.xml" charset="GBK" />
