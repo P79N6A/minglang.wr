@@ -338,7 +338,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 				returnLong=dto.getUserId();
 				param.clear();
 				param.put("userId", dto.getUserId());
-				param.put("status", dto.getStatus());
+				param.put("status", dto.getUserType());
 				param.put("point", dto.getPoint());
 				partnerCourseRecordMapper.updateApplyExamPoint(param);
 			}
