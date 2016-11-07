@@ -400,7 +400,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto) {
+	public void submitQuitTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto) {
 		try {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
@@ -420,7 +420,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
 			alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
 			alipayStandardBailDto.setTypeCode(standerBailTypeCode);
-			alipayStandardBailDto.setUserAccount(accountDto.getAccountNo());
+			alipayStandardBailDto.setUserAccount(accountNo);
 			dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
 			dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
 			taskLists.add(dealStanderBailTaskVo);

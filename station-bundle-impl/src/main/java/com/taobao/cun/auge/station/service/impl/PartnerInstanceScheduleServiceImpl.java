@@ -91,19 +91,29 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		if (partner == null) {
 			return Boolean.TRUE;
 		}
-		OperatorDto operatorDto = new OperatorDto();
-		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
-		operatorDto.setOperatorOrgId(0L);
-		PaymentAccountDto accountDto = paymentAccountQueryAdapter
-				.queryPaymentAccountByTaobaoUserId(partner.getTaobaoUserId(), operatorDto);
-
+		
 		// 获得冻结的金额
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 		String frozenMoney = accountMoney.getMoney().toString();
+		
+		String accountNo = accountMoney.getAccountNo();
+		
+		OperatorDto operatorDto = new OperatorDto();
+		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
+		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+		operatorDto.setOperatorOrgId(0L);
+		if (accountNo== null) {
+			PaymentAccountDto accountDto = paymentAccountQueryAdapter
+					.queryPaymentAccountByTaobaoUserId(partner.getTaobaoUserId(), operatorDto);
+			if (accountDto == null){
+				logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
+				throw new  AugeServiceException("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
+			}
+			accountNo = accountDto.getAccountNo();
+		}
 
-		generalTaskSubmitService.submitQuitTask(instanceId, accountDto, frozenMoney, operatorDto);
+		generalTaskSubmitService.submitQuitTask(instanceId, accountNo, frozenMoney, operatorDto);
 
 		return Boolean.TRUE;
 	}
