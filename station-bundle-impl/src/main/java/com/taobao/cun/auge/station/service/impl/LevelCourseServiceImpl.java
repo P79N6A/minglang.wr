@@ -34,6 +34,7 @@ import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningStatisticsDto;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import com.taobao.cun.auge.station.service.LevelCourseQueryService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
@@ -54,6 +55,8 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
     @Autowired
     private PartnerPeixunService partnerPeixunService;
     
+    private static final String COURSE_HAD_EXIST = "COURSE_HAD_EXIST";
+    
     /**
      * 新增一个晋升培训课程,目前不支持更新课程所以如果已存在则直接返回false;
      * 保存课程信息,在按照层级更新层级课程配置信息;
@@ -66,7 +69,7 @@ public class LevelCourseServiceImpl implements LevelCourseManageService, LevelCo
         LevelCourseExample example = new LevelCourseExample();
         example.createCriteria().andCourseCodeEqualTo(course.getCourseCode());
         if(!CollectionUtils.isEmpty(courseBo.queryLevelCourse(example))){
-            return false;
+            throw new AugeServiceException(COURSE_HAD_EXIST, "duplilcate course code,course code had exsit:" + course.getCourseCode());
         }
         LevelCourse levelCourse = LevelCourseConvertor.toLevelCourse(course);
         levelCourse.setGmtCreate(new Date());
