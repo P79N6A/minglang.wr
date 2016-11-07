@@ -335,7 +335,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 			return null;
 		}else{
 			for(ExamInstanceDto dto:instances){
-				returnLong=dto.getUserId();
+				returnLong=dto.getId();
 				param.clear();
 				param.put("userId", dto.getUserId());
 				param.put("status", dto.getUserType());
