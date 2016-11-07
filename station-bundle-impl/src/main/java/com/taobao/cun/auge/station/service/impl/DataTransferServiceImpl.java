@@ -41,6 +41,7 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -56,7 +57,6 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
-import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
@@ -323,29 +323,188 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Override
 	public Long queryInstances(Long id,Long detailId) {
-		if(id==null){
-			return null;
-		}
-		Long returnLong=null;
-		Map<String,Object> param=new HashMap<String,Object>();
-		param.put("id", id);
-		param.put("detailId", detailId);
-		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
-		if(instances.size()==0){
-			return null;
-		}else{
-			for(ExamInstanceDto dto:instances){
-				returnLong=dto.getUserId();
-				param.clear();
-				param.put("userId", dto.getUserId());
-				param.put("status", dto.getUserType());
-				param.put("point", dto.getPoint());
-				partnerCourseRecordMapper.updateApplyExamPoint(param);
+//		if(id==null){
+//			return null;
+//		}
+//		Long returnLong=null;
+//		Map<String,Object> param=new HashMap<String,Object>();
+//		param.put("id", id);
+//		param.put("detailId", detailId);
+//		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
+//		if(instances.size()==0){
+//			return null;
+//		}else{
+//			for(ExamInstanceDto dto:instances){
+//				returnLong=dto.getUserId();
+//				param.clear();
+//				param.put("userId", dto.getUserId());
+//				param.put("status", dto.getUserType());
+//				param.put("point", dto.getPoint());
+//				partnerCourseRecordMapper.updateApplyExamPoint(param);
+//			}
+//		}
+//		return returnLong;
+		List<PartnerApply> applys=partnerCourseRecordMapper.testPartnerApplyQuery(null);
+		for(PartnerApply apply:applys){
+			int type=(int) (1+Math.random()*(5));
+			List<Map<String,Object>> params=getInit(apply.getTaobaoUserId(),type);
+			for(Map<String,Object> param:params){
+				partnerCourseRecordMapper.testInsertExamInstance(param);
 			}
 		}
-		return returnLong;
+		return null;
 	}
 	
+	private List<Map<String,Object>> getInit(Long userId,int type){
+		List<Map<String,Object>> result=new ArrayList<Map<String,Object>>();
+		if(type==1){
+			//单个招募试卷试卷 三条考试记录，一条有效
+			Map<String,Object> map1=getDefaultMap(userId);
+			map1.put("paperId", "123");
+		    map1.put("point", "50");
+		    map1.put("status", "failed");
+		    map1.put("bizType", "partnerApply");
+		    map1.put("valid", "n");
+		    result.add(map1);
+		    Map<String,Object> map2=getDefaultMap(userId);
+			map2.put("paperId", "123");
+		    map2.put("point", "98");
+		    map2.put("status", "pass");
+		    map2.put("bizType", "partnerApply");
+		    map2.put("valid", "n");
+		    result.add(map2);
+		    Map<String,Object> map3=getDefaultMap(userId);
+			map3.put("paperId", "123");
+		    map3.put("point", "100");
+		    map3.put("status", "pass");
+		    map3.put("bizType", "partnerApply");
+		    result.add(map3);
+		}else if(type==2){
+			//两个招募试卷试卷 各三条考试记录，一条有效
+			Map<String,Object> map1=getDefaultMap(userId);
+			map1.put("paperId", "123");
+		    map1.put("point", "50");
+		    map1.put("status", "failed");
+		    map1.put("bizType", "partnerApply");
+		    map1.put("valid", "n");
+		    result.add(map1);
+		    Map<String,Object> map2=getDefaultMap(userId);
+			map2.put("paperId", "123");
+		    map2.put("point", "98");
+		    map2.put("status", "pass");
+		    map2.put("bizType", "partnerApply");
+		    map2.put("valid", "n");
+		    result.add(map2);
+		    Map<String,Object> map3=getDefaultMap(userId);
+			map3.put("paperId", "123");
+		    map3.put("point", "100");
+		    map3.put("status", "pass");
+		    map3.put("bizType", "partnerApply");
+		    result.add(map3);
+		    Map<String,Object> map4=getDefaultMap(userId);
+			map4.put("paperId", "1");
+		    map4.put("point", "50");
+		    map4.put("status", "failed");
+		    map4.put("bizType", "partnerApply");
+		    map4.put("valid", "n");
+		    result.add(map4);
+		    Map<String,Object> map5=getDefaultMap(userId);
+			map5.put("paperId", "1");
+		    map5.put("point", "98");
+		    map5.put("status", "pass");
+		    map5.put("bizType", "partnerApply");
+		    map5.put("valid", "n");
+		    result.add(map5);
+		    Map<String,Object> map6=getDefaultMap(userId);
+			map6.put("paperId", "1");
+		    map6.put("point", "100");
+		    map6.put("status", "pass");
+		    map6.put("bizType", "partnerApply");
+		    map6.put("valid", "n");
+		    result.add(map6);
+		}else if(type==3){
+			//单个招募试卷，+活动试卷，一条有效
+			Map<String,Object> map1=getDefaultMap(userId);
+			map1.put("paperId", "123");
+		    map1.put("point", "50");
+		    map1.put("status", "failed");
+		    map1.put("bizType", "partnerApply");
+		    map1.put("valid", "n");
+		    result.add(map1);
+		    Map<String,Object> map2=getDefaultMap(userId);
+			map2.put("paperId", "123");
+		    map2.put("point", "98");
+		    map2.put("status", "pass");
+		    map2.put("bizType", "partnerApply");
+		    map2.put("valid", "n");
+		    result.add(map2);
+		    Map<String,Object> map3=getDefaultMap(userId);
+			map3.put("paperId", "123");
+		    map3.put("point", "100");
+		    map3.put("status", "pass");
+		    map3.put("bizType", "partnerApply");
+		    result.add(map3);
+		    Map<String,Object> map4=getDefaultMap(userId);
+			map4.put("paperId", "122");
+		    map4.put("point", "50");
+		    map4.put("status", "failed");
+		    map4.put("bizType", "partner_activity");
+		    map4.put("valid", "n");
+		    result.add(map4);
+		    Map<String,Object> map5=getDefaultMap(userId);
+			map5.put("paperId", "122");
+		    map5.put("point", "98");
+		    map5.put("status", "pass");
+		    map5.put("bizType", "partner_activity");
+		    map5.put("valid", "n");
+		    result.add(map5);
+		    Map<String,Object> map6=getDefaultMap(userId);
+			map6.put("paperId", "122");
+		    map6.put("point", "100");
+		    map6.put("status", "pass");
+		    map6.put("bizType", "partner_activity");
+		    result.add(map6);
+		}else if(type==4){
+			//无招募试卷，只有活动试卷，一条有效
+			Map<String,Object> map4=getDefaultMap(userId);
+			map4.put("paperId", "122");
+		    map4.put("point", "50");
+		    map4.put("status", "failed");
+		    map4.put("bizType", "partner_activity");
+		    map4.put("valid", "n");
+		    result.add(map4);
+		    Map<String,Object> map5=getDefaultMap(userId);
+			map5.put("paperId", "122");
+		    map5.put("point", "98");
+		    map5.put("status", "pass");
+		    map5.put("bizType", "partner_activity");
+		    map5.put("valid", "n");
+		    result.add(map5);
+		    Map<String,Object> map6=getDefaultMap(userId);
+			map6.put("paperId", "122");
+		    map6.put("point", "100");
+		    map6.put("status", "pass");
+		    map6.put("bizType", "partner_activity");
+		    result.add(map6);
+		}else{
+			//无考试记录
+			return result;
+		}
+		return result;
+	}
+	
+	private Map<String,Object> getDefaultMap(Long userId){
+		Map<String,Object> result=new HashMap<String,Object>();
+		result.put("gmtCreate", new Date());
+		result.put("gmtModified", new Date());
+		result.put("creator", "test");
+		result.put("modifier", "test");
+		result.put("isDeleted", "n");
+		result.put("taobaoNick","h" );
+		result.put("userId", userId);
+		result.put("valid", "y");
+		return result;
+	}
 //	public static void main(String[] args) throws Exception{
 //		 BufferedReader b = new BufferedReader(new FileReader("D://shujushengji1.txt"));
 //		 PrintWriter pw1=new PrintWriter(new File("D://shujushengji2.txt"));

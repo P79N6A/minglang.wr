@@ -422,4 +422,24 @@
     modifier='dataUp'
     where taobao_user_id=#{userId} and apply_exam_status is null
   </update>
+  
+   <resultMap id="testPartnerApplyQueryMap" type="com.taobao.cun.auge.dal.domain.PartnerApply" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="taobao_user_id" property="taobaoUserId" jdbcType="BIGINT" />
+  </resultMap>
+  <select id="testPartnerApplyQuery" resultMap="testPartnerApplyQueryMap" parameterType="map" >
+  select id ,taobao_user_id
+  from partner_apply where is_deleted='n'
+  </select>
+  <insert id="testInsertExamInstance" parameterType="map" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into exam_instance (gmt_create, gmt_modified, creator, 
+      modifier, is_deleted, user_type, user_id,paper_id,point,status,taobao_nick,valid,biz_type)
+    values (#{gmtCreate}, #{gmtModified}, #{creator}, 
+      #{modifier}, #{isDeleted}, 'partner', 
+      #{paperId}, #{point}, #{status}, 
+      #{taobaoNick}, #{valid},#{bizType})
+  </insert>
 </mapper>

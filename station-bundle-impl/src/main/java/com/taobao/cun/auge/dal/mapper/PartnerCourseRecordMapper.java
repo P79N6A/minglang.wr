@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
@@ -102,4 +103,6 @@ public interface PartnerCourseRecordMapper {
      */
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
     int updateApplyExamPoint(Map<String,Object> param);
+    List<PartnerApply> testPartnerApplyQuery(Map<String,Object> param);
+    int testInsertExamInstance(Map<String,Object> param);
 }
