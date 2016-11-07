@@ -438,7 +438,7 @@
     insert into exam_instance (gmt_create, gmt_modified, creator, 
       modifier, is_deleted, user_type, user_id,paper_id,point,status,taobao_nick,valid,biz_type)
     values (#{gmtCreate}, #{gmtModified}, #{creator}, 
-      #{modifier}, #{isDeleted}, 'partner', 
+      #{modifier}, #{isDeleted}, 'partner', #{userId}
       #{paperId}, #{point}, #{status}, 
       #{taobaoNick}, #{valid},#{bizType})
   </insert>
