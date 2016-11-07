@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
@@ -41,7 +41,10 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
 
     private static final LevelExamConfigurationDto EMPTY_CONFIG_OBJECT = new LevelExamConfigurationDto(); 
     private static final String LEVEL_EXAM_CONFIG = "level_exam_config";
-    private static final String LEVEL_EXAM_KEY = "level_to_exam";
+    private static final String LEVEL_EXAM_KEY = "level_to_exam_map";
+    private static final String LEVEL_EXAM_EVALUATE_SWITCH = "level_to_exam_evaluate_switch";
+
+
     
     @Autowired
     private AppResourceBO appResourceBO;
@@ -58,8 +61,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
             logger.error("invalid configuration, dto:{}, configurePerson:{}", configurationDto, configurePerson);
             return false;
         }
-        LevelConfiguration configuration = new LevelConfiguration(configurationDto.isOpenEvaluate(), configurationDto.isDispatch(), configurationDto.getLevelExamMap());
-        String value = JSON.toJSONString(configuration);
+        String value = JSON.toJSONString(configurationDto.getLevelExamMap());
         return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, value, false, configurePerson);
     }
 
@@ -69,10 +71,8 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         if(appResource==null || StringUtils.isBlank(appResource.getValue())){
             return EMPTY_CONFIG_OBJECT; 
         }
-        LevelConfiguration configuration =  JSON.parseObject(appResource.getValue(), LevelConfiguration.class);
-        return new LevelExamConfigurationDto().setLevelExamMap(configuration.getLevelExamPaperIdMap())
-                .setDispatch(configuration.isDispatch())
-                .setOpenEvaluate(configuration.isOpenEvaluate());
+        Map<String, Long> configuration =  JSON.parseObject(appResource.getValue(), new TypeReference<Map<String, Long>>(){});
+        return new LevelExamConfigurationDto().setLevelExamMap(configuration);
     }
     
     
@@ -126,6 +126,17 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         return new LevelExamingResult(isPassAllDispatchedExam, notPassExamLevels);
     }
     
+    @Override
+    public boolean configureSwitchForDispatchPaper(boolean open) {
+        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, null, !open, "system");
+    }
+
+    @Override
+    public boolean configureSwitchForEvaluate(boolean open) {
+        String switchStr = Boolean.toString(open);
+        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_EVALUATE_SWITCH, switchStr, false, "system");
+    }
+    
     /**
      * 根据试卷配置信息给合伙人分发指定层级的试卷
      * @param taobaoUserId 合伙人id
@@ -140,7 +151,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
             logger.error("LevelExamDispatchServiceImpl LevelExamConfigurationDto is null");
             return false;
         }
-        if(CollectionUtils.isEmpty(dispatchLevels) || !configurationDto.isDispatch()){
+        if(CollectionUtils.isEmpty(dispatchLevels)){
             return true;
         }
         for(PartnerInstanceLevel level:dispatchLevels){
@@ -201,52 +212,4 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         return edd;
     }
     
-    public static class LevelConfiguration implements Serializable {
-
-        private static final long serialVersionUID = 5209263287154537277L;
-        /**
-         * 是否打开开关 晋升时必须通过考试
-         */
-        private boolean openEvaluate;
-        /**
-         * 是否分发晋升试卷
-         */
-        private boolean dispatch;
-        private Map<String, Long> levelExamPaperIdMap = new HashMap<String, Long>();
-        
-        public LevelConfiguration(){};
-        
-        public LevelConfiguration(boolean isOpenEvaluate, boolean isDispatch, Map<String, Long> levelExamPaperIdMap) {
-            super();
-            this.openEvaluate = isOpenEvaluate;
-            this.dispatch = isDispatch;
-            this.levelExamPaperIdMap = levelExamPaperIdMap;
-        }
-
-        public boolean isOpenEvaluate() {
-            return openEvaluate;
-        }
-        
-        public void setOpenEvaluate(boolean isOpenEvaluate) {
-            this.openEvaluate = isOpenEvaluate;
-        }
-        
-        public boolean isDispatch() {
-            return dispatch;
-        }
-        
-        public void setDispatch(boolean isDispatch) {
-            this.dispatch = isDispatch;
-        }
-        
-        public Map<String, Long> getLevelExamPaperIdMap() {
-            return levelExamPaperIdMap;
-        }
-        
-        public void setLevelExamPaperIdMap(Map<String, Long> levelExamPaperIdMap) {
-            this.levelExamPaperIdMap = levelExamPaperIdMap;
-        }
-        
-    }
-
 }

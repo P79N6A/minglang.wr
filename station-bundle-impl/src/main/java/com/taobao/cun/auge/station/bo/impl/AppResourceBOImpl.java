@@ -60,14 +60,13 @@ public class AppResourceBOImpl implements AppResourceBO {
     public boolean configAppResource(String type, String key, String value,  boolean isDelete, String configurePerson) {
         ValidateUtils.notNull(type);
         ValidateUtils.notNull(key);
-        ValidateUtils.notNull(value);
         ValidateUtils.notNull(configurePerson);        
         AppResource existResource = queryAppResource(type, key);
         if(existResource!=null){
             AppResource newResource = toAppResource(type, key, value, configurePerson, isDelete);
             newResource.setId(existResource.getId());
             newResource.setGmtCreate(existResource.getGmtCreate());
-            int count = appResourceMapper.updateByPrimaryKey(newResource);
+            int count = appResourceMapper.updateByPrimaryKeySelective(newResource);
             return count > 0;
         }else{
             AppResource newResource = toAppResource(type, key, value, configurePerson, isDelete);

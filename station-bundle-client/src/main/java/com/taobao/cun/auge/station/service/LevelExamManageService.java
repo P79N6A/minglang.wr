@@ -18,6 +18,16 @@ public interface LevelExamManageService {
     LevelExamConfigurationDto queryConfigure();
     
     /**
+     * 是否分发试卷的开关
+     */
+    boolean configureSwitchForDispatchPaper(boolean open);
+    
+    /**
+     * 是否把晋升考试作为晋升必要条件的开关
+     */
+    boolean configureSwitchForEvaluate(boolean open);
+    
+    /**
      * 根据当前合伙人层级,进行试卷分发,针对taobaoUserId+level 试卷分发满足幂等性要求
      * @param taobaoUserId
      * @param nickName

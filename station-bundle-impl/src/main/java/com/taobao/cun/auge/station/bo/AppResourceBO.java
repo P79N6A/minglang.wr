@@ -22,7 +22,7 @@ public interface AppResourceBO {
 	
 	public Map<String, AppResource> queryAppResourceMap(String type);
 	
-	public boolean configAppResource(@NotNull String type,@NotNull  String key, @NotNull String value, boolean isDelete, @NotNull String configurePerson);
+	public boolean configAppResource(@NotNull String type,@NotNull  String key, String value, boolean isDelete, @NotNull String configurePerson);
 	
 	public String queryAppValueNotAllowNull(String type, String key);
 }
