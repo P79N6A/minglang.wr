@@ -41,8 +41,6 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
-import com.jcabi.log.Logger;
-import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -58,6 +56,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
@@ -324,40 +323,40 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Override
 	public Long queryInstances(Long id,Long detailId) {
-//		if(id==null){
-//			return null;
-//		}
-//		Long returnLong=null;
-//		Map<String,Object> param=new HashMap<String,Object>();
-//		param.put("id", id);
-//		param.put("detailId", detailId);
-//		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
-//		if(instances.size()==0){
-//			return null;
-//		}else{
-//			for(ExamInstanceDto dto:instances){
-//				returnLong=dto.getUserId();
-//				param.clear();
-//				param.put("userId", dto.getUserId());
-//				param.put("status", dto.getUserType());
-//				param.put("point", dto.getPoint());
-//				partnerCourseRecordMapper.updateApplyExamPoint(param);
-//			}
-//		}
-//		return returnLong;
-		List<PartnerApply> applys=partnerCourseRecordMapper.testPartnerApplyQuery(null);
-		for(PartnerApply apply:applys){
-			int type=(int) (1+Math.random()*(5));
-			List<Map<String,Object>> params=getInit(apply.getTaobaoUserId(),type);
-			for(Map<String,Object> param:params){
-				try{
-				partnerCourseRecordMapper.testInsertExamInstance(param);
-				}catch(Exception e){
-					System.out.println(e);
-				}
+		if(id==null){
+			return null;
+		}
+		Long returnLong=null;
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("id", id);
+		param.put("detailId", detailId);
+		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
+		if(instances.size()==0){
+			return null;
+		}else{
+			for(ExamInstanceDto dto:instances){
+				returnLong=dto.getUserId();
+				param.clear();
+				param.put("userId", dto.getUserId());
+				param.put("status", dto.getUserType());
+				param.put("point", dto.getPoint());
+				partnerCourseRecordMapper.updateApplyExamPoint(param);
 			}
 		}
-		return null;
+		return returnLong;
+//		List<PartnerApply> applys=partnerCourseRecordMapper.testPartnerApplyQuery(null);
+//		for(PartnerApply apply:applys){
+//			int type=(int) (1+Math.random()*(5));
+//			List<Map<String,Object>> params=getInit(apply.getTaobaoUserId(),type);
+//			for(Map<String,Object> param:params){
+//				try{
+//				partnerCourseRecordMapper.testInsertExamInstance(param);
+//				}catch(Exception e){
+//					System.out.println(e);
+//				}
+//			}
+//		}
+//		return null;
 	}
 	
 	private List<Map<String,Object>> getInit(Long userId,int type){
