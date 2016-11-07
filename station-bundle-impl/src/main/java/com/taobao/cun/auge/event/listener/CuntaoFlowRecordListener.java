@@ -244,6 +244,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 			return emp360Adapter.getName(operator);
 		} else if (OperatorTypeEnum.HAVANA.equals(type)) {
 			return uicReadAdapter.getFullName(Long.parseLong(operator));
+		}else if (OperatorTypeEnum.SYSTEM.equals(type)) {
+			return OperatorTypeEnum.SYSTEM.getDesc();
 		}
 		return operator;
 	}
