@@ -139,10 +139,10 @@ public class ProcessProcessor {
 			// 任务被激活
 		} else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
 			// 村点强制停业
-			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
+			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)||ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
 				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.CLOSING);
 				// 村点退出
-			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
+			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)||ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 				monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.QUITING);
 			}
 			//任务完成
