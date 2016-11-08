@@ -115,10 +115,10 @@ public class ProcessProcessor {
 			String resultCode = instanceStatus.getString("code");
 
 			// 村点强制停业
-			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
+			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)||ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
 				monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 				// 合伙人退出
-			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
+			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)||ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 				if(StringUtil.isNotBlank(partnerInstanceId)){
 					quitApprove(Long.valueOf(partnerInstanceId), ProcessApproveResultEnum.valueof(resultCode));
 				}else{

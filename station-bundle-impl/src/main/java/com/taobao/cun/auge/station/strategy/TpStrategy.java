@@ -628,8 +628,6 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
 		
-		String aclPermissionCode = findApproveAclPermissionCode(ProcessBusinessEnum.stationForcedClosure,typeEnum);
-		params.put("aclPermissionCode", aclPermissionCode);
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
@@ -648,8 +646,6 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
 		
-		String aclPermissionCode = findApproveAclPermissionCode(ProcessBusinessEnum.stationQuitRecord,typeEnum);
-		params.put("aclPermissionCode", aclPermissionCode);
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
