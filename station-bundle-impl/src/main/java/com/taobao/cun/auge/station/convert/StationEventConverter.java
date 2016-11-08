@@ -17,6 +17,8 @@ public final class StationEventConverter {
 
 		event.setStationId(station.getId());
 		event.setStationName(station.getName());
+		
+		event.setStatusChangeEnum(statusChangeEnum);
 		event.copyOperatorDto(operator);
 
 		return event;
