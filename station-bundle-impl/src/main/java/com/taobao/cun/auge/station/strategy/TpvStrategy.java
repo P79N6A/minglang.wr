@@ -326,7 +326,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) throws AugeServiceException {
+	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 		Long applyId = findCloseApplyId(instanceId);
 		
@@ -344,7 +344,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) throws AugeServiceException {
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
 		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
 		Long applyId = findQuitApplyId(instanceId);
 		

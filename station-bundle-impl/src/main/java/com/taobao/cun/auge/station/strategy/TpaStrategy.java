@@ -380,7 +380,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) throws AugeServiceException {
+	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
@@ -389,7 +389,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto) throws AugeServiceException {
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
 		try {
 			processProcessor.quitApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
