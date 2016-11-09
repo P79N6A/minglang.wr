@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
@@ -27,9 +28,11 @@ import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
 
-
+@Service("partnerInstanceLevelDataQueryService")
+@HSFProvider(serviceInterface = PartnerInstanceLevelDataQueryService.class)
 public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstanceLevelDataQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceLevelDataQueryServiceImpl.class);

@@ -39,7 +39,10 @@ public class LevelExamConfigurationDto implements Serializable {
     }
     
     public Long getExamPaperId(PartnerInstanceLevel level){
-        return levelExamPaperIdMap.get(level);
+        if(level == null){
+            return 0L;
+        }
+        return levelExamPaperIdMap.get(level.name());
     }
 
     public Map<String, Long> getLevelExamMap(){
