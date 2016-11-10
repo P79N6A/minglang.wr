@@ -350,7 +350,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			return null;
 		}
 		PartnerInstanceDto instance = PartnerInstanceConverter.convert(rel);
-
+		
+		// 获得生命周期数据
+		PartnerLifecycleDto lifecycleDto = PartnerLifecycleConverter
+				.toPartnerLifecycleDto(getLifecycleItem(rel.getId(), rel.getState()));
+		instance.setPartnerLifecycleDto(lifecycleDto);
+		
 		Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 		PartnerDto partnerDto = PartnerConverter.toPartnerDto(partner);
 		instance.setPartnerDto(partnerDto);
