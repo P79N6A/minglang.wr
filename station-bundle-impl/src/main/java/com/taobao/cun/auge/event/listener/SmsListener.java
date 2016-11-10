@@ -3,6 +3,7 @@ package com.taobao.cun.auge.event.listener;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
+import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import com.taobao.util.MapUtil;
 import org.apache.ecs.html.P;
 import org.slf4j.Logger;
@@ -59,6 +60,7 @@ public class SmsListener implements EventListener {
 		//智慧县域报名消息
 		if (event.getValue() instanceof WisdomCountyApplyEvent){
 			processWisdomCountyApplyEvent(event);
+			return;
 		}
 
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
@@ -91,7 +93,15 @@ public class SmsListener implements EventListener {
 		String creator = applyEvent.getCreator();
 		Map<String, EmpInfoDto> empInfoByWorkNos = emp360Adapter.getEmpInfoByWorkNos(Collections.singletonList(creator));
 		if (empInfoByWorkNos.get(creator) != null) {
-			generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), empInfoByWorkNos.get(creator).getMobile(), applyEvent.getOperator(), "智慧县域报名测试");
+			String mobile = empInfoByWorkNos.get(creator).getMobile();
+			StringBuilder content = new StringBuilder(empInfoByWorkNos.get(creator).getName());
+			WisdomCountyStateEnum type = applyEvent.getType();
+			if (WisdomCountyStateEnum.AUDIT_PASS.equals(type)) {
+				content.append("，你的智慧县域报名审核已通过，请至ORG下载合同模板及合同审批注意事项。");
+			} else if (WisdomCountyStateEnum.AUDIT_FAIL.equals(type)) {
+				content.append("，你的智慧县域报名审核未通过。");
+			}
+			generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), mobile, applyEvent.getOperator(), content.toString());
 		} else {
 			logger.info("can not query mobile by " + creator);
 		}

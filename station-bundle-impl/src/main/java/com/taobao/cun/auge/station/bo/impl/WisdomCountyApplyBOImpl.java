@@ -145,6 +145,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         event.setApplyId(dto.getId());
         event.setOpinion(dto.getState().getDesc());
         event.setCreator(creator);
+        event.setType(dto.getState());
         EventDispatcherUtil.dispatch(EventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
     }
 }
