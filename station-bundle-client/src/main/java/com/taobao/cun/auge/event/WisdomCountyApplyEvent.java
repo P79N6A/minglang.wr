@@ -15,6 +15,17 @@ public class WisdomCountyApplyEvent extends OperatorDto {
 
     private String opinion;
 
+    //报名小二
+    private String creator;
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
     public String getOpinion() {
         return opinion;
     }

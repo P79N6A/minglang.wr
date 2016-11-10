@@ -11,6 +11,15 @@ public class EmpInfoDto implements Serializable {
 	private String name;// 员工姓名
 	private String loginAccount;// 域账户
 	private String buMail; // 公司邮箱
+	private String mobile; // 手机号码
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
 
 	public String getWorkNo() {
 		return workNo;
