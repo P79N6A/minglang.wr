@@ -13,7 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.taobao.cun.auge.station.condition.LevelCourseCondition;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningStatisticsDto;
-import com.taobao.cun.auge.station.service.impl.LevelCourseServiceImpl;
+import com.taobao.cun.auge.station.service.impl.LevelCourseQueryServiceImpl;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -22,7 +22,7 @@ import com.taobao.cun.auge.station.service.impl.LevelCourseServiceImpl;
 public class TestLevelCourseQueryService {
 
     @Autowired
-    private LevelCourseServiceImpl levelCourseQueryService;
+    private LevelCourseQueryServiceImpl levelCourseQueryService;
     
     @Test
     public void testGetCourseLearningInfo(){
