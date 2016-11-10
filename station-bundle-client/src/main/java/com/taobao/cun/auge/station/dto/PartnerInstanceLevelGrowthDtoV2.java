@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
 
@@ -36,42 +35,42 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
     /**
      * 1.0商品GMV占比全国排名
      */
-    private BigDecimal        goods1GmvRatio;
+    private Double        goods1GmvRatio;
     private Long              goods1GmvRatioRank;
-    private BigDecimal        goods1GmvRatioScore;
-    private BigDecimal        lastGoods1GmvRatioScore;
+    private Double        goods1GmvRatioScore;
+    private Double        lastGoods1GmvRatioScore;
 
     /**
      * app活跃村民使用数
      */
-    private BigDecimal        activeAppUserCnt;
+    private Double        activeAppUserCnt;
     private Long              activeAppUserCntRank;
-    private BigDecimal        activeAppUserCntScore;
-    private BigDecimal        lastActiveAppUserCntScore;
+    private Double        activeAppUserCntScore;
+    private Double        lastActiveAppUserCntScore;
 
     /**
      * 忠实村民数
      */
-    private BigDecimal        loyaltyVillagerCnt;
+    private Double        loyaltyVillagerCnt;
     private Long              loyaltyVillagerCntRank;
-    private BigDecimal        loyaltyVillagerCntScore;
-    private BigDecimal        lastLoyaltyVillagerCntScore;
+    private Double        loyaltyVillagerCntScore;
+    private Double        lastLoyaltyVillagerCntScore;
 
     /**
      * 复购率
      */
-    private BigDecimal        repurchaseRate;
+    private Double        repurchaseRate;
     private Long              repurchaseRateRank;
-    private BigDecimal        repurchaseRateScore;
-    private BigDecimal        lastRepurchaseRateScore;
+    private Double        repurchaseRateScore;
+    private Double        lastRepurchaseRateScore;
 
     /**
      * 访问商品数
      */
-    private BigDecimal        visitedProductCnt;
+    private Double        visitedProductCnt;
     private Long              visitedProductCntRank;
-    private BigDecimal        visitedProductCntScore;
-    private BigDecimal        lastVisitedProductCntScore;
+    private Double        visitedProductCntScore;
+    private Double        lastVisitedProductCntScore;
 
     /**
      * 县排名
@@ -147,35 +146,35 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.goods1GmvRatioRank = goods1GmvRatioRank;
     }
 
-    public BigDecimal getGoods1GmvRatio() {
+    public Double getGoods1GmvRatio() {
         return goods1GmvRatio;
     }
 
-    public void setGoods1GmvRatio(BigDecimal goods1GmvRatio) {
+    public void setGoods1GmvRatio(Double goods1GmvRatio) {
         this.goods1GmvRatio = goods1GmvRatio;
     }
 
-    public BigDecimal getGoods1GmvRatioScore() {
+    public Double getGoods1GmvRatioScore() {
         return goods1GmvRatioScore;
     }
 
-    public void setGoods1GmvRatioScore(BigDecimal goods1GmvRatioScore) {
+    public void setGoods1GmvRatioScore(Double goods1GmvRatioScore) {
         this.goods1GmvRatioScore = goods1GmvRatioScore;
     }
 
-    public BigDecimal getLastGoods1GmvRatioScore() {
+    public Double getLastGoods1GmvRatioScore() {
         return lastGoods1GmvRatioScore;
     }
 
-    public void setLastGoods1GmvRatioScore(BigDecimal lastGoods1GmvRatioScore) {
+    public void setLastGoods1GmvRatioScore(Double lastGoods1GmvRatioScore) {
         this.lastGoods1GmvRatioScore = lastGoods1GmvRatioScore;
     }
 
-    public BigDecimal getActiveAppUserCnt() {
+    public Double getActiveAppUserCnt() {
         return activeAppUserCnt;
     }
 
-    public void setActiveAppUserCnt(BigDecimal activeAppUserCnt) {
+    public void setActiveAppUserCnt(Double activeAppUserCnt) {
         this.activeAppUserCnt = activeAppUserCnt;
     }
 
@@ -187,27 +186,27 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.activeAppUserCntRank = activeAppUserCntRank;
     }
 
-    public BigDecimal getActiveAppUserCntScore() {
+    public Double getActiveAppUserCntScore() {
         return activeAppUserCntScore;
     }
 
-    public void setActiveAppUserCntScore(BigDecimal activeAppUserCntScore) {
+    public void setActiveAppUserCntScore(Double activeAppUserCntScore) {
         this.activeAppUserCntScore = activeAppUserCntScore;
     }
 
-    public BigDecimal getLastActiveAppUserCntScore() {
+    public Double getLastActiveAppUserCntScore() {
         return lastActiveAppUserCntScore;
     }
 
-    public void setLastActiveAppUserCntScore(BigDecimal lastActiveAppUserCntScore) {
+    public void setLastActiveAppUserCntScore(Double lastActiveAppUserCntScore) {
         this.lastActiveAppUserCntScore = lastActiveAppUserCntScore;
     }
 
-    public BigDecimal getLoyaltyVillagerCnt() {
+    public Double getLoyaltyVillagerCnt() {
         return loyaltyVillagerCnt;
     }
 
-    public void setLoyaltyVillagerCnt(BigDecimal loyaltyVillagerCnt) {
+    public void setLoyaltyVillagerCnt(Double loyaltyVillagerCnt) {
         this.loyaltyVillagerCnt = loyaltyVillagerCnt;
     }
 
@@ -219,27 +218,27 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.loyaltyVillagerCntRank = loyaltyVillagerCntRank;
     }
 
-    public BigDecimal getLoyaltyVillagerCntScore() {
+    public Double getLoyaltyVillagerCntScore() {
         return loyaltyVillagerCntScore;
     }
 
-    public void setLoyaltyVillagerCntScore(BigDecimal loyaltyVillagerCntScore) {
+    public void setLoyaltyVillagerCntScore(Double loyaltyVillagerCntScore) {
         this.loyaltyVillagerCntScore = loyaltyVillagerCntScore;
     }
 
-    public BigDecimal getLastLoyaltyVillagerCntScore() {
+    public Double getLastLoyaltyVillagerCntScore() {
         return lastLoyaltyVillagerCntScore;
     }
 
-    public void setLastLoyaltyVillagerCntScore(BigDecimal lastLoyaltyVillagerCntScore) {
+    public void setLastLoyaltyVillagerCntScore(Double lastLoyaltyVillagerCntScore) {
         this.lastLoyaltyVillagerCntScore = lastLoyaltyVillagerCntScore;
     }
 
-    public BigDecimal getRepurchaseRate() {
+    public Double getRepurchaseRate() {
         return repurchaseRate;
     }
 
-    public void setRepurchaseRate(BigDecimal repurchaseRate) {
+    public void setRepurchaseRate(Double repurchaseRate) {
         this.repurchaseRate = repurchaseRate;
     }
 
@@ -251,27 +250,27 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.repurchaseRateRank = repurchaseRateRank;
     }
 
-    public BigDecimal getRepurchaseRateScore() {
+    public Double getRepurchaseRateScore() {
         return repurchaseRateScore;
     }
 
-    public void setRepurchaseRateScore(BigDecimal repurchaseRateScore) {
+    public void setRepurchaseRateScore(Double repurchaseRateScore) {
         this.repurchaseRateScore = repurchaseRateScore;
     }
 
-    public BigDecimal getLastRepurchaseRateScore() {
+    public Double getLastRepurchaseRateScore() {
         return lastRepurchaseRateScore;
     }
 
-    public void setLastRepurchaseRateScore(BigDecimal lastRepurchaseRateScore) {
+    public void setLastRepurchaseRateScore(Double lastRepurchaseRateScore) {
         this.lastRepurchaseRateScore = lastRepurchaseRateScore;
     }
 
-    public BigDecimal getVisitedProductCnt() {
+    public Double getVisitedProductCnt() {
         return visitedProductCnt;
     }
 
-    public void setVisitedProductCnt(BigDecimal visitedProductCnt) {
+    public void setVisitedProductCnt(Double visitedProductCnt) {
         this.visitedProductCnt = visitedProductCnt;
     }
 
@@ -283,19 +282,19 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.visitedProductCntRank = visitedProductCntRank;
     }
 
-    public BigDecimal getVisitedProductCntScore() {
+    public Double getVisitedProductCntScore() {
         return visitedProductCntScore;
     }
 
-    public void setVisitedProductCntScore(BigDecimal visitedProductCntScore) {
+    public void setVisitedProductCntScore(Double visitedProductCntScore) {
         this.visitedProductCntScore = visitedProductCntScore;
     }
 
-    public BigDecimal getLastVisitedProductCntScore() {
+    public Double getLastVisitedProductCntScore() {
         return lastVisitedProductCntScore;
     }
 
-    public void setLastVisitedProductCntScore(BigDecimal lastVisitedProductCntScore) {
+    public void setLastVisitedProductCntScore(Double lastVisitedProductCntScore) {
         this.lastVisitedProductCntScore = lastVisitedProductCntScore;
     }
 
