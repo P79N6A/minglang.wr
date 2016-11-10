@@ -20,7 +20,9 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
@@ -36,6 +38,8 @@ import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -68,6 +72,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 	@Autowired
 	PartnerBO partnerBO;
+	
+	@Autowired
+	AccountMoneyBO accountMoneyBO;
 
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
@@ -501,13 +508,19 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// alipayTagDto.setUserId(accountNo.substring(0, accountNo.length()
 			// - 4));
 			// }
-
-			OperatorDto operatorDto = new OperatorDto();
-			operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-			operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
-			operatorDto.setOperatorOrgId(0L);
-			PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
-			String accountNo = accountDto.getAccountNo();
+			AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+			
+			String accountNo = accountMoney.getAccountNo();
+			
+			if (StringUtils.isEmpty(accountNo)) {
+				OperatorDto operatorDto = new OperatorDto();
+				operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
+				operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+				operatorDto.setOperatorOrgId(0L);
+				PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
+				accountNo = accountDto.getAccountNo();
+			}
 			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
 			dealStationTagTaskVo.setParameter(JSON.toJSONString(alipayTagDto));
