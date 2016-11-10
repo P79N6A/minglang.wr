@@ -174,6 +174,17 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 			logger.error("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
 			throw new  AugeServiceException("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
 		}
+		
+		Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
+		if (partner == null) {
+			return Boolean.TRUE;
+		}
+		
+		if (!accountDto.getAlipayId().equals(partner.getAlipayAccount())) {
+			logger.error("PartnerInstanceScheduleService.initAccountNo getAlipayAccount is change:"+accountMoneyDto.getObjectId());
+			return Boolean.TRUE;
+		}
+		
 		AccountMoney   record = new AccountMoney();
 		record.setId(accountMoneyDto.getId());
 		record.setAccountNo(accountDto.getAccountNo());
