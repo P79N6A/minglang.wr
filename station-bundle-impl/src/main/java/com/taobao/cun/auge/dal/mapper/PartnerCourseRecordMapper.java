@@ -103,6 +103,4 @@ public interface PartnerCourseRecordMapper {
      */
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
     int updateApplyExamPoint(Map<String,Object> param);
-    List<PartnerApply> testPartnerApplyQuery(Map<String,Object> param);
-    int testInsertExamInstance(Map<String,Object> param);
 }
