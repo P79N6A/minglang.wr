@@ -165,11 +165,17 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 			throw new  AugeServiceException("PartnerInstanceScheduleService.initAccountNo rel is null param:"+accountMoneyDto.getObjectId());
 		}
 
-		PaymentAccountDto accountDto = paymentAccountQueryAdapter
-				.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
-		if (accountDto == null){
-			logger.error("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
-			throw new  AugeServiceException("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
+		PaymentAccountDto accountDto;
+		try {
+			accountDto = paymentAccountQueryAdapter
+					.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
+			if (accountDto == null){
+				logger.error("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
+				throw new  AugeServiceException("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
+			}
+		} catch (Exception e) {
+			logger.error("PartnerInstanceScheduleService.initAccountNo service erro param:"+accountMoneyDto.getObjectId());
+			return Boolean.TRUE;
 		}
 		
 		Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
