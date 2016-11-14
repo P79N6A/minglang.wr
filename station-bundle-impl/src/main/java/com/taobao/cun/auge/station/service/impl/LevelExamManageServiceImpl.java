@@ -14,28 +14,23 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.convert.LevelExamUtil.ExamLevelExtendInfo;
 import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
-import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.service.LevelExamManageService;
-import com.taobao.cun.auge.station.service.LevelExamResultQueryService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
-import com.taobao.cun.crius.exam.dto.UserDispatchDto;
 import com.taobao.cun.crius.exam.enums.ExamDispatchSourceEnum;
-import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("levelExamManageService")
 @HSFProvider(serviceInterface = LevelExamManageService.class)
-public class LevelExamManageServiceImpl implements LevelExamManageService, LevelExamResultQueryService {
+public class LevelExamManageServiceImpl implements LevelExamManageService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelExamManageServiceImpl.class);
 
@@ -43,8 +38,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     private static final String LEVEL_EXAM_CONFIG = "level_exam_config";
     private static final String LEVEL_EXAM_KEY = "level_to_exam_map";
     private static final String LEVEL_EXAM_EVALUATE_SWITCH = "level_to_exam_evaluate_switch";
-
-
     
     @Autowired
     private AppResourceBO appResourceBO;
@@ -55,6 +48,9 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     @Autowired
     PartnerInstanceQueryService partnerInstanceQueryService;
 
+    /**
+     * 配置指定层级试卷id
+     */
     @Override
     public boolean configure(LevelExamConfigurationDto configurationDto, String configurePerson) {
         if(configurationDto == null || configurationDto.getLevelExamMap() == null || configurePerson == null){
@@ -65,6 +61,9 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
         return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, value, false, configurePerson);
     }
 
+    /**
+     * 查询层级试卷配置
+     */
     @Override
     public LevelExamConfigurationDto queryConfigure() {
         AppResource appResource =  appResourceBO.queryAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY);
@@ -96,41 +95,18 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     }
     
     /**
-     * 判断是否通过了本层级所有晋升考试
-     * 如果没有那么打印日志
+     * 是否分发试卷
+     * open:false表示不会分发试卷,这样晋升时不会考察是否通过考试
      */
-    @Override
-    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel level) {
-        Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
-        if(dispatchedExamLevelAndPaper==null) {
-            logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
-            return new LevelExamingResult(false, Lists.newArrayList());
-        }
-        List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
-        List<String> notPassExamLevels = Lists.newArrayList();
-        for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
-            ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
-            if(isPassExam(resultModel)){
-                passedLevels.add(entry.getKey());
-            }else {
-                notPassExamLevels.add(entry.getKey().name());
-            }
-        }
-        boolean isPassAllDispatchedExam = passedLevels.containsAll(dispatchedExamLevelAndPaper.keySet());
-        List<PartnerInstanceLevel> allLevelExams = LevelExamUtil.computeShouldTakeExamList(level);
-        boolean isPassAllLevelExam = passedLevels.containsAll(allLevelExams);
-        if(!isPassAllDispatchedExam || !isPassAllLevelExam){
-            allLevelExams.removeAll(passedLevels);
-            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass dispatched level:{}, not dispatch levels:{}", taobaoUserId,  level, notPassExamLevels, allLevelExams);
-        }
-        return new LevelExamingResult(isPassAllDispatchedExam, notPassExamLevels);
-    }
-    
     @Override
     public boolean configureSwitchForDispatchPaper(boolean open) {
         return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, null, !open, "system");
     }
 
+    /**
+     * 考试是否通过作为晋升必要条件的开关设置
+     * open:true表示晋升时会查询该村小二是否通过所有相关考试
+     */
     @Override
     public boolean configureSwitchForEvaluate(boolean open) {
         String switchStr = Boolean.toString(open);
@@ -139,8 +115,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
     
     /**
      * 根据试卷配置信息给合伙人分发指定层级的试卷
-     * @param taobaoUserId 合伙人id
-     * @param nickName
      * @param dispatchLevels 需要分发试卷的层级
      * @param configurationDto 试卷配置
      * @return
@@ -183,22 +157,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService, Level
            return Collections.emptyMap();
        }
        return LevelExamUtil.parseDispatchedExamLevels(dispatchedExamList);
-   }
-   
-   /**
-    * 是否通过此考试
-    * @param resultModel
-    * @return
-    */
-   private boolean isPassExam(ResultModel<UserDispatchDto> resultModel){
-       if(resultModel!=null 
-               && resultModel.isSuccess() 
-               && resultModel.getResult()!=null 
-               && resultModel.getResult().getCurrentInstance()!=null){
-           return resultModel.getResult().getCurrentInstance().getStatus()!=null 
-                   && ExamInstanceStatusEnum.PASS.getCode().equals( resultModel.getResult().getCurrentInstance().getStatus().getCode());
-       }
-       return false;
    }
    
     private ExamDispatchDto newExamDispatchDto(Long userId, String nickName, Long paperId, String extendInfo, String dispatcher){
