@@ -34,4 +34,9 @@ public interface DataTransferService {
 	 * 签到
 	 */
 	public Boolean sign(PartnerCourseRecordDto dto);
+	
+	/**
+	 * 获取招募考试列表
+	 */
+	public Long queryInstances(Long id,Long detailId);
 }
