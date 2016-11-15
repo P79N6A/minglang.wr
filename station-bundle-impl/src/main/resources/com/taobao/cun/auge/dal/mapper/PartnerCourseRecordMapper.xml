@@ -411,7 +411,7 @@
    <if test="detailId != null" >
       and id=#{detailId}
     </if>
-   limit 0,50
+   limit 0,5000
   </select>
   
   <update id="updateApplyExamPoint" parameterType="map">
