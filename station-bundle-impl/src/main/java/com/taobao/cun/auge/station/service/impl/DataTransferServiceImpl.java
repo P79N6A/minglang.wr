@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -54,6 +56,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
@@ -91,6 +94,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
+	
 	
 	@Override
 	public List<PartnerCourseRecordDto> getAllRecords(String status,String courseCode) {
@@ -316,23 +320,30 @@ public class DataTransferServiceImpl implements DataTransferService{
          }
 		 }
 	}
+
+	@Override
+	public Long queryInstances(Long id,Long detailId) {
+		if(id==null){
+			return null;
+		}
+		Long returnLong=null;
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("id", id);
+		param.put("detailId", detailId);
+		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
+		if(instances.size()==0){
+			return null;
+		}else{
+			for(ExamInstanceDto dto:instances){
+				returnLong=dto.getId();
+				param.clear();
+				param.put("userId", dto.getUserId());
+				param.put("status", dto.getUserType());
+				param.put("point", dto.getPoint());
+				partnerCourseRecordMapper.updateApplyExamPoint(param);
+			}
+		}
+		return returnLong;
+	}
 	
-//	public static void main(String[] args) throws Exception{
-//		 BufferedReader b = new BufferedReader(new FileReader("D://shujushengji1.txt"));
-//		 PrintWriter pw1=new PrintWriter(new File("D://shujushengji2.txt"));
-//		 String l=null;
-//		 while((l=b.readLine())!=null){
-//			 String[] temps=l.split(",");
-//			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','APPLY_IN','bc471','NEW','"+temps[0]+"');");
-//			 pw1.println("insert into partner_course_record (gmt_create, gmt_modified, creator,  modifier, is_deleted, course_type, course_code, status, partner_user_id)values(now(),now(),'datatransfer','datatransfer','n','UPGRADE','bc467','NEW','"+temps[0]+"');");
-//             String sell=null;
-//             if(temps[2].contains("500003")||temps[2].contains("500002")){
-//            	 sell="2927051613";
-//             }else{
-//            	 sell="795246961";
-//             }
-//			 pw1.println("insert into station_decorate (gmt_create, gmt_modified, creator, modifier, is_deleted, station_id,  partner_user_id, seller_taobao_user_id, status,is_valid,payment_type,decorate_type)values (now(),now(),'yi.shaoy','yi.shaoy','n','"+temps[1]+"','"+temps[0]+"', '"+sell+"','UNDECORATE','Y','SELF','NEW');");
-//		     pw1.flush();
-//		 }
-//	}
 }
