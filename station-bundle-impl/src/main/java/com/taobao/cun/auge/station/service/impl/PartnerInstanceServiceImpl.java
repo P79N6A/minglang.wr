@@ -70,6 +70,7 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
@@ -635,7 +636,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException{
+		FreezeBondDto freezeBondDto = new FreezeBondDto();
+		freezeBondDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		freezeBondDto.setOperator(String.valueOf(taobaoUserId));
+		
+		freezeBondDto.setTaobaoUserId(taobaoUserId);
+		return freezeBond(freezeBondDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException {
+		ValidateUtils.validateParam(freezeBondDto);
+		Long taobaoUserId = freezeBondDto.getTaobaoUserId();
+		String accountNo =  freezeBondDto.getAccountNo();
+		String alipayAccount = freezeBondDto.getAlipayAccount();
+		
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
@@ -663,6 +680,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 			accountMoneyUpdateDto.setFrozenTime(new Date());
 			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+			accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
+			accountMoneyUpdateDto.setAccountNo(accountNo);
 			accountMoneyUpdateDto.setOperator(operator);
 			accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
