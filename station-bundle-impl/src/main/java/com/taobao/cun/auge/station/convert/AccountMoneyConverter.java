@@ -23,6 +23,7 @@ public class AccountMoneyConverter {
 
 		AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
 		
+		accountMoneyDto.setId(accountMoney.getId());
 		accountMoneyDto.setAlipayAccount(accountMoney.getAlipayAccount());
 		accountMoneyDto.setFrozenTime(accountMoney.getFrozenTime());
 		accountMoneyDto.setMoney(accountMoney.getMoney());
@@ -32,7 +33,7 @@ public class AccountMoneyConverter {
 		accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.valueof(accountMoney.getTargetType()));
 		accountMoneyDto.setThawTime(accountMoney.getThawTime());
 		accountMoneyDto.setType(AccountMoneyTypeEnum.valueof(accountMoney.getType()));
-
+		accountMoneyDto.setAccountNo(accountMoney.getAccountNo());
 		return accountMoneyDto;
 	}
 
@@ -51,7 +52,8 @@ public class AccountMoneyConverter {
 		accountMoney.setTargetType(accountMoneyDto.getTargetType().getCode());
 		accountMoney.setThawTime(accountMoneyDto.getThawTime());
 		accountMoney.setType(accountMoneyDto.getType().getCode());
-
+		accountMoney.setAccountNo(accountMoneyDto.getAccountNo());
+		
 		return accountMoney;
 	}
 

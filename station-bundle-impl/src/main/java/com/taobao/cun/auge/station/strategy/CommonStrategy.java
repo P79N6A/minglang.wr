@@ -11,7 +11,7 @@ public class CommonStrategy {
 	
 	@Autowired
     PartnerInstanceQueryService partnerInstanceQueryService;
-	
+
 	public String findCloseReason(Long instanceId) {
 		// 获取停业原因
 		CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);

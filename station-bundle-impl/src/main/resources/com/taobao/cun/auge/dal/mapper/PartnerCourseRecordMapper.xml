@@ -394,4 +394,33 @@
       partner_user_id = #{partnerUserId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+   <resultMap id="dataTransferResultMap" type="com.taobao.cun.crius.exam.dto.ExamInstanceDto" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="user_type" property="userType" jdbcType="VARCHAR" />
+    <result column="point" property="point" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryExamInstanceList" resultMap="dataTransferResultMap" parameterType="map" >
+   select id,user_id,status as userType,point
+   from exam_instance
+   where is_deleted='n'
+   and valid='y'
+   and biz_type='partner_apply'
+   and id>#{id}
+   <if test="detailId != null" >
+      and id=#{detailId}
+    </if>
+   limit 0,500
+  </select>
+  
+  <update id="updateApplyExamPoint" parameterType="map">
+    update partner_apply
+    set apply_exam_status=#{status},
+    apply_exam_point=#{point},
+    gmt_modified=now(),
+    modifier='dataUp'
+    where taobao_user_id=#{userId} and apply_exam_status is null
+  </update>
+  
 </mapper>

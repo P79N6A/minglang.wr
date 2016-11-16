@@ -74,7 +74,7 @@ public interface GeneralTaskSubmitService {
 	 * @param accountDto
 	 * @return
 	 */
-	public void submitQuitTask(Long instanceId, PaymentAccountDto accountDto, String frozenMoney, OperatorDto operatorDto);
+	public void submitQuitTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto);
 
 	/**
 	 * 退出审批通过后去支付标和物流站点等任务

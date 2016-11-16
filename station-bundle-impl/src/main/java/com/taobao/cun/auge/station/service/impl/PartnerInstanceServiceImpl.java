@@ -27,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -70,6 +71,7 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
@@ -120,6 +122,7 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -635,7 +638,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException{
+		FreezeBondDto freezeBondDto = new FreezeBondDto();
+		freezeBondDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		freezeBondDto.setOperator(String.valueOf(taobaoUserId));
+		
+		freezeBondDto.setTaobaoUserId(taobaoUserId);
+		return freezeBond(freezeBondDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException {
+		ValidateUtils.validateParam(freezeBondDto);
+		Long taobaoUserId = freezeBondDto.getTaobaoUserId();
+		String accountNo =  freezeBondDto.getAccountNo();
+		String alipayAccount = freezeBondDto.getAlipayAccount();
+		
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
@@ -663,6 +682,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 			accountMoneyUpdateDto.setFrozenTime(new Date());
 			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+			accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
+			accountMoneyUpdateDto.setAccountNo(accountNo);
 			accountMoneyUpdateDto.setOperator(operator);
 			accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
@@ -774,6 +795,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
+		}
+		//判断装修是否未付款
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+		if (decorate != null
+				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+						decorate.getPaymentType())
+				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+						decorate.getStatus())) {
+			throw new AugeServiceException(
+					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 		}
         //装修改成不作为强制节点
 //		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
