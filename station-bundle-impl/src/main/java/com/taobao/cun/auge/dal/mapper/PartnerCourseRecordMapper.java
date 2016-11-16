@@ -5,9 +5,10 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 
 public interface PartnerCourseRecordMapper {
@@ -103,4 +104,10 @@ public interface PartnerCourseRecordMapper {
      */
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
     int updateApplyExamPoint(Map<String,Object> param);
+    
+    List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(Map<String,Object> param);
+    
+    List<PartnerPeixunListDetailDto> queryPeixunList(Map<String,Object> param);
+    
+    int queryPeixunListCount(Map<String,Object> param);
 }
