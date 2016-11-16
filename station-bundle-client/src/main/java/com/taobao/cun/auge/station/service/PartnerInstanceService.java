@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -99,11 +100,19 @@ public interface PartnerInstanceService {
 	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException;
 
 	/**
-	 * 冻结保证金
+	 * 冻结保证金（新接口）
 	 * 
-	 * @param taobaoUserId
-	 * @param frozenMoney
-	 * @return
+	 * @param freezeBondDto
+	 * @return boolean
+	 */
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	
+	/**
+	 * 冻结保证金(老接口，防止发布时报错,未来不在使用)
+	 * 使用新接口freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	 * 
+	 * @param freezeBondDto
+	 * @return boolean
 	 */
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
 
