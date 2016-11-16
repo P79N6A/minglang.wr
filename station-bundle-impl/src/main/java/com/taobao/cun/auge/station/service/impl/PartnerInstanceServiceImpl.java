@@ -27,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -99,7 +100,6 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEvaluateTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -121,6 +121,7 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -632,6 +633,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException{
@@ -792,6 +794,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
+		}
+		//判断装修是否未付款
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+		if (decorate != null
+				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+						decorate.getPaymentType())
+				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+						decorate.getStatus())) {
+			throw new AugeServiceException(
+					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 		}
         //装修改成不作为强制节点
 //		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
