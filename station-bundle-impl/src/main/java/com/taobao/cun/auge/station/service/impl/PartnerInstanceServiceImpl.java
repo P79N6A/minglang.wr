@@ -640,8 +640,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		FreezeBondDto freezeBondDto = new FreezeBondDto();
 		freezeBondDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		freezeBondDto.setOperator(String.valueOf(taobaoUserId));
-		freezeBondDto.setAccountNo("");
-		freezeBondDto.setAlipayAccount("");
+		
 		freezeBondDto.setTaobaoUserId(taobaoUserId);
 		return freezeBond(freezeBondDto);
 	}

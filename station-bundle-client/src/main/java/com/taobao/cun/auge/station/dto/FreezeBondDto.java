@@ -21,7 +21,6 @@ public class FreezeBondDto extends OperatorDto{
 	/**
 	 * 支付宝账号（支付宝内部id）
 	 */
-	@NotNull(message="accountNo not null")
 	private String accountNo;
 	
 	/**
