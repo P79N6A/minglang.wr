@@ -1,10 +1,27 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
 
     private static final long serialVersionUID = -8157263646689962620L;
+    
+    /**
+     * 统计日期
+     */
+    private String statDate;
+
+    /**
+     * 统计开始日期
+     */
+    private Date statStartDate;
+    /**
+     * 统计截止日期
+     * 
+     */
+    private Date statEndDate;
+    
     /**
      * 村点id
      */
@@ -89,6 +106,30 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
      * 全国合伙人总数
      */
     private Long              countryPartnerInstanceCnt;
+    
+    public String getStatDate() {
+        return statDate;
+    }
+    
+    public void setStatDate(String statDate) {
+        this.statDate = statDate;
+    }
+    
+    public Date getStatStartDate() {
+        return statStartDate;
+    }
+    
+    public void setStatStartDate(Date statStartDate) {
+        this.statStartDate = statStartDate;
+    }
+    
+    public Date getStatEndDate() {
+        return statEndDate;
+    }
+    
+    public void setStatEndDate(Date statEndDate) {
+        this.statEndDate = statEndDate;
+    }
 
     public Long getStationId() {
         return stationId;
