@@ -439,21 +439,19 @@
    and c.station_id=d.id
    and d.apply_org=e.id
    and e.temp_full_id_path like concat(#{orgId}, '/%')
-    <if test="nickName != null" >
+    <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}
    </if>
-   <if test="phoneNum != null" >
+   <if test="phoneNum != null and phoneNum != ''" >
        and  a.mobile=#{phoneNum}
    </if>
-   <if test="partnerName != null" >
+   <if test="partnerName != null and partnerName != '' " >
        and  a.name=#{partnerName}
    </if>
-   <if test="courseTypes != null" >
 	 and b.course_type in
 		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
  		 #{item}  
 		 </foreach>
-   </if>
    group by b.course_type,b.status
   </select>
   
