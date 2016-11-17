@@ -426,7 +426,7 @@
    <resultMap id="peixunCountResult" type="com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto" >
     <id column="status" property="status" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="count_num" property="countNum" jdbcType="Integer" />
+    <result column="count_num" property="countNum" jdbcType="INTEGER" />
   </resultMap>
   
   <select id="queryPeixunCountByCondition" resultMap="peixunCountResult" parameterType="map" >
