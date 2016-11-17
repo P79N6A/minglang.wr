@@ -448,12 +448,6 @@
    <if test="partnerName != null" >
        and  a.name=#partnerName
    </if>
-   <if test="courseTypes != null" >
-	 and b.course_type in
-		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
- 		 #{courseTypes}  
-		 </foreach>
-   </if>
    group by b.course_type,b.status
   </select>
   
