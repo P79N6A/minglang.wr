@@ -451,7 +451,7 @@
 	a.name=#partnerName
    </isNotNull>
     <isNotNull property="courseTypes" prepend="and">
-	 b.courseType in
+	 b.course_type in
 		 <iterate property="courseTypes" open="(" close=")"
 				  conjunction=",">
 			 #courseTypes[]#
