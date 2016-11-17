@@ -420,9 +420,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		param.put("phoneNum", condition.getPhoneNum());
 		param.put("partnerName", condition.getPartnerName());
 		param.put("courseTypes", condition.getCourseTypes());
-		List<PartnerPeixunStatusCountDto> records = partnerCourseRecordMapper
-				.queryPeixunCountByCondition(param);
-		return records;
+		try{
+			List<PartnerPeixunStatusCountDto> records = partnerCourseRecordMapper
+					.queryPeixunCountByCondition(param);
+			return records;
+		}catch(Exception e){
+			logger.error("aaaaa",e);
+			return null;
+		}
+		
+		
 	}
 
 	@Override
