@@ -419,11 +419,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		param.put("nickName", condition.getNickName());
 		param.put("phoneNum", condition.getPhoneNum());
 		param.put("partnerName", condition.getPartnerName());
-		List<String> courseTypes=new ArrayList<String>();
-		for(PartnerPeixunCourseTypeEnum type:condition.getCourseTypes()){
-			courseTypes.add(type.getCode());
-		}
-		param.put("courseTypes", courseTypes);
+		param.put("courseTypes", condition.getCourseTypes());
 		List<PartnerPeixunStatusCountDto> records = partnerCourseRecordMapper
 				.queryPeixunCountByCondition(param);
 		return records;
@@ -439,15 +435,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		param.put("phoneNum", condition.getPhoneNum());
 		param.put("partnerName", condition.getPartnerName());
 		if(condition.getPeixunStatus()!=null){
-			param.put("courseStatus", condition.getPeixunStatus().getCode());
+			param.put("courseStatus", condition.getPeixunStatus());
 		}
-		param.put("courseType", condition.getCourseTypes().get(0).getCode());
+		param.put("courseType", condition.getCourseTypes().get(0));
 		param.put("pageNum", condition.getPageNum());
 		param.put("pageSize", condition.getPageSize());
 		int count=partnerCourseRecordMapper.queryPeixunListCount(param);
 		List<PartnerPeixunListDetailDto> records = partnerCourseRecordMapper
 				.queryPeixunList(param);
-		fillResult(records,condition.getCourseTypes().get(0).getCode());
+		fillResult(records,condition.getCourseTypes().get(0));
 		PageDto<PartnerPeixunListDetailDto> result=new PageDto<PartnerPeixunListDetailDto>();
 		result.setTotal(count);
 		result.setItems(records);

@@ -13,8 +13,8 @@ public class PartnerPeixunQueryCondition extends PageQuery {
 	private String nickName;
 	private String phoneNum;
 	private String partnerName;
-	private PartnerPeixunStatusEnum peixunStatus;
-	private List<PartnerPeixunCourseTypeEnum> courseTypes;
+	private String peixunStatus;
+	private List<String> courseTypes;
 
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -48,21 +48,22 @@ public class PartnerPeixunQueryCondition extends PageQuery {
 		this.partnerName = partnerName;
 	}
 
-	public PartnerPeixunStatusEnum getPeixunStatus() {
+	public String getPeixunStatus() {
 		return peixunStatus;
 	}
 
-	public void setPeixunStatus(PartnerPeixunStatusEnum peixunStatus) {
+	public void setPeixunStatus(String peixunStatus) {
 		this.peixunStatus = peixunStatus;
 	}
 
-	public List<PartnerPeixunCourseTypeEnum> getCourseTypes() {
+	public List<String> getCourseTypes() {
 		return courseTypes;
 	}
 
-	public void setCourseTypes(List<PartnerPeixunCourseTypeEnum> courseTypes) {
+	public void setCourseTypes(List<String> courseTypes) {
 		this.courseTypes = courseTypes;
 	}
+
 
 
 }
