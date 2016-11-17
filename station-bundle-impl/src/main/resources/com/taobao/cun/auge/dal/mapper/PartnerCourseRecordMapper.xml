@@ -438,25 +438,22 @@
    and c.station_id=d.id
    and d.apply_org=e.id
    and e.temp_full_id_path like concat(#orgIdPath#, '/%')
-   <isNotNull property="nickName" prepend="and">
-	a.taobao_nick=#nickName
-   </isNotNull>
-   <isNotNull property="phoneNum" prepend="and">
-	a.mobile=#phoneNum
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-    <isNotNull property="courseTypes" prepend="and">
-	 b.course_type in
+    <if test="nickName != null" >
+       and  a.taobao_nick=#nickName
+   </if>
+   <if test="phoneNum != null" >
+       and  a.mobile=#phoneNum
+   </if>
+   <if test="partnerName != null" >
+       and  a.name=#partnerName
+   </if>
+   <if test="courseTypes != null" >
+	 and b.course_type in
 		 <iterate property="courseTypes" open="(" close=")"
 				  conjunction=",">
 			 #courseTypes[]#
 		 </iterate>
-   </isNotNull>
+   </if>
    group by b.course_type,b.status
   </select>
   
@@ -488,21 +485,18 @@
    and d.apply_org=e.id
    and e.temp_full_id_path like concat(#orgIdPath#, '/%')
    and b.course_type=#courseType
-   <isNotNull property="nickName" prepend="and">
-	a.taobao_nick=#nickName
-   </isNotNull>
-   <isNotNull property="phoneNum" prepend="and">
-	a.mobile=#phoneNum
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-    <isNotNull property="courseStatus" prepend="and">
-	b.course_status=#courseStatus
-   </isNotNull>
+   <if test="nickName != null" >
+       and  a.taobao_nick=#nickName
+   </if>
+   <if test="phoneNum != null" >
+       and  a.mobile=#phoneNum
+   </if>
+   <if test="partnerName != null" >
+       and  a.name=#partnerName
+   </if>
+   <if test="courseStatus != null" >
+       and b.course_status=#courseStatus
+   </if>
     limit #pageNum# , #pageSize#
   </select>
    <select id="queryPeixunListCount" parameterType="map" >
@@ -515,20 +509,18 @@
    and d.apply_org=e.id
    and e.temp_full_id_path like concat(#orgIdPath#, '/%')
    and b.course_type=#courseType
-   <isNotNull property="nickName" prepend="and">
-	a.taobao_nick=#nickName
-   </isNotNull>
-   <isNotNull property="phoneNum" prepend="and">
-	a.mobile=#phoneNum
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-   <isNotNull property="partnerName" prepend="and">
-	a.name=#partnerName
-   </isNotNull>
-    <isNotNull property="courseStatus" prepend="and">
-	b.course_status=#courseStatus
+   <if test="nickName != null" >
+       and  a.taobao_nick=#nickName
+   </if>
+   <if test="phoneNum != null" >
+       and  a.mobile=#phoneNum
+   </if>
+   <if test="partnerName != null" >
+       and  a.name=#partnerName
+   </if>
+   <if test="courseStatus != null" >
+       and b.course_status=#courseStatus
+   </if>
   </select>
   
 </mapper>
