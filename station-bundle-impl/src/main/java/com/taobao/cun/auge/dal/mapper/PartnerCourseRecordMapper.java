@@ -105,7 +105,7 @@ public interface PartnerCourseRecordMapper {
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
     int updateApplyExamPoint(Map<String,Object> param);
     
-    List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(Map<String,Object> param);
+    Map<String,Object> queryPeixunCountByCondition(Map<String,Object> param);
     
     List<PartnerPeixunListDetailDto> queryPeixunList(Map<String,Object> param);
     
