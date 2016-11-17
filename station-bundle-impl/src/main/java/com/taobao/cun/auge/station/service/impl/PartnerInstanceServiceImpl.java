@@ -1757,6 +1757,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			levelProcessDto.setCountyStationName(countyStation.getName());
 			levelProcessDto.setCurrentLevel(partnerInstanceLevelDto.getCurrentLevel());
 			levelProcessDto.setExpectedLevel(partnerInstanceLevelDto.getExpectedLevel());
+			
 			List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(countyOrgId, UserRole.COUNTY_LEADER);
 			CuntaoUser countyLeader = userLists.iterator().next();
 			levelProcessDto.setEmployeeId(countyLeader.getLoginId());

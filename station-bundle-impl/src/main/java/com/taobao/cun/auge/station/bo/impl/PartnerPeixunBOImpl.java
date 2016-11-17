@@ -398,6 +398,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			dt.setStatusDesc(PartnerPeixunStatusEnum.DONE.getDesc());
 			dt.setGmtDone(dto.getEndDate());
 			dt.setCourseCode(dto.getCourseCode());
+//			if(dto.getCourseType()!=null){
+//			    dt.setCourseType(dto.getCourseType().name());
+//			}
 			result.add(dt);
 		}
 		return result;
