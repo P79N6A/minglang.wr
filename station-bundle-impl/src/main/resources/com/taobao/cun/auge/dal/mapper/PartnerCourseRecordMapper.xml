@@ -449,10 +449,9 @@
    </if>
    <if test="courseTypes != null" >
 	 and b.course_type in
-		 <iterate property="courseTypes" open="(" close=")"
-				  conjunction=",">
-			 #courseTypes[]#
-		 </iterate>
+		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
+ 		 #{courseTypes}  
+		 </foreach>
    </if>
    group by b.course_type,b.status
   </select>
