@@ -163,6 +163,10 @@
 			<artifactId>biz-base-bundle.client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.taobao</groupId>
+			<artifactId>biz-base-org</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
 		</dependency>
