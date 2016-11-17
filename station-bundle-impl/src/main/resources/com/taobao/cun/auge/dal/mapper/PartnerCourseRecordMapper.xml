@@ -424,8 +424,8 @@
   </update>
   
    <resultMap id="peixunCountResult" type="com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto" >
-    <id column="status" property="status" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="course_type" property="courseType" jdbcType="VARCHAR" />
     <result column="count_num" property="countNum" jdbcType="INTEGER" />
   </resultMap>
   
@@ -457,7 +457,7 @@
   </select>
   
   <resultMap id="peixunQueryListResult" type="com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto" >
-    <id column="partner_name" property="partnerName" jdbcType="VARCHAR" />
+    <result column="partner_name" property="partnerName" jdbcType="VARCHAR" />
     <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
     <result column="taobao_nick" property="taobaoNick" jdbcType="VARCHAR" />
     <result column="station_num" property="stationName" jdbcType="VARCHAR" />
