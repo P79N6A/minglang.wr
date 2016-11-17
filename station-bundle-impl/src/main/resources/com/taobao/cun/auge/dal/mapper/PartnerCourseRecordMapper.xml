@@ -439,7 +439,21 @@
    and c.station_id=d.id
    and d.apply_org=e.id
    and e.temp_full_id_path like concat(#orgIdPath#, '/%')
-   
+    <if test="nickName != null" >
+       and  a.taobao_nick=#nickName
+   </if>
+   <if test="phoneNum != null" >
+       and  a.mobile=#phoneNum
+   </if>
+   <if test="partnerName != null" >
+       and  a.name=#partnerName
+   </if>
+   <if test="courseTypes != null" >
+	 and b.course_type in
+		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
+ 		 #{item}  
+		 </foreach>
+   </if>
    group by b.course_type,b.status
   </select>
   
@@ -485,7 +499,7 @@
    </if>
     limit #pageNum# , #pageSize#
   </select>
-   <select id="queryPeixunListCount" parameterType="map" >
+   <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
    select count(*)
    from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
    where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
