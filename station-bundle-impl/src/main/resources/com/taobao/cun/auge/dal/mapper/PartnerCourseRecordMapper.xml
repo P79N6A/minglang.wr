@@ -429,8 +429,9 @@
     <result column="count_num" property="countNum" jdbcType="INTEGER" />
   </resultMap>
   
-  <select id="queryPeixunCountByCondition" resultType="com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto" parameterType="map" >
-   select b.course_type as courseType,b.status as status,count(*) as countNum from
+  
+  <select id="queryPeixunCountByCondition" resultMap="peixunCountResult" parameterType="map" >
+   select b.course_type as course_type,b.status as status,count(*) as count_num from
    partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
    where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
    and a.taobao_user_id=b.partner_user_id
