@@ -438,12 +438,6 @@
    and a.id=c.partner_id
    and c.station_id=d.id
    and d.apply_org=e.id
-   and e.temp_full_id_path like concat(#{orgId}, '/%')
-   
-	 and b.course_type in
-		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
- 		 #{item}  
-		 </foreach>
    group by b.course_type,b.status
   </select>
   
