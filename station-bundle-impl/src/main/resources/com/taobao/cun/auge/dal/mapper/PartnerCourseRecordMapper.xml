@@ -495,7 +495,6 @@
    <if test="courseStatus != null and courseStatus !=''" >
        and b.status=#{courseStatus}
    </if>
-    limit #{pageNum},#{pageSize}
   </select>
    <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
    select count(*)
