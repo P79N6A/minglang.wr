@@ -11,7 +11,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
@@ -26,9 +25,6 @@ import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 public class LevelAuditMessageServiceImpl implements LevelAuditMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelAuditMessageServiceImpl.class);
-    
-    @Autowired
-    private LevelAuditProcessStartService levelAuditProcessStartService;
     
     @Autowired
     PartnerInstanceService partnerInstanceService;
@@ -76,11 +72,6 @@ public class LevelAuditMessageServiceImpl implements LevelAuditMessageService {
             logger.error("handRefuse: " + ob.toJSONString(), e);
             throw e;
         }
-    }
-
-    @Override
-    public void startApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto) {
-        levelAuditProcessStartService.startApproveProcess(levelProcessDto);
     }
 
 }

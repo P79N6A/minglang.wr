@@ -10,29 +10,36 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
 
 /**
- * 晋升流程启动服务:S6 S7 S8需要人工流程审核
+ * 晋升流程处理服务:S6 S7 S8需要人工流程审核
  * 类LevelAuditProcessStartService.java的实现描述：主要包括启动审核任务流程以及内外审核消息处理服务的获取;
  * @author xujianhui 2016年11月17日 下午3:39:03
  */
-@Service("levelAuditProcessStartService")
-public class LevelAuditProcessStartService {
+@Service("levelAuditFlowService")
+@HSFProvider(serviceInterface = LevelAuditFlowService.class)
+public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
-    private static final Logger logger = LoggerFactory.getLogger(LevelAuditProcessStartService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LevelAuditFlowProcessServiceImpl.class);
+    private static final String SPLITER_CHAR = "#";
 
     @Autowired
     protected CuntaoWorkFlowService cuntaoWorkFlowService;
@@ -45,7 +52,6 @@ public class LevelAuditProcessStartService {
     
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
-
     
     /**
      * 晋升S6 S7 S8才需要人工审核流程
@@ -61,6 +67,7 @@ public class LevelAuditProcessStartService {
         }
     }
     
+    @Override
     public final void startApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto) {
         String businessCode = levelProcessDto.getBusinessCode();
         Long businessId = levelProcessDto.getBusinessId();
@@ -101,7 +108,7 @@ public class LevelAuditProcessStartService {
         }
     }
     
-    public static final String SPLITER_CHAR = "#";
+    @Override
     public String generateApproverOrgIdAndRoleCode(String type, String orgId, String aclRoleCode){
         logger.info(String.format("查询流程节点执行人。orgId = %s , roleCode = %s", orgId, aclRoleCode));
         JSONArray result = new JSONArray();
@@ -109,6 +116,21 @@ public class LevelAuditProcessStartService {
         return result.toString();
     }
 
+    @Override
+    public void processAuditMessage(JSONObject ob, ProcessApproveResultEnum approveResult) {
+        try {
+            PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
+            if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+                getLevelAuditMessageService(partnerInstanceLevelDto.getExpectedLevel()).handleApprove(ob);
+            } else {
+                getLevelAuditMessageService(partnerInstanceLevelDto.getExpectedLevel()).handleRefuse(ob);
+            }
+        } catch (Exception e) {
+            logger.error("LevelAuditFlowProcessServiceImpl monitorLevelApprove: " + ob.toJSONString(), e);
+            throw e;
+        }
+    }
+    
     private OrgPermissionHolder getApproversOrgId(PartnerInstanceLevelEnum expectedLevel, Long countyOrgId){
         if(expectedLevel == null || countyOrgId==null){
             return new OrgPermissionHolder(countyOrgId, "cuntao_dq_admin_01");
@@ -147,4 +169,5 @@ public class LevelAuditProcessStartService {
         }
         
     }
+
 }

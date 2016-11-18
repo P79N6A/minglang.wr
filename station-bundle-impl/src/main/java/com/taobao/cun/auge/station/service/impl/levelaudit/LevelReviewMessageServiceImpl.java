@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 
@@ -24,9 +23,6 @@ public class LevelReviewMessageServiceImpl implements LevelAuditMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelReviewMessageServiceImpl.class);
   
-    @Autowired
-    private LevelAuditProcessStartService levelAuditProcessStartService;
-    
     @Autowired
     PartnerInstanceService partnerInstanceService;
     
@@ -48,11 +44,6 @@ public class LevelReviewMessageServiceImpl implements LevelAuditMessageService {
      */
     @Override
     public void handleRefuse(JSONObject ob) {
-    }
-
-    @Override
-    public void startApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto) {
-        levelAuditProcessStartService.startApproveProcess(levelProcessDto);
     }
 
 }

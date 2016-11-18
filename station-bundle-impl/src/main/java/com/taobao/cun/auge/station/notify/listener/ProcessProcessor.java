@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -34,7 +33,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -50,7 +48,7 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.StationService;
-import com.taobao.cun.auge.station.service.impl.levelaudit.LevelAuditProcessStartService;
+import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
 
@@ -101,7 +99,7 @@ public class ProcessProcessor {
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
 	
 	@Autowired
-    LevelAuditProcessStartService levelAuditProcessStartService;
+	LevelAuditFlowService levelAuditFlowService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -133,7 +131,7 @@ public class ProcessProcessor {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
-				monitorLevelApprove(ob, ProcessApproveResultEnum.valueof(resultCode));
+				levelAuditFlowService.processAuditMessage(ob, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -154,21 +152,6 @@ public class ProcessProcessor {
 		}
 	}
 	
-	private void monitorLevelApprove(JSONObject ob, ProcessApproveResultEnum approveResult) {
-		try {
-			PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-			    levelAuditProcessStartService.getLevelAuditMessageService(partnerInstanceLevelDto.getExpectedLevel()).handleApprove(ob);
-			} else {
-			    levelAuditProcessStartService.getLevelAuditMessageService(partnerInstanceLevelDto.getExpectedLevel()).handleRefuse(ob);
-			}
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + "monitorLevelApprove: " + ob.toJSONString(), e);
-			throw e;
-		}
-	}
-	
-
 	private void monitorHomepageShowApprove(String objectId, String businessCode, ProcessApproveResultEnum approveResult) {
 		busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
 				ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult));

@@ -19,7 +19,7 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.ProcessService;
-import com.taobao.cun.auge.station.service.impl.levelaudit.LevelAuditProcessStartService;
+import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -42,7 +42,7 @@ public class ProcessServiceImpl implements ProcessService {
 	PartnerInstanceBO partnerInstanceBO;
 	
 	@Autowired
-	LevelAuditProcessStartService levelAuditProcessStartService;
+	LevelAuditFlowService levelAuditFlowService;
 
 	/**
 	 * 启动停业、退出流程审批流程
@@ -80,6 +80,6 @@ public class ProcessServiceImpl implements ProcessService {
 		
 	
 	public void startLevelApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto){
-	    levelAuditProcessStartService.startApproveProcess(levelProcessDto);
+	    levelAuditFlowService.startApproveProcess(levelProcessDto);
 	}
 }

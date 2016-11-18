@@ -22,6 +22,7 @@ import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 import com.taobao.cun.auge.station.dto.LevelCourseLearningDto;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 
 public class LevelCourseConvertor {
@@ -91,11 +92,6 @@ public class LevelCourseConvertor {
         return codeSet;
     }
     
-    public static Map<String, List<LevelCourseLearningDto>> toGroupedLearningDtoMap(List<LevelCourse> courseList, Map<String, PartnerOnlinePeixunDto> courseCodePeixunMap){
-        List<LevelCourseLearningDto> learningDtoList = convertToCourseLearningDto(courseList, courseCodePeixunMap);
-        return groupByGrowthIndex(learningDtoList);
-    }
-    
     /**
      * 转成courseCode到dto的Map
      */
@@ -115,7 +111,9 @@ public class LevelCourseConvertor {
     /**
      * 将课程列表对象以及PartnerPeixunDto的课程状态和课程detail链接  一起转成对外输出的dto对象 
      */
-    public static List<LevelCourseLearningDto> convertToCourseLearningDto(List<LevelCourse> courseList, Map<String, PartnerOnlinePeixunDto> courseCodePeixunMap){
+    public static List<LevelCourseLearningDto> convertToCourseLearningDto(List<LevelCourse> courseList, 
+                                                                          Map<String, PartnerOnlinePeixunDto> courseCodePeixunMap,
+                                                                          Set<String> requiredCourseCodes, Set<String> electiveCourseCodes){
         if(CollectionUtils.isEmpty(courseList) ){
             return Collections.emptyList();
         }
@@ -124,6 +122,11 @@ public class LevelCourseConvertor {
             LevelCourseLearningDto learningDto = new LevelCourseLearningDto();
             learningDto.setCourseName(course.getCourseName());
             learningDto.setGrowthIndex(course.getTag());
+            if(CollectionUtils.contains(requiredCourseCodes.iterator(), course.getCourseCode())) {
+                learningDto.setCourseType(LevelCourseTypeEnum.REQUIRED.name());
+            }else if(CollectionUtils.contains(electiveCourseCodes.iterator(), course.getCourseCode())){
+                learningDto.setCourseType(LevelCourseTypeEnum.ELECTIVE.name());
+            }
             if(!CollectionUtils.isEmpty(courseCodePeixunMap) && courseCodePeixunMap.get(course.getCourseCode())!=null){
                 PartnerOnlinePeixunDto partnerPeixunDto = courseCodePeixunMap.get(course.getCourseCode());
                 if(partnerPeixunDto.getStatus()!=null){
@@ -139,23 +142,23 @@ public class LevelCourseConvertor {
     /**
      * 按照指标对list进行分组
      */
-    private static Map<String, List<LevelCourseLearningDto>> groupByGrowthIndex(List<LevelCourseLearningDto> dtoList){
-        Map<String, List<LevelCourseLearningDto>> resultMap = Maps.newHashMap();
-        if(CollectionUtils.isEmpty(dtoList)){
-            return resultMap;
-        }
-        for(LevelCourseLearningDto dto:dtoList){
-            List<LevelCourseLearningDto> tmpList = resultMap.get(dto.getGrowthIndex());
-            if(tmpList == null){
-                tmpList = Lists.newArrayList();
-                tmpList.add(dto);
-                resultMap.put(dto.getGrowthIndex(), tmpList);
-            }else{
-                tmpList.add(dto);
-            }
-        }
-        return resultMap;
-    }
+//    private static Map<String, List<LevelCourseLearningDto>> groupByGrowthIndex(List<LevelCourseLearningDto> dtoList){
+//        Map<String, List<LevelCourseLearningDto>> resultMap = Maps.newHashMap();
+//        if(CollectionUtils.isEmpty(dtoList)){
+//            return resultMap;
+//        }
+//        for(LevelCourseLearningDto dto:dtoList){
+//            List<LevelCourseLearningDto> tmpList = resultMap.get(dto.getGrowthIndex());
+//            if(tmpList == null){
+//                tmpList = Lists.newArrayList();
+//                tmpList.add(dto);
+//                resultMap.put(dto.getGrowthIndex(), tmpList);
+//            }else{
+//                tmpList.add(dto);
+//            }
+//        }
+//        return resultMap;
+//    }
     
     /**
      * 计算待学习课程数

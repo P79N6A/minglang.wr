@@ -48,27 +48,22 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
     private PartnerPeixunService partnerPeixunService;
     
     /**
-     * 获取合伙人必修课程学习数据以及课程指标分类数据
+     * 获取合伙人必修课程学习数据
      */
     @Override
     public LevelCourseLearningStatisticsDto getCourseLearningInfo(LevelCourseCondition condition) {
         if(!LevelCourseCondition.isValid(condition)){
             return LevelCourseLearningStatisticsDto.getNullDto();
         }
-        List<LevelCourse> tagCourseList = courseBo.groupCoursesByTag(condition.getGroupCount());
-        Set<String> totalCodeSet = LevelCourseConvertor.extractCourseCode(tagCourseList);
-        
         String key = LevelCourseConfigUtil.getResourceKey(condition.getUserLevel(), LevelCourseTypeEnum.REQUIRED);
         AppResource resource = appResourceBo.queryAppResource(LevelCourseConfigUtil.getResourceType(), key);
-        Set<String> courseCodeSet = Collections.emptySet();
+        Set<String> totalCodeSet = Collections.emptySet();
         if(resource!=null){
-            courseCodeSet = LevelCourseConfigUtil.parseCourseCodeSet(resource.getValue());
-            totalCodeSet.addAll(courseCodeSet);
+            totalCodeSet = LevelCourseConfigUtil.parseCourseCodeSet(resource.getValue());
         }
         Map<String, PartnerOnlinePeixunDto> courseCodePeixunDtoMap = queryBatchOnlinePeixunProcess(condition.getUserId(), Lists.newArrayList(totalCodeSet));
-        Map<String, List<LevelCourseLearningDto>> groupedLearningCourseList = LevelCourseConvertor.toGroupedLearningDtoMap(tagCourseList, courseCodePeixunDtoMap);
-        int toLearningCount = LevelCourseConvertor.computeLearningCount(courseCodeSet, courseCodePeixunDtoMap);
-        return new LevelCourseLearningStatisticsDto(groupedLearningCourseList, toLearningCount);
+        int toLearningCount = LevelCourseConvertor.computeLearningCount(totalCodeSet, courseCodePeixunDtoMap);
+        return new LevelCourseLearningStatisticsDto(null, toLearningCount);
     }
 
     @Override
@@ -85,7 +80,7 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
             lce.createCriteria().andCourseCodeIn(totalCourseCodeList);
             List<LevelCourse> levelCourseList = courseBo.queryLevelCourse(lce);
             Map<String, PartnerOnlinePeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(totalCourseCodeList));
-            return LevelCourseConvertor.convertToCourseLearningDto(levelCourseList, peixunDtoMap);
+            return LevelCourseConvertor.convertToCourseLearningDto(levelCourseList, peixunDtoMap, requiredCourseCodeSet, electiveCourseCodeSet);
         }
         return Collections.emptyList();
     }
@@ -101,7 +96,9 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
         List<LevelCourse> tagCourseList = courseBo.queryLevelCourse(lce);
         Set<String> courseCodeSet = LevelCourseConvertor.extractCourseCode(tagCourseList);
         Map<String, PartnerOnlinePeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(courseCodeSet));
-        return LevelCourseConvertor.convertToCourseLearningDto(tagCourseList, peixunDtoMap);
+        Set<String> requiredCourseCodeSet = getCourseCodeList("S5", LevelCourseTypeEnum.REQUIRED);
+        Set<String> electiveCourseCodeSet = getCourseCodeList("S5", LevelCourseTypeEnum.ELECTIVE);
+        return LevelCourseConvertor.convertToCourseLearningDto(tagCourseList, peixunDtoMap, requiredCourseCodeSet, electiveCourseCodeSet);
     }
     
     private Set<String> getCourseCodeList(String level, LevelCourseTypeEnum type) {
