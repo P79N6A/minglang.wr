@@ -493,7 +493,7 @@
        and  a.name=#{partnerName}
    </if>
    <if test="courseStatus != null and courseStatus !=''" >
-       and b.course_status=#{courseStatus}
+       and b.status=#{courseStatus}
    </if>
     limit #{pageNum} , #{pageSize}
   </select>
@@ -517,7 +517,7 @@
        and  a.name=#{partnerName}
    </if>
    <if test="courseStatus != null" >
-       and b.course_status=#{courseStatus}
+       and b.status=#{courseStatus}
    </if>
   </select>
   
