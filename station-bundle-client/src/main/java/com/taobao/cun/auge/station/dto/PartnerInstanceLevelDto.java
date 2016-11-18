@@ -135,26 +135,45 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 
     private String                               remark;
 //----------------------------------------------------------新加指标 start-----------------------------------------------------//
+    /**
+     * 1.0商品gmv占比
+     */
     private BigDecimal                           goods1GmvRatio;
 
     private BigDecimal                           goods1GmvRatioScore;
 
+    /**
+     * 活跃村民数:访问超过两次
+     */
     private BigDecimal                           activeAppUserCnt;
 
     private BigDecimal                           activeAppUserCntScore;
 
+    /**
+     * 忠实村民数:近六个月访问超过六次
+     */
     private BigDecimal                           loyaltyVillagerCnt;
 
     private BigDecimal                           loyaltyVillagerCntScore;
 
+    /**
+     * 复购率
+     */
     private BigDecimal                           repurchaseRate;
 
     private BigDecimal                           repurchaseRateScore;
 
+    /**
+     * 商品访问数
+     */
     private BigDecimal                           visitedProductCnt;
 
     private BigDecimal                           visitedProductCntScore;
 
+    /**
+     * 此次评级中前六个月中有几个月的月收入低于给定的最低值,评估月收入稳定性防止刷额
+     */
+    private BigDecimal                           monthlyIncomeLowerCount;
 //----------------------------------------------------------新加指标 end-----------------------------------------------------//
 
     
@@ -484,6 +503,14 @@ public class PartnerInstanceLevelDto extends OperatorDto {
 
     public void setVisitedProductCntScore(BigDecimal visitedProductCntScore) {
         this.visitedProductCntScore = visitedProductCntScore;
+    }
+
+    public BigDecimal getMonthlyIncomeLowerCount() {
+        return monthlyIncomeLowerCount;
+    }
+
+    public void setMonthlyIncomeLowerCount(BigDecimal monthlyIncomeLowerCount) {
+        this.monthlyIncomeLowerCount = monthlyIncomeLowerCount;
     }
 
 }

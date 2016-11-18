@@ -57,6 +57,7 @@ public class PartnerInstanceLevelConverter {
 		result.setVisitedProductCntScore(level.getVisitedProductCntScore());
 		result.setRepurchaseRate(level.getRepurchaseRate());
 		result.setRepurchaseRateScore(level.getRepurchaseRateScore());
+		result.setMonthlyIncomeLowerCount(level.getMonthlyIncomeLowerCount());
 		return result;
 	}
 
@@ -95,6 +96,7 @@ public class PartnerInstanceLevelConverter {
 		result.setStationId(level.getStationId());
 		result.setTaobaoUserId(level.getTaobaoUserId());
 		result.setRemark(level.getRemark());
+		result.setMonthlyIncomeLowerCount(level.getMonthlyIncomeLowerCount());
 		return result;
 	}
 
