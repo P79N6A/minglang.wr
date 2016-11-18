@@ -96,9 +96,7 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
         List<LevelCourse> tagCourseList = courseBo.queryLevelCourse(lce);
         Set<String> courseCodeSet = LevelCourseConvertor.extractCourseCode(tagCourseList);
         Map<String, PartnerOnlinePeixunDto> peixunDtoMap = queryBatchOnlinePeixunProcess(userId, new ArrayList<>(courseCodeSet));
-        Set<String> requiredCourseCodeSet = getCourseCodeList("S5", LevelCourseTypeEnum.REQUIRED);
-        Set<String> electiveCourseCodeSet = getCourseCodeList("S5", LevelCourseTypeEnum.ELECTIVE);
-        return LevelCourseConvertor.convertToCourseLearningDto(tagCourseList, peixunDtoMap, requiredCourseCodeSet, electiveCourseCodeSet);
+        return LevelCourseConvertor.convertToCourseLearningDto(tagCourseList, peixunDtoMap, null, null);
     }
     
     private Set<String> getCourseCodeList(String level, LevelCourseTypeEnum type) {

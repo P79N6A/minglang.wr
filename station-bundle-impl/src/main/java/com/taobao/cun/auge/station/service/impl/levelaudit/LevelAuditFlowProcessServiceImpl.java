@@ -90,6 +90,8 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         if(expectedLevel!=null){
             initData.put("expectedLevel", expectedLevel.getLevel().toString());
             initData.put("expectedLevelDesc", expectedLevel.getDescription());
+        }else{
+            initData.put("isS6", Boolean.TRUE.toString());
         }
         initData.put("score", levelProcessDto.getScore().toString());
         initData.put("monthlyIncome", levelProcessDto.getMonthlyIncome().toString());
@@ -98,7 +100,6 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         initData.put("employeeName", levelProcessDto.getEmployeeName());
         initData.put("employeeId", levelProcessDto.getEmployeeId());
         initData.put("evaluateInfo", levelProcessDto.getEvaluateInfo());
-        
         ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
                 String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
         if (!rm.isSuccess()) {

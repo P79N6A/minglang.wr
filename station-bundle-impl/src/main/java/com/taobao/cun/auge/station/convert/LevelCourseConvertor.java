@@ -122,9 +122,9 @@ public class LevelCourseConvertor {
             LevelCourseLearningDto learningDto = new LevelCourseLearningDto();
             learningDto.setCourseName(course.getCourseName());
             learningDto.setGrowthIndex(course.getTag());
-            if(CollectionUtils.contains(requiredCourseCodes.iterator(), course.getCourseCode())) {
+            if(requiredCourseCodes!=null && CollectionUtils.contains(requiredCourseCodes.iterator(), course.getCourseCode())) {
                 learningDto.setCourseType(LevelCourseTypeEnum.REQUIRED.name());
-            }else if(CollectionUtils.contains(electiveCourseCodes.iterator(), course.getCourseCode())){
+            }else if(electiveCourseCodes!=null && CollectionUtils.contains(electiveCourseCodes.iterator(), course.getCourseCode())){
                 learningDto.setCourseType(LevelCourseTypeEnum.ELECTIVE.name());
             }
             if(!CollectionUtils.isEmpty(courseCodePeixunMap) && courseCodePeixunMap.get(course.getCourseCode())!=null){
