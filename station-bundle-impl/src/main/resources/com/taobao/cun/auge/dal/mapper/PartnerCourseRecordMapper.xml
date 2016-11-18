@@ -474,7 +474,7 @@
    ,d.id as station_id
    ,b.course_type as course_type
    ,b.status as course_status
-   ,d.gmt_done as gmt_done
+   ,b.gmt_done as gmt_done
    from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
    where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
    and a.taobao_user_id=b.partner_user_id
