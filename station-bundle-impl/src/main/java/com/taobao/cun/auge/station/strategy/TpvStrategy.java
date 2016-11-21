@@ -121,7 +121,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
 		// TODO Auto-generated method stub
 
 	}
@@ -331,13 +331,14 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long applyId = findCloseApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
+		processTask.setBusiness(ProcessBusinessEnum.TPV_CLOSE);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		processTask.setBusinessId(stationApplyId);
 		processTask.setBusinessName(stationName);
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
@@ -348,13 +349,14 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long applyId = findQuitApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
+		processTask.setBusiness(ProcessBusinessEnum.TPV_QUIT);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		processTask.setBusinessId(stationApplyId);
 		processTask.setBusinessName(stationName);
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
