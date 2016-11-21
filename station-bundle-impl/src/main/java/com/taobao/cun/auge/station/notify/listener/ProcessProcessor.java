@@ -98,8 +98,8 @@ public class ProcessProcessor {
 	@Autowired
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
 	
-	@Autowired
-	LevelAuditFlowService levelAuditFlowService;
+//	@Autowired
+//	LevelAuditFlowService levelAuditFlowService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -131,7 +131,7 @@ public class ProcessProcessor {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
-				levelAuditFlowService.processAuditMessage(ob, ProcessApproveResultEnum.valueof(resultCode));
+//				levelAuditFlowService.processAuditMessage(ob, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

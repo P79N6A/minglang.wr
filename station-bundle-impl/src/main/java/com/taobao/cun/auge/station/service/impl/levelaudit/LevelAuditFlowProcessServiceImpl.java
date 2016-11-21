@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
@@ -45,9 +46,11 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     protected CuntaoWorkFlowService cuntaoWorkFlowService;
     
     @Autowired
+    @Qualifier("levelAuditMessageService")
     private LevelAuditMessageService levelAuditMessageService;
     
     @Autowired
+    @Qualifier("levelReviewMessageService")
     private LevelAuditMessageService levelReviewMessageService;
     
     @Autowired
@@ -68,7 +71,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     }
     
     @Override
-    public final void startApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto) {
+    public void startApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto) {
         String businessCode = levelProcessDto.getBusinessCode();
         Long businessId = levelProcessDto.getBusinessId();
 
