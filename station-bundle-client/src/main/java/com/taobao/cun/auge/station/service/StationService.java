@@ -2,7 +2,8 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 public interface StationService {
 	
@@ -11,15 +12,13 @@ public interface StationService {
 	 * 
 	 * @param stationId
 	 * @param approveResult
-	 * @throws AugeServiceException
 	 */
-	public void auditQuitStation(Long stationId,ProcessApproveResultEnum approveResult) throws AugeServiceException;
+	public void auditQuitStation(Long stationId,ProcessApproveResultEnum approveResult)throws AugeBusinessException,AugeSystemException;
 	
 	/**
 	 * 申请撤点
 	 * 
 	 * @param quitDto
-	 * @throws AugeServiceException
 	 */
-	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto) throws AugeServiceException;
+	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto) throws AugeBusinessException,AugeSystemException;
 }
