@@ -173,7 +173,7 @@ public class PartnerInstanceLevelDto extends OperatorDto {
     /**
      * 此次评级中前六个月中有几个月的月收入低于给定的最低值,评估月收入稳定性防止刷额
      */
-    private BigDecimal                           monthlyIncomeLowerCount;
+    private String                           monthlyIncomeLastSixMonth;
 //----------------------------------------------------------新加指标 end-----------------------------------------------------//
 
     
@@ -504,13 +504,13 @@ public class PartnerInstanceLevelDto extends OperatorDto {
     public void setVisitedProductCntScore(BigDecimal visitedProductCntScore) {
         this.visitedProductCntScore = visitedProductCntScore;
     }
-
-    public BigDecimal getMonthlyIncomeLowerCount() {
-        return monthlyIncomeLowerCount;
+    
+    public String getMonthlyIncomeLastSixMonth() {
+        return monthlyIncomeLastSixMonth;
     }
 
-    public void setMonthlyIncomeLowerCount(BigDecimal monthlyIncomeLowerCount) {
-        this.monthlyIncomeLowerCount = monthlyIncomeLowerCount;
+    public void setMonthlyIncomeLastSixMonth(String monthlyIncomeLastSixMonth) {
+        this.monthlyIncomeLastSixMonth = monthlyIncomeLastSixMonth;
     }
 
 }

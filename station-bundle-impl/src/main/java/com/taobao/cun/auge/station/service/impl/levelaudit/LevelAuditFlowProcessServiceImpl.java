@@ -87,11 +87,14 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         OrgPermissionHolder approveHolder = getApproversOrgId(expectedLevel, levelProcessDto.getCountyOrgId());
         initData.put("orgId", String.valueOf(approveHolder.getOrgId()));
         initData.put("permission", approveHolder.getPermission());
+        
+        String evaluateToLevelKey = "ToLevel";
         if(expectedLevel!=null){
             initData.put("expectedLevel", expectedLevel.getLevel().toString());
             initData.put("expectedLevelDesc", expectedLevel.getDescription());
+            initData.put(evaluateToLevelKey, expectedLevel.getLevel().toString());
         }else{
-            initData.put("isS6", Boolean.TRUE.toString());
+            initData.put(evaluateToLevelKey, PartnerInstanceLevelEnum.S_6.getLevel().toString());
         }
         initData.put("score", levelProcessDto.getScore().toString());
         initData.put("monthlyIncome", levelProcessDto.getMonthlyIncome().toString());
