@@ -145,7 +145,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                                 BeanCopyUtils.copyNotNullProperties(input, dto);
                                 return dto;
                             }catch(Exception e){
-                                logger.error("");
+                                logger.error("copy properties exception!", e);
                                 return null;
                             }
                         }
