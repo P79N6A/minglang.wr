@@ -67,7 +67,7 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
     /**
      * 忠实村民数
      */
-    private Long              loyaltyVillagerCnt;
+    private Double              loyaltyVillagerCnt;
     private Long              loyaltyVillagerCntRank;
     private Double            loyaltyVillagerCntScore;
     private Double            lastLoyaltyVillagerCntScore;
@@ -354,11 +354,11 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.activeAppUserCnt = activeAppUserCnt;
     }
 
-    public Long getLoyaltyVillagerCnt() {
+    public Double getLoyaltyVillagerCnt() {
         return loyaltyVillagerCnt;
     }
 
-    public void setLoyaltyVillagerCnt(Long loyaltyVillagerCnt) {
+    public void setLoyaltyVillagerCnt(Double loyaltyVillagerCnt) {
         this.loyaltyVillagerCnt = loyaltyVillagerCnt;
     }
 
