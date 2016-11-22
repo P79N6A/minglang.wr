@@ -6,22 +6,21 @@ import java.util.Date;
 public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
 
     private static final long serialVersionUID = -8157263646689962620L;
-    
+
     /**
      * 统计日期
      */
-    private String statDate;
+    private String            statDate;
 
     /**
      * 统计开始日期
      */
-    private Date statStartDate;
+    private Date              statStartDate;
     /**
      * 统计截止日期
-     * 
      */
-    private Date statEndDate;
-    
+    private Date              statEndDate;
+
     /**
      * 村点id
      */
@@ -52,42 +51,42 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
     /**
      * 1.0商品GMV占比全国排名
      */
-    private Double        goods1GmvRatio;
+    private Double            goods1GmvRatio;
     private Long              goods1GmvRatioRank;
-    private Double        goods1GmvRatioScore;
-    private Double        lastGoods1GmvRatioScore;
+    private Double            goods1GmvRatioScore;
+    private Double            lastGoods1GmvRatioScore;
 
     /**
      * app活跃村民使用数
      */
-    private Double        activeAppUserCnt;
+    private Long              activeAppUserCnt;
     private Long              activeAppUserCntRank;
-    private Double        activeAppUserCntScore;
-    private Double        lastActiveAppUserCntScore;
+    private Double            activeAppUserCntScore;
+    private Double            lastActiveAppUserCntScore;
 
     /**
      * 忠实村民数
      */
-    private Double        loyaltyVillagerCnt;
+    private Long              loyaltyVillagerCnt;
     private Long              loyaltyVillagerCntRank;
-    private Double        loyaltyVillagerCntScore;
-    private Double        lastLoyaltyVillagerCntScore;
+    private Double            loyaltyVillagerCntScore;
+    private Double            lastLoyaltyVillagerCntScore;
 
     /**
      * 复购率
      */
-    private Double        repurchaseRate;
+    private Double            repurchaseRate;
     private Long              repurchaseRateRank;
-    private Double        repurchaseRateScore;
-    private Double        lastRepurchaseRateScore;
+    private Double            repurchaseRateScore;
+    private Double            lastRepurchaseRateScore;
 
     /**
      * 访问商品数
      */
-    private Double        visitedProductCnt;
+    private Long              visitedProductCnt;
     private Long              visitedProductCntRank;
-    private Double        visitedProductCntScore;
-    private Double        lastVisitedProductCntScore;
+    private Double            visitedProductCntScore;
+    private Double            lastVisitedProductCntScore;
 
     /**
      * 县排名
@@ -106,27 +105,27 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
      * 全国合伙人总数
      */
     private Long              countryPartnerInstanceCnt;
-    
+
     public String getStatDate() {
         return statDate;
     }
-    
+
     public void setStatDate(String statDate) {
         this.statDate = statDate;
     }
-    
+
     public Date getStatStartDate() {
         return statStartDate;
     }
-    
+
     public void setStatStartDate(Date statStartDate) {
         this.statStartDate = statStartDate;
     }
-    
+
     public Date getStatEndDate() {
         return statEndDate;
     }
-    
+
     public void setStatEndDate(Date statEndDate) {
         this.statEndDate = statEndDate;
     }
@@ -211,14 +210,6 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.lastGoods1GmvRatioScore = lastGoods1GmvRatioScore;
     }
 
-    public Double getActiveAppUserCnt() {
-        return activeAppUserCnt;
-    }
-
-    public void setActiveAppUserCnt(Double activeAppUserCnt) {
-        this.activeAppUserCnt = activeAppUserCnt;
-    }
-
     public Long getActiveAppUserCntRank() {
         return activeAppUserCntRank;
     }
@@ -241,14 +232,6 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
 
     public void setLastActiveAppUserCntScore(Double lastActiveAppUserCntScore) {
         this.lastActiveAppUserCntScore = lastActiveAppUserCntScore;
-    }
-
-    public Double getLoyaltyVillagerCnt() {
-        return loyaltyVillagerCnt;
-    }
-
-    public void setLoyaltyVillagerCnt(Double loyaltyVillagerCnt) {
-        this.loyaltyVillagerCnt = loyaltyVillagerCnt;
     }
 
     public Long getLoyaltyVillagerCntRank() {
@@ -307,14 +290,6 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.lastRepurchaseRateScore = lastRepurchaseRateScore;
     }
 
-    public Double getVisitedProductCnt() {
-        return visitedProductCnt;
-    }
-
-    public void setVisitedProductCnt(Double visitedProductCnt) {
-        this.visitedProductCnt = visitedProductCnt;
-    }
-
     public Long getVisitedProductCntRank() {
         return visitedProductCntRank;
     }
@@ -369,6 +344,30 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
 
     public void setCountryPartnerInstanceCnt(Long countryPartnerInstanceCnt) {
         this.countryPartnerInstanceCnt = countryPartnerInstanceCnt;
+    }
+
+    public Long getActiveAppUserCnt() {
+        return activeAppUserCnt;
+    }
+
+    public void setActiveAppUserCnt(Long activeAppUserCnt) {
+        this.activeAppUserCnt = activeAppUserCnt;
+    }
+
+    public Long getLoyaltyVillagerCnt() {
+        return loyaltyVillagerCnt;
+    }
+
+    public void setLoyaltyVillagerCnt(Long loyaltyVillagerCnt) {
+        this.loyaltyVillagerCnt = loyaltyVillagerCnt;
+    }
+
+    public Long getVisitedProductCnt() {
+        return visitedProductCnt;
+    }
+
+    public void setVisitedProductCnt(Long visitedProductCnt) {
+        this.visitedProductCnt = visitedProductCnt;
     }
 
 }
