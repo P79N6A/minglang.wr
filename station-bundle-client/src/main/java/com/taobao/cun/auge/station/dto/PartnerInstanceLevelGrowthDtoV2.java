@@ -59,7 +59,7 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
     /**
      * app活跃村民使用数
      */
-    private Long              activeAppUserCnt;
+    private Double              activeAppUserCnt;
     private Long              activeAppUserCntRank;
     private Double            activeAppUserCntScore;
     private Double            lastActiveAppUserCntScore;
@@ -346,11 +346,11 @@ public class PartnerInstanceLevelGrowthDtoV2 implements Serializable {
         this.countryPartnerInstanceCnt = countryPartnerInstanceCnt;
     }
 
-    public Long getActiveAppUserCnt() {
+    public Double getActiveAppUserCnt() {
         return activeAppUserCnt;
     }
 
-    public void setActiveAppUserCnt(Long activeAppUserCnt) {
+    public void setActiveAppUserCnt(Double activeAppUserCnt) {
         this.activeAppUserCnt = activeAppUserCnt;
     }
 
