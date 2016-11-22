@@ -46,7 +46,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
         List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
         List<String> notPassExamLevels = Lists.newArrayList();
         for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
-            ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatchList(entry.getValue(), taobaoUserId);
+            ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
             if(isPassExam(resultModel)){
                 passedLevels.add(entry.getKey());
             }else {
