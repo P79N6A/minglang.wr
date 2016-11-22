@@ -24,7 +24,7 @@ import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("levelExamQueryService")
-@HSFProvider(serviceInterface = LevelExamQueryService.class)
+@HSFProvider(serviceInterface = LevelExamQueryService.class, clientTimeout=10000)
 public class LevelExamQueryServiceImpl implements LevelExamQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelExamQueryServiceImpl.class);
