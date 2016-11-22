@@ -26,12 +26,12 @@ public class PartnerInstanceLevelGrowthTrendDtoV2 implements Serializable {
     /**
      * 最近一天app活跃用户数
      */
-    private Double            lastDayActiveAppUserCnt;
+    private Long            lastDayActiveAppUserCnt;
 
     /**
      * 最近一天忠实村民数
      */
-    private Double            lastDayLoyaltyVillagerCnt;
+    private Long            lastDayLoyaltyVillagerCnt;
 
     /**
      * 最近一天复购率
@@ -41,7 +41,7 @@ public class PartnerInstanceLevelGrowthTrendDtoV2 implements Serializable {
     /**
      * 最近一天访问商品数
      */
-    private Double            lastDayVisitedProductCnt;
+    private Long            lastDayVisitedProductCnt;
 
     public String getStatDate() {
         return statDate;
@@ -67,19 +67,19 @@ public class PartnerInstanceLevelGrowthTrendDtoV2 implements Serializable {
         this.lastDayGoods1GmvRatio = lastDayGoods1GmvRatio;
     }
 
-    public Double getLastDayActiveAppUserCnt() {
+    public Long getLastDayActiveAppUserCnt() {
         return lastDayActiveAppUserCnt;
     }
 
-    public void setLastDayActiveAppUserCnt(Double lastDayActiveAppUserCnt) {
+    public void setLastDayActiveAppUserCnt(Long lastDayActiveAppUserCnt) {
         this.lastDayActiveAppUserCnt = lastDayActiveAppUserCnt;
     }
 
-    public Double getLastDayLoyaltyVillagerCnt() {
+    public Long getLastDayLoyaltyVillagerCnt() {
         return lastDayLoyaltyVillagerCnt;
     }
 
-    public void setLastDayLoyaltyVillagerCnt(Double lastDayLoyaltyVillagerCnt) {
+    public void setLastDayLoyaltyVillagerCnt(Long lastDayLoyaltyVillagerCnt) {
         this.lastDayLoyaltyVillagerCnt = lastDayLoyaltyVillagerCnt;
     }
 
@@ -91,11 +91,11 @@ public class PartnerInstanceLevelGrowthTrendDtoV2 implements Serializable {
         this.lastDayRepurchaseRate = lastDayRepurchaseRate;
     }
 
-    public Double getLastDayVisitedProductCnt() {
+    public Long getLastDayVisitedProductCnt() {
         return lastDayVisitedProductCnt;
     }
 
-    public void setLastDayVisitedProductCnt(Double lastDayVisitedProductCnt) {
+    public void setLastDayVisitedProductCnt(Long lastDayVisitedProductCnt) {
         this.lastDayVisitedProductCnt = lastDayVisitedProductCnt;
     }
 
