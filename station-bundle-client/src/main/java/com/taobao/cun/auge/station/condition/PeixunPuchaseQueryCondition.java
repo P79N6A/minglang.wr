@@ -9,9 +9,10 @@ public class PeixunPuchaseQueryCondition extends PageQuery{
 	private static final long serialVersionUID = 1L;
 	private Long orgId;
 	private String status;
-	private Date gmtExceptStart;
-	private Date gmtExceptEnd;
+	private String gmtExceptStart;
+	private String gmtExceptEnd;
 	private String receiveWorkNo;
+	private String orgPath;
 	public Long getOrgId() {
 		return orgId;
 	}
@@ -24,16 +25,17 @@ public class PeixunPuchaseQueryCondition extends PageQuery{
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public Date getGmtExceptStart() {
+	
+	public String getGmtExceptStart() {
 		return gmtExceptStart;
 	}
-	public void setGmtExceptStart(Date gmtExceptStart) {
+	public void setGmtExceptStart(String gmtExceptStart) {
 		this.gmtExceptStart = gmtExceptStart;
 	}
-	public Date getGmtExceptEnd() {
+	public String getGmtExceptEnd() {
 		return gmtExceptEnd;
 	}
-	public void setGmtExceptEnd(Date gmtExceptEnd) {
+	public void setGmtExceptEnd(String gmtExceptEnd) {
 		this.gmtExceptEnd = gmtExceptEnd;
 	}
 	public String getReceiveWorkNo() {
@@ -41,6 +43,12 @@ public class PeixunPuchaseQueryCondition extends PageQuery{
 	}
 	public void setReceiveWorkNo(String receiveWorkNo) {
 		this.receiveWorkNo = receiveWorkNo;
+	}
+	public String getOrgPath() {
+		return orgPath;
+	}
+	public void setOrgPath(String orgPath) {
+		this.orgPath = orgPath;
 	}
 	
 	

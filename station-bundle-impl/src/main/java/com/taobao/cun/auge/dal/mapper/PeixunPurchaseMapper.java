@@ -99,4 +99,6 @@ public interface PeixunPurchaseMapper {
     int updateByPrimaryKey(PeixunPurchase record);
     
     List<PeixunPurchaseDto> queryListByCondition(Map<String,Object> param);
+    int queryPurchaseListCount(Map<String,Object> param);
+
 }

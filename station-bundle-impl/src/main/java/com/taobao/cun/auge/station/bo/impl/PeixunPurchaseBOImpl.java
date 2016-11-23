@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
@@ -182,12 +184,24 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			PeixunPuchaseQueryCondition condition) {
 		Map<String,Object> param =new HashMap<String,Object>();
 		param.put("orgId", condition.getOrgId());
+		param.put("orgPath", condition.getOrgPath());
 		param.put("recevieWorkNo", condition.getReceiveWorkNo());
 		param.put("status", condition.getStatus());
 		param.put("gmtExceptStart", condition.getGmtExceptStart());
 		param.put("gmtExceptEnd", condition.getGmtExceptEnd());
 		param.put("pageNum", condition.getPageNum());
 		param.put("pageSize", condition.getPageSize());
+		try{
+		int count=peixunPurchaseMapper.queryPurchaseListCount(param);
+		List<PeixunPurchaseDto> records = peixunPurchaseMapper
+				.queryListByCondition(param);
+		PageDto<PeixunPurchaseDto> result=new PageDto<PeixunPurchaseDto>();
+		result.setTotal(count);
+		result.setItems(records);
+		return result;
+		}catch(Exception e){
+			System.out.println(e);
+		}
 		return null;
 	}
 

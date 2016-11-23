@@ -440,7 +440,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		param.put("courseType", condition.getCourseTypes().get(0));
 		param.put("pageNum", condition.getPageNum());
 		param.put("pageSize", condition.getPageSize());
-		try{
 		int count=partnerCourseRecordMapper.queryPeixunListCount(param);
 		List<PartnerPeixunListDetailDto> records = partnerCourseRecordMapper
 				.queryPeixunList(param);
@@ -449,10 +448,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		result.setTotal(count);
 		result.setItems(records);
 		return result;
-		}catch(Exception e){
-			logger.error("aaa",e);
-		}
-		return null;
 	}
 
 	private void fillResult(List<PartnerPeixunListDetailDto> records,String courseType){
