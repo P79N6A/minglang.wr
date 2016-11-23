@@ -125,7 +125,9 @@ public class ProcessProcessor {
 					monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 				}
 			} else if (ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
-					|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)) {
+					|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)) {
 				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
 			//村点撤点
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
