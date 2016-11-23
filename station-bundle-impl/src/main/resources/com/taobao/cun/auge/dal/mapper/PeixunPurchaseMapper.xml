@@ -607,7 +607,7 @@
       from peixun_purchase a,cuntao_org b
       where a.is_deleted='n' and b.is_deleted='n'
       and a.apply_org_id=b.id
-      and b.temp_full_id_path like concat(#{orgPath}, '/%')
+      and (b.id=#{orgId} or b.temp_full_id_path like concat(#{orgPath}, '/%'))
 	  <if test="status != null and status != ''"  >
 	   and  a.status=#{status}
 	  </if>
@@ -628,7 +628,7 @@
       from peixun_purchase a,cuntao_org b
       where a.is_deleted='n' and b.is_deleted='n'
       and a.apply_org_id=b.id
-      and b.temp_full_id_path like concat(#{orgPath}, '/%')
+      and (b.id=#{orgId} or b.temp_full_id_path like concat(#{orgPath}, '/%'))
 	  <if test="status != null and status != ''"  >
 	   and  a.status=#{status}
 	  </if>
