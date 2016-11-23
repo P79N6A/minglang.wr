@@ -595,7 +595,7 @@
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
   </resultMap>
   
-  <select id="" resultMap="queryListResult" parameterType="map">
+  <select id="queryListByCondition" resultMap="queryListResult" parameterType="map">
       select 
       a.id,
       a.purchase_type,
