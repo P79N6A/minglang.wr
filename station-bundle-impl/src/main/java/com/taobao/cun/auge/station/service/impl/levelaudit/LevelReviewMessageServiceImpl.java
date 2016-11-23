@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -30,12 +28,11 @@ public class LevelReviewMessageServiceImpl implements LevelAuditMessageService {
     PartnerInstanceLevelBO partnerInstanceLevelBO;
     
     @Override
-    public void handleApprove(JSONObject ob) {
+    public void handleApprove(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel) {
         try {
-            PartnerInstanceLevelDto dto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-            logger.error("Review Level Evaluate Pass for partnerInstanceId:{}, currentLevel:{}" + dto.getPartnerInstanceId(), dto.getCurrentLevel());
+            logger.error("Review Level Evaluate Pass for partnerInstanceId:{}, currentLevel:{}" + partnerInstanceLevelDto.getPartnerInstanceId(), partnerInstanceLevelDto.getCurrentLevel());
         } catch (Exception e) {
-            logger.error("handleApprove error", ob.toJSONString());
+            logger.error("handleApprove error", e);
         }
     }
 
@@ -43,7 +40,7 @@ public class LevelReviewMessageServiceImpl implements LevelAuditMessageService {
      * S6晋升review只能同意不能拒绝 仅仅是一个review而已
      */
     @Override
-    public void handleRefuse(JSONObject ob) {
+    public void handleRefuse(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel) {
     }
 
 }

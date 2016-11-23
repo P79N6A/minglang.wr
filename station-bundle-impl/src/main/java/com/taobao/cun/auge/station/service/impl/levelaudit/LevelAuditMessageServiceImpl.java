@@ -6,8 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
@@ -33,10 +31,8 @@ public class LevelAuditMessageServiceImpl implements LevelAuditMessageService {
     PartnerInstanceLevelBO partnerInstanceLevelBO;
     
     @Override
-    public void handleApprove(JSONObject ob) {
+    public void handleApprove(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel) {
         try {
-                PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-                String adjustLevel = ob.getString("adjustLevel");
                 partnerInstanceLevelDto.setPreLevel(partnerInstanceLevelDto.getCurrentLevel());
                 PartnerInstanceLevelEnum expectedLevel = partnerInstanceLevelDto.getExpectedLevel();
                 if (StringUtils.isNotBlank(adjustLevel)) {
@@ -53,23 +49,22 @@ public class LevelAuditMessageServiceImpl implements LevelAuditMessageService {
                 partnerInstanceLevelDto.setExpectedLevel(null);
                 partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
         } catch (Exception e) {
-            logger.error("handleApprove: " + ob.toJSONString(), e);
+            logger.error("Approve Exception ", e);
             throw e;
         }
 
     }
 
     @Override
-    public void handleRefuse(JSONObject ob) {
+    public void handleRefuse(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel) {
         try {
-            PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
             PartnerInstanceLevel level = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceLevelDto.getPartnerInstanceId());
             level.setExpectedLevel(null);
             String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
             level.setRemark(remark);
             partnerInstanceLevelBO.updatePartnerInstanceLevel(level);
         } catch (Exception e) {
-            logger.error("handRefuse: " + ob.toJSONString(), e);
+            logger.error("Refuse Exception " , e);
             throw e;
         }
     }

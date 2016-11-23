@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -33,6 +34,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -130,8 +132,21 @@ public class ProcessProcessor {
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
-				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
-				levelAuditFlowService.processAuditMessage(ob, ProcessApproveResultEnum.valueof(resultCode));
+				try{
+				    logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
+				    /**
+				     * 启动审批流程时塞进来的数据
+				     */
+		            PartnerInstanceLevelDto dto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
+		            /**
+		             * cuntaobops 审批通过的level
+		             */
+				    String adjustLevel = ob.getString("adjustLevel");
+                    levelAuditFlowService.processAuditMessage(dto, ProcessApproveResultEnum.valueof(resultCode), adjustLevel);
+				}  catch (Exception e) {
+		            logger.error("LevelAuditFlowProcessServiceImpl processAuditMessage error  ", e);
+		            throw e;
+		        }
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

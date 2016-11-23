@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.station.service.interfaces;
 
-import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 
 /**
  * 层级审批消息发送和监听处理服务
@@ -13,11 +13,11 @@ public interface LevelAuditMessageService {
      * 处理内外层级审批通过的消息
      * @param partnerInstanceLevelDto:内外消息反序列化出来的
      */
-    void handleApprove(JSONObject ob);
+    void handleApprove(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel);
     
     /**
      * 处理内外层级审批不通过的消息
      * @param partnerInstanceLevelDto:内外消息反序列化出来的
      */
-    void handleRefuse(JSONObject ob);
+    void handleRefuse(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel);
 }
