@@ -17,12 +17,20 @@ import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
+import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.dto.flow.enums.CuntaoFlowTargetTypeEnum;
 @Component("peixunPurchaseBO")
 public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
 	@Autowired
 	PeixunPurchaseMapper peixunPurchaseMapper;
 	
+	@Autowired
+    private CuntaoWorkFlowService  cuntaoWorkFlowService;
+	
+	public static String FLOW_BUSINESS_CODE="peixun_purchase";
 	
 	@Override
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
@@ -37,6 +45,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			PeixunPurchase record=new PeixunPurchase();
 			BeanUtils.copyProperties(dto, record);
 			peixunPurchaseMapper.insert(record);
+			//生成流程
+			createFlow(record.getId(),dto.getLoginId());
 			return record.getId();
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
@@ -49,9 +59,17 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 	}
 	
+	private void createFlow(Long applyId,String loginId){
+		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
+				.startProcessInstance(FLOW_BUSINESS_CODE,
+						String.valueOf(applyId), loginId, null);
+	}
 	private void validateForCreate(PeixunPurchaseDto dto){
 		if(StringUtils.isEmpty(dto.getMasterWorkNo())){
 			throw new AugeServiceException("masterWorkNo is null");
+		}
+		if(StringUtils.isEmpty(dto.getLoginId())){
+			throw new AugeServiceException("loginId is null");
 		}
 		if(StringUtils.isEmpty(dto.getIsShare())){
 			throw new AugeServiceException("isShare is null");

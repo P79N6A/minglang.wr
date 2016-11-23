@@ -64,6 +64,8 @@ public class PeixunPurchaseDto implements Serializable {
 	
 	private String orgName;
 
+	private String loginId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -294,6 +296,14 @@ public class PeixunPurchaseDto implements Serializable {
 
 	public void setReceiverWorkName(String receiverWorkName) {
 		this.receiverWorkName = receiverWorkName;
+	}
+
+	public String getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
 	}
 
 	
