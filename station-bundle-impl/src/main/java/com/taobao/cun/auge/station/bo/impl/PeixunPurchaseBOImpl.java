@@ -37,6 +37,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Override
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
 		validateForCreate(dto);
+		try{
 		if(dto.getId()==null){
 			//新增
 			dto.setGmtCreate(new Date());
@@ -58,6 +59,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);
 			return record.getId();
+		}
+		}catch(Exception e){
+			return null;
 		}
 	}
 	
