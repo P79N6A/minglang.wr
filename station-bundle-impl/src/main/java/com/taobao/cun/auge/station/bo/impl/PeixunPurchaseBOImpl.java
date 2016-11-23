@@ -76,18 +76,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(StringUtils.isEmpty(dto.getIsShare())){
 			throw new AugeServiceException("isShare is null");
 		}
-		if(StringUtils.isEmpty(dto.getCategoryId())){
-			throw new AugeServiceException("categoryId is null");
-		}
-		if(StringUtils.isEmpty(dto.getOuCode())){
-			throw new AugeServiceException("ouCode is null");
-		}
+//		if(StringUtils.isEmpty(dto.getCategoryId())){
+//			throw new AugeServiceException("categoryId is null");
+//		}
+//		if(StringUtils.isEmpty(dto.getOuCode())){
+//			throw new AugeServiceException("ouCode is null");
+//		}
 		if(StringUtils.isEmpty(dto.getPurchaseType())){
 			throw new AugeServiceException("purchaseType is null");
 		}
-		if(StringUtils.isEmpty(dto.getReceiveAddress())){
-			throw new AugeServiceException("receiveAddress is null");
-		}
+//		if(StringUtils.isEmpty(dto.getReceiveAddress())){
+//			throw new AugeServiceException("receiveAddress is null");
+//		}
 		if(StringUtils.isEmpty(dto.getReceiverMobile())){
 			throw new AugeServiceException("recevieMobile is null");
 		}
