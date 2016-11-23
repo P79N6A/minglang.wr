@@ -34,10 +34,10 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     ExamUserDispatchService  examUserDispatchService;
     
     /**
-     * 判断是否通过了本层级所有晋升考试
+     * 判断是否通过了本层级晋升考试
      */
     @Override
-    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel level) {
+    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, String level) {
         Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
         if(dispatchedExamLevelAndPaper.isEmpty()){
             return new LevelExamingResult(true, Collections.emptyList(), Collections.emptyList());
@@ -54,7 +54,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
                 notPassExamLevels.add(entry.getKey().name());
             }
         }
-        boolean isPassLevelExam = passedLevels.contains(level);
+        boolean isPassLevelExam = passedLevelStrList.contains(level);
         return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList);
     }
     
