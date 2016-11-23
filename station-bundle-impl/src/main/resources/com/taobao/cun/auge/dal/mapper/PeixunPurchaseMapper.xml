@@ -612,10 +612,10 @@
 	   and  a.status=#{status}
 	  </if>
 	  <if test="gmtExceptStart != null and gmtExceptStart != ''"  >
-       <![CDATA[and  a.gmt_except_open>=gmtExceptStart]]>
+       <![CDATA[and  a.gmt_except_open>=#{gmtExceptStart}]]>
    	  </if>
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
-   	  <![CDATA[and  a.gmt_except_open<=gmtExceptEnd]]>
+   	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
  	  <if test="receiveWorkNo != null and receiveWorkNo != ''"  >
 	   and  a.receiver_work_no=#{receiveWorkNo}
@@ -633,10 +633,10 @@
 	   and  a.status=#{status}
 	  </if>
 	  <if test="gmtExceptStart != null and gmtExceptStart != ''"  >
-       <![CDATA[and  a.gmt_except_open>=gmtExceptStart]]>
+       <![CDATA[and  a.gmt_except_open>=#{gmtExceptStart}]]>
    	  </if>
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
-   	  <![CDATA[and  a.gmt_except_open<=gmtExceptEnd]]>
+   	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
  	  <if test="receiveWorkNo != null and receiveWorkNo != ''"  >
 	   and  a.receiver_work_no=#{receiveWorkNo}
