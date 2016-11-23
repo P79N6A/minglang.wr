@@ -12,7 +12,7 @@ import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExample;
 import com.taobao.cun.auge.dal.domain.WisdomCountyApplyExtExample;
 import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyExtMapper;
 import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
+import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
@@ -129,7 +129,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());
         if (wisdomCountyApplyMapper.updateByPrimaryKeySelective(wisdomCountyApply) == 1){
             try {
-                dispatchAuditEvent(auditDto);
+                dispatchAuditEvent(auditDto, wisdomCountyApply.getCreator());
             } catch (Exception e){
                 logger.error("dispatch wisdom county apply event error", e);
             }
@@ -138,12 +138,14 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         return false;
     }
 
-    private void dispatchAuditEvent(WisdomCountyApplyAuditDto dto){
+    private void dispatchAuditEvent(WisdomCountyApplyAuditDto dto, String creator){
         WisdomCountyApplyEvent event = new WisdomCountyApplyEvent();
         event.copyOperatorDto(dto);
         event.setRemark(dto.getRemark());
         event.setApplyId(dto.getId());
         event.setOpinion(dto.getState().getDesc());
-        EventDispatcherUtil.dispatch(StationBundleEventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
+        event.setCreator(creator);
+        event.setType(dto.getState());
+        EventDispatcherUtil.dispatch(EventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
     }
 }

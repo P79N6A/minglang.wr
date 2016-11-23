@@ -68,6 +68,7 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 					EmpInfoDto.setName(emp360Info.getName());
 					EmpInfoDto.setNickName(emp360Info.getNickName());
 					EmpInfoDto.setBuMail(emp360Info.getBuMail());
+					EmpInfoDto.setMobile(emp360Info.getMobile());
 					empInfoMap.put(workMap.get(emp360Info.getWorkNo().replaceFirst("^0+", "")), EmpInfoDto);
 				}
 			}

@@ -27,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -57,6 +58,7 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.CloseStationApplyConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -69,6 +71,7 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
@@ -98,7 +101,6 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEvaluateTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -120,10 +122,13 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
@@ -135,7 +140,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.auge.station.validate.PartnerInstanceValidator;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
@@ -206,9 +210,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	CaiNiaoService caiNiaoService;
 
 	@Autowired
-	PartnerInstanceValidator partnerInstanceValidator;
-	
-	@Autowired
 	PartnerPeixunBO partnerPeixunBO;
 	
 	@Autowired
@@ -218,6 +219,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	CountyStationBO countyStationBO;
 	@Autowired
 	CuntaoUserService cuntaoUserService;
+	
+	@Autowired
+	PartnerInstanceChecker partnerInstanceChecker;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -634,7 +638,23 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException {
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException{
+		FreezeBondDto freezeBondDto = new FreezeBondDto();
+		freezeBondDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		freezeBondDto.setOperator(String.valueOf(taobaoUserId));
+		
+		freezeBondDto.setTaobaoUserId(taobaoUserId);
+		return freezeBond(freezeBondDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException {
+		ValidateUtils.validateParam(freezeBondDto);
+		Long taobaoUserId = freezeBondDto.getTaobaoUserId();
+		String accountNo =  freezeBondDto.getAccountNo();
+		String alipayAccount = freezeBondDto.getAlipayAccount();
+		
 		try {
 			PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
@@ -662,6 +682,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 			accountMoneyUpdateDto.setFrozenTime(new Date());
 			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+			accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
+			accountMoneyUpdateDto.setAccountNo(accountNo);
 			accountMoneyUpdateDto.setOperator(operator);
 			accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
 			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
@@ -773,6 +795,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
+		}
+		//判断装修是否未付款
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+		if (decorate != null
+				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+						decorate.getPaymentType())
+				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+						decorate.getStatus())) {
+			throw new AugeServiceException(
+					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 		}
         //装修改成不作为强制节点
 //		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
@@ -1027,7 +1060,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException {
+	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException{
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(forcedCloseDto);
@@ -1039,11 +1072,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			//生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
-			PartnerInstanceStateChangeEnum instanceStateChange = buildInstanceClosingStateChange(partnerStationRel);
+			PartnerInstanceStateChangeEnum instanceStateChange = PartnerInstanceConverter.convertClosingStateChange(partnerStationRel);
 
 			// 校验停业前置条件。例如校验合伙人是否还存在淘帮手存在
-			PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerStationRel.getType());
-			partnerInstanceHandler.validateClosePreCondition(partnerType, partnerStationRel);
+			partnerInstanceChecker.checkCloseApply(instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
 			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
@@ -1064,26 +1096,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 通过事件，定时钟，启动停业流程
 			dispatchInstStateChangeEvent(instanceId, instanceStateChange, forcedCloseDto);
 			// 失效tair
-		} catch (AugeServiceException e) {
-			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto),
-					e.toString());
-			logger.error(error, e);
+		}catch (AugeBusinessException e) {
+			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
+			logger.warn(error, e);
 			throw e;
 		} catch (Exception e) {
 			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
 			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
-	}
-
-	private PartnerInstanceStateChangeEnum buildInstanceClosingStateChange(PartnerStationRel partnerStationRel) {
-		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
-			return PartnerInstanceStateChangeEnum.DECORATING_CLOSING;
-		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerStationRel.getState())) {
-			return PartnerInstanceStateChangeEnum.START_CLOSING;
-		} else {
-			//状态校验,只有装修中，或者服务中可以停业
-			throw new AugeServiceException("partner state is not decorating or servicing.");
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 
@@ -1115,7 +1135,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException {
+	public void applyQuitByManager(QuitStationApplyDto quitDto)throws AugeBusinessException,AugeSystemException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(quitDto);
@@ -1126,7 +1146,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 			// 校验申请退出的前置条件：是否存在下级合伙人，是否存在未结束订单，是否已经提交过退出
-			partnerInstanceValidator.validateApplyQuitPreCondition(instance, quitDto);
+			partnerInstanceChecker.checkQuitApply(instanceId);
+
+			PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
+			// 校验是否可以同时撤点
+			Boolean isQuitStation = quitDto.getIsQuitStation();
+			// 如果选择同时撤点，校验村点上其他人是否都处于退出待解冻、已退出状态
+			if (Boolean.TRUE.equals(isQuitStation)) {
+				partnerInstanceHandler.validateOtherPartnerQuit(instanceType, instanceId);
+			}
 
 			// 保存退出申请单
 			QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
@@ -1150,7 +1178,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_QUITTING, quitDto);
 
 			// 失效tair
-		} catch (AugeServiceException e) {
+		} catch (AugeBusinessException e) {
 			String error = getAugeExceptionErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto),
 					e.toString());
 			logger.error(error, e);
@@ -1158,7 +1186,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} catch (Exception e) {
 			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
 			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
 

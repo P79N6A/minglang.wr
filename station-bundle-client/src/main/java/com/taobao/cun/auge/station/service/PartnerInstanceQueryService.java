@@ -255,8 +255,8 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException;
-	
-	/**
+
+    /**
      * 获取合伙人层级成长信息
      * @param taobaoUserId
      * @return
@@ -270,5 +270,5 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
-
+    
 }

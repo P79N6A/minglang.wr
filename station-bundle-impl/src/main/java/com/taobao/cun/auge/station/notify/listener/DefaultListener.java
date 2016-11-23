@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import com.taobao.cun.auge.station.bo.PartnerExamBO;
 
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.alilang.AlilangUserRegister;
@@ -29,7 +30,8 @@ public class DefaultListener implements MessageListener {
 	PartnerPeixunBO partnerPeixunBO;
 	@Resource
 	private AlilangUserRegister alilangUserRegister;
-	
+	@Autowired
+	PartnerExamBO partnerExamBO;
 	@Override
 	public void receiveMessage(Message message, MessageStatus status) {
 		logger.info("DefaultListener receiveMessage start");
@@ -62,6 +64,8 @@ public class DefaultListener implements MessageListener {
 			partnerPeixunBO.handlePeixunPaymentProcess(strMessage, ob);
 		}else if(NotifyContents.ALILANG_REGISTER_TOPIC.equals(strMessage.getTopic())){ 
 			alilangUserRegister.register(ob.getString("mobile"), ob.getString("alilangUid"));
+		}else if(NotifyContents.EXAM_FINISH.equals(strMessage.getTopic())){
+			partnerExamBO.handleExamFinish(strMessage, ob);
 		}else{
 			logger.warn("unknow msgTopic:"+strMessage.getTopic());
 		}

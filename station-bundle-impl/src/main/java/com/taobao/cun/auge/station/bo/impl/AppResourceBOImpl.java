@@ -118,3 +118,4 @@ public class AppResourceBOImpl implements AppResourceBO {
 	}
 
 }
+

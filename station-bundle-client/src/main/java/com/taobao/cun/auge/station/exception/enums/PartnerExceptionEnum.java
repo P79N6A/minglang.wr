@@ -47,6 +47,9 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_LEASE_AREA_IS_NULL = new PartnerExceptionEnum(
 			"PARTNER_LEASE_AREA_IS_NULL", "可租赁门店面积不能为空");
 
+	public static final PartnerExceptionEnum PARTNER_DECORATE_NOT_PAY = new PartnerExceptionEnum(
+			"PARTNER_NOT_FINISH_COURSE", "装修未付款");
+	
 	static {
 		mappings.put("NO_RECORD", NO_RECORD);
 		mappings.put("ID_IS_NULL", ID_IS_NULL);

@@ -43,7 +43,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean partnerInstanceLevelDataService(@Value("${hsf.consumer.version.crius.partnerInstanceLevelDataService}") String version) {
 		return getConsumerBean(PartnerInstanceLevelDataService.class, HSFGroup.HSF, version, 3000);
 	}
-	
+
 	// cuntaocenter服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean taobaoTradeOrderQueryService(

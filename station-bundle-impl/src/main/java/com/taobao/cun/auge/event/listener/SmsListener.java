@@ -1,5 +1,11 @@
 package com.taobao.cun.auge.event.listener;
 
+import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.dto.EmpInfoDto;
+import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
+import com.taobao.util.MapUtil;
+import org.apache.ecs.html.P;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
+import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
@@ -21,8 +27,12 @@ import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+
 @Component("smsListener")
-@EventSub(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT)
+@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT})
 public class SmsListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsListener.class);
@@ -41,8 +51,18 @@ public class SmsListener implements EventListener {
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 
+	@Autowired
+	Emp360Adapter emp360Adapter;
+
 	@Override
 	public void onMessage(Event event) {
+
+		//智慧县域报名消息
+		if (event.getValue() instanceof WisdomCountyApplyEvent){
+			processWisdomCountyApplyEvent(event);
+			return;
+		}
+
 		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
 		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
@@ -66,6 +86,28 @@ public class SmsListener implements EventListener {
 
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
+
+	private void processWisdomCountyApplyEvent(Event event){
+		WisdomCountyApplyEvent applyEvent = (WisdomCountyApplyEvent) event.getValue();
+		logger.info("receive event." + JSON.toJSONString(applyEvent));
+		String creator = applyEvent.getCreator();
+		Map<String, EmpInfoDto> empInfoByWorkNos = emp360Adapter.getEmpInfoByWorkNos(Collections.singletonList(creator));
+		if (empInfoByWorkNos.get(creator) != null) {
+			String mobile = empInfoByWorkNos.get(creator).getMobile();
+			StringBuilder content = new StringBuilder(empInfoByWorkNos.get(creator).getName());
+			WisdomCountyStateEnum type = applyEvent.getType();
+			if (WisdomCountyStateEnum.AUDIT_PASS.equals(type)) {
+				content.append("，你的智慧县域报名审核已通过，请至ORG下载合同模板及合同审批注意事项。");
+			} else if (WisdomCountyStateEnum.AUDIT_FAIL.equals(type)) {
+				content.append("，你的智慧县域报名审核未通过。");
+			}
+			generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), mobile, applyEvent.getOperator(), content.toString());
+		} else {
+			logger.info("can not query mobile by " + creator);
+		}
+
+	}
+
 
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
 		// 正式提交后，入驻中，发短信
@@ -91,7 +133,7 @@ public class SmsListener implements EventListener {
 	/**
 	 * 查询合伙人手机号码
 	 * 
-	 * @param taobaoUserId
+	 * @param instanceId
 	 * @return
 	 */
 	private String findPartnerMobile(Long instanceId) {

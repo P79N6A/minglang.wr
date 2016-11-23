@@ -104,7 +104,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			stationApply.setVersion(0l);
 			// stationApply.setCustomerLevel(customerLevel);
 			logger.info("sync add to station_apply : {}", JSON.toJSONString(stationApply));
-			stationApplyMapper.insert(stationApply);
+			stationApplyMapper.insertSelective(stationApply);
 
 			// 更新instance的station_apply_id字段
 			PartnerStationRel instance = new PartnerStationRel();

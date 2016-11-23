@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -39,11 +40,29 @@ public interface PartnerInstanceScheduleService {
 	
 	/**
 	 * 解冻保证金
-	 * @param thawMoneyDto
+	 * @param instanceId
 	 * @return
 	 * @throws AugeServiceException
 	 */
 	public Boolean thawMoney(Long instanceId) throws AugeServiceException;
+	
+	
+	
+	/**
+	 * 历史的已冻结保证金的账户，初始化账户表account_money AccountNo字段
+	 * @param pageQuery
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<AccountMoneyDto>  getWaitInitAccountNoList(int fetchNum) throws AugeServiceException;
+	
+	/**
+	 * 历史的已冻结保证金的账户，初始化账户表account_money AccountNo字段
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Boolean initAccountNo(AccountMoneyDto accountMoneyDto) throws AugeServiceException;
 	
 	
 }

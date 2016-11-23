@@ -26,3 +26,4 @@ public interface AppResourceBO {
 	
 	public String queryAppValueNotAllowNull(String type, String key);
 }
+
