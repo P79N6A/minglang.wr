@@ -8,5 +8,5 @@ public interface LevelExamQueryService {
     /**
      * 合伙人是否通过当前level包括该level以下的所有分发的晋升考试
      */
-    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel leve);
+    public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel to);
 }

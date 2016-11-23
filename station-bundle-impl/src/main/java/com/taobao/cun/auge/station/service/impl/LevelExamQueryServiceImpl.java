@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
@@ -34,33 +35,27 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     
     /**
      * 判断是否通过了本层级所有晋升考试
-     * 如果没有那么打印日志
      */
     @Override
     public LevelExamingResult queryLevelExamResult(Long taobaoUserId, PartnerInstanceLevel level) {
         Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
-        if(dispatchedExamLevelAndPaper==null) {
-            logger.error("LevelExamDispatchServiceImpl query dispatch record error, taobaoUserId:{}", taobaoUserId);
-            return new LevelExamingResult(false, Lists.newArrayList());
+        if(dispatchedExamLevelAndPaper.isEmpty()){
+            return new LevelExamingResult(true, Collections.emptyList(), Collections.emptyList());
         }
+        
         List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
-        List<String> notPassExamLevels = Lists.newArrayList();
+        List<String> notPassExamLevels = Lists.newArrayList(), passedLevelStrList = Lists.newArrayList();
         for(Map.Entry<PartnerInstanceLevel, Long>entry:dispatchedExamLevelAndPaper.entrySet()){
             ResultModel<UserDispatchDto> resultModel = examUserDispatchService.queryExamUserDispatch(entry.getValue(), taobaoUserId);
             if(isPassExam(resultModel)){
                 passedLevels.add(entry.getKey());
+                passedLevelStrList.add(entry.getKey().name());
             }else {
                 notPassExamLevels.add(entry.getKey().name());
             }
         }
-        boolean isPassAllDispatchedExam = passedLevels.containsAll(dispatchedExamLevelAndPaper.keySet());
-        List<PartnerInstanceLevel> allLevelExams = LevelExamUtil.computeShouldTakeExamList(level);
-        boolean isPassAllLevelExam = passedLevels.containsAll(allLevelExams);
-        if(!isPassAllDispatchedExam || !isPassAllLevelExam){
-            allLevelExams.removeAll(passedLevels);
-            logger.error(" LevelExamDispatchServiceImpl taobaoUserId:{}, level:{}, not pass dispatched level:{}, not dispatch levels:{}", taobaoUserId,  level, notPassExamLevels, allLevelExams);
-        }
-        return new LevelExamingResult(isPassAllDispatchedExam, notPassExamLevels);
+        boolean isPassLevelExam = passedLevels.contains(level);
+        return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList);
     }
     
     /**
@@ -69,7 +64,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     private Map<PartnerInstanceLevel, Long> getDispatchedPaperInfo (Long taobaoUserId){
         ResultModel<List<ExamDispatchDto>>result = examUserDispatchService.listExamDispatchDto(taobaoUserId, ExamDispatchSourceEnum.promotion, 0, 100);
         if(result==null || !result.isSuccess()){
-            return null;
+            throw new AugeServiceException("Query dispatched promotion exam fail!");
         }
         List<ExamDispatchDto> dispatchedExamList = result.getResult();
         if(CollectionUtils.isEmpty(dispatchedExamList)){

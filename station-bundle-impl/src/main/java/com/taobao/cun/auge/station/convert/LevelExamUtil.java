@@ -71,4 +71,8 @@ public class LevelExamUtil {
             this.examLevel = examLevel;
         }
     }
+    
+    public static void main(String[] args){
+        System.out.print(JSON.toJSONString(new ExamLevelExtendInfo("S8")));
+    }
 }

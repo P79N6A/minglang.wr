@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -140,18 +141,20 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     
     private OrgPermissionHolder getApproversOrgId(PartnerInstanceLevelEnum expectedLevel, Long countyOrgId){
         if(expectedLevel == null || countyOrgId==null){
-            return new OrgPermissionHolder(countyOrgId, "cuntao_dq_admin_01");
+            return new OrgPermissionHolder(countyOrgId, AclPermissionEnum.cuntao_admin_county_01.getCode());
         }
         OrgRangeType rangeType = OrgRangeType.PROVINCE;
-        String permision = "";
+        AclPermissionEnum permision = null;
         if(expectedLevel.getLevel() == PartnerInstanceLevelEnum.PartnerInstanceLevel.S7){
             rangeType = OrgRangeType.PROVINCE;
+            permision = AclPermissionEnum.cuntao_dq_admin_01;
         }else if(expectedLevel.getLevel() == PartnerInstanceLevelEnum.PartnerInstanceLevel.S8){
             rangeType = OrgRangeType.LARGE_AREA;
+            permision = AclPermissionEnum.cuntao_dqjl_admin_01;
         }
         CuntaoOrgDto orgDto = cuntaoOrgServiceClient.getAncestor(countyOrgId, rangeType);
         if(orgDto!=null){
-            return new OrgPermissionHolder(orgDto.getId(), permision);
+            return new OrgPermissionHolder(orgDto.getId(), permision.getCode());
         }
         logger.error("orgDto is null, countyOrgId:{}, rangeType:{}, expectLevel:{}", new Object[]{ countyOrgId, rangeType, expectedLevel});
         return null;
