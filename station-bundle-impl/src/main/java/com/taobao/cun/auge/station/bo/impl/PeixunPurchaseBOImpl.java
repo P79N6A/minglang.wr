@@ -37,7 +37,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Override
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
 		validateForCreate(dto);
-		try{
 		if(dto.getId()==null){
 			//新增
 			dto.setGmtCreate(new Date());
@@ -56,12 +55,20 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			if(record==null){
 				throw new AugeServiceException("not find record");
 			}
+			//判断修改人和提交人是否一致
+			if(!record.getCreator().equals(dto.getOperator())){
+				throw new AugeServiceException("与提交人不一致，无权限修改");
+			}
+			//判断是否是可编辑状态
+			if (!PeixunPurchaseStatusEnum.AUDIT_NOT_PASS.getCode().equals(
+					record.getStatus())
+					|| !PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
+							record.getStatus())) {
+				throw new AugeServiceException("状态不可编辑");
+			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);
 			return record.getId();
-		}
-		}catch(Exception e){
-			return null;
 		}
 	}
 	
