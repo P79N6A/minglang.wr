@@ -37,7 +37,7 @@ import com.taobao.util.CalendarUtil;
  * @author xujianhui 2016年11月17日 下午3:39:03
  */
 @Service("levelAuditFlowService")
-@HSFProvider(serviceInterface = LevelAuditFlowService.class)
+@HSFProvider(serviceInterface = LevelAuditFlowService.class, clientTimeout=15000)
 public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
     private static final Logger logger = LoggerFactory.getLogger(LevelAuditFlowProcessServiceImpl.class);
