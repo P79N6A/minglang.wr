@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.service.impl;
+package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;

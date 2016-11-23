@@ -7,6 +7,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
+import com.taobao.cun.auge.station.service.PeixunPurchaseService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("peixunPurchaseService")
