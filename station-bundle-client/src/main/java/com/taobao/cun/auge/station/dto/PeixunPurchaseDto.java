@@ -73,7 +73,25 @@ public class PeixunPurchaseDto implements Serializable {
 	private String masterName;
     private String auditName;
     private String receiverName;
+    private String applyWorkNo;
+    private String applyName;
 	
+	public String getApplyWorkNo() {
+		return applyWorkNo;
+	}
+
+	public void setApplyWorkNo(String applyWorkNo) {
+		this.applyWorkNo = applyWorkNo;
+	}
+
+	public String getApplyName() {
+		return applyName;
+	}
+
+	public void setApplyName(String applyName) {
+		this.applyName = applyName;
+	}
+
 	public Long getId() {
 		return id;
 	}

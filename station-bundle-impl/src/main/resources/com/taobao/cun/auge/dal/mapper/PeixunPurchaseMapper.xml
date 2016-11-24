@@ -34,6 +34,9 @@
     <result column="master_name" property="masterName" jdbcType="VARCHAR" />
     <result column="audit_Name" property="auditName" jdbcType="VARCHAR" />
     <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
+    <result column="apply_work_no" property="applyWorkNo" jdbcType="VARCHAR" />
+    <result column="apply_name" property="applyName" jdbcType="VARCHAR" />
+    
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -112,7 +115,7 @@
     id, gmt_create, gmt_modified, modifier, creator, is_deleted, purchase_type, apply_org_id, 
     master_work_no, gmt_except_open, receiver_work_no, receiver_mobile, except_num, is_share, 
     share_desc, description, ou_code, category_id, bill_method, receive_address, status, 
-    audit_work_no, gmt_audit, audit_desc,master_name,audit_name,receiver_name
+    audit_work_no, gmt_audit, audit_desc,master_name,audit_name,receiver_name,apply_work_no,apply_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.PeixunPurchaseExample" >
     <!--
@@ -181,7 +184,7 @@
       is_share, share_desc, description, 
       ou_code, category_id, bill_method, 
       receive_address, status, audit_work_no, 
-      gmt_audit, audit_desc,master_name,audit_name,receiver_name)
+      gmt_audit, audit_desc,master_name,audit_name,receiver_name,apply_work_no,apply_name)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
       #{creator,jdbcType=VARCHAR}, #{isDeleted,jdbcType=VARCHAR}, #{purchaseType,jdbcType=VARCHAR}, 
       #{applyOrgId,jdbcType=BIGINT}, #{masterWorkNo,jdbcType=VARCHAR}, #{gmtExceptOpen,jdbcType=TIMESTAMP}, 
@@ -189,7 +192,7 @@
       #{isShare,jdbcType=VARCHAR}, #{shareDesc,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{ouCode,jdbcType=VARCHAR}, #{categoryId,jdbcType=VARCHAR}, #{billMethod,jdbcType=VARCHAR}, 
       #{receiveAddress,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{auditWorkNo,jdbcType=VARCHAR}, 
-      #{gmtAudit,jdbcType=TIMESTAMP}, #{auditDesc,jdbcType=VARCHAR},#{masterName,jdbcType=VARCHAR},#{auditName,jdbcType=VARCHAR},#{receiverName,jdbcType=VARCHAR})
+      #{gmtAudit,jdbcType=TIMESTAMP}, #{auditDesc,jdbcType=VARCHAR},#{masterName,jdbcType=VARCHAR},#{auditName,jdbcType=VARCHAR},#{receiverName,jdbcType=VARCHAR},#{applyWorkNo,jdbcType=VARCHAR},#{applyName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PeixunPurchase" >
     <!--
@@ -280,6 +283,12 @@
       <if test="receiverName != null" >
         receiver_name,
       </if>
+       <if test="applyWorkNo != null" >
+        apply_work_no,
+      </if>
+       <if test="applyName != null" >
+        apply_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -359,6 +368,12 @@
       </if>
       <if test="receiverName != null" >
         #{receiverName,jdbcType=VARCHAR},
+      </if>
+      <if test="applyWorkNo != null" >
+        #{applyWorkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="applyName != null" >
+        #{applyName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -462,6 +477,12 @@
       <if test="record.receiverName != null" >
         receiver_name = #{record.receiverName,jdbcType=VARCHAR},
       </if>
+      <if test="record.applyWorkNo != null" >
+        apply_work_no = #{record.applyWorkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyName != null" >
+        apply_name = #{record.applyName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -500,7 +521,9 @@
       audit_desc = #{record.auditDesc,jdbcType=VARCHAR},
       master_name = #{record.masterName,jdbcType=VARCHAR},
       audit_name = #{record.auditName,jdbcType=VARCHAR},
-      receiver_name = #{record.receiverName,jdbcType=VARCHAR}
+      receiver_name = #{record.receiverName,jdbcType=VARCHAR},
+      apply_work_no = #{record.applyWorkNo,jdbcType=VARCHAR},
+      apply_name = #{record.applyName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -591,6 +614,12 @@
       <if test="receiverName != null" >
         receiver_name = #{receiverName,jdbcType=VARCHAR},
       </if>
+      <if test="applyWorkNo != null" >
+        apply_work_no = #{applyWorkNo,jdbcType=VARCHAR},
+      </if>
+      <if test="applyName != null" >
+        apply_name = #{applyName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -626,7 +655,9 @@
       audit_desc = #{auditDesc,jdbcType=VARCHAR},
       master_name = #{masterName,jdbcType=VARCHAR},
       audit_name = #{auditName,jdbcType=VARCHAR},
-      receiver_name = #{receiverName,jdbcType=VARCHAR}
+      receiver_name = #{receiverName,jdbcType=VARCHAR},
+      apply_work_no = #{applyWorkNo,jdbcType=VARCHAR},
+       apply_name = #{applyName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   
@@ -636,10 +667,11 @@
     <result column="apply_org_id" property="applyOrgId" jdbcType="BIGINT" />
     <result column="org_name" property="orgName" jdbcType="VARCHAR" />
     <result column="gmt_except_open" property="gmtExceptOpen" jdbcType="TIMESTAMP" />
-    <result column="receiver_work_no" property="receiverWorkNo" jdbcType="VARCHAR" />
+    <result column="apply_work_no" property="applyWorkNo" jdbcType="VARCHAR" />
     <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="VARCHAR" />
     <result column="org_full_name" property="orgFullName" jdbcType="VARCHAR" />
+    <result column="apply_name" property="applyName" jdbcType="VARCHAR" />
     
   </resultMap>
   
@@ -649,7 +681,7 @@
       a.purchase_type,
       a.apply_org_id,
       a.gmt_except_open,
-      a.receiver_work_no,
+      a.apply_work_no,
       a.gmt_create,
       b.name as org_name,
       a.status as status,
@@ -667,8 +699,8 @@
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
    	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
- 	  <if test="receiveWorkNo != null and receiveWorkNo != ''"  >
-	   and  a.receiver_work_no=#{receiveWorkNo}
+ 	  <if test="applyWorkNo != null and applyWorkNo != ''"  >
+	   and  a.apply_work_no=#{applyWorkNo}
 	  </if>
   </select>
   
@@ -688,8 +720,8 @@
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
    	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
- 	  <if test="receiveWorkNo != null and receiveWorkNo != ''"  >
-	   and  a.receiver_work_no=#{receiveWorkNo}
+ 	  <if test="applyWorkNo != null and applyWorkNo != ''"  >
+	   and  a.apply_work_no=#{applyWorkNo}
 	  </if>
   </select>
 </mapper>

@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.condition;
 
-import java.util.Date;
-
 import com.taobao.cun.auge.common.PageQuery;
 
 public class PeixunPuchaseQueryCondition extends PageQuery{
@@ -13,6 +11,14 @@ public class PeixunPuchaseQueryCondition extends PageQuery{
 	private String gmtExceptEnd;
 	private String receiveWorkNo;
 	private String orgPath;
+	private String applyWorkNo;
+	
+	public String getApplyWorkNo() {
+		return applyWorkNo;
+	}
+	public void setApplyWorkNo(String applyWorkNo) {
+		this.applyWorkNo = applyWorkNo;
+	}
 	public Long getOrgId() {
 		return orgId;
 	}

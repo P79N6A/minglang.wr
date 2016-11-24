@@ -223,7 +223,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		Map<String,Object> param =new HashMap<String,Object>();
 		param.put("orgId", condition.getOrgId());
 		param.put("orgPath", condition.getOrgPath());
-		param.put("recevieWorkNo", condition.getReceiveWorkNo());
+		param.put("applyWorkNo", condition.getApplyWorkNo());
 		param.put("status", condition.getStatus());
 		param.put("gmtExceptStart", condition.getGmtExceptStart());
 		param.put("gmtExceptEnd", condition.getGmtExceptEnd());
