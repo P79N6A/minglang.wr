@@ -97,7 +97,8 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
             initData.put("expectedLevelDesc", expectedLevel.getDescription());
             initData.put(evaluateToLevelKey, expectedLevel.getLevel().toString());
         }else{
-            initData.put(evaluateToLevelKey, PartnerInstanceLevelEnum.S_6.getLevel().toString());
+            initData.put(evaluateToLevelKey, PartnerInstanceLevelEnum.S_6.getLevel().name().toString());
+            initData.put("expectedLevelDesc", PartnerInstanceLevelEnum.S_6.getDescription());
         }
         initData.put("score", levelProcessDto.getScore().toString());
         initData.put("monthlyIncome", levelProcessDto.getMonthlyIncome().toString());
