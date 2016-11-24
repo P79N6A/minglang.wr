@@ -968,7 +968,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException {
+	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeBusinessException,AugeSystemException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(confirmCloseDto);
@@ -1047,7 +1047,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				// 发出合伙人实例状态变更事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, confirmCloseDto);
 			}
-		} catch (AugeServiceException e) {
+		} catch (AugeBusinessException e) {
 			String error = getAugeExceptionErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.toString());
 			logger.error(error, e);
 			throw e;
