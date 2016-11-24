@@ -35,12 +35,14 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     
     /**
      * 判断是否通过了本层级晋升考试
+     * 1.通过该层级考试
+     * 2.没有分发该层级考试
      */
     @Override
     public LevelExamingResult queryLevelExamResult(Long taobaoUserId, String level) {
         Map<PartnerInstanceLevel, Long> dispatchedExamLevelAndPaper  = getDispatchedPaperInfo(taobaoUserId);
         if(dispatchedExamLevelAndPaper.isEmpty()){
-            return new LevelExamingResult(true, Collections.emptyList(), Collections.emptyList());
+            return new LevelExamingResult(true, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         }
         
         List<PartnerInstanceLevel> passedLevels = Lists.newArrayList();
@@ -54,8 +56,13 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
                 notPassExamLevels.add(entry.getKey().name());
             }
         }
-        boolean isPassLevelExam = passedLevelStrList.contains(level);
-        return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList);
+        /**
+         * 已通过层级里面包含目标层级或者没有通过层级不包含该层级(表示没分发该级别的试卷)
+         */
+        boolean isPassLevelExam = (passedLevelStrList.contains(level) || !notPassExamLevels.contains(level));
+        List<String> dispathedLevels = Lists.newArrayList(passedLevelStrList);
+        dispathedLevels.addAll(notPassExamLevels);
+        return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList, dispathedLevels);
     }
     
     /**
