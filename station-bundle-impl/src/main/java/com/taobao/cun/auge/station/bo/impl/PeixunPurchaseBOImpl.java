@@ -250,6 +250,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			}
 			record.setStatusDesc(PeixunPurchaseStatusEnum.valueof(record.getStatus()).getDesc());
 			record.setPurchaseTypeDesc(PeixunPurchaseStatusEnum.valueof(record.getPurchaseType()).getDesc());
+			record.setApplyWorkNo(record.getApplyWorkNo()+"-"+record.getApplyName());
 		}
 	}
 
