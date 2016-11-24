@@ -478,11 +478,20 @@
 				<artifactId>httpclient</artifactId>
 				<version>4.5.2</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.common.uic.uic-common</groupId>
+				<artifactId>common-uic-common</artifactId>
+				<version>3.7.5.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>log4j-over-slf4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<build>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
