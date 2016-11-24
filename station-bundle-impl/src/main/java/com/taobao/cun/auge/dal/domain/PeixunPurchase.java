@@ -203,6 +203,10 @@ public class PeixunPurchase {
      *
      * @mbggenerated Mon Nov 21 16:20:21 CST 2016
      */
+    
+    private String masterName;
+    private String auditName;
+    private String receiverName;
     public Long getId() {
         return id;
     }
@@ -770,4 +774,30 @@ public class PeixunPurchase {
     public void setAuditDesc(String auditDesc) {
         this.auditDesc = auditDesc;
     }
+
+	public String getMasterName() {
+		return masterName;
+	}
+
+	public void setMasterName(String masterName) {
+		this.masterName = masterName;
+	}
+
+	public String getAuditName() {
+		return auditName;
+	}
+
+	public void setAuditName(String auditName) {
+		this.auditName = auditName;
+	}
+
+	public String getReceiverName() {
+		return receiverName;
+	}
+
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
+	}
+    
+    
 }

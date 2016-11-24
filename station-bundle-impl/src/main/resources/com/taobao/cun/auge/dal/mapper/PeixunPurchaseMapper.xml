@@ -31,6 +31,9 @@
     <result column="audit_work_no" property="auditWorkNo" jdbcType="VARCHAR" />
     <result column="gmt_audit" property="gmtAudit" jdbcType="TIMESTAMP" />
     <result column="audit_desc" property="auditDesc" jdbcType="VARCHAR" />
+    <result column="master_name" property="masterName" jdbcType="VARCHAR" />
+    <result column="audit_Name" property="auditName" jdbcType="VARCHAR" />
+    <result column="receiver_name" property="receiverName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -109,7 +112,7 @@
     id, gmt_create, gmt_modified, modifier, creator, is_deleted, purchase_type, apply_org_id, 
     master_work_no, gmt_except_open, receiver_work_no, receiver_mobile, except_num, is_share, 
     share_desc, description, ou_code, category_id, bill_method, receive_address, status, 
-    audit_work_no, gmt_audit, audit_desc
+    audit_work_no, gmt_audit, audit_desc,master_name,audit_name,receiver_name
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.PeixunPurchaseExample" >
     <!--
@@ -178,7 +181,7 @@
       is_share, share_desc, description, 
       ou_code, category_id, bill_method, 
       receive_address, status, audit_work_no, 
-      gmt_audit, audit_desc)
+      gmt_audit, audit_desc,master_name,audit_name,receiver_name)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
       #{creator,jdbcType=VARCHAR}, #{isDeleted,jdbcType=VARCHAR}, #{purchaseType,jdbcType=VARCHAR}, 
       #{applyOrgId,jdbcType=BIGINT}, #{masterWorkNo,jdbcType=VARCHAR}, #{gmtExceptOpen,jdbcType=TIMESTAMP}, 
@@ -186,7 +189,7 @@
       #{isShare,jdbcType=VARCHAR}, #{shareDesc,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{ouCode,jdbcType=VARCHAR}, #{categoryId,jdbcType=VARCHAR}, #{billMethod,jdbcType=VARCHAR}, 
       #{receiveAddress,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{auditWorkNo,jdbcType=VARCHAR}, 
-      #{gmtAudit,jdbcType=TIMESTAMP}, #{auditDesc,jdbcType=VARCHAR})
+      #{gmtAudit,jdbcType=TIMESTAMP}, #{auditDesc,jdbcType=VARCHAR},#{masterName,jdbcType=VARCHAR},#{auditName,jdbcType=VARCHAR},#{receiverName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PeixunPurchase" >
     <!--
@@ -268,6 +271,15 @@
       <if test="auditDesc != null" >
         audit_desc,
       </if>
+      <if test="masterName != null" >
+        master_name,
+      </if>
+      <if test="auditName != null" >
+        audit_name,
+      </if>
+      <if test="receiverName != null" >
+        receiver_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -338,6 +350,15 @@
       </if>
       <if test="auditDesc != null" >
         #{auditDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="masterName != null" >
+        #{masterName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditName != null" >
+        #{auditName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverName != null" >
+        #{receiverName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -432,6 +453,15 @@
       <if test="record.auditDesc != null" >
         audit_desc = #{record.auditDesc,jdbcType=VARCHAR},
       </if>
+      <if test="record.masterName != null" >
+        master_name = #{record.masterName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auditName != null" >
+        audit_name = #{record.auditName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiverName != null" >
+        receiver_name = #{record.receiverName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -467,7 +497,10 @@
       status = #{record.status,jdbcType=VARCHAR},
       audit_work_no = #{record.auditWorkNo,jdbcType=VARCHAR},
       gmt_audit = #{record.gmtAudit,jdbcType=TIMESTAMP},
-      audit_desc = #{record.auditDesc,jdbcType=VARCHAR}
+      audit_desc = #{record.auditDesc,jdbcType=VARCHAR},
+      master_name = #{record.masterName,jdbcType=VARCHAR},
+      audit_name = #{record.auditName,jdbcType=VARCHAR},
+      receiver_name = #{record.receiverName,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -549,6 +582,15 @@
       <if test="auditDesc != null" >
         audit_desc = #{auditDesc,jdbcType=VARCHAR},
       </if>
+      <if test="masterName != null" >
+        master_name = #{masterName,jdbcType=VARCHAR},
+      </if>
+      <if test="auditName != null" >
+        audit_name = #{auditName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverName != null" >
+        receiver_name = #{receiverName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -581,7 +623,10 @@
       status = #{status,jdbcType=VARCHAR},
       audit_work_no = #{auditWorkNo,jdbcType=VARCHAR},
       gmt_audit = #{gmtAudit,jdbcType=TIMESTAMP},
-      audit_desc = #{auditDesc,jdbcType=VARCHAR}
+      audit_desc = #{auditDesc,jdbcType=VARCHAR},
+      master_name = #{masterName,jdbcType=VARCHAR},
+      audit_name = #{auditName,jdbcType=VARCHAR},
+      receiver_name = #{receiverName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

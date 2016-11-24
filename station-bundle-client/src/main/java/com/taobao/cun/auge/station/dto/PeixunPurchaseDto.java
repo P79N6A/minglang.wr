@@ -66,6 +66,10 @@ public class PeixunPurchaseDto implements Serializable {
 
 	private String loginId;
 	
+	private String masterName;
+    private String auditName;
+    private String receiverName;
+	
 	public Long getId() {
 		return id;
 	}
@@ -304,6 +308,30 @@ public class PeixunPurchaseDto implements Serializable {
 
 	public void setLoginId(String loginId) {
 		this.loginId = loginId;
+	}
+
+	public String getMasterName() {
+		return masterName;
+	}
+
+	public void setMasterName(String masterName) {
+		this.masterName = masterName;
+	}
+
+	public String getAuditName() {
+		return auditName;
+	}
+
+	public void setAuditName(String auditName) {
+		this.auditName = auditName;
+	}
+
+	public String getReceiverName() {
+		return receiverName;
+	}
+
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
 	}
 
 	

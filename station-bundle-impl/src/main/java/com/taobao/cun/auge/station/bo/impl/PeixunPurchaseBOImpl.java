@@ -49,7 +49,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			BeanUtils.copyProperties(dto, record);
 			peixunPurchaseMapper.insert(record);
 			//生成流程
-			createFlow(record.getId(),dto.getLoginId());
+			createFlow(record.getId(),dto.getLoginId(),dto.getApplyOrgId());
 			return record.getId();
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
@@ -69,11 +69,15 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);
+			//生成流程
+			createFlow(record.getId(),dto.getLoginId(),dto.getApplyOrgId());
 			return record.getId();
 		}
 	}
 	
-	private void createFlow(Long applyId,String loginId){
+	private void createFlow(Long applyId,String loginId,Long orgId){
+		Map<String,String> initData = new HashMap<String, String>();
+		initData.put("orgId", String.valueOf(orgId));
 		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
 				.startProcessInstance(FLOW_BUSINESS_CODE,
 						String.valueOf(applyId), loginId, null);
