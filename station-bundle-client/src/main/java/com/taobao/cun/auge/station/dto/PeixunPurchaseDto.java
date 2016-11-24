@@ -22,6 +22,8 @@ public class PeixunPurchaseDto implements Serializable {
 	private String isDeleted;
 
 	private String purchaseType;
+	
+	private String purchaseTypeDesc;
 
 	private Long applyOrgId;
 
@@ -74,6 +76,14 @@ public class PeixunPurchaseDto implements Serializable {
 	
 	public Long getId() {
 		return id;
+	}
+
+	public String getPurchaseTypeDesc() {
+		return purchaseTypeDesc;
+	}
+
+	public void setPurchaseTypeDesc(String purchaseTypeDesc) {
+		this.purchaseTypeDesc = purchaseTypeDesc;
 	}
 
 	public void setId(Long id) {

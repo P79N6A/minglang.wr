@@ -249,6 +249,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 				record.setGmtExceptOpenDesc(sdf.format(record.getGmtExceptOpen()));
 			}
 			record.setStatusDesc(PeixunPurchaseStatusEnum.valueof(record.getStatus()).getDesc());
+			record.setPurchaseTypeDesc(PeixunPurchaseStatusEnum.valueof(record.getPurchaseType()).getDesc());
 		}
 	}
 
