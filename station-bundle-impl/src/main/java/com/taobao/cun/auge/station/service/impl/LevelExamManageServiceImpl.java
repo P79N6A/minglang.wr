@@ -162,6 +162,9 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     private ExamDispatchDto newExamDispatchDto(Long userId, String nickName, Long paperId, String extendInfo, String dispatcher){
         ExamDispatchDto edd =  new ExamDispatchDto();
         edd.setUserId(userId);
+        if(nickName==null){
+            nickName = " ";
+        }
         edd.setTaobaoNick(nickName);
         edd.setPaperId(paperId);
         edd.setDispatcher(dispatcher);
