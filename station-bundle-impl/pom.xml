@@ -313,6 +313,10 @@
 			<groupId>com.taobao.common.uic.uic-common</groupId>
 			<artifactId>common-uic-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
