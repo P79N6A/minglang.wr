@@ -29,10 +29,10 @@ import com.taobao.cun.auge.station.service.PartnerTpgService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("partnerTpgService")
-@HSFProvider(serviceInterface = ParnterTpgServiceImpl.class)
-public class ParnterTpgServiceImpl implements PartnerTpgService {
+@HSFProvider(serviceInterface = PartnerTpgService.class)
+public class PartnerTpgServiceImpl implements PartnerTpgService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ParnterTpgServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(PartnerTpgServiceImpl.class);
 	
 	@Autowired
 	private PartnerTpgBO partnerTpgBO;
