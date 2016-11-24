@@ -31,6 +31,7 @@ import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -102,6 +103,9 @@ public class ProcessProcessor {
 	@Autowired
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
 
+	@Autowired
+	PeixunPurchaseBO peixunPurchaseBO;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -133,6 +137,12 @@ public class ProcessProcessor {
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
 				monitorLevelApprove(ob, ProcessApproveResultEnum.valueof(resultCode));
+			}else if(ProcessBusinessEnum.peixunPurchase.getCode().equals(businessCode)){
+				//培训集采
+				String audit=ob.getString("approver");
+				String auditName=ob.getString("approverName");  
+				String desc=ob.getString("taskRemark");   
+				handlePeixunPurchase(objectId,audit,auditName,desc,ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -396,5 +406,9 @@ public class ProcessProcessor {
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
 		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+	}
+	
+	private void handlePeixunPurchase(String id,String audit,String auditName,String desc,ProcessApproveResultEnum approveResult){
+		peixunPurchaseBO.audit(new Long(id), audit,auditName, desc, approveResult.getCode().equals(ProcessApproveResultEnum.APPROVE_PASS.getCode()));
 	}
 }

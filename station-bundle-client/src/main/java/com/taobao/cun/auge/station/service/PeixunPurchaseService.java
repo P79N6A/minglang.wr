@@ -17,11 +17,6 @@ public interface PeixunPurchaseService {
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto);
 	
 	/**
-	 * 审核集采申请
-	 */
-	public boolean audit(Long id,String operate,String auditDesc,Boolean isPass);
-	
-	/**
 	 * 撤回集采申请
 	 */
 	public boolean rollback(Long id ,String operate);

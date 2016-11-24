@@ -23,11 +23,6 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService{
 	}
 
 	@Override
-	public boolean audit(Long id, String operate, String auditDesc,Boolean isPass) {
-		return peixunPurchaseBO.audit(id, operate, auditDesc,isPass);
-	}
-
-	@Override
 	public boolean rollback(Long id, String operate) {
 		return peixunPurchaseBO.rollback(id, operate);
 	}

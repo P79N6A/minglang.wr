@@ -8,7 +8,7 @@ public interface PeixunPurchaseBO {
 
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto);
 	
-	public boolean audit(Long id,String operate,String auditDesc,Boolean isPass);
+	public boolean audit(Long id,String operate,String operateName,String auditDesc,Boolean isPass);
 	
 	public boolean rollback(Long id ,String operate);
 	

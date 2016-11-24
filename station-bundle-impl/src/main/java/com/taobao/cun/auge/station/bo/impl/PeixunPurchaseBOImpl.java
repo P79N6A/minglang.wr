@@ -148,7 +148,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 
 	@Override
-	public boolean audit(Long id, String operate, String auditDesc,Boolean isPass) {
+	public boolean audit(Long id, String operate,String operateName,String auditDesc,Boolean isPass) {
 		if(id==null||StringUtils.isEmpty(operate)){
 			throw new AugeServiceException("param is null");
 		}
@@ -161,6 +161,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
+		record.setAuditWorkNo(operate);
+		record.setAuditName(operateName);
 		if(isPass){
 			record.setStatus(PeixunPurchaseStatusEnum.AUDIT_PASS.getCode());
 		}else{
