@@ -54,6 +54,8 @@ public class PeixunPurchaseDto implements Serializable {
 	private String receiveAddress;
 
 	private String status;
+	private String statusDesc;
+	private String orgFullName;
 	private String auditWorkNo;
 
 	private Date gmtAudit;
@@ -332,6 +334,22 @@ public class PeixunPurchaseDto implements Serializable {
 
 	public void setReceiverName(String receiverName) {
 		this.receiverName = receiverName;
+	}
+
+	public String getStatusDesc() {
+		return statusDesc;
+	}
+
+	public void setStatusDesc(String statusDesc) {
+		this.statusDesc = statusDesc;
+	}
+
+	public String getOrgFullName() {
+		return orgFullName;
+	}
+
+	public void setOrgFullName(String orgFullName) {
+		this.orgFullName = orgFullName;
 	}
 
 	

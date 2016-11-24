@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -231,10 +232,24 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		int count=peixunPurchaseMapper.queryPurchaseListCount(param);
 		List<PeixunPurchaseDto> records = peixunPurchaseMapper
 				.queryListByCondition(param);
+		fillResult(records);
 		PageDto<PeixunPurchaseDto> result=new PageDto<PeixunPurchaseDto>();
 		result.setTotal(count);
 		result.setItems(records);
 		return result;
+	}
+	
+	private void fillResult(List<PeixunPurchaseDto> records){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		for(PeixunPurchaseDto record:records){
+			if(record.getGmtCreate()!=null){
+				record.setGmtCreateDesc(sdf.format(record.getGmtCreate()));
+			}
+			if(record.getGmtExceptOpen()!=null){
+				record.setGmtExceptOpenDesc(sdf.format(record.getGmtExceptOpen()));
+			}
+			record.setStatusDesc(PeixunPurchaseStatusEnum.valueof(record.getStatus()).getDesc());
+		}
 	}
 
 	@Override
