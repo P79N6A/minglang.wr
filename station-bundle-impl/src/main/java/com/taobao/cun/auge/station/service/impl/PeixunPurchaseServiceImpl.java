@@ -43,4 +43,9 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService{
 		return peixunPurchaseBO.queryPeixunPurchaseList(condition);
 	}
 
+	@Override
+	public PeixunPurchaseDto queryById(Long id) {
+		return peixunPurchaseBO.queryById(id);
+	}
+
 }

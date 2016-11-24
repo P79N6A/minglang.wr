@@ -37,5 +37,7 @@ public interface PeixunPurchaseService {
 	 * @return
 	 */
 	public PageDto<PeixunPurchaseDto> queryPeixunPurchaseList(PeixunPuchaseQueryCondition condition);
+	
+	public PeixunPurchaseDto queryById(Long id);
 
 }

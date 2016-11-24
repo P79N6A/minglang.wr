@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
@@ -202,7 +203,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		param.put("gmtExceptEnd", condition.getGmtExceptEnd());
 		param.put("pageNum", condition.getPageNum());
 		param.put("pageSize", condition.getPageSize());
-		try{
 		int count=peixunPurchaseMapper.queryPurchaseListCount(param);
 		List<PeixunPurchaseDto> records = peixunPurchaseMapper
 				.queryListByCondition(param);
@@ -210,10 +210,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		result.setTotal(count);
 		result.setItems(records);
 		return result;
-		}catch(Exception e){
-			System.out.println(e);
+	}
+
+	@Override
+	public PeixunPurchaseDto queryById(Long id) {
+		Assert.notNull(id);
+		PeixunPurchase pp=peixunPurchaseMapper.selectByPrimaryKey(id);
+		if(pp==null){
+			throw new AugeServiceException("not find record");
 		}
-		return null;
+		PeixunPurchaseDto result=new PeixunPurchaseDto();
+		BeanUtils.copyProperties(pp, result);
+		return result;
 	}
 
 }
