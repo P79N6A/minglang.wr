@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
+import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -249,7 +250,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 				record.setGmtExceptOpenDesc(sdf.format(record.getGmtExceptOpen()));
 			}
 			record.setStatusDesc(PeixunPurchaseStatusEnum.valueof(record.getStatus()).getDesc());
-			record.setPurchaseTypeDesc(PeixunPurchaseStatusEnum.valueof(record.getPurchaseType()).getDesc());
+			record.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(record.getPurchaseType()).getDesc());
 			record.setApplyWorkNo(record.getApplyWorkNo()+"-"+record.getApplyName());
 		}
 	}
