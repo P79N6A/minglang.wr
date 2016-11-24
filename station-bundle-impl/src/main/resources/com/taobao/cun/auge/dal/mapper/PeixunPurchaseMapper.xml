@@ -699,8 +699,8 @@
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
    	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
- 	  <if test="applyWorkNo != null and applyWorkNo != ''"  >
-	   and  a.apply_work_no=#{applyWorkNo}
+ 	   <if test="applyName != null and applyName != ''"  >
+	   and  a.apply_name=#{applyName}
 	  </if>
   </select>
   
@@ -720,8 +720,8 @@
    	  <if test="gmtExceptEnd != null and gmtExceptEnd != ''"  >
    	  <![CDATA[and  a.gmt_except_open<=#{gmtExceptEnd}]]>
  	  </if>
- 	  <if test="applyWorkNo != null and applyWorkNo != ''"  >
-	   and  a.apply_work_no=#{applyWorkNo}
+ 	  <if test="applyName != null and applyName != ''"  >
+	   and  a.apply_name=#{applyName}
 	  </if>
   </select>
 </mapper>

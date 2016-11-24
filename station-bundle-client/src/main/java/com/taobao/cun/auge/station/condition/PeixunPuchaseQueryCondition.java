@@ -12,7 +12,14 @@ public class PeixunPuchaseQueryCondition extends PageQuery{
 	private String receiveWorkNo;
 	private String orgPath;
 	private String applyWorkNo;
+	private String applyName;
 	
+	public String getApplyName() {
+		return applyName;
+	}
+	public void setApplyName(String applyName) {
+		this.applyName = applyName;
+	}
 	public String getApplyWorkNo() {
 		return applyWorkNo;
 	}
