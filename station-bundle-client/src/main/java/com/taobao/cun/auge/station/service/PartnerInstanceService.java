@@ -149,7 +149,7 @@ public interface PartnerInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
+	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeBusinessException,AugeSystemException;
 
 	/**
 	 * 小二、TP商申请停业
