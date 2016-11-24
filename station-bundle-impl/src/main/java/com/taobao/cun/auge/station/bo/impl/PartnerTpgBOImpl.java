@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.bo.PartnerTpgBO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 
-@Component
+@Component("partnerTpgBO")
 public class PartnerTpgBOImpl implements PartnerTpgBO {
 
 	@Autowired
@@ -68,8 +68,9 @@ public class PartnerTpgBOImpl implements PartnerTpgBO {
 	}
 
 	@Override
-	public void addPartnerTpg(PartnerTpg parnterTpg) {
+	public Long addPartnerTpg(PartnerTpg parnterTpg) {
 		partnerTpgMapper.insertSelective(parnterTpg);
+		return parnterTpg.getId();
 	}
 
 	@Override
@@ -78,7 +79,12 @@ public class PartnerTpgBOImpl implements PartnerTpgBO {
 		partnerTpg.setIsDeleted("y");
 		partnerTpg.setId(id);
 		partnerTpgMapper.updateByPrimaryKeySelective(partnerTpg);
-		
+	}
+
+
+	@Override
+	public void updatePartnerTpg(PartnerTpg parnterTpg) {
+		partnerTpgMapper.updateByPrimaryKeySelective(parnterTpg);
 	}
 
 }

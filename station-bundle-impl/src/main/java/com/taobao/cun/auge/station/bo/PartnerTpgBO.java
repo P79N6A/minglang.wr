@@ -14,7 +14,9 @@ public interface PartnerTpgBO {
 	
 	Optional<PartnerTpg> queryByParnterInstanceId(Long partnerInstanceId);
 	
-	void addPartnerTpg(PartnerTpg parnterTpg);
+	Long addPartnerTpg(PartnerTpg parnterTpg);
+	
+	void updatePartnerTpg(PartnerTpg parnterTpg);
 	
 	void deletePartnerTpg(Long id);
 }
