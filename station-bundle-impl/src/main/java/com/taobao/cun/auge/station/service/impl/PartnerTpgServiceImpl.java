@@ -76,12 +76,16 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				if(!partnerTpgBO.checkTag(partnerInstance.getTaobaoUserId())){
 					boolean addTagResult = partnerTpgBO.addTpgTag(partnerInstance.getTaobaoUserId());
 					if(!addTagResult){
+						partnerTpg.setUicTpgFlag("upgrade_fail");
+						updatePartnerTpg(partnerTpg);
 						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] uic打标失败");
 						throw new AugeBusinessException("uic打标失败");
 					}
+				}else{
+					partnerTpg.setUicTpgFlag("valid");
+					updatePartnerTpg(partnerTpg);
 				}
-				partnerTpg.setUicTpgFlag("y");
-				updatePartnerTpg(partnerTpg);
+				
 				
 				Result<StationDTO> stationResult = stationReadService.queryStationById(cainiaoStationId);
 				if(!stationResult.isSuccess()){
@@ -94,13 +98,20 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 					feature.put("ctpType", "CtPG");
 					boolean updateFeaturesResult = stationWriteService.putStationFeatures(cainiaoStationId, feature.asMap(), Modifier.newSystem()).getData();
 					if(!updateFeaturesResult){
+						partnerTpg.setCainiaoStationFeature("upgrade_fail");
+						partnerTpg.setCainiaoStationId(cainiaoStationId);
+						updatePartnerTpg(partnerTpg);
 						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 更新菜鸟供赢通标示失败");
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
 					}
+				}else{
+					partnerTpg.setCainiaoStationFeature("valid");
+					partnerTpg.setCainiaoStationId(cainiaoStationId);
+					updatePartnerTpg(partnerTpg);
 				}
-				partnerTpg.setCainiaoStationId(cainiaoStationId);
-				partnerTpg.setCainiaoStationFeature(feature.toString());
-				updatePartnerTpg(partnerTpg);
+				
+			
+				
 			
 			return true;
 		} catch (Exception e) {
@@ -141,11 +152,14 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				PartnerTpg partnerTpg =	tpgResult.get();
 				if(partnerTpgBO.checkTag(partnerInstance.getTaobaoUserId())){
 					if(!partnerTpgBO.removeTpgTag(partnerInstance.getTaobaoUserId())){
+						partnerTpg.setUicTpgFlag("degrade_fail");
+						updatePartnerTpg(partnerTpg);
 						logger.error("degradeTpg error!partnerInstanceId["+partnerInstanceId+"] 删除UIC供赢通标示失败");
 						throw new AugeBusinessException("删除UIC供赢通标示失败");
+					}else{
+						partnerTpg.setUicTpgFlag("invaild");
+						updatePartnerTpg(partnerTpg);
 					}
-					partnerTpg.setUicTpgFlag("n");
-					updatePartnerTpg(partnerTpg);
 				}
 				Long cainiaoStationId = cainiaoStationRelBO.getCainiaoStationId(partnerInstance.getStationId());
 				if(cainiaoStationId == null){
@@ -162,11 +176,13 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 					feature.put("ctpType", "CtPA");
 					boolean updateFeaturesResult = stationWriteService.putStationFeatures(cainiaoStationId, feature.asMap(), Modifier.newSystem()).getData();
 					if(!updateFeaturesResult){
+						partnerTpg.setUicTpgFlag("degrade_fail");
+						updatePartnerTpg(partnerTpg);
 						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 更新菜鸟供赢通标示失败");
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
 					}
 				}
-				partnerTpg.setCainiaoStationFeature(feature.toString());
+				partnerTpg.setCainiaoStationFeature("invaild");
 				updatePartnerTpg(partnerTpg);
 				partnerTpgBO.deletePartnerTpg(partnerTpg.getId());
 			}
