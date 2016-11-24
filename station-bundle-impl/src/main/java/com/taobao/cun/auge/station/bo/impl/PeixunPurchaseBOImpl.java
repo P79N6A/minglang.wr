@@ -75,13 +75,21 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 	}
 	
-	private void createFlow(Long applyId,String loginId,Long orgId){
-		Map<String,String> initData = new HashMap<String, String>();
+	private void createFlow(Long applyId, String loginId, Long orgId) {
+		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(orgId));
-		ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
-				.startProcessInstance(FLOW_BUSINESS_CODE,
-						String.valueOf(applyId), loginId, null);
+		try {
+			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
+					.startProcessInstance(FLOW_BUSINESS_CODE,
+							String.valueOf(applyId), loginId, null);
+			if (!rm.isSuccess()) {
+				throw new AugeServiceException(rm.getException());
+			}
+		} catch (Exception e) {
+			throw new AugeServiceException("流程启动失败", e);
+		}
 	}
+	
 	private void validateForCreate(PeixunPurchaseDto dto){
 		if(StringUtils.isEmpty(dto.getMasterWorkNo())){
 			throw new AugeServiceException("masterWorkNo is null");
@@ -188,7 +196,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		record.setModifier(operate);
 		record.setStatus(PeixunPurchaseStatusEnum.ROLLBACK.getCode());
 		peixunPurchaseMapper.updateByPrimaryKey(record);
+		//终止流程
+		endTask(id,operate);
 		return true;
+	}
+	
+	private void endTask(Long id, String operate) {
+		try {
+			cuntaoWorkFlowService.teminateProcessInstance(FLOW_BUSINESS_CODE,
+					String.valueOf(id), operate);
+		} catch (Exception e) {
+			throw new AugeServiceException("终止流程失败", e);
+		}
 	}
 
 	@Override

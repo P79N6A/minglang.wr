@@ -137,13 +137,7 @@ public class ProcessProcessor {
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
 				monitorLevelApprove(ob, ProcessApproveResultEnum.valueof(resultCode));
-			}else if(ProcessBusinessEnum.peixunPurchase.getCode().equals(businessCode)){
-				//培训集采
-				String audit=ob.getString("approver");
-				String auditName=ob.getString("approverName");  
-				String desc=ob.getString("taskRemark");   
-				handlePeixunPurchase(objectId,audit,auditName,desc,ProcessApproveResultEnum.valueof(resultCode));
-			}
+			} 
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
 			// 任务被激活
@@ -158,6 +152,15 @@ public class ProcessProcessor {
 			//任务完成
 		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
 			//流程启动
+			if(ProcessBusinessEnum.peixunPurchase.getCode().equals(businessCode)){
+				//培训集采
+				JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
+				String resultCode = instanceStatus.getString("code");
+				String audit=ob.getString("approver");
+				String auditName=ob.getString("approverName");  
+				String desc=ob.getString("taskRemark");   
+				handlePeixunPurchase(objectId,audit,auditName,desc,ProcessApproveResultEnum.valueof(resultCode));
+			}
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
 			
 		}
