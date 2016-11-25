@@ -143,7 +143,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		instanceExtDto.setInstanceId(instanceId);
 		instanceExtDto.setMaxChildNum(childNum);
 		instanceExtDto.copyOperatorDto(operatorDto);
-		savePartnerMaxChildNum(instanceExtDto, PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD);
+		savePartnerMaxChildNum(instanceExtDto, reason);
 	}
 
 	private void savePartnerMaxChildNum(PartnerInstanceExtDto instanceExtDto,
