@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -38,6 +39,7 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -149,9 +151,37 @@ public class ProcessProcessor {
 			}
 			//任务完成
 		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
+			recordCloseQuitApprove(ob, businessCode, businessId);
 			//流程启动
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
 			
+		}
+	}
+
+	// 停业、退出打印日志
+	private void recordCloseQuitApprove(JSONObject ob, String businessCode, Long businessId) {
+		if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)
+				|| ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)
+				|| ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
+				|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
+			try {
+				PartnerStationRel partnerStationRel = partnerInstanceBO
+						.getPartnerStationRelByStationApplyId(businessId);
+
+				CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+
+				cuntaoFlowRecord.setTargetId(partnerStationRel.getStationId());
+				cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+				cuntaoFlowRecord.setNodeTitle("审批");
+				cuntaoFlowRecord.setOperatorName(ob.getString("approverName"));
+				cuntaoFlowRecord.setOperatorWorkid(ob.getString("approver"));
+				cuntaoFlowRecord.setOperateTime(new Date());
+				cuntaoFlowRecord.setOperateOpinion(ob.getString("result"));
+				cuntaoFlowRecord.setRemarks(ob.getString("taskRemark"));
+				cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+			} catch (Exception e) {
+				logger.error("Failed to log close quit record.JSONObject=" + ob.toJSONString(), e);
+			}
 		}
 	}
 	
@@ -184,7 +214,6 @@ public class ProcessProcessor {
 			throw e;
 		}
 	}
-	
 
 	private void monitorHomepageShowApprove(String objectId, String businessCode, ProcessApproveResultEnum approveResult) {
 		busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
@@ -199,7 +228,6 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-
 	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		closeApprove(partnerStationRel.getId(), approveResult);
@@ -303,7 +331,6 @@ public class ProcessProcessor {
 	 * @param approveResult
 	 * @throws Exception
 	 */
-
 	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
 		quitApprove(partnerStationRel.getId(), approveResult);
