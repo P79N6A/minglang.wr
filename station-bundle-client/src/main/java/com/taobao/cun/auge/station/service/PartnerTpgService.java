@@ -15,4 +15,11 @@ public interface PartnerTpgService {
 	 * @return
 	 */
 	public boolean degradeTpg(Long partnerInstanceId);
+	
+	/**
+	 * 是否是供赢通会员
+	 * @param partnerInstanceId
+	 * @return
+	 */
+	public boolean isPartnerTpg(Long partnerInstanceId);
 }

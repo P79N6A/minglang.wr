@@ -82,7 +82,7 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						throw new AugeBusinessException("uic打标失败");
 					}
 				}else{
-					partnerTpg.setUicTpgFlag("valid");
+					partnerTpg.setUicTpgFlag("upgrade_success");
 					updatePartnerTpg(partnerTpg);
 				}
 				
@@ -105,14 +105,10 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
 					}
 				}else{
-					partnerTpg.setCainiaoStationFeature("valid");
+					partnerTpg.setCainiaoStationFeature("upgrade_success");
 					partnerTpg.setCainiaoStationId(cainiaoStationId);
 					updatePartnerTpg(partnerTpg);
 				}
-				
-			
-				
-			
 			return true;
 		} catch (Exception e) {
 			logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 系统异常",e);
@@ -139,9 +135,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 	}
 	
 	
-	private boolean checkExists(Long partnerInstanceId) {
-		return partnerTpgBO.queryByParnterInstanceId(partnerInstanceId).isPresent();
-	}
 
 	@Override
 	public boolean degradeTpg(Long partnerInstanceId) {
@@ -157,7 +150,7 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						logger.error("degradeTpg error!partnerInstanceId["+partnerInstanceId+"] 删除UIC供赢通标示失败");
 						throw new AugeBusinessException("删除UIC供赢通标示失败");
 					}else{
-						partnerTpg.setUicTpgFlag("invaild");
+						partnerTpg.setUicTpgFlag("degrade_success");
 						updatePartnerTpg(partnerTpg);
 					}
 				}
@@ -182,7 +175,7 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
 					}
 				}
-				partnerTpg.setCainiaoStationFeature("invaild");
+				partnerTpg.setCainiaoStationFeature("degrade_success");
 				updatePartnerTpg(partnerTpg);
 				partnerTpgBO.deletePartnerTpg(partnerTpg.getId());
 			}
@@ -192,6 +185,11 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 			throw new AugeSystemException("系统异常");
 		}
 	
+	}
+
+	@Override
+	public boolean isPartnerTpg(Long partnerInstanceId) {
+		return partnerTpgBO.queryByParnterInstanceId(partnerInstanceId).isPresent();
 	}
 
 }
