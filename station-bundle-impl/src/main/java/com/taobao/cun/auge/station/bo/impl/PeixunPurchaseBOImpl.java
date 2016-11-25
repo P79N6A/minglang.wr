@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
@@ -189,8 +188,14 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(record==null){
 			throw new AugeServiceException("not find record");
 		}
-		if(!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(record.getStatus())){
-			throw new AugeServiceException("非审核通过状态,无法撤回");
+		if (!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(
+				record.getStatus())
+				|| !PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
+						record.getStatus())) {
+			throw new AugeServiceException("当前状态无法撤回");
+		}
+		if(!operate.equals(record.getApplyWorkNo())){
+			throw new AugeServiceException("操作人与提交人不一致，无法撤回");
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
@@ -255,7 +260,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
 	@Override
 	public PeixunPurchaseDto queryById(Long id) {
-		Assert.notNull(id);
+		if(id==null){
+			return null;
+		}
 		PeixunPurchase pp=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(pp==null){
 			throw new AugeServiceException("not find record");
