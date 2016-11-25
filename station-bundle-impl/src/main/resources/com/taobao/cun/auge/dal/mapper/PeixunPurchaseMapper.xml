@@ -685,7 +685,8 @@
       a.gmt_create,
       b.name as org_name,
       a.status as status,
-      b.full_name_path as org_full_name 
+      b.full_name_path as org_full_name,
+      a.apply_name as apply_name 
       from peixun_purchase a,cuntao_org b
       where a.is_deleted='n' and b.is_deleted='n'
       and a.apply_org_id=b.id
