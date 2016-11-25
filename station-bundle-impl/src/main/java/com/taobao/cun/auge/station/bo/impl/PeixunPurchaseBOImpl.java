@@ -18,14 +18,12 @@ import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
-import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
-import com.taobao.cun.dto.flow.enums.CuntaoFlowTargetTypeEnum;
 @Component("peixunPurchaseBO")
 public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
@@ -264,6 +262,15 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		PeixunPurchaseDto result=new PeixunPurchaseDto();
 		BeanUtils.copyProperties(pp, result);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		if(result.getGmtCreate()!=null){
+			result.setGmtCreateDesc(sdf.format(result.getGmtCreate()));
+		}
+		if(pp.getGmtExceptOpen()!=null){
+			result.setGmtExceptOpenDesc(sdf.format(result.getGmtExceptOpen()));
+		}
+		result.setStatusDesc(PeixunPurchaseStatusEnum.valueof(result.getStatus()).getDesc());
+		result.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(result.getPurchaseType()).getDesc());
 		return result;
 	}
 
