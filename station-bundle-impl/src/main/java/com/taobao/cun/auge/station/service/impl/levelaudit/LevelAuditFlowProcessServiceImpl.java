@@ -78,7 +78,6 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         String applierId = String.valueOf(levelProcessDto.getEmployeeId());
         OperatorTypeEnum operatorType = OperatorTypeEnum.BUC;
 
-        //  创建村点任务流程
         Map<String, String> initData = new HashMap<String, String>();
         initData.put("countyStationName", levelProcessDto.getCountyStationName());
         initData.put("applyTime", CalendarUtil.formatDate(levelProcessDto.getApplyTime(),CalendarUtil.TIME_PATTERN));

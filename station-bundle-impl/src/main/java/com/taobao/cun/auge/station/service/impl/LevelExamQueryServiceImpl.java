@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -9,11 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.dto.LevelExamingResult;
+import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.service.LevelExamQueryService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -63,6 +67,58 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
         List<String> dispathedLevels = Lists.newArrayList(passedLevelStrList);
         dispathedLevels.addAll(notPassExamLevels);
         return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList, dispathedLevels);
+    }
+    
+    /**
+     * 是否通过了从preLevel到newCurrentLevel之间的所有考试
+     * 返回最低没有通过考试的层级
+     */
+    @Override
+    public PartnerInstanceLevelEnum checkEvaluateLevelByExamResult(Long taobaoUserId, PartnerInstanceLevelEnum preLevel, PartnerInstanceLevelEnum newCurrentLevel) {
+        Assert.notNull(taobaoUserId);
+        Assert.notNull(preLevel);
+        Assert.notNull(newCurrentLevel);
+        boolean isUpgrade = newCurrentLevel.getLevel().compareTo(preLevel.getLevel()) > 0;
+        if(!isUpgrade){
+            return newCurrentLevel;
+        }
+        LevelExamingResult examResult = queryLevelExamResult(taobaoUserId,  newCurrentLevel.getLevel().name());
+        List<PartnerInstanceLevel> shouldPassLevelExam = enumsBetween(preLevel.getLevel(), newCurrentLevel.getLevel());
+        List<String> passedLevelExam = examResult.getPassedLevelExams();
+        List<String> dispatchedLevels = examResult.getDispatchedLevels();
+        PartnerInstanceLevel newLevel = preLevel.getLevel();
+        for (PartnerInstanceLevel tmp : shouldPassLevelExam) {
+            if (!passedLevelExam.contains(tmp.name()) && dispatchedLevels.contains(tmp.name())) {
+                return PartnerInstanceLevelEnum.valueof(newLevel);
+            }
+            newLevel = tmp;
+        }
+        return PartnerInstanceLevelEnum.valueof(newLevel);
+    }
+    
+    /**
+     * 排序好的中间枚举列表
+     */
+    private List<PartnerInstanceLevel> enumsBetween(PartnerInstanceLevel from, PartnerInstanceLevel to){
+        if(from==null || to==null){
+            return Collections.emptyList();
+        }
+        PartnerInstanceLevel up = (from.compareTo(to)<=0) ? to :from;
+        PartnerInstanceLevel down = (from.compareTo(to)<=0) ? from :to;
+        List<PartnerInstanceLevel> allEnumLevels = Arrays.asList(PartnerInstanceLevel.values());
+        Collections.sort(allEnumLevels, new Comparator<PartnerInstanceLevel>() {
+            @Override
+            public int compare(PartnerInstanceLevel o1, PartnerInstanceLevel o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        List<PartnerInstanceLevel> enums = Lists.newArrayList();
+        for(PartnerInstanceLevel temp:allEnumLevels){
+            if(temp.compareTo(down)>=0 && temp.compareTo(up)<=0){
+                enums.add(temp);
+            }
+        }
+        return enums;
     }
     
     /**
