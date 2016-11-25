@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
@@ -64,7 +63,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		} else if (event.getValue() instanceof WisdomCountyApplyEvent) {
 			processWisdomCountyApplyEvent(event);
 		}else if (event.getValue() instanceof StationStatusChangeEvent) {
-		      processStationStatusChangeEvent(event);
+		    processStationStatusChangeEvent(event);
 	    }
 
 	}
@@ -255,8 +254,6 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 		logger.info("receive event." + JSON.toJSONString(changEvent));
 
-		String bizMonth = changEvent.getBizMonth();
-		Integer childMaxNum = changEvent.getChildMaxNum();
 		Long instanceId = changEvent.getPartnerInstanceId();
 
 		String operator = changEvent.getOperator();
@@ -272,11 +269,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperatorName(buildOperatorName);
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
-		if (StringUtil.isEmpty(bizMonth)) {
-			cuntaoFlowRecord.setRemarks(buildOperatorName + "修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
-		} else {
-			cuntaoFlowRecord.setRemarks("根据淘帮手在" + bizMonth + "业绩，修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
-		}
+		cuntaoFlowRecord.setRemarks(changEvent.getReason());
+		
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(changEvent));

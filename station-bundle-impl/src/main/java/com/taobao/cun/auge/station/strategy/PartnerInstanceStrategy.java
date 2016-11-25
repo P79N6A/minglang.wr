@@ -98,4 +98,13 @@ public interface PartnerInstanceStrategy {
 	 * @param instanceId
 	 */
 	public void validateOtherPartnerQuit(Long instanceId);
+
+	/**
+	 * 进入服务中
+	 * 
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param operatorDto
+	 */
+	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto);
 }

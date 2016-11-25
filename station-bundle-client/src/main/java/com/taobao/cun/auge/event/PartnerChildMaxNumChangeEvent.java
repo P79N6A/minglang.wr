@@ -14,6 +14,9 @@ public class PartnerChildMaxNumChangeEvent extends OperatorDto {
 	private String bizMonth;
 	
 	private Integer childMaxNum;
+	
+	//变更原因
+	private String reason;
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;
@@ -37,5 +40,13 @@ public class PartnerChildMaxNumChangeEvent extends OperatorDto {
 
 	public void setChildMaxNum(Integer childMaxNum) {
 		this.childMaxNum = childMaxNum;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 }

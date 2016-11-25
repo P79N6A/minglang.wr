@@ -410,4 +410,10 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
+		// TODO Auto-generated method stub
+
+	}
 }

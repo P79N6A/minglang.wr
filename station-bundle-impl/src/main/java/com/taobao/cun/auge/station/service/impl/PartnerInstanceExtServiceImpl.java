@@ -11,32 +11,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.event.EventConstant;
-import com.taobao.cun.auge.event.PartnerChildMaxNumChangeEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
+import com.taobao.cun.auge.station.convert.PartnerChildMaxNumChangeEventConverter;
+import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
-import com.taobao.cun.crius.event.client.EventDispatcher;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("partnerInstanceExtService")
 @HSFProvider(serviceInterface = PartnerInstanceExtService.class)
 public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceExtService.class);
-	
+
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
-	
+
 	@Override
 	public Integer findPartnerMaxChildNum(Long partnerStationId) {
 		ValidateUtils.notNull(partnerStationId);
@@ -48,7 +50,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		Long instanceId = parent.getId();
 		return partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
 	}
-	
+
 	@Override
 	public Integer findPartnerMaxChildNumByInsId(Long instanceId) {
 		ValidateUtils.notNull(instanceId);
@@ -97,9 +99,55 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		}
 		return instanceExtDtos;
 	}
-	
+
 	@Override
-	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto){
+	public void initPartnerMaxChildNum(Long instanceId, Integer maxChildNum, OperatorDto operatorDto) {
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+		instanceExtDto.setInstanceId(instanceId);
+		instanceExtDto.setMaxChildNum(maxChildNum);
+		instanceExtDto.copyOperatorDto(operatorDto);
+		savePartnerMaxChildNum(instanceExtDto, PartnerMaxChildNumChangeReasonEnum.INIT);
+	}
+
+	@Override
+	public void updatePartnerMaxChildNum(PartnerChildMaxNumUpdateDto updateDto) {
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+		instanceExtDto.setInstanceId(updateDto.getInstanceId());
+		instanceExtDto.setMaxChildNum(updateDto.getMaxChildNum());
+		instanceExtDto.setChildNumChangDate(updateDto.getChildNumChangDate());
+		instanceExtDto.copyOperatorDto(updateDto);
+		savePartnerMaxChildNum(instanceExtDto, updateDto.getReason());
+	}
+
+	@Override
+	public void addPartnerMaxChildNum(Long instanceId, Integer increaseNum, PartnerMaxChildNumChangeReasonEnum reason,
+			OperatorDto operatorDto) {
+		// 查询当前实例扩展
+		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceId);
+
+		// 当前最大配额
+		Integer curMaxChildNum = null != instanceExt ? instanceExt.getMaxChildNum() : 0;
+
+		// 已经达到最大配额10，则返回
+		if (curMaxChildNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM) {
+			return;
+		}
+
+		Integer childNum = curMaxChildNum + increaseNum;
+		// 最大配额校验
+		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM
+				: childNum;
+
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+
+		instanceExtDto.setInstanceId(instanceId);
+		instanceExtDto.setMaxChildNum(childNum);
+		instanceExtDto.copyOperatorDto(operatorDto);
+		savePartnerMaxChildNum(instanceExtDto, PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD);
+	}
+
+	private void savePartnerMaxChildNum(PartnerInstanceExtDto instanceExtDto,
+			PartnerMaxChildNumChangeReasonEnum reason) {
 		ValidateUtils.notNull(instanceExtDto);
 		ValidateUtils.notNull(instanceExtDto.getInstanceId());
 
@@ -108,21 +156,12 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 			partnerInstanceExtBO.addPartnerInstanceExt(instanceExtDto);
 			logger.info(
 					"PartnerInstanceExt isnot exist.add PartnerInstanceExtDto = " + JSON.toJSONString(instanceExtDto));
+		} else {
+			partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
+			logger.info("update PartnerInstanceExt.PartnerInstanceExtDto=" + JSON.toJSONString(instanceExtDto));
 		}
 
-		partnerInstanceExtBO.updatePartnerInstanceExt(instanceExtDto);
-		logger.info("update PartnerInstanceExt.PartnerInstanceExtDto=" + JSON.toJSONString(instanceExtDto));
-
-		Integer maxChildNum = instanceExtDto.getMaxChildNum();
-		//如果修改了子成员最大名额，则，发事件
-		if (null != maxChildNum) {
-			PartnerChildMaxNumChangeEvent event = new PartnerChildMaxNumChangeEvent();
-			event.setPartnerInstanceId(instanceExtDto.getInstanceId());
-			event.setChildMaxNum(maxChildNum);
-			event.setBizMonth(instanceExtDto.getChildNumChangDate());
-			event.copyOperatorDto(instanceExtDto);
-
-			EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, event);
-		}
+		// 发送变更事件
+		PartnerChildMaxNumChangeEventConverter.dispatchChangeEvent(instanceExtDto, reason);
 	}
 }

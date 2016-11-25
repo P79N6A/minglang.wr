@@ -13,13 +13,10 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
-import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -41,9 +38,6 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
-	
-	@Autowired
-	PartnerInstanceExtService partnerInstanceExtService;
 	
 	@Autowired
 	PartnerApplyBO partnerApplyBO;
@@ -81,25 +75,8 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			//服务中
 			partnerInstanceHandler.startQuiting(instanceId, stationName, partnerType, stateChangeEvent);
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
-			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
-			
-			instanceExtDto.setInstanceId(instanceId);
-			instanceExtDto.setMaxChildNum(PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM);
-			instanceExtDto.copyOperatorDto(stateChangeEvent);
-			
-			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+		    partnerInstanceHandler.startService(instanceId, taobaoUserId, partnerType, stateChangeEvent);
 		}
-//		else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)){
-//			//将生成合伙人按钮打开
-//			if (PartnerInstanceTypeEnum.TP.equals(partnerType)){
-//				PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
-//				partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-//				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
-//				partnerApplyDto.setOperator(stateChangeEvent.getOperator());
-//				partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
-//			}
-//		}
-
 		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
 	}
 }

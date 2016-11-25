@@ -26,7 +26,8 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.DwiCtStationTpaIncomeMConverter;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
@@ -87,7 +88,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		// 没有查询到，则插入默认值
 		String bizMonth = incomeDto.getBizMonth();
 		if (null == instanceExt) {
-			savePartnerChildMaxNum(instanceId, bizMonth, PartnerInstanceExtConstant.ADD_NUM_PER);
+			partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM, OperatorDto.defaultOperator());
 			return Boolean.TRUE;
 		}
 
@@ -125,22 +126,22 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 				: childNum;
 
 		//更新配额
-		savePartnerChildMaxNum(instanceId, bizMonth, childNum);
+		updatePartnerChildMaxNum(instanceId, bizMonth, childNum);
 		
 		logger.info(
 				"change child maxNum.instanceId=" + instanceId + " childNum=" + childNum + " bizMonth= " + bizMonth);
 		return Boolean.TRUE;
 	}
 
-	private void savePartnerChildMaxNum(Long instanceId, String bizMonth, Integer childNum) {
-		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+	private void updatePartnerChildMaxNum(Long instanceId, String bizMonth, Integer childNum) {
+		PartnerChildMaxNumUpdateDto updateDto = new PartnerChildMaxNumUpdateDto();
+		updateDto.setInstanceId(instanceId);
+		updateDto.setMaxChildNum(childNum);
+		updateDto.setChildNumChangDate(bizMonth);
+		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
+		updateDto.setReason(PartnerMaxChildNumChangeReasonEnum.TPA_PERFORMANCE_REWARD);
 
-		instanceExtDto.setInstanceId(instanceId);
-		instanceExtDto.setMaxChildNum(childNum);
-		instanceExtDto.setChildNumChangDate(bizMonth);
-		instanceExtDto.copyOperatorDto(OperatorDto.defaultOperator());
-
-		partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+		partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
 	}
 
 	private String[] findLastNMonth() {
