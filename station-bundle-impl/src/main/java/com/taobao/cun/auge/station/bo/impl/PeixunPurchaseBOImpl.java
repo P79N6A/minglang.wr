@@ -59,7 +59,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 				throw new AugeServiceException("not find record");
 			}
 			//判断修改人和提交人是否一致
-			if(!record.getCreator().equals(dto.getOperator())){
+			if(!record.getApplyWorkNo().equals(dto.getOperator())){
 				throw new AugeServiceException("与提交人不一致，无权限修改");
 			}
 			//判断是否是可编辑状态
@@ -67,7 +67,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 					record.getStatus())
 					|| !PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
 							record.getStatus())) {
-				throw new AugeServiceException("状态不可编辑");
+				throw new AugeServiceException("当前状态不可编辑");
 			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);
