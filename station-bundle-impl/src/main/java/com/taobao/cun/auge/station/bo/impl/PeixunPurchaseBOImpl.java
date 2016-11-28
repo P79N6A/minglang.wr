@@ -75,7 +75,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			BeanUtils.copyProperties(dto, record);
 			peixunPurchaseMapper.insert(record);
 			//生成流程
-			createFlow(record.getId(),dto.getLoginId(),dto.getParentOrgId());
+			createFlow(record.getId(),dto.getLoginId(),dto.getApplyOrgId());
 			return record.getId();
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
