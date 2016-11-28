@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +51,10 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Autowired
 	private PrService prService;
 	
-	@Autowired
+	@Resource
 	private ProductService cereProductService;
 	
-	@Autowired
+	@Resource
 	private CategoryService cereCategoryService;
 	
 	@Autowired
