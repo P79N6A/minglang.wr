@@ -371,6 +371,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(pp.getGmtExceptOpen()!=null){
 			result.setGmtExceptOpenDesc(sdf.format(result.getGmtExceptOpen()));
 		}
+		CuntaoOrgDto county = cuntaoOrgServiceClient.getCuntaoOrg(pp.getApplyOrgId());
+		result.setOrgFullName(county.getFullNamePath());
 		result.setStatusDesc(PeixunPurchaseStatusEnum.valueof(result.getStatus()).getDesc());
 		result.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(result.getPurchaseType()).getDesc());
 		return result;

@@ -76,6 +76,7 @@ public class PeixunPurchaseDto implements Serializable {
     private String applyWorkNo;
     private String applyName;
 	private Long parentOrgId;
+	
 	public String getApplyWorkNo() {
 		return applyWorkNo;
 	}
