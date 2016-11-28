@@ -73,7 +73,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			BeanUtils.copyProperties(dto, record);
 			peixunPurchaseMapper.insert(record);
 			//生成流程
-			createFlow(record.getId(),dto.getLoginId(),dto.getApplyOrgId());
+			createFlow(record.getId(),dto.getLoginId(),dto.getParentOrgId());
 			return record.getId();
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
@@ -105,7 +105,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		try {
 			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
 					.startProcessInstance(FLOW_BUSINESS_CODE,
-							String.valueOf(applyId), loginId, null);
+							String.valueOf(applyId), loginId, initData);
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}

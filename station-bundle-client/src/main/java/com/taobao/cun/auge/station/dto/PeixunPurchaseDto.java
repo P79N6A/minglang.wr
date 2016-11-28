@@ -75,7 +75,7 @@ public class PeixunPurchaseDto implements Serializable {
     private String receiverName;
     private String applyWorkNo;
     private String applyName;
-	
+	private Long parentOrgId;
 	public String getApplyWorkNo() {
 		return applyWorkNo;
 	}
@@ -378,6 +378,14 @@ public class PeixunPurchaseDto implements Serializable {
 
 	public void setOrgFullName(String orgFullName) {
 		this.orgFullName = orgFullName;
+	}
+
+	public Long getParentOrgId() {
+		return parentOrgId;
+	}
+
+	public void setParentOrgId(Long parentOrgId) {
+		this.parentOrgId = parentOrgId;
 	}
 
 	
