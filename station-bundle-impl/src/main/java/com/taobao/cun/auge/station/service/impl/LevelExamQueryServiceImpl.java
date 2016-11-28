@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
@@ -34,6 +36,9 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(LevelExamQueryServiceImpl.class);
 
+    @Autowired
+    private AppResourceBO appResourceBO;
+    
     @Autowired
     ExamUserDispatchService  examUserDispatchService;
     
@@ -67,6 +72,14 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
         List<String> dispathedLevels = Lists.newArrayList(passedLevelStrList);
         dispathedLevels.addAll(notPassExamLevels);
         return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList, dispathedLevels);
+    }
+    
+    public boolean isOpenEvaluateCheckExamPass() {
+        String isEvaluate = appResourceBO.queryAppResourceValue(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH);
+        if(StringUtils.isNotBlank(isEvaluate)){
+            return Boolean.parseBoolean(isEvaluate);
+        }
+        return false;
     }
     
     /**

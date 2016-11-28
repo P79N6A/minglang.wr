@@ -25,7 +25,7 @@ public class LevelExamingResult implements Serializable {
      * 分发了试卷的层级
      */
     private List<String>     dispatchedLevels;
-
+    
     public LevelExamingResult(){super();}
     public LevelExamingResult(boolean isPassedAllExams, List<String> notPassLevelExams, List<String> passedLevels, List<String>dispatchedLevels) {
         super();
@@ -66,5 +66,5 @@ public class LevelExamingResult implements Serializable {
     public void setDispatchedLevels(List<String> dispatchedLevels) {
         this.dispatchedLevels = dispatchedLevels;
     }
-
+    
 }

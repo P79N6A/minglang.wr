@@ -15,6 +15,11 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanc
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
 
 public class LevelExamUtil {
+    
+    public static final String LEVEL_EXAM_CONFIG = "level_exam_config";
+    public static final String LEVEL_EXAM_KEY = "level_to_exam_map";
+    public static final String LEVEL_EXAM_EVALUATE_SWITCH = "level_to_exam_evaluate_switch";
+    public static final String LEVEL_EXAM_KEY_SWITCH = "level_to_exam_dispatch_switch";
 
     /**
      * 层级晋升试卷分发规则:

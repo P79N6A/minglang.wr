@@ -22,4 +22,10 @@ public interface LevelExamQueryService {
      * @return
      */
     public PartnerInstanceLevelEnum checkEvaluateLevelByExamResult(Long taobaoUserId, PartnerInstanceLevelEnum preLevel, PartnerInstanceLevelEnum newCurrentLevel);
+    
+    /**
+     * 是否打开了考试评级的控制
+     * @return
+     */
+    public boolean isOpenEvaluateCheckExamPass();
 }

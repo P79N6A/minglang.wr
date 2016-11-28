@@ -35,10 +35,6 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     private static final Logger logger = LoggerFactory.getLogger(LevelExamManageServiceImpl.class);
 
     private static final LevelExamConfigurationDto EMPTY_CONFIG_OBJECT = new LevelExamConfigurationDto(); 
-    private static final String LEVEL_EXAM_CONFIG = "level_exam_config";
-    private static final String LEVEL_EXAM_KEY = "level_to_exam_map";
-    private static final String LEVEL_EXAM_EVALUATE_SWITCH = "level_to_exam_evaluate_switch";
-    private static final String LEVEL_EXAM_KEY_SWITCH = "level_to_exam_dispatch_switch";
     
     @Autowired
     private AppResourceBO appResourceBO;
@@ -59,7 +55,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
             return false;
         }
         String value = JSON.toJSONString(configurationDto.getLevelExamMap());
-        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, value, false, configurePerson);
+        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY, value, false, configurePerson);
     }
 
     /**
@@ -67,7 +63,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
      */
     @Override
     public LevelExamConfigurationDto queryConfigure() {
-        AppResource appResource =  appResourceBO.queryAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY);
+        AppResource appResource =  appResourceBO.queryAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY);
         if(appResource==null || StringUtils.isBlank(appResource.getValue())){
             return EMPTY_CONFIG_OBJECT; 
         }
@@ -101,7 +97,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
      */
     @Override
     public boolean configureSwitchForDispatchPaper(boolean open) {
-        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY_SWITCH, null, !open, "system");
+        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY_SWITCH, Boolean.valueOf(open).toString(), false, "system");
     }
 
     /**
@@ -111,7 +107,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     @Override
     public boolean configureSwitchForEvaluate(boolean open) {
         String switchStr = Boolean.toString(open);
-        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_EVALUATE_SWITCH, switchStr, false, "system");
+        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH, switchStr, false, "system");
     }
     
     /**
