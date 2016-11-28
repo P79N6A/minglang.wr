@@ -480,6 +480,11 @@
 				<artifactId>httpclient</artifactId>
 				<version>4.5.2</version>
 			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>ceres.shard</artifactId>
+			  <version>1.0.0.39</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

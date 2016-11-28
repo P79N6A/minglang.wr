@@ -1,25 +1,42 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
+import com.alibaba.ceres.service.Result;
+import com.alibaba.ceres.service.catalog.ProductService;
+import com.alibaba.ceres.service.catalog.model.CatalogProductDto;
+import com.alibaba.ceres.service.category.CategoryService;
+import com.alibaba.ceres.service.category.model.CategoryUseDto;
+import com.alibaba.ceres.service.pr.PrService;
+import com.alibaba.ceres.service.pr.model.PrDto;
+import com.alibaba.ceres.service.pr.model.PrLineDto;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
+import com.taobao.cun.common.config.diamond.DiamondHelper;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -33,6 +50,19 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
     private CuntaoWorkFlowService  cuntaoWorkFlowService;
 	
 	public static String FLOW_BUSINESS_CODE="peixun_purchase";
+	
+	@Autowired
+	private PrService prService;
+	
+	@Autowired
+	private ProductService cereProductService;
+	
+	@Autowired
+	private CategoryService cereCategoryService;
+	
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+	
 	
 	@Override
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
@@ -217,8 +247,76 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
 	@Override
 	public boolean createOrder(Long id, String operate) {
-		// TODO Auto-generated method stub
+		Assert.notNull(id);
+		Assert.notNull(operate);
+		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
+		if(record==null){
+			throw new AugeServiceException("not find record");
+		}
+		if (!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(
+				record.getStatus())) {
+			throw new AugeServiceException("还未审核通过，无法下单");
+		}
+		if(!operate.equals(record.getApplyWorkNo())){
+			throw new AugeServiceException("提交人与申请人不一致，无法下单");
+		}
+		PrDto prDto = new PrDto();
+		prDto.setActualRequestor(record.getApplyWorkNo());
+		prDto.setApplicant(record.getApplyWorkNo());
+		prDto.setDescription(applyReason(record));
+		prDto.setOuCode("B53");
+		List<PrLineDto> prLineList = getPrList(record);
+		prDto.setPrLineList(prLineList);
+		Result<?> result = prService.submitPr(prDto);
+		if(!result.isSuccess()) {
+			throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+		}
+		record.setGmtModified(new Date());
+		record.setModifier(operate);
+		record.setStatus(PeixunPurchaseStatusEnum.ORDER.getCode());
+		peixunPurchaseMapper.updateByPrimaryKey(record);
 		return false;
+	}
+	
+	private String applyReason(PeixunPurchase record){
+		CuntaoOrgDto county = cuntaoOrgServiceClient.getCuntaoOrg(record.getApplyOrgId());
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		StringBuilder sb=new StringBuilder();
+		sb.append("申请人:").append(record.getApplyName()).append("(").append(record.getApplyWorkNo()).append("),");
+		sb.append("申请县域:").append(county.getFullNamePath()).append(",");
+		sb.append("开班人数:").append(record.getExceptNum()).append(",");
+		sb.append("期望开班时间:").append(sdf.format(record.getGmtExceptOpen())).append(",");
+		sb.append("是否凑班：").append("y".equals(record.getIsShare())?"是,":"否,");
+		sb.append("凑班原因:").append(record.getShareDesc()).append(",");
+		sb.append("备注:").append(record.getDescription());
+		return sb.toString();
+	}
+	
+	private List<PrLineDto> getPrList(PeixunPurchase record) {
+		List<PrLineDto> prLineList = new ArrayList<PrLineDto>();
+		Result<CatalogProductDto> proResult = cereProductService
+				.getProductInfoWithSku("productNo");
+		if (proResult != null && proResult.isSuccess()) {
+			String useCode = null;
+			List<CategoryUseDto> useList = cereCategoryService.getCategoryUseList(
+					proResult.getValue().getPurchaseCategoryId(),
+					record.getApplyWorkNo());
+			if (useList != null && useList.size() > 0) {
+				useCode = useList.get(0).getUseCode();
+			}
+			PrLineDto prLine = new PrLineDto();
+			prLine.setSkuId(String.valueOf(proResult.getValue().getSkuList()
+					.get(0).getSkuId()));
+			prLine.setCategoryUse(useCode);
+			prLine.setNeedByDate(record.getGmtExceptOpen());
+			prLine.setDeliveryAddressId(new Long(111));
+			prLine.setReceiver("");
+			prLine.setQuantity(record.getExceptNum());
+			prLine.setRemark(applyReason(record));
+			prLine.setAcceptanceStandard("123");
+			prLineList.add(prLine);
+		}
+		return prLineList;
 	}
 
 	@Override
