@@ -2,6 +2,9 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import com.taobao.cun.auge.permission.operation.Operation;
 
 public class PeixunPurchaseDto implements Serializable {
 
@@ -76,6 +79,9 @@ public class PeixunPurchaseDto implements Serializable {
     private String applyWorkNo;
     private String applyName;
 	private Long parentOrgId;
+
+	private List<Operation> operations;
+	private long topIndex;
 	
 	public String getApplyWorkNo() {
 		return applyWorkNo;
@@ -387,6 +393,22 @@ public class PeixunPurchaseDto implements Serializable {
 
 	public void setParentOrgId(Long parentOrgId) {
 		this.parentOrgId = parentOrgId;
+	}
+
+	public List<Operation> getOperations() {
+		return operations;
+	}
+
+	public void setOperations(List<Operation> operations) {
+		this.operations = operations;
+	}
+
+	public long getTopIndex() {
+		return topIndex;
+	}
+
+	public void setTopIndex(long topIndex) {
+		this.topIndex = topIndex;
 	}
 
 	
