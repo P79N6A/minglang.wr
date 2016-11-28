@@ -18,7 +18,7 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum stationQuitRecord = new ProcessBusinessEnum("stationQuitRecord", "申请退出");
 	public static final ProcessBusinessEnum SHUT_DOWN_STATION = new ProcessBusinessEnum("SHUT_DOWN_STATION", "申请撤点");
 	public static final ProcessBusinessEnum partnerInstanceLevelAudit = new ProcessBusinessEnum("partnerInstanceLevelAudit", "合伙人层级审批");
-	public static final ProcessBusinessEnum peixunPurchase = new ProcessBusinessEnum("peixunPurchase", "培训集采审批");
+	public static final ProcessBusinessEnum peixunPurchase = new ProcessBusinessEnum("peixun_purchase", "培训集采审批");
 
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
