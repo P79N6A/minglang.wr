@@ -38,6 +38,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     private static final String LEVEL_EXAM_CONFIG = "level_exam_config";
     private static final String LEVEL_EXAM_KEY = "level_to_exam_map";
     private static final String LEVEL_EXAM_EVALUATE_SWITCH = "level_to_exam_evaluate_switch";
+    private static final String LEVEL_EXAM_KEY_SWITCH = "level_to_exam_dispatch_switch";
     
     @Autowired
     private AppResourceBO appResourceBO;
@@ -100,7 +101,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
      */
     @Override
     public boolean configureSwitchForDispatchPaper(boolean open) {
-        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY, null, !open, "system");
+        return appResourceBO.configAppResource(LEVEL_EXAM_CONFIG, LEVEL_EXAM_KEY_SWITCH, null, !open, "system");
     }
 
     /**
