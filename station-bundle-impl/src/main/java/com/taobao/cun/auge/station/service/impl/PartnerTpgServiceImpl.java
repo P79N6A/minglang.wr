@@ -80,10 +80,10 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						updatePartnerTpg(partnerTpg);
 						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] uic打标失败");
 						throw new AugeBusinessException("uic打标失败");
+					}else{
+						partnerTpg.setUicTpgFlag("upgrade_success");
+						updatePartnerTpg(partnerTpg);
 					}
-				}else{
-					partnerTpg.setUicTpgFlag("upgrade_success");
-					updatePartnerTpg(partnerTpg);
 				}
 				
 				
@@ -103,11 +103,11 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						updatePartnerTpg(partnerTpg);
 						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 更新菜鸟供赢通标示失败");
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
+					}else{
+						partnerTpg.setCainiaoStationFeature("upgrade_success");
+						partnerTpg.setCainiaoStationId(cainiaoStationId);
+						updatePartnerTpg(partnerTpg);
 					}
-				}else{
-					partnerTpg.setCainiaoStationFeature("upgrade_success");
-					partnerTpg.setCainiaoStationId(cainiaoStationId);
-					updatePartnerTpg(partnerTpg);
 				}
 			return true;
 		} catch (Exception e) {
