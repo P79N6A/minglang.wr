@@ -193,7 +193,7 @@
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>bundle-model</artifactId>
-				<version>2.2.9.xjh-SNAPSHOT</version>
+				<version>2.3.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao</groupId>
@@ -223,7 +223,7 @@
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>data-client</artifactId>
-				<version>1.1.1.xjh-SNAPSHOT</version>
+				<version>1.1.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.metaq.final</groupId>
@@ -423,7 +423,7 @@
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>exam-client</artifactId>
-				<version>1.0.xjh-SNAPSHOT</version>
+				<version>1.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.crm.shared</groupId>
