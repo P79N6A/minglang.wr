@@ -209,8 +209,17 @@ public class PeixunPurchase {
     private String receiverName;
     private String applyWorkNo;
     private String applyName;
+    private String prNo;
     
-    public String getApplyWorkNo() {
+    public String getPrNo() {
+		return prNo;
+	}
+
+	public void setPrNo(String prNo) {
+		this.prNo = prNo;
+	}
+
+	public String getApplyWorkNo() {
 		return applyWorkNo;
 	}
 

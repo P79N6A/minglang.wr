@@ -269,9 +269,12 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prDto.setPrLineList(prLineList);
 		try {
 			Result<?> result = prService.submitPr(prDto);
+			
 			if (!result.isSuccess()) {
 				throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
 			}
+			String prNo=(String)result.getValue();
+			record.setPrNo(prNo);
 		} catch (Exception e) {
 			throw new RuntimeException("提交pr失败，失败原因：" + e);
 		}
