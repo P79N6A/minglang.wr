@@ -236,8 +236,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	
 	private void endTask(Long id, String operate) {
 		try {
-			cuntaoWorkFlowService.teminateProcessInstance(FLOW_BUSINESS_CODE,
-					String.valueOf(id), operate);
+			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(id),FLOW_BUSINESS_CODE,
+					operate);
 		} catch (Exception e) {
 			throw new AugeServiceException("终止流程失败", e);
 		}
