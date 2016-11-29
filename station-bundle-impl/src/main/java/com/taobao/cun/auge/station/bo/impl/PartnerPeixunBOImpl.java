@@ -388,7 +388,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		List<PartnerPeixunDto> result=new ArrayList<PartnerPeixunDto>();
 		l1:for(TrainingRecordDTO dto:trainRecords){
 			for(PartnerPeixunDto re:result){
-				if(dto.getTrainee().equals(String.valueOf(re.getUserId()))){
+				if(dto.getCourseCode().equals(String.valueOf(re.getCourseCode()))){
 				continue l1;
 			  }
 			}

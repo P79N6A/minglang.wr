@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +13,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
-import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
@@ -38,7 +36,6 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -53,6 +50,7 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.StationService;
+import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.notify.message.StringMessage;
 
@@ -101,7 +99,10 @@ public class ProcessProcessor {
 	PartnerInstanceService partnerInstanceService;
 	@Autowired
 	PartnerInstanceLevelBO partnerInstanceLevelBO;
-
+	
+	@Autowired
+	LevelAuditFlowService levelAuditFlowService;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -133,8 +134,21 @@ public class ProcessProcessor {
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}else if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
-				logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
-				monitorLevelApprove(ob, ProcessApproveResultEnum.valueof(resultCode));
+				try{
+				    logger.info("monitorLevelApprove, JSONObject :" + ob.toJSONString());
+				    /**
+				     * 启动审批流程时塞进来的数据
+				     */
+		            PartnerInstanceLevelDto dto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
+		            /**
+		             * cuntaobops 审批通过的level
+		             */
+				    String adjustLevel = ob.getString("adjustLevel");
+                    levelAuditFlowService.processAuditMessage(dto, ProcessApproveResultEnum.valueof(resultCode), adjustLevel);
+				}  catch (Exception e) {
+		            logger.error("LevelAuditFlowProcessServiceImpl processAuditMessage error  ", e);
+		            throw e;
+		        }
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -155,37 +169,6 @@ public class ProcessProcessor {
 		}
 	}
 	
-	private void monitorLevelApprove(JSONObject ob, ProcessApproveResultEnum approveResult) {
-		try {
-			PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-				String adjustLevel = ob.getString("adjustLevel");
-				partnerInstanceLevelDto.setPreLevel(partnerInstanceLevelDto.getCurrentLevel());
-				if (StringUtils.isNotBlank(adjustLevel)) {
-					String remark = "申请层级为: " + partnerInstanceLevelDto.getExpectedLevel().getLevel().toString() + ", 人工调整为 : "
-							+ adjustLevel;
-					partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
-					partnerInstanceLevelDto.setRemark(remark);
-				}else{
-					partnerInstanceLevelDto.setCurrentLevel(partnerInstanceLevelDto.getExpectedLevel());
-				}
-				partnerInstanceLevelDto.setExpectedLevel(null);
-				partnerInstanceService.evaluatePartnerInstanceLevel(partnerInstanceLevelDto);
-			} else {
-				PartnerInstanceLevel level = partnerInstanceLevelBO
-						.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceLevelDto.getPartnerInstanceId());
-				level.setExpectedLevel(null);
-				String remark = "申请合伙人层级 " + partnerInstanceLevelDto.getCurrentLevel().getLevel().toString() + " 被拒绝";
-				level.setRemark(remark);
-				partnerInstanceLevelBO.updatePartnerInstanceLevel(level);
-			}
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + "monitorLevelApprove: " + ob.toJSONString(), e);
-			throw e;
-		}
-	}
-	
-
 	private void monitorHomepageShowApprove(String objectId, String businessCode, ProcessApproveResultEnum approveResult) {
 		busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
 				ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult));
@@ -397,6 +380,7 @@ public class ProcessProcessor {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
+	
 }
