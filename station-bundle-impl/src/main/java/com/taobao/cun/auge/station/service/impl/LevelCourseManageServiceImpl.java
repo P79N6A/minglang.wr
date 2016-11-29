@@ -84,9 +84,9 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
      */
     @Override
     public List<LevelCourseEditDto> queryManageLevelCourses(LevelCourseManageCondition condition) {
-        if(!LevelCourseManageCondition.isValidManageCondition(condition)){
-            return Collections.emptyList();
-        }
+//        if(!LevelCourseManageCondition.isValidManageCondition(condition)){
+//            return Collections.emptyList();
+//        }
         LevelCourseExample example = new LevelCourseExample();
         if(condition.isSearchByLevel()){
             LevelCourseTypeEnum courseType = condition.getCourseType() != null ? condition.getCourseType() : LevelCourseTypeEnum.REQUIRED;
@@ -98,6 +98,10 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
         }else{
             example = LevelCourseConvertor.toLevelCourseExample(condition);
         }
+        example.setOrderByClause("gmt_create desc");
+        example.setLimitStart(0);
+        example.setLimitEnd(200);
+        
         List<LevelCourse> levelCourseList =  courseBo.queryLevelCourse(example);
         Map<String, AppResource> resourceList = appResourceBo.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
         Map<String, CourseLevelInfo> courseLevelInfoMap = LevelCourseConfigUtil.groupLevelByCourseCode(resourceList.values());
