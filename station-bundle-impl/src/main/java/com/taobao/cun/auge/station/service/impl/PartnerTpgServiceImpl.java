@@ -56,8 +56,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				}
 				Optional<PartnerTpg> partnerTpgResult = partnerTpgBO.queryByParnterInstanceId(partnerInstanceId);
 				PartnerInstanceDto partnerInstance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
-				PartnerTpg partnerTpg = partnerTpgResult.isPresent()?partnerTpgResult.get():addPartnerTpg(partnerInstance);
-			
 				if(!PartnerInstanceTypeEnum.TPA.getCode().equals(partnerInstance.getType().getCode())){
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 菜鸟物流站点不存在");
 					throw new AugeSystemException("只支持淘帮手升级供赢通会员");
@@ -66,12 +64,23 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 淘帮手必须服务中");
 					throw new AugeSystemException("淘帮手必须服务中");
 				}
-				
 				Long cainiaoStationId = cainiaoStationRelBO.getCainiaoStationId(partnerInstance.getStationId());
 				if(cainiaoStationId == null){
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 菜鸟物流站点不存在");
 					throw new AugeBusinessException("菜鸟物流站点不存在");
 				}
+				Result<StationDTO> stationResult = stationReadService.queryStationById(cainiaoStationId);
+				if(!stationResult.isSuccess()){
+					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 查询菜鸟物流站点失败");
+					throw new AugeBusinessException("查询菜鸟物流站点失败");
+				}
+				FeatureDTO feature = stationResult.getData().getFeature();
+				if(feature.get("ctpType") != null && feature.get("ctpType").equals("CTPA1_0")){
+					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 查询菜鸟物流站点失败");
+					throw new AugeBusinessException("降级淘帮手无法升级成供赢通");
+				}
+				
+				PartnerTpg partnerTpg = partnerTpgResult.isPresent()?partnerTpgResult.get():addPartnerTpg(partnerInstance);
 				//if not exist tpg tag add tag
 				if(!partnerTpgBO.checkTag(partnerInstance.getTaobaoUserId())){
 					boolean addTagResult = partnerTpgBO.addTpgTag(partnerInstance.getTaobaoUserId());
@@ -85,15 +94,7 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 						updatePartnerTpg(partnerTpg);
 					}
 				}
-				
-				
-				Result<StationDTO> stationResult = stationReadService.queryStationById(cainiaoStationId);
-				if(!stationResult.isSuccess()){
-					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 查询菜鸟物流站点失败");
-					throw new AugeBusinessException("查询菜鸟物流站点失败");
-				}
 				//updateCaiNiaoFeature
-				FeatureDTO feature = stationResult.getData().getFeature();
 				if(feature.get("ctpType") != null && !feature.get("ctpType").equals("CtPG")){
 					feature.put("ctpType", "CtPG");
 					boolean updateFeaturesResult = stationWriteService.putStationFeatures(cainiaoStationId, feature.asMap(), Modifier.newSystem()).getData();
