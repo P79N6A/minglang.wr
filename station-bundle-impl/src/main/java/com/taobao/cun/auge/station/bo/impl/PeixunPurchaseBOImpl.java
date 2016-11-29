@@ -214,6 +214,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(id==null||StringUtils.isEmpty(operate)){
 			throw new AugeServiceException("param is null");
 		}
+		try{
 		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(record==null){
 			throw new AugeServiceException("not find record");
@@ -233,6 +234,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		peixunPurchaseMapper.updateByPrimaryKey(record);
 		//终止流程
 		endTask(id,operate);
+	}catch(Exception e){
+		return false;
+	}
 		return true;
 	}
 	
