@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,7 +113,8 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
             if(userId == null || CollectionUtils.isEmpty(courseCodes)){
                 return Collections.emptyMap();
             }
-            Map<String, PartnerOnlinePeixunDto> peixunDtos = partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
+            Set<String> strSet = new HashSet<String>(courseCodes);
+            Map<String, PartnerOnlinePeixunDto> peixunDtos = partnerPeixunService.queryBatchOnlinePeixunProcess(userId, new ArrayList<String>(strSet));
             return peixunDtos;
         }catch(Throwable t){
             logger.error("LevelCourseServiceImpl.queryBatchOnlinePeixunProcess error!", t);
