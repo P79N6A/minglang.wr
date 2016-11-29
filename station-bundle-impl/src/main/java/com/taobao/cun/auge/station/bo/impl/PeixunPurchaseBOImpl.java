@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.ceres.service.Result;
@@ -63,6 +65,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	AppResourceBO appResourceBO;
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
 		validateForCreate(dto);
 		if(dto.getId()==null){
@@ -183,6 +186,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean audit(Long id, String operate,String operateName,String auditDesc,Boolean isPass) {
 		if(id==null||StringUtils.isEmpty(operate)){
 			throw new AugeServiceException("param is null");
@@ -208,6 +212,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean rollback(Long id, String operate) {
 		if(id==null||StringUtils.isEmpty(operate)){
 			throw new AugeServiceException("param is null");
@@ -236,14 +241,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	
 	private void endTask(Long id, String operate) {
 		try {
-			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(id),FLOW_BUSINESS_CODE,
-					operate);
+			ResultModel<CuntaoProcessInstance> instance = cuntaoWorkFlowService
+					.findRunningProcessInstance(FLOW_BUSINESS_CODE,
+							String.valueOf(id));
+			String instanceId = instance.getResult().getProcessInstanceId();
+			cuntaoWorkFlowService.teminateProcessInstance(instanceId, operate);
 		} catch (Exception e) {
 			throw new AugeServiceException("终止流程失败", e);
 		}
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean createOrder(Long id, String operate) {
 		Assert.notNull(id);
 		Assert.notNull(operate);
