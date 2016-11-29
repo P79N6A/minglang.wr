@@ -93,7 +93,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			//判断是否是可编辑状态
 			if (!PeixunPurchaseStatusEnum.AUDIT_NOT_PASS.getCode().equals(
 					record.getStatus())
-					|| !PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
+					&&!PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
 							record.getStatus())) {
 				throw new AugeServiceException("当前状态不可编辑");
 			}
