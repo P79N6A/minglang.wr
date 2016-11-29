@@ -17,9 +17,7 @@ import org.springframework.util.Assert;
 
 import com.alibaba.ceres.service.Result;
 import com.alibaba.ceres.service.catalog.ProductService;
-import com.alibaba.ceres.service.catalog.model.CatalogProductDto;
 import com.alibaba.ceres.service.category.CategoryService;
-import com.alibaba.ceres.service.category.model.CategoryUseDto;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
@@ -214,7 +212,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(id==null||StringUtils.isEmpty(operate)){
 			throw new AugeServiceException("param is null");
 		}
-		try{
 		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(record==null){
 			throw new AugeServiceException("not find record");
@@ -234,9 +231,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		peixunPurchaseMapper.updateByPrimaryKey(record);
 		//终止流程
 		endTask(id,operate);
-	}catch(Exception e){
-		return false;
-	}
 		return true;
 	}
 	
