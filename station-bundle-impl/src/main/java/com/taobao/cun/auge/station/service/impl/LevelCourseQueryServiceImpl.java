@@ -112,7 +112,8 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
             if(userId == null || CollectionUtils.isEmpty(courseCodes)){
                 return Collections.emptyMap();
             }
-            return partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
+            Map<String, PartnerOnlinePeixunDto> peixunDtos = partnerPeixunService.queryBatchOnlinePeixunProcess(userId, courseCodes);
+            return peixunDtos;
         }catch(Throwable t){
             logger.error("LevelCourseServiceImpl.queryBatchOnlinePeixunProcess error!", t);
             return Collections.emptyMap();

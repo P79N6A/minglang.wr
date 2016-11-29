@@ -60,7 +60,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
         return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDto.class,  new DataListFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>(){
             @Override
             public ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
-                return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendData(taobaoUserId, stationId, statDate, statDate);
+                return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendData(taobaoUserId, stationId, statDate, endDate);
             }
         });
     }
@@ -80,7 +80,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
         return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDtoV2.class,  new DataListFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDtoV2>(){
             @Override
             public ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDtoV2>> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
-                return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendDataV2(taobaoUserId, stationId, statDate, statDate);
+                return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendDataV2(taobaoUserId, stationId, statDate, endDate);
             }
         });
     }

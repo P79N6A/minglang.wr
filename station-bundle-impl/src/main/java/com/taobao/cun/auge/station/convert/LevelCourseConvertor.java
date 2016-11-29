@@ -127,12 +127,12 @@ public class LevelCourseConvertor {
             }else if(electiveCourseCodes!=null && CollectionUtils.contains(electiveCourseCodes.iterator(), course.getCourseCode())){
                 learningDto.setCourseType(LevelCourseTypeEnum.ELECTIVE.name());
             }
+            learningDto.setCourseDetailUrl(course.getCourseCode());
             if(!CollectionUtils.isEmpty(courseCodePeixunMap) && courseCodePeixunMap.get(course.getCourseCode())!=null){
                 PartnerOnlinePeixunDto partnerPeixunDto = courseCodePeixunMap.get(course.getCourseCode());
                 if(partnerPeixunDto.getStatus()!=null){
                     learningDto.setStatus(partnerPeixunDto.getStatus().getCode());
                 }
-                learningDto.setCourseDetailUrl(partnerPeixunDto.getCourseUrl());
             }
             learningDtoList.add(learningDto);
         }

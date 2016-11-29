@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.enums;
 public enum GrowthIndexEnum {
 
     AVERAGE_MONTHLY_EARNINGS("ame", "月平均收入"),
-    PRODUCT_ONE_GMV_RATIO("pogr", "1.0商品GMV占比"),
+    PRODUCT_ONE_GMV_RATIO("pogr", "1.0商品收入占比"),
     REPURCHASE_RATIO("rr", "复购率"),
     ACTIVE_APP_BUYER_COUNT("aabc", "app活跃村民数"),
     LOYALTY_BUYER("lb", "忠实村民数"),
