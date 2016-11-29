@@ -24,7 +24,7 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -373,7 +373,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
 		
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
@@ -536,7 +536,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
 			OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
 	}
 
@@ -597,7 +597,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				pisc.setPartnerInstanceState(state);
 				pisc.setStationName(stationDto.getName());
 				pisc.setTaobaoUserId(rel.getTaobaoUserId());
-				EventDispatcherUtil.dispatch(EventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
+				EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
 			}
 		} catch (Exception e) {
 			logger.error("dispatchEvent error param: instanceId" + rel.getId(), e);

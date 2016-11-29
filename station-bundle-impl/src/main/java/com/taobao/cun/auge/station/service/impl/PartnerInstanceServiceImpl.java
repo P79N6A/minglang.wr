@@ -29,7 +29,7 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
@@ -822,7 +822,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void sendPartnerInstanceStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChangeEnum,
 	                                                 OperatorDto operator) {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
 	}
 
@@ -898,7 +898,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 发送状态变化事件
 			PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
 					PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
-			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.toString());
@@ -1603,7 +1603,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			event.setParentTaobaoUserId(parentRel.getTaobaoUserId());
 			event.setOperator(degradePartnerInstanceSuccessDto.getOperator());
 			event.setOperatorType(degradePartnerInstanceSuccessDto.getOperatorType());
-			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
 		} catch (Exception e) {
 			String error = getErrorMessage("degradePartnerInstanceSuccess", JSON.toJSONString(degradePartnerInstanceSuccessDto),
 					e.getMessage());
@@ -1617,7 +1617,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,
 				operator);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 
 	@Override
@@ -1631,7 +1631,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 发送评级变化事件: 类型为系统评定
 			PartnerInstanceLevelChangeEvent event = PartnerInstanceLevelEventConverter
 					.convertLevelChangeEvent(partnerInstanceLevelDto.getEvaluateType(), partnerInstanceLevelDto);
-			EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT, event);
 		} catch (Exception e) {
 			logger.error("EvaluatePartnerInstanceLevelError:" + JSON.toJSONString(partnerInstanceLevelDto), e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
@@ -1666,7 +1666,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			belongTp.copyOperatorDto(changeTPDto);
 			caiNiaoService.updateBelongTPForTpa(belongTp);
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
-			EventDispatcherUtil.dispatch(EventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto, oldParentStationId, stationId));
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto, oldParentStationId, stationId));
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),
 					augeException.toString());
@@ -1708,7 +1708,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         closeStationApplyBO.deleteCloseStationApply(instanceId, operator);
         //发送已停业到服务中事件
 		PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(psl, operator);
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 
 	private PartnerInstanceStateChangeEvent buildCloseToServiceEvent(PartnerStationRel psl, String operator){
@@ -1785,6 +1785,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			levelProcessDto.setCountyStationName(countyStation.getName());
 			levelProcessDto.setCurrentLevel(partnerInstanceLevelDto.getCurrentLevel());
 			levelProcessDto.setExpectedLevel(partnerInstanceLevelDto.getExpectedLevel());
+			
 			List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(countyOrgId, UserRole.COUNTY_LEADER);
 			CuntaoUser countyLeader = userLists.iterator().next();
 			levelProcessDto.setEmployeeId(countyLeader.getLoginId());

@@ -13,7 +13,9 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -254,4 +256,19 @@ public interface PartnerInstanceQueryService {
 	 */
 	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException;
 
+    /**
+     * 获取合伙人层级成长信息
+     * @param taobaoUserId
+     * @return
+     */
+    public PartnerInstanceLevelGrowthDtoV2 getPartnerInstanceLevelGrowthDataV2(Long taobaoUserId);
+    
+    /**
+     * 获取合伙人成长趋势指标数据
+     * @param taobaoUserId
+     * @param statDate
+     * @return
+     */
+    public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
+    
 }

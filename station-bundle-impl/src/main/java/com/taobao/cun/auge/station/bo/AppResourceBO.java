@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.station.bo;
 
 import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.dal.domain.AppResource;
 
@@ -17,5 +20,10 @@ public interface AppResourceBO {
 	
 	public String queryAppResourceValue(String type, String key);
 	
+	public Map<String, AppResource> queryAppResourceMap(String type);
+	
+	public boolean configAppResource(@NotNull String type,@NotNull  String key, String value, boolean isDelete, @NotNull String configurePerson);
+	
 	public String queryAppValueNotAllowNull(String type, String key);
 }
+
