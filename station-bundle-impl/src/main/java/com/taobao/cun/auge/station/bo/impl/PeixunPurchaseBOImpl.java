@@ -220,7 +220,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		if (!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(
 				record.getStatus())
-				|| !PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
+				&& !PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
 						record.getStatus())) {
 			throw new AugeServiceException("当前状态无法撤回");
 		}
