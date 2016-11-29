@@ -703,6 +703,7 @@
  	   <if test="applyName != null and applyName != ''"  >
 	   and  a.apply_name=#{applyName}
 	  </if>
+	  order by a.id desc
   </select>
   
    <select id="queryPurchaseListCount" parameterType="map" resultType="java.lang.Integer">

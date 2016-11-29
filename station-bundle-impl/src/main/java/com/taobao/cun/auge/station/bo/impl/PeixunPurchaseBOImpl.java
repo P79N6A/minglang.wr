@@ -29,6 +29,7 @@ import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
@@ -60,6 +61,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
+	@Autowired
+	AppResourceBO appResourceBO;
 	
 	@Override
 	public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
@@ -264,9 +267,13 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prDto.setOuCode("B53");
 		List<PrLineDto> prLineList = getPrList(record);
 		prDto.setPrLineList(prLineList);
-		Result<?> result = prService.submitPr(prDto);
-		if(!result.isSuccess()) {
-			throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+		try {
+			Result<?> result = prService.submitPr(prDto);
+			if (!result.isSuccess()) {
+				throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("提交pr失败，失败原因：" + e);
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
@@ -290,29 +297,21 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
+		String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE",record.getPurchaseType()+"_SKU");
+		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
+		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
+//		String productCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","PRODUCT_CODE");
 		List<PrLineDto> prLineList = new ArrayList<PrLineDto>();
-		Result<CatalogProductDto> proResult = cereProductService
-				.getProductInfoWithSku("productNo");
-		if (proResult != null && proResult.isSuccess()) {
-			String useCode = null;
-			List<CategoryUseDto> useList = cereCategoryService.getCategoryUseList(
-					proResult.getValue().getPurchaseCategoryId(),
-					record.getApplyWorkNo());
-			if (useList != null && useList.size() > 0) {
-				useCode = useList.get(0).getUseCode();
-			}
-			PrLineDto prLine = new PrLineDto();
-			prLine.setSkuId(String.valueOf(proResult.getValue().getSkuList()
-					.get(0).getSkuId()));
-			prLine.setCategoryUse(useCode);
-			prLine.setNeedByDate(record.getGmtExceptOpen());
-			prLine.setDeliveryAddressId(new Long(111));
-			prLine.setReceiver("");
-			prLine.setQuantity(record.getExceptNum());
-			prLine.setRemark(applyReason(record));
-			prLine.setAcceptanceStandard("123");
-			prLineList.add(prLine);
-		}
+		PrLineDto prLine = new PrLineDto();
+		prLine.setSkuId(skuCode);
+		prLine.setCategoryUse(useCode);
+		prLine.setNeedByDate(record.getGmtExceptOpen());
+		prLine.setDeliveryAddressId(new Long(address));
+		prLine.setReceiver(record.getReceiverWorkNo());
+		prLine.setQuantity(record.getExceptNum());
+		prLine.setRemark(applyReason(record));
+//		prLine.setAcceptanceStandard("123");
+		prLineList.add(prLine);
 		return prLineList;
 	}
 
