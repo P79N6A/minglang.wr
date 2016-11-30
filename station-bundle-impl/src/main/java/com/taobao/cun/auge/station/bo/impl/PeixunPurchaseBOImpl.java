@@ -183,6 +183,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		record.setReceiverWorkNo(dto.getReceiverWorkNo());
 		record.setShareDesc(dto.getShareDesc());
 		record.setStatus(dto.getStatus());
+		record.setApplyName(dto.getApplyName());
+		record.setReceiverName(dto.getReceiverName());
+		record.setMasterName(dto.getMasterName());
 	}
 
 	@Override
