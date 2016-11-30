@@ -11,6 +11,7 @@ import com.ali.dowjones.service.portal.ProductService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.alibaba.buc.acl.api.service.AccessControlService;
+import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
@@ -183,4 +184,8 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return uicTagServiceClient;
 	}
 	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
+		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
+	}
 }
