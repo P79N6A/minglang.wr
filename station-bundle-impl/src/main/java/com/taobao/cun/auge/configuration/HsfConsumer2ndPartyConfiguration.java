@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.configuration;
 
-import com.alibaba.buc.api.EnhancedUserQueryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +11,8 @@ import com.ali.dowjones.service.portal.ProductService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.alibaba.buc.acl.api.service.AccessControlService;
+import com.alibaba.buc.api.EnhancedUserQueryService;
+import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
@@ -23,6 +24,17 @@ import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
+import com.taobao.uic.common.cache.UICCacheService;
+import com.taobao.uic.common.service.userdata.UicDataReadService;
+import com.taobao.uic.common.service.userdata.UicDataWriteService;
+import com.taobao.uic.common.service.userdata.client.TagRecordServiceClient;
+import com.taobao.uic.common.service.userdata.client.UicDataServiceClient;
+import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
+import com.taobao.uic.common.service.userinfo.TagRecordReadService;
+import com.taobao.uic.common.service.userinfo.TagRecordWriteService;
+import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
+import com.taobao.uic.common.util.ClientInfo;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
 
@@ -109,7 +121,69 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean esbFinanceContractAdapter(@Value("${crm.finance.service.version}") String version) {
 		return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
 	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean stationReadService(@Value("${hsf.consumer.version.cainiao.stationReadService}") String version) {
+		return getConsumerBean(StationReadService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean tagRecordReadService(@Value("${taobao.uic.version}") String version) {
+		return getConsumerBean(TagRecordReadService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean tagRecordWriteService(@Value("${taobao.uic.version}") String version) {
+		return getConsumerBean(TagRecordWriteService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean uicDataReadService(@Value("${taobao.uic.version}") String version) {
+		return getConsumerBean(UicDataReadService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean uicDataWriteService(@Value("${taobao.uic.version}") String version) {
+		return getConsumerBean(UicDataWriteService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean
+	public TagRecordServiceClient tagRecordServiceClient(TagRecordReadService tagRecordReadService,
+			TagRecordWriteService tagRecordWriteService,
+			UICCacheService uicCacheService) {
+		TagRecordServiceClient tagRecordServiceClient = new TagRecordServiceClient();
+		tagRecordServiceClient.setTagRecordWriteService(tagRecordWriteService);
+		tagRecordServiceClient.setTagRecordReadService(tagRecordReadService);
+		tagRecordServiceClient.setUicCacheService(uicCacheService);
+		return tagRecordServiceClient;
+	}
+	
+	@Bean
+	public UicDataServiceClient uicDataServiceClient(ClientInfo clientInfo,
+			UicDataReadService uicDataReadService,
+			UicDataWriteService uicDataWriteService,
+			UICCacheService uicCacheService) {
+		UicDataServiceClient uicDataServiceClient = new UicDataServiceClient();
+		uicDataServiceClient.setClientInfo(clientInfo);
+		uicDataServiceClient.setUicDataReadService(uicDataReadService);
+		uicDataServiceClient.setUicDataWriteService(uicDataWriteService);
+		uicDataServiceClient.setUicCacheService(uicCacheService);
+		return uicDataServiceClient;
+	}
 
+	@Bean
+	public UicTagServiceClient uicTagServiceClient(UicDataServiceClient uicDataServiceClient,
+			UicExtraReadServiceClient uicExtraReadServiceClient,
+			UicTagWriteServiceClient uicTagWriteServiceClient,
+			TagRecordServiceClient tagRecordServiceClient) {
+		UicTagServiceClient uicTagServiceClient = new UicTagServiceClient();
+		uicTagServiceClient.setUicDataServiceClient(uicDataServiceClient);
+		uicTagServiceClient.setUicExtraReadServiceClient(uicExtraReadServiceClient);
+		uicTagServiceClient.setUicTagWriteServiceClient(uicTagWriteServiceClient);
+		uicTagServiceClient.setTagRecordServiceClient(tagRecordServiceClient);
+		return uicTagServiceClient;
+	}
+	
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
 		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);

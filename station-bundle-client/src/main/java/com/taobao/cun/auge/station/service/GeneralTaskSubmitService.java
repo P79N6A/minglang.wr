@@ -63,7 +63,7 @@ public interface GeneralTaskSubmitService {
 	 * @param partnerType
 	 * @param operatorId
 	 */
-	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId);
+	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId,Long instanceId);
 
 	/**
 	 * 解冻和正式退出任务
