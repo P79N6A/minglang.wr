@@ -202,6 +202,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		record.setModifier(operate);
 		record.setAuditWorkNo(operate);
 		record.setAuditName(operateName);
+		record.setAuditDesc(auditDesc);
 		if(isPass){
 			record.setStatus(PeixunPurchaseStatusEnum.AUDIT_PASS.getCode());
 		}else{
