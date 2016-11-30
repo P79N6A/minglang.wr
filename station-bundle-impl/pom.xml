@@ -47,19 +47,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
-			</dependency> -->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-metaq</artifactId>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>com.aliexpress.boot</groupId>
-			<artifactId>spring-boot-starter-maven</artifactId>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> </dependency> -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-endpoints</artifactId>
@@ -165,8 +159,12 @@
 			<artifactId>bundle-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.taobao.cun.module</groupId>
+			<groupId>com.taobao</groupId>
 			<artifactId>biz-base-bundle.client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao</groupId>
+			<artifactId>biz-base-org</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
@@ -290,29 +288,35 @@
 			<version>1.0.6</version>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.crm.shared</groupId>
-			  <artifactId>dowjones.service.api</artifactId>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>dowjones.service.api</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.alibaba.crm.shared</groupId>
-				<artifactId>order.service</artifactId>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>order.service</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.crm.shared</groupId>
-			  <artifactId>esb.services.nasdaq</artifactId>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>esb.services.nasdaq</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.alibaba.crm.shared</groupId>
-				<artifactId>finance.service.api</artifactId>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>finance.service.api</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.common.uic.uic-common</groupId>
 			<artifactId>common-uic-common</artifactId>
 		</dependency>
+		<dependency>
+		   <groupId>org.jmockit</groupId> 
+		   <artifactId>jmockit</artifactId> 
+		   <version>1.28</version>
+		   <scope>test</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

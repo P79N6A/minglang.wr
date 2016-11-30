@@ -47,6 +47,17 @@ public class PartnerInstanceLevelConverter {
 		result.setScore(level.getScore());
 		result.setStationId(level.getStationId());
 		result.setTaobaoUserId(level.getTaobaoUserId());
+		result.setGoods1GmvRatio(level.getGoods1GmvRatio());
+		result.setGoods1GmvRatioScore(level.getGoods1GmvRatioScore());
+		result.setActiveAppUserCnt(level.getActiveAppUserCnt());
+		result.setActiveAppUserCntScore(level.getActiveAppUserCntScore());
+		result.setLoyaltyVillagerCnt(level.getLoyaltyVillagerCnt());
+		result.setLoyaltyVillagerCntScore(level.getLoyaltyVillagerCntScore());
+		result.setVisitedProductCnt(level.getVisitedProductCnt());
+		result.setVisitedProductCntScore(level.getVisitedProductCntScore());
+		result.setRepurchaseRate(level.getRepurchaseRate());
+		result.setRepurchaseRateScore(level.getRepurchaseRateScore());
+		result.setMonthlyIncomeLastSixMonth(level.getMonthlyIncomeLastSixMonth());
 		return result;
 	}
 
@@ -85,6 +96,17 @@ public class PartnerInstanceLevelConverter {
 		result.setStationId(level.getStationId());
 		result.setTaobaoUserId(level.getTaobaoUserId());
 		result.setRemark(level.getRemark());
+		result.setGoods1GmvRatio(level.getGoods1GmvRatio());
+        result.setGoods1GmvRatioScore(level.getGoods1GmvRatioScore());
+        result.setActiveAppUserCnt(level.getActiveAppUserCnt());
+        result.setActiveAppUserCntScore(level.getActiveAppUserCntScore());
+        result.setLoyaltyVillagerCnt(level.getLoyaltyVillagerCnt());
+        result.setLoyaltyVillagerCntScore(level.getLoyaltyVillagerCntScore());
+        result.setVisitedProductCnt(level.getVisitedProductCnt());
+        result.setVisitedProductCntScore(level.getVisitedProductCntScore());
+        result.setRepurchaseRate(level.getRepurchaseRate());
+        result.setRepurchaseRateScore(level.getRepurchaseRateScore());
+        result.setMonthlyIncomeLastSixMonth(level.getMonthlyIncomeLastSixMonth());
 		return result;
 	}
 
