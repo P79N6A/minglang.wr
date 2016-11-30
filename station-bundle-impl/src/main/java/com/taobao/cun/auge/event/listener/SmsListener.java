@@ -109,6 +109,7 @@ public class SmsListener implements EventListener {
 				} else if (WisdomCountyStateEnum.APPLY.equals(type)) {
 					content.append(diamondConfiguredProperties.getApply());
 					String[] phones = diamondConfiguredProperties.getMobile().split(",");
+                    logger.info("phones " + JSON.toJSONString(phones));
 					for (String phone : phones) {
 						generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), phone, applyEvent.getOperator(), content.toString());
 					}
