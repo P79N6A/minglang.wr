@@ -472,9 +472,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			// 不撤点
 			if ("n".equals(isQuitStation)) {
-				cainiaoTaskVo.setMethodName("unBindAdmin");
+				/*cainiaoTaskVo.setMethodName("unBindAdmin");
 				cainiaoTaskVo.setParameterType(Long.class.getName());
-				cainiaoTaskVo.setParameter(String.valueOf(stationId));
+				cainiaoTaskVo.setParameter(String.valueOf(stationId));*/
+				return;
 			} else {
 				cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 				SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
