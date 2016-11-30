@@ -142,7 +142,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     private void dispatchApplyEvent(WisdomCountyApplyDto dto) {
         WisdomCountyApplyEvent event = new WisdomCountyApplyEvent();
         event.copyOperatorDto(dto);
-        event.setCreator(dto.getCreator());
+        event.setCreator(dto.getOperator());
         event.setType(dto.getState());
         EventDispatcherUtil.dispatch(EventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
     }

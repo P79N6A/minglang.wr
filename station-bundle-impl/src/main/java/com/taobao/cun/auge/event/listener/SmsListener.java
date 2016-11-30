@@ -117,7 +117,7 @@ public class SmsListener implements EventListener {
 				logger.info("can not query mobile by " + creator);
 			}
 		} catch (Exception e) {
-			logger.error("can not query mobile by " + creator, e);
+			logger.error("query mobile error by " + creator, e);
 		}
 	}
 
