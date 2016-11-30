@@ -94,7 +94,7 @@ public class SmsListener implements EventListener {
 			if (users.get(creator) != null) {
 				logger.info("users " + JSON.toJSONString(users.get(creator)));
 				String mobile = users.get(creator).getCellphone();
-				String name = users.get(creator).getEName();
+				String name = users.get(creator).getLastName();
 				StringBuilder content = new StringBuilder(name);
 				WisdomCountyStateEnum type = applyEvent.getType();
 				if (WisdomCountyStateEnum.AUDIT_PASS.equals(type)) {

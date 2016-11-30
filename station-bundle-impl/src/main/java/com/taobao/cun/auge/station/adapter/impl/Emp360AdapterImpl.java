@@ -51,9 +51,7 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 		empQuery.setSecret(securityId);
 		empQuery.setWorkNoList(workNos);
 		try {
-			logger.info("employee360Service.getBatchEmpInfoList query param  : {}", JSON.toJSON(empQuery));
 			ResultSupport<List<Emp360Info>> returnResult = employee360Service.getBatchEmpInfoList(empQuery);
-			logger.info("employee360Service.getBatchEmpInfoList query result  : {}", JSON.toJSON(returnResult));
 			if (returnResult == null || !returnResult.isSuccess()) {
 				throw new AugeServiceException("workNos is null!");
 			}
