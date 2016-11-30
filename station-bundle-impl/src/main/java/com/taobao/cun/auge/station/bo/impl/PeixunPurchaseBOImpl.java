@@ -221,9 +221,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(record==null){
 			throw new AugeServiceException("not find record");
 		}
-		if (!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(
-				record.getStatus())
-				&& !PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
+		if (!PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
 						record.getStatus())) {
 			throw new AugeServiceException("当前状态无法撤回");
 		}
