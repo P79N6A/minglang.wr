@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.alibaba.buc.api.EnhancedUserQueryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,5 +125,10 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean ceresCategoryService(@Value("${alibaba.ceres.version}") String version) {
 		return getConsumerBean(CategoryService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
+		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
 	}
 }
