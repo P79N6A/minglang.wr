@@ -8,8 +8,8 @@ public class PartnerPeixunCourseTypeEnum implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	public static final PartnerPeixunCourseTypeEnum APPLY_IN = new PartnerPeixunCourseTypeEnum("APPLY_IN", "启航班 ");
-	public static final PartnerPeixunCourseTypeEnum UPGRADE = new PartnerPeixunCourseTypeEnum("UPGRADE", "橙长营 ");
+	public static final PartnerPeixunCourseTypeEnum APPLY_IN = new PartnerPeixunCourseTypeEnum("APPLY_IN", "启航班");
+	public static final PartnerPeixunCourseTypeEnum UPGRADE = new PartnerPeixunCourseTypeEnum("UPGRADE", "橙长营");
 
 	private static final Map<String, PartnerPeixunCourseTypeEnum> mappings = new HashMap<String, PartnerPeixunCourseTypeEnum>();
 	static {
