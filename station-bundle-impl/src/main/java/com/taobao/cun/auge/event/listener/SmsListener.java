@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.event.listener;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
-import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import org.slf4j.Logger;
@@ -52,6 +52,9 @@ public class SmsListener implements EventListener {
 	@Autowired
 	EnhancedUserQueryService enhancedUserQueryService;
 
+	@Autowired
+	DiamondConfiguredProperties diamondConfiguredProperties;
+
 	@Override
 	public void onMessage(Event event) {
 
@@ -98,17 +101,24 @@ public class SmsListener implements EventListener {
 				StringBuilder content = new StringBuilder(name);
 				WisdomCountyStateEnum type = applyEvent.getType();
 				if (WisdomCountyStateEnum.AUDIT_PASS.equals(type)) {
-					content.append("，你的智慧县域报名审核已通过，请至ORG下载合同模板及合同审批注意事项。");
+					content.append(diamondConfiguredProperties.getPass());
+					generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), mobile, applyEvent.getOperator(), content.toString());
 				} else if (WisdomCountyStateEnum.AUDIT_FAIL.equals(type)) {
-					content.append("，你的智慧县域报名审核未通过。");
+					content.append(diamondConfiguredProperties.getFail());
+					generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), mobile, applyEvent.getOperator(), content.toString());
+				} else if (WisdomCountyStateEnum.APPLY.equals(type)) {
+					content.append(diamondConfiguredProperties.getApply());
+					String[] phones = diamondConfiguredProperties.getMobile().split(",");
+                    logger.info("phones " + JSON.toJSONString(phones));
+					for (String phone : phones) {
+						generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), phone, applyEvent.getOperator(), content.toString());
+					}
 				}
-				generalTaskSubmitService.submitSmsTask(Long.valueOf(creator), mobile, applyEvent.getOperator(), content.toString());
 			} else {
 				logger.info("can not query mobile by " + creator);
 			}
-		} catch (BucException e) {
-			logger.error("can not query mobile by " + creator, e);
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("query mobile error by " + creator, e);
 		}
 	}
 
