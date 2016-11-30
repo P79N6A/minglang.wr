@@ -45,12 +45,12 @@ public class StationStatusChangeEnum implements Serializable{
 			"停业 : '停业申请中' -> '已停业'", StationStatusEnum.CLOSED, StationStatusEnum.CLOSING);
 
 	public static final StationStatusChangeEnum START_QUITTING = new StationStatusChangeEnum(ChangeEnum.START_QUITTING,
-			"申请退出 :'已停业' -> '退出申请中'", StationStatusEnum.QUITING, StationStatusEnum.CLOSED);
+			"申请撤点 :'已停业' -> '撤点申请中'", StationStatusEnum.QUITING, StationStatusEnum.CLOSED);
 
 	public static final StationStatusChangeEnum QUITTING_REFUSED = new StationStatusChangeEnum(ChangeEnum.QUITTING_REFUSED,
-			"退出申请打回 : '退出申请中' -> '已停业'", StationStatusEnum.CLOSED, StationStatusEnum.QUITING);
+			"撤点申请打回 : '撤点申请中' -> '已停业'", StationStatusEnum.CLOSED, StationStatusEnum.QUITING);
 
-	public static final StationStatusChangeEnum QUIT = new StationStatusChangeEnum(ChangeEnum.QUIT, "已退出 :'退出申请中'->'已退出'",
+	public static final StationStatusChangeEnum QUIT = new StationStatusChangeEnum(ChangeEnum.QUIT, "已撤点 :'撤点申请中'->'已撤点'",
 			StationStatusEnum.QUIT, StationStatusEnum.QUITING);
 	
 	private static final Map<ChangeEnum, StationStatusChangeEnum> mappings = new HashMap<ChangeEnum, StationStatusChangeEnum>();

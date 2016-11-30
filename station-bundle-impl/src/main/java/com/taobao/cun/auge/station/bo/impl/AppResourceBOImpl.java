@@ -1,11 +1,15 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
@@ -52,7 +56,58 @@ public class AppResourceBOImpl implements AppResourceBO {
 		return "";
 	}
 
-	@Override
+    @Override
+    public boolean configAppResource(String type, String key, String value,  boolean isDelete, String configurePerson) {
+        ValidateUtils.notNull(type);
+        ValidateUtils.notNull(key);
+        ValidateUtils.notNull(configurePerson);        
+        AppResource existResource = queryAppResource(type, key);
+        if(existResource!=null){
+            AppResource newResource = toAppResource(type, key, value, configurePerson, isDelete);
+            newResource.setId(existResource.getId());
+            newResource.setGmtCreate(existResource.getGmtCreate());
+            int count = appResourceMapper.updateByPrimaryKeySelective(newResource);
+            return count > 0;
+        }else{
+            AppResource newResource = toAppResource(type, key, value, configurePerson, isDelete);
+            newResource.setCreator(configurePerson);
+            newResource.setGmtCreate(new Date());
+            int id = appResourceMapper.insert(newResource);
+            return id > 0;
+        }
+    }
+
+    private AppResource toAppResource(String type, String key, String value, String configurePerson, boolean isDeleted) {
+        AppResource resource = new AppResource();
+        resource.setGmtModified(new Date());
+        resource.setValue(value);
+        if(isDeleted){
+            resource.setIsDeleted("y");
+        }else{
+            resource.setIsDeleted("n");
+        }
+        resource.setModifier(configurePerson);
+        resource.setType(type);
+        resource.setName(key);
+        return resource;
+    }
+
+    @Override
+    public Map<String, AppResource> queryAppResourceMap(String type) {
+        List<AppResource> appResourceList = queryAppResourceList(type);
+        if(CollectionUtils.isEmpty(appResourceList)){
+            return Maps.newHashMap();
+        }
+        Map<String, AppResource> resourceMap = Maps.newHashMap();
+        for(AppResource resource:appResourceList){
+            if(resource!=null && resource.getName()!=null){
+                resourceMap.put(resource.getName(), resource);
+            }
+        }
+        return resourceMap;
+    }
+
+    @Override
 	public String queryAppValueNotAllowNull(String type, String key) {
 		String value=queryAppResourceValue(type,key);
 		if(StringUtils.isEmpty(value)){
@@ -63,3 +118,4 @@ public class AppResourceBOImpl implements AppResourceBO {
 	}
 
 }
+

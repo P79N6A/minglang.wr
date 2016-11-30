@@ -117,13 +117,11 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,Long instanceId)throws AugeServiceException {
+	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,Long instanceId) {
 		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instanceId);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel)throws AugeServiceException {
+	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel) {
 		strategy.get(typeEnum.getCode()).validateClosePreCondition(partnerStationRel);
 	}
 	

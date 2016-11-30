@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
+import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -14,7 +15,9 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 
 /**
@@ -99,11 +102,19 @@ public interface PartnerInstanceService {
 	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException;
 
 	/**
-	 * 冻结保证金
+	 * 冻结保证金（新接口）
 	 * 
-	 * @param taobaoUserId
-	 * @param frozenMoney
-	 * @return
+	 * @param freezeBondDto
+	 * @return boolean
+	 */
+	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	
+	/**
+	 * 冻结保证金(老接口，防止发布时报错,未来不在使用)
+	 * 使用新接口freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	 * 
+	 * @param freezeBondDto
+	 * @return boolean
 	 */
 	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
 
@@ -138,7 +149,7 @@ public interface PartnerInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeServiceException;
+	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeBusinessException,AugeSystemException;
 
 	/**
 	 * 小二、TP商申请停业
@@ -147,7 +158,7 @@ public interface PartnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeServiceException;
+	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException;
 
 	/**
 	 * 小二、TP商申请撤点
@@ -156,7 +167,7 @@ public interface PartnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeServiceException;
+	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeBusinessException,AugeSystemException;
 
 	/**
 	 * 申请入驻

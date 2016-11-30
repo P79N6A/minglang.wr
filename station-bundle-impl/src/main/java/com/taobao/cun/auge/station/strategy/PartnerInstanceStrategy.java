@@ -67,7 +67,7 @@ public interface PartnerInstanceStrategy {
 	 * @param instanceId
 	 * @throws AugeServiceException
 	 */
-	public void validateExistChildrenForQuit(Long instanceId) throws AugeServiceException;
+	public void validateExistChildrenForQuit(Long instanceId);
 	
 	/**
 	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手
@@ -77,13 +77,13 @@ public interface PartnerInstanceStrategy {
 	 * @param partnerStationRel
 	 * @throws AugeServiceException
 	 */
-	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException;
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel);
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 	
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 	
-	public void startQuiting(Long instanceId, String stationName,OperatorDto operatorDto) throws AugeServiceException;
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 
 	/**
 	 * 校验资产是否已经归还

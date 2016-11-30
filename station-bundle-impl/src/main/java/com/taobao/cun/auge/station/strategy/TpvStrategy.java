@@ -20,7 +20,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -121,7 +121,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-	public void validateClosePreCondition(PartnerStationRel partnerStationRel) throws AugeServiceException {
+	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
 		// TODO Auto-generated method stub
 
 	}
@@ -226,7 +226,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
 
-		EventDispatcherUtil.dispatch(EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), operator));
 	}
@@ -331,13 +331,14 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long applyId = findCloseApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
+		processTask.setBusiness(ProcessBusinessEnum.TPV_CLOSE);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		processTask.setBusinessId(stationApplyId);
 		processTask.setBusinessName(stationName);
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
@@ -348,13 +349,14 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long applyId = findQuitApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
+		processTask.setBusiness(ProcessBusinessEnum.TPV_QUIT);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
 		processTask.setBusinessId(stationApplyId);
 		processTask.setBusinessName(stationName);
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
