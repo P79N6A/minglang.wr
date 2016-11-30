@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.alibaba.buc.api.EnhancedUserQueryService;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,6 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
-import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 @Configuration
@@ -108,5 +108,10 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean esbFinanceContractAdapter(@Value("${crm.finance.service.version}") String version) {
 		return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
+	}
+
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
+		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
 	}
 }
