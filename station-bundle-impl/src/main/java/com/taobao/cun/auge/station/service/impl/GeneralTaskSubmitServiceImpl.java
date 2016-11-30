@@ -22,6 +22,7 @@ import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
@@ -75,6 +76,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
+	
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
@@ -472,10 +476,12 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			// 不撤点
 			if ("n".equals(isQuitStation)) {
-				/*cainiaoTaskVo.setMethodName("unBindAdmin");
-				cainiaoTaskVo.setParameterType(Long.class.getName());
-				cainiaoTaskVo.setParameter(String.valueOf(stationId));*/
-				return;
+				if (partnerInstanceBO.isOtherPartnerQuit(instanceId)) {
+					cainiaoTaskVo.setMethodName("unBindAdmin");
+					cainiaoTaskVo.setParameterType(Long.class.getName());
+					cainiaoTaskVo.setParameter(String.valueOf(stationId));
+					taskLists.add(cainiaoTaskVo);
+				}
 			} else {
 				cainiaoTaskVo.setMethodName("deleteCainiaoStation");
 				SyncDeleteCainiaoStationDto syncDeleteCainiaoStationDto = new SyncDeleteCainiaoStationDto();
@@ -483,9 +489,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 				syncDeleteCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
 				cainiaoTaskVo.setParameterType(SyncDeleteCainiaoStationDto.class.getName());
 				cainiaoTaskVo.setParameter(JSON.toJSONString(syncDeleteCainiaoStationDto));
+				taskLists.add(cainiaoTaskVo);
 			}
 
-			taskLists.add(cainiaoTaskVo);
+			
 
 			// 取消支付宝标示
 			GeneralTaskDto dealStationTagTaskVo = new GeneralTaskDto();
