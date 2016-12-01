@@ -30,6 +30,7 @@
 		<tomcat.version>7.0.64</tomcat.version>
 
 		<ague.station.client.version>1.7.2</ague.station.client.version>
+
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
 	</properties>
@@ -461,11 +462,6 @@
 				<version>4.5.2</version>
 			</dependency>
 			<dependency>
-			  <groupId>com.alibaba.crm.shared</groupId>
-			  <artifactId>ceres.shard</artifactId>
-			  <version>1.0.0.39</version>
-			 </dependency>
-			 <dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
 				<version>3.7.5.2</version>
@@ -480,6 +476,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>ceres.shard</artifactId>
+			  <version>1.0.0.39</version>
+			 </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
