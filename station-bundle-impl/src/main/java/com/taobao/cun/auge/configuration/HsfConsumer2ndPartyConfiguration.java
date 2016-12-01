@@ -138,7 +138,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean ceresCategoryService(@Value("${alibaba.ceres.version}") String version) {
 		return getConsumerBean(CategoryService.class, HSFGroup.HSF, version, 3000);
 	}
-	
+	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean stationReadService(@Value("${hsf.consumer.version.cainiao.stationReadService}") String version) {
 		return getConsumerBean(StationReadService.class, HSFGroup.HSF, version, 3000);
 	}
