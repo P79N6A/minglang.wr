@@ -62,6 +62,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         WisdomCountyApply wisdomCountyApply = WisdomCountyApplyConverter.dtoTo(dto);
         DomainUtils.beforeInsert(wisdomCountyApply, dto.getOperator());
         wisdomCountyApplyMapper.insert(wisdomCountyApply);
+        dispatchApplyEvent(dto);
         return wisdomCountyApply.getId();
     }
 
@@ -136,6 +137,14 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
             return true;
         }
         return false;
+    }
+
+    private void dispatchApplyEvent(WisdomCountyApplyDto dto) {
+        WisdomCountyApplyEvent event = new WisdomCountyApplyEvent();
+        event.copyOperatorDto(dto);
+        event.setCreator(dto.getOperator());
+        event.setType(dto.getState());
+        EventDispatcherUtil.dispatch(EventConstant.WISDOM_COUNTY_APPLY_EVENT, event);
     }
 
     private void dispatchAuditEvent(WisdomCountyApplyAuditDto dto, String creator){
