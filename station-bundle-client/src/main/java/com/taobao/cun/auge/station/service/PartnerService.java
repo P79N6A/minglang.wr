@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerService {
 	/**
@@ -15,4 +16,6 @@ public interface PartnerService {
 	 * @return
 	 */
 	public PartnerDto getPartnerByAlilangUserId(String aliLangUserId);
+	
+	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
 }

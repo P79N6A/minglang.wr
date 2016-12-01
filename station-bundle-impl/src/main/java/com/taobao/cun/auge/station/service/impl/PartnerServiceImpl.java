@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -26,4 +27,8 @@ public class PartnerServiceImpl implements PartnerService {
 		return PartnerConverter.toPartnerDto(partnerBO.getPartnerByAliLangUserId(aliLangUserId));
 	}
 
+	@Override
+	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException {
+		return PartnerConverter.toPartnerDto(partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId));
+	}
 }
