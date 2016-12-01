@@ -97,12 +97,12 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				//updateCaiNiaoFeature
 				if(feature.get("ctpType") != null && !feature.get("ctpType").equals("CtPG")){
 					feature.put("ctpType", "CtPG");
-					boolean updateFeaturesResult = stationWriteService.putStationFeatures(cainiaoStationId, feature.asMap(), Modifier.newSystem()).getData();
-					if(!updateFeaturesResult){
+					 Result<Boolean> updateFeaturesResult= stationWriteService.putStationFeatures(cainiaoStationId, feature.asMap(), Modifier.newSystem());
+					if(updateFeaturesResult == null || !updateFeaturesResult.isSuccess()||!updateFeaturesResult.getData()){
 						partnerTpg.setCainiaoStationFeature("upgrade_fail");
 						partnerTpg.setCainiaoStationId(cainiaoStationId);
 						updatePartnerTpg(partnerTpg);
-						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 更新菜鸟供赢通标示失败");
+						logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 更新菜鸟供赢通标示失败,errorMessage:"+updateFeaturesResult!=null?updateFeaturesResult.getErrorMessage():"updateFeatureResult is null");
 						throw new AugeBusinessException("更新菜鸟供赢通标示失败");
 					}else{
 						partnerTpg.setCainiaoStationFeature("upgrade_success");
