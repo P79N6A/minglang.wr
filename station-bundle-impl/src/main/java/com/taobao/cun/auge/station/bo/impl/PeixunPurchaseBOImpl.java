@@ -273,7 +273,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prDto.setActualRequestor(record.getApplyWorkNo());
 		prDto.setApplicant(record.getApplyWorkNo());
 		prDto.setDescription(applyReason(record));
-		prDto.setOuCode("B53");
+		prDto.setOuCode("T62");
 		List<PrLineDto> prLineList = getPrList(record);
 		prDto.setPrLineList(prLineList);
 		try {
