@@ -476,7 +476,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					for(PartnerCourseRecord newRecord:newRecords){
 						if(dto.getUserId().compareTo(newRecord.getPartnerUserId())==0){
 							dto.setChengZhangStatus(newRecord.getStatus());
-							dto.setChengZhangStatusDesc(PartnerPeixunStatusEnum.valueof(dto.getCourseStatus()).getDesc());
+							dto.setChengZhangStatusDesc(PartnerPeixunStatusEnum.valueof(newRecord.getStatus()).getDesc());
 							dto.setGmtChengZhangDone(newRecord.getGmtDone());
 							dto.setGmtChengZhangDoneDesc(newRecord.getGmtDone()==null?null:sdf.format(newRecord.getGmtDone()));
 							break;
@@ -490,7 +490,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					for(PartnerCourseRecord newRecord:newRecords){
 						if(dto.getUserId().compareTo(newRecord.getPartnerUserId())==0){
 							dto.setQiHangStatus(newRecord.getStatus());
-							dto.setQiHangStatusDesc(PartnerPeixunStatusEnum.valueof(dto.getCourseStatus()).getDesc());
+							dto.setQiHangStatusDesc(PartnerPeixunStatusEnum.valueof(newRecord.getStatus()).getDesc());
 							dto.setGmtQiHangDone(newRecord.getGmtDone());
 							dto.setGmtQiHangDoneDesc(newRecord.getGmtDone()==null?null:sdf.format(newRecord.getGmtDone()));
 							break;
