@@ -308,6 +308,10 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>ceres.shard</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.common.uic.uic-common</groupId>
 			<artifactId>common-uic-common</artifactId>
 		</dependency>

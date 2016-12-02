@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +28,7 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -38,8 +42,11 @@ import com.taobao.cun.auge.partner.service.PartnerQueryService;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -403,4 +410,94 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		return result;
 	}
 
+	@Override
+	public List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(
+			PartnerPeixunQueryCondition condition) {
+		Assert.notNull(condition.getOrgIdPath());
+		Map<String,Object> param =new HashMap<String,Object>();
+		param.put("orgIdPath", condition.getOrgIdPath());
+		param.put("nickName", condition.getNickName());
+		param.put("phoneNum", condition.getPhoneNum());
+		param.put("partnerName", condition.getPartnerName());
+		param.put("courseTypes", condition.getCourseTypes());
+		List<PartnerPeixunStatusCountDto> records = partnerCourseRecordMapper
+				.queryPeixunCountByCondition(param);
+		return records;
+	}
+
+	@Override
+	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
+			PartnerPeixunQueryCondition condition) {
+		Assert.notNull(condition.getOrgIdPath());
+		Map<String,Object> param =new HashMap<String,Object>();
+		param.put("orgIdPath", condition.getOrgIdPath());
+		param.put("nickName", condition.getNickName());
+		param.put("phoneNum", condition.getPhoneNum());
+		param.put("partnerName", condition.getPartnerName());
+		if(condition.getPeixunStatus()!=null){
+			param.put("courseStatus", condition.getPeixunStatus());
+		}
+		param.put("courseType", condition.getCourseTypes().get(0));
+		param.put("pageNum", condition.getPageNum());
+		param.put("pageSize", condition.getPageSize());
+		int count=partnerCourseRecordMapper.queryPeixunListCount(param);
+		List<PartnerPeixunListDetailDto> records = partnerCourseRecordMapper
+				.queryPeixunList(param);
+		fillResult(records,condition.getCourseTypes().get(0));
+		PageDto<PartnerPeixunListDetailDto> result=new PageDto<PartnerPeixunListDetailDto>();
+		result.setTotal(count);
+		result.setItems(records);
+		return result;
+	}
+
+	private void fillResult(List<PartnerPeixunListDetailDto> records,String courseType){
+		if(records.size()>0){
+			List<Long> userIds=new ArrayList<Long>();
+			for(PartnerPeixunListDetailDto dto:records){
+				userIds.add(dto.getUserId());
+			}
+			PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andIsDeletedEqualTo("n");
+			criteria.andPartnerUserIdIn(userIds);
+			if(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode().equals(courseType)){
+				criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.UPGRADE.getCode());
+			}else{
+				criteria.andCourseTypeEqualTo(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode());
+			}
+			List<PartnerCourseRecord> newRecords = partnerCourseRecordMapper.selectByExample(example);
+			for(PartnerPeixunListDetailDto dto:records){
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				if(dto.getCourseType().equals(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode())){
+					dto.setQiHangStatus(dto.getCourseStatus());
+					dto.setQiHangStatusDesc(PartnerPeixunStatusEnum.valueof(dto.getCourseStatus()).getDesc());
+					dto.setGmtQiHangDone(dto.getGmtDone());
+				    dto.setGmtQiHangDoneDesc(dto.getGmtQiHangDone()==null?null:sdf.format(dto.getGmtQiHangDone())); 
+					for(PartnerCourseRecord newRecord:newRecords){
+						if(dto.getUserId().compareTo(newRecord.getPartnerUserId())==0){
+							dto.setChengZhangStatus(newRecord.getStatus());
+							dto.setChengZhangStatusDesc(PartnerPeixunStatusEnum.valueof(newRecord.getStatus()).getDesc());
+							dto.setGmtChengZhangDone(newRecord.getGmtDone());
+							dto.setGmtChengZhangDoneDesc(newRecord.getGmtDone()==null?null:sdf.format(newRecord.getGmtDone()));
+							break;
+						}
+					}
+				}else{
+					dto.setChengZhangStatus(dto.getCourseStatus());
+					dto.setChengZhangStatusDesc(PartnerPeixunStatusEnum.valueof(dto.getCourseStatus()).getDesc());
+					dto.setGmtChengZhangDone(dto.getGmtDone());
+				    dto.setGmtChengZhangDoneDesc(dto.getGmtChengZhangDone()==null?null:sdf.format(dto.getGmtChengZhangDone())); 
+					for(PartnerCourseRecord newRecord:newRecords){
+						if(dto.getUserId().compareTo(newRecord.getPartnerUserId())==0){
+							dto.setQiHangStatus(newRecord.getStatus());
+							dto.setQiHangStatusDesc(PartnerPeixunStatusEnum.valueof(newRecord.getStatus()).getDesc());
+							dto.setGmtQiHangDone(newRecord.getGmtDone());
+							dto.setGmtQiHangDoneDesc(newRecord.getGmtDone()==null?null:sdf.format(newRecord.getGmtDone()));
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 }

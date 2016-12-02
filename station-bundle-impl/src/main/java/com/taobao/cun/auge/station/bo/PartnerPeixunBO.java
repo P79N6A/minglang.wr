@@ -3,8 +3,12 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
+import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.notify.message.StringMessage;
 
@@ -71,4 +75,8 @@ public interface PartnerPeixunBO {
 	 */
     public List<PartnerPeixunDto> queryBatchOnlinePeixunProcess(Long userId, List<String> courseCodes);
 	
+    public List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(
+			PartnerPeixunQueryCondition condition);
+    
+    public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
 }

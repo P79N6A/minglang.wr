@@ -29,6 +29,7 @@ import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
@@ -103,6 +104,9 @@ public class ProcessProcessor {
 	@Autowired
 	LevelAuditFlowService levelAuditFlowService;
 	
+	@Autowired
+	PeixunPurchaseBO peixunPurchaseBO;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -164,6 +168,14 @@ public class ProcessProcessor {
 			//任务完成
 		}else if(ProcessMsgTypeEnum.TASK_COMPLETED.getCode().equals(msgType)){
 			//流程启动
+			if(ProcessBusinessEnum.peixunPurchase.getCode().equals(businessCode)){
+				//培训集采
+				String resultCode = ob.getString("result");
+				String audit=ob.getString("approver");
+				String auditName=ob.getString("approverName");  
+				String desc=ob.getString("taskRemark");   
+				handlePeixunPurchase(objectId,audit,auditName,desc,resultCode);
+			}
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
 			
 		}
@@ -383,4 +395,7 @@ public class ProcessProcessor {
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 	
+	private void handlePeixunPurchase(String id,String audit,String auditName,String desc,String result){
+		peixunPurchaseBO.audit(new Long(id), audit,auditName, desc, !"拒绝".equals(result));
+	}
 }

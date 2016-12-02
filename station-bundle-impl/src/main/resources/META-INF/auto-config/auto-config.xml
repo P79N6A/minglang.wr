@@ -85,6 +85,7 @@
 		<property name="spring.notify.publisher.topics" defaultValue="CUNTAO_AUGE_ALILANG"/>
 		<property name="spring.notify.subscriber.topics.alilang.registered" defaultValue="NM-cuntao-user,NM-alilang-to-cuntao-user,NM-alilang-user"/>
 		<property name="alilang.orgId" defaultValue="1"/>
+		<property name="alibaba.ceres.version" defaultValue="1.0.0.daily" description="集采服务" />
 		<property name="taobao.uic.version" defaultValue="1.0.0.daily"/>
 		<property name="hsf.consumer.version.cainiao.stationReadService" defaultValue="1.0.0.daily"/>
 		<property name="hsf.consumer.version.enhancedUserQueryService" defaultValue="1.0.0.daily" description="用户查询服务" />

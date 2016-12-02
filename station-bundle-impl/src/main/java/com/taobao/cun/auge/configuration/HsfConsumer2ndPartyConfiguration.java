@@ -16,6 +16,8 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
+import com.alibaba.ceres.service.category.CategoryService;
+import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
@@ -122,6 +124,20 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
 	}
 	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean prService(@Value("${alibaba.ceres.version}") String version) {
+		return getConsumerBean(PrService.class, HSFGroup.HSF, version, 30000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean ceresProductService(@Value("${alibaba.ceres.version}") String version) {
+		return getConsumerBean(com.alibaba.ceres.service.catalog.ProductService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean ceresCategoryService(@Value("${alibaba.ceres.version}") String version) {
+		return getConsumerBean(CategoryService.class, HSFGroup.HSF, version, 3000);
+	}
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean stationReadService(@Value("${hsf.consumer.version.cainiao.stationReadService}") String version) {
 		return getConsumerBean(StationReadService.class, HSFGroup.HSF, version, 3000);
