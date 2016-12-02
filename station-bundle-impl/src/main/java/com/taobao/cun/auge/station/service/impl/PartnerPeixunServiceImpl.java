@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.taobao.common.category.util.StringUtil;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
@@ -23,8 +24,11 @@ import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
+import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -206,6 +210,18 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			result.put(code, re);
 		}
 		return result;
+	}
+
+	@Override
+	public List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(
+			PartnerPeixunQueryCondition condition) {
+		return partnerPeixunBO.queryPeixunCountByCondition(condition);
+	}
+
+	@Override
+	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
+			PartnerPeixunQueryCondition condition) {
+		return partnerPeixunBO.queryPeixunList(condition);
 	}
 	
 }

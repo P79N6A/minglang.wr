@@ -20,7 +20,8 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum partnerInstanceLevelAudit = new ProcessBusinessEnum("partnerInstanceLevelAudit", "合伙人层级审批");
 	public static final ProcessBusinessEnum TPV_CLOSE = new ProcessBusinessEnum("TPV_CLOSE", "申请停业");
 	public static final ProcessBusinessEnum TPV_QUIT = new ProcessBusinessEnum("TPV_QUIT", "申请退出");
-	
+	public static final ProcessBusinessEnum peixunPurchase = new ProcessBusinessEnum("peixun_purchase", "培训集采审批");
+
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
 		mappings.put("stationQuitRecord", stationQuitRecord);
@@ -28,6 +29,8 @@ public class ProcessBusinessEnum implements Serializable {
 		mappings.put("partnerInstanceLevelAudit", partnerInstanceLevelAudit);
 		mappings.put("TPV_CLOSE", TPV_CLOSE);
 		mappings.put("TPV_QUIT", TPV_QUIT);
+		mappings.put("peixunPurchase", peixunPurchase);
+
 	}
 
 	public ProcessBusinessEnum(String code, String desc) {
