@@ -501,6 +501,7 @@
    <if test="courseStatus != null and courseStatus !=''" >
        and b.status=#{courseStatus}
    </if>
+   order by a.id desc
   </select>
    <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
    select count(*)
