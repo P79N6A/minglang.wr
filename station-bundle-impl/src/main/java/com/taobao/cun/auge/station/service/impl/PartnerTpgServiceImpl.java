@@ -193,4 +193,9 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 		return partnerTpgBO.queryByParnterInstanceId(partnerInstanceId).isPresent();
 	}
 
+    @Override
+    public boolean hasTpgTag(Long taobaoUserId) {
+        return partnerTpgBO.checkTag(taobaoUserId);
+    }
+
 }

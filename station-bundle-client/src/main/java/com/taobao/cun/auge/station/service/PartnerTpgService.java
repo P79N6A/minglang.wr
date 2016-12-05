@@ -22,4 +22,6 @@ public interface PartnerTpgService {
 	 * @return
 	 */
 	public boolean isPartnerTpg(Long partnerInstanceId);
+
+	public boolean hasTpgTag(Long taobaoUserId);
 }
