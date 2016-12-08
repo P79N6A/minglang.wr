@@ -130,7 +130,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Station station = stationBO.getStationById(partnerInstance.getStationId());
             Long orgId = station.getApplyOrg();
             CuntaoOrgDto currentOrg = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
-            while (null == currentOrg) {
+            while (null != currentOrg ) {
                 if (forceInstallOrgList.contains(currentOrg.getId())) {
                     return true;
                 }
@@ -141,6 +141,5 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         }
         return false;
     }
-
 
 }
