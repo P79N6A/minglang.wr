@@ -14,7 +14,7 @@ public class AlilangProfileDto implements Serializable{
     /**
      * 村蜜阿里郎用户ID
      */
-    private String aliLangUserId;
+    private String alilangUserId;
     /**
      * 是否强制安装村蜜阿里郎
      */
@@ -28,12 +28,12 @@ public class AlilangProfileDto implements Serializable{
         this.taobaoUserId = taobaoUserId;
     }
 
-    public String getAliLangUserId() {
-        return aliLangUserId;
+    public String getAlilangUserId() {
+        return alilangUserId;
     }
 
-    public void setAliLangUserId(String aliLangUserId) {
-        this.aliLangUserId = aliLangUserId;
+    public void setAlilangUserId(String alilangUserId) {
+        this.alilangUserId = alilangUserId;
     }
 
     public boolean isForceInstallAlilang() {

@@ -97,11 +97,12 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
     @Override
     public AlilangProfileDto getAlilangProfile(Long taobaoUserId) {
         AlilangProfileDto profile = new AlilangProfileDto();
+
         profile.setTaobaoUserId(taobaoUserId);
         try {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             Partner partner = partnerBO.getPartnerById(partnerInstance.getPartnerId());
-            profile.setAliLangUserId(partner.getAlilangUserId());
+            profile.setAlilangUserId(partner.getAlilangUserId());
             boolean forceInstallAlilang = isForceInstallAlilang(partnerInstance);
             profile.setForceInstallAlilang(forceInstallAlilang);
         } catch (Exception e) {
