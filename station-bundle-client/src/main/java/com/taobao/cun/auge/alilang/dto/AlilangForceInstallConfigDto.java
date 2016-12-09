@@ -13,9 +13,18 @@ public class AlilangForceInstallConfigDto implements Serializable {
      */
     private List<Long> whiteList;
     /**
+     * 是否全部合伙人强制安装
+     * 当true时，forceInstallOrgIdList将不起作用
+     */
+    private boolean forceAllPartnerInstall;
+    /**
      * 强制安装的组织id列表
      */
     private List<Long> forceInstallOrgIdList;
+    /**
+     * 需要强制安装的合伙人类型
+     */
+    private List<String> forceInstallPartnerTypeList;
 
     public List<Long> getWhiteList() {
         return whiteList;
@@ -31,5 +40,21 @@ public class AlilangForceInstallConfigDto implements Serializable {
 
     public void setForceInstallOrgIdList(List<Long> forceInstallOrgIdList) {
         this.forceInstallOrgIdList = forceInstallOrgIdList;
+    }
+
+    public List<String> getForceInstallPartnerTypeList() {
+        return forceInstallPartnerTypeList;
+    }
+
+    public void setForceInstallPartnerTypeList(List<String> forceInstallPartnerTypeList) {
+        this.forceInstallPartnerTypeList = forceInstallPartnerTypeList;
+    }
+
+    public boolean isForceAllPartnerInstall() {
+        return forceAllPartnerInstall;
+    }
+
+    public void setForceAllPartnerInstall(boolean forceAllPartnerInstall) {
+        this.forceAllPartnerInstall = forceAllPartnerInstall;
     }
 }

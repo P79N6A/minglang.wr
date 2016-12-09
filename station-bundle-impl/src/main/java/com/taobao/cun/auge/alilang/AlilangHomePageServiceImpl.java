@@ -2,6 +2,7 @@ package com.taobao.cun.auge.alilang;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.alilang.dto.AlilangForceInstallConfigDto;
@@ -9,6 +10,7 @@ import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.diamond.client.Diamond;
+import com.taobao.diamond.manager.ManagerListener;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -27,6 +29,8 @@ import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.util.CollectionUtils;
+
+import javax.annotation.PostConstruct;
 
 @Service("alilangHomePageService")
 @HSFProvider(serviceInterface = AlilangHomePageService.class)
@@ -97,7 +101,6 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
     @Override
     public AlilangProfileDto getAlilangProfile(Long taobaoUserId) {
         AlilangProfileDto profile = new AlilangProfileDto();
-
         profile.setTaobaoUserId(taobaoUserId);
         try {
             PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -111,6 +114,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         return profile;
     }
 
+
     private boolean isForceInstallAlilang(PartnerStationRel partnerInstance) {
         //是否强制安装阿里郎
         try {
@@ -122,8 +126,18 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Long taobaoUserId = partnerInstance.getTaobaoUserId();
             List<Long> whiteList = config.getWhiteList();
             List<Long> forceInstallOrgList = config.getForceInstallOrgIdList();
+            List<String> forceInstallPartnerTypeList = config.getForceInstallPartnerTypeList();
+            // 不在本次强制安装的合伙人类型列表里面
+            if (CollectionUtils.isEmpty(forceInstallPartnerTypeList) || !forceInstallPartnerTypeList.contains(StringUtils.upperCase(partnerInstance.getType()))) {
+                return false;
+            }
+            //白名单
             if (!CollectionUtils.isEmpty(whiteList) && whiteList.contains(taobaoUserId)) {
                 return false;
+            }
+            //全国强制安装
+            if (config.isForceAllPartnerInstall()) {
+                return true;
             }
             if (CollectionUtils.isEmpty(forceInstallOrgList)) {
                 return false;
@@ -131,7 +145,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Station station = stationBO.getStationById(partnerInstance.getStationId());
             Long orgId = station.getApplyOrg();
             CuntaoOrgDto currentOrg = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
-            while (null != currentOrg ) {
+            while (null != currentOrg) {
                 if (forceInstallOrgList.contains(currentOrg.getId())) {
                     return true;
                 }
