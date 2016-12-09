@@ -24,4 +24,10 @@ public interface LevelAuditFlowService {
      * @param adjustLevel 晋升到新层级
      */
      void processAuditMessage(PartnerInstanceLevelDto partnerInstanceLevelDto, ProcessApproveResultEnum approveResult, String adjustLevel);
+
+    /**
+     * 成功启动内外的审批流程以后要做的一些事情
+     * @param levelProcessDto
+     */
+    void afterStartApproveProcessSuccess(PartnerInstanceLevelDto partnerInstanceLevelDto);
 }

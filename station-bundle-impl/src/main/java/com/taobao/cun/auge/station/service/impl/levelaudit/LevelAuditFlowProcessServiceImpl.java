@@ -131,7 +131,12 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
             getLevelAuditMessageService(partnerInstanceLevelDto.getExpectedLevel()).handleRefuse(partnerInstanceLevelDto, adjustLevel);
         }
     }
-    
+
+    @Override
+    public void afterStartApproveProcessSuccess(PartnerInstanceLevelDto partnerInstanceLevelDto) {
+
+    }
+
     private OrgPermissionHolder getApproversOrgId(PartnerInstanceLevelEnum expectedLevel, Long countyOrgId){
         if(expectedLevel == null || countyOrgId==null){
             return new OrgPermissionHolder(countyOrgId, AclPermissionEnum.cuntao_admin_county_01.getCode());
