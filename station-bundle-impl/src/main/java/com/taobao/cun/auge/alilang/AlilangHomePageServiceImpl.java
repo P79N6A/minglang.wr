@@ -132,7 +132,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             if (!CollectionUtils.isEmpty(whiteList) && whiteList.contains(taobaoUserId)) {
                 return false;
             }
-            //全国强制安装
+            //是否全国强制安装
             if (config.isForceAllPartnerInstall()) {
                 return true;
             }
