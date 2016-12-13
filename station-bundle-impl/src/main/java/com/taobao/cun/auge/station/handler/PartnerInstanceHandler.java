@@ -145,4 +145,9 @@ public class PartnerInstanceHandler implements InitializingBean{
 	public void validateOtherPartnerQuit(PartnerInstanceTypeEnum typeEnum, Long instanceId) {
 		strategy.get(typeEnum.getCode()).validateOtherPartnerQuit(instanceId);
 	}
+	
+	public void startService(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum typeEnum,
+			OperatorDto operatorDto) throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).startService(instanceId, taobaoUserId, operatorDto);
+	}
 }
