@@ -70,9 +70,9 @@ public interface PartnerInstanceExtService {
 	   * 初始化最大子成员配额
 	   * 
 	   * @param instanceId
-	   * @param maxChildNum 初始化值，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * @param initMaxChildNum 初始化值，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
 	   * @param operatorDto
 	   */
-	  public void initPartnerMaxChildNum(Long instanceId, Integer maxChildNum, OperatorDto operatorDto);
+	  public void initPartnerMaxChildNum(Long instanceId, Integer initMaxChildNum, OperatorDto operatorDto);
 	
 }
