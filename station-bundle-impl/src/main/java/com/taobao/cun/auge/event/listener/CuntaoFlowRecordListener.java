@@ -2,6 +2,7 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Date;
 
+import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,21 +94,23 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	private void processWisdomCountyApplyEvent(Event event){
 		WisdomCountyApplyEvent applyEvent = (WisdomCountyApplyEvent) event.getValue();
-		logger.info("receive event." + JSON.toJSONString(applyEvent));
-		String operator = applyEvent.getOperator();
-		OperatorTypeEnum operatorType = applyEvent.getOperatorType();
-		String buildOperatorName = buildOperatorName(operator, operatorType);
-		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
-		cuntaoFlowRecord.setTargetId(applyEvent.getApplyId());
-		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.WISDOM_COUNTY_APPLY.getCode());
-		cuntaoFlowRecord.setNodeTitle("智慧县域报名审核");
-		cuntaoFlowRecord.setOperatorName(buildOperatorName);
-		cuntaoFlowRecord.setOperatorWorkid(operator);
-		cuntaoFlowRecord.setOperateTime(new Date());
-		cuntaoFlowRecord.setRemarks(applyEvent.getRemark());
-		cuntaoFlowRecord.setOperateOpinion(applyEvent.getOpinion());
-		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
-		logger.info("Finished to handle event." + JSON.toJSONString(applyEvent));
+		if (WisdomCountyStateEnum.AUDIT_PASS.equals(applyEvent.getType()) || WisdomCountyStateEnum.AUDIT_FAIL.equals(applyEvent.getType())) {
+			logger.info("receive event." + JSON.toJSONString(applyEvent));
+			String operator = applyEvent.getOperator();
+			OperatorTypeEnum operatorType = applyEvent.getOperatorType();
+			String buildOperatorName = buildOperatorName(operator, operatorType);
+			CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+			cuntaoFlowRecord.setTargetId(applyEvent.getApplyId());
+			cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.WISDOM_COUNTY_APPLY.getCode());
+			cuntaoFlowRecord.setNodeTitle("智慧县域报名审核");
+			cuntaoFlowRecord.setOperatorName(buildOperatorName);
+			cuntaoFlowRecord.setOperatorWorkid(operator);
+			cuntaoFlowRecord.setOperateTime(new Date());
+			cuntaoFlowRecord.setRemarks(applyEvent.getRemark());
+			cuntaoFlowRecord.setOperateOpinion(applyEvent.getOpinion());
+			cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+			logger.info("Finished to handle event." + JSON.toJSONString(applyEvent));
+		}
 	}
 
 	private void processLevelChangeEvent(Event event) {

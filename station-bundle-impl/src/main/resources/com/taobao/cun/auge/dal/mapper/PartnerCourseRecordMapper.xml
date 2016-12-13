@@ -423,4 +423,110 @@
     where taobao_user_id=#{userId} and apply_exam_status is null
   </update>
   
+   <resultMap id="peixunCountResult" type="com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto" >
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="course_type" property="courseType" jdbcType="VARCHAR" />
+    <result column="count_num" property="countNum" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <select id="queryPeixunCountByCondition" resultMap="peixunCountResult" parameterType="map" >
+   select b.course_type as course_type,b.status as status,count(*) as count_num from
+   partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+   and a.taobao_user_id=b.partner_user_id
+   and a.id=c.partner_id
+   and c.station_id=d.id
+   and d.apply_org=e.id
+   and c.is_current='y'
+   and d.state='NORMAL'
+   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+    <if test="nickName != null and nickName != ''"  >
+       and  a.taobao_nick=#{nickName}
+   </if>
+   <if test="phoneNum != null and phoneNum != ''" >
+       and  a.mobile=#{phoneNum}
+   </if>
+   <if test="partnerName != null and partnerName != '' " >
+       and  a.name=#{partnerName}
+   </if>
+	 and b.course_type in
+		<foreach item="item" index="index" collection="courseTypes" open="(" separator="," close=")">  
+ 		 #{item}  
+		 </foreach>
+   group by b.course_type,b.status
+  </select>
+  
+  <resultMap id="peixunQueryListResult" type="com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto" >
+    <result column="partner_name" property="partnerName" jdbcType="VARCHAR" />
+    <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" />
+    <result column="taobao_nick" property="taobaoNick" jdbcType="VARCHAR" />
+    <result column="station_name" property="stationName" jdbcType="VARCHAR" />
+    <result column="station_id" property="stationId" jdbcType="BIGINT" />
+    <result column="course_type" property="courseType" jdbcType="VARCHAR" />
+    <result column="course_status" property="courseStatus" jdbcType="VARCHAR" />
+    <result column="gmt_done" property="gmtDone" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <select id="queryPeixunList" resultMap="peixunQueryListResult" parameterType="map" >
+   select a.name as partner_name
+   ,a.mobile as phone_num
+   ,a.taobao_nick as taobao_nick
+   ,d.name as station_name
+   ,d.id as station_id
+   ,b.course_type as course_type
+   ,b.status as course_status
+   ,b.gmt_done as gmt_done
+   ,b.partner_user_id as user_id
+   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+   and a.taobao_user_id=b.partner_user_id
+   and a.id=c.partner_id
+   and c.station_id=d.id
+   and d.apply_org=e.id
+   and c.is_current='y'
+   and d.state='NORMAL'
+   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   and b.course_type=#{courseType}
+   <if test="nickName != null and nickName != ''"  >
+       and  a.taobao_nick=#{nickName}
+   </if>
+   <if test="phoneNum != null and phoneNum != ''" >
+       and  a.mobile=#{phoneNum}
+   </if>
+   <if test="partnerName != null and partnerName != '' " >
+       and  a.name=#{partnerName}
+   </if>
+   <if test="courseStatus != null and courseStatus !=''" >
+       and b.status=#{courseStatus}
+   </if>
+   order by a.id desc
+  </select>
+   <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
+   select count(*)
+   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+   and a.taobao_user_id=b.partner_user_id
+   and a.id=c.partner_id
+   and c.station_id=d.id
+   and d.apply_org=e.id
+   and c.is_current='y'
+   and d.state='NORMAL'
+   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   and b.course_type=#{courseType}
+   <if test="nickName != null and nickName != ''"  >
+       and  a.taobao_nick=#{nickName}
+   </if>
+   <if test="phoneNum != null and phoneNum != ''" >
+       and  a.mobile=#{phoneNum}
+   </if>
+   <if test="partnerName != null and partnerName != '' " >
+       and  a.name=#{partnerName}
+   </if>
+   <if test="courseStatus != null and courseStatus !=''" >
+       and b.status=#{courseStatus}
+   </if>
+  </select>
+  
 </mapper>

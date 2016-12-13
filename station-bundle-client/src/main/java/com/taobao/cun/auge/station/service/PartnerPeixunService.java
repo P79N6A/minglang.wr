@@ -3,8 +3,12 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 
 /**
@@ -33,4 +37,16 @@ public interface PartnerPeixunService {
 	 * 线下训状态查询
 	 */
 	public PartnerPeixunDto queryOfflinePeixunProcess(Long userId,String courseCode,PartnerPeixunCourseTypeEnum courseType);
+	
+	/**
+	 * 提供根据条件查询培训数量
+	 * @return
+	 */
+	public List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(PartnerPeixunQueryCondition condition);
+
+   /**
+    * 提供分页查询培训列表 
+    */
+	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
+	
 }

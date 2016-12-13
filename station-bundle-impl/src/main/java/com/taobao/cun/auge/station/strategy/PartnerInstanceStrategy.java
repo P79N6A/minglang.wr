@@ -98,7 +98,7 @@ public interface PartnerInstanceStrategy {
 	 * @param instanceId
 	 */
 	public void validateOtherPartnerQuit(Long instanceId);
-
+	
 	/**
 	 * 进入服务中
 	 * 

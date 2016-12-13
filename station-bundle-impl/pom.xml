@@ -307,6 +307,20 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>ceres.shard</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.common.uic.uic-common</groupId>
+			<artifactId>common-uic-common</artifactId>
+		</dependency>
+		<dependency>
+		   <groupId>org.jmockit</groupId> 
+		   <artifactId>jmockit</artifactId> 
+		   <version>1.28</version>
+		   <scope>test</scope>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
