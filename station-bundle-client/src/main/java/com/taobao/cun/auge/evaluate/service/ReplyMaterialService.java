@@ -22,4 +22,13 @@ public interface ReplyMaterialService {
      */
     boolean submitEvaluateAttachments(Long taobaoUserId, Long levelTaskNodeId, List<String> attachmentIdentifiers) throws AugeServiceException;
 
+
+    /**
+     * 查询审批流程中的业务数据
+     * @param processInstanceId
+     * @return
+     */
+    ReplyMaterialDTO queryReplyMateraByApproveInstanceId(Long processInstanceId, Long taskId);
+
+
 }
