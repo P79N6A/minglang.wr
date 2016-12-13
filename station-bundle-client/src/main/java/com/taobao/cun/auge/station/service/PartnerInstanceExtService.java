@@ -45,7 +45,7 @@ public interface PartnerInstanceExtService {
 	public List<PartnerInstanceExtDto> findPartnerExtInfos(List<Long> instanceIds);
 	
 	 /**
-	   * 在原有的值上，添加increaseNum个子成员
+	   * 在原有的值上，添加increaseNum个子成员，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
 	   * 
 	   * @param instanceId
 	   * @param increaseNum
@@ -56,7 +56,7 @@ public interface PartnerInstanceExtService {
 	      OperatorDto operatorDto);
 
 	  /**
-	   * 修改最大子成员配额
+	   * 修改最大子成员配额，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
 	   * 
 	   * @param instanceId
 	   * @param maxChildNum
@@ -70,7 +70,7 @@ public interface PartnerInstanceExtService {
 	   * 初始化最大子成员配额
 	   * 
 	   * @param instanceId
-	   * @param maxChildNum
+	   * @param maxChildNum 初始化值，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
 	   * @param operatorDto
 	   */
 	  public void initPartnerMaxChildNum(Long instanceId, Integer maxChildNum, OperatorDto operatorDto);
