@@ -102,7 +102,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException;;
+	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException;
 
 	/**
 	 * 获取用户账户资金情况，如保证金

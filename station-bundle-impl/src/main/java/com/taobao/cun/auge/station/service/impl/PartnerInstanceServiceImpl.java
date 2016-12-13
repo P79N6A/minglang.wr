@@ -29,11 +29,11 @@ import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
@@ -73,11 +73,11 @@ import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.FreezeBondDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
+import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDegradeDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
@@ -114,6 +114,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -415,13 +416,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 修改子成员配额
 			Integer childNum = partnerInstanceUpdateServicingDto.getChildNum();
 			if (null != childNum) {
-				PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+				PartnerChildMaxNumUpdateDto updateDto = new PartnerChildMaxNumUpdateDto();
+				updateDto.setInstanceId(partnerInstanceUpdateServicingDto.getId());
+				updateDto.setMaxChildNum(childNum);
+				updateDto.setReason(PartnerMaxChildNumChangeReasonEnum.EDIT);
+				updateDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
 
-				instanceExtDto.setInstanceId(partnerInstanceUpdateServicingDto.getId());
-				instanceExtDto.setMaxChildNum(childNum);
-				instanceExtDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
-
-				partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+				partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
 			}
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),

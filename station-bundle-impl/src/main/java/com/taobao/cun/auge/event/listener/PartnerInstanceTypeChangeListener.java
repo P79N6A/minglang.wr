@@ -9,7 +9,8 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
-import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
@@ -20,10 +21,10 @@ import com.taobao.cun.crius.event.client.EventListener;
 public class PartnerInstanceTypeChangeListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceTypeChangeListener.class);
-	
+
 	@Autowired
 	PartnerInstanceExtService partnerInstanceExtService;
-	
+
 	@Override
 	public void onMessage(Event event) {
 		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
@@ -32,14 +33,15 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 
 		PartnerInstanceTypeChangeEnum typeChangeEnum = typeChangeEvent.getTypeChangeEnum();
 		Long instanceId = typeChangeEvent.getPartnerInstanceId();
-		//降级
+		// 降级
 		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEnum)) {
-			PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto ();
-			instanceExtDto.setInstanceId(instanceId);
-			instanceExtDto.setMaxChildNum(0);
-			instanceExtDto.copyOperatorDto(typeChangeEvent);
-			
-			partnerInstanceExtService.savePartnerExtInfo(instanceExtDto);
+			PartnerChildMaxNumUpdateDto updateDto = new PartnerChildMaxNumUpdateDto();
+			updateDto.setInstanceId(instanceId);
+			updateDto.setMaxChildNum(0);
+			updateDto.setReason(PartnerMaxChildNumChangeReasonEnum.TP_DEGREE_2_TPA);
+			updateDto.copyOperatorDto(typeChangeEvent);
+
+			partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
 		}
 	}
 }

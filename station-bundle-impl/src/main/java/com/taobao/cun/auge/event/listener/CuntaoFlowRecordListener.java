@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
@@ -27,8 +26,12 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelConverter;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
@@ -49,6 +52,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 	@Autowired
 	UicReadAdapter uicReadAdapter;
+	
+	@Autowired
+	PartnerInstanceQueryService partnerInstanceQueryService;
 
 	@Override
 	public void onMessage(Event event) {
@@ -65,7 +71,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		} else if (event.getValue() instanceof WisdomCountyApplyEvent) {
 			processWisdomCountyApplyEvent(event);
 		}else if (event.getValue() instanceof StationStatusChangeEvent) {
-		      processStationStatusChangeEvent(event);
+		    processStationStatusChangeEvent(event);
 	    }
 
 	}
@@ -224,13 +230,13 @@ public class CuntaoFlowRecordListener implements EventListener {
 		} else if (PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)) {
-			return "";
+			return findCloseReason(stateChangeEvent.getPartnerInstanceId());
 		} else if (PartnerInstanceStateChangeEnum.CLOSING_REFUSED.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			return "";
+			return findQuitReason(stateChangeEvent.getPartnerInstanceId());
 		} else if (PartnerInstanceStateChangeEnum.QUITTING_REFUSED.equals(stateChangeEnum)) {
 			return "";
 		} else if (PartnerInstanceStateChangeEnum.QUIT.equals(stateChangeEnum)) {
@@ -258,8 +264,6 @@ public class CuntaoFlowRecordListener implements EventListener {
 
 		logger.info("receive event." + JSON.toJSONString(changEvent));
 
-		String bizMonth = changEvent.getBizMonth();
-		Integer childMaxNum = changEvent.getChildMaxNum();
 		Long instanceId = changEvent.getPartnerInstanceId();
 
 		String operator = changEvent.getOperator();
@@ -275,11 +279,8 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperatorName(buildOperatorName);
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
-		if (StringUtil.isEmpty(bizMonth)) {
-			cuntaoFlowRecord.setRemarks(buildOperatorName + "修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
-		} else {
-			cuntaoFlowRecord.setRemarks("根据淘帮手在" + bizMonth + "业绩，修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0));
-		}
+		cuntaoFlowRecord.setRemarks(changEvent.getReason());
+		
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(changEvent));
@@ -309,5 +310,31 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(statusChangeEvent));
+	}
+	
+	// 获取停业原因
+	private String findCloseReason(Long instanceId) {
+		try {
+			CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);
+			if (CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getCloseReason())) {
+				return forcedCloseDto.getOtherReason();
+			} else {
+				return null != forcedCloseDto.getCloseReason() ? forcedCloseDto.getCloseReason().getDesc() : "";
+			}
+		} catch (Exception e) {
+			logger.error("查询停业原因失败。instanceId=" + instanceId, e);
+			return "";
+		}
+	}
+	
+	// 获取退出原因
+	private String findQuitReason(Long instanceId) {
+		try {
+			QuitStationApplyDto quitStationApplyDto = partnerInstanceQueryService.getQuitStationApply(instanceId);
+			return quitStationApplyDto.getOtherDescription();
+		} catch (Exception e) {
+			logger.error("查询退出原因失败。instanceId=" + instanceId, e);
+			return "";
+		}
 	}
 }
