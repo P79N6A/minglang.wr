@@ -312,9 +312,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 		logger.info("Finished to handle event." + JSON.toJSONString(statusChangeEvent));
 	}
 	
-	public String findCloseReason(Long instanceId) {
+	// 获取停业原因
+	private String findCloseReason(Long instanceId) {
 		try {
-			// 获取停业原因
 			CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);
 			if (CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getCloseReason())) {
 				return forcedCloseDto.getOtherReason();
@@ -327,9 +327,9 @@ public class CuntaoFlowRecordListener implements EventListener {
 		}
 	}
 	
-	public String findQuitReason(Long instanceId) {
+	// 获取退出原因
+	private String findQuitReason(Long instanceId) {
 		try {
-			// 获取停业原因
 			QuitStationApplyDto quitStationApplyDto = partnerInstanceQueryService.getQuitStationApply(instanceId);
 			return quitStationApplyDto.getOtherDescription();
 		} catch (Exception e) {
