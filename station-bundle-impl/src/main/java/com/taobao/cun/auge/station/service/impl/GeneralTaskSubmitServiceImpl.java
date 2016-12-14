@@ -666,4 +666,18 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
 	}
+
+	@Override
+	public void submitReAddUserTagTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,
+			String operator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void submitThawTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,
+			String operator) {
+		// TODO Auto-generated method stub
+		
+	}
 }

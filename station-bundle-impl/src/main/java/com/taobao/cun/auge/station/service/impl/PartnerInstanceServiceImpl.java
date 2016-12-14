@@ -83,6 +83,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
@@ -1807,5 +1808,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error("PromotePartnerInstanceLevelError:" + JSON.toJSONString(partnerInstanceLevelDto), e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	}
+
+
+	@Override
+	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto)
+			throws AugeServiceException, AugeSystemException {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -62,6 +62,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -80,6 +81,7 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
@@ -608,4 +610,17 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate) {
         return partnerInstanceLevelDataQueryService.getPartnerInstanceLevelGrowthTrendDataV2(taobaoUserId, statDate);
     }
+
+	@Override
+	public Boolean isUpgradePartnerInstance(Long instanceId) throws AugeServiceException, AugeSystemException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId)
+			throws AugeServiceException, AugeSystemException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -1,36 +1,38 @@
 package com.taobao.cun.auge.event.listener;
 
-import com.alibaba.buc.api.EnhancedUserQueryService;
-import com.alibaba.buc.api.model.enhanced.EnhancedUser;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
-import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
+import java.util.Collections;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.buc.api.EnhancedUserQueryService;
+import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
+import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
+import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
 
-import java.util.Collections;
-import java.util.Map;
-
 @Component("smsListener")
-@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT})
+@EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT,EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT})
 public class SmsListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(SmsListener.class);
@@ -61,6 +63,10 @@ public class SmsListener implements EventListener {
 		//智慧县域报名消息
 		if (event.getValue() instanceof WisdomCountyApplyEvent){
 			processWisdomCountyApplyEvent(event);
+			return;
+		}else if (event.getValue() instanceof PartnerInstanceTypeChangeEvent){
+			//升降级事件
+			processTypeChangeEvent((PartnerInstanceTypeChangeEvent)event.getValue());
 			return;
 		}
 
@@ -158,6 +164,27 @@ public class SmsListener implements EventListener {
 		} catch (AugeServiceException e) {
 			logger.error("查询合伙人手机号码失败。instanceId=" + instanceId);
 			return "";
+		}
+	}
+
+	/**
+	 * 升级级事件处理器
+	 * 
+	 * @param event
+	 */
+	private void processTypeChangeEvent(PartnerInstanceTypeChangeEvent event) {
+		PartnerInstanceTypeChangeEnum typeChangeEnum = event.getTypeChangeEnum();
+		//淘帮手升级为合伙人
+		if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
+			Long instanceId = event.getPartnerInstanceId();
+			Long taobaoUserId = event.getTaobaoUserId();
+			String operatorId = event.getOperator();
+			
+			// 查询手机号码
+			String mobile = findPartnerMobile(instanceId);
+			
+			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
+			generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
 		}
 	}
 }
