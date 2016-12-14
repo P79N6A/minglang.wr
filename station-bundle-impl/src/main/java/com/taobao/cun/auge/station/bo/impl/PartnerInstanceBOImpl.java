@@ -752,4 +752,22 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
 		
 	}
+	
+	@Override
+	public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId) {
+		ValidateUtils.notNull(taobaoUserId);
+
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		// 按照服务结束时间倒序
+		example.setOrderByClause("service_end_time DESC");
+
+		Criteria criteria = example.createCriteria();
+
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.N.getCode());
+		criteria.andIsDeletedEqualTo("n");
+
+		return PartnerInstanceConverter
+				.convert(ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example)));
+	}
 }

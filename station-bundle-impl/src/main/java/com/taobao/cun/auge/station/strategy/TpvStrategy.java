@@ -370,4 +370,10 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void validateOtherPartnerQuit(Long instanceId) {
 		// TODO Auto-generated method stub
 	}
+	
+	@Override
+	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
+		// TODO Auto-generated method stub
+
+	}
 }
