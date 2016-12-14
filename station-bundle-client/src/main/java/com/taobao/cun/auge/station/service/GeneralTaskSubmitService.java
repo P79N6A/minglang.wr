@@ -4,7 +4,6 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
-import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -112,5 +111,27 @@ public interface GeneralTaskSubmitService {
 	 * @param levelProcessDto
 	 */
 	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto);
+	
+
+	/**
+	 * 提交恢复合伙人标示任务
+	 * 
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param partnerType
+	 * @param operator
+	 */
+	public void submitReAddUserTagTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,	String operator);
+
+	/**
+	 * 提交解冻保证金任务
+	 *
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param taobaoNick
+	 * @param partnerType
+	 * @param operator
+	 */
+	public void submitThawTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,	String operator);
 
 }

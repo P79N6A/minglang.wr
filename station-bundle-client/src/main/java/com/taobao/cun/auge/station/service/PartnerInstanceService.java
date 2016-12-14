@@ -14,6 +14,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -253,5 +254,15 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException ;
+	
+	
+	/**
+	 * 升级淘帮手
+	 *
+	 * @param upgradeDto
+	 * @throws AugeServiceException
+	 * @throws AugeSystemException
+	 */
+	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException;
 	
 }
