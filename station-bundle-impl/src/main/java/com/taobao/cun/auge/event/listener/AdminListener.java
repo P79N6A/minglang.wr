@@ -66,16 +66,24 @@ public class AdminListener implements EventListener {
         }
     }
 
+    /**
+     * 处理变更合伙人事件
+     * @param event
+     */
     private void processChangeTPEvent(Event event){
         ChangeTPEvent changeTPEvent = (ChangeTPEvent) event.getValue();
         Long instanceId = changeTPEvent.getInstanceId();
         Long stationId = changeTPEvent.getStationId();
         Long taobaoUserId = getTaobaoUserIdByStationId(stationId);
         //解除旧合伙人关系,绑定新合伙人关系
-        quitTPARelation(taobaoUserId, stationId, changeTPEvent.getOldParentStationId());
+        quitTPARelation(taobaoUserId, stationId, getTaobaoUserIdByStationId(changeTPEvent.getOldParentStationId()));
         addOpenRelation(PartnerInstanceTypeEnum.TPA, taobaoUserId, stationId, instanceId);
     }
 
+    /**
+     * 处理类型变更事件
+     * @param event
+     */
     private void processTypeChangeEvent(Event event) {
         PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
 
@@ -87,11 +95,23 @@ public class AdminListener implements EventListener {
             param.setPartnerUserId(typeChangeEvent.getParentTaobaoUserId());
             param.setUserId(typeChangeEvent.getTaobaoUserId());
             partnerLifecycleCallbackService.onDegrade(param);
+            //淘帮手升级为合伙人
+        }else if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEvent.getTypeChangeEnum())){
+        	Long taobaoUserId = typeChangeEvent.getTaobaoUserId();
+        	Long stationId=typeChangeEvent.getStationId();
+        	Long parentTaobaoUserId = typeChangeEvent.getParentTaobaoUserId();
+        	
+        	  //解除旧合伙人关系,绑定新合伙人关系
+            quitTPARelation(taobaoUserId, stationId, parentTaobaoUserId);
         }
 
         logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
     }
 
+    /**
+     * 处理状态变更事件
+     * @param event
+     */
     private void processStateChangeEvent(Event event) {
         PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
 
@@ -239,10 +259,9 @@ public class AdminListener implements EventListener {
     }
 
     /**
-     * 添加服务记录及关系
-     *
+     * 解除旧合伙人关系,绑定新合伙人关系
      */
-    private void quitTPARelation(Long taobaoUserId, Long stationId, Long parentStationId) {
+    private void quitTPARelation(Long taobaoUserId, Long stationId, Long parentTaobaoUserId) {
         try {
             logger.info("quitTPARelation start,stationId=" + stationId);
             Date gmtEnd = DateUtil.getCurrentDate();
@@ -250,7 +269,7 @@ public class AdminListener implements EventListener {
             PartnerLifecycleOnQuitCallbackParam onquitCallbackParam = new PartnerLifecycleOnQuitCallbackParam();
             onquitCallbackParam.setGmtEnd(gmtEnd);
             onquitCallbackParam.setIsTpa(true);
-            onquitCallbackParam.setPartnerUserId(getTaobaoUserIdByStationId(parentStationId));
+            onquitCallbackParam.setPartnerUserId(parentTaobaoUserId);
             onquitCallbackParam.setStationId(stationId);
             onquitCallbackParam.setUserId(taobaoUserId);
             partnerLifecycleCallbackService.onQuit(onquitCallbackParam);
