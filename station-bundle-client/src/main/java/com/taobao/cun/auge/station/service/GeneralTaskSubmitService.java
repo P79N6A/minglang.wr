@@ -112,26 +112,4 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto);
 	
-
-	/**
-	 * 提交恢复合伙人标示任务
-	 * 
-	 * @param instanceId
-	 * @param taobaoUserId
-	 * @param partnerType
-	 * @param operator
-	 */
-	public void submitReAddUserTagTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,	String operator);
-
-	/**
-	 * 提交解冻保证金任务
-	 *
-	 * @param instanceId
-	 * @param taobaoUserId
-	 * @param taobaoNick
-	 * @param partnerType
-	 * @param operator
-	 */
-	public void submitThawTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,	String operator);
-
 }

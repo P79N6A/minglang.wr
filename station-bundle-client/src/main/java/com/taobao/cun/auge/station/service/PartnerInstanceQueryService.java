@@ -276,7 +276,7 @@ public interface PartnerInstanceQueryService {
 	/**
 	 * 是否是升级后的实例
 	 *
-	 * @param instanceId
+	 * @param instanceId 升级后的实例id
 	 * @return
 	 * @throws AugeServiceException
 	 * @throws AugeSystemException
@@ -286,7 +286,7 @@ public interface PartnerInstanceQueryService {
 	/**
 	 * 根据升级后的实例id，查询升级申请单信息
 	 *
-	 * @param instanceId
+	 * @param instanceId 升级后的实例id
 	 * @return
 	 * @throws AugeServiceException
 	 * @throws AugeSystemException

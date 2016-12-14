@@ -34,6 +34,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
@@ -50,6 +51,8 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
@@ -85,86 +88,48 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Autowired
 	PartnerTpgBO partnerTpgBO;
 	
+	@Autowired
+	PartnerInstanceScheduleService PartnerInstanceScheduleService;
+	
+	@Autowired
+	PartnerInstanceQueryService partnerInstanceQueryService;
+	
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
-			String businessNo = String.valueOf(instance.getId());
-
 			// 菜鸟驿站同步 begin
-			GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
-			cainiaoTaskDto.setBusinessNo(businessNo);
-			cainiaoTaskDto.setBeanName("caiNiaoService");
-			cainiaoTaskDto.setMethodName("addCainiaoStation");
+			GeneralTaskDto cainiaoTaskDto;
+			
+			//是否是升级的合伙人
+			if (partnerInstanceQueryService.isUpgradePartnerInstance(instance.getId())) {
+				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerInstanceQueryService.getPartnerTypeChangeApply(instance.getId());
+				// 解冻淘帮手保证金
+				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getInstanceId());
+				cainiaoTaskDto = buildUpgradeCainiaoTask(instance.getId(), operator);
+			} else {
+				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
+			}
 			cainiaoTaskDto.setBusinessStepNo(1l);
-			cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			cainiaoTaskDto.setBusinessStepDesc("addCainiaoStation");
-			cainiaoTaskDto.setOperator(operator);
-			cainiaoTaskDto.setPriority(TaskPriority.HIGH);
-
-			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
-			syncAddCainiaoStationDto.setPartnerInstanceId(instance.getId());
-			cainiaoTaskDto.setParameterType(SyncAddCainiaoStationDto.class.getName());
-			cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
 			taskDtos.add(cainiaoTaskDto);
 			// TODO 菜鸟驿站同步 end
 
 			// TODO uic打标 begin
-			GeneralTaskDto uicGeneralTaskDto = new GeneralTaskDto();
-			uicGeneralTaskDto.setBusinessNo(businessNo);
-			uicGeneralTaskDto.setBeanName("uicTagService");
-			uicGeneralTaskDto.setMethodName("addUserTag");
+			GeneralTaskDto uicGeneralTaskDto = buildAddUicTagTask(instance, operator);
 			uicGeneralTaskDto.setBusinessStepNo(2l);
-			uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
-			uicGeneralTaskDto.setOperator(operator);
-			UserTagDto userTagDto = new UserTagDto();
-			userTagDto.setPartnerType(instance.getType());
-			userTagDto.setTaobaoUserId(instance.getTaobaoUserId());
-			uicGeneralTaskDto.setParameterType(UserTagDto.class.getName());
-			uicGeneralTaskDto.setParameter(JSON.toJSONString(userTagDto));
-			uicGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(uicGeneralTaskDto);
 			// TODO uic打标 end
 
 			// TODO 申请单更新为服务中 begin
-			GeneralTaskDto stationConfirmGeneralTaskDto = new GeneralTaskDto();
-			stationConfirmGeneralTaskDto.setBusinessNo(businessNo);
-			stationConfirmGeneralTaskDto.setBeanName("partnerInstanceService");
-			stationConfirmGeneralTaskDto.setMethodName("applySettleSuccess");
-			stationConfirmGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+			GeneralTaskDto stationConfirmGeneralTaskDto = buildInstanceSettleSuccessTask(instance.getId(), operator);
 			stationConfirmGeneralTaskDto.setBusinessStepNo(3l);
-			stationConfirmGeneralTaskDto.setBusinessStepDesc("applySettleSuccess");
-			stationConfirmGeneralTaskDto.setOperator(operator);
-
-			PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-			settleSuccessDto.setInstanceId(instance.getId());
-			settleSuccessDto.setOperator(operator);
-			settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
-			stationConfirmGeneralTaskDto.setParameterType(PartnerInstanceSettleSuccessDto.class.getName());
-			stationConfirmGeneralTaskDto.setParameter(JSON.toJSONString(settleSuccessDto));
-			stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(stationConfirmGeneralTaskDto);
 			// TODO 申请单更新为服务中 end
 
 			// TODO 旺旺打标 begin
-			GeneralTaskDto wangwangGeneralTaskDto = new GeneralTaskDto();
-			wangwangGeneralTaskDto.setBusinessNo(businessNo);
-			wangwangGeneralTaskDto.setBeanName("wangWangTagService");
-			wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
+			GeneralTaskDto wangwangGeneralTaskDto = buildAddWangwangTagTask(instance, operator);
 			wangwangGeneralTaskDto.setBusinessStepNo(4l);
-			wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
-			wangwangGeneralTaskDto.setOperator(operator);
-			wangwangGeneralTaskDto.setParameterType(String.class.getName());
-			wangwangGeneralTaskDto.setParameter(instance.getPartnerDto().getTaobaoNick());
-			GeneralTaskRetryConfigDto retry = new GeneralTaskRetryConfigDto();
-			retry.setIntervalTime(6 * 3600);// 失败5小时重试
-			retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
-			retry.setIntervalIncrement(false);
-			wangwangGeneralTaskDto.setRetryTaskConfig(retry);
-			wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(wangwangGeneralTaskDto);
 			// TODO 旺旺打标 end
 
@@ -175,6 +140,93 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitSettlingSysProcessTasks] instanceId = {}, {}", instance.getId(), e);
 			throw new AugeServiceException("submitSettlingSysProcessTasks error: " + e.getMessage());
 		}
+	}
+	
+	private GeneralTaskDto buildUpgradeCainiaoTask(Long instanceId, String operator) {
+		return null;
+	}
+
+	private GeneralTaskDto buildAddCainiaoTask(Long instanceId, String operator) {
+		String businessNo = String.valueOf(instanceId);
+		
+		GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
+		cainiaoTaskDto.setBusinessNo(businessNo);
+		cainiaoTaskDto.setBeanName("caiNiaoService");
+		cainiaoTaskDto.setMethodName("addCainiaoStation");
+
+		cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		cainiaoTaskDto.setBusinessStepDesc("addCainiaoStation");
+		cainiaoTaskDto.setOperator(operator);
+		cainiaoTaskDto.setPriority(TaskPriority.HIGH);
+
+		SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+		syncAddCainiaoStationDto.setPartnerInstanceId(instanceId);
+		cainiaoTaskDto.setParameterType(SyncAddCainiaoStationDto.class.getName());
+		cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
+		return cainiaoTaskDto;
+	}
+
+	private GeneralTaskDto buildAddUicTagTask(PartnerInstanceDto instance, String operator) {
+		String businessNo = String.valueOf(instance.getId());
+		
+		GeneralTaskDto uicGeneralTaskDto = new GeneralTaskDto();
+		uicGeneralTaskDto.setBusinessNo(businessNo);
+		uicGeneralTaskDto.setBeanName("uicTagService");
+		uicGeneralTaskDto.setMethodName("addUserTag");
+		uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
+		uicGeneralTaskDto.setOperator(operator);
+		UserTagDto userTagDto = new UserTagDto();
+		userTagDto.setPartnerType(instance.getType());
+		userTagDto.setTaobaoUserId(instance.getTaobaoUserId());
+		uicGeneralTaskDto.setParameterType(UserTagDto.class.getName());
+		uicGeneralTaskDto.setParameter(JSON.toJSONString(userTagDto));
+		uicGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return uicGeneralTaskDto;
+	}
+
+	private GeneralTaskDto buildInstanceSettleSuccessTask(Long instanceId, String operator) {
+		String businessNo = String.valueOf(instanceId);
+		
+		GeneralTaskDto stationConfirmGeneralTaskDto = new GeneralTaskDto();
+		stationConfirmGeneralTaskDto.setBusinessNo(businessNo);
+		stationConfirmGeneralTaskDto.setBeanName("partnerInstanceService");
+		stationConfirmGeneralTaskDto.setMethodName("applySettleSuccess");
+		stationConfirmGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+
+		stationConfirmGeneralTaskDto.setBusinessStepDesc("applySettleSuccess");
+		stationConfirmGeneralTaskDto.setOperator(operator);
+
+		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
+		settleSuccessDto.setInstanceId(instanceId);
+		settleSuccessDto.setOperator(operator);
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		stationConfirmGeneralTaskDto.setParameterType(PartnerInstanceSettleSuccessDto.class.getName());
+		stationConfirmGeneralTaskDto.setParameter(JSON.toJSONString(settleSuccessDto));
+		stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return stationConfirmGeneralTaskDto;
+	}
+
+	private GeneralTaskDto buildAddWangwangTagTask(PartnerInstanceDto instance, String operator) {
+		String businessNo = String.valueOf(instance.getId());
+		
+		GeneralTaskDto wangwangGeneralTaskDto = new GeneralTaskDto();
+		wangwangGeneralTaskDto.setBusinessNo(businessNo);
+		wangwangGeneralTaskDto.setBeanName("wangWangTagService");
+		wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
+
+		wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
+		wangwangGeneralTaskDto.setOperator(operator);
+		wangwangGeneralTaskDto.setParameterType(String.class.getName());
+		wangwangGeneralTaskDto.setParameter(instance.getPartnerDto().getTaobaoNick());
+		GeneralTaskRetryConfigDto retry = new GeneralTaskRetryConfigDto();
+		retry.setIntervalTime(6 * 3600);// 失败5小时重试
+		retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
+		retry.setIntervalIncrement(false);
+		wangwangGeneralTaskDto.setRetryTaskConfig(retry);
+		wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return wangwangGeneralTaskDto;
 	}
 
 	@Override
@@ -665,19 +717,5 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
 			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
-	}
-
-	@Override
-	public void submitReAddUserTagTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,
-			String operator) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void submitThawTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType,
-			String operator) {
-		// TODO Auto-generated method stub
-		
 	}
 }
