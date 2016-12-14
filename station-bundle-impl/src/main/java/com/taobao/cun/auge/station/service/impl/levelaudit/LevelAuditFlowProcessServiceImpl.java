@@ -1,19 +1,19 @@
 package com.taobao.cun.auge.station.service.impl.levelaudit;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
+import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
+import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
+import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
+import com.taobao.cun.auge.questionnaire.QuestionnireDispatchParamDTO;
+import com.taobao.cun.auge.questionnaire.dto.QuestionnireForEvaluateEventData;
+import com.taobao.cun.auge.questionnaire.enums.QuestionnireEventEnum;
+import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
@@ -29,6 +29,15 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 晋升流程处理服务:S6 S7 S8需要人工流程审核
@@ -55,6 +64,12 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
+    @Autowired
+    private PartnerLevelTaskBusinessDataService partnerLevelTaskBusinessDataService;
+
+    @Autowired
+    private QuestionnireManageService questionnireManageService;
     
     /**
      * 晋升S6 S7 S8才需要人工审核流程
@@ -133,8 +148,48 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     }
 
     @Override
-    public void afterStartApproveProcessSuccess(PartnerInstanceLevelDto partnerInstanceLevelDto) {
+    public void afterStartApproveProcessSuccess(JSONObject jsonObject) {
+        Long processInstanceId = jsonObject.getLong(LevelAuditFlowService.PROCESS_INSTANCE_ID);
+        PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(jsonObject.getString(LevelAuditFlowService.EVALUATE_LEVEL_INFO), PartnerInstanceLevelDto.class);
+        dispatchQuesionnaire(jsonObject, processInstanceId, partnerInstanceLevelDto);
+        initReplyMaterial(processInstanceId, partnerInstanceLevelDto);
+    }
 
+    /**
+     * 初始化答辩材料
+     * @param processInstanceId
+     * @param partnerInstanceLevelDto
+     */
+    private void initReplyMaterial(Long processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
+        PartnerLevelTaskBusinessDataDTO businessDataDTO = new PartnerLevelTaskBusinessDataDTO();
+        businessDataDTO.setAuditedPersonId(partnerInstanceLevelDto.getTaobaoUserId());
+        businessDataDTO.setProcessInstanceId(processInstanceId);
+        businessDataDTO.setInfoType(LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
+        businessDataDTO.setAuditStatus(TaskNodeAuditStatus.NOT_AUDIT.name());
+        partnerLevelTaskBusinessDataService.saveTaskBusinessData(processInstanceId, null, businessDataDTO);
+    }
+
+    /**
+     * 分发调查问卷
+     * @param jsonObject
+     * @param processInstanceId
+     * @param partnerInstanceLevelDto
+     */
+    private void dispatchQuesionnaire(JSONObject jsonObject, Long processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
+        QuestionnireDispatchParamDTO dispatchParamDTO = new QuestionnireDispatchParamDTO();
+        dispatchParamDTO.setQuestionnireEventId(processInstanceId);
+        dispatchParamDTO.setInformantId(partnerInstanceLevelDto.getTaobaoUserId());
+        dispatchParamDTO.setInformantCountyOrgId(partnerInstanceLevelDto.getCountyOrgId());
+        dispatchParamDTO.setType(QuestionnireEventEnum.PARTNER_EVALUATE);
+
+        QuestionnireForEvaluateEventData eventData = new QuestionnireForEvaluateEventData();
+        Date evaluateDate = partnerInstanceLevelDto.getEvaluateDate();
+        eventData.setEvaluateDate(evaluateDate);
+        eventData.setInfomantId(partnerInstanceLevelDto.getTaobaoUserId());
+        eventData.setInfomantName(jsonObject.getString(LevelAuditFlowService.PARTNER_NAME));
+        eventData.setToLevel(jsonObject.getString(LevelAuditFlowService.TO_LEVEL));
+        dispatchParamDTO.setEventDataJson(JSON.toJSONString(eventData));
+        questionnireManageService.dispatchQuestionnire(dispatchParamDTO);
     }
 
     private OrgPermissionHolder getApproversOrgId(PartnerInstanceLevelEnum expectedLevel, Long countyOrgId){

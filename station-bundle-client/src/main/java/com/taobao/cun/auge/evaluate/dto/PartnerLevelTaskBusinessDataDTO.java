@@ -53,7 +53,7 @@ public class PartnerLevelTaskBusinessDataDTO implements Serializable {
     private String extendsInfo;
 
     /**
-     * 审批状态
+     * 审批状态 TaskNodeAuditStatus
      */
     private String auditStatus;
 

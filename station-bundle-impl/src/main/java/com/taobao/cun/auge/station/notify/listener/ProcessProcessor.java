@@ -178,8 +178,7 @@ public class ProcessProcessor {
 			}
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
 			if(ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)){
-                PartnerInstanceLevelDto dto = JSON.parseObject(ob.getString("evaluateInfo"), PartnerInstanceLevelDto.class);
-                levelAuditFlowService.afterStartApproveProcessSuccess(dto);
+                levelAuditFlowService.afterStartApproveProcessSuccess(ob);
             }
 		}
 	}
