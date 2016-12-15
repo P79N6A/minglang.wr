@@ -41,6 +41,7 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -107,7 +108,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerInstanceQueryService.getPartnerTypeChangeApply(instance.getId());
 				// 解冻淘帮手保证金
 				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getInstanceId());
-				cainiaoTaskDto = buildUpgradeCainiaoTask(instance.getId(), operator);
+				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getInstanceId(),instance.getId(), operator);
 			} else {
 				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
 			}
@@ -142,8 +143,25 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 	
-	private GeneralTaskDto buildUpgradeCainiaoTask(Long instanceId, String operator) {
-		return null;
+	private GeneralTaskDto buildUpgradeCainiaoTask(Long oldInsId,Long newInsId,String operator) {
+		String businessNo = String.valueOf(newInsId);
+		
+		GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
+		cainiaoTaskDto.setBusinessNo(businessNo);
+		cainiaoTaskDto.setBeanName("caiNiaoService");
+		cainiaoTaskDto.setMethodName("upgradeToTPForTpa");
+
+		cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		cainiaoTaskDto.setBusinessStepDesc("upgradeToTPForTpa");
+		cainiaoTaskDto.setOperator(operator);
+		cainiaoTaskDto.setPriority(TaskPriority.HIGH);
+
+		SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto = new SyncUpgradeToTPForTpaDto();
+		syncUpgradeToTPForTpaDto.setOldPartnerInstanceId(oldInsId);
+		syncUpgradeToTPForTpaDto.setPartnerInstanceId(newInsId);
+		cainiaoTaskDto.setParameterType(SyncUpgradeToTPForTpaDto.class.getName());
+		cainiaoTaskDto.setParameter(JSON.toJSONString(syncUpgradeToTPForTpaDto));
+		return cainiaoTaskDto;
 	}
 
 	private GeneralTaskDto buildAddCainiaoTask(Long instanceId, String operator) {

@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -72,4 +73,10 @@ public interface CaiNiaoService {
 	 * @throws AugeServiceException
 	 */
 	public void updateBelongTPForTpa(SyncModifyBelongTPForTpaDto syncModifyBelongTPForTpaDto) throws AugeServiceException;
+	
+	/**
+	 *淘帮手直升成为合伙人 菜鸟业务服务
+	 *@throws AugeServiceException
+	 */
+	public void upgradeToTPForTpa(SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto) throws AugeServiceException;
 }

@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +35,7 @@ import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -469,6 +472,70 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		} catch (Exception e) {
 			String error = getErrorMessage("updateBelongTPForTpa", "partnerInstanceId:" + partnerInstanceId +
 		" parentPartnerInstanceId:"+parentPartnerInstanceId, e.getMessage());
+			logger.error(error, e);
+			throw new RuntimeException(error, e);
+		}
+	}
+
+	@Override
+	public void upgradeToTPForTpa(
+			SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto)
+			throws AugeServiceException {
+		if (syncUpgradeToTPForTpaDto == null || 
+				syncUpgradeToTPForTpaDto.getPartnerInstanceId() == null ||
+				syncUpgradeToTPForTpaDto.getOldPartnerInstanceId()== null) {
+			throw new AugeServiceException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		Long piId = syncUpgradeToTPForTpaDto.getPartnerInstanceId();//新的实例id
+		Long oldPiId = syncUpgradeToTPForTpaDto.getOldPartnerInstanceId();//老的淘帮手实例id
+		try {
+
+			logger.info("CaiNiaoServiceImpl upgradeToTPForTpa start,oldPiId=" + oldPiId + " piId="+piId);
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(oldPiId);
+			if (instanceDto == null) {
+				String error = getErrorMessage("upgradeToTPForTpa", String.valueOf(oldPiId), "PartnerInstance is null");
+				logger.error(error);
+				throw new AugeServiceException(error);
+			}
+			Long stationId = instanceDto.getStationId();
+			Long taobaoUserId = instanceDto.getTaobaoUserId();
+			
+			// 查询菜鸟物流站关系表
+			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+					CuntaoCainiaoStationRelTypeEnum.STATION);
+			if (rel == null || "n".equals(rel.getIsOwn())) {// 没有物流站,删除关系
+				CuntaoCainiaoStationRel parentRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(instanceDto.getParentStationId(),
+						CuntaoCainiaoStationRelTypeEnum.STATION);
+				if (parentRel == null) {
+					String error = getErrorMessage("deleteCainiaoStation", String.valueOf(oldPiId), "parentRel is null");
+					logger.error(error);
+					throw new AugeServiceException(error);
+				}
+				//删除老的淘帮手的物流站关系
+				caiNiaoAdapter.removeStationUserRel(taobaoUserId);
+				
+				//新增合伙人服务站
+				SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+				syncAddCainiaoStationDto.setPartnerInstanceId(piId);
+				addCainiaoStation(syncAddCainiaoStationDto);
+				
+			} else {// 有物流站,更新物流站信息
+				SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+				syncModifyCainiaoStationDto.setPartnerInstanceId(piId);
+				updateCainiaoStation(syncModifyCainiaoStationDto);
+				
+				Set<String> featureKey = new HashSet<String>();
+				featureKey.add(CaiNiaoAdapter.CTP_TB_UID);
+				featureKey.add(CaiNiaoAdapter.CTP_ORG_STA_ID);
+				featureKey.add(CaiNiaoAdapter.CTP_TYPE);
+				caiNiaoAdapter.removeStationFeatures(rel.getCainiaoStationId(), featureKey);
+				
+				LinkedHashMap<String, String> featureMap1 = new LinkedHashMap<String, String>();
+				featureMap1.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(taobaoUserId));
+				caiNiaoAdapter.updateStationUserRelFeature(taobaoUserId, featureMap1);
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("upgradeToTPForTpa", "oldPiId=" + oldPiId + " piId="+piId, e.getMessage());
 			logger.error(error, e);
 			throw new RuntimeException(error, e);
 		}
