@@ -53,7 +53,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
         ReplyMaterialDTO materialDTO = new ReplyMaterialDTO();
         String attachmentStr = dto.getTaskBusinessInfo();
         if(!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))){
-            materialDTO.setStatus("HaveUpload");
+            materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.UPLOADED.name());
             List<String> attachmentIdentifiers = JSON.parseArray(attachmentStr, String.class);
             List<ReplyMaterialDTO.Attachment> attachmentDtoList = Lists.newArrayList();
             for(String identifier:attachmentIdentifiers) {
@@ -62,6 +62,8 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
                 attachmentDtoList.add(tmp);
             }
             materialDTO.setAttachmentDtoList(attachmentDtoList);
+            materialDTO.setLevelTaskNodeId(dto.getTaskId());
+            materialDTO.setProcessInstanceId(dto.getProcessInstanceId());
         }
         return materialDTO;
     }

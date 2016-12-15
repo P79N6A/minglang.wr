@@ -13,6 +13,11 @@ public class ReplyMaterialDTO implements Serializable {
     private static final long serialVersionUID = -1771781726742389239L;
 
     /**
+     * 流程实例id
+     */
+    private String processInstanceId;
+
+    /**
      * 答辩材料针对哪个任务节点的.
      */
     private Long levelTaskNodeId;
@@ -64,6 +69,14 @@ public class ReplyMaterialDTO implements Serializable {
         this.replayEventDesc = replayEventDesc;
     }
 
+    public String getProcessInstanceId() {
+        return processInstanceId;
+    }
+
+    public void setProcessInstanceId(String processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+
     public static class Attachment {
         private String fileName;
         private String fileType;
@@ -92,5 +105,11 @@ public class ReplyMaterialDTO implements Serializable {
         public void setUrl(String url) {
             this.url = url;
         }
+    }
+
+    public static enum UploadStatus {
+        NOT_UPLOAD,
+        UPLOADED
+        ;
     }
 }
