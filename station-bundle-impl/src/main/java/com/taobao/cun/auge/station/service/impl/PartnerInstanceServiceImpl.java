@@ -1744,7 +1744,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		//初始化装修生命周期
 		PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		Station s = stationBO.getStationById(psl.getStationId());
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
