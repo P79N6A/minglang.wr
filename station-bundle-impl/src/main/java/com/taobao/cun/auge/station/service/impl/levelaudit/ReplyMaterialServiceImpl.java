@@ -10,7 +10,6 @@ import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
 import com.taobao.cun.auge.evaluate.service.ReplyMaterialService;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +47,20 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
         return materials;
     }
 
-    @NotNull
     private ReplyMaterialDTO getReplyMaterialDTO(PartnerLevelTaskBusinessDataDTO dto) {
         ReplyMaterialDTO materialDTO = new ReplyMaterialDTO();
-        String attachmentStr = dto.getTaskBusinessInfo();
-        materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.NOT_UPLOAD.name());
+        setUploadStatus(dto, materialDTO, dto.getTaskBusinessInfo());
+        materialDTO.setLevelTaskNodeId(dto.getTaskId());
+        materialDTO.setProcessInstanceId(dto.getProcessInstanceId());
+        return materialDTO;
+    }
+
+    private void setUploadStatus(PartnerLevelTaskBusinessDataDTO dto, ReplyMaterialDTO materialDTO, String attachmentStr) {
+        if(TaskNodeAuditStatus.isAudited(dto.getAuditStatus())){
+            materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.CANT_UPLOAD.name());
+        }else{
+            materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.NOT_UPLOAD.name());
+        }
         if (!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))) {
             materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.UPLOADED.name());
             List<String> attachmentIdentifiers = JSON.parseArray(attachmentStr, String.class);
@@ -64,9 +72,6 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
             }
             materialDTO.setAttachmentDtoList(attachmentDtoList);
         }
-        materialDTO.setLevelTaskNodeId(dto.getTaskId());
-        materialDTO.setProcessInstanceId(dto.getProcessInstanceId());
-        return materialDTO;
     }
 
     @Override

@@ -109,7 +109,8 @@ public class ReplyMaterialDTO implements Serializable {
 
     public static enum UploadStatus {
         NOT_UPLOAD,
-        UPLOADED
+        UPLOADED,
+        CANT_UPLOAD
         ;
     }
 }
