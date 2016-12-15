@@ -97,9 +97,12 @@ public class AdminListener implements EventListener {
             partnerLifecycleCallbackService.onDegrade(param);
             //淘帮手升级为合伙人
         }else if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEvent.getTypeChangeEnum())){
-        	Long taobaoUserId = typeChangeEvent.getTaobaoUserId();
-        	Long stationId=typeChangeEvent.getStationId();
-        	Long parentTaobaoUserId = typeChangeEvent.getParentTaobaoUserId();
+        	PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(typeChangeEvent.getPartnerInstanceId());
+        	Long taobaoUserId = instance.getTaobaoUserId();
+        	Long stationId=instance.getStationId();
+        	Long parentStationId = instance.getParentStationId();
+        	PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
+        	Long parentTaobaoUserId = parentInstance.getTaobaoUserId();
         	
         	  //解除旧合伙人关系,绑定新合伙人关系
             quitTPARelation(taobaoUserId, stationId, parentTaobaoUserId);

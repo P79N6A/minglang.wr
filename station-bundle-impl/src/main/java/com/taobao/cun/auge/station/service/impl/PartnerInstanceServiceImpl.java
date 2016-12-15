@@ -1817,10 +1817,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException {
+	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto)
+			throws AugeServiceException, AugeSystemException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(upgradeDto);
 
@@ -1828,30 +1828,62 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long stationId = stationDto.getId();
 		ValidateUtils.notNull(stationId);
 		PartnerDto partnerDto = upgradeDto.getPartnerDto();
-		
+
 		Long partnerId = partnerDto.getId();
 		ValidateUtils.notNull(partnerId);
-		
-		//更新村点信息
-		stationDto.setState(StationStateEnum.INVALID);
-		stationDto.setStatus(StationStatusEnum.NEW);
-		stationDto.copyOperatorDto(upgradeDto);
-		updateStation(stationDto);
-		
-		//更新合伙人信息
-		partnerDto.copyOperatorDto(upgradeDto);
-		updatePartner(partnerDto);
-		
-		//新生成一个合伙人实例
-		
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-		
-		partnerInstanceDto.setStationId(stationId);
-		partnerInstanceDto.setPartnerId(partnerId);
-		partnerInstanceDto.copyOperatorDto(upgradeDto);
-		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-		partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
-		
-		Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
+		try {
+			// 更新村点信息
+			stationDto.setState(StationStateEnum.INVALID);
+			stationDto.setStatus(StationStatusEnum.NEW);
+			stationDto.copyOperatorDto(upgradeDto);
+			updateStation(stationDto);
+
+			// 更新合伙人信息
+			partnerDto.copyOperatorDto(upgradeDto);
+			updatePartner(partnerDto);
+
+			// 更新老的实例
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
+					upgradeDto.getOperator());
+
+			// 新生成一个合伙人实例
+			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+			partnerInstanceDto.setStationId(stationId);
+			partnerInstanceDto.setPartnerId(partnerId);
+			partnerInstanceDto.copyOperatorDto(upgradeDto);
+			partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
+			partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+			// 升级标示
+			partnerInstanceDto.setBit(1);
+			// 新的合伙人实例
+			Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
+
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceDto.setId(nextInstanceId);
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.ADD, nextInstanceId);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+
+			// 发出升级事件
+			PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
+			event.setPartnerInstanceId(instanceId);
+			event.setStationId(stationId);
+			event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
+			event.copyOperatorDto(upgradeDto);
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("upgradePartnerInstance","PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.toString());
+			logger.warn(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("upgradePartnerInstance", "PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 }
