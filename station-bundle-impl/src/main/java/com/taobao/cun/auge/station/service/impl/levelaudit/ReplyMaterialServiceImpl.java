@@ -52,6 +52,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     private ReplyMaterialDTO getReplyMaterialDTO(PartnerLevelTaskBusinessDataDTO dto) {
         ReplyMaterialDTO materialDTO = new ReplyMaterialDTO();
         String attachmentStr = dto.getTaskBusinessInfo();
+        materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.NOT_UPLOAD.name());
         if (!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))) {
             materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.UPLOADED.name());
             List<String> attachmentIdentifiers = JSON.parseArray(attachmentStr, String.class);
