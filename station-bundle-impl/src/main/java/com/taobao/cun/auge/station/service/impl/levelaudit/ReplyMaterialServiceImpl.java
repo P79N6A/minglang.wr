@@ -37,11 +37,11 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     @Override
     public List<ReplyMaterialDTO> queryReplyMaterialDTOs(Long taobaoUserId) throws AugeServiceException {
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByAuditedPersonId(taobaoUserId, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
-        if(CollectionUtils.isEmpty(dataDtos)){
+        if (CollectionUtils.isEmpty(dataDtos)) {
             return Collections.emptyList();
         }
         List<ReplyMaterialDTO> materials = Lists.newArrayList();
-        for(PartnerLevelTaskBusinessDataDTO dto:dataDtos) {
+        for (PartnerLevelTaskBusinessDataDTO dto : dataDtos) {
             ReplyMaterialDTO materialDTO = getReplyMaterialDTO(dto);
             materials.add(materialDTO);
         }
@@ -52,19 +52,19 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     private ReplyMaterialDTO getReplyMaterialDTO(PartnerLevelTaskBusinessDataDTO dto) {
         ReplyMaterialDTO materialDTO = new ReplyMaterialDTO();
         String attachmentStr = dto.getTaskBusinessInfo();
-        if(!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))){
+        if (!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))) {
             materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.UPLOADED.name());
             List<String> attachmentIdentifiers = JSON.parseArray(attachmentStr, String.class);
             List<ReplyMaterialDTO.Attachment> attachmentDtoList = Lists.newArrayList();
-            for(String identifier:attachmentIdentifiers) {
+            for (String identifier : attachmentIdentifiers) {
                 ReplyMaterialDTO.Attachment tmp = new ReplyMaterialDTO.Attachment();
                 tmp.setFileName(identifier);
                 attachmentDtoList.add(tmp);
             }
             materialDTO.setAttachmentDtoList(attachmentDtoList);
-            materialDTO.setLevelTaskNodeId(dto.getTaskId());
-            materialDTO.setProcessInstanceId(dto.getProcessInstanceId());
         }
+        materialDTO.setLevelTaskNodeId(dto.getTaskId());
+        materialDTO.setProcessInstanceId(dto.getProcessInstanceId());
         return materialDTO;
     }
 
@@ -74,7 +74,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
         Assert.notNull(processInstanceId);
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, null, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         PartnerLevelTaskBusinessDataDTO dto = dataDtos.get(0);
-        if(!taobaoUserId.equals(dto.getAuditedPersonId()) || TaskNodeAuditStatus.isAudited(dto.getAuditStatus())) {
+        if (!taobaoUserId.equals(dto.getAuditedPersonId()) || TaskNodeAuditStatus.isAudited(dto.getAuditStatus())) {
             logger.error("No Priviledge To Submit Attachements!");
             throw new AugeServiceException("No Priviledge To Submit Attachements!");
         }
@@ -83,7 +83,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
         updateDto.setInfoType(LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         updateDto.setProcessInstanceId(processInstanceId);
         updateDto.setId(dto.getId());
-        if(!CollectionUtils.isEmpty(attachmentIdentifiers)) {
+        if (!CollectionUtils.isEmpty(attachmentIdentifiers)) {
             dto.setTaskBusinessInfo(JSON.toJSONString(attachmentIdentifiers));
         }
         return partnerLevelTaskBusinessDataService.saveTaskBusinessData(processInstanceId, null, dto);
@@ -93,7 +93,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     public ReplyMaterialDTO queryReplyMateraByApproveInstanceId(String processInstanceId, Long taskId) {
         Assert.notNull(processInstanceId);
         List<PartnerLevelTaskBusinessDataDTO> dataDTOs = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, taskId, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
-        if(CollectionUtils.isEmpty(dataDTOs)) {
+        if (CollectionUtils.isEmpty(dataDTOs)) {
             return null;
         }
 
