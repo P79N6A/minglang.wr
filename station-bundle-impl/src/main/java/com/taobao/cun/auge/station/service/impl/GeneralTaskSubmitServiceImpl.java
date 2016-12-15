@@ -18,7 +18,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
-import com.taobao.cun.auge.dal.domain.PartnerTypeChangeApply;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -36,6 +36,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
@@ -103,8 +104,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			GeneralTaskDto cainiaoTaskDto;
 			
 			//是否是升级的合伙人
-			if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId())) {
-				PartnerTypeChangeApply typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());
+			if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId(),PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP)) {
+				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());
 				// 解冻淘帮手保证金
 				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getPartnerInstanceId());
 				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getPartnerInstanceId(),instance.getId(), operator);
