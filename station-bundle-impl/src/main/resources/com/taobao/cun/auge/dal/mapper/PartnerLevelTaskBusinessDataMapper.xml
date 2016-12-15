@@ -9,7 +9,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
-    <result column="process_instance_id" jdbcType="BIGINT" property="processInstanceId" />
+    <result column="process_instance_id" jdbcType="VARCHAR" property="processInstanceId" />
     <result column="task_node" jdbcType="BIGINT" property="taskNode" />
     <result column="audited_person_id" jdbcType="BIGINT" property="auditedPersonId" />
     <result column="audit_person_id" jdbcType="BIGINT" property="auditPersonId" />
@@ -152,7 +152,7 @@
       task_node, audited_person_id, audit_person_id, 
       participants_id, info_type, task_business_info, 
       extends_info, audit_status)
-    values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{processInstanceId,jdbcType=BIGINT}, 
+    values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{processInstanceId,jdbcType=VARCHAR}, 
       #{taskNode,jdbcType=BIGINT}, #{auditedPersonId,jdbcType=BIGINT}, #{auditPersonId,jdbcType=BIGINT}, 
       #{participantsId,jdbcType=VARCHAR}, #{infoType,jdbcType=VARCHAR}, #{taskBusinessInfo,jdbcType=VARCHAR}, 
       #{extendsInfo,jdbcType=VARCHAR}, #{auditStatus,jdbcType=VARCHAR})
@@ -209,7 +209,7 @@
         #{gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="processInstanceId != null">
-        #{processInstanceId,jdbcType=BIGINT},
+        #{processInstanceId,jdbcType=VARCHAR},
       </if>
       <if test="taskNode != null">
         #{taskNode,jdbcType=BIGINT},
@@ -264,7 +264,7 @@
         gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="record.processInstanceId != null">
-        process_instance_id = #{record.processInstanceId,jdbcType=BIGINT},
+        process_instance_id = #{record.processInstanceId,jdbcType=VARCHAR},
       </if>
       <if test="record.taskNode != null">
         task_node = #{record.taskNode,jdbcType=BIGINT},
@@ -304,7 +304,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       gmt_create = #{record.gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
-      process_instance_id = #{record.processInstanceId,jdbcType=BIGINT},
+      process_instance_id = #{record.processInstanceId,jdbcType=VARCHAR},
       task_node = #{record.taskNode,jdbcType=BIGINT},
       audited_person_id = #{record.auditedPersonId,jdbcType=BIGINT},
       audit_person_id = #{record.auditPersonId,jdbcType=BIGINT},
@@ -331,7 +331,7 @@
         gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       </if>
       <if test="processInstanceId != null">
-        process_instance_id = #{processInstanceId,jdbcType=BIGINT},
+        process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
       </if>
       <if test="taskNode != null">
         task_node = #{taskNode,jdbcType=BIGINT},
@@ -368,7 +368,7 @@
     update partner_level_task_business_data
     set gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
-      process_instance_id = #{processInstanceId,jdbcType=BIGINT},
+      process_instance_id = #{processInstanceId,jdbcType=VARCHAR},
       task_node = #{taskNode,jdbcType=BIGINT},
       audited_person_id = #{auditedPersonId,jdbcType=BIGINT},
       audit_person_id = #{auditPersonId,jdbcType=BIGINT},

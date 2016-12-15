@@ -17,7 +17,7 @@ public interface PartnerLevelTaskBusinessDataService {
      * @param businessDataDTO 业务数据
      * @return
      */
-    boolean saveTaskBusinessData(Long processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO);
+    boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO);
 
     /**
      * 查询某个被审批人员的所有某种类型的任务数据;
@@ -34,6 +34,6 @@ public interface PartnerLevelTaskBusinessDataService {
      * @param dataType
      * @return
      */
-    List<PartnerLevelTaskBusinessDataDTO> queryByProcessInstanceAndTaskId(Long processInstanceId, Long taskId, LevelTaskDataTypeEnum dataType);
+    List<PartnerLevelTaskBusinessDataDTO> queryByProcessInstanceAndTaskId(String processInstanceId, Long taskId, LevelTaskDataTypeEnum dataType);
 
 }

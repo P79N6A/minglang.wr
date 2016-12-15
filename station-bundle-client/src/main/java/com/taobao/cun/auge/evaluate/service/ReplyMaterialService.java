@@ -20,7 +20,7 @@ public interface ReplyMaterialService {
      * 提交答辩材料
      * 只有审批之前可以提交材料
      */
-    boolean submitEvaluateAttachments(Long taobaoUserId, Long levelTaskNodeId, List<String> attachmentIdentifiers) throws AugeServiceException;
+    boolean submitEvaluateAttachments(Long taobaoUserId, String levelTaskNodeId, List<String> attachmentIdentifiers) throws AugeServiceException;
 
 
     /**
@@ -28,7 +28,7 @@ public interface ReplyMaterialService {
      * @param processInstanceId
      * @return
      */
-    ReplyMaterialDTO queryReplyMateraByApproveInstanceId(Long processInstanceId, Long taskId);
+    ReplyMaterialDTO queryReplyMateraByApproveInstanceId(String processInstanceId, Long taskId);
 
 
 }

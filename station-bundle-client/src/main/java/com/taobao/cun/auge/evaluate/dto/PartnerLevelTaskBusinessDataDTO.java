@@ -22,7 +22,7 @@ public class PartnerLevelTaskBusinessDataDTO implements Serializable {
     private Long auditedPersonId;
 
     @NotNull(message = "porocessInstanceId is null")
-    private Long processInstanceId;
+    private String processInstanceId;
 
     private Long taskId;
 
@@ -113,11 +113,11 @@ public class PartnerLevelTaskBusinessDataDTO implements Serializable {
         this.auditStatus = auditStatus;
     }
 
-    public Long getProcessInstanceId() {
+    public String getProcessInstanceId() {
         return processInstanceId;
     }
 
-    public void setProcessInstanceId(Long processInstanceId) {
+    public void setProcessInstanceId(String processInstanceId) {
         this.processInstanceId = processInstanceId;
     }
 

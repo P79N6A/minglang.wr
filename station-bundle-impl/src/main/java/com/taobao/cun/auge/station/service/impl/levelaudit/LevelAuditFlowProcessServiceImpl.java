@@ -149,7 +149,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
     @Override
     public void afterStartApproveProcessSuccess(JSONObject jsonObject) {
-        Long processInstanceId = jsonObject.getLong(LevelAuditFlowService.PROCESS_INSTANCE_ID);
+        String processInstanceId = jsonObject.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
         PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(jsonObject.getString(LevelAuditFlowService.EVALUATE_LEVEL_INFO), PartnerInstanceLevelDto.class);
         initReplyMaterial(processInstanceId, partnerInstanceLevelDto);
         dispatchQuesionnaire(jsonObject, processInstanceId, partnerInstanceLevelDto);
@@ -160,7 +160,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
      * @param processInstanceId
      * @param partnerInstanceLevelDto
      */
-    private void initReplyMaterial(Long processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
+    private void initReplyMaterial(String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
         try {
             PartnerLevelTaskBusinessDataDTO businessDataDTO = new PartnerLevelTaskBusinessDataDTO();
             businessDataDTO.setAuditedPersonId(partnerInstanceLevelDto.getTaobaoUserId());
@@ -179,7 +179,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
      * @param processInstanceId
      * @param partnerInstanceLevelDto
      */
-    private void dispatchQuesionnaire(JSONObject jsonObject, Long processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
+    private void dispatchQuesionnaire(JSONObject jsonObject, String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
         try {
             QuestionnireDispatchParamDTO dispatchParamDTO = new QuestionnireDispatchParamDTO();
             dispatchParamDTO.setQuestionnireEventId(processInstanceId);

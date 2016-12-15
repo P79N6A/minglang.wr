@@ -385,52 +385,62 @@ public class PartnerLevelTaskBusinessDataExample {
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdEqualTo(Long value) {
+        public Criteria andProcessInstanceIdEqualTo(String value) {
             addCriterion("process_instance_id =", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdNotEqualTo(Long value) {
+        public Criteria andProcessInstanceIdNotEqualTo(String value) {
             addCriterion("process_instance_id <>", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdGreaterThan(Long value) {
+        public Criteria andProcessInstanceIdGreaterThan(String value) {
             addCriterion("process_instance_id >", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andProcessInstanceIdGreaterThanOrEqualTo(String value) {
             addCriterion("process_instance_id >=", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdLessThan(Long value) {
+        public Criteria andProcessInstanceIdLessThan(String value) {
             addCriterion("process_instance_id <", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdLessThanOrEqualTo(Long value) {
+        public Criteria andProcessInstanceIdLessThanOrEqualTo(String value) {
             addCriterion("process_instance_id <=", value, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdIn(List<Long> values) {
+        public Criteria andProcessInstanceIdLike(String value) {
+            addCriterion("process_instance_id like", value, "processInstanceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andProcessInstanceIdNotLike(String value) {
+            addCriterion("process_instance_id not like", value, "processInstanceId");
+            return (Criteria) this;
+        }
+
+        public Criteria andProcessInstanceIdIn(List<String> values) {
             addCriterion("process_instance_id in", values, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdNotIn(List<Long> values) {
+        public Criteria andProcessInstanceIdNotIn(List<String> values) {
             addCriterion("process_instance_id not in", values, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdBetween(Long value1, Long value2) {
+        public Criteria andProcessInstanceIdBetween(String value1, String value2) {
             addCriterion("process_instance_id between", value1, value2, "processInstanceId");
             return (Criteria) this;
         }
 
-        public Criteria andProcessInstanceIdNotBetween(Long value1, Long value2) {
+        public Criteria andProcessInstanceIdNotBetween(String value1, String value2) {
             addCriterion("process_instance_id not between", value1, value2, "processInstanceId");
             return (Criteria) this;
         }

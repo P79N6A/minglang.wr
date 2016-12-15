@@ -67,7 +67,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     }
 
     @Override
-    public boolean submitEvaluateAttachments(Long taobaoUserId, Long processInstanceId, List<String> attachmentIdentifiers) throws AugeServiceException {
+    public boolean submitEvaluateAttachments(Long taobaoUserId, String processInstanceId, List<String> attachmentIdentifiers) throws AugeServiceException {
         Assert.notNull(taobaoUserId);
         Assert.notNull(processInstanceId);
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, null, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
@@ -88,7 +88,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     }
 
     @Override
-    public ReplyMaterialDTO queryReplyMateraByApproveInstanceId(Long processInstanceId, Long taskId) {
+    public ReplyMaterialDTO queryReplyMateraByApproveInstanceId(String processInstanceId, Long taskId) {
         Assert.notNull(processInstanceId);
         List<PartnerLevelTaskBusinessDataDTO> dataDTOs = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, taskId, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         if(CollectionUtils.isEmpty(dataDTOs)) {

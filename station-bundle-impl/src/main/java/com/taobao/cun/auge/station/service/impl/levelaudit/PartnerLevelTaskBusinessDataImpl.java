@@ -32,7 +32,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
     private PartnerLevelTaskBusinessDataMapper partnerLevelTaskBusinessDataMapper;
 
     @Override
-    public boolean saveTaskBusinessData(Long processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
+    public boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         BeanValidator.validateWithThrowable(businessDataDTO);
         Assert.notNull(processInstanceId);
         PartnerLevelTaskBusinessDataExample example = getPartnerLevelTaskBusinessDataExample(processInstanceId, taskId, businessDataDTO);
@@ -49,7 +49,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
     }
 
     @NotNull
-    private PartnerLevelTaskBusinessDataExample getPartnerLevelTaskBusinessDataExample(Long processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
+    private PartnerLevelTaskBusinessDataExample getPartnerLevelTaskBusinessDataExample(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         PartnerLevelTaskBusinessDataExample example = new PartnerLevelTaskBusinessDataExample();
         PartnerLevelTaskBusinessDataExample.Criteria criteria = example.createCriteria();
         criteria.andProcessInstanceIdEqualTo(processInstanceId).andInfoTypeEqualTo(businessDataDTO.getInfoType().name());
@@ -73,7 +73,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
     }
 
     @Override
-    public List<PartnerLevelTaskBusinessDataDTO> queryByProcessInstanceAndTaskId(Long processInstanceId, Long taskId, LevelTaskDataTypeEnum dataType) {
+    public List<PartnerLevelTaskBusinessDataDTO> queryByProcessInstanceAndTaskId(String processInstanceId, Long taskId, LevelTaskDataTypeEnum dataType) {
         Assert.notNull(processInstanceId);
         Assert.notNull(dataType);
         PartnerLevelTaskBusinessDataExample example = new PartnerLevelTaskBusinessDataExample();
@@ -113,7 +113,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
         return dtoList;
     }
 
-    private PartnerLevelTaskBusinessData getPartnerLevelTaskBusinessData(boolean isCreate, Long processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
+    private PartnerLevelTaskBusinessData getPartnerLevelTaskBusinessData(boolean isCreate, String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         PartnerLevelTaskBusinessData data = new PartnerLevelTaskBusinessData();
         data.setAuditedPersonId(businessDataDTO.getAuditedPersonId());
         data.setAuditPersonId(businessDataDTO.getAuditPersonId());
