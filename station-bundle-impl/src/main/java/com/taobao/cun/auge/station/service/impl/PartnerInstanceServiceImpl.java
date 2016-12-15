@@ -1462,7 +1462,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				throw new AugeServiceException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
 			}
 			updateStation(rel.getStationId(), partnerInstanceDto);
-			updatePartner(rel.getPartnerId(), partnerInstanceDto);
+			
+			PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+			partnerDto.copyOperatorDto(partnerInstanceDto);
+			partnerDto.setId(rel.getPartnerId());
+			
+			updatePartner(partnerDto);
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 
 			// 同步station_apply
@@ -1475,24 +1480,26 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 	}
 
-	private void updatePartner(Long partnerId, PartnerInstanceDto partnerInstanceDto) {
-		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-		partnerDto.copyOperatorDto(partnerInstanceDto);
-		partnerDto.setId(partnerId);
+	private void updatePartner(PartnerDto partnerDto) {
 		partnerBO.updatePartner(partnerDto);
-		attachementBO.modifyAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
+		attachementBO.modifyAttachementBatch(partnerDto.getAttachements(), partnerDto.getId(), AttachementBizTypeEnum.PARTNER, partnerDto);
 	}
 
 	private void updateStation(Long stationId, PartnerInstanceDto partnerInstanceDto) {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		stationDto.copyOperatorDto(partnerInstanceDto);
 		stationDto.setId(stationId);
+		updateStation(stationDto);
+	}
+	
+	private void updateStation(StationDto stationDto) {
+		Long stationId = stationDto.getId();
 		// 判断服务站编号是否使用中
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
 		
 		stationBO.updateStation(stationDto);
 		saveStationFixProtocol(stationDto, stationId);
-		attachementBO.modifyAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
+		attachementBO.modifyAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, stationDto);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1812,9 +1819,39 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 
 	@Override
-	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto)
-			throws AugeServiceException, AugeSystemException {
-		// TODO Auto-generated method stub
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException {
+		// 参数校验
+		BeanValidator.validateWithThrowable(upgradeDto);
+
+		StationDto stationDto = upgradeDto.getStationDto();
+		Long stationId = stationDto.getId();
+		ValidateUtils.notNull(stationId);
+		PartnerDto partnerDto = upgradeDto.getPartnerDto();
 		
+		Long partnerId = partnerDto.getId();
+		ValidateUtils.notNull(partnerId);
+		
+		//更新村点信息
+		stationDto.setState(StationStateEnum.INVALID);
+		stationDto.setStatus(StationStatusEnum.NEW);
+		stationDto.copyOperatorDto(upgradeDto);
+		updateStation(stationDto);
+		
+		//更新合伙人信息
+		partnerDto.copyOperatorDto(upgradeDto);
+		updatePartner(partnerDto);
+		
+		//新生成一个合伙人实例
+		
+		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+		
+		partnerInstanceDto.setStationId(stationId);
+		partnerInstanceDto.setPartnerId(partnerId);
+		partnerInstanceDto.copyOperatorDto(upgradeDto);
+		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
+		partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+		
+		Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
 	}
 }

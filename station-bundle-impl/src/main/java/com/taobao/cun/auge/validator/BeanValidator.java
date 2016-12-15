@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 /**
  * 采用JSR-303规范对Bean校验
@@ -60,7 +61,7 @@ public class BeanValidator {
 
 		if (validateResult.hasError()) {
 			BeanValidateException validateException =  new BeanValidateException(validateResult.getClassName(), validateResult.getErrors());
-			throw new AugeServiceException("param error",validateException.getMessage());
+			throw new AugeSystemException("param error",validateException.getMessage());
 		}
 	}
 

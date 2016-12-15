@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.taobao.cun.auge.common.OperatorDto;
 
 public class PartnerInstanceUpgradeDto extends OperatorDto {
@@ -9,16 +11,19 @@ public class PartnerInstanceUpgradeDto extends OperatorDto {
 	/**
 	 * 主键
 	 */
+	@NotNull(message = "partnerInstanceId not null")
 	private Long partnerInstanceId;
 
 	/**
 	 * 村点dto
 	 */
+	@NotNull(message = "StationDto not null")
 	private StationDto stationDto;
 
 	/**
 	 * 合伙人dto
 	 */
+	@NotNull(message = "PartnerDto not null")
 	private PartnerDto partnerDto;
 
 	public Long getPartnerInstanceId() {
