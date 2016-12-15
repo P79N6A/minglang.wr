@@ -18,6 +18,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerTpgBO;
+import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
@@ -41,7 +43,6 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
-import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -52,7 +53,6 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
@@ -93,7 +93,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	PartnerInstanceScheduleService PartnerInstanceScheduleService;
 	
 	@Autowired
-	PartnerInstanceQueryService partnerInstanceQueryService;
+	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
 	
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
@@ -104,11 +104,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			GeneralTaskDto cainiaoTaskDto;
 			
 			//是否是升级的合伙人
-			if (partnerInstanceQueryService.isUpgradePartnerInstance(instance.getId())) {
-				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerInstanceQueryService.getPartnerTypeChangeApply(instance.getId());
+			if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId(),PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP)) {
+				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());
 				// 解冻淘帮手保证金
-				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getInstanceId());
-				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getInstanceId(),instance.getId(), operator);
+				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getPartnerInstanceId());
+				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getPartnerInstanceId(),instance.getId(), operator);
 			} else {
 				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
 			}

@@ -17,7 +17,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
@@ -25,7 +24,6 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 /**
  * 合伙人实例查询服务
@@ -272,25 +270,4 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
-    
-	/**
-	 * 是否是升级后的实例
-	 *
-	 * @param instanceId 升级后的实例id
-	 * @return
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
-	 */
-	public Boolean isUpgradePartnerInstance(Long instanceId) throws AugeServiceException, AugeSystemException;
-	
-	/**
-	 * 根据升级后的实例id，查询升级申请单信息
-	 *
-	 * @param instanceId 升级后的实例id
-	 * @return
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
-	 */
-	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId) throws AugeServiceException, AugeSystemException;
-    
 }

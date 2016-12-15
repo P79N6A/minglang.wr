@@ -1,17 +1,17 @@
 package com.taobao.cun.auge.station.dto;
 
-import java.io.Serializable;
 import java.util.Map;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 
-public class PartnerTypeChangeApplyDto implements Serializable {
+public class PartnerTypeChangeApplyDto extends OperatorDto {
 
 	private static final long serialVersionUID = -395193218316322678L;
 
-	private Long instanceId;
+	private Long partnerInstanceId;
 
-	private Long nextInstanceId;
+	private Long nextPartnerInstanceId;
 
 	/**
 	 * 其他特性，用于扩展服务站属性
@@ -20,20 +20,20 @@ public class PartnerTypeChangeApplyDto implements Serializable {
 
 	private PartnerInstanceTypeChangeEnum typeChangeEnum;
 
-	public Long getInstanceId() {
-		return instanceId;
+	public Long getPartnerInstanceId() {
+		return partnerInstanceId;
 	}
 
-	public void setInstanceId(Long instanceId) {
-		this.instanceId = instanceId;
+	public void setPartnerInstanceId(Long partnerInstanceId) {
+		this.partnerInstanceId = partnerInstanceId;
 	}
 
-	public Long getNextInstanceId() {
-		return nextInstanceId;
+	public Long getNextPartnerInstanceId() {
+		return nextPartnerInstanceId;
 	}
 
-	public void setNextInstanceId(Long nextInstanceId) {
-		this.nextInstanceId = nextInstanceId;
+	public void setNextPartnerInstanceId(Long nextPartnerInstanceId) {
+		this.nextPartnerInstanceId = nextPartnerInstanceId;
 	}
 
 	public Map<String, String> getFeature() {

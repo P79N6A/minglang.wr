@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -55,6 +57,7 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
@@ -87,6 +90,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -224,6 +228,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	PartnerInstanceChecker partnerInstanceChecker;
+	
+	@Autowired
+	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -1744,7 +1751,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		//初始化装修生命周期
 		PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		Station s = stationBO.getStationById(psl.getStationId());
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
@@ -1817,7 +1823,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException {
@@ -1828,30 +1833,96 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long stationId = stationDto.getId();
 		ValidateUtils.notNull(stationId);
 		PartnerDto partnerDto = upgradeDto.getPartnerDto();
-		
+
 		Long partnerId = partnerDto.getId();
 		ValidateUtils.notNull(partnerId);
+		try {
+			Station station = stationBO.getStationById(stationId);
+			//村点信息备份
+			Map<String, String> feature = backupStationInfo(station);
+			// 更新村点信息
+			stationDto.setState(StationStateEnum.INVALID);
+			stationDto.setStatus(StationStatusEnum.NEW);
+			stationDto.copyOperatorDto(upgradeDto);
+			updateStation(stationDto);
+
+			// 更新合伙人信息
+			partnerDto.copyOperatorDto(upgradeDto);
+			updatePartner(partnerDto);
+
+			// 更新老的实例
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
+					upgradeDto.getOperator());
+
+			// 新生成一个合伙人实例
+			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+			partnerInstanceDto.setStationId(stationId);
+			partnerInstanceDto.setPartnerId(partnerId);
+			partnerInstanceDto.copyOperatorDto(upgradeDto);
+			partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
+			partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+			// 升级标示
+			partnerInstanceDto.setBit(1);
+			// 新的合伙人实例
+			Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
+
+			// 不同类型合伙人，执行不同的生命周期
+			partnerInstanceDto.setId(nextInstanceId);
+			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+			
+			//新增类型变更申请单
+			PartnerTypeChangeApplyDto applyDto = new PartnerTypeChangeApplyDto();
+			applyDto.setPartnerInstanceId(instanceId);
+			applyDto.setNextPartnerInstanceId(nextInstanceId);
+			applyDto.setFeature(feature);
+			applyDto.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
+			partnerTypeChangeApplyBO.addPartnerTypeChangeApply(applyDto);
+
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.ADD, nextInstanceId);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+
+			// 发出升级事件
+			PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
+			event.setPartnerInstanceId(instanceId);
+			event.setStationId(stationId);
+			event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
+			event.copyOperatorDto(upgradeDto);
+			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("upgradePartnerInstance","PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.toString());
+			logger.warn(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("upgradePartnerInstance", "PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
+	}
+
+
+	private Map<String, String> backupStationInfo(Station station) {
+		Map<String, String> feature = new HashMap<String,String>();
+		feature.put("stationNum", station.getStationNum());
+		feature.put("stationName", station.getName());
 		
-		//更新村点信息
-		stationDto.setState(StationStateEnum.INVALID);
-		stationDto.setStatus(StationStatusEnum.NEW);
-		stationDto.copyOperatorDto(upgradeDto);
-		updateStation(stationDto);
+		feature.put("province", station.getProvince());
+		feature.put("provinceDetail", station.getProvinceDetail());
+		feature.put("city", station.getCity());
+		feature.put("cityDetail", station.getCityDetail());
+		feature.put("county", station.getCounty());
+		feature.put("countyDetail", station.getCountyDetail());
+		feature.put("town", station.getTown());
+		feature.put("townDetail", station.getTownDetail());
+		feature.put("village", station.getVillage());
+		feature.put("villageDetail", station.getVillageDetail());
+		feature.put("address", station.getAddress());
 		
-		//更新合伙人信息
-		partnerDto.copyOperatorDto(upgradeDto);
-		updatePartner(partnerDto);
-		
-		//新生成一个合伙人实例
-		
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-		
-		partnerInstanceDto.setStationId(stationId);
-		partnerInstanceDto.setPartnerId(partnerId);
-		partnerInstanceDto.copyOperatorDto(upgradeDto);
-		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-		partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
-		
-		Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
+		feature.put("lat", station.getLat());
+		feature.put("lng", station.getLng());
+		return feature;
 	}
 }
