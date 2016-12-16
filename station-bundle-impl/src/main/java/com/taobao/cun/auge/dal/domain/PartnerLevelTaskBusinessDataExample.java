@@ -565,133 +565,143 @@ public class PartnerLevelTaskBusinessDataExample {
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdIsNull() {
-            addCriterion("audit_person_id is null");
+        public Criteria andAuditPersonNameIsNull() {
+            addCriterion("audit_person_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdIsNotNull() {
-            addCriterion("audit_person_id is not null");
+        public Criteria andAuditPersonNameIsNotNull() {
+            addCriterion("audit_person_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdEqualTo(Long value) {
-            addCriterion("audit_person_id =", value, "auditPersonId");
+        public Criteria andAuditPersonNameEqualTo(String value) {
+            addCriterion("audit_person_name =", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdNotEqualTo(Long value) {
-            addCriterion("audit_person_id <>", value, "auditPersonId");
+        public Criteria andAuditPersonNameNotEqualTo(String value) {
+            addCriterion("audit_person_name <>", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdGreaterThan(Long value) {
-            addCriterion("audit_person_id >", value, "auditPersonId");
+        public Criteria andAuditPersonNameGreaterThan(String value) {
+            addCriterion("audit_person_name >", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("audit_person_id >=", value, "auditPersonId");
+        public Criteria andAuditPersonNameGreaterThanOrEqualTo(String value) {
+            addCriterion("audit_person_name >=", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdLessThan(Long value) {
-            addCriterion("audit_person_id <", value, "auditPersonId");
+        public Criteria andAuditPersonNameLessThan(String value) {
+            addCriterion("audit_person_name <", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdLessThanOrEqualTo(Long value) {
-            addCriterion("audit_person_id <=", value, "auditPersonId");
+        public Criteria andAuditPersonNameLessThanOrEqualTo(String value) {
+            addCriterion("audit_person_name <=", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdIn(List<Long> values) {
-            addCriterion("audit_person_id in", values, "auditPersonId");
+        public Criteria andAuditPersonNameLike(String value) {
+            addCriterion("audit_person_name like", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdNotIn(List<Long> values) {
-            addCriterion("audit_person_id not in", values, "auditPersonId");
+        public Criteria andAuditPersonNameNotLike(String value) {
+            addCriterion("audit_person_name not like", value, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdBetween(Long value1, Long value2) {
-            addCriterion("audit_person_id between", value1, value2, "auditPersonId");
+        public Criteria andAuditPersonNameIn(List<String> values) {
+            addCriterion("audit_person_name in", values, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andAuditPersonIdNotBetween(Long value1, Long value2) {
-            addCriterion("audit_person_id not between", value1, value2, "auditPersonId");
+        public Criteria andAuditPersonNameNotIn(List<String> values) {
+            addCriterion("audit_person_name not in", values, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdIsNull() {
-            addCriterion("participants_id is null");
+        public Criteria andAuditPersonNameBetween(String value1, String value2) {
+            addCriterion("audit_person_name between", value1, value2, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdIsNotNull() {
-            addCriterion("participants_id is not null");
+        public Criteria andAuditPersonNameNotBetween(String value1, String value2) {
+            addCriterion("audit_person_name not between", value1, value2, "auditPersonName");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdEqualTo(String value) {
-            addCriterion("participants_id =", value, "participantsId");
+        public Criteria andParticipantsIsNull() {
+            addCriterion("participants is null");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdNotEqualTo(String value) {
-            addCriterion("participants_id <>", value, "participantsId");
+        public Criteria andParticipantsIsNotNull() {
+            addCriterion("participants is not null");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdGreaterThan(String value) {
-            addCriterion("participants_id >", value, "participantsId");
+        public Criteria andParticipantsEqualTo(String value) {
+            addCriterion("participants =", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdGreaterThanOrEqualTo(String value) {
-            addCriterion("participants_id >=", value, "participantsId");
+        public Criteria andParticipantsNotEqualTo(String value) {
+            addCriterion("participants <>", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdLessThan(String value) {
-            addCriterion("participants_id <", value, "participantsId");
+        public Criteria andParticipantsGreaterThan(String value) {
+            addCriterion("participants >", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdLessThanOrEqualTo(String value) {
-            addCriterion("participants_id <=", value, "participantsId");
+        public Criteria andParticipantsGreaterThanOrEqualTo(String value) {
+            addCriterion("participants >=", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdLike(String value) {
-            addCriterion("participants_id like", value, "participantsId");
+        public Criteria andParticipantsLessThan(String value) {
+            addCriterion("participants <", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdNotLike(String value) {
-            addCriterion("participants_id not like", value, "participantsId");
+        public Criteria andParticipantsLessThanOrEqualTo(String value) {
+            addCriterion("participants <=", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdIn(List<String> values) {
-            addCriterion("participants_id in", values, "participantsId");
+        public Criteria andParticipantsLike(String value) {
+            addCriterion("participants like", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdNotIn(List<String> values) {
-            addCriterion("participants_id not in", values, "participantsId");
+        public Criteria andParticipantsNotLike(String value) {
+            addCriterion("participants not like", value, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdBetween(String value1, String value2) {
-            addCriterion("participants_id between", value1, value2, "participantsId");
+        public Criteria andParticipantsIn(List<String> values) {
+            addCriterion("participants in", values, "participants");
             return (Criteria) this;
         }
 
-        public Criteria andParticipantsIdNotBetween(String value1, String value2) {
-            addCriterion("participants_id not between", value1, value2, "participantsId");
+        public Criteria andParticipantsNotIn(List<String> values) {
+            addCriterion("participants not in", values, "participants");
+            return (Criteria) this;
+        }
+
+        public Criteria andParticipantsBetween(String value1, String value2) {
+            addCriterion("participants between", value1, value2, "participants");
+            return (Criteria) this;
+        }
+
+        public Criteria andParticipantsNotBetween(String value1, String value2) {
+            addCriterion("participants not between", value1, value2, "participants");
             return (Criteria) this;
         }
 

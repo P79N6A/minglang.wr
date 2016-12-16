@@ -29,12 +29,12 @@ public class PartnerLevelTaskBusinessDataDTO implements Serializable {
     /**
      * 审批人
      */
-    private Long auditPersonId;
+    private String auditPersonName;
 
     /**
      * 参与人员
      */
-    private String participantsId;
+    private String participants;
 
     /**
      * 数据类型如:答辩附件材料
@@ -65,20 +65,20 @@ public class PartnerLevelTaskBusinessDataDTO implements Serializable {
         this.auditedPersonId = auditedPersonId;
     }
 
-    public Long getAuditPersonId() {
-        return auditPersonId;
+    public String getAuditPersonName() {
+        return auditPersonName;
     }
 
-    public void setAuditPersonId(Long auditPersonId) {
-        this.auditPersonId = auditPersonId;
+    public void setAuditPersonName(String auditPersonName) {
+        this.auditPersonName = auditPersonName;
     }
 
-    public String getParticipantsId() {
-        return participantsId;
+    public String getParticipants() {
+        return participants;
     }
 
-    public void setParticipantsId(String participantsId) {
-        this.participantsId = participantsId;
+    public void setParticipants(String participants) {
+        this.participants = participants;
     }
 
     public LevelTaskDataTypeEnum getInfoType() {

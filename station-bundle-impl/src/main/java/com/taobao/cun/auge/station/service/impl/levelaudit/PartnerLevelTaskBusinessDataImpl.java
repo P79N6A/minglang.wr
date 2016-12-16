@@ -48,7 +48,6 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
         }
     }
 
-    @NotNull
     private PartnerLevelTaskBusinessDataExample getPartnerLevelTaskBusinessDataExample(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         PartnerLevelTaskBusinessDataExample example = new PartnerLevelTaskBusinessDataExample();
         PartnerLevelTaskBusinessDataExample.Criteria criteria = example.createCriteria();
@@ -97,13 +96,13 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
             PartnerLevelTaskBusinessDataDTO dto = new PartnerLevelTaskBusinessDataDTO();
             dto.setExtendsInfo(data.getExtendsInfo());
             dto.setTaskBusinessInfo(data.getTaskBusinessInfo());
-            dto.setParticipantsId(data.getParticipantsId());
+            dto.setParticipants(data.getParticipants());
             dto.setAuditedPersonId(data.getAuditedPersonId());
             if(StringUtils.isNotBlank(data.getInfoType())) {
                 dto.setInfoType(LevelTaskDataTypeEnum.valueOf(data.getInfoType()));
             }
             dto.setAuditStatus(data.getAuditStatus());
-            dto.setAuditPersonId(data.getAuditPersonId());
+            dto.setAuditPersonName(data.getAuditPersonName());
             dto.setProcessInstanceId(data.getProcessInstanceId());
             if(data.getTaskNode()!=null) {
                 dto.setTaskId(Long.valueOf(data.getTaskNode()));
@@ -116,14 +115,14 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
     private PartnerLevelTaskBusinessData getPartnerLevelTaskBusinessData(boolean isCreate, String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         PartnerLevelTaskBusinessData data = new PartnerLevelTaskBusinessData();
         data.setAuditedPersonId(businessDataDTO.getAuditedPersonId());
-        data.setAuditPersonId(businessDataDTO.getAuditPersonId());
+        data.setAuditPersonName(businessDataDTO.getAuditPersonName());
         if(isCreate) {
             Date now = new Date();
             data.setGmtCreate(now);
             data.setGmtModified(now);
         }
         data.setInfoType(businessDataDTO.getInfoType().name());
-        data.setParticipantsId(businessDataDTO.getParticipantsId());
+        data.setParticipants(businessDataDTO.getParticipants());
         data.setProcessInstanceId(processInstanceId);
         data.setTaskNode(taskId);
         data.setAuditStatus(businessDataDTO.getAuditStatus());

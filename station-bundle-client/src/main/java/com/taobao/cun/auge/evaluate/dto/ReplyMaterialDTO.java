@@ -80,6 +80,9 @@ public class ReplyMaterialDTO implements Serializable {
     public static class Attachment {
         private String fileName;
         private String fileType;
+        /**
+         * oss存储的话 是Identifier
+         */
         private String url;
 
         public String getFileName() {

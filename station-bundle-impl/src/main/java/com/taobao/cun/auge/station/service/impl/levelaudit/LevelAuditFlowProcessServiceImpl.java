@@ -157,8 +157,6 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
     /**
      * 初始化答辩材料
-     * @param processInstanceId
-     * @param partnerInstanceLevelDto
      */
     private void initReplyMaterial(String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
         try {
@@ -175,9 +173,6 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
     /**
      * 分发调查问卷
-     * @param jsonObject
-     * @param processInstanceId
-     * @param partnerInstanceLevelDto
      */
     private void dispatchQuesionnaire(JSONObject jsonObject, String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
         try {
