@@ -39,6 +39,7 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.put(PartnerInstanceTypeEnum.TPA.getCode(), tpaStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TPV.getCode(), tpvStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TPT.getCode(), tpStrategy);
 	}
 	
 	/**
