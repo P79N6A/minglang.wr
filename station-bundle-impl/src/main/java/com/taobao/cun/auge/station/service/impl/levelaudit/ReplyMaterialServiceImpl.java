@@ -68,6 +68,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
             for (String identifier : attachmentIdentifiers) {
                 ReplyMaterialDTO.Attachment tmp = new ReplyMaterialDTO.Attachment();
                 tmp.setFileName(identifier);
+                tmp.setUrl(identifier);
                 attachmentDtoList.add(tmp);
             }
             materialDTO.setAttachmentDtoList(attachmentDtoList);
