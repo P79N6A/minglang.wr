@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.strategy.PartnerInstanceStrategy;
 import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
+import com.taobao.cun.auge.station.strategy.TptStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
 
 @Component("partnerInstanceHandler")
@@ -33,13 +34,16 @@ public class PartnerInstanceHandler implements InitializingBean{
 	@Autowired
 	private TpStrategy tpStrategy;
 	
+	@Autowired
+	private TptStrategy tptStrategy;
+	
 	Map<String,PartnerInstanceStrategy> strategy = new HashMap<String,PartnerInstanceStrategy>();
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		strategy.put(PartnerInstanceTypeEnum.TPA.getCode(), tpaStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TPV.getCode(), tpvStrategy);
 		strategy.put(PartnerInstanceTypeEnum.TP.getCode(), tpStrategy);
-		strategy.put(PartnerInstanceTypeEnum.TPT.getCode(), tpStrategy);
+		strategy.put(PartnerInstanceTypeEnum.TPT.getCode(), tptStrategy);
 	}
 	
 	/**
