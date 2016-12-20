@@ -26,7 +26,7 @@ public class PartnerInstanceTypeEnum implements Serializable {
 		mappings.put("TPA", TPA);
 		mappings.put("TP", TP);
 		mappings.put("TPV", TPV);
-		mappings.put("TPV", TPV);
+		mappings.put("TPT", TPT);
 	}
 	@NotNull
 	private String code;

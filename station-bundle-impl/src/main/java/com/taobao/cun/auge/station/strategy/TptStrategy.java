@@ -512,7 +512,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		}
 		
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPT);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
