@@ -151,6 +151,10 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     public void afterStartApproveProcessSuccess(JSONObject jsonObject) {
         String processInstanceId = jsonObject.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
         PartnerInstanceLevelDto partnerInstanceLevelDto = JSON.parseObject(jsonObject.getString(LevelAuditFlowService.EVALUATE_LEVEL_INFO), PartnerInstanceLevelDto.class);
+        if(partnerInstanceLevelDto==null){
+            logger.error("partnerInstanceLevelDto is null, jsonObject:{}",jsonObject);
+            return;
+        }
         initReplyMaterial(processInstanceId, partnerInstanceLevelDto);
         dispatchQuesionnaire(jsonObject, processInstanceId, partnerInstanceLevelDto);
     }
