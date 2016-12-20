@@ -23,6 +23,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -189,7 +190,7 @@ public class SmsListener implements EventListener {
 			
 			String operatorId = event.getOperator();
 			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
-			content = String.format(content, partner.getName());
+			content = String.format(content, partner.getName(),PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE);
 			
 			generalTaskSubmitService.submitSmsTask(parentTaobaoUserId, mobile, operatorId, content);
 		}
