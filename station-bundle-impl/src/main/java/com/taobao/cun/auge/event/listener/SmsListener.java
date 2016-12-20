@@ -167,16 +167,6 @@ public class SmsListener implements EventListener {
 		}
 	}
 	
-	private String findPartnerMobileByPartnerId(Long partnerId){
-		try {
-			Partner partner = partnerBO.getPartnerById(partnerId);
-			return partner.getMobile();
-		} catch (AugeServiceException e) {
-			logger.error("查询合伙人手机号码失败。partnerId=" + partnerId);
-			return "";
-		}
-	}
-	
 	/**
 	 * 升级级事件处理器
 	 * 
@@ -187,17 +177,20 @@ public class SmsListener implements EventListener {
 		//淘帮手升级为合伙人
 		if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
 			//淘帮手实例
-        	PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(event.getPartnerInstanceId());
-        	Long parentStationId = instance.getParentStationId();
+        	PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(event.getPartnerInstanceId());
+        	Long parentStationId = tpaInstance.getParentStationId();
         	//合伙人实例
-        	PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-        	Long parentTaobaoUserId = parentInstance.getTaobaoUserId();
+        	PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
+        	Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
 			
 			// 查询手机号码
-			String mobile = findPartnerMobileByPartnerId(parentInstance.getPartnerId());
+        	Partner partner = partnerBO.getPartnerById(tpInstance.getPartnerId());
+			String mobile = partner.getMobile();
 			
 			String operatorId = event.getOperator();
 			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
+			content = String.format(content, partner.getName());
+			
 			generalTaskSubmitService.submitSmsTask(parentTaobaoUserId, mobile, operatorId, content);
 		}
 	}

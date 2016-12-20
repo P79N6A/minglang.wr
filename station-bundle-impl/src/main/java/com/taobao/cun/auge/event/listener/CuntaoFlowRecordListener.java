@@ -179,7 +179,7 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperatorName(buildOperatorName);
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
-		cuntaoFlowRecord.setRemarks(typeChangeEvent.getTypeChangeEnum().getDescription());
+		cuntaoFlowRecord.setRemarks(typeChangeEnum.getDescription());
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
