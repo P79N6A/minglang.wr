@@ -1883,6 +1883,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			applyDto.setNextPartnerInstanceId(nextInstanceId);
 			applyDto.setFeature(feature);
 			applyDto.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
+			applyDto.copyOperatorDto(upgradeDto);
 			partnerTypeChangeApplyBO.addPartnerTypeChangeApply(applyDto);
 
 			// 同步station_apply

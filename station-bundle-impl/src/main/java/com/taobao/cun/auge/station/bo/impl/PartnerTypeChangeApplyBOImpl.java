@@ -18,6 +18,7 @@ import com.taobao.cun.auge.station.convert.PartnerTypeChangeApplyDtoConverter;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.validator.BeanValidator;
 
 @Component("partnerTypeChangeApplyBO")
 public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
@@ -55,7 +56,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 
 	@Override
 	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto)	throws AugeServiceException, AugeSystemException {
-		ValidateUtils.notNull(applyDto);
+		BeanValidator.validateWithThrowable(applyDto);
 		
 		PartnerTypeChangeApply apply = PartnerTypeChangeApplyDtoConverter.convert(applyDto);
 		DomainUtils.beforeInsert(apply, applyDto.getOperator());
