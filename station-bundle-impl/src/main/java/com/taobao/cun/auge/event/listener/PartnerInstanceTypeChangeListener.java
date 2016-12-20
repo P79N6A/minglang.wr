@@ -60,6 +60,7 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			
+			//淘帮手升级为合伙人，去淘帮手标
 			generalTaskSubmitService.submitRemoveUserTagTasks(partner.getTaobaoUserId(), partner.getTaobaoNick(), typeChangeEnum.getPrePartnerInstanceType(), typeChangeEvent.getOperator(), instanceId);
 			
 		}
