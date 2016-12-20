@@ -1851,8 +1851,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			updatePartner(partnerDto);
 
 			// 更新老的实例
-			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
-			partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
+			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+			partnerInstanceBO.changeState(tpaInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
 					upgradeDto.getOperator());
 
 			// 新生成一个合伙人实例
@@ -1862,7 +1862,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceDto.setPartnerId(partnerId);
 			partnerInstanceDto.copyOperatorDto(upgradeDto);
 			partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-			partnerInstanceDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+			partnerInstanceDto.setTaobaoUserId(tpaInstance.getTaobaoUserId());
+			partnerInstanceDto.setApplierId(upgradeDto.getOperator());
+			partnerInstanceDto.setApplierType(upgradeDto.getOperatorType().getCode());
+			partnerInstanceDto.setApplyTime(new Date());
 			// 升级标示
 			partnerInstanceDto.setBit(1);
 			// 新的合伙人实例
@@ -1874,7 +1877,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			//新增类型变更申请单
 			PartnerTypeChangeApplyDto applyDto = new PartnerTypeChangeApplyDto();
-			applyDto.setPartnerInstanceId(instanceId);
+			applyDto.setPartnerInstanceId(tpaInstance.getId());
 			applyDto.setNextPartnerInstanceId(nextInstanceId);
 			applyDto.setFeature(feature);
 			applyDto.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
@@ -1883,11 +1886,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.ADD, nextInstanceId);
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
+			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, tpaInstance.getId());
 
 			// 发出升级事件
 			PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
-			event.setPartnerInstanceId(instanceId);
+			event.setPartnerInstanceId(tpaInstance.getId());
 			event.setStationId(stationId);
 			event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
 			event.copyOperatorDto(upgradeDto);
