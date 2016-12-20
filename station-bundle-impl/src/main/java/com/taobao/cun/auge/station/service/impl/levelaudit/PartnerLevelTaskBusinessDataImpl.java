@@ -116,9 +116,10 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
         PartnerLevelTaskBusinessData data = new PartnerLevelTaskBusinessData();
         data.setAuditedPersonId(businessDataDTO.getAuditedPersonId());
         data.setAuditPersonName(businessDataDTO.getAuditPersonName());
+        Date now = new Date();
         if(isCreate) {
-            Date now = new Date();
             data.setGmtCreate(now);
+        }else {
             data.setGmtModified(now);
         }
         data.setInfoType(businessDataDTO.getInfoType().name());
