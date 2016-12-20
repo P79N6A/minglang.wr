@@ -1837,9 +1837,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long partnerId = partnerDto.getId();
 		ValidateUtils.notNull(partnerId);
 		try {
-			Station station = stationBO.getStationById(stationId);
 			//村点信息备份
-			Map<String, String> feature = backupStationInfo(station);
+			Map<String, String> feature = backupStationInfo(stationId);
 			// 更新村点信息
 			stationDto.setState(StationStateEnum.INVALID);
 			stationDto.setStatus(StationStatusEnum.NEW);
@@ -1856,26 +1855,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 					upgradeDto.getOperator());
 
 			// 新生成一个合伙人实例
-			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-
-			partnerInstanceDto.setStationId(stationId);
-			partnerInstanceDto.setParentStationId(stationId);
-			partnerInstanceDto.setPartnerId(partnerId);
-			partnerInstanceDto.copyOperatorDto(upgradeDto);
-			partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
-			partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-			partnerInstanceDto.setTaobaoUserId(tpaInstance.getTaobaoUserId());
-			partnerInstanceDto.setApplierId(upgradeDto.getOperator());
-			partnerInstanceDto.setApplierType(upgradeDto.getOperatorType().getCode());
-			partnerInstanceDto.setApplyTime(new Date());
-			// 升级标示
-			partnerInstanceDto.setBit(1);
-			// 新的合伙人实例
-			Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
-
-			// 不同类型合伙人，执行不同的生命周期
-			partnerInstanceDto.setId(nextInstanceId);
-			partnerInstanceHandler.handleApplyUpgrade(partnerInstanceDto, partnerInstanceDto.getType());
+			Long nextInstanceId = addUpgradedInstance(tpaInstance,upgradeDto);
 			
 			//新增类型变更申请单
 			PartnerTypeChangeApplyDto applyDto = new PartnerTypeChangeApplyDto();
@@ -1892,12 +1872,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, tpaInstance.getId());
 
 			// 发出升级事件
-			PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
-			event.setPartnerInstanceId(tpaInstance.getId());
-			event.setStationId(stationId);
-			event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
-			event.copyOperatorDto(upgradeDto);
-			EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+			dispatchUpgradeEvent(tpaInstance,upgradeDto);
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("upgradePartnerInstance","PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.toString());
 			logger.warn(error, e);
@@ -1909,8 +1884,56 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
+	//发出升级事件
+	private void dispatchUpgradeEvent(PartnerStationRel tpaInstance,OperatorDto operatorDto) {
+		PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
+		
+		event.setPartnerInstanceId(tpaInstance.getId());
+		event.setStationId(tpaInstance.getStationId());
+		event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
+		event.copyOperatorDto(operatorDto);
+		
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+	}
 
-	private Map<String, String> backupStationInfo(Station station) {
+	/**
+	 * 生成升级后的合伙人实例
+	 * 
+	 * @param upgradeDto
+	 * @param tpaInstance
+	 * @return
+	 */
+	private Long addUpgradedInstance(PartnerStationRel tpaInstance,OperatorDto operatorDto) {
+		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+
+		Long stationId = tpaInstance.getStationId();
+		Long partnerId = tpaInstance.getPartnerId();
+		
+		partnerInstanceDto.setStationId(stationId);
+		partnerInstanceDto.setParentStationId(stationId);
+		partnerInstanceDto.setPartnerId(partnerId);
+		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
+		partnerInstanceDto.setTaobaoUserId(tpaInstance.getTaobaoUserId());
+		partnerInstanceDto.setApplyTime(new Date());
+		// 升级标示
+		partnerInstanceDto.setBit(1);
+		
+		partnerInstanceDto.copyOperatorDto(operatorDto);
+		partnerInstanceDto.setApplierId(operatorDto.getOperator());
+		partnerInstanceDto.setApplierType(operatorDto.getOperatorType().getCode());
+		// 新的合伙人实例
+		Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
+
+		// 不同类型合伙人，执行不同的生命周期
+		partnerInstanceDto.setId(nextInstanceId);
+		partnerInstanceHandler.handleApplyUpgrade(partnerInstanceDto, partnerInstanceDto.getType());
+		return nextInstanceId;
+	}
+
+	private Map<String, String> backupStationInfo(Long stationId) {
+		Station station = stationBO.getStationById(stationId);
+		
 		Map<String, String> feature = new HashMap<String,String>();
 		feature.put("stationNum", station.getStationNum());
 		feature.put("stationName", station.getName());
