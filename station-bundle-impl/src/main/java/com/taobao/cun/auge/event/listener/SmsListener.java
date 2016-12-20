@@ -60,7 +60,6 @@ public class SmsListener implements EventListener {
 
 	@Override
 	public void onMessage(Event event) {
-
 		//智慧县域报名消息
 		if (event.getValue() instanceof WisdomCountyApplyEvent){
 			processWisdomCountyApplyEvent(event);
@@ -129,7 +128,6 @@ public class SmsListener implements EventListener {
 		}
 	}
 
-
 	private DingtalkTemplateEnum findSmsTemplate(PartnerInstanceStateChangeEnum stateChangeEnum) {
 		// 正式提交后，入驻中，发短信
 		if (PartnerInstanceStateChangeEnum.START_SETTLING.equals(stateChangeEnum)) {
@@ -169,29 +167,32 @@ public class SmsListener implements EventListener {
 	}
 	
 	/**
-	 * 升级级事件处理器
+	 * 升级事件处理器
 	 * 
 	 * @param event
 	 */
 	private void processTypeChangeEvent(PartnerInstanceTypeChangeEvent event) {
 		PartnerInstanceTypeChangeEnum typeChangeEnum = event.getTypeChangeEnum();
-		//淘帮手升级为合伙人
-		if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
-			//淘帮手实例
-        	PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(event.getPartnerInstanceId());
-        	Long parentStationId = tpaInstance.getParentStationId();
-        	//合伙人实例
-        	PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-        	Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
-			
-			// 查询手机号码
-        	Partner partner = partnerBO.getPartnerById(tpInstance.getPartnerId());
+		// 淘帮手升级为合伙人
+		if (PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)) {
+			// 淘帮手实例
+			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(event.getPartnerInstanceId());
+			// 父站点id
+			Long parentStationId = tpaInstance.getParentStationId();
+			// 合伙人实例
+			PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
+			// 合伙人淘宝账号
+			Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
+
+			// 查询合伙人手机号码
+			Partner partner = partnerBO.getPartnerById(tpInstance.getPartnerId());
 			String mobile = partner.getMobile();
-			
+
 			String operatorId = event.getOperator();
-			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
-			content = String.format(content, partner.getName(),PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE);
-			
+			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
+			//替换淘帮手姓名和奖励淘帮手名额
+			content = String.format(content, partner.getName(),	PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE);
+
 			generalTaskSubmitService.submitSmsTask(parentTaobaoUserId, mobile, operatorId, content);
 		}
 	}
