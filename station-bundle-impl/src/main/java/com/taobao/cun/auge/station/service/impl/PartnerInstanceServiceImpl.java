@@ -1859,8 +1859,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
 			partnerInstanceDto.setStationId(stationId);
+			partnerInstanceDto.setParentStationId(stationId);
 			partnerInstanceDto.setPartnerId(partnerId);
 			partnerInstanceDto.copyOperatorDto(upgradeDto);
+			partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 			partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
 			partnerInstanceDto.setTaobaoUserId(tpaInstance.getTaobaoUserId());
 			partnerInstanceDto.setApplierId(upgradeDto.getOperator());
@@ -1873,7 +1875,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 不同类型合伙人，执行不同的生命周期
 			partnerInstanceDto.setId(nextInstanceId);
-			partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
+			partnerInstanceHandler.handleApplyUpgrade(partnerInstanceDto, partnerInstanceDto.getType());
 			
 			//新增类型变更申请单
 			PartnerTypeChangeApplyDto applyDto = new PartnerTypeChangeApplyDto();

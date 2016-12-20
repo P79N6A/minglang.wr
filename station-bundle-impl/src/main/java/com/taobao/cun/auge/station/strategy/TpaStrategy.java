@@ -416,4 +416,10 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void applyUpgrade(PartnerInstanceDto instanceDto) {
+		// TODO Auto-generated method stub
+		
+	}
 }

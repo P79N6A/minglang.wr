@@ -376,4 +376,10 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void applyUpgrade(PartnerInstanceDto instanceDto) {
+		// TODO Auto-generated method stub
+		
+	}
 }

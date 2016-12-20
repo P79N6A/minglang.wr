@@ -107,4 +107,11 @@ public interface PartnerInstanceStrategy {
 	 * @param operatorDto
 	 */
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto);
+
+	/**
+	 * 升级
+	 * 
+	 * @param instanceDto
+	 */
+	public void applyUpgrade(PartnerInstanceDto instanceDto);
 }

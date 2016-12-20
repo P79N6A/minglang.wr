@@ -149,6 +149,22 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Autowired
 	PartnerApplyBO partnerApplyBO;
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void applyUpgrade(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+		// 构建入驻生命周期
+		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
+		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
+		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
+		partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
+		partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
+		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
+		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
+	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
