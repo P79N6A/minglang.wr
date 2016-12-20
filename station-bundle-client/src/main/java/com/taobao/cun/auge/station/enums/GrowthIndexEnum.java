@@ -8,6 +8,7 @@ public enum GrowthIndexEnum {
     ACTIVE_APP_BUYER_COUNT("aabc", "app活跃村民数"),
     LOYALTY_BUYER("lb", "忠实村民数"),
     VISIT_PRODUCT_COUNT("vpc", "访问商品数"),
+    GROWTH_CAMP("gc", "成长营"),
     ;
     private String key;
     private String desc;
