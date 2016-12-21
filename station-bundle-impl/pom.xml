@@ -321,10 +321,6 @@
 		   <version>1.28</version>
 		   <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>com.taobao.cun</groupId>
-			<artifactId>cun-common-client</artifactId>
-		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
