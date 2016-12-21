@@ -1903,7 +1903,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	 * @param tpaInstance
 	 * @return
 	 */
-	private Long addUpgradedInstance(PartnerStationRel tpaInstance,OperatorDto operatorDto) {
+	private Long addUpgradedInstance(PartnerStationRel tpaInstance,PartnerInstanceUpgradeDto upgradeDto) {
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 
 		Long stationId = tpaInstance.getStationId();
@@ -1918,16 +1918,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setApplyTime(new Date());
 		// 升级标示
 		partnerInstanceDto.setBit(1);
+		partnerInstanceDto.setStationDecorateTypeEnum(upgradeDto.getStationDecorateTypeEnum());
+		partnerInstanceDto.setStationDecoratePaymentTypeEnum(upgradeDto.getStationDecoratePaymentTypeEnum());
 		
-		partnerInstanceDto.copyOperatorDto(operatorDto);
-		partnerInstanceDto.setApplierId(operatorDto.getOperator());
-		partnerInstanceDto.setApplierType(operatorDto.getOperatorType().getCode());
+		partnerInstanceDto.copyOperatorDto(upgradeDto);
+		partnerInstanceDto.setApplierId(upgradeDto.getOperator());
+		partnerInstanceDto.setApplierType(upgradeDto.getOperatorType().getCode());
 		// 新的合伙人实例
 		Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
 
 		// 不同类型合伙人，执行不同的生命周期
 		partnerInstanceDto.setId(nextInstanceId);
-		partnerInstanceHandler.handleApplyUpgrade(partnerInstanceDto, partnerInstanceDto.getType());
+		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 		return nextInstanceId;
 	}
 
