@@ -32,7 +32,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
     private PartnerLevelTaskBusinessDataMapper partnerLevelTaskBusinessDataMapper;
 
     @Override
-    public boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
+    public Boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO) {
         BeanValidator.validateWithThrowable(businessDataDTO);
         Assert.notNull(processInstanceId);
         PartnerLevelTaskBusinessDataExample example = getPartnerLevelTaskBusinessDataExample(processInstanceId, taskId, businessDataDTO);

@@ -17,7 +17,7 @@ public interface PartnerLevelTaskBusinessDataService {
      * @param businessDataDTO 业务数据
      * @return
      */
-    boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO);
+    Boolean saveTaskBusinessData(String processInstanceId, Long taskId, PartnerLevelTaskBusinessDataDTO businessDataDTO);
 
     /**
      * 查询某个被审批人员的所有某种类型的任务数据;
