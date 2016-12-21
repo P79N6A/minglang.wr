@@ -180,9 +180,9 @@ public class ProcessProcessor {
 				handlePeixunPurchase(objectId,audit,auditName,desc,resultCode);
 			}
 		}else if(ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)){
-			if(ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)){
-                levelAuditFlowService.afterStartApproveProcessSuccess(ob);
-            }
+			if(ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
+				levelAuditFlowService.afterStartApproveProcessSuccess(ob);
+			}
 		}
 	}
 	
