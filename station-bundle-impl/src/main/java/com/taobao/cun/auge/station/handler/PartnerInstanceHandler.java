@@ -53,18 +53,6 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	/**
-	 * 升级，如果以后淘帮手升级为合伙人时，需要装修，则直接走handleApplySettle
-	 * 
-	 * @param instanceDto
-	 * @param typeEnum
-	 * @throws AugeServiceException
-	 */
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void handleApplyUpgrade(PartnerInstanceDto instanceDto,PartnerInstanceTypeEnum typeEnum)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).applyUpgrade(instanceDto);
-	}
-	
-	/**
 	 * 入驻中编辑，只能在生命周期待办任务,没有开始的时候编辑
 	 * 
 	 * @param instanceDto
