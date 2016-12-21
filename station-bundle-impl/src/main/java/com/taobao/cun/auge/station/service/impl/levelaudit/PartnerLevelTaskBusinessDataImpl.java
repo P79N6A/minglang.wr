@@ -119,6 +119,7 @@ public class PartnerLevelTaskBusinessDataImpl implements PartnerLevelTaskBusines
         Date now = new Date();
         if(isCreate) {
             data.setGmtCreate(now);
+            data.setGmtModified(now);
         }else {
             data.setGmtModified(now);
         }
