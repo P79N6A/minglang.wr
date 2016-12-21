@@ -311,4 +311,11 @@ public interface PartnerInstanceBO {
 	
 	public void updateIsCurrentByInstanceId(Long instanceId,PartnerInstanceIsCurrentEnum isCurrentEnum)throws AugeServiceException;
 
+	/**
+	 * 查询该账号，上一次进入的村淘的实例，以服务结束时间，最新的为准
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId);
 }

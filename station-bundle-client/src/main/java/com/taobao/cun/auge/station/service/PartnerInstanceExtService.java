@@ -2,7 +2,10 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 
 public interface PartnerInstanceExtService {
 	
@@ -41,11 +44,35 @@ public interface PartnerInstanceExtService {
 	 */
 	public List<PartnerInstanceExtDto> findPartnerExtInfos(List<Long> instanceIds);
 	
-	/**
-	 * 保存合伙人扩展，不存在修改，存在，修改
-	 * 
-	 * @return
-	 */
-	public void savePartnerExtInfo(PartnerInstanceExtDto instanceExtDto);
+	 /**
+	   * 在原有的值上，添加increaseNum个子成员，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * 
+	   * @param instanceId
+	   * @param increaseNum
+	   * @param reason
+	   * @param operatorDto
+	   */
+	  public void addPartnerMaxChildNum(Long instanceId, Integer increaseNum, PartnerMaxChildNumChangeReasonEnum reason,
+	      OperatorDto operatorDto);
+
+	  /**
+	   * 修改最大子成员配额，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * 
+	   * @param instanceId
+	   * @param maxChildNum
+	   *            修改后的值
+	   * @param reason
+	   * @param operatorDto
+	   */
+	  public void updatePartnerMaxChildNum(PartnerChildMaxNumUpdateDto updateDto);
+	  
+	  /**
+	   * 初始化最大子成员配额
+	   * 
+	   * @param instanceId
+	   * @param initMaxChildNum 初始化值，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * @param operatorDto
+	   */
+	  public void initPartnerMaxChildNum(Long instanceId, Integer initMaxChildNum, OperatorDto operatorDto);
 	
 }
