@@ -198,7 +198,12 @@ public class ProcessProcessor {
 
 				cuntaoFlowRecord.setTargetId(partnerStationRel.getStationId());
 				cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
-				cuntaoFlowRecord.setNodeTitle("审批");
+				
+				if(StringUtil.isNotBlank(ob.getString("result"))){
+					cuntaoFlowRecord.setNodeTitle("审批("+ob.getString("result")+")");
+				}else{
+					cuntaoFlowRecord.setNodeTitle("审批");
+				}
 				cuntaoFlowRecord.setOperatorName(ob.getString("approverName"));
 				cuntaoFlowRecord.setOperatorWorkid(ob.getString("approver"));
 				cuntaoFlowRecord.setOperateTime(new Date());
