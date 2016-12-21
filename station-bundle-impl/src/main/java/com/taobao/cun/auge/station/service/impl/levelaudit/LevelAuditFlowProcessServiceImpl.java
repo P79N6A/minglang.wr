@@ -180,20 +180,22 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
      */
     private void dispatchQuesionnaire(JSONObject jsonObject, String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
         try {
-            QuestionnireDispatchParamDTO dispatchParamDTO = new QuestionnireDispatchParamDTO();
-            dispatchParamDTO.setQuestionnireEventId(processInstanceId);
-            dispatchParamDTO.setInformantId(partnerInstanceLevelDto.getTaobaoUserId());
-            dispatchParamDTO.setInformantCountyOrgId(partnerInstanceLevelDto.getCountyOrgId());
-            dispatchParamDTO.setType(QuestionnireEventEnum.PARTNER_EVALUATE);
+            if(PartnerInstanceLevelEnum.S_8.equals(partnerInstanceLevelDto.getExpectedLevel()) || PartnerInstanceLevelEnum.S_7.equals(partnerInstanceLevelDto.getExpectedLevel())) {
+                QuestionnireDispatchParamDTO dispatchParamDTO = new QuestionnireDispatchParamDTO();
+                dispatchParamDTO.setQuestionnireEventId(processInstanceId);
+                dispatchParamDTO.setInformantId(partnerInstanceLevelDto.getTaobaoUserId());
+                dispatchParamDTO.setInformantCountyOrgId(partnerInstanceLevelDto.getCountyOrgId());
+                dispatchParamDTO.setType(QuestionnireEventEnum.PARTNER_EVALUATE);
 
-            QuestionnireForEvaluateEventData eventData = new QuestionnireForEvaluateEventData();
-            Date evaluateDate = partnerInstanceLevelDto.getEvaluateDate();
-            eventData.setEvaluateDate(evaluateDate);
-            eventData.setInfomantId(partnerInstanceLevelDto.getTaobaoUserId());
-            eventData.setInfomantName(jsonObject.getString(LevelAuditFlowService.PARTNER_NAME));
-            eventData.setToLevel(jsonObject.getString(LevelAuditFlowService.TO_LEVEL));
-            dispatchParamDTO.setEventDataJson(JSON.toJSONString(eventData));
-            questionnireManageService.dispatchQuestionnire(dispatchParamDTO);
+                QuestionnireForEvaluateEventData eventData = new QuestionnireForEvaluateEventData();
+                Date evaluateDate = partnerInstanceLevelDto.getEvaluateDate();
+                eventData.setEvaluateDate(evaluateDate);
+                eventData.setInfomantId(partnerInstanceLevelDto.getTaobaoUserId());
+                eventData.setInfomantName(jsonObject.getString(LevelAuditFlowService.PARTNER_NAME));
+                eventData.setToLevel(jsonObject.getString(LevelAuditFlowService.TO_LEVEL));
+                dispatchParamDTO.setEventDataJson(JSON.toJSONString(eventData));
+                questionnireManageService.dispatchQuestionnire(dispatchParamDTO);
+            }
         }catch (Exception e){
             logger.error("dispatch quesionnire error, processInstanceId:" + processInstanceId + " taobaoUserId:" + partnerInstanceLevelDto.getTaobaoUserId(), e);
         }
