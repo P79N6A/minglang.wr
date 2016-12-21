@@ -37,7 +37,8 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency collision issues. -->
+			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
+				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
 			<dependency>
 				<groupId>com.aliexpress.boot</groupId>
@@ -477,10 +478,15 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-			  <groupId>com.alibaba.crm.shared</groupId>
-			  <artifactId>ceres.shard</artifactId>
-			  <version>1.0.0.39</version>
-			 </dependency>
+				<groupId>com.alibaba.crm.shared</groupId>
+				<artifactId>ceres.shard</artifactId>
+				<version>1.0.0.39</version>
+			</dependency>
+			<dependency>
+				<groupId>com.esotericsoftware.kryo</groupId>
+				<artifactId>kryo</artifactId>
+				<version>999-not-exist</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -605,10 +611,11 @@
 			</plugin>
 
 			<!-- generate git.properties -->
-			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> <version>2.2.0</version> 
-				<executions> <execution> <goals> <goal>revision</goal> </goals> </execution> </executions> <configuration> <verbose>true</verbose> 
-				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> <failOnNoGitDirectory>false</failOnNoGitDirectory> 
-				</configuration> </plugin> -->
+			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
+				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
+				</goals> </execution> </executions> <configuration> <verbose>true</verbose> 
+				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> 
+				<failOnNoGitDirectory>false</failOnNoGitDirectory> </configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
