@@ -1909,12 +1909,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		Long stationId = tpaInstance.getStationId();
 		Long partnerId = tpaInstance.getPartnerId();
 		
+		Partner partner = partnerBO.getPartnerById(partnerId);
+		PartnerDto partnerDto = upgradeDto.getPartnerDto();
+		
+		partnerDto.setTaobaoNick(partner.getTaobaoNick());
+		partnerDto.setTaobaoUserId(partner.getTaobaoUserId());
+		
 		partnerInstanceDto.setStationId(stationId);
 		partnerInstanceDto.setParentStationId(stationId);
 		partnerInstanceDto.setPartnerId(partnerId);
 		partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
 		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-		partnerInstanceDto.setTaobaoUserId(tpaInstance.getTaobaoUserId());
+		partnerInstanceDto.setTaobaoUserId(partner.getTaobaoUserId());
+		partnerInstanceDto.setPartnerDto(partnerDto);
+		partnerInstanceDto.setStationDto(upgradeDto.getStationDto());
 		partnerInstanceDto.setApplyTime(new Date());
 		// 升级标示
 		partnerInstanceDto.setBit(1);
