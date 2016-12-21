@@ -30,7 +30,6 @@
 		<tomcat.version>7.0.64</tomcat.version>
 
 		<ague.station.client.version>1.7.5-SNAPSHOT</ague.station.client.version>
-
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
 	</properties>
@@ -481,6 +480,14 @@
 			  <artifactId>ceres.shard</artifactId>
 			  <version>1.0.0.39</version>
 			 </dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -589,7 +596,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!-- add java sources by default -->
+			<!-- add java sources by default 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -603,7 +610,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+            -->
 			<!-- generate git.properties -->
 			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> <version>2.2.0</version> 
 				<executions> <execution> <goals> <goal>revision</goal> </goals> </execution> </executions> <configuration> <verbose>true</verbose> 
