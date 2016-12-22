@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -127,4 +128,10 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 			@Value("${hsf.consumer.version.auge.busiWorkBaseInfoService}") String version) {
 		return getConsumerBean(BusiWorkBaseInfoService.class, HSFGroup.HSF, version, 3000);
 	}
+
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean questionnireManageService(@Value("${hsf.consumer.version.cunbiz.questionnireManageService}") String version) {
+		return getConsumerBean(QuestionnireManageService.class, HSFGroup.HSF, version, 10000);
+	}
+
 }
