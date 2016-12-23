@@ -1869,7 +1869,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.ADD, nextInstanceId);
 			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_ALL, tpaInstance.getId());
+			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstance.getId());
 
 			// 发出升级事件
 			dispatchUpgradeEvent(tpaInstance,upgradeDto);
