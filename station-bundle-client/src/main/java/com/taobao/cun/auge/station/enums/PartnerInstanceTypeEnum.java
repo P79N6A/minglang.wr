@@ -19,12 +19,14 @@ public class PartnerInstanceTypeEnum implements Serializable {
 	public static final PartnerInstanceTypeEnum TP = new PartnerInstanceTypeEnum("TP", "合伙人", PartnerInstanceType.TP);
 	public static final PartnerInstanceTypeEnum TPA = new PartnerInstanceTypeEnum("TPA", "淘帮手", PartnerInstanceType.TPA);
 	public static final PartnerInstanceTypeEnum TPV = new PartnerInstanceTypeEnum("TPV", "村拍档", PartnerInstanceType.TPV);
+	public static final PartnerInstanceTypeEnum TPT = new PartnerInstanceTypeEnum("TPT", "县小二", PartnerInstanceType.TPT);
 
 	private static final Map<String, PartnerInstanceTypeEnum> mappings = new HashMap<String, PartnerInstanceTypeEnum>();
 	static {
 		mappings.put("TPA", TPA);
 		mappings.put("TP", TP);
 		mappings.put("TPV", TPV);
+		mappings.put("TPT", TPT);
 	}
 	@NotNull
 	private String code;
@@ -93,7 +95,7 @@ public class PartnerInstanceTypeEnum implements Serializable {
 	}
 	
 	public enum PartnerInstanceType {
-		TP, TPA, TPV;
+		TP, TPA, TPV,TPT;
 	}
 }
 

@@ -94,10 +94,10 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
-@Component("tpStrategy")
-public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
+@Component("tptStrategy")
+public class TptStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 
-	private static final Logger logger = LoggerFactory.getLogger(TpStrategy.class);
+	private static final Logger logger = LoggerFactory.getLogger(TptStrategy.class);
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
@@ -157,7 +157,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 		// 构建入驻生命周期
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPT);
 		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
 		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
@@ -512,7 +512,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		}
 		
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPT);
 		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
