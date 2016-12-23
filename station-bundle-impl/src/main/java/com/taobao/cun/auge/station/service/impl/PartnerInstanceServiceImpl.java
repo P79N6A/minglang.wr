@@ -1851,7 +1851,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 更新老的实例
 			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			partnerInstanceBO.changeState(tpaInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
+			partnerInstanceBO.changeState(tpaInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUITING,
 					upgradeDto.getOperator());
 
 			// 新生成一个合伙人实例
