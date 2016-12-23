@@ -33,6 +33,8 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	private Long TPA_TAG = new Double(Math.pow(2, 13)).longValue();
 
 	private Long TPV_TAG = new Double(Math.pow(2, 25)).longValue();
+	
+	private Long TPT_TAG = new Double(Math.pow(2, 55)).longValue();
 
 	public void addUserTag(UserTagDto userTagDto) {
 		BeanValidator.validateWithThrowable(userTagDto);
@@ -51,11 +53,28 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				addTpUserTag(taobaoUserId);
 				addTpvUserTag(taobaoUserId);
 				break;
+			case TPT:
+				addTpUserTag(taobaoUserId);
+				addTptUserTag(taobaoUserId);
+				break;
 			}
 		} catch (Exception e) {
 			logger.error(UIC_TAG_ERROR_MSG + " [addUserTag]  parameter = {}, {}", JSON.toJSONString(userTagDto), e);
 			throw new AugeUicTagException("addUserTag  error!", e);
 		}
+	}
+
+	private void addTptUserTag(Long taobaoUserId) {
+		long tptTag = getTPTTag(taobaoUserId);
+		if (tptTag != TPT_TAG.longValue()) {
+			ResultDO<Integer> result = uicTagWriteServiceClient.addUserTag19(taobaoUserId, TPT_TAG);
+			logger.info("uicTagWriteServiceClient.addUserTag19 , result : {}", JSON.toJSONString(result));
+			if (result == null || !result.isSuccess()) {
+				logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId, TPT_TAG);
+				throw new RuntimeException("uicTagWriteServiceClient.addUserTag error");
+			}
+		}
+		
 	}
 
 	public void removeUserTag(UserTagDto userTagDto) {
@@ -75,11 +94,33 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				removeTpUserTag(taobaoUserId);
 				removeTpvUserTag(taobaoUserId);
 				break;
+			case TPT:
+				removeTpUserTag(taobaoUserId);
+				removeTptUserTag(taobaoUserId);
+				break;
 			}
 		} catch (Exception e) {
 			logger.error(UIC_TAG_ERROR_MSG + " [removeUserTag] parameter = {}, {}", JSON.toJSONString(userTagDto), e);
 			throw new AugeUicTagException("addUserTag  error!", e);
 		}
+	}
+
+	private void removeTptUserTag(Long taobaoUserId) {
+		long tptTag = getTPTTag(taobaoUserId);
+		if (tptTag == TPT_TAG.longValue()) {
+			ResultDO<Integer> result = uicTagWriteServiceClient.removeUserTag19(taobaoUserId, TPT_TAG);
+			logger.info("uicTagWriteServiceClient.removeUserTag , taobaoUserId:{}, result:{}", taobaoUserId, JSON.toJSONString(result));
+			if (result != null) {
+				if (result.isSuccess()) {
+					logger.info("uicTagWriteServiceClient.removeUserTag success, taobaoUserId: {}.", taobaoUserId);
+				} else {
+					logger.error("uicTagWriteServiceClient.removeUserTag failed, taobaoUserId: {}, resultCode:{}, erroMsg:{}",
+							new Object[] { taobaoUserId, result.getRetCode(), result.getErrMsg() });
+					throw new RuntimeException("uicTagWriteServiceClient.removeUserTag error.");
+				}
+			}
+		}
+		
 	}
 
 	/**
@@ -243,4 +284,18 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		return extraUserDOResultDO.getModule().getUserTag19() & TPV_TAG;
 	}
 
+	/**
+	 * 获取村拍档标
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	private long getTPTTag(long taobaoUserId) {
+		ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
+		if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
+			logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
+			throw new RuntimeException("uicExtraReadServiceClient.getExtraUserByUserId result null");
+		}
+		return extraUserDOResultDO.getModule().getUserTag19() & TPT_TAG;
+	}
 }
