@@ -478,11 +478,11 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.alibaba.crm.shared</groupId>
-				<artifactId>ceres.shard</artifactId>
-				<version>1.0.0.39</version>
-			</dependency>
-			<dependency>
+			  <groupId>com.alibaba.crm.shared</groupId>
+			  <artifactId>ceres.shard</artifactId>
+			  <version>1.0.0.39</version>
+			 </dependency>
+			   <dependency>
 				<groupId>com.esotericsoftware.kryo</groupId>
 				<artifactId>kryo</artifactId>
 				<version>999-not-exist</version>
