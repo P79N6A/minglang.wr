@@ -40,7 +40,7 @@ public class LevelAuditMessageServiceImpl implements LevelAuditMessageService {
                     if(expectedLevel!=null){
                         levelStr = expectedLevel.getLevel().toString();
                     }
-                    String remark = "申请层级为: " + levelStr  + ", 人工调整为 : " + adjustLevel;
+                    String remark = "申请层级为: " + levelStr  + ", 人工评定为 : " + adjustLevel;
                     partnerInstanceLevelDto.setCurrentLevel(PartnerInstanceLevelEnum.valueof(adjustLevel));
                     partnerInstanceLevelDto.setRemark(remark);
                 }else{

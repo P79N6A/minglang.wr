@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.alilang;
 
+import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
+
 import java.util.List;
 
 public interface AlilangHomePageService {
@@ -9,6 +11,8 @@ public interface AlilangHomePageService {
 	UserExamProfile getUserExamProfile(Long taobaoUserId);
 	
 	UserProfile getUserProfile(Long taobaoUserId);
+
+	AlilangProfileDto getAlilangProfile(Long taobaoUserId);
 	
 	
 }

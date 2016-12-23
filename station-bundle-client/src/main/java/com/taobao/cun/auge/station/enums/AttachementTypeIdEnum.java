@@ -35,6 +35,8 @@ public class AttachementTypeIdEnum implements Serializable {
 	public static final AttachementTypeIdEnum WISDOM_COUNTY_APPLY = new AttachementTypeIdEnum(15L, "报名表");
 	public static final AttachementTypeIdEnum WISDOM_COUNTY_FUNCTION = new AttachementTypeIdEnum(16L, "服务功能确认表");
 
+	public static final AttachementTypeIdEnum CUNGOV_CONSULT_IMAGE = new AttachementTypeIdEnum(17L, "举报投诉照片");
+
     static {
         mappings.put(1L, IDCARD_IMG);
         mappings.put(2L, CURRENT_STATUS_IMG);
@@ -53,6 +55,8 @@ public class AttachementTypeIdEnum implements Serializable {
         
         mappings.put(15L, WISDOM_COUNTY_APPLY);
         mappings.put(16L, WISDOM_COUNTY_FUNCTION);
+
+        mappings.put(17L, CUNGOV_CONSULT_IMAGE);
     }
     
     private Long code;
