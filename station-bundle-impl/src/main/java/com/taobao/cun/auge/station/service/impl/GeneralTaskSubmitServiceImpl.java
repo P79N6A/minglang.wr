@@ -36,6 +36,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -54,7 +55,7 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
@@ -91,7 +92,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	PartnerTpgBO partnerTpgBO;
 	
 	@Autowired
-	PartnerInstanceScheduleService PartnerInstanceScheduleService;
+	PartnerInstanceService partnerInstanceService;
 	
 	@Autowired
 	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
@@ -108,7 +109,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId(),PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP)) {
 				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());
 				// 解冻淘帮手保证金
-				PartnerInstanceScheduleService.thawMoney(typeChangeApplyDto.getPartnerInstanceId());
+				partnerInstanceService.thawMoney(typeChangeApplyDto.getPartnerInstanceId());
 				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getPartnerInstanceId(),instance.getId(), operator);
 			} else {
 				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
@@ -509,24 +510,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
 			// 解除保证金
-			GeneralTaskDto dealStanderBailTaskVo = new GeneralTaskDto();
-			dealStanderBailTaskVo.setBusinessNo(String.valueOf(instanceId));
-			dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
-			dealStanderBailTaskVo.setMethodName("dealStandardBail");
-			dealStanderBailTaskVo.setBusinessStepNo(1l);
-			dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
-			dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
-			dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
-
-			AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
-			alipayStandardBailDto.setAmount(frozenMoney);
-			alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE);
-			alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
-			alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
-			alipayStandardBailDto.setTypeCode(standerBailTypeCode);
-			alipayStandardBailDto.setUserAccount(accountNo);
-			dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
-			dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
+			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
+					operatorDto);
 			taskLists.add(dealStanderBailTaskVo);
 
 			// 正式撤点
@@ -551,6 +536,63 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitQuitTask] instanceId = {}, {}", instanceId, e);
 			throw new AugeServiceException("submitQuitTask error: " + e.getMessage());
+		}
+	}
+
+	private GeneralTaskDto buildDealStanderBailTaskVo(Long instanceId, String accountNo, String frozenMoney,
+			OperatorDto operatorDto) {
+		GeneralTaskDto dealStanderBailTaskVo = new GeneralTaskDto();
+		dealStanderBailTaskVo.setBusinessNo(String.valueOf(instanceId));
+		dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
+		dealStanderBailTaskVo.setMethodName("dealStandardBail");
+		dealStanderBailTaskVo.setBusinessStepNo(1l);
+		dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+		dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
+		dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
+
+		AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
+		alipayStandardBailDto.setAmount(frozenMoney);
+		alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE);
+		alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
+		alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
+		alipayStandardBailDto.setTypeCode(standerBailTypeCode);
+		alipayStandardBailDto.setUserAccount(accountNo);
+		dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
+		dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
+		return dealStanderBailTaskVo;
+	}
+	
+	@Override
+	public void submitThawMoneyTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto) {
+		try {
+			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+
+			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
+					operatorDto);
+			taskLists.add(dealStanderBailTaskVo);
+
+			// 调用解冻成功
+			GeneralTaskDto thawMoneyTaskVo = new GeneralTaskDto();
+			thawMoneyTaskVo.setBusinessNo(String.valueOf(instanceId));
+			thawMoneyTaskVo.setBeanName("partnerInstanceService");
+			thawMoneyTaskVo.setMethodName("thawMoneySuccess");
+			thawMoneyTaskVo.setBusinessStepNo(2l);
+			thawMoneyTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+			thawMoneyTaskVo.setBusinessStepDesc("thawMoneySuccess");
+			thawMoneyTaskVo.setOperator(operatorDto.getOperator());
+
+			PartnerInstanceThrawSuccessDto thrawSuccessDto = new PartnerInstanceThrawSuccessDto();
+			thrawSuccessDto.copyOperatorDto(operatorDto);
+			thrawSuccessDto.setInstanceId(instanceId);
+			thawMoneyTaskVo.setParameterType(PartnerInstanceThrawSuccessDto.class.getName());
+			thawMoneyTaskVo.setParameter(JSON.toJSONString(thrawSuccessDto));
+			taskLists.add(thawMoneyTaskVo);
+
+			taskSubmitService.submitTasks(taskLists);
+			logger.info("submitThawMoneyTask : {}", JSON.toJSONString(taskLists));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitThawMoneyTask] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitThawMoneyTask error: " + e.getMessage());
 		}
 	}
 

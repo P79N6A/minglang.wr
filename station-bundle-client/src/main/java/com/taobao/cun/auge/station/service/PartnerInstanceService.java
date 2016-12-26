@@ -13,6 +13,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -264,5 +265,24 @@ public interface PartnerInstanceService {
 	 * @throws AugeSystemException
 	 */
 	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException;
+	
+	/**
+	 * 解冻保证金
+	 * 
+	 * @param instanceId
+	 * @return
+	 * @throws AugeServiceException
+	 * @throws AugeSystemException
+	 */
+	public Boolean thawMoney(Long instanceId) throws AugeServiceException, AugeSystemException;
+	
+	/**
+	 * 成功解冻保证金
+	 * 
+	 * @param partnerInstanceThrawSuccessDto
+	 * @throws AugeServiceException
+	 * @throws AugeSystemException
+	 */
+	public void thawMoneySuccess(PartnerInstanceThrawSuccessDto partnerInstanceThrawSuccessDto) throws AugeServiceException, AugeSystemException;
 	
 }

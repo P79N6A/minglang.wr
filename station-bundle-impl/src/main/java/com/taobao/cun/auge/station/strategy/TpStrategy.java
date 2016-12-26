@@ -369,6 +369,14 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			param.copyOperatorDto(partnerInstanceQuitDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
+		thawMoney(partnerInstanceQuitDto, instanceId);
+		
+		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
+				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
+						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
+	}
+
+	private void thawMoney(OperatorDto operatorDto, Long instanceId) {
 		//解冻保证金
 		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
 		accountMoneyUpdateDto.setObjectId(instanceId);
@@ -376,12 +384,8 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
 		accountMoneyUpdateDto.setThawTime(new Date());
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
-		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceQuitDto);
+		accountMoneyUpdateDto.copyOperatorDto(operatorDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
-		
-		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
-				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
-						partnerInstanceBO.getPartnerInstanceById(instanceId), partnerInstanceQuitDto));
 	}
 
 	@Override

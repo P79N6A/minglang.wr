@@ -21,6 +21,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -85,6 +86,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -1851,7 +1853,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 			// 更新老的实例
 			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			partnerInstanceBO.changeState(tpaInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUITING,
+			partnerInstanceBO.changeState(tpaInstance.getId(), PartnerInstanceStateEnum.SERVICING, PartnerInstanceStateEnum.QUIT,
 					upgradeDto.getOperator());
 
 			// 新生成一个合伙人实例
@@ -1963,5 +1965,53 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		feature.put("lat", station.getLat());
 		feature.put("lng", station.getLng());
 		return feature;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Boolean thawMoney(Long instanceId) throws AugeServiceException, AugeSystemException {
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (rel == null) {
+			return Boolean.TRUE;
+		}
+		
+		// 获得冻结的金额
+		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		String frozenMoney = accountMoney.getMoney().toString();
+		
+		String accountNo = accountMoney.getAccountNo();
+		
+		OperatorDto operatorDto = new OperatorDto();
+		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
+		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+		operatorDto.setOperatorOrgId(0L);
+		if (accountNo== null) {
+			PaymentAccountDto accountDto = paymentAccountQueryAdapter
+					.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
+			if (accountDto == null){
+				logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
+				throw new  AugeServiceException("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
+			}
+			accountNo = accountDto.getAccountNo();
+		}
+
+		generalTaskSubmitService.submitThawMoneyTask(instanceId, accountNo, frozenMoney, operatorDto);
+
+		return Boolean.TRUE;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void thawMoneySuccess(PartnerInstanceThrawSuccessDto partnerInstanceThrawSuccessDto) throws AugeServiceException, AugeSystemException {
+		//解冻保证金
+		AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+		accountMoneyUpdateDto.setObjectId(partnerInstanceThrawSuccessDto.getInstanceId());
+		accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+		accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
+		accountMoneyUpdateDto.setThawTime(new Date());
+		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
+		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceThrawSuccessDto);
+		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
 	}
 }
