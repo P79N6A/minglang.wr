@@ -555,6 +555,11 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				featureKey.add(CaiNiaoAdapter.CTP_TYPE);
 				caiNiaoAdapter.removeStationFeatures(rel.getCainiaoStationId(), featureKey);
 				
+				// 调用新菜鸟接口
+				LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
+				featureMap.put(CaiNiaoAdapter.CTP_TYPE, "CtP");
+				caiNiaoAdapter.updateStationFeatures(rel.getCainiaoStationId(), featureMap);
+				
 				LinkedHashMap<String, String> featureMap1 = new LinkedHashMap<String, String>();
 				featureMap1.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(taobaoUserId));
 				caiNiaoAdapter.updateStationUserRelFeature(taobaoUserId, featureMap1);
