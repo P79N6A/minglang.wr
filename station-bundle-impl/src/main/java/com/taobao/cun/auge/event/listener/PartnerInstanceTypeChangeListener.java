@@ -62,7 +62,6 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 			
 			//淘帮手升级为合伙人，去淘帮手标
 			generalTaskSubmitService.submitRemoveUserTagTasks(partner.getTaobaoUserId(), partner.getTaobaoNick(), typeChangeEnum.getPrePartnerInstanceType(), typeChangeEvent.getOperator(), instanceId);
-			
 		}
 	}
 }

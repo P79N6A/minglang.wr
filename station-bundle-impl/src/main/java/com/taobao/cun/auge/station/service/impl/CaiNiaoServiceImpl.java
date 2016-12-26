@@ -114,6 +114,33 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 					relDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 					cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDto);
 				}
+			}else if (PartnerInstanceTypeEnum.TPT.equals(instanceDto.getType())) {
+				// 合伙人
+				Long caiNiaoStationId = null;
+				caiNiaoStationId = getCainiaoStationId(instanceDto.getStationDto().getId());
+				if (caiNiaoStationId != null) {//入驻已有服务站
+					caiNiaoStationDto.setStationId(caiNiaoStationId);
+					caiNiaoAdapter.updateAdmin(caiNiaoStationDto);
+				}else {
+					caiNiaoStationId = caiNiaoAdapter.addStation(caiNiaoStationDto);
+					if (caiNiaoStationId == null) {
+						logger.error(
+								"caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
+						throw new RuntimeException("caiNiaoStationService.saveStation is null ");
+					}
+					
+					LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
+					featureMap.put(CaiNiaoAdapter.CTP_TYPE, "CtPT");
+					caiNiaoAdapter.updateStationFeatures(caiNiaoStationId, featureMap);
+					
+					CuntaoCainiaoStationRelDto relDto = new CuntaoCainiaoStationRelDto();
+					relDto.setObjectId(instanceDto.getStationDto().getId());
+					relDto.setCainiaoStationId(caiNiaoStationId);
+					relDto.setType(CuntaoCainiaoStationRelTypeEnum.STATION);
+					relDto.setIsOwn("y");
+					relDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
+					cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDto);
+				}
 			}
 		} catch (Exception e) {
 			String error = getErrorMessage("addCainiaoStation", String.valueOf(partnerInstanceId), e.getMessage());
@@ -476,11 +503,9 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			throw new RuntimeException(error, e);
 		}
 	}
-
+	
 	@Override
-	public void upgradeToTPForTpa(
-			SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto)
-			throws AugeServiceException {
+	public void upgradeToTPForTpa(SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto)throws AugeServiceException {
 		if (syncUpgradeToTPForTpaDto == null || 
 				syncUpgradeToTPForTpaDto.getPartnerInstanceId() == null ||
 				syncUpgradeToTPForTpaDto.getOldPartnerInstanceId()== null) {

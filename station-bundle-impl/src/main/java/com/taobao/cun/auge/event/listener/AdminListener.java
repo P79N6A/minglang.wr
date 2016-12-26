@@ -80,38 +80,38 @@ public class AdminListener implements EventListener {
         addOpenRelation(PartnerInstanceTypeEnum.TPA, taobaoUserId, stationId, instanceId);
     }
 
-    /**
-     * 处理类型变更事件
-     * @param event
-     */
-    private void processTypeChangeEvent(Event event) {
-        PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
+	/**
+	 * 处理类型变更事件
+	 * @param event
+	 */
+	private void processTypeChangeEvent(Event event) {
+		PartnerInstanceTypeChangeEvent typeChangeEvent = (PartnerInstanceTypeChangeEvent) event.getValue();
 
-        logger.info("receive event." + JSON.toJSONString(typeChangeEvent));
-        // 合伙人降级为淘帮手
-        if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEvent.getTypeChangeEnum())) {
-            PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
-            param.setGmtEnd(DateUtil.getCurrentDate());
-            param.setPartnerUserId(typeChangeEvent.getParentTaobaoUserId());
-            param.setUserId(typeChangeEvent.getTaobaoUserId());
-            partnerLifecycleCallbackService.onDegrade(param);
-            //淘帮手升级为合伙人
-        }else if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEvent.getTypeChangeEnum())){
-        	//淘帮手实例
-        	PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(typeChangeEvent.getPartnerInstanceId());
-        	Long taobaoUserId = tpaInstance.getTaobaoUserId();
-        	Long stationId = tpaInstance.getStationId();
-        	Long parentStationId = tpaInstance.getParentStationId();
-        	//合伙人实例
-        	PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-        	Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
-        	
-        	//解除旧合伙人关系,绑定新合伙人关系
-            quitTPARelation(taobaoUserId, stationId, parentTaobaoUserId);
-        }
+		logger.info("receive event." + JSON.toJSONString(typeChangeEvent));
+		// 合伙人降级为淘帮手
+		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(typeChangeEvent.getTypeChangeEnum())) {
+			PartnerLifecycleOnDegradeCallbackParam param = new PartnerLifecycleOnDegradeCallbackParam();
+			param.setGmtEnd(DateUtil.getCurrentDate());
+			param.setPartnerUserId(typeChangeEvent.getParentTaobaoUserId());
+			param.setUserId(typeChangeEvent.getTaobaoUserId());
+			partnerLifecycleCallbackService.onDegrade(param);
+			// 淘帮手升级为合伙人
+		} else if (PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEvent.getTypeChangeEnum())) {
+			// 淘帮手实例
+			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(typeChangeEvent.getPartnerInstanceId());
+			Long taobaoUserId = tpaInstance.getTaobaoUserId();
+			Long stationId = tpaInstance.getStationId();
+			Long parentStationId = tpaInstance.getParentStationId();
+			// 合伙人实例
+			PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
+			Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
 
-        logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
-    }
+			// 解除旧合伙人关系,绑定新合伙人关系
+			quitTPARelation(taobaoUserId, stationId, parentTaobaoUserId);
+		}
+
+		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
+	}
 
     /**
      * 处理状态变更事件

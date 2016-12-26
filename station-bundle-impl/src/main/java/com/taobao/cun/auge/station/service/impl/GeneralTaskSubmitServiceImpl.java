@@ -113,6 +113,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			} else {
 				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
 			}
+			
 			cainiaoTaskDto.setBusinessStepNo(1l);
 			taskDtos.add(cainiaoTaskDto);
 			// TODO 菜鸟驿站同步 end
@@ -172,7 +173,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		cainiaoTaskDto.setBusinessNo(businessNo);
 		cainiaoTaskDto.setBeanName("caiNiaoService");
 		cainiaoTaskDto.setMethodName("addCainiaoStation");
-
+	
 		cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
 		cainiaoTaskDto.setBusinessStepDesc("addCainiaoStation");
 		cainiaoTaskDto.setOperator(operator);
@@ -192,6 +193,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		uicGeneralTaskDto.setBusinessNo(businessNo);
 		uicGeneralTaskDto.setBeanName("uicTagService");
 		uicGeneralTaskDto.setMethodName("addUserTag");
+	
 		uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
 		uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
 		uicGeneralTaskDto.setOperator(operator);
@@ -212,7 +214,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		stationConfirmGeneralTaskDto.setBeanName("partnerInstanceService");
 		stationConfirmGeneralTaskDto.setMethodName("applySettleSuccess");
 		stationConfirmGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-
+		
 		stationConfirmGeneralTaskDto.setBusinessStepDesc("applySettleSuccess");
 		stationConfirmGeneralTaskDto.setOperator(operator);
 
@@ -233,7 +235,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		wangwangGeneralTaskDto.setBusinessNo(businessNo);
 		wangwangGeneralTaskDto.setBeanName("wangWangTagService");
 		wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
-
+		
 		wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
 		wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
 		wangwangGeneralTaskDto.setOperator(operator);

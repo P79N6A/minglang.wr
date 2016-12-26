@@ -270,4 +270,5 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
+    
 }
