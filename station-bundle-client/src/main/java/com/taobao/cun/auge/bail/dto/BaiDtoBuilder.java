@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class BaiDtoBuilder {
 
     public static final String OUT_ORDER_NO_PRE = "CT";
+    public static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
 
     public static CuntaoFreezeBailDto generateFreezeBailDto(Long taobaoUserId, UserTypeEnum userType, String alipayId,
                                                             BailOperateTypeEnum operateType, BigDecimal frozenMoney,
@@ -23,7 +24,7 @@ public class BaiDtoBuilder {
         freezeBailDto.setTaobaoUserId(taobaoUserId);
         freezeBailDto.setAlipayId(alipayId);
         freezeBailDto.setUserTypeEnum(userType);
-        Long amountCent = frozenMoney.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN).longValue();
+        Long amountCent = frozenMoney.multiply(ONE_HUNDRED).longValue();
         freezeBailDto.setAmount(amountCent);
         freezeBailDto.setBailOperateTypeEnum(operateType);
         freezeBailDto.setOutOrderId(outOrderNo);
@@ -41,7 +42,7 @@ public class BaiDtoBuilder {
         unFreezeBailDto.setUserTypeEnum(userType);
         unFreezeBailDto.setAlipayId(alipayId);
         unFreezeBailDto.setBailOperateTypeEnum(operateType);
-        Long amountCent = unfrozenMoney.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN).longValue();
+        Long amountCent = unfrozenMoney.multiply(ONE_HUNDRED).longValue();
         unFreezeBailDto.setAmount(amountCent);
         unFreezeBailDto.setSource(source);
         unFreezeBailDto.setReason(reason);
@@ -69,6 +70,10 @@ public class BaiDtoBuilder {
 
     public static String generateOutOrderNoByInstanceId(Long partnerInstanceId) {
         return OUT_ORDER_NO_PRE + partnerInstanceId;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new BigDecimal("1.00").multiply(new BigDecimal("100")).longValue());
     }
 
 }
