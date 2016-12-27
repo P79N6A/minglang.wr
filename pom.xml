@@ -500,6 +500,11 @@
 				<artifactId>kryo</artifactId>
 				<version>999-not-exist</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaosettle.client</artifactId>
+				<version>1.0.21-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

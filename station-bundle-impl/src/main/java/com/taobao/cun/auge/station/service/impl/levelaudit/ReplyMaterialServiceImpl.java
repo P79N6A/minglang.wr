@@ -58,11 +58,8 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     private void setUploadStatus(PartnerLevelTaskBusinessDataDTO dto, ReplyMaterialDTO materialDTO, String attachmentStr) {
         if(TaskNodeAuditStatus.isAudited(dto.getAuditStatus())){
             materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.CANT_UPLOAD.name());
-        }else{
-            materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.NOT_UPLOAD.name());
         }
-        if (!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))) {
-            materialDTO.setStatus(ReplyMaterialDTO.UploadStatus.UPLOADED.name());
+        if(!StringUtils.isEmpty(attachmentStr) && !CollectionUtils.isEmpty(JSON.parseArray(attachmentStr, String.class))) {
             List<String> attachmentIdentifiers = JSON.parseArray(attachmentStr, String.class);
             List<ReplyMaterialDTO.Attachment> attachmentDtoList = Lists.newArrayList();
             for (String identifier : attachmentIdentifiers) {
