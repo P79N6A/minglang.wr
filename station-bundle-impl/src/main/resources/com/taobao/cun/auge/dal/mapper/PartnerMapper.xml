@@ -26,6 +26,8 @@
     <result column="solid_point" jdbcType="CHAR" property="solidPoint" />
     <result column="lease_area" jdbcType="DECIMAL" property="leaseArea" />
     <result column="alilang_user_id" jdbcType="VARCHAR" property="alilangUserId" />
+    <result column="birthday" jdbcType="TIMESTAMP" property="birthday" />
+    <result column="flower_name" jdbcType="VARCHAR" property="flowerName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -103,7 +105,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, name, alipay_account, 
     taobao_user_id, taobao_nick, iden_num, mobile, email, business_type, description, 
-    state, solid_point, lease_area, alilang_user_id
+    state, solid_point, lease_area, alilang_user_id,birthday,flower_name
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerExample" resultMap="BaseResultMap">
     <!--
@@ -170,14 +172,14 @@
       alipay_account, taobao_user_id, taobao_nick, 
       iden_num, mobile, email, 
       business_type, description, state, 
-      solid_point, lease_area, alilang_user_id
+      solid_point, lease_area, alilang_user_id,birthday,flower_name
       )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoUserId,jdbcType=BIGINT}, #{taobaoNick,jdbcType=VARCHAR}, 
       #{idenNum,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{businessType,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
-      #{solidPoint,jdbcType=CHAR}, #{leaseArea,jdbcType=DECIMAL}, #{alilangUserId,jdbcType=VARCHAR}
+      #{solidPoint,jdbcType=CHAR}, #{leaseArea,jdbcType=DECIMAL}, #{alilangUserId,jdbcType=VARCHAR}, #{birthday,jdbcType=TIMESTAMP},#{flowerName,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Partner">
@@ -245,6 +247,12 @@
       <if test="alilangUserId != null">
         alilang_user_id,
       </if>
+       <if test="flowerName != null">
+        flower_name,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -300,6 +308,12 @@
       </if>
       <if test="alilangUserId != null">
         #{alilangUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="flowerName != null">
+        #{flowerName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -379,6 +393,12 @@
       <if test="record.alilangUserId != null">
         alilang_user_id = #{record.alilangUserId,jdbcType=VARCHAR},
       </if>
+      <if test="record.birthday != null">
+        birthday = #{record.birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="record.flowerName != null">
+        flower_name = #{record.flowerName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -409,7 +429,9 @@
       state = #{record.state,jdbcType=VARCHAR},
       solid_point = #{record.solidPoint,jdbcType=CHAR},
       lease_area = #{record.leaseArea,jdbcType=DECIMAL},
-      alilang_user_id = #{record.alilangUserId,jdbcType=VARCHAR}
+      alilang_user_id = #{record.alilangUserId,jdbcType=VARCHAR},
+      birthday = #{record.birthday,jdbcType=TIMESTAMP},
+      flower_name = #{record.flowerName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -476,6 +498,12 @@
       <if test="alilangUserId != null">
         alilang_user_id = #{alilangUserId,jdbcType=VARCHAR},
       </if>
+       <if test="birthday != null">
+        birthday = #{birthday,jdbcType=VARCHAR},
+      </if>
+       <if test="flowerName != null">
+        flower_name = #{flowerName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -503,7 +531,9 @@
       state = #{state,jdbcType=VARCHAR},
       solid_point = #{solidPoint,jdbcType=CHAR},
       lease_area = #{leaseArea,jdbcType=DECIMAL},
-      alilang_user_id = #{alilangUserId,jdbcType=VARCHAR}
+      alilang_user_id = #{alilangUserId,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=TIMESTAMP},
+      flower_name = #{flowerName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

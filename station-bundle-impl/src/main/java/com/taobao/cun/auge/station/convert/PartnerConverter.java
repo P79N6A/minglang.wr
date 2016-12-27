@@ -1,7 +1,12 @@
 package com.taobao.cun.auge.station.convert;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -70,8 +75,20 @@ public class PartnerConverter {
 		if (parnterDto.getState() != null) {
 			partner.setState(parnterDto.getState().getCode());
 		}
-
+		addBirthday(partner);
 		return partner;
+	}
+	
+	//初始化生日
+	private static void addBirthday(Partner partner){
+		if(StringUtils.isNoneEmpty(partner.getIdenNum())&&partner.getIdenNum().length()==18){
+			DateFormat format = new SimpleDateFormat("yyyyMMdd");  
+			try {
+				partner.setBirthday(format.parse(partner.getIdenNum().substring(6, 14)));
+			} catch (Exception e) {
+				// 暂时不影响正常保存
+			}
+		}
 	}
 
 	public static List<PartnerDto> toPartnerDtos(List<Partner> partner) {
