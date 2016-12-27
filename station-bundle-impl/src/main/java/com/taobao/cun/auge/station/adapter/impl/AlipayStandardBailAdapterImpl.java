@@ -31,14 +31,14 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			logger.info("start dealStandardBail : " + JSON.toJSONString(alipayStandardBailDto));
 			String outOrderNo = alipayStandardBailDto.getOutOrderNo();
 			if (StringUtils.isEmpty(outOrderNo)) {
-				throw new RuntimeException("outOrderNo is empty!")
+				throw new RuntimeException("outOrderNo is empty!");
 			}
 			ResultModel<Boolean> resultModel = null;
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(BaiDtoBuilder.parseInstanceIdFromOutOrderNo(outOrderNo));
 			if (AlipayStandardBailDto.ALIPAY_OP_TYPE_FREEZE.equals(alipayStandardBailDto.getOpType())) {
 				resultModel = bailService.freezeUserBail(BaiDtoBuilder.buildFreezeBailDtoFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
 			}else if(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE.equals(alipayStandardBailDto.getOpType())) {
-				resultModel = bailService.unfreezeUserBail(BaiDtoBuilder.buildFrom(rel.getTaobaoUserId(), alipayStandardBailDto);
+				resultModel = bailService.unfreezeUserBail(BaiDtoBuilder.buildFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
 			}else if (AlipayStandardBailDto.ALIPAY_OP_TYPE_TRANSFER.equals(alipayStandardBailDto.getOpType())) {
 				throw new RuntimeException("Not Support Operation Exception!");
 			}
