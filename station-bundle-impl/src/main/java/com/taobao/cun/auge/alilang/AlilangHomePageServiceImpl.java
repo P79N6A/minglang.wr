@@ -9,6 +9,7 @@ import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.diamond.client.Diamond;
+
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -23,9 +24,11 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 import org.springframework.util.CollectionUtils;
 
 
@@ -115,6 +118,10 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
     private boolean isForceInstallAlilang(PartnerStationRel partnerInstance) {
         //是否强制安装阿里郎
         try {
+        	if(!PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState())){
+        		//非服务中的，不强绑定
+        		return false;
+        	}
             String alilangForceInstallConfig = Diamond.getConfig(ALILANG_FORCE_INSTALL_DATAID, ALILANG_TOPIC_GROUP, 3000);
             if (StringUtils.isBlank(alilangForceInstallConfig)) {
                 return false;
