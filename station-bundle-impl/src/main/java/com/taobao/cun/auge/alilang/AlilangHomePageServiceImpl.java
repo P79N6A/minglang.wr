@@ -94,6 +94,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Partner partner = partnerBO.getPartnerById(partnerInstance.getPartnerId());
             if (partner != null) {
                 profile.setUserName(partner.getName());
+                profile.setBirthday(partner.getBirthday());
             }
         }
         return profile;

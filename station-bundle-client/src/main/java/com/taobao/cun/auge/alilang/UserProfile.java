@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.alilang;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class UserProfile implements Serializable{
 
@@ -16,6 +17,8 @@ public class UserProfile implements Serializable{
 	private int joinDays;
 	
 	private Long stationId;
+	
+	private Date birthday;
 
 	public String getStationName() {
 		return stationName;
@@ -47,6 +50,14 @@ public class UserProfile implements Serializable{
 
 	public void setStationId(Long stationId) {
 		this.stationId = stationId;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 	
 	
