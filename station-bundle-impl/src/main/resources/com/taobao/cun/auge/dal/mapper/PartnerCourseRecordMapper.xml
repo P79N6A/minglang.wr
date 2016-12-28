@@ -547,7 +547,7 @@
    <if test="detailId != null" >
       and id=#{detailId}
     </if>
-   limit 0,500
+   limit 0,10
   </select>
    <update id="updatePartnerBirth" parameterType="map">
     update partner
