@@ -303,7 +303,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>auge</finalName>
+		<finalName>station-bundle</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
