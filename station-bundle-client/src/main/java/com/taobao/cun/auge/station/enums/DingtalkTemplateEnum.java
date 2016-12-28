@@ -38,7 +38,8 @@ public class DingtalkTemplateEnum implements Serializable {
 	public static final DingtalkTemplateEnum NODE_LEAVE_APPLY = new DingtalkTemplateEnum("CuntaoNodeLeaveApply",
 			"停业确认");
 	public static final DingtalkTemplateEnum NODE_LEAVE = new DingtalkTemplateEnum("CuntaoNodeLeave", "正式撤点成功");
-
+	public static final DingtalkTemplateEnum TPA_UPGRADE_2_TP = new DingtalkTemplateEnum("TPA_UPGRADE_2_TP", "淘帮手升级为合伙人");
+	
 	public static final Map<String, DingtalkTemplateEnum> mappings = new HashMap<String, DingtalkTemplateEnum>();
 
 	static {
@@ -47,6 +48,7 @@ public class DingtalkTemplateEnum implements Serializable {
 		mappings.put("NODE_OPEN", NODE_OPEN);
 		mappings.put("NODE_LEAVE_APPLY", NODE_LEAVE_APPLY);
 		mappings.put("NODE_LEAVE", NODE_LEAVE);
+		mappings.put("TPA_UPGRADE_2_TP",TPA_UPGRADE_2_TP);
 	}
 
 	public static DingtalkTemplateEnum valueof(String code) {
