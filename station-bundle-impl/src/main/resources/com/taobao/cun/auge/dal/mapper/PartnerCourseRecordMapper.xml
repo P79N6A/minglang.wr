@@ -529,4 +529,31 @@
    </if>
   </select>
   
+  
+   <resultMap id="birthdayResult" type="com.taobao.cun.auge.station.dto.PartnerDto" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="iden_num" property="idenNum" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="VARCHAR" />
+    <result column="point" property="point" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryPartnerIden" resultMap="birthdayResult" parameterType="map" >
+   select id,iden_num
+   from partner
+   where is_deleted='n'
+   and iden_num is not null
+   and iden_num !=''
+   and id>#{id}
+   <if test="detailId != null" >
+      and id=#{detailId}
+    </if>
+   limit 0,500
+  </select>
+   <update id="updatePartnerBirth" parameterType="map">
+    update partner
+    set birthday=#{birthday}
+    where id=#{id}
+  </update>
+  
+  
 </mapper>

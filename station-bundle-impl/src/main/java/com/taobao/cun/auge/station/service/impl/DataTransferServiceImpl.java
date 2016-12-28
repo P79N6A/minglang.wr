@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.service.impl;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.lang3.StringUtils;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
@@ -50,6 +53,7 @@ import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -330,17 +334,23 @@ public class DataTransferServiceImpl implements DataTransferService{
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("id", id);
 		param.put("detailId", detailId);
-		List<ExamInstanceDto> instances=partnerCourseRecordMapper.queryExamInstanceList(param);
+		List<PartnerDto> instances=partnerCourseRecordMapper.queryPartnerIden(param);
 		if(instances.size()==0){
 			return null;
 		}else{
-			for(ExamInstanceDto dto:instances){
+			for(PartnerDto dto:instances){
 				returnLong=dto.getId();
 				param.clear();
-				param.put("userId", dto.getUserId());
-				param.put("status", dto.getUserType());
-				param.put("point", dto.getPoint());
-				partnerCourseRecordMapper.updateApplyExamPoint(param);
+				if(StringUtils.isNoneEmpty(dto.getIdenNum())&&dto.getIdenNum().length()==18){
+					DateFormat format = new SimpleDateFormat("yyyyMMdd");  
+					try {
+						param.put("birthday", format.parse(dto.getIdenNum().substring(6, 14)));
+					} catch (Exception e) {
+						// 暂时不影响正常保存
+					}
+				}
+				param.put("id", dto.getId());
+				partnerCourseRecordMapper.updatePartnerBirth(param);
 			}
 		}
 		return returnLong;
