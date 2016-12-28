@@ -503,7 +503,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.0.21-SNAPSHOT</version>
+				<version>1.0.21.jdk6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
