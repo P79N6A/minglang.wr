@@ -98,6 +98,19 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         }
         return profile;
     }
+    
+    @Override
+	public UserProfile getUserProfileByAlilangUserId(String alilangUserId) {
+		if(StringUtils.isEmpty(alilangUserId)){
+			return null;
+		}
+		Partner partner=partnerBO.getPartnerByAliLangUserId(alilangUserId);
+		if(partner!=null){
+			return getUserProfile(partner.getTaobaoUserId());
+		}else{
+			return new UserProfile();
+		}
+	}
 
     @Override
     public AlilangProfileDto getAlilangProfile(Long taobaoUserId) {
@@ -161,5 +174,8 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         }
         return false;
     }
+
+
+	
 
 }
