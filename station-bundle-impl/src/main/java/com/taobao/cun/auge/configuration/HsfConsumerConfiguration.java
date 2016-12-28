@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.configuration;
 
 import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -134,4 +135,8 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(QuestionnireManageService.class, HSFGroup.HSF, version, 10000);
 	}
 
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean cuntaoNewBailService(@Value("${hsf.consumer.version.settle.cuntaoNewBailService}") String version) {
+		return getConsumerBean(CuntaoNewBailService.class, HSFGroup.HSF, version, 5000);
+	}
 }
