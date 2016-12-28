@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.adapter.impl;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -548,6 +549,27 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		}
 		return bindAdmin(station);
 	}
-
-
+	
+	@Override
+	public boolean removeStationFeatures(Long stationId,
+			Set<String> keys) throws AugeServiceException {
+		if (stationId == null) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.removeStationFeatures.param.error:stationId is null!");
+		}
+		if (keys == null || keys.size()==0) {
+			throw new AugeServiceException("CaiNiaoAdapterBO.removeStationFeatures.param.keys is null!");
+		}
+		try {
+			logger.info("removeStationFeatures.info stationId"+stationId+"keys"+keys);
+			Result<Boolean> res = stationWriteService.removeStationFeatures(stationId, keys, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("removeStationFeatures", stationId.toString()+" keys:"+keys.toString(),e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
 }

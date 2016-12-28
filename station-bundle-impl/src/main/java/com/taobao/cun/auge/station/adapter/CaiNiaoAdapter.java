@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.adapter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -147,5 +148,14 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean updateAdmin(CaiNiaoStationDto station) throws AugeServiceException;
+	
+	/**
+	 * 删除 村站feature字段的值
+	 * @param stationId
+	 * @param keys
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean removeStationFeatures(Long stationId,Set<String> keys) throws AugeServiceException;
 
 }

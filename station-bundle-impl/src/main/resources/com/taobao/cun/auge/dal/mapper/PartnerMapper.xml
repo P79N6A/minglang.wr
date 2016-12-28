@@ -247,11 +247,11 @@
       <if test="alilangUserId != null">
         alilang_user_id,
       </if>
-       <if test="flowerName != null">
-        flower_name,
-      </if>
       <if test="birthday != null">
         birthday,
+      </if>
+       <if test="flowerName != null">
+        flower_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">

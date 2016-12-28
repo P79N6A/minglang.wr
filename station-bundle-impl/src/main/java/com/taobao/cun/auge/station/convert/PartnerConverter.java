@@ -81,7 +81,7 @@ public class PartnerConverter {
 	
 	//初始化生日
 	private static void addBirthday(Partner partner){
-		if(StringUtils.isNoneEmpty(partner.getIdenNum())&&partner.getIdenNum().length()==18){
+		if(StringUtils.isNotEmpty(partner.getIdenNum())&&partner.getIdenNum().length()==18){
 			DateFormat format = new SimpleDateFormat("yyyyMMdd");  
 			try {
 				partner.setBirthday(format.parse(partner.getIdenNum().substring(6, 14)));
