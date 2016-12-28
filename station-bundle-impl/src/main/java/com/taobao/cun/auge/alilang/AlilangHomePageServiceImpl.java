@@ -87,6 +87,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Station station = stationBO.getStationById(partnerInstance.getStationId());
             if (station != null) {
                 profile.setStationName(station.getName());
+                profile.setStationId(station.getId());
             }
         }
         if (partnerInstance != null && partnerInstance.getPartnerId() != null) {

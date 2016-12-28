@@ -14,6 +14,8 @@ public class UserProfile implements Serializable{
 	private String userName;
 	
 	private int joinDays;
+	
+	private Long stationId;
 
 	public String getStationName() {
 		return stationName;
@@ -37,6 +39,14 @@ public class UserProfile implements Serializable{
 
 	public void setJoinDays(int joinDays) {
 		this.joinDays = joinDays;
+	}
+
+	public Long getStationId() {
+		return stationId;
+	}
+
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
 	}
 	
 	
