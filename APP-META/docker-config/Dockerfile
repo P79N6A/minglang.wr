@@ -18,4 +18,4 @@ VOLUME /home/admin/logs  /home/admin/cai/logs /home/admin/${MS_APP_NAME}/logs
 WORKDIR /home/admin/${MS_APP_NAME}/bin
 
 #代码包
-COPY station-bundle.tgz /home/admin/${MS_APP_NAME}/target/station-bundle.tgz
+COPY station-bundle.tgz /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.tgz
