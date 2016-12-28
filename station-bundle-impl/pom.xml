@@ -306,7 +306,6 @@
 		<finalName>station-bundle</finalName>
 		<plugins>
 			<plugin>
-				<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring-boot.version}</version>
@@ -325,6 +324,7 @@
 					<excludeDevtools>true</excludeDevtools>
 				</configuration>
 			</plugin>
+			<plugin>
 				<groupId>org.bsc.maven</groupId>
 				<artifactId>maven-processor-plugin</artifactId>
 				<version>2.2.4</version>
