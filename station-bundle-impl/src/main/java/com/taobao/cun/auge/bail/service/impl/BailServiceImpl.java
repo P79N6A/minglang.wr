@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Map;
+
 /**
  * Created by xujianhui on 16/12/27.
  */
@@ -60,5 +62,24 @@ public class BailServiceImpl implements BailService {
     @Override
     public ResultModel<Boolean> transferUserBailForPunish(CuntaoTransferBailForPunishDto cuntaoTransferBailForPunishDto) {
         return cuntaoNewBailService.transferUserBailForPunish(cuntaoTransferBailForPunishDto);
+    }
+
+    @Override
+    public ResultModel<Boolean> checkAlipaySign(Map<String, String> params) {
+        Assert.notEmpty(params);
+        return cuntaoNewBailService.checkAlipaySign(params);
+    }
+
+    @Override
+    public ResultModel<Boolean> fillSignInfo(Map<String, String> params) {
+        Assert.notEmpty(params);
+        return cuntaoNewBailService.fillSignInfo(params);
+    }
+
+    @Override
+    public ResultModel<String> queryUserFreezeAmount(Long taobaoUserId, UserTypeEnum userTypeEnum) {
+        Assert.notNull(taobaoUserId);
+        Assert.notNull(userTypeEnum);
+        return cuntaoNewBailService.queryUserFreezeAmount(taobaoUserId, userTypeEnum);
     }
 }

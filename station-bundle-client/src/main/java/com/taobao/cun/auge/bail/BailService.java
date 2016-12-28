@@ -5,6 +5,8 @@ import com.taobao.cun.settle.bail.enums.BailChannelEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.common.model.ResultModel;
 
+import java.util.Map;
+
 /**
  * Created by xujianhui on 16/12/27.
  */
@@ -48,4 +50,24 @@ public interface BailService {
      * @return
      */
     public ResultModel<Boolean> transferUserBailForPunish(CuntaoTransferBailForPunishDto cuntaoTransferBailForPunishDto);
+
+    /**
+     * 支付宝回调签名验证
+     * @param params
+     * @return
+     */
+    public ResultModel<Boolean> checkAlipaySign(Map<String,String> params);
+
+    /**
+     * 补充签约信息(协议号) return_url和notify_url的post请求里需要调用此接口
+     * @return
+     */
+    public ResultModel<Boolean> fillSignInfo(Map<String, String> params);
+
+    /**
+     * 查询用户保证金余额
+     * @param taobaoUserId
+     * @return
+     */
+    public ResultModel<String> queryUserFreezeAmount(Long taobaoUserId,UserTypeEnum userTypeEnum);
 }
