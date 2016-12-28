@@ -1,7 +1,7 @@
 FROM reg.docker.alibaba-inc.com/aliexpress/spring-boot-server:1.2-5u7
 
 # 设置应用变量
-ENV MS_APP_NAME=auge
+ENV MS_APP_NAME=station-bundle
 
 #启停脚本;设置应用名（务必包含此四项）
 RUN mkdir /home/admin/cai && \
