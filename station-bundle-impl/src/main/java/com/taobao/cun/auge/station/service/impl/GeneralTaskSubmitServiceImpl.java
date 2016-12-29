@@ -443,7 +443,38 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public void submitAddUserTagTasks(Long instanceId,String operator) {
+		try {
+			PartnerInstanceDto instance =partnerInstanceBO.getPartnerInstanceById(instanceId);
+			
+			// 异构系统交互提交后台任务
+			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
+			// TODO uic打标 begin
+			GeneralTaskDto uicGeneralTaskDto = buildAddUicTagTask(instance, operator);
+			uicGeneralTaskDto.setBusinessStepNo(1l);
+			taskDtos.add(uicGeneralTaskDto);
+			// TODO uic打标 end
+
+			// TODO 旺旺打标 begin
+			GeneralTaskDto wangwangGeneralTaskDto = buildAddWangwangTagTask(instance, operator);
+			wangwangGeneralTaskDto.setBusinessStepNo(2l);
+			taskDtos.add(wangwangGeneralTaskDto);
+			// TODO 旺旺打标 end
+
+			// TODO 提交任务
+			taskSubmitService.submitTasks(taskDtos);
+			logger.info("submitAddUserTagTasks : {}", JSON.toJSONString(taskDtos));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitAddUserTagTasks] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitAddUserTagTasks error: " + e.getMessage());
+		}
+		
+	}
+	
+	@Override
 	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId,Long instanceId) {
 		try {
 			UserTagDto userTagDto = new UserTagDto();

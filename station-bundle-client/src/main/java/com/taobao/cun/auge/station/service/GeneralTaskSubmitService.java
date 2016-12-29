@@ -4,7 +4,6 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
-import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -53,7 +52,13 @@ public interface GeneralTaskSubmitService {
 	 * @param content
 	 */
 	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
-
+	
+	/**
+	 * 打标
+	 * @param instanceId
+	 * @param operator
+	 */
+	public void submitAddUserTagTasks(Long instanceId,String operator);
 
 	/**
 	 * 用户去标

@@ -108,6 +108,15 @@ public class AdminListener implements EventListener {
 
 			// 解除旧合伙人关系,绑定新合伙人关系
 			quitTPARelation(taobaoUserId, stationId, parentTaobaoUserId);
+			//撤销升级
+		}else if (PartnerInstanceTypeChangeEnum.CANCEL_TPA_UPGRADE_2_TP.equals(typeChangeEvent.getTypeChangeEnum())) {
+			// 淘帮手实例
+			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(typeChangeEvent.getPartnerInstanceId());
+			Long taobaoUserId = tpaInstance.getTaobaoUserId();
+			Long stationId = tpaInstance.getStationId();
+
+			// 建立和原来合伙人的关系
+		    addOpenRelation(PartnerInstanceTypeEnum.TPA, taobaoUserId, stationId, tpaInstance.getId());
 		}
 
 		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));

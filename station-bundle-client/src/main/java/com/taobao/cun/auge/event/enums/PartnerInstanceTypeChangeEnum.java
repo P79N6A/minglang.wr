@@ -19,7 +19,7 @@ public class PartnerInstanceTypeChangeEnum implements Serializable {
 	private PartnerInstanceTypeEnum prePartnerInstanceType;
 
 	public enum ChangeEnum {
-		TP_DEGREE_2_TPA,TPA_UPGRADE_2_TP
+		TP_DEGREE_2_TPA,TPA_UPGRADE_2_TP,CANCEL_TPA_UPGRADE_2_TP
 	}
 
 	public static final PartnerInstanceTypeChangeEnum TP_DEGREE_2_TPA = new PartnerInstanceTypeChangeEnum(ChangeEnum.TP_DEGREE_2_TPA,
@@ -27,11 +27,15 @@ public class PartnerInstanceTypeChangeEnum implements Serializable {
 	
 	public static final PartnerInstanceTypeChangeEnum TPA_UPGRADE_2_TP = new PartnerInstanceTypeChangeEnum(ChangeEnum.TPA_UPGRADE_2_TP,
             "淘帮手升级: '淘帮手'-> '合伙人'", PartnerInstanceTypeEnum.TP, PartnerInstanceTypeEnum.TPA);
+	
+	public static final PartnerInstanceTypeChangeEnum CANCEL_TPA_UPGRADE_2_TP = new PartnerInstanceTypeChangeEnum(ChangeEnum.CANCEL_TPA_UPGRADE_2_TP,
+            "撤销淘帮手升级: '淘帮手'-> '合伙人'", PartnerInstanceTypeEnum.TPA, PartnerInstanceTypeEnum.TP);
 
 	private static final Map<ChangeEnum, PartnerInstanceTypeChangeEnum> mappings = new HashMap<ChangeEnum, PartnerInstanceTypeChangeEnum>();
 	static {
 		mappings.put(ChangeEnum.TP_DEGREE_2_TPA, TP_DEGREE_2_TPA);
 		mappings.put(ChangeEnum.TPA_UPGRADE_2_TP, TPA_UPGRADE_2_TP);
+		mappings.put(ChangeEnum.CANCEL_TPA_UPGRADE_2_TP, CANCEL_TPA_UPGRADE_2_TP);
 	}
 
 	public String getDescription() {

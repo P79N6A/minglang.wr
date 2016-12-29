@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +19,6 @@ import org.springframework.util.Assert;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -150,6 +148,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.auge.station.util.EventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
@@ -1842,7 +1841,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		ValidateUtils.notNull(partnerId);
 		try {
 			//村点信息备份
-			Map<String, String> feature = backupStationInfo(stationId);
+			Map<String, String> feature = partnerTypeChangeApplyBO.backupStationInfo(stationId);
 			// 更新村点信息
 			stationDto.setState(StationStateEnum.INVALID);
 			stationDto.setStatus(StationStatusEnum.NEW);
@@ -1876,7 +1875,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstance.getId());
 
 			// 发出升级事件
-			dispatchUpgradeEvent(tpaInstance,upgradeDto);
+			EventUtil.dispatchUpgradeEvent(tpaInstance,upgradeDto);
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("upgradePartnerInstance","PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.toString());
 			logger.warn(error, e);
@@ -1886,18 +1885,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-	}
-
-	//发出升级事件
-	private void dispatchUpgradeEvent(PartnerStationRel tpaInstance,OperatorDto operatorDto) {
-		PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
-		
-		event.setPartnerInstanceId(tpaInstance.getId());
-		event.setStationId(tpaInstance.getStationId());
-		event.setTypeChangeEnum(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP);
-		event.copyOperatorDto(operatorDto);
-		
-		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
 	}
 
 	/**
@@ -1943,69 +1930,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerInstanceDto.setId(nextInstanceId);
 		partnerInstanceHandler.handleApplySettle(partnerInstanceDto, partnerInstanceDto.getType());
 		return nextInstanceId;
-	}
-
-	private Map<String, String> backupStationInfo(Long stationId) {
-		Station station = stationBO.getStationById(stationId);
-		
-		Map<String, String> feature = new HashMap<String,String>();
-		feature.put("stationNum", station.getStationNum());
-		feature.put("stationName", station.getName());
-		
-		feature.put("province", station.getProvince());
-		feature.put("provinceDetail", station.getProvinceDetail());
-		feature.put("city", station.getCity());
-		feature.put("cityDetail", station.getCityDetail());
-		feature.put("county", station.getCounty());
-		feature.put("countyDetail", station.getCountyDetail());
-		feature.put("town", station.getTown());
-		feature.put("townDetail", station.getTownDetail());
-		feature.put("village", station.getVillage());
-		feature.put("villageDetail", station.getVillageDetail());
-		feature.put("address", station.getAddress());
-		
-		feature.put("lat", station.getLat());
-		feature.put("lng", station.getLng());
-		return feature;
-	}
-	
-	private StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto,CancelUpgradePartnerInstance cancelDto){
-		Long stationId = partnerInstanceBO.findStationIdByInstanceId(applyDto.getPartnerInstanceId());
-		
-		Map<String, String> feature = applyDto.getFeature();
-		StationDto stationDto= new StationDto();
-		
-		stationDto.setId(stationId);
-		stationDto.setStationNum(feature.get("stationNum"));
-		stationDto.setName(feature.get("stationName"));
-		
-		
-		Address address = new Address();
-		address.setProvince(feature.get("province"));
-		address.setProvinceDetail(feature.get("provinceDetail"));
-		
-		address.setCity(feature.get("city"));
-		address.setCityDetail(feature.get("cityDetail"));
-		
-		address.setCounty(feature.get("county"));
-		address.setCountyDetail(feature.get("countyDetail"));
-		
-		address.setTown(feature.get("town"));
-		address.setTownDetail(feature.get("townDetail"));
-		
-		address.setVillage(feature.get("village"));
-		address.setVillageDetail(feature.get("villageDetail"));
-		
-		address.setAddressDetail(feature.get("address"));
-		
-		address.setLat(feature.get("lat"));
-		address.setLng(feature.get("lng"));
-		
-		stationDto.setAddress(address);
-		
-		stationDto.copyOperatorDto(cancelDto);
-		
-		return stationDto;
 	}
 
 	@Override
@@ -2058,8 +1982,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 
 	@Override
-	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto)
-			throws AugeServiceException, AugeSystemException {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto) throws AugeServiceException, AugeSystemException {
 		// 参数校验
 		BeanValidator.validateWithThrowable(cancelDto);
 		
@@ -2070,7 +1994,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Long tpaInstanceId = applyDto.getPartnerInstanceId();
 			
 			//恢复村点
-			updateStation(fillStationDto(applyDto,cancelDto));
+			StationDto fillStationDto = partnerTypeChangeApplyBO.fillStationDto(applyDto);
+			fillStationDto.copyOperatorDto(cancelDto);
+			updateStation(fillStationDto);
 			
 			//恢复淘帮手实例
 			PartnerInstanceDto tpaInstanceDto = new PartnerInstanceDto();
@@ -2085,6 +2011,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			//删除升级申请单
 			partnerTypeChangeApplyBO.deletePartnerTypeChangeApply(applyDto.getId(), cancelDto.getOperator());
+			
+			// 同步tp station_apply
+			syncStationApply(SyncStationApplyEnum.DELETE, instanceId);
+			// 同步tpa station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstanceId);
+			
+			//发出撤销升级事件
+			EventUtil.dispatchCancelUpgradeEvent(tpaInstanceId,fillStationDto.getId(),cancelDto);
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("cancelUpgradePartnerInstance","CancelUpgradePartnerInstance =" + JSON.toJSONString(cancelDto), e.toString());
 			logger.warn(error, e);
