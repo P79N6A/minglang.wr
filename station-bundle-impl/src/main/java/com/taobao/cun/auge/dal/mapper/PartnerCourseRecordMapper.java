@@ -105,6 +105,9 @@ public interface PartnerCourseRecordMapper {
      */
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
     List<PartnerDto> queryPartnerIden(Map<String,Object> param);
+    List<PartnerDto> queryAlilangPartner(Map<String,Object> param);
+
+    
     int updateApplyExamPoint(Map<String,Object> param);
     int updatePartnerBirth(Map<String,Object> param);
 
