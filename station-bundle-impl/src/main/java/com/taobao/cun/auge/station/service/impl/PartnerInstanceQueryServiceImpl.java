@@ -596,7 +596,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
-		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instanceId);
+		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instance);
 	}
 
     @Override

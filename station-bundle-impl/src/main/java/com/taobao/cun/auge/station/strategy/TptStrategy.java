@@ -218,29 +218,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
-		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
-
-		if (CollectionUtils.isEmpty(children)) {
-			return;
-		}
-		for (PartnerStationRel rel : children) {
-			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
-				logger.warn("合伙人存在淘帮手");
-				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-			} else {
-				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
-						item.getCurrentStep())) {
-					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
-						continue;
-					}
-					logger.warn("合伙人存在淘帮手");
-					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-				}
-			}
-		}
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
 	}
 	
 	@Override
