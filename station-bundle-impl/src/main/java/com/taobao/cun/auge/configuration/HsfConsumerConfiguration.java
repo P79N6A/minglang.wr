@@ -139,4 +139,5 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean cuntaoNewBailService(@Value("${hsf.consumer.version.settle.cuntaoNewBailService}") String version) {
 		return getConsumerBean(CuntaoNewBailService.class, HSFGroup.HSF, version, 5000);
 	}
+
 }

@@ -17,8 +17,8 @@ public final class PartnerInstanceExtConstant {
 	// 默认初始化配额
 	public final static Integer DEFAULT_MAX_CHILD_NUM = 3;
 	
-	// 淘帮手进入服务中，奖励父合伙人1个名额
-	public final static Integer REWARD_PARENT_NUM_FRO_SERVICE = 1;
+	// 淘帮手进入服务中，奖励父合伙人2个名额
+	public final static Integer REWARD_PARENT_NUM_FRO_SERVICE = 2;
 	
 	private PartnerInstanceExtConstant(){
 		

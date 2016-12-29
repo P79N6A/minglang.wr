@@ -179,17 +179,10 @@ public class CuntaoFlowRecordListener implements EventListener {
 		cuntaoFlowRecord.setOperatorName(buildOperatorName);
 		cuntaoFlowRecord.setOperatorWorkid(operator);
 		cuntaoFlowRecord.setOperateTime(new Date());
-		cuntaoFlowRecord.setRemarks(buildTypeChangeRecordContent(typeChangeEvent));
+		cuntaoFlowRecord.setRemarks(typeChangeEnum.getDescription());
 		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
 
 		logger.info("Finished to handle event." + JSON.toJSONString(typeChangeEvent));
-	}
-
-	private String buildTypeChangeRecordContent(PartnerInstanceTypeChangeEvent event) {
-		if (PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.equals(event.getTypeChangeEnum())) {
-			return PartnerInstanceTypeChangeEnum.TP_DEGREE_2_TPA.getDescription();
-		}
-		return null;
 	}
 
 	private void processStateChangeEvent(Event event) {

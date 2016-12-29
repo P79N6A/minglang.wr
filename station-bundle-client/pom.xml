@@ -38,11 +38,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.taobao.cun</groupId>
-            <artifactId>cuntaosettle.client</artifactId>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cuntaosettle.client</artifactId>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
