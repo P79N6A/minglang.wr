@@ -8,9 +8,19 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 public class PartnerTypeChangeApplyDto extends OperatorDto {
 
 	private static final long serialVersionUID = -395193218316322678L;
+	/**
+	 * 申请单id
+	 */
+	private Long id;
 
+	/**
+	 * 升降级实例id
+	 */
 	private Long partnerInstanceId;
 
+	/**
+	 * 升降级后的实例id
+	 */
 	private Long nextPartnerInstanceId;
 
 	/**
@@ -18,7 +28,18 @@ public class PartnerTypeChangeApplyDto extends OperatorDto {
 	 */
 	private Map<String, String> feature;
 
+	/**
+	 * 升降级
+	 */
 	private PartnerInstanceTypeChangeEnum typeChangeEnum;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getPartnerInstanceId() {
 		return partnerInstanceId;

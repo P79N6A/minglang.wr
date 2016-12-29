@@ -218,9 +218,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
+		//人村分离后，老合伙人不再校验淘帮手的状态
+		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(instance.getIsCurrent())){
+			return;
+		}
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instance.getId(), states);
 
 		if (CollectionUtils.isEmpty(children)) {
 			return;

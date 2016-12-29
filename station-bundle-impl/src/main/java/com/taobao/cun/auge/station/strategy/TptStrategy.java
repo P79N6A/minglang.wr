@@ -218,49 +218,13 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
-		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
 
-		if (CollectionUtils.isEmpty(children)) {
-			return;
-		}
-		for (PartnerStationRel rel : children) {
-			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
-				logger.warn("合伙人存在淘帮手");
-				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-			} else {
-				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
-						item.getCurrentStep())) {
-					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
-						continue;
-					}
-					logger.warn("合伙人存在淘帮手");
-					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-				}
-			}
-		}
 	}
 	
 	@Override
 	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
-		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
 
-		if (CollectionUtils.isNotEmpty(children)) {
-			logger.warn("合伙人存在淘帮手");
-			throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_FOR_CLOSE);
-		}
-		
-		//如果是从装修中停业，则需要判断村点是否退出了装修
-		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
-			try {
-				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
-			} catch (Exception e) {
-				throw new AugeBusinessException("村点装修状态不允许退出，请先审核装修反馈记录");
-			}
-		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

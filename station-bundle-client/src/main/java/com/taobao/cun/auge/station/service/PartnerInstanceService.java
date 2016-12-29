@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
@@ -266,6 +267,14 @@ public interface PartnerInstanceService {
 	 */
 	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException;
 	
+	/**
+	 * 取消升级
+	 * 
+	 * @param cancelDto
+	 * @throws AugeServiceException
+	 * @throws AugeSystemException
+	 */
+	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto) throws AugeServiceException, AugeSystemException;
 	/**
 	 * 解冻保证金
 	 * 

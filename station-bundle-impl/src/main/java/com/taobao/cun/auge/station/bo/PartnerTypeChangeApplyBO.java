@@ -34,4 +34,13 @@ public interface PartnerTypeChangeApplyBO {
 	 * @throws AugeSystemException
 	 */
 	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto) throws AugeServiceException, AugeSystemException;
+	
+	/**
+	 * 删除升级申请单
+	 * 
+	 * @param applyId
+	 * @throws AugeServiceException
+	 * @throws AugeSystemException
+	 */
+	public void deletePartnerTypeChangeApply(Long applyId,String operator) throws AugeServiceException, AugeSystemException;
 }

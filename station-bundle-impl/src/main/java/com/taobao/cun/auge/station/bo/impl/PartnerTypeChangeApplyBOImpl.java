@@ -66,4 +66,14 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 		
 	}
 
+	@Override
+	public void deletePartnerTypeChangeApply(Long applyId, String operator) throws AugeServiceException, AugeSystemException {
+		ValidateUtils.notNull(applyId);
+
+		PartnerTypeChangeApply apply = new PartnerTypeChangeApply();
+		apply.setId(applyId);
+		DomainUtils.beforeDelete(apply, operator);
+		partnerTypeChangeApplyMapper.updateByPrimaryKeySelective(apply);
+	}
+
 }

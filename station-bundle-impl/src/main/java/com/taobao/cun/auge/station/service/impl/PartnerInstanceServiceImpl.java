@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -70,6 +71,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
@@ -1966,6 +1968,45 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		feature.put("lng", station.getLng());
 		return feature;
 	}
+	
+	private StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto,CancelUpgradePartnerInstance cancelDto){
+		Long stationId = partnerInstanceBO.findStationIdByInstanceId(applyDto.getPartnerInstanceId());
+		
+		Map<String, String> feature = applyDto.getFeature();
+		StationDto stationDto= new StationDto();
+		
+		stationDto.setId(stationId);
+		stationDto.setStationNum(feature.get("stationNum"));
+		stationDto.setName(feature.get("stationName"));
+		
+		
+		Address address = new Address();
+		address.setProvince(feature.get("province"));
+		address.setProvinceDetail(feature.get("provinceDetail"));
+		
+		address.setCity(feature.get("city"));
+		address.setCityDetail(feature.get("cityDetail"));
+		
+		address.setCounty(feature.get("county"));
+		address.setCountyDetail(feature.get("countyDetail"));
+		
+		address.setTown(feature.get("town"));
+		address.setTownDetail(feature.get("townDetail"));
+		
+		address.setVillage(feature.get("village"));
+		address.setVillageDetail(feature.get("villageDetail"));
+		
+		address.setAddressDetail(feature.get("address"));
+		
+		address.setLat(feature.get("lat"));
+		address.setLng(feature.get("lng"));
+		
+		stationDto.setAddress(address);
+		
+		stationDto.copyOperatorDto(cancelDto);
+		
+		return stationDto;
+	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -2013,5 +2054,45 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 		accountMoneyUpdateDto.copyOperatorDto(partnerInstanceThrawSuccessDto);
 		accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+	}
+
+
+	@Override
+	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto)
+			throws AugeServiceException, AugeSystemException {
+		// 参数校验
+		BeanValidator.validateWithThrowable(cancelDto);
+		
+		try {
+			//查询升级申请单
+			Long instanceId = cancelDto.getInstanceId();
+			PartnerTypeChangeApplyDto applyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instanceId);
+			Long tpaInstanceId = applyDto.getPartnerInstanceId();
+			
+			//恢复村点
+			updateStation(fillStationDto(applyDto,cancelDto));
+			
+			//恢复淘帮手实例
+			PartnerInstanceDto tpaInstanceDto = new PartnerInstanceDto();
+			tpaInstanceDto.copyOperatorDto(cancelDto);
+			tpaInstanceDto.setId(tpaInstanceId);
+			tpaInstanceDto.setState(PartnerInstanceStateEnum.SERVICING);
+			tpaInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
+			
+			partnerInstanceBO.updatePartnerStationRel(tpaInstanceDto);
+			//删除合伙人实例
+			partnerInstanceBO.deletePartnerStationRel(instanceId, cancelDto.getOperator());
+			
+			//删除升级申请单
+			partnerTypeChangeApplyBO.deletePartnerTypeChangeApply(applyDto.getId(), cancelDto.getOperator());
+		} catch (AugeServiceException e) {
+			String error = getAugeExceptionErrorMessage("cancelUpgradePartnerInstance","CancelUpgradePartnerInstance =" + JSON.toJSONString(cancelDto), e.toString());
+			logger.warn(error, e);
+			throw e;
+		} catch (Exception e) {
+			String error = getErrorMessage("cancelUpgradePartnerInstance", "CancelUpgradePartnerInstance =" + JSON.toJSONString(cancelDto), e.getMessage());
+			logger.error(error, e);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
+		}
 	}
 }
