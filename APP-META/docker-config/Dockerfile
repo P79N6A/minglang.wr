@@ -5,7 +5,7 @@ ENV MS_APP_NAME=auge
 
 #启停脚本;设置应用名（务必包含此四项）
 RUN mkdir /home/admin/cai && \
-mkdir /home/admin/auge/target && \
+mkdir -p /home/admin/auge/target && \
 echo "/home/admin/${MS_APP_NAME}/bin/jbossctl stop" > /home/admin/stop.sh && \
 echo "/home/admin/${MS_APP_NAME}/bin/jbossctl pubstart" > /home/admin/start.sh && \
 echo "/home/admin/${MS_APP_NAME}/bin/preload.sh" > /home/admin/health.sh && \
