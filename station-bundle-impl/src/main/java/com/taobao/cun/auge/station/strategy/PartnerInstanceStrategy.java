@@ -67,7 +67,7 @@ public interface PartnerInstanceStrategy {
 	 * @param instanceId
 	 * @throws AugeServiceException
 	 */
-	public void validateExistChildrenForQuit(Long instanceId);
+	public void validateExistChildrenForQuit(PartnerStationRel instance);
 	
 	/**
 	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手

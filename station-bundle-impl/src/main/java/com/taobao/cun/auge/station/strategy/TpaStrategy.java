@@ -142,7 +142,7 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
 		// TODO Auto-generated method stub
 
 	}

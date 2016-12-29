@@ -122,8 +122,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
 	
-	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,Long instanceId) {
-		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instanceId);
+	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,PartnerStationRel instance) {
+		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instance);
 	}
 	
 	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel) {

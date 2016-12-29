@@ -116,7 +116,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
 		
 	}
 	
