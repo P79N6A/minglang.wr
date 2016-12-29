@@ -556,4 +556,31 @@
   </update>
   
   
+   <resultMap id="alilangResult" type="com.taobao.cun.auge.station.dto.PartnerDto" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="taobao_user_id" property="taobaoUserId" jdbcType="BIGINT" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  
+  <select id="queryAlilangPartner" resultMap="alilangResult" parameterType="map" >
+   select a.id,a.taobao_user_id,a.mobile,a.email,a.name
+   from partner a,partner_station_rel b
+   where a.is_deleted='n'
+   and b.is_deleted='n'
+   and a.id=b.partner_id
+   and b.is_current='y'
+   and b.type='TP'
+   and b.state in('DECORATING','SERVICING')
+   and a.id>#{id}
+   <if test="detailId != null" >
+      and a.id=#{detailId}
+    </if>
+   limit 0,500
+  </select>
+  
+  
+  
 </mapper>
