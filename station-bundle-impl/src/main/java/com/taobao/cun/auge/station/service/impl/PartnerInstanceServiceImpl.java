@@ -1993,8 +1993,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			PartnerTypeChangeApplyDto applyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instanceId);
 			Long tpaInstanceId = applyDto.getPartnerInstanceId();
 			
-			//恢复村点
+			//恢复村点信息，状态为服务中
 			StationDto fillStationDto = partnerTypeChangeApplyBO.fillStationDto(applyDto);
+			fillStationDto.setState(StationStateEnum.NORMAL);
+			fillStationDto.setStatus(StationStatusEnum.SERVICING);
 			fillStationDto.copyOperatorDto(cancelDto);
 			updateStation(fillStationDto);
 			
