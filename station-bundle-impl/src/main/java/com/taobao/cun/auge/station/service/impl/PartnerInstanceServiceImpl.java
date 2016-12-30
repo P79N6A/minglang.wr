@@ -2010,7 +2010,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceBO.updatePartnerStationRel(tpaInstanceDto);
 			//删除合伙人实例
 			partnerInstanceBO.deletePartnerStationRel(instanceId, cancelDto.getOperator());
-			
+			//删除合伙人入驻生命周期
+			partnerLifecycleBO.deleteLifecycleItems(instanceId, cancelDto.getOperator());
 			//删除升级申请单
 			partnerTypeChangeApplyBO.deletePartnerTypeChangeApply(applyDto.getId(), cancelDto.getOperator());
 			
