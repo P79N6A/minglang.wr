@@ -1988,8 +1988,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		BeanValidator.validateWithThrowable(cancelDto);
 		
 		try {
-			//查询升级申请单
 			Long instanceId = cancelDto.getInstanceId();
+			PartnerLifecycleItems lifeItem = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+			if(PartnerLifecycleBondEnum.HAS_FROZEN.getCode().equals(lifeItem.getBond())){
+				throw new AugeServiceException("保证金已经冻结，不可以撤销。");
+			}
+			//查询升级申请单
 			PartnerTypeChangeApplyDto applyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instanceId);
 			Long tpaInstanceId = applyDto.getPartnerInstanceId();
 			
