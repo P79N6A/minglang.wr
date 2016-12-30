@@ -531,7 +531,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
 			// 同步删除
-			syncStationApplyBO.deleteStationApply(rel.getStationApplyId());
+			syncStationApplyBO.deleteStationApply(rel.getId());
 		} catch (AugeServiceException augeException) {
 			String error = getAugeExceptionErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto),
 					augeException.toString());
@@ -1324,7 +1324,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				syncStationApplyBO.addStationApply(instanceId);
 				break;
 			case DELETE:
-				throw new RuntimeException("delete id not support");
+				syncStationApplyBO.deleteStationApply(instanceId);
 			default:
 				syncStationApplyBO.updateStationApply(instanceId, type);
 				break;

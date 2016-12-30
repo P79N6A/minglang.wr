@@ -18,12 +18,14 @@ import org.springframework.util.Assert;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
 import com.taobao.cun.auge.dal.domain.AccountMoneyExample;
 import com.taobao.cun.auge.dal.domain.Attachement;
 import com.taobao.cun.auge.dal.domain.AttachementExample;
+import com.taobao.cun.auge.dal.domain.AttachementExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
@@ -36,7 +38,6 @@ import com.taobao.cun.auge.dal.domain.ProtocolExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.dal.domain.StationApplyExample;
-import com.taobao.cun.auge.dal.domain.AttachementExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
 import com.taobao.cun.auge.dal.mapper.AttachementMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerLifecycleItemsMapper;
@@ -52,19 +53,16 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
-import com.taobao.cun.auge.cache.TairCache;
 
 @Component("syncStationApplyBO")
 public class StationApplySyncBOImpl implements StationApplySyncBO {
@@ -626,12 +624,14 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 	}
 
 	@Override
-	public void deleteStationApply(Long stationApplyId) {
-		if (null == stationApplyId) {
+	public void deleteStationApply(Long instanceId) {
+		if (null == instanceId) {
 			return;
 		}
+		PartnerStationRel instance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
+		
 		StationApply sa = new StationApply();
-		sa.setId(stationApplyId);
+		sa.setId(instance.getStationApplyId());
 		sa.setIsDeleted("y");
 		stationApplyMapper.updateByPrimaryKeySelective(sa);
 	}
