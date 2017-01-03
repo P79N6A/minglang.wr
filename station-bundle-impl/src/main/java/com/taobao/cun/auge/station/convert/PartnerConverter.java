@@ -50,7 +50,7 @@ public class PartnerConverter {
 		return partnerDto;
 	}
 
-	public static Partner toParnter(PartnerDto parnterDto) {
+	public static Partner toParnter(PartnerDto parnterDto,boolean isUpdate) {
 		if (parnterDto == null) {
 			return null;
 		}
@@ -75,7 +75,9 @@ public class PartnerConverter {
 		if (parnterDto.getState() != null) {
 			partner.setState(parnterDto.getState().getCode());
 		}
-		addBirthday(partner);
+		if(!isUpdate){
+			addBirthday(partner);
+		}
 		return partner;
 	}
 	
@@ -111,7 +113,7 @@ public class PartnerConverter {
 
 		List<Partner> list = new ArrayList<Partner>();
 		for (PartnerDto partnerDto : partner) {
-			list.add(toParnter(partnerDto));
+			list.add(toParnter(partnerDto,false));
 		}
 
 		return list;

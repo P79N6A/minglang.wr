@@ -55,7 +55,7 @@ public class PartnerBOImpl implements PartnerBO {
 	public Long addPartner(PartnerDto partnerDto)
 			throws AugeServiceException {
 		ValidateUtils.notNull(partnerDto);
-		Partner record = PartnerConverter.toParnter(partnerDto);
+		Partner record = PartnerConverter.toParnter(partnerDto,false);
 		DomainUtils.beforeInsert(record, partnerDto.getOperator());
 		exPartnerMapper.insert(record);
 		return record.getId();
@@ -67,7 +67,7 @@ public class PartnerBOImpl implements PartnerBO {
 			throws AugeServiceException {
 		ValidateUtils.notNull(partnerDto);
 		ValidateUtils.notNull(partnerDto.getId());
-		Partner record = PartnerConverter.toParnter(partnerDto);
+		Partner record = PartnerConverter.toParnter(partnerDto,true);
 		DomainUtils.beforeUpdate(record, partnerDto.getOperator());
 		exPartnerMapper.updateByPrimaryKeySelective(record);
 	}
