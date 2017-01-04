@@ -85,6 +85,7 @@ public class PartnerServiceImpl implements PartnerService {
 		result.setPartnerType(rel.getType());
 		result.setTaobaoNick(partner.getTaobaoNick());
 		result.setTaobaoUserId(partner.getTaobaoUserId());
+		result.setMobile(partner.getMobile());
 		//组装村点信息
 		Station station=stationBO.getStationById(rel.getStationId());
 		if(station==null){
