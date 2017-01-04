@@ -140,11 +140,6 @@ public class PartnerBOImpl implements PartnerBO {
 		Assert.notNull(dto.getFlowerName());
 		Assert.notNull(dto.getNameMeaning());
 		Assert.notNull(dto.getNameSource());
-		//判断花名是否已经存在
-		Partner partner=getNormalPartnerByTaobaoUserId(dto.getTaobaoUserId());
-		if(partner!=null&&StringUtils.isNotEmpty(partner.getFlowerName())){
-			throw new AugeServiceException("花名已经存在，请不要重复申请");
-		}
 		Long id=null;
 		if(dto.getId()!=null){
 			id=dto.getId();
@@ -163,6 +158,15 @@ public class PartnerBOImpl implements PartnerBO {
 			apply.setModifier(String.valueOf(dto.getTaobaoUserId()));
 			partnerFlowerNameApplyMapper.updateByPrimaryKey(apply);
 		}else{
+			//判断花名是否已经存在
+			PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+			com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+			criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName());
+			List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+			if(applys.size()>0){
+				throw new AugeServiceException("花名已经存在，请不要重复申请");
+
+			}
 			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
 			BeanUtils.copyProperties(dto, apply);
 			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
