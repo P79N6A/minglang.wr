@@ -65,7 +65,11 @@ public class BaiDtoBuilder {
     }
 
     public static Long parseInstanceIdFromOutOrderNo(String outSignNo) {
-        return Long.parseLong(outSignNo.substring(OUT_ORDER_NO_PRE.length()));
+        if(outSignNo.startsWith(OUT_ORDER_NO_PRE)){
+            return Long.parseLong(outSignNo.substring(OUT_ORDER_NO_PRE.length()));
+        }else {
+            return Long.parseLong(outSignNo);
+        }
     }
 
     public static String generateOutOrderNoByInstanceId(Long partnerInstanceId) {
