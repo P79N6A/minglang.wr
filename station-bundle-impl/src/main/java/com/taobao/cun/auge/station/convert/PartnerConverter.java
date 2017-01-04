@@ -77,6 +77,8 @@ public class PartnerConverter {
 		}
 		if(!isUpdate){
 			addBirthday(partner);
+		}else if(parnterDto.getBirthday()!=null){
+			partner.setBirthday(parnterDto.getBirthday());
 		}
 		return partner;
 	}
