@@ -158,15 +158,7 @@ public class PartnerBOImpl implements PartnerBO {
 			apply.setModifier(String.valueOf(dto.getTaobaoUserId()));
 			partnerFlowerNameApplyMapper.updateByPrimaryKey(apply);
 		}else{
-			//判断花名是否已经存在
-			PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
-			com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
-			criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName());
-			List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
-			if(applys.size()>0){
-				throw new AugeServiceException("花名已经存在，请不要重复申请");
-
-			}
+			validateApply(dto);
 			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
 			BeanUtils.copyProperties(dto, apply);
 			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
@@ -182,6 +174,24 @@ public class PartnerBOImpl implements PartnerBO {
 		createFlow(id,dto.getTaobaoUserId());
 	}
 	
+	private void validateApply(PartnerFlowerNameApplyDto dto){
+		//判断花名是否已经存在
+		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName());
+		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+		if(applys.size()>0){
+			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
+		}
+		//判断是否已经申请过
+		PartnerFlowerNameApplyExample example1 = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria1 = example1.createCriteria();
+		criteria1.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(dto.getTaobaoUserId());
+		List<PartnerFlowerNameApply> applys1=partnerFlowerNameApplyMapper.selectByExample(example1);
+		if(applys1.size()>0){
+			throw new AugeServiceException("花名已经申请过，请不要重复申请");
+		}
+	}
 	private void createFlow(Long applyId, Long loginId) {
 		//获取组织
 		PartnerStationRel rel=partnerInstanceBO.getActivePartnerInstance(loginId);
