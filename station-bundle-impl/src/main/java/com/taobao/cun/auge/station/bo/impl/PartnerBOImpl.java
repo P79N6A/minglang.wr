@@ -1,11 +1,17 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -13,20 +19,40 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerExample;
 import com.taobao.cun.auge.dal.domain.PartnerExample.Criteria;
+import com.taobao.cun.auge.dal.domain.PartnerFlowerNameApply;
+import com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.ExPartnerMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerFlowerNameApplyMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
+import com.taobao.cun.auge.station.enums.PartnerFlowerNameApplyStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
 @Component("partnerBO")
 public class PartnerBOImpl implements PartnerBO {
 	
 	@Autowired
 	ExPartnerMapper exPartnerMapper;
-	
-	
+	@Autowired
+	PartnerFlowerNameApplyMapper partnerFlowerNameApplyMapper;
+	@Autowired
+    private CuntaoWorkFlowService  cuntaoWorkFlowService;
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
+	@Autowired
+	StationBO stationBO;
+	public static String FLOW_BUSINESS_CODE="partner_flower_name_apply";
 	@Override
 	public Partner getNormalPartnerByTaobaoUserId(Long taobaoUserId)
 			throws AugeServiceException {
@@ -104,5 +130,111 @@ public class PartnerBOImpl implements PartnerBO {
 				.andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
 				.andIsDeletedEqualTo("n");
 		return exPartnerMapper.selectByExample(example); 
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void applyFlowName(PartnerFlowerNameApplyDto dto) {
+		Assert.notNull(dto);
+		Assert.notNull(dto.getTaobaoUserId());
+		Assert.notNull(dto.getFlowerName());
+		Assert.notNull(dto.getNameMeaning());
+		Assert.notNull(dto.getNameSource());
+		//判断花名是否已经存在
+		Partner partner=getNormalPartnerByTaobaoUserId(dto.getTaobaoUserId());
+		if(partner!=null&&StringUtils.isNotEmpty(partner.getFlowerName())){
+			throw new AugeServiceException("花名已经存在，请不要重复申请");
+		}
+		Long id=null;
+		if(dto.getId()!=null){
+			id=dto.getId();
+			//判断是否是审核没通过
+			PartnerFlowerNameApply pf=partnerFlowerNameApplyMapper.selectByPrimaryKey(dto.getId());
+			if(pf==null){
+				throw new AugeServiceException("修改失败，查找不到申请记录");
+			}
+			if(!PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode().equals(pf.getStatus())){
+				throw new AugeServiceException("当前状态不允许修改");
+			}
+			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
+			BeanUtils.copyProperties(dto, apply);
+			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
+			apply.setGmtModified(new Date());
+			apply.setModifier(String.valueOf(dto.getTaobaoUserId()));
+			partnerFlowerNameApplyMapper.updateByPrimaryKey(apply);
+		}else{
+			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
+			BeanUtils.copyProperties(dto, apply);
+			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
+			apply.setGmtModified(new Date());
+			apply.setModifier(String.valueOf(dto.getTaobaoUserId()));
+			apply.setCreator(String.valueOf(dto.getTaobaoUserId()));
+			apply.setGmtCreate(new Date());
+			apply.setIsDeleted("n");
+			partnerFlowerNameApplyMapper.insert(apply);
+			id=apply.getId();
+		}
+		//插入流程
+		createFlow(id,dto.getTaobaoUserId());
+	}
+	
+	private void createFlow(Long applyId, Long loginId) {
+		//获取组织
+		PartnerStationRel rel=partnerInstanceBO.getActivePartnerInstance(loginId);
+		if(rel==null){
+			throw new AugeServiceException("当前状态无法申请花名");
+		}
+		Station s=stationBO.getStationById(rel.getStationId());
+		if(s==null){
+			throw new AugeServiceException("村点状态无效");
+		}
+		Map<String, String> initData = new HashMap<String, String>();
+		initData.put("orgId", String.valueOf(s.getApplyOrg()));
+		try {
+			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
+					.startProcessInstance(FLOW_BUSINESS_CODE,
+							String.valueOf(applyId), String.valueOf(loginId), initData);
+			if (!rm.isSuccess()) {
+				throw new AugeServiceException(rm.getException());
+			}
+		} catch (Exception e) {
+			throw new AugeServiceException("申请花名失败", e);
+		}
+	}
+
+	@Override
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId) {
+		Assert.notNull(taobaoUserId);
+		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId);
+		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+		if(applys.size()>0){
+			PartnerFlowerNameApplyDto result=new PartnerFlowerNameApplyDto();
+			BeanUtils.copyProperties(applys.get(0), result);
+			return result;
+		}
+		return null;
+	}
+
+	@Override
+	public void auditFlowerNameApply(Long id, boolean auditResult) {
+		Assert.notNull(id);
+		Assert.notNull(auditResult);
+		PartnerFlowerNameApply apply=partnerFlowerNameApplyMapper.selectByPrimaryKey(id);
+		if(!PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode().equals(apply.getStatus())){
+			//状态不对，不处理
+			return;
+		}
+		if(auditResult){
+			apply.setStatus(PartnerFlowerNameApplyStatusEnum.AUDIT_PASS.getCode());
+			//更新至partner
+			Partner partner=getNormalPartnerByTaobaoUserId(apply.getTaobaoUserId());
+			partner.setFlowerName(apply.getFlowerName());
+			exPartnerMapper.updateByPrimaryKeySelective(partner);
+			
+		}else{
+			apply.setStatus(PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode());
+		}
 	}
 }

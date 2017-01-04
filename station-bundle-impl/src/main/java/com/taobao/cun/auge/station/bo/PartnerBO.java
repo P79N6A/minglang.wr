@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -72,4 +73,9 @@ public interface PartnerBO {
 	 */
 	public List<Partner> getPartnerByMobile(String mobile) throws AugeServiceException;
 	
+	public void applyFlowName(PartnerFlowerNameApplyDto dto);
+	
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId);
+	
+	public void auditFlowerNameApply(Long id,boolean auditResult);
 }

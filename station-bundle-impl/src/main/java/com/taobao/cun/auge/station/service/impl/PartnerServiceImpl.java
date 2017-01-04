@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -148,4 +149,15 @@ public class PartnerServiceImpl implements PartnerService {
         	}
         }
 	}
+
+	@Override
+	public void applyFlowName(PartnerFlowerNameApplyDto dto) {
+		partnerBO.applyFlowName(dto);
+	}
+
+	@Override
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId) {
+		return partnerBO.getFlowerNameApplyDetail(taobaoUserId);
+	}
+
 }
