@@ -38,6 +38,8 @@ public class PartnerConverter {
 		partnerDto.setSolidPoint(partner.getSolidPoint());
 		partnerDto.setLeaseArea(partner.getLeaseArea());
 		partnerDto.setAliLangUserId(partner.getAlilangUserId());
+		partnerDto.setBirthday(partner.getBirthday());
+		partnerDto.setFlowerName(partner.getFlowerName());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
