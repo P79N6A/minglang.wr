@@ -14,11 +14,19 @@ public class PartnerFlowerNameApplyDto implements Serializable{
 	private Long id;
 	
 	//扩展字段
+	private String name;
 	private String nameSourceDesc;
 	private String statusDesc;
 	private String stationName;
 	private String countyName;
 	
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}

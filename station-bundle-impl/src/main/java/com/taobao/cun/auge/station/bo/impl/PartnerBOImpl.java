@@ -281,5 +281,7 @@ public class PartnerBOImpl implements PartnerBO {
 			Station station=stationBO.getStationById(rel.getStationId());
 			dto.setStationName(station.getName());
 		}
+		Partner partner=getNormalPartnerByTaobaoUserId(dto.getTaobaoUserId());
+		dto.setName(partner.getName());
 	}
 }
