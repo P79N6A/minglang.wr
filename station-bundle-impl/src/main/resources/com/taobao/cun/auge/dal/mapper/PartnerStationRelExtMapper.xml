@@ -99,7 +99,7 @@
 		
 		p.name as partner_name,
 		p.alipay_account,
-        p.flower_name
+        p.flower_name,
 		p.taobao_nick,
 		p.iden_num,
 		p.mobile,
