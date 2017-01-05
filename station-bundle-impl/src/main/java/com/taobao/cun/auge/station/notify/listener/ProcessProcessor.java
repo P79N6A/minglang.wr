@@ -439,6 +439,6 @@ public class ProcessProcessor {
 		peixunPurchaseBO.audit(new Long(id), audit,auditName, desc, !"拒绝".equals(result));
 	}
 	private void handleFlowerNameApply(String id,String result){
-		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.equals(result));
+		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
 	}
 }
