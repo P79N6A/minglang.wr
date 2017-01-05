@@ -252,6 +252,8 @@ public class PartnerBOImpl implements PartnerBO {
 		}else{
 			apply.setStatus(PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode());
 		}
+		apply.setGmtModified(new Date());
+		partnerFlowerNameApplyMapper.updateByPrimaryKey(apply);
 	}
 
 	@Override
