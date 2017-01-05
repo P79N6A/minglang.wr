@@ -152,12 +152,14 @@ public class PartnerBOImpl implements PartnerBO {
 			if(!PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode().equals(pf.getStatus())){
 				throw new AugeServiceException("当前状态不允许修改");
 			}
-			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
-			BeanUtils.copyProperties(dto, apply);
-			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
-			apply.setGmtModified(new Date());
-			apply.setModifier(String.valueOf(dto.getTaobaoUserId()));
-			partnerFlowerNameApplyMapper.updateByPrimaryKey(apply);
+			pf.setNameMeaning(dto.getNameMeaning());
+			pf.setNameSource(dto.getNameSource());
+			pf.setFlowerName(dto.getFlowerName());
+			pf.setFlowerNamePinyin(dto.getFlowerNamePinyin());
+			pf.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
+			pf.setGmtModified(new Date());
+			pf.setModifier(String.valueOf(dto.getTaobaoUserId()));
+			partnerFlowerNameApplyMapper.updateByPrimaryKey(pf);
 		}else{
 			validateApply(dto);
 			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
