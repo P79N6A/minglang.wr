@@ -78,4 +78,6 @@ public interface PartnerBO {
 	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId);
 	
 	public void auditFlowerNameApply(Long id,boolean auditResult);
+	
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetailById(Long id);
 }

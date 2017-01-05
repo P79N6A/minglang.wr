@@ -45,5 +45,11 @@ public interface PartnerService {
 	 * 获取花名审批状态
 	 */
 	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId);	
+	
+	/**
+	 * 根据申请id获取花名审批状态
+	 */
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetailById(Long id);	
+
 		
 }

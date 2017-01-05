@@ -13,6 +13,12 @@ public class PartnerFlowerNameApplyDto implements Serializable{
 	private String status;
 	private Long id;
 	
+	//扩展字段
+	private String nameSourceDesc;
+	private String statusDesc;
+	private String stationName;
+	private String countyName;
+	
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}
@@ -54,6 +60,30 @@ public class PartnerFlowerNameApplyDto implements Serializable{
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getNameSourceDesc() {
+		return nameSourceDesc;
+	}
+	public void setNameSourceDesc(String nameSourceDesc) {
+		this.nameSourceDesc = nameSourceDesc;
+	}
+	public String getStatusDesc() {
+		return statusDesc;
+	}
+	public void setStatusDesc(String statusDesc) {
+		this.statusDesc = statusDesc;
+	}
+	public String getStationName() {
+		return stationName;
+	}
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+	public String getCountyName() {
+		return countyName;
+	}
+	public void setCountyName(String countyName) {
+		this.countyName = countyName;
 	}
 	
 	

@@ -33,6 +33,7 @@ import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerFlowerNameApplyStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerFlowerNameSourceEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
@@ -226,6 +227,7 @@ public class PartnerBOImpl implements PartnerBO {
 		if(applys.size()>0){
 			PartnerFlowerNameApplyDto result=new PartnerFlowerNameApplyDto();
 			BeanUtils.copyProperties(applys.get(0), result);
+			addExternalForFlowerDto(result);
 			return result;
 		}
 		return null;
@@ -249,6 +251,35 @@ public class PartnerBOImpl implements PartnerBO {
 			
 		}else{
 			apply.setStatus(PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode());
+		}
+	}
+
+	@Override
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetailById(Long id) {
+		Assert.notNull(id);
+		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andIdEqualTo(id);
+		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+		if(applys.size()>0){
+			PartnerFlowerNameApplyDto result=new PartnerFlowerNameApplyDto();
+			BeanUtils.copyProperties(applys.get(0), result);
+			addExternalForFlowerDto(result);
+			return result;
+		}
+		return null;
+	}
+	
+	private void addExternalForFlowerDto(PartnerFlowerNameApplyDto dto){
+		if(StringUtils.isNotEmpty(dto.getNameSource())&&PartnerFlowerNameSourceEnum.valueof(dto.getNameSource())!=null){
+			dto.setNameSourceDesc(PartnerFlowerNameSourceEnum.valueof(dto.getNameSource()).getDesc());
+		}
+		dto.setStatusDesc(PartnerFlowerNameApplyStatusEnum.valueof(dto.getStatus()).getDesc());
+		//村点名称
+		PartnerStationRel rel=partnerInstanceBO.getActivePartnerInstance(dto.getTaobaoUserId());
+		if(rel!=null){
+			Station station=stationBO.getStationById(rel.getStationId());
+			dto.setStationName(station.getName());
 		}
 	}
 }

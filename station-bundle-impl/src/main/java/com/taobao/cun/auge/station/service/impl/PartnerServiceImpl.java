@@ -160,4 +160,9 @@ public class PartnerServiceImpl implements PartnerService {
 		return partnerBO.getFlowerNameApplyDetail(taobaoUserId);
 	}
 
+	@Override
+	public PartnerFlowerNameApplyDto getFlowerNameApplyDetailById(Long id) {
+		return partnerBO.getFlowerNameApplyDetailById(id);
+	}
+
 }
