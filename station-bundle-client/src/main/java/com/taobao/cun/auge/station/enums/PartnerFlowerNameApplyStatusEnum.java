@@ -7,8 +7,8 @@ import java.util.Map;
 public class PartnerFlowerNameApplyStatusEnum implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public static final PartnerFlowerNameApplyStatusEnum WAIT_AUDIT = new PartnerFlowerNameApplyStatusEnum("WAIT_AUDIT", "待审核");
-	public static final PartnerFlowerNameApplyStatusEnum AUDIT_PASS = new PartnerFlowerNameApplyStatusEnum("PAY", "审核通过");
-	public static final PartnerFlowerNameApplyStatusEnum AUDIT_NOT_PASS = new PartnerFlowerNameApplyStatusEnum("DONE", "审核未通过");
+	public static final PartnerFlowerNameApplyStatusEnum AUDIT_PASS = new PartnerFlowerNameApplyStatusEnum("AUDIT_PASS", "审核通过");
+	public static final PartnerFlowerNameApplyStatusEnum AUDIT_NOT_PASS = new PartnerFlowerNameApplyStatusEnum("AUDIT_NOT_PASS", "审核未通过");
 
 	private static final Map<String, PartnerFlowerNameApplyStatusEnum> mappings = new HashMap<String, PartnerFlowerNameApplyStatusEnum>();
 
