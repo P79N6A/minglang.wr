@@ -29,6 +29,9 @@ public class PartnerMaxChildNumChangeReasonEnum implements Serializable {
 
 	public static final PartnerMaxChildNumChangeReasonEnum TP_DEGREE_2_TPA = new PartnerMaxChildNumChangeReasonEnum(
 			"TP_DEGREE_2_TPA", "合伙人降级为淘帮手");
+	
+	public static final PartnerMaxChildNumChangeReasonEnum TPA_AUTO_CLOSE = new PartnerMaxChildNumChangeReasonEnum(
+			"TPA_AUTO_CLOSE", "淘帮手自动停业");
 
 	static {
 		mappings.put("INIT", INIT);
@@ -36,6 +39,7 @@ public class PartnerMaxChildNumChangeReasonEnum implements Serializable {
 		mappings.put("TPA_PERFORMANCE_REWARD", TPA_PERFORMANCE_REWARD);
 		mappings.put("TPA_UPGRADE_REWARD", TPA_UPGRADE_REWARD);
 		mappings.put("TP_DEGREE_2_TPA", TP_DEGREE_2_TPA);
+		mappings.put("TPA_AUTO_CLOSE", TPA_AUTO_CLOSE);
 	}
 
 	public PartnerMaxChildNumChangeReasonEnum(String code, String desc) {

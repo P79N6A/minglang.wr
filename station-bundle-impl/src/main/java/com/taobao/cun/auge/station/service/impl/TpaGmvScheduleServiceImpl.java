@@ -62,8 +62,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-			example.setBizMonths(findLastNMonth());
-			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
+			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.REWARD_PARENT_NUM_LAST_MONTH_COUNT));
+			example.setLastMonthCount(PartnerInstanceExtConstant.REWARD_PARENT_NUM_LAST_MONTH_COUNT);
 			example.setScale(PartnerInstanceExtConstant.SCALE);
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
@@ -144,10 +144,10 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
 	}
 
-	private String[] findLastNMonth() {
-		List<String> lastTwoMonths = new ArrayList<String>(PartnerInstanceExtConstant.LAST_MONTH_COUNT);
+	private String[] findLastNMonth(Integer lastMonthCount) {
+		List<String> lastTwoMonths = new ArrayList<String>(lastMonthCount);
 
-		for (int i = PartnerInstanceExtConstant.LAST_MONTH_COUNT; i > 0; i--) {
+		for (int i = lastMonthCount; i > 0; i--) {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -i);
 			String lastMonth = format.format(cal.getTime());
@@ -156,5 +156,27 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		}
 
 		return lastTwoMonths.toArray(new String[lastTwoMonths.size()]);
+	}
+
+	@Override
+	public PageDto<DwiCtStationTpaIncomeMDto> getWaitClosingTpaList(PageQuery pageQuery) throws AugeServiceException {
+		try {
+			// 参数校验
+			BeanValidator.validateWithThrowable(pageQuery);
+
+			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
+
+			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.AUTO_CLOSE_LAST_MONTH_COUNT));
+			example.setLastMonthCount(PartnerInstanceExtConstant.AUTO_CLOSE_LAST_MONTH_COUNT);
+			example.setGmvLimit(PartnerInstanceExtConstant.GMV_LIMIT);
+			example.setOrderNumLimit(PartnerInstanceExtConstant.ORDER_LIMIT);
+
+			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
+			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
+			return PageDtoUtil.success(page, DwiCtStationTpaIncomeMConverter.convert(page));
+		} catch (Exception e) {
+			logger.error("查询淘帮手连续n个月绩效失败", e);
+			return PageDtoUtil.unSuccess(pageQuery.getPageNum(), pageQuery.getPageSize());
+		}
 	}
 }

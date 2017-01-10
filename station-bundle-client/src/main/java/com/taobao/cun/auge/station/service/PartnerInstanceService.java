@@ -162,6 +162,15 @@ public interface PartnerInstanceService {
 	 * @return
 	 */
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException;
+	
+	/**
+	 * 系统自动停业
+	 * 
+	 * @param forcedCloseDto
+	 * @throws AugeBusinessException
+	 * @throws AugeSystemException
+	 */
+	public void applyCloseBySystem(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException;
 
 	/**
 	 * 小二、TP商申请撤点

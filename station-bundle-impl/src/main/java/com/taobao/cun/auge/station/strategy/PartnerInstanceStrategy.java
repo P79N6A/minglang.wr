@@ -81,8 +81,45 @@ public interface PartnerInstanceStrategy {
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 	
+	/**
+	 * 停业中
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 	
+	/**
+	 * 系统主动停业
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
+	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
+	
+	/**
+	 * 已停业
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param taobaoNick
+	 * @param typeEnum
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException;
+	
+	/**
+	 * 退出中
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 
 	/**

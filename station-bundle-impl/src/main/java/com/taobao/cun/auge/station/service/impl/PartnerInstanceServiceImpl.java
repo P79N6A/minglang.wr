@@ -1073,12 +1073,25 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException{
-		try {
-			// 参数校验
-			BeanValidator.validateWithThrowable(forcedCloseDto);
-			//校验操作人的组织id
-			forcedCloseDto.validateOperatorOrgId();
+		// 参数校验
+		BeanValidator.validateWithThrowable(forcedCloseDto);
+		//校验操作人的组织id
+		forcedCloseDto.validateOperatorOrgId();
+		
+		applyCloseInternal(forcedCloseDto,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void applyCloseBySystem(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException{
+		// 参数校验
+		BeanValidator.validateWithThrowable(forcedCloseDto);
+		
+		applyCloseInternal(forcedCloseDto,PartnerInstanceCloseTypeEnum.SYSTEM_QUIT);
+	}
 
+	private void applyCloseInternal(ForcedCloseDto forcedCloseDto,PartnerInstanceCloseTypeEnum closeType) {
+		try {
 			Long instanceId = forcedCloseDto.getInstanceId();
 			//查询实例是否存在，不存在会抛异常
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
@@ -1090,16 +1103,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceChecker.checkCloseApply(instanceId);
 
 			// 合伙人实例停业中,退出类型为强制清退
-			closingPartnerInstance(partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT, forcedCloseDto);
+			closingPartnerInstance(partnerStationRel, closeType, forcedCloseDto);
 
 			// 村点停业中
 			closingStation(partnerStationRel.getStationId(), instanceStateChange, forcedCloseDto);
 
 			// 添加停业生命周期记录
-			addClosingLifecycle(forcedCloseDto, partnerStationRel, PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+			addClosingLifecycle(forcedCloseDto, partnerStationRel, closeType);
 
 			// 新增停业申请单
-			CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toWorkCloseStationApplyDto(forcedCloseDto, instanceStateChange);
+			CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toCloseStationApplyDto(forcedCloseDto, closeType,instanceStateChange);
 			closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 
 			// 同步station_apply
@@ -1109,11 +1122,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			dispatchInstStateChangeEvent(instanceId, instanceStateChange, forcedCloseDto);
 			// 失效tair
 		}catch (AugeBusinessException e) {
-			String error = getAugeExceptionErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
+			String error = getAugeExceptionErrorMessage("applyCloseInternal", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.toString());
 			logger.warn(error, e);
 			throw e;
 		} catch (Exception e) {
-			String error = getErrorMessage("applyCloseByManager", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
+			String error = getErrorMessage("applyCloseInternal", "ForcedCloseDto =" + JSON.toJSONString(forcedCloseDto), e.getMessage());
 			logger.error(error, e);
 			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}

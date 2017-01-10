@@ -27,4 +27,13 @@ public interface TpaGmvScheduleService {
 	 * @return
 	 */
 	public Boolean addChildNumByGmv(DwiCtStationTpaIncomeMDto incomeDto);
+	
+	/**
+	 * 淘帮手前两个自然月（满两个自然月），每月含佣父订单<10笔且含佣GMV<1000元
+	 * 
+	 * @param page
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PageDto<DwiCtStationTpaIncomeMDto> getWaitClosingTpaList(PageQuery page) throws AugeServiceException;
 }

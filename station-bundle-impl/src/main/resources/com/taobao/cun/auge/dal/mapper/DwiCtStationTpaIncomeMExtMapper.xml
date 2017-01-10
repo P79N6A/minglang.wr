@@ -19,6 +19,8 @@
     <result column="ct_srvc_tpa_income_est_fee_amt_avg_mtd" property="ctSrvcTpaIncomeEstFeeAmtAvgMtd" jdbcType="DECIMAL" />
     <result column="station_srvc_cnt" property="stationSrvcCnt" jdbcType="BIGINT" />
     <result column="ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd" property="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd" jdbcType="BIGINT" />
+    <result column="tpa_gmv" property="tpaGmv" jdbcType="DECIMAL" />
+    <result column="tpa_order_num" property="tpaOrderNum" jdbcType="BIGINT" />
   </resultMap>
   
   <select id="selectStationsByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple" >
@@ -34,9 +36,11 @@
 			ct_srvc_tpa_income_est_fee_amt_mtd,
 			ct_srvc_tpa_income_est_fee_amt_avg_mtd,
 			station_srvc_cnt,
-			ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd
+			ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd,
+			tpa_gmv,
+			tpa_order_num
 		
-		from dwi_ct_station_tpa_income_m where station_srvc_cnt > 0
+		from dwi_ct_station_tpa_income_m where 
 			<include refid="query_condition" />  
 		group by station_id 
 		<if test="lastMonthCount != null" >
@@ -51,7 +55,13 @@
 			</foreach>
 		</if>
 		<if test="scale != null" >
-			<![CDATA[ and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
+			<![CDATA[ station_srvc_cnt > 0 and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
+		</if>
+		<if test="orderNumLimit != null" >
+			<![CDATA[ tpa_order_num < #{orderNumLimit} ]]>
+		</if>
+		<if test="gmvLimit != null" >
+			<![CDATA[ tpa_gmv < #{gmvLimit} ]]>
 		</if>
   </sql>
 </mapper>

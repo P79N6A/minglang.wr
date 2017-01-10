@@ -54,7 +54,17 @@ public interface PartnerInstanceExtService {
 	   */
 	  public void addPartnerMaxChildNum(Long instanceId, Integer increaseNum, PartnerMaxChildNumChangeReasonEnum reason,
 	      OperatorDto operatorDto);
-
+	  
+	  /**
+	   * 在原有的值上，减少decreaseNum个子成员，最少不少于@see#PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM
+	   * @param instanceId
+	   * @param decreaseNum
+	   * @param reason
+	   * @param operatorDto
+	   */
+	  public void decreasePartnerMaxChildNum(Long instanceId, Integer decreaseNum, PartnerMaxChildNumChangeReasonEnum reason,
+		      OperatorDto operatorDto);
+	  
 	  /**
 	   * 修改最大子成员配额，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
 	   * 

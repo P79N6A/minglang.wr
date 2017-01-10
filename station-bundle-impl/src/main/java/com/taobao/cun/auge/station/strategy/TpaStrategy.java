@@ -18,23 +18,26 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -51,6 +54,7 @@ import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
@@ -59,6 +63,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -69,11 +74,12 @@ import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.pandora.util.StringUtils;
 
 @Component("tpaStrategy")
-public class TpaStrategy implements PartnerInstanceStrategy {
+public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(TpaStrategy.class);
 
@@ -112,6 +118,12 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 
 	@Autowired
 	PartnerApplyBO partnerApplyBO;
+	
+	@Autowired
+	PartnerInstanceExtService partnerInstanceExtService;
+	
+	@Autowired
+	CloseStationApplyBO closeStationApplyBO;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -381,11 +393,35 @@ public class TpaStrategy implements PartnerInstanceStrategy {
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+		autoClosing( instanceId,  stationName,  operatorDto);
+	}
+	
+	@Override
+	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
 			throw new AugeServiceException(e.getMessage());
 		}
+	}
+	
+	@Override
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException {
+		super.closed(instanceId, taobaoUserId, taobaoNick, typeEnum, operatorDto);
+		
+		//系统停业的，减少合伙人一个淘帮手名额
+		CloseStationApplyDto closeApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
+		if (PartnerInstanceCloseTypeEnum.SYSTEM_QUIT.equals(closeApplyDto.getType())) {
+			decreaseTpChildMaxNum(instanceId, operatorDto);
+		}
+	}
+
+	private void decreaseTpChildMaxNum(Long instanceId, OperatorDto operatorDto) {
+		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Long tpStationId = tpaInstance.getParentStationId();
+		PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(tpStationId);
+		Long tpInstanceId = tpInstance.getId();
+		partnerInstanceExtService.decreasePartnerMaxChildNum(tpInstanceId, PartnerInstanceExtConstant.REDUCE_PARENT_NUM_FRO_CLOSE, PartnerMaxChildNumChangeReasonEnum.TPA_AUTO_CLOSE , operatorDto);
 	}
 
 	@Override

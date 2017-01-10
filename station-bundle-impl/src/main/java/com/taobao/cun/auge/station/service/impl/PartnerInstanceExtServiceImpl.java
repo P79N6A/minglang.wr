@@ -164,4 +164,35 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		// 发送变更事件
 		PartnerChildMaxNumChangeEventConverter.dispatchChangeEvent(instanceExtDto, reason);
 	}
+
+	@Override
+	public void decreasePartnerMaxChildNum(Long instanceId, Integer decreaseNum, PartnerMaxChildNumChangeReasonEnum reason, OperatorDto operatorDto) {
+		// 查询当前实例扩展
+		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceId);
+		
+		//保护
+		if(null == instanceExt){
+			return;
+		}
+		
+		// 当前最大配额
+		Integer curMaxChildNum =  instanceExt.getMaxChildNum() ;
+		
+		// 已经达到初始值3，则返回
+		if (curMaxChildNum <= PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM) {
+			return;
+		}
+		//计算新值
+		Integer childNum = curMaxChildNum - decreaseNum;
+		// 最小配额校验
+		childNum = childNum <= PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM ? PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM
+				: childNum;
+		
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+
+		instanceExtDto.setInstanceId(instanceId);
+		instanceExtDto.setMaxChildNum(childNum);
+		instanceExtDto.copyOperatorDto(operatorDto);
+		savePartnerMaxChildNum(instanceExtDto, reason);
+	}
 }

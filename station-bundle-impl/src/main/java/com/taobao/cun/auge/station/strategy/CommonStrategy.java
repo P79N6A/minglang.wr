@@ -2,15 +2,22 @@ package com.taobao.cun.auge.station.strategy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 
-public class CommonStrategy {
+public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	
 	@Autowired
     PartnerInstanceQueryService partnerInstanceQueryService;
+	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
 
 	public String findCloseReason(Long instanceId) {
 		// 获取停业原因
@@ -40,5 +47,15 @@ public class CommonStrategy {
 			return 0l;
 		}
 		return quitApply.getId();
+	}
+	
+	@Override
+	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+		
+	}
+	
+	@Override
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException {
+		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(),instanceId);
 	}
 }

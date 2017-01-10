@@ -23,10 +23,14 @@ public class PartnerInstanceCloseTypeEnum implements Serializable {
 
 	public static final PartnerInstanceCloseTypeEnum PARTNER_QUIT = new PartnerInstanceCloseTypeEnum("partner-quit",
 			"主动申请退出");
+	
+	public static final PartnerInstanceCloseTypeEnum SYSTEM_QUIT = new PartnerInstanceCloseTypeEnum("SYSTEM_QUIT",
+			"自动清退");
 
 	static {
 		mappings.put("worker-quit", WORKER_QUIT);
 		mappings.put("partner-quit", PARTNER_QUIT);
+		mappings.put("SYSTEM_QUIT", SYSTEM_QUIT);
 	}
 
 	public PartnerInstanceCloseTypeEnum(String code, String desc) {
