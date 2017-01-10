@@ -50,7 +50,7 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	}
 	
 	@Override
-	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void autoClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		
 	}
 	

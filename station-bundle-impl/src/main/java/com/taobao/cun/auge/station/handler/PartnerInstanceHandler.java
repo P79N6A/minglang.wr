@@ -139,8 +139,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(typeEnum.getCode()).startClosing(instanceId, stationName, operatorDto);
 	}
 	
-	public void autoClosing(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
-		strategy.get(typeEnum.getCode()).autoClosing(instanceId, stationName, operatorDto);
+	public void autoClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).autoClosing(instanceId, operatorDto);
 	}
 	
 	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto)throws AugeServiceException {

@@ -95,11 +95,10 @@ public interface PartnerInstanceStrategy {
 	 * 系统主动停业
 	 * 
 	 * @param instanceId
-	 * @param stationName
 	 * @param operatorDto
 	 * @throws AugeServiceException
 	 */
-	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
+	public void autoClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException;
 	
 	/**
 	 * 已停业

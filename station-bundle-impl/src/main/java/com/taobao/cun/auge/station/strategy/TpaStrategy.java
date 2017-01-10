@@ -393,11 +393,11 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		autoClosing( instanceId,  stationName,  operatorDto);
+		autoClosing( instanceId, operatorDto);
 	}
 	
 	@Override
-	public void autoClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void autoClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
@@ -416,8 +416,8 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		}
 	}
 
-	private void decreaseTpChildMaxNum(Long instanceId, OperatorDto operatorDto) {
-		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+	private void decreaseTpChildMaxNum(Long tpaInstanceId, OperatorDto operatorDto) {
+		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(tpaInstanceId);
 		Long tpStationId = tpaInstance.getParentStationId();
 		PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(tpStationId);
 		Long tpInstanceId = tpInstance.getId();

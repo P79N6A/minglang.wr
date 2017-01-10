@@ -69,7 +69,7 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			// 系统自动停业
 		}else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				&& PartnerInstanceCloseTypeEnum.SYSTEM_QUIT.getCode().equals(instance.getCloseType())) {
-			partnerInstanceHandler.autoClosing(instanceId, stationName, partnerType, stateChangeEvent);
+			partnerInstanceHandler.autoClosing(instanceId, partnerType, stateChangeEvent);
 			// 已停业，去标
 		} else if (PartnerInstanceStateChangeEnum.CLOSED.equals(stateChangeEnum)) {
 			partnerInstanceHandler.closed(instance.getId(), taobaoUserId, taobaoNick, partnerType, stateChangeEvent);
