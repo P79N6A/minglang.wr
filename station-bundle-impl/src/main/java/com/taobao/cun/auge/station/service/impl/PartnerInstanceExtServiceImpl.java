@@ -176,7 +176,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		}
 		
 		// 当前最大配额
-		Integer curMaxChildNum =  instanceExt.getMaxChildNum() ;
+		Integer curMaxChildNum =  instanceExt.getMaxChildNum();
 		
 		// 已经达到初始值3，则返回
 		if (curMaxChildNum <= PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM) {

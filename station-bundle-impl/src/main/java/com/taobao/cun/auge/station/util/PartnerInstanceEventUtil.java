@@ -7,8 +7,8 @@ import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 
-public final class EventUtil {
-	private EventUtil() {
+public final class PartnerInstanceEventUtil {
+	private PartnerInstanceEventUtil() {
 
 	}
 

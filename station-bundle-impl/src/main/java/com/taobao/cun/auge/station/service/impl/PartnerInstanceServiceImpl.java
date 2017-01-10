@@ -148,7 +148,7 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.cun.auge.station.util.EventUtil;
+import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
@@ -1888,7 +1888,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstance.getId());
 
 			// 发出升级事件
-			EventUtil.dispatchUpgradeEvent(tpaInstance,upgradeDto);
+			PartnerInstanceEventUtil.dispatchUpgradeEvent(tpaInstance,upgradeDto);
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("upgradePartnerInstance","PartnerInstanceUpgradeDto =" + JSON.toJSONString(upgradeDto), e.toString());
 			logger.warn(error, e);
@@ -2038,7 +2038,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstanceId);
 			
 			//发出撤销升级事件
-			EventUtil.dispatchCancelUpgradeEvent(tpaInstanceId,fillStationDto.getId(),cancelDto);
+			PartnerInstanceEventUtil.dispatchCancelUpgradeEvent(tpaInstanceId,fillStationDto.getId(),cancelDto);
 		} catch (AugeServiceException e) {
 			String error = getAugeExceptionErrorMessage("cancelUpgradePartnerInstance","CancelUpgradePartnerInstance =" + JSON.toJSONString(cancelDto), e.toString());
 			logger.warn(error, e);
