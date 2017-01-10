@@ -37,6 +37,7 @@ import com.taobao.cun.auge.station.enums.PartnerFlowerNameSourceEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
@@ -210,7 +211,7 @@ public class PartnerBOImpl implements PartnerBO {
 		try {
 			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
 					.startProcessInstance(FLOW_BUSINESS_CODE,
-							String.valueOf(applyId), String.valueOf(loginId), initData);
+							String.valueOf(applyId), String.valueOf(loginId),UserTypeEnum.HAVANA, initData);
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}
