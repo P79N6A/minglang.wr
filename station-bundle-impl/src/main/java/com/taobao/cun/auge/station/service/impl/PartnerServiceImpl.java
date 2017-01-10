@@ -88,6 +88,7 @@ public class PartnerServiceImpl implements PartnerService {
 		result.setTaobaoUserId(partner.getTaobaoUserId());
 		result.setMobile(partner.getMobile());
 		result.setGmtServiceBegin(rel.getServiceBeginTime());
+		result.setBirthday(partner.getBirthday());
 		//组装村点信息
 		Station station=stationBO.getStationById(rel.getStationId());
 		if(station==null){

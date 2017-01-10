@@ -28,6 +28,13 @@ public class PartnerDetailDto implements Serializable{
 	private String taobaoNick;
 	private Long stationId;
 	private String partnerType;
+	private Date birthday;
+	public Date getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
 	public String getName() {
 		return name;
 	}
