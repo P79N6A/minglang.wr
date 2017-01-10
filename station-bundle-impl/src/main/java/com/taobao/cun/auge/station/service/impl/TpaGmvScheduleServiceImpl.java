@@ -62,8 +62,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.REWARD_PARENT_NUM_LAST_MONTH_COUNT));
-			example.setLastMonthCount(PartnerInstanceExtConstant.REWARD_PARENT_NUM_LAST_MONTH_COUNT);
+			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.LAST_MONTHS_4_REWARD_PARENT_NUM));
+			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTHS_4_REWARD_PARENT_NUM);
 			example.setScale(PartnerInstanceExtConstant.SCALE);
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
@@ -166,10 +166,10 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.AUTO_CLOSE_LAST_MONTH_COUNT));
-			example.setLastMonthCount(PartnerInstanceExtConstant.AUTO_CLOSE_LAST_MONTH_COUNT);
-			example.setGmvLimit(PartnerInstanceExtConstant.GMV_LIMIT);
-			example.setOrderNumLimit(PartnerInstanceExtConstant.ORDER_LIMIT);
+			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE));
+			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE);
+			example.setGmvLimit(PartnerInstanceExtConstant.GMV_LIMIT_4_AUTO_CLOSE);
+			example.setOrderNumLimit(PartnerInstanceExtConstant.ORDER_LIMIT_4_AUTO_CLOSE);
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
