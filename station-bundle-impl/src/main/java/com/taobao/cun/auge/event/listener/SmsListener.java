@@ -135,7 +135,7 @@ public class SmsListener implements EventListener {
 				
 				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE.getCode());
 				// 替换淘帮手姓名和减少淘帮手名额
-				content = String.format(content, tpaPartner.getName(),	PartnerInstanceExtConstant.REDUCE_PARENT_NUM_FRO_CLOSE);
+				content = String.format(content, tpaPartner.getName(),	PartnerInstanceExtConstant.REDUCE_PARENT_NUM_4_AUTO_CLOSE);
 				
 				generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
 			}
@@ -241,7 +241,7 @@ public class SmsListener implements EventListener {
 			String operatorId = event.getOperator();
 			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
 			//替换淘帮手姓名和奖励淘帮手名额
-			content = String.format(content, tpaPartner.getName(),	PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE);
+			content = String.format(content, tpaPartner.getName(),	PartnerInstanceExtConstant.REWARD_PARENT_NUM_4_TPA_SERVICE);
 
 			generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
 		}

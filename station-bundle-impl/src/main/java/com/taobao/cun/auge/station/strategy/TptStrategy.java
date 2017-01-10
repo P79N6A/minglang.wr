@@ -41,7 +41,6 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -74,7 +73,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
@@ -638,39 +636,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
-		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM,
-				operatorDto);
 
-		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
-		rewardParentTp(taobaoUserId, operatorDto);
-	}
-
-	// 如果该账号以前是淘帮手，则奖励其原有合伙人1个淘帮手名额
-	private void rewardParentTp(Long taobaoUserId, OperatorDto operatorDto) {
-		// 根据服务结束时间，查询最后一次服务的实例
-		PartnerInstanceDto instanceDto = partnerInstanceBO.getLastPartnerInstance(taobaoUserId);
-		// 以前从未进入村淘
-		if (null == instanceDto) {
-			return;
-		}
-
-		// 如果上一次是淘帮手，则奖励原有合伙人一个淘帮手名额
-		if (!PartnerInstanceTypeEnum.TPA.equals(instanceDto.getType())) {
-			return;
-		}
-		// 上一次作为淘帮手时，所属合伙人的村点id
-		Long parentStationId = instanceDto.getParentStationId();
-
-		// 查询合伙人实例
-		PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-
-		// 原合伙人必须是服务中，才奖励一个名额
-		if (null != parentInstance && PartnerInstanceTypeEnum.TP.getCode().equals(parentInstance.getType())
-				&& PartnerInstanceStateEnum.SERVICING.getCode().equals(parentInstance.getState())) {
-			partnerInstanceExtService.addPartnerMaxChildNum(parentInstance.getId(),
-					PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE,
-					PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD, operatorDto);
-		}
 	}
 }

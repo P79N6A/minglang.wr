@@ -713,7 +713,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		if (null != parentInstance && PartnerInstanceTypeEnum.TP.getCode().equals(parentInstance.getType())
 				&& PartnerInstanceStateEnum.SERVICING.getCode().equals(parentInstance.getState())) {
 			partnerInstanceExtService.addPartnerMaxChildNum(parentInstance.getId(),
-					PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE,
+					PartnerInstanceExtConstant.REWARD_PARENT_NUM_4_TPA_SERVICE,
 					PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD, operatorDto);
 		}
 	}

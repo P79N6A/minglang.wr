@@ -421,7 +421,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long tpStationId = tpaInstance.getParentStationId();
 		PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(tpStationId);
 		Long tpInstanceId = tpInstance.getId();
-		partnerInstanceExtService.decreasePartnerMaxChildNum(tpInstanceId, PartnerInstanceExtConstant.REDUCE_PARENT_NUM_FRO_CLOSE, PartnerMaxChildNumChangeReasonEnum.TPA_AUTO_CLOSE , operatorDto);
+		partnerInstanceExtService.decreasePartnerMaxChildNum(tpInstanceId, PartnerInstanceExtConstant.REDUCE_PARENT_NUM_4_AUTO_CLOSE, PartnerMaxChildNumChangeReasonEnum.TPA_AUTO_CLOSE, operatorDto);
 	}
 
 	@Override
