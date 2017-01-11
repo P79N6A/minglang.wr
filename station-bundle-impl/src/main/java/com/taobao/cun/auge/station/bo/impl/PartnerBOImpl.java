@@ -40,6 +40,7 @@ import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.diamond.client.Diamond;
 
 @Component("partnerBO")
 public class PartnerBOImpl implements PartnerBO {
@@ -55,6 +56,9 @@ public class PartnerBOImpl implements PartnerBO {
 	@Autowired
 	StationBO stationBO;
 	public static String FLOW_BUSINESS_CODE="partner_flower_name_apply";
+	public static String DIAMOND_BLACK="com.taobao.cun:auge.flowerName.blackList";
+	public static String DIAMOND_GROUP="DEFAULT_GROUP";
+
 	@Override
 	public Partner getNormalPartnerByTaobaoUserId(Long taobaoUserId)
 			throws AugeServiceException {
@@ -143,6 +147,16 @@ public class PartnerBOImpl implements PartnerBO {
 		Assert.notNull(dto.getNameMeaning());
 		Assert.notNull(dto.getNameSource());
 		Long id=null;
+		//验证花名是否黑名单
+		try {
+			String flowerNameBlackString = Diamond.getConfig(DIAMOND_BLACK,
+					DIAMOND_GROUP, 3000);
+			if (flowerNameBlackString.contains(dto.getFlowerName())) {
+				throw new AugeServiceException("此花名不允许使用，请更换再试。");
+			}
+		} catch (Exception e) {
+			throw new AugeServiceException("花名申请失败,请稍后再试");
+		}
 		if(dto.getId()!=null){
 			id=dto.getId();
 			//判断是否是审核没通过
