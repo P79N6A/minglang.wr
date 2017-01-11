@@ -155,7 +155,7 @@ public class PartnerBOImpl implements PartnerBO {
 				throw new AugeServiceException("此花名不允许使用，请更换再试。");
 			}
 		} catch (Exception e) {
-			throw new AugeServiceException("花名申请失败,请稍后再试");
+			throw new AugeServiceException(e.getMessage());
 		}
 		if(dto.getId()!=null){
 			id=dto.getId();
