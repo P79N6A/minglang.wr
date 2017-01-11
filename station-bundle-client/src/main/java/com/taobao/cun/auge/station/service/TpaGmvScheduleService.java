@@ -36,4 +36,12 @@ public interface TpaGmvScheduleService {
 	 * @throws AugeServiceException
 	 */
 	public PageDto<DwiCtStationTpaIncomeMDto> getWaitClosingTpaList(PageQuery page) throws AugeServiceException;
+	
+	/**
+	 * 淘帮手前两个自然月（满两个自然月），每月含佣父订单<10笔且含佣GMV<1000元
+	 * 
+	 * @param incomeDto
+	 * @return
+	 */
+	public Boolean autoCloseByGmv(DwiCtStationTpaIncomeMDto incomeDto);
 }
