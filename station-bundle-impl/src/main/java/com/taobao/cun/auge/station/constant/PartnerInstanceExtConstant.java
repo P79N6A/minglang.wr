@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.station.constant;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+@RefreshScope
 public final class PartnerInstanceExtConstant {
 
 	// 根据最近2个月绩效，奖励合伙人淘帮手名额
@@ -30,6 +33,7 @@ public final class PartnerInstanceExtConstant {
 	public static final Double GMV_LIMIT_4_AUTO_CLOSE = 1000d;
 
 	// 淘帮手自动停业订单限制
+	@Value("${order.limit.4.auto.close}")
 	public static final Long ORDER_LIMIT_4_AUTO_CLOSE = 10l;
 
 	private PartnerInstanceExtConstant() {
