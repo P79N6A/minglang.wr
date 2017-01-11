@@ -49,19 +49,19 @@
   </select>
   <sql id="query_condition" >
   		<if test="bizMonths != null" >
-			and biz_month in 
+			biz_month in 
 			<foreach collection="bizMonths" item="bizMonth" open="(" close=")" separator="," >
 				#{bizMonth}
 			</foreach>
 		</if>
 		<if test="scale != null" >
-			<![CDATA[ station_srvc_cnt > 0 and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
+			<![CDATA[and station_srvc_cnt > 0 and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
 		</if>
 		<if test="orderNumLimit != null" >
-			<![CDATA[ tpa_order_num < #{orderNumLimit} ]]>
+			<![CDATA[and tpa_order_num < #{orderNumLimit} ]]>
 		</if>
 		<if test="gmvLimit != null" >
-			<![CDATA[ tpa_gmv < #{gmvLimit} ]]>
+			<![CDATA[and tpa_gmv < #{gmvLimit} ]]>
 		</if>
   </sql>
 </mapper>
