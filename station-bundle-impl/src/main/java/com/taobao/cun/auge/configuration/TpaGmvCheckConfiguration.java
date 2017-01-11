@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RefreshScope
-public class TpaGmvCheckConfiguration implements Serializable{
+public class TpaGmvCheckConfiguration{
 	
 	private static final long serialVersionUID = 2851670673426340073L;
 	
