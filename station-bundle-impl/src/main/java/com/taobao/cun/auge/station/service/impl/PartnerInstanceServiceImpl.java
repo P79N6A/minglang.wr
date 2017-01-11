@@ -1083,7 +1083,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void applyCloseBySystem(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException{
+	public void applyCloseBySystem(ForcedCloseDto forcedCloseDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(forcedCloseDto);
 		
