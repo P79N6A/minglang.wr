@@ -46,6 +46,8 @@ public class BailServiceImpl implements BailService {
 
     @Override
     public ResultModel<Boolean> unfreezeUserBail(CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto) {
+        String outOrderId = cuntaoUnFreezeBailDto.getOutOrderId() + "UNFREEZE";
+        cuntaoUnFreezeBailDto.setOutOrderId(outOrderId);
         return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
     }
 
