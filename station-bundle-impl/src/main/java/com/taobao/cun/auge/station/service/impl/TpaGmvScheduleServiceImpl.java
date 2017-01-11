@@ -17,6 +17,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -61,6 +62,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	
 	@Autowired
 	PartnerInstanceService partnerInstanceService;
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 
 	@Override
 	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery pageQuery) throws AugeServiceException {
@@ -177,7 +181,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE));
 			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE);
 			example.setGmvLimit(PartnerInstanceExtConstant.GMV_LIMIT_4_AUTO_CLOSE);
-			example.setOrderNumLimit(PartnerInstanceExtConstant.ORDER_LIMIT_4_AUTO_CLOSE);
+			example.setOrderNumLimit(tpaGmvCheckConfiguration.getOrderLimit4AutoClose());
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
