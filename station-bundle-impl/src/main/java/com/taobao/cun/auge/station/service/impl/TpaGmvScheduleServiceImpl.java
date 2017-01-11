@@ -47,8 +47,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	private static final Logger logger = LoggerFactory.getLogger(TpaGmvScheduleService.class);
 
-	
-
 	@Autowired
 	DwiCtStationTpaIncomeMExtMapper dwiCtStationTpaIncomeMExtMapper;
 
