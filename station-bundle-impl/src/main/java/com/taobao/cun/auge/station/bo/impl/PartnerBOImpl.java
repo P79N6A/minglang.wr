@@ -196,7 +196,7 @@ public class PartnerBOImpl implements PartnerBO {
 		//判断花名是否已经存在
 		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
 		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName());
+		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
 		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
 		if(applys.size()>0){
 			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
