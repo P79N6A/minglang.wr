@@ -386,12 +386,12 @@
 	where is_deleted='n'
 	<if test="gmtStart != null">
          <![CDATA[
-        gmt_course >= #{gmtStart,jdbcType=TIMESTAMP},
+    and    gmt_course >= #{gmtStart,jdbcType=TIMESTAMP}
         ]]>
 	</if>
 	<if test="gmtEnd != null">
    <![CDATA[
-        gmt_course <= #{gmtEnd,jdbcType=TIMESTAMP},
+   and     gmt_course <= #{gmtEnd,jdbcType=TIMESTAMP}
         ]]>
 	</if>
 	order by gmt_course,seq_num
