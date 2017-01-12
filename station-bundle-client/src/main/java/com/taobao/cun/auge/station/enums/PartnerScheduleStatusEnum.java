@@ -7,7 +7,7 @@ import java.util.Map;
 public class PartnerScheduleStatusEnum implements Serializable{
 
 		private static final long serialVersionUID = 1L;
-		public static final PartnerScheduleStatusEnum NOT_ATTEMP = new PartnerScheduleStatusEnum("NOT_ATTEMP", "已观看未反馈");
+		public static final PartnerScheduleStatusEnum NOT_ATTEMP = new PartnerScheduleStatusEnum("NOT_ATTEMP", "未观看");
 		public static final PartnerScheduleStatusEnum NOT_REFLECT = new PartnerScheduleStatusEnum("NOT_REFLECT", "已观看未反馈");
 		public static final PartnerScheduleStatusEnum HAS_REFLECT = new PartnerScheduleStatusEnum("HAS_REFLECT", "已观看乙反馈");
 		public static final PartnerScheduleStatusEnum LIVING = new PartnerScheduleStatusEnum("LIVING", "进行中");
