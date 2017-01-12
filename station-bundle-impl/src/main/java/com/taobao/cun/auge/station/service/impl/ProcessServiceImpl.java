@@ -50,7 +50,7 @@ public class ProcessServiceImpl implements ProcessService {
 	@Override
 	public void startApproveProcess(StartProcessDto startProcessDto) {
 		ProcessBusinessEnum business = startProcessDto.getBusiness();
-		String businessCode = null == business ? startProcessDto.getBusinessCode() : business.getCode();
+		String businessCode = business.getCode();
 		
 		Long businessId = startProcessDto.getBusinessId();
 		Long applyId = startProcessDto.getApplyId();
