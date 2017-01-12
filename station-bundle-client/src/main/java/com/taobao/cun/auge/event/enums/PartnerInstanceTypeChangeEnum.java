@@ -29,7 +29,7 @@ public class PartnerInstanceTypeChangeEnum implements Serializable {
             "淘帮手升级: '淘帮手'-> '合伙人'", PartnerInstanceTypeEnum.TP, PartnerInstanceTypeEnum.TPA);
 	
 	public static final PartnerInstanceTypeChangeEnum CANCEL_TPA_UPGRADE_2_TP = new PartnerInstanceTypeChangeEnum(ChangeEnum.CANCEL_TPA_UPGRADE_2_TP,
-            "撤销淘帮手升级: '淘帮手'-> '合伙人'", PartnerInstanceTypeEnum.TPA, PartnerInstanceTypeEnum.TP);
+            "撤销淘帮手升级: '合伙人'-> '淘帮手'", PartnerInstanceTypeEnum.TPA, PartnerInstanceTypeEnum.TP);
 
 	private static final Map<ChangeEnum, PartnerInstanceTypeChangeEnum> mappings = new HashMap<ChangeEnum, PartnerInstanceTypeChangeEnum>();
 	static {
