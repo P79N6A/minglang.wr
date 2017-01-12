@@ -12,6 +12,7 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
@@ -23,7 +24,6 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -59,6 +59,9 @@ public class SmsListener implements EventListener {
 
 	@Autowired
 	DiamondConfiguredProperties diamondConfiguredProperties;
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 	
 	@Override
 	public void onMessage(Event event) {
@@ -129,7 +132,7 @@ public class SmsListener implements EventListener {
 				
 				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE.getCode());
 				// 替换淘帮手姓名和减少淘帮手名额
-				content = String.format(content, tpaPartner.getName(),PartnerInstanceExtConstant.REDUCE_PARENT_NUM_4_AUTO_CLOSE);
+				content = String.format(content, tpaPartner.getName(),tpaGmvCheckConfiguration.getReduceTpaNum4AutoClose());
 				
 				generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
 			}
@@ -235,7 +238,7 @@ public class SmsListener implements EventListener {
 			String operatorId = event.getOperator();
 			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
 			//替换淘帮手姓名和奖励淘帮手名额
-			content = String.format(content, tpaPartner.getName(),	PartnerInstanceExtConstant.REWARD_PARENT_NUM_4_TPA_SERVICE);
+			content = String.format(content, tpaPartner.getName(),	tpaGmvCheckConfiguration.getRewardTpaNum4TpaUpgrade());
 
 			generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
 		}

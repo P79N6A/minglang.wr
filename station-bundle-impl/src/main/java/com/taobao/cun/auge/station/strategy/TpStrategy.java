@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -41,7 +42,6 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -149,6 +149,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Autowired
 	PartnerApplyBO partnerApplyBO;
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -683,7 +686,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
 		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM,
+		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
 				operatorDto);
 
 		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
@@ -709,11 +712,11 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		// 查询合伙人实例
 		PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
 
-		// 原合伙人必须是服务中，才奖励一个名额
+		// 原合伙人必须是服务中，才奖励2个名额
 		if (null != parentInstance && PartnerInstanceTypeEnum.TP.getCode().equals(parentInstance.getType())
 				&& PartnerInstanceStateEnum.SERVICING.getCode().equals(parentInstance.getState())) {
 			partnerInstanceExtService.addPartnerMaxChildNum(parentInstance.getId(),
-					PartnerInstanceExtConstant.REWARD_PARENT_NUM_4_TPA_SERVICE,
+					tpaGmvCheckConfiguration.getRewardTpaNum4TpaUpgrade(),
 					PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD, operatorDto);
 		}
 	}

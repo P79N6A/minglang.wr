@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -32,7 +33,6 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -124,6 +124,9 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Autowired
 	CloseStationApplyBO closeStationApplyBO;
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -421,7 +424,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		Long tpStationId = tpaInstance.getParentStationId();
 		PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(tpStationId);
 		Long tpInstanceId = tpInstance.getId();
-		partnerInstanceExtService.decreasePartnerMaxChildNum(tpInstanceId, PartnerInstanceExtConstant.REDUCE_PARENT_NUM_4_AUTO_CLOSE, PartnerMaxChildNumChangeReasonEnum.TPA_AUTO_CLOSE, operatorDto);
+		partnerInstanceExtService.decreasePartnerMaxChildNum(tpInstanceId, tpaGmvCheckConfiguration.getReduceTpaNum4AutoClose(), PartnerMaxChildNumChangeReasonEnum.TPA_AUTO_CLOSE, operatorDto);
 	}
 
 	@Override

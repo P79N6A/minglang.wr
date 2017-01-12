@@ -25,7 +25,6 @@ import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.DwiCtStationTpaIncomeMConverter;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -74,9 +73,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.LAST_MONTHS_4_REWARD_PARENT_NUM));
-			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTHS_4_REWARD_PARENT_NUM);
-			example.setScale(PartnerInstanceExtConstant.SCALE);
+			example.setBizMonths(findLastNMonth(tpaGmvCheckConfiguration.getLastMonths4TpaPerform()));
+			example.setLastMonthCount(tpaGmvCheckConfiguration.getLastMonths4TpaPerform());
+			example.setScale(tpaGmvCheckConfiguration.getScale4TpaPerform());
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
@@ -100,7 +99,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		// 没有查询到，则插入默认值
 		String bizMonth = incomeDto.getBizMonth();
 		if (null == instanceExt) {
-			partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM, OperatorDto.defaultOperator());
+			partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(), OperatorDto.defaultOperator());
 			return Boolean.TRUE;
 		}
 
@@ -127,14 +126,14 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		}
 
 		// 已经达到最大配额
-		if (curMaxChildNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM) {
+		if (curMaxChildNum >= tpaGmvCheckConfiguration.getMaxTpaNum4Tp()) {
 			logger.info("child num reaches a maximun.instanceId=" + instanceId + " curMaxChildNum=" + curMaxChildNum);
 			return Boolean.TRUE;
 		}
-		Integer childNum = curMaxChildNum + PartnerInstanceExtConstant.ADD_NUM_PER;
+		Integer childNum = curMaxChildNum + tpaGmvCheckConfiguration.getRewardTpaNum4TpaPerform();
 
 		// 最大配额校验
-		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM
+		childNum = childNum >= tpaGmvCheckConfiguration.getMaxTpaNum4Tp() ? tpaGmvCheckConfiguration.getMaxTpaNum4Tp()
 				: childNum;
 
 		//更新配额
@@ -178,9 +177,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
 
-			example.setBizMonths(findLastNMonth(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE));
-			example.setLastMonthCount(PartnerInstanceExtConstant.LAST_MONTHS_4_AUTO_CLOSE);
-			example.setGmvLimit(PartnerInstanceExtConstant.GMV_LIMIT_4_AUTO_CLOSE);
+			example.setBizMonths(findLastNMonth(tpaGmvCheckConfiguration.getLastMonths4AutoClose()));
+			example.setLastMonthCount(tpaGmvCheckConfiguration.getLastMonths4AutoClose());
+			example.setGmvLimit(tpaGmvCheckConfiguration.getGmvLimit4AutoClose());
 			example.setOrderNumLimit(tpaGmvCheckConfiguration.getOrderLimit4AutoClose());
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
