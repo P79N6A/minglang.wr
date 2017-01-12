@@ -20,6 +20,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -327,14 +328,16 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findCloseApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.TPV_CLOSE);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
@@ -345,14 +348,16 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 
 	@Override
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findQuitApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.TPV_QUIT);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));

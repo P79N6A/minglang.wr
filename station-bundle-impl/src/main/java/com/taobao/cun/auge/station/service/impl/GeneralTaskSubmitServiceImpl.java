@@ -368,14 +368,13 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 */
 	public void submitApproveProcessTask(ApproveProcessTask processTask) {
 		BeanValidator.validateWithThrowable(processTask);
-		// 校验操作人的组织id
-		processTask.validateOperatorOrgId();
 		try {
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setBusiness(processTask.getBusiness());
 			startProcessDto.setBusinessId(processTask.getBusinessId());
 			startProcessDto.setBusinessName(processTask.getBusinessName());
+			startProcessDto.setBusinessOrgId(processTask.getBusinessOrgId());
 			startProcessDto.copyOperatorDto(processTask);
 			startProcessDto.setJsonParams(FeatureUtil.toStringUnencode(processTask.getParams()));
 			// 启动流程

@@ -1073,25 +1073,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException{
-		// 参数校验
-		BeanValidator.validateWithThrowable(forcedCloseDto);
-		//校验操作人的组织id
-		forcedCloseDto.validateOperatorOrgId();
-		
 		applyCloseInternal(forcedCloseDto,PartnerInstanceCloseTypeEnum.WORKER_QUIT);
 	}
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void applyCloseBySystem(ForcedCloseDto forcedCloseDto){
-		// 参数校验
-		BeanValidator.validateWithThrowable(forcedCloseDto);
-		
 		applyCloseInternal(forcedCloseDto,PartnerInstanceCloseTypeEnum.SYSTEM_QUIT);
 	}
 
 	private void applyCloseInternal(ForcedCloseDto forcedCloseDto,PartnerInstanceCloseTypeEnum closeType) {
+		// 参数校验
+		BeanValidator.validateWithThrowable(forcedCloseDto);
 		try {
+			
 			Long instanceId = forcedCloseDto.getInstanceId();
 			//查询实例是否存在，不存在会抛异常
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);

@@ -633,14 +633,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findCloseApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
@@ -651,14 +653,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Override
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findQuitApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));

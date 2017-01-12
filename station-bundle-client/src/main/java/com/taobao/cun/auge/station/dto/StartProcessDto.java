@@ -16,6 +16,8 @@ public class StartProcessDto extends OperatorDto {
 	// 业务主键id
 	private Long businessId;
 	
+	private Long businessOrgId;
+	
 	//申请单id
 	private Long applyId;
 
@@ -27,6 +29,14 @@ public class StartProcessDto extends OperatorDto {
 	
 	//业务自定义的参数
 	private String jsonParams;
+	
+	public Long getBusinessOrgId() {
+		return businessOrgId;
+	}
+
+	public void setBusinessOrgId(Long businessOrgId) {
+		this.businessOrgId = businessOrgId;
+	}
 
 	public ProcessBusinessEnum getBusiness() {
 		return business;
