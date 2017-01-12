@@ -391,7 +391,7 @@
 	</if>
 	<if test="gmtEnd != null">
    <![CDATA[
-        gmt_course <= #{gmtEnd,jdbcType=VARCHAR},
+        gmt_course <= #{gmtEnd,jdbcType=TIMESTAMP},
         ]]>
 	</if>
 	order by gmt_course,seq_num
