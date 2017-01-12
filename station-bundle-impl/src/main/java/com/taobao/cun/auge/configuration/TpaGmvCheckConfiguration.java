@@ -11,7 +11,7 @@ public class TpaGmvCheckConfiguration {
 	// =========奖励tp淘帮手名额===========
 
 	// 绩效奖励： 根据最近2个月绩效，奖励合伙人淘帮手名额
-	@Value("${last.months.4.auto.close}")
+	@Value("${last.months.4.tpa.perform}")
 	private Integer lastMonths4TpaPerform = 2;
 
 	// 绩效奖励：排名前20%
