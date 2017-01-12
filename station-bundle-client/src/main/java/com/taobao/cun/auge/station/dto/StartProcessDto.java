@@ -16,9 +16,6 @@ public class StartProcessDto extends OperatorDto {
 	//业务所属组织
 	private Long businessOrgId;
 	
-	//申请单id
-	private Long applyId;
-
 	//业务名称
 	private String businessName;
 
@@ -63,13 +60,5 @@ public class StartProcessDto extends OperatorDto {
 
 	public void setJsonParams(String jsonParams) {
 		this.jsonParams = jsonParams;
-	}
-
-	public Long getApplyId() {
-		return applyId;
-	}
-
-	public void setApplyId(Long applyId) {
-		this.applyId = applyId;
 	}
 }
