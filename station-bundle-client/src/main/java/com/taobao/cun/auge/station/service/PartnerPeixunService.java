@@ -49,4 +49,9 @@ public interface PartnerPeixunService {
     */
 	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
 	
+	/**
+	 * 提供给村学习视频播放验权服务
+	 */
+	public Boolean checkCourseViewPermission(Long taobaoUserId,String courseCode);
+	
 }

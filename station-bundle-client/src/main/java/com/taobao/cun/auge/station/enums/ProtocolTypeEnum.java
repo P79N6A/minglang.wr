@@ -23,12 +23,16 @@ public class ProtocolTypeEnum implements Serializable {
     
     public static final ProtocolTypeEnum TRIPARTITE_FIXED = new ProtocolTypeEnum("TRIPARTITE_FIXED", "三方固点");
 
+    public static final ProtocolTypeEnum COURSE_SCHEDULE = new ProtocolTypeEnum("COURSE_SCHEDULE", "公益课程协议");
+
     static {
         mappings.put("SETTLE_PRO", SETTLE_PRO);
         mappings.put("MANAGE_PRO", MANAGE_PRO);
         mappings.put("PARTNER_QUIT_PRO", PARTNER_QUIT_PRO);
         mappings.put("GOV_FIXED", GOV_FIXED);
         mappings.put("TRIPARTITE_FIXED", TRIPARTITE_FIXED);
+        mappings.put("COURSE_SCHEDULE", COURSE_SCHEDULE);
+
     }
 
     public ProtocolTypeEnum(String code, String desc) {
