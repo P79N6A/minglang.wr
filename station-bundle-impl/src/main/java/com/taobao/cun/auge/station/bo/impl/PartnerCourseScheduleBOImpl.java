@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.alibaba.ivy.common.AppAuthDTO;
@@ -38,7 +39,7 @@ import com.taobao.cun.auge.station.dto.PartnerCourseScheduleDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleReflectDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleShowDto;
 import com.taobao.cun.auge.station.enums.PartnerScheduleStatusEnum;
-
+@Component("partnerCourseScheduleBO")
 public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerCourseScheduleBO.class);
