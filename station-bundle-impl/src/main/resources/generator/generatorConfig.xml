@@ -124,7 +124,7 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 	-->
-		<table tableName="partner_flower_name_apply" enableCountByExample="true" enableUpdateByExample="true"
+		<table tableName="partner_course_schedule" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>

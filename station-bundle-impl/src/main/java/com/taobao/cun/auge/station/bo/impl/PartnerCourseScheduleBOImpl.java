@@ -94,7 +94,6 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 	@Override
 	public List<PartnerCourseScheduleShowDto> getCourseSchedule(
 			Long taobaoUserId, Date gmtStart, Date gmtEnd) {
-		try{
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("taobaoUserId", taobaoUserId);
 		param.put("gmtStart", gmtStart);
@@ -117,9 +116,6 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 		List<PartnerCourseScheduleReflect> reflects =getReflectList(taobaoUserId,scheduleIds);
         //封装返回结果
 		return fillResult(list,taobaoUserId,courses,trainRecords,reflects);
-		}catch(Exception e){
-			return null;
-		}
 	}
 
 	private List<CourseDTO> getCourseDetail(List<String> courseCodes){
@@ -206,7 +202,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 			dto.getCourses().add(courseDetail);
 		}
 		
-		return new ArrayList<PartnerCourseScheduleShowDto>();
+		return result;
 		
 	}
 	
