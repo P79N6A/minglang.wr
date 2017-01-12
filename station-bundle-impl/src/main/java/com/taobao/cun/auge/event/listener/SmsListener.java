@@ -130,7 +130,7 @@ public class SmsListener implements EventListener {
 				// tpa partner
 				Partner tpaPartner = partnerBO.getPartnerById(tpaInstance.getPartnerId());
 				
-				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE.getCode());
+				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE_SMS_2_TP.getCode());
 				// 替换淘帮手姓名和减少淘帮手名额
 				content = String.format(content, tpaPartner.getName(),tpaGmvCheckConfiguration.getReduceTpaNum4AutoClose());
 				
