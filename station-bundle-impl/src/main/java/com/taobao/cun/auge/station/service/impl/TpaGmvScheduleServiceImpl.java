@@ -204,17 +204,19 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 		logger.info("Start to auto close tpa station.DwiCtStationTpaIncomeMDto=" + JSON.toJSONString(incomeDto));
 
 		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(incomeDto.getPartnerStationId());
-		// DA算的是淘帮手绩效月报表，出报表和定时钟开始运营之间的时间段，可能淘帮手处于停业申请中，已停业，退出申请中，已退出，或者退出，重新入驻为其他合伙人，不处理
+		
+		// DA算的是淘帮手绩效月报表，出报表和定时钟开始运营之间的时间段，可能淘帮手升级了，tpa实例不存在了
 		if (!PartnerInstanceTypeEnum.TPA.getCode().equals(tpaInstance.getType())) {
 			logger.warn("Failed to auto close tpa station,instance type is not tpa.DwiCtStationTpaIncomeMDto="
 					+ JSON.toJSONString(incomeDto));
 			return Boolean.TRUE;
+			// DA算的是淘帮手绩效月报表，出报表和定时钟开始运营之间的时间段，可能淘帮手处于停业申请中，已停业，退出申请中，已退出，或者退出，重新入驻为其他合伙人，不处理
 		} else if (null == tpaInstance
 				|| !PartnerInstanceStateEnum.SERVICING.getCode().equals(tpaInstance.getState())) {
 			logger.warn("Failed to auto close tpa station,instance state is not servicing.DwiCtStationTpaIncomeMDto="
 					+ JSON.toJSONString(incomeDto));
 			return Boolean.TRUE;
-			// DA算的是淘帮手绩效月报表，出报表和定时钟开始运营之间的时间段，可能淘帮手升级了，tpa实例不存在了
+			
 		}
 
 		// 服务开始时间，是否在考核期间，入驻第一个月不在考核期间
