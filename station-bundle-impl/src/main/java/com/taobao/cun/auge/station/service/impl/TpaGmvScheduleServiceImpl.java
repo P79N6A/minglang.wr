@@ -203,7 +203,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	public Boolean autoCloseByGmv(DwiCtStationTpaDDto incomeDto) {
 		logger.info("Start to auto close tpa station.DwiCtStationTpaIncomeMDto=" + JSON.toJSONString(incomeDto));
 
-		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(incomeDto.getStationId());
+		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(incomeDto.getPartnerStationId());
 		// DA算的是淘帮手绩效月报表，出报表和定时钟开始运营之间的时间段，可能淘帮手处于停业申请中，已停业，退出申请中，已退出，或者退出，重新入驻为其他合伙人，不处理
 		if (!PartnerInstanceTypeEnum.TPA.getCode().equals(tpaInstance.getType())) {
 			logger.warn("Failed to auto close tpa station,instance type is not tpa.DwiCtStationTpaIncomeMDto="

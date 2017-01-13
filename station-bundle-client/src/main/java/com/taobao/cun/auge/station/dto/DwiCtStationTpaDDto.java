@@ -9,34 +9,79 @@ public class DwiCtStationTpaDDto implements Serializable{
 
 	private Long id;
 
+    /**
+     * 统计日期
+     */
     private String statDate;
 
+    /**
+     * 数据插入时间
+     */
     private String dwInsTime;
 
+    /**
+     * 业务月份
+     */
     private String bizMonth;
 
+    /**
+     * 县服务中心orgId
+     */
     private String countyOrgId;
 
+    /**
+     * 县服务中心名称
+     */
     private String countyOrgName;
 
+    /**
+     * 村小二服务站id
+     */
     private Long stationId;
-
+    
+    /**
+     * 村小二服务站名称
+     */
     private String stationName;
 
+    /**
+     * 淘帮手服务站id
+     */
     private Long partnerStationId;
 
+    /**
+     * 淘帮手服务站名称
+     */
     private String partnerStationName;
 
+    /**
+     * 淘帮手服务站状态
+     */
     private String state;
 
+    /**
+     * 自然月初截至月底，服务中天数
+     */
     private Long srvcDayCntMtd;
 
+    /**
+     * 自然月初截至月底，含佣父订单数
+     */
     private Long payMordCntMtd023;
 
+    /**
+     * 自然月初截至月底，含佣成交金额
+     */
     private BigDecimal payOrdAmtMtd001;
 
+    /**
+     * 自然月初截至月底，实物父订单数
+     */
     private Long payMordCntMtd015;
 
+    /**
+     * 自然月初截至月底，实物子订单成交金额
+     */
     private BigDecimal payOrdAmtMtd587;
 
 	public Long getId() {
