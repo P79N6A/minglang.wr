@@ -2,7 +2,7 @@ package com.taobao.cun.auge.dal.example;
 
 import java.io.Serializable;
 
-public class DwiCtStationTpaIncomeMExmple implements Serializable {
+public class DwiCtStationTpaIncomeMExtExmple implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,16 +21,6 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 	 */
 	private Double scale;
 	
-	/**
-	 * 限制的订单数
-	 */
-	private Long orderNumLimit;
-	
-	/**
-	 * 限制的含佣GMV
-	 */
-	private Double gmvLimit;
-
 	public String[] getBizMonths() {
 		return bizMonths;
 	}
@@ -53,21 +43,5 @@ public class DwiCtStationTpaIncomeMExmple implements Serializable {
 
 	public void setScale(Double scale) {
 		this.scale = scale;
-	}
-
-	public Long getOrderNumLimit() {
-		return orderNumLimit;
-	}
-
-	public void setOrderNumLimit(Long orderNumLimit) {
-		this.orderNumLimit = orderNumLimit;
-	}
-
-	public Double getGmvLimit() {
-		return gmvLimit;
-	}
-
-	public void setGmvLimit(Double gmvLimit) {
-		this.gmvLimit = gmvLimit;
 	}
 }

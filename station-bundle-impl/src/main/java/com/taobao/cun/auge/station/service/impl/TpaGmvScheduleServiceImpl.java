@@ -18,14 +18,19 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
+import com.taobao.cun.auge.dal.domain.DwiCtStationTpaD;
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple;
+import com.taobao.cun.auge.dal.example.DwiCtStationTpaDExtExample;
+import com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExtExmple;
+import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaDExtMapper;
 import com.taobao.cun.auge.dal.mapper.DwiCtStationTpaIncomeMExtMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
+import com.taobao.cun.auge.station.convert.DwiCtStationTpaDConverter;
 import com.taobao.cun.auge.station.convert.DwiCtStationTpaIncomeMConverter;
+import com.taobao.cun.auge.station.dto.DwiCtStationTpaDDto;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
@@ -49,6 +54,9 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 
 	@Autowired
 	DwiCtStationTpaIncomeMExtMapper dwiCtStationTpaIncomeMExtMapper;
+	
+	@Autowired
+	DwiCtStationTpaDExtMapper dwiCtStationTpaDExtMapper;
 
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
@@ -71,7 +79,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageQuery);
 
-			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
+			DwiCtStationTpaIncomeMExtExmple example = new DwiCtStationTpaIncomeMExtExmple();
 
 			example.setBizMonths(findLastNMonth(tpaGmvCheckConfiguration.getLastMonths4TpaPerform()));
 			example.setLastMonthCount(tpaGmvCheckConfiguration.getLastMonths4TpaPerform());
@@ -170,12 +178,12 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	}
 
 	@Override
-	public PageDto<DwiCtStationTpaIncomeMDto> getWaitClosingTpaList(PageQuery pageQuery) throws AugeServiceException {
+	public PageDto<DwiCtStationTpaDDto> getWaitClosingTpaList(PageQuery pageQuery) throws AugeServiceException {
 		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageQuery);
 
-			DwiCtStationTpaIncomeMExmple example = new DwiCtStationTpaIncomeMExmple();
+			DwiCtStationTpaDExtExample example = new DwiCtStationTpaDExtExample();
 
 			example.setBizMonths(findLastNMonth(tpaGmvCheckConfiguration.getLastMonths4AutoClose()));
 			example.setLastMonthCount(tpaGmvCheckConfiguration.getLastMonths4AutoClose());
@@ -183,8 +191,8 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			example.setOrderNumLimit(tpaGmvCheckConfiguration.getOrderLimit4AutoClose());
 
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
-			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
-			return PageDtoUtil.success(page, DwiCtStationTpaIncomeMConverter.convert(page));
+			Page<DwiCtStationTpaD> page = dwiCtStationTpaDExtMapper.selectStationsByExample(example);
+			return PageDtoUtil.success(page, DwiCtStationTpaDConverter.convert(page));
 		} catch (Exception e) {
 			logger.error("查询淘帮手连续n个月绩效失败", e);
 			return PageDtoUtil.unSuccess(pageQuery.getPageNum(), pageQuery.getPageSize());
@@ -192,7 +200,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	}
 
 	@Override
-	public Boolean autoCloseByGmv(DwiCtStationTpaIncomeMDto incomeDto) {
+	public Boolean autoCloseByGmv(DwiCtStationTpaDDto incomeDto) {
 		logger.info("Start to auto close tpa station.DwiCtStationTpaIncomeMDto=" + JSON.toJSONString(incomeDto));
 
 		PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceByStationId(incomeDto.getStationId());
