@@ -672,25 +672,20 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
 			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
-			// Partner partner =
-			// partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-			// String accountNo = partner.getAlipayAccount();
-			// if (StringUtils.isNotEmpty(accountNo)) {
-			// alipayTagDto.setUserId(accountNo.substring(0, accountNo.length()
-			// - 4));
-			// }
 			AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 			
-			String accountNo = accountMoney.getAccountNo();
-			
-			if (StringUtils.isEmpty(accountNo)) {
+			String accountNo ;
+			//村拍档没有保证金，所以accountMoney=null
+			if (null == accountMoney || StringUtils.isEmpty(accountMoney.getAccountNo())) {
 				OperatorDto operatorDto = new OperatorDto();
 				operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 				operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 				operatorDto.setOperatorOrgId(0L);
 				PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
 				accountNo = accountDto.getAccountNo();
+			}else{
+				accountNo = accountMoney.getAccountNo();
 			}
 			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
