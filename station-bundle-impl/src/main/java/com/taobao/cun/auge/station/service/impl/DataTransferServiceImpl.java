@@ -34,6 +34,7 @@ import com.alibaba.crm.finance.dataobject.audit.AuditDto;
 import com.alibaba.crm.finance.dataobject.contract.ContractDto;
 import com.alibaba.crm.finance.dataobject.draft.RefundOrShiftDraftMaterialDto;
 import com.alibaba.crm.finance.dataobject.draft.ShiftDraftMaterialDetailDto;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
@@ -44,6 +45,7 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.alilang.jingwei.PartnerMessage;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -62,6 +64,9 @@ import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.notify.message.StringMessage;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
+import com.taobao.notify.remotingclient.SendResult;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
 public class DataTransferServiceImpl implements DataTransferService{
@@ -325,8 +330,45 @@ public class DataTransferServiceImpl implements DataTransferService{
 		 }
 	}
 
+	
+	@Value("${notify.alilang.topic}")
+	protected String topic;
+	@Value("${notify.alilang.messageType}")
+	protected String messageType;
+	@Value("${alilang.orgId}")
+	protected long alilangOrgId;
+	@Autowired
+    private NotifyManagerBean notifyPublisherManagerBean;
+	
 	@Override
 	public Long queryInstances(Long id,Long detailId) {
+//		if(id==null){
+//			return null;
+//		}
+//		Long returnLong=null;
+//		Map<String,Object> param=new HashMap<String,Object>();
+//		param.put("id", id);
+//		param.put("detailId", detailId);
+//		List<PartnerDto> instances=partnerCourseRecordMapper.queryPartnerIden(param);
+//		if(instances.size()==0){
+//			return null;
+//		}else{
+//			for(PartnerDto dto:instances){
+//				returnLong=dto.getId();
+//				param.clear();
+//				if(StringUtils.isNoneEmpty(dto.getIdenNum())&&dto.getIdenNum().length()==18){
+//					DateFormat format = new SimpleDateFormat("yyyyMMdd");  
+//					try {
+//						param.put("birthday", format.parse(dto.getIdenNum().substring(6, 14)));
+//					} catch (Exception e) {
+//						// 暂时不影响正常保存
+//					}
+//				}
+//				param.put("id", dto.getId());
+//				partnerCourseRecordMapper.updatePartnerBirth(param);
+//			}
+//		}
+		
 		if(id==null){
 			return null;
 		}
@@ -334,23 +376,29 @@ public class DataTransferServiceImpl implements DataTransferService{
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("id", id);
 		param.put("detailId", detailId);
-		List<PartnerDto> instances=partnerCourseRecordMapper.queryPartnerIden(param);
+		List<PartnerDto> instances=partnerCourseRecordMapper.queryAlilangPartner(param);
 		if(instances.size()==0){
 			return null;
 		}else{
 			for(PartnerDto dto:instances){
+				try{
 				returnLong=dto.getId();
-				param.clear();
-				if(StringUtils.isNoneEmpty(dto.getIdenNum())&&dto.getIdenNum().length()==18){
-					DateFormat format = new SimpleDateFormat("yyyyMMdd");  
-					try {
-						param.put("birthday", format.parse(dto.getIdenNum().substring(6, 14)));
-					} catch (Exception e) {
-						// 暂时不影响正常保存
-					}
+				PartnerMessage partnerMessage = new PartnerMessage();
+				partnerMessage.setTaobaoUserId(dto.getTaobaoUserId());
+				partnerMessage.setMobile(dto.getMobile());
+				partnerMessage.setAction("new");
+				partnerMessage.setEmail(dto.getEmail());
+				partnerMessage.setName(dto.getName());
+				partnerMessage.setAlilangOrgId(alilangOrgId);
+				String str = JSONObject.toJSONString(partnerMessage);
+				StringMessage stringMessage = new StringMessage();
+				stringMessage.setBody(str);
+				stringMessage.setTopic(topic);
+				stringMessage.setMessageType(messageType);
+				SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
+				}catch(Exception e){
+					//
 				}
-				param.put("id", dto.getId());
-				partnerCourseRecordMapper.updatePartnerBirth(param);
 			}
 		}
 		return returnLong;
