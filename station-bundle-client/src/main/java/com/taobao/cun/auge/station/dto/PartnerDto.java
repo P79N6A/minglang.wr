@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -83,7 +84,28 @@ public class PartnerDto extends OperatorDto implements Serializable{
     
     private String aliLangUserId;
     
-    public String getAliLangUserId() {
+    private String flowerName;
+    private Date birthday;
+    
+    
+    
+    public String getFlowerName() {
+		return flowerName;
+	}
+
+	public void setFlowerName(String flowerName) {
+		this.flowerName = flowerName;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getAliLangUserId() {
 		return aliLangUserId;
 	}
 

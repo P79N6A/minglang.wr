@@ -21,6 +21,7 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum TPV_CLOSE = new ProcessBusinessEnum("TPV_CLOSE", "申请停业");
 	public static final ProcessBusinessEnum TPV_QUIT = new ProcessBusinessEnum("TPV_QUIT", "申请退出");
 	public static final ProcessBusinessEnum peixunPurchase = new ProcessBusinessEnum("peixun_purchase", "培训集采审批");
+	public static final ProcessBusinessEnum partnerFlowerNameApply = new ProcessBusinessEnum("partner_flower_name_apply", "花名申请");
 
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
@@ -30,6 +31,7 @@ public class ProcessBusinessEnum implements Serializable {
 		mappings.put("TPV_CLOSE", TPV_CLOSE);
 		mappings.put("TPV_QUIT", TPV_QUIT);
 		mappings.put("peixunPurchase", peixunPurchase);
+		mappings.put("partnerFlowerNameApply", partnerFlowerNameApply);
 
 	}
 

@@ -245,7 +245,7 @@ public final class PartnerInstanceConverter {
 		partnerDto.setName(instance.getPartnerName());
 		partnerDto.setDescription(instance.getPartnerDescription());
 		partnerDto.setState(PartnerStateEnum.valueof(instance.getPartnerState()));
-
+        partnerDto.setFlowerName(instance.getFlowerName());
 		return partnerDto;
 	}
 
