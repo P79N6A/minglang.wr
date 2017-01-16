@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,13 +19,16 @@ import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
+import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
+import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
@@ -33,6 +37,7 @@ import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
@@ -67,7 +72,10 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	@Autowired
 	ExamUserDispatchService examUserDispatchService;
-	
+	@Autowired
+	PartnerInstanceQueryService partnerInstanceQueryService;
+	@Autowired
+	PartnerCourseScheduleBO partnerCourseScheduleBO;
 	@Override
 	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds,String courseType,String courseCode) {
 		return partnerPeixunBO.queryBatchPeixunRecord(userIds,courseType,courseCode);
@@ -222,6 +230,39 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
 			PartnerPeixunQueryCondition condition) {
 		return partnerPeixunBO.queryPeixunList(condition);
+	}
+
+	@Override
+	public Boolean checkCourseViewPermission(Long taobaoUserId,
+			String courseCode) {
+		Assert.notNull(taobaoUserId);
+		// 判断是否合伙人身份
+		PartnerInstanceDto dto = partnerInstanceQueryService
+				.getActivePartnerInstance(taobaoUserId);
+		if (dto == null) {
+			return false;
+		}
+		if (StringUtils.isNotEmpty(courseCode)) {
+			// 判断是否课程表可播放时间段
+			List<PartnerCourseSchedule> schedules = partnerCourseScheduleBO
+					.getScheduleByCourseCode(courseCode);
+			if (schedules == null || schedules.size() == 0) {
+				return true;
+			} else {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				String nowDate = dateFormat.format(new Date());
+				for (PartnerCourseSchedule schedule : schedules) {
+					if (dateFormat.format(schedule.getGmtCourse()).equals(
+							nowDate)) {
+						if (new Date().before(schedule.getGmtEnd())
+								&& new Date().after(schedule.getGmtStart()))
+							return true;
+					}
+				}
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

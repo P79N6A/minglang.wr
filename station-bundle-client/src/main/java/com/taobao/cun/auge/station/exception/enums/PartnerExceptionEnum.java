@@ -50,6 +50,9 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum PARTNER_DECORATE_NOT_PAY = new PartnerExceptionEnum(
 			"PARTNER_NOT_FINISH_COURSE", "装修未付款");
 	
+	public static final PartnerExceptionEnum MOBILE_HAS_USED = new PartnerExceptionEnum(
+			"MOBILE_HAS_USED", "该手机号已被使用");
+	
 	static {
 		mappings.put("NO_RECORD", NO_RECORD);
 		mappings.put("ID_IS_NULL", ID_IS_NULL);
@@ -67,6 +70,7 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("PARTNER_NOT_FINISH_COURSE", PARTNER_NOT_FINISH_COURSE);
 		mappings.put("PARTNER_SOLID_POINT_IS_NULL", PARTNER_SOLID_POINT_IS_NULL);
 		mappings.put("PARTNER_LEASE_AREA_IS_NULL", PARTNER_LEASE_AREA_IS_NULL);
+		mappings.put("MOBILE_HAS_USED", MOBILE_HAS_USED);
 
 	}
 

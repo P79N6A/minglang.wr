@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.Date;
+
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -58,4 +60,7 @@ public interface PartnerProtocolRelBO {
 	 * @throws AugeServiceException
 	 */
 	public PartnerProtocolRelDto  getPartnerProtocolRelDto(ProtocolTypeEnum type,Long objectId,PartnerProtocolRelTargetTypeEnum targetType)  throws AugeServiceException;
+	
+	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
+			String operator, PartnerProtocolRelTargetTypeEnum targetType);
 }

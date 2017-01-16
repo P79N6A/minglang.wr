@@ -44,6 +44,7 @@
     <result column="business_type" jdbcType="VARCHAR" property="businessType" />
     <result column="partner_description" jdbcType="VARCHAR" property="partnerDescription" />
     <result column="partner_state" jdbcType="VARCHAR" property="partnerState" />
+    <result column="flower_name" jdbcType="VARCHAR" property="flowerName" />
     
     
     <!-- station -->
@@ -98,7 +99,7 @@
 		
 		p.name as partner_name,
 		p.alipay_account,
-
+        p.flower_name,
 		p.taobao_nick,
 		p.iden_num,
 		p.mobile,
