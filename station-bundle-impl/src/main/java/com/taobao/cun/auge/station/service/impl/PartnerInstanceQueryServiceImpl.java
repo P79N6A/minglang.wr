@@ -591,14 +591,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		return partnerInstanceBO.getHistoryPartnerInstanceByStationId(stationId);
 	}
 
-	@Override
-	public void isExitChildPartnerNotQuit(Long instanceId) throws AugeServiceException {
-		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-
-		PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
-		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instance);
-	}
-
     @Override
     public PartnerInstanceLevelGrowthDtoV2 getPartnerInstanceLevelGrowthDataV2(Long taobaoUserId) {
         return partnerInstanceLevelDataQueryService.getPartnerInstanceLevelGrowthDataV2(taobaoUserId);

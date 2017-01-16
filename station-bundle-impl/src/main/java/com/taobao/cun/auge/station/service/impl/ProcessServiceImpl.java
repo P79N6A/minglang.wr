@@ -50,21 +50,16 @@ public class ProcessServiceImpl implements ProcessService {
 	@Override
 	public void startApproveProcess(StartProcessDto startProcessDto) {
 		ProcessBusinessEnum business = startProcessDto.getBusiness();
-		String businessCode = null == business ? startProcessDto.getBusinessCode() : business.getCode();
-		
+		String businessCode = business.getCode();
 		Long businessId = startProcessDto.getBusinessId();
-		Long applyId = startProcessDto.getApplyId();
-
 		String applierId = startProcessDto.getOperator();
-		Long applierOrgId = startProcessDto.getOperatorOrgId();
 		OperatorTypeEnum operatorType = startProcessDto.getOperatorType();
 
 		// 创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>(FeatureUtil.toMap(startProcessDto.getJsonParams()));
-		initData.put("orgId", String.valueOf(applierOrgId));
-		if (null != applyId) {
-			initData.put("applyId", String.valueOf(applyId));
-		}
+		Long orgId = null != startProcessDto.getBusinessOrgId() ? startProcessDto.getBusinessOrgId()
+				: startProcessDto.getOperatorOrgId();
+		initData.put("orgId", String.valueOf(orgId));
 		if (StringUtil.isNotBlank(startProcessDto.getBusinessName())) {
 			initData.put("taskName", "(" + startProcessDto.getBusinessName() + ")" + business.getDesc());
 		}

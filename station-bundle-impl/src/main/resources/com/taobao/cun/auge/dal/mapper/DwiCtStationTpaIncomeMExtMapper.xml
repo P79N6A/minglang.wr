@@ -21,7 +21,7 @@
     <result column="ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd" property="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd" jdbcType="BIGINT" />
   </resultMap>
   
-  <select id="selectStationsByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExmple" >
+  <select id="selectStationsByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.example.DwiCtStationTpaIncomeMExtExmple" >
 		select 
 			id,
 			stat_date,

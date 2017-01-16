@@ -55,12 +55,12 @@ public class CloseStationApplyConverter {
 		return closeStationApply;
 	}
 	
-	public static CloseStationApplyDto toWorkCloseStationApplyDto(ForcedCloseDto forcedCloseDto,PartnerInstanceStateChangeEnum instanceStateChange) {
+	public static CloseStationApplyDto toCloseStationApplyDto(ForcedCloseDto forcedCloseDto,PartnerInstanceCloseTypeEnum closeType,PartnerInstanceStateChangeEnum instanceStateChange) {
 		CloseStationApplyDto closeStationApplyDto = new CloseStationApplyDto();
 		closeStationApplyDto.setCloseReason(forcedCloseDto.getReason());
 		closeStationApplyDto.setOtherReason(forcedCloseDto.getRemarks());
 		closeStationApplyDto.setPartnerInstanceId(forcedCloseDto.getInstanceId());
-		closeStationApplyDto.setType(PartnerInstanceCloseTypeEnum.WORKER_QUIT);
+		closeStationApplyDto.setType(closeType);
 		closeStationApplyDto.setOperator(forcedCloseDto.getOperator());
 		closeStationApplyDto.setOperatorOrgId(forcedCloseDto.getOperatorOrgId());
 		closeStationApplyDto.setOperatorType(forcedCloseDto.getOperatorType());

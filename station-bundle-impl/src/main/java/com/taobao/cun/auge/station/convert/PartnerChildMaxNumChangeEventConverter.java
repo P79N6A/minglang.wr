@@ -23,23 +23,15 @@ public final class PartnerChildMaxNumChangeEventConverter {
 		EventDispatcher.getInstance().dispatch(EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, event);
 	}
 
-	private static String buildChangeReason(PartnerInstanceExtDto instanceExtDto,
-			PartnerMaxChildNumChangeReasonEnum reason) {
+	private static String buildChangeReason(PartnerInstanceExtDto instanceExtDto, PartnerMaxChildNumChangeReasonEnum reason) {
 		Integer childMaxNum = instanceExtDto.getMaxChildNum();
 		String bizMonth = instanceExtDto.getChildNumChangDate();
 
-		if (PartnerMaxChildNumChangeReasonEnum.EDIT.equals(reason)) {
-			return reason.getDesc() + ",修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0);
-		} else if (PartnerMaxChildNumChangeReasonEnum.TPA_PERFORMANCE_REWARD.equals(reason)) {
+		if (PartnerMaxChildNumChangeReasonEnum.TPA_PERFORMANCE_REWARD.equals(reason)) {
 			return bizMonth + reason.getDesc() + ",修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0);
-		} else if (PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD.equals(reason)) {
-			return reason.getDesc() + ",修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0);
-		} else if (PartnerMaxChildNumChangeReasonEnum.INIT.equals(reason)) {
-			return reason.getDesc() + ",修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0);
-		} else if (PartnerMaxChildNumChangeReasonEnum.TP_DEGREE_2_TPA.equals(reason)) {
+		} else {
 			return reason.getDesc() + ",修改子成员最大配额为" + (null != childMaxNum ? childMaxNum : 0);
 		}
-		return "";
 	}
 
 }

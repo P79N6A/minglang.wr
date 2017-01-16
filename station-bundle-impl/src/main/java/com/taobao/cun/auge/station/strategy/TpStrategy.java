@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -41,7 +42,6 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
@@ -150,6 +150,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	@Autowired
 	PartnerApplyBO partnerApplyBO;
 	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -219,7 +222,8 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Override
 	public void validateExistChildrenForQuit(PartnerStationRel instance) {
-		if (!PartnerInstanceIsCurrentEnum.Y.getCode().equals(instance.getIsCurrent())) {
+		//人村分离后，老合伙人不再校验淘帮手的状态
+		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(instance.getIsCurrent())){
 			return;
 		}
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
@@ -629,14 +633,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findCloseApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
@@ -647,14 +653,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Override
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findQuitApplyId(instanceId);
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
 		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
+		processTask.setBusinessId(instance.getStationApplyId());
 		processTask.setBusinessName(stationName);
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
@@ -682,7 +690,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
 		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM,
+		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, tpaGmvCheckConfiguration.getDefaultTpaNum4Tp(),
 				operatorDto);
 
 		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
@@ -708,11 +716,11 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		// 查询合伙人实例
 		PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
 
-		// 原合伙人必须是服务中，才奖励一个名额
+		// 原合伙人必须是服务中，才奖励2个名额
 		if (null != parentInstance && PartnerInstanceTypeEnum.TP.getCode().equals(parentInstance.getType())
 				&& PartnerInstanceStateEnum.SERVICING.getCode().equals(parentInstance.getState())) {
 			partnerInstanceExtService.addPartnerMaxChildNum(parentInstance.getId(),
-					PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE,
+					tpaGmvCheckConfiguration.getRewardTpaNum4TpaUpgrade(),
 					PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD, operatorDto);
 		}
 	}

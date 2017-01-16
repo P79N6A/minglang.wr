@@ -57,11 +57,15 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 
 			partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
 		}else if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
+			//淘帮手升级
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			
 			//淘帮手升级为合伙人，去淘帮手标
 			generalTaskSubmitService.submitRemoveUserTagTasks(partner.getTaobaoUserId(), partner.getTaobaoNick(), typeChangeEnum.getPrePartnerInstanceType(), typeChangeEvent.getOperator(), instanceId);
+		}else if(PartnerInstanceTypeChangeEnum.CANCEL_TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
+			//淘帮手撤销升级为合伙人，打标淘帮手标
+			generalTaskSubmitService.submitAddUserTagTasks(instanceId, typeChangeEvent.getOperator());
 		}
 	}
 }
