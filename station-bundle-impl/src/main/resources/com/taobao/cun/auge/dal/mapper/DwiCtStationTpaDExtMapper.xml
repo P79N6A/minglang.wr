@@ -44,9 +44,9 @@
 		
 		from dwi_ct_station_tpa_d where 
 			<include refid="query_condition" />  
-		group by station_id 
+		group by partner_station_id 
 		<if test="lastMonthCount != null" >
-		    having count(station_id) = #{lastMonthCount}
+		    having count(partner_station_id) = #{lastMonthCount}
 		</if>
   </select>
   <sql id="query_condition" >
