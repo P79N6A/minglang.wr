@@ -18,8 +18,6 @@
     <result column="ct_srvc_tpa_income_est_fee_amt_avg_mtd" property="ctSrvcTpaIncomeEstFeeAmtAvgMtd" jdbcType="DECIMAL" />
     <result column="station_srvc_cnt" property="stationSrvcCnt" jdbcType="BIGINT" />
     <result column="ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd" property="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd" jdbcType="BIGINT" />
-    <result column="tpa_gmv" property="tpaGmv" jdbcType="DECIMAL" />
-    <result column="tpa_order_num" property="tpaOrderNum" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -94,7 +92,7 @@
     -->
     id, stat_date, biz_month, county_org_id, county_org_name, station_id, station_name, 
     tpa_srvc_cnt_1d, ct_srvc_tpa_income_est_fee_amt_mtd, ct_srvc_tpa_income_est_fee_amt_avg_mtd, 
-    station_srvc_cnt, ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd, tpa_gmv, tpa_order_num
+    station_srvc_cnt, ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeMExample" >
     <!--
@@ -155,14 +153,12 @@
       county_org_name, station_id, station_name, 
       tpa_srvc_cnt_1d, ct_srvc_tpa_income_est_fee_amt_mtd, 
       ct_srvc_tpa_income_est_fee_amt_avg_mtd, station_srvc_cnt, 
-      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd, tpa_gmv, 
-      tpa_order_num)
+      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd)
     values (#{statDate,jdbcType=VARCHAR}, #{bizMonth,jdbcType=VARCHAR}, #{countyOrgId,jdbcType=VARCHAR}, 
       #{countyOrgName,jdbcType=VARCHAR}, #{stationId,jdbcType=BIGINT}, #{stationName,jdbcType=VARCHAR}, 
       #{tpaSrvcCnt1d,jdbcType=BIGINT}, #{ctSrvcTpaIncomeEstFeeAmtMtd,jdbcType=DECIMAL}, 
       #{ctSrvcTpaIncomeEstFeeAmtAvgMtd,jdbcType=DECIMAL}, #{stationSrvcCnt,jdbcType=BIGINT}, 
-      #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT}, #{tpaGmv,jdbcType=DECIMAL}, 
-      #{tpaOrderNum,jdbcType=BIGINT})
+      #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM" >
     <!--
@@ -207,12 +203,6 @@
       <if test="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd != null" >
         ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd,
       </if>
-      <if test="tpaGmv != null" >
-        tpa_gmv,
-      </if>
-      <if test="tpaOrderNum != null" >
-        tpa_order_num,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="statDate != null" >
@@ -247,12 +237,6 @@
       </if>
       <if test="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd != null" >
         #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT},
-      </if>
-      <if test="tpaGmv != null" >
-        #{tpaGmv,jdbcType=DECIMAL},
-      </if>
-      <if test="tpaOrderNum != null" >
-        #{tpaOrderNum,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -309,12 +293,6 @@
       <if test="record.ctSrvcTpaIncomeEstFeeAmtAvgRankMtd != null" >
         ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{record.ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT},
       </if>
-      <if test="record.tpaGmv != null" >
-        tpa_gmv = #{record.tpaGmv,jdbcType=DECIMAL},
-      </if>
-      <if test="record.tpaOrderNum != null" >
-        tpa_order_num = #{record.tpaOrderNum,jdbcType=BIGINT},
-      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -337,9 +315,7 @@
       ct_srvc_tpa_income_est_fee_amt_mtd = #{record.ctSrvcTpaIncomeEstFeeAmtMtd,jdbcType=DECIMAL},
       ct_srvc_tpa_income_est_fee_amt_avg_mtd = #{record.ctSrvcTpaIncomeEstFeeAmtAvgMtd,jdbcType=DECIMAL},
       station_srvc_cnt = #{record.stationSrvcCnt,jdbcType=BIGINT},
-      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{record.ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT},
-      tpa_gmv = #{record.tpaGmv,jdbcType=DECIMAL},
-      tpa_order_num = #{record.tpaOrderNum,jdbcType=BIGINT}
+      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{record.ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -384,12 +360,6 @@
       <if test="ctSrvcTpaIncomeEstFeeAmtAvgRankMtd != null" >
         ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT},
       </if>
-      <if test="tpaGmv != null" >
-        tpa_gmv = #{tpaGmv,jdbcType=DECIMAL},
-      </if>
-      <if test="tpaOrderNum != null" >
-        tpa_order_num = #{tpaOrderNum,jdbcType=BIGINT},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -409,9 +379,7 @@
       ct_srvc_tpa_income_est_fee_amt_mtd = #{ctSrvcTpaIncomeEstFeeAmtMtd,jdbcType=DECIMAL},
       ct_srvc_tpa_income_est_fee_amt_avg_mtd = #{ctSrvcTpaIncomeEstFeeAmtAvgMtd,jdbcType=DECIMAL},
       station_srvc_cnt = #{stationSrvcCnt,jdbcType=BIGINT},
-      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT},
-      tpa_gmv = #{tpaGmv,jdbcType=DECIMAL},
-      tpa_order_num = #{tpaOrderNum,jdbcType=BIGINT}
+      ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd = #{ctSrvcTpaIncomeEstFeeAmtAvgRankMtd,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
