@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerChildMaxNumChangeEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
@@ -38,6 +38,9 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 	@Autowired
 	PartnerInstanceExtBO partnerInstanceExtBO;
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 
 	@Override
 	public Integer findPartnerMaxChildNum(Long partnerStationId) {
@@ -129,13 +132,13 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 		Integer curMaxChildNum = null != instanceExt ? instanceExt.getMaxChildNum() : 0;
 
 		// 已经达到最大配额10，则返回
-		if (curMaxChildNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM) {
+		if (curMaxChildNum >= tpaGmvCheckConfiguration.getMaxTpaNum4Tp()) {
 			return;
 		}
 
 		Integer childNum = curMaxChildNum + increaseNum;
 		// 最大配额校验
-		childNum = childNum >= PartnerInstanceExtConstant.MAX_CHILD_NUM ? PartnerInstanceExtConstant.MAX_CHILD_NUM
+		childNum = childNum >= tpaGmvCheckConfiguration.getMaxTpaNum4Tp() ? tpaGmvCheckConfiguration.getMaxTpaNum4Tp()
 				: childNum;
 
 		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
@@ -163,5 +166,36 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 		// 发送变更事件
 		PartnerChildMaxNumChangeEventConverter.dispatchChangeEvent(instanceExtDto, reason);
+	}
+
+	@Override
+	public void decreasePartnerMaxChildNum(Long instanceId, Integer decreaseNum, PartnerMaxChildNumChangeReasonEnum reason, OperatorDto operatorDto) {
+		// 查询当前实例扩展
+		PartnerInstanceExt instanceExt = partnerInstanceExtBO.findPartnerInstanceExt(instanceId);
+		
+		//保护
+		if(null == instanceExt){
+			return;
+		}
+		
+		// 当前最大配额
+		Integer curMaxChildNum =  instanceExt.getMaxChildNum();
+		
+		// 已经达到初始值3，则返回
+		if (curMaxChildNum <= tpaGmvCheckConfiguration.getDefaultTpaNum4Tp()) {
+			return;
+		}
+		//计算新值
+		Integer childNum = curMaxChildNum - decreaseNum;
+		// 最小配额校验
+		childNum = childNum <= tpaGmvCheckConfiguration.getDefaultTpaNum4Tp() ? tpaGmvCheckConfiguration.getDefaultTpaNum4Tp()
+				: childNum;
+		
+		PartnerInstanceExtDto instanceExtDto = new PartnerInstanceExtDto();
+
+		instanceExtDto.setInstanceId(instanceId);
+		instanceExtDto.setMaxChildNum(childNum);
+		instanceExtDto.copyOperatorDto(operatorDto);
+		savePartnerMaxChildNum(instanceExtDto, reason);
 	}
 }

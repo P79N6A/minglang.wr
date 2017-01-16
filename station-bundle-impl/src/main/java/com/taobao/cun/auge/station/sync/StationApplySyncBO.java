@@ -25,9 +25,9 @@ public interface StationApplySyncBO {
 
 	/**
 	 * 删除
-	 * @param stationApplyId
+	 * @param instanceId
 	 */
-	public void deleteStationApply(Long stationApplyId);
+	public void deleteStationApply(Long instanceId);
 	
 	/**
 	 * 验证station_apply和partner_station_rel总数

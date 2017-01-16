@@ -368,14 +368,13 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 */
 	public void submitApproveProcessTask(ApproveProcessTask processTask) {
 		BeanValidator.validateWithThrowable(processTask);
-		// 校验操作人的组织id
-		processTask.validateOperatorOrgId();
 		try {
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setBusiness(processTask.getBusiness());
 			startProcessDto.setBusinessId(processTask.getBusinessId());
 			startProcessDto.setBusinessName(processTask.getBusinessName());
+			startProcessDto.setBusinessOrgId(processTask.getBusinessOrgId());
 			startProcessDto.copyOperatorDto(processTask);
 			startProcessDto.setJsonParams(FeatureUtil.toStringUnencode(processTask.getParams()));
 			// 启动流程
@@ -443,7 +442,38 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public void submitAddUserTagTasks(Long instanceId,String operator) {
+		try {
+			PartnerInstanceDto instance =partnerInstanceBO.getPartnerInstanceById(instanceId);
+			
+			// 异构系统交互提交后台任务
+			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
+			// TODO uic打标 begin
+			GeneralTaskDto uicGeneralTaskDto = buildAddUicTagTask(instance, operator);
+			uicGeneralTaskDto.setBusinessStepNo(1l);
+			taskDtos.add(uicGeneralTaskDto);
+			// TODO uic打标 end
+
+			// TODO 旺旺打标 begin
+			GeneralTaskDto wangwangGeneralTaskDto = buildAddWangwangTagTask(instance, operator);
+			wangwangGeneralTaskDto.setBusinessStepNo(2l);
+			taskDtos.add(wangwangGeneralTaskDto);
+			// TODO 旺旺打标 end
+
+			// TODO 提交任务
+			taskSubmitService.submitTasks(taskDtos);
+			logger.info("submitAddUserTagTasks : {}", JSON.toJSONString(taskDtos));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitAddUserTagTasks] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitAddUserTagTasks error: " + e.getMessage());
+		}
+		
+	}
+	
+	@Override
 	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId,Long instanceId) {
 		try {
 			UserTagDto userTagDto = new UserTagDto();
@@ -642,25 +672,20 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
 			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
-			// Partner partner =
-			// partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-			// String accountNo = partner.getAlipayAccount();
-			// if (StringUtils.isNotEmpty(accountNo)) {
-			// alipayTagDto.setUserId(accountNo.substring(0, accountNo.length()
-			// - 4));
-			// }
 			AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 			
-			String accountNo = accountMoney.getAccountNo();
-			
-			if (StringUtils.isEmpty(accountNo)) {
+			String accountNo ;
+			//村拍档没有保证金，所以accountMoney=null
+			if (null == accountMoney || StringUtils.isEmpty(accountMoney.getAccountNo())) {
 				OperatorDto operatorDto = new OperatorDto();
 				operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 				operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 				operatorDto.setOperatorOrgId(0L);
 				PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
 				accountNo = accountDto.getAccountNo();
+			}else{
+				accountNo = accountMoney.getAccountNo();
 			}
 			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());

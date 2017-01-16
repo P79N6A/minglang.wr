@@ -12,6 +12,7 @@ import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.EventConstant;
@@ -23,8 +24,9 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -57,28 +59,37 @@ public class SmsListener implements EventListener {
 
 	@Autowired
 	DiamondConfiguredProperties diamondConfiguredProperties;
-
+	
+	@Autowired
+	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
+	
 	@Override
 	public void onMessage(Event event) {
 		//智慧县域报名消息
 		if (event.getValue() instanceof WisdomCountyApplyEvent){
 			processWisdomCountyApplyEvent(event);
-			return;
 		}else if (event.getValue() instanceof PartnerInstanceTypeChangeEvent){
 			//升降级事件
 			processTypeChangeEvent((PartnerInstanceTypeChangeEvent)event.getValue());
-			return;
+		}else if (event.getValue() instanceof PartnerInstanceStateChangeEvent){
+			//实例状态变更事件
+			processPartnerInstanceStateChangeEvent((PartnerInstanceStateChangeEvent)event.getValue());
 		}
-
-		PartnerInstanceStateChangeEvent stateChangeEvent = (PartnerInstanceStateChangeEvent) event.getValue();
-
+	}
+	
+	private void processPartnerInstanceStateChangeEvent(PartnerInstanceStateChangeEvent stateChangeEvent){
 		logger.info("receive event." + JSON.toJSONString(stateChangeEvent));
-
+		smsPartner(stateChangeEvent);
+		smsParentPartner(stateChangeEvent);
+		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
+	}
+	
+	private void smsPartner(PartnerInstanceStateChangeEvent stateChangeEvent){
 		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
 		Long instanceId = stateChangeEvent.getPartnerInstanceId();
 		Long taobaoUserId = stateChangeEvent.getTaobaoUserId();
 		String operatorId = stateChangeEvent.getOperator();
-
+		
 		// 查询手机号码
 		String mobile = findPartnerMobile(instanceId);
 		// 查询短信模板
@@ -90,8 +101,42 @@ public class SmsListener implements EventListener {
 		String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
 
 		generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
+	}
+	
+	private void smsParentPartner(PartnerInstanceStateChangeEvent stateChangeEvent) {
+		PartnerInstanceStateChangeEnum stateChangeEnum = stateChangeEvent.getStateChangeEnum();
+		Long instanceId = stateChangeEvent.getPartnerInstanceId();
+		String operatorId = stateChangeEvent.getOperator();
+		PartnerInstanceTypeEnum partnerType = stateChangeEvent.getPartnerType();
 
-		logger.info("Finished to handle event." + JSON.toJSONString(stateChangeEvent));
+		// 淘帮手自动停业
+		if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+				&& PartnerInstanceTypeEnum.TPA.equals(partnerType)) {
+			// 淘帮手实例
+			PartnerStationRel tpaInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+
+			if (PartnerInstanceCloseTypeEnum.SYSTEM_QUIT.getCode().equals(tpaInstance.getCloseType())) {
+				// 父站点id
+				Long parentStationId = tpaInstance.getParentStationId();
+				// 合伙人实例
+				PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
+				
+				// 查询合伙人手机号码
+				Partner tpPartner = partnerBO.getPartnerById(tpInstance.getPartnerId());
+				String tpMobile = tpPartner.getMobile();
+				// 合伙人淘宝账号
+				Long tpTaobaoUserId = tpPartner.getTaobaoUserId();
+				
+				// tpa partner
+				Partner tpaPartner = partnerBO.getPartnerById(tpaInstance.getPartnerId());
+				
+				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE_SMS_2_TP.getCode());
+				// 替换淘帮手姓名和减少淘帮手名额
+				content = String.format(content, tpaPartner.getName(),tpaGmvCheckConfiguration.getReduceTpaNum4AutoClose());
+				
+				generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
+			}
+		}
 	}
 
 	private void processWisdomCountyApplyEvent(Event event){
@@ -181,19 +226,21 @@ public class SmsListener implements EventListener {
 			Long parentStationId = tpaInstance.getParentStationId();
 			// 合伙人实例
 			PartnerStationRel tpInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-			// 合伙人淘宝账号
-			Long parentTaobaoUserId = tpInstance.getTaobaoUserId();
-
 			// 查询合伙人手机号码
-			Partner partner = partnerBO.getPartnerById(tpInstance.getPartnerId());
-			String mobile = partner.getMobile();
+			Partner tpPartner = partnerBO.getPartnerById(tpInstance.getPartnerId());
+			String tpMobile = tpPartner.getMobile();
+			// 合伙人淘宝账号
+			Long tpTaobaoUserId = tpInstance.getTaobaoUserId();
+			
+			//tpa partner
+			Partner tpaPartner = partnerBO.getPartnerById(tpaInstance.getPartnerId());
 
 			String operatorId = event.getOperator();
 			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
 			//替换淘帮手姓名和奖励淘帮手名额
-			content = String.format(content, partner.getName(),	PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE);
+			content = String.format(content, tpaPartner.getName(),	tpaGmvCheckConfiguration.getRewardTpaNum4TpaUpgrade());
 
-			generalTaskSubmitService.submitSmsTask(parentTaobaoUserId, mobile, operatorId, content);
+			generalTaskSubmitService.submitSmsTask(tpTaobaoUserId, tpMobile, operatorId, content);
 		}
 	}
 }

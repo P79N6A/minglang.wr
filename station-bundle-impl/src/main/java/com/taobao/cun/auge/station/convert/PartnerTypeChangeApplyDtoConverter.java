@@ -37,6 +37,7 @@ public final class PartnerTypeChangeApplyDtoConverter {
 
 		PartnerTypeChangeApplyDto applyDto = new PartnerTypeChangeApplyDto();
 
+		applyDto.setId(apply.getId());
 		applyDto.setPartnerInstanceId(apply.getPartnerInstanceId());
 		applyDto.setNextPartnerInstanceId(apply.getNextPartnerInstanceId());
 		applyDto.setFeature(FeatureUtil.toMap(apply.getFeature()));
