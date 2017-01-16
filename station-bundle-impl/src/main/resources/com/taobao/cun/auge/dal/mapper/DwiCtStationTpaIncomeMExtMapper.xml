@@ -51,7 +51,7 @@
 			</foreach>
 		</if>
 		<if test="scale != null" >
-			<![CDATA[and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
+			<![CDATA[ and (ct_srvc_tpa_income_est_fee_amt_avg_rank_mtd / station_srvc_cnt) <= #{scale} ]]>
 		</if>
   </sql>
 </mapper>
