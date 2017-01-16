@@ -57,7 +57,9 @@ public class ProcessServiceImpl implements ProcessService {
 
 		// 创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>(FeatureUtil.toMap(startProcessDto.getJsonParams()));
-		initData.put("orgId", String.valueOf(startProcessDto.getBusinessOrgId()));
+		Long orgId = null != startProcessDto.getBusinessOrgId() ? startProcessDto.getBusinessOrgId()
+				: startProcessDto.getOperatorOrgId();
+		initData.put("orgId", String.valueOf(orgId));
 		if (StringUtil.isNotBlank(startProcessDto.getBusinessName())) {
 			initData.put("taskName", "(" + startProcessDto.getBusinessName() + ")" + business.getDesc());
 		}

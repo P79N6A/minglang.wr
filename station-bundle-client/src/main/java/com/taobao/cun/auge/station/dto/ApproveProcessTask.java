@@ -21,7 +21,6 @@ public class ApproveProcessTask extends OperatorDto implements Serializable {
 
 	private String businessName;
 	
-	@NotNull(message = "businessOrgId not null")
 	private Long businessOrgId;
 
 	private Map<String, String> params = new HashMap<String, String>();
