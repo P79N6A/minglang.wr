@@ -28,8 +28,7 @@
 		<spring-cloud.version>Brixton.RELEASE</spring-cloud.version>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
-
-		<ague.station.client.version>1.8.8</ague.station.client.version>
+		<ague.station.client.version>1.8.9</ague.station.client.version>
 
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
@@ -492,6 +491,11 @@
 				<groupId>com.esotericsoftware.kryo</groupId>
 				<artifactId>kryo</artifactId>
 				<version>999-not-exist</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaosettle.client</artifactId>
+				<version>1.0.21.jdk6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
