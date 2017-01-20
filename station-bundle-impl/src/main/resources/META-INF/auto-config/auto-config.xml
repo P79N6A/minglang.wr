@@ -90,7 +90,9 @@
 		<property name="hsf.consumer.version.cainiao.stationReadService" defaultValue="1.0.0.daily"/>
 		<property name="hsf.consumer.version.enhancedUserQueryService" defaultValue="1.0.0.daily" description="用户查询服务" />
 		<property name="hsf.consumer.version.cunbiz.questionnireManageService" defaultValue="1.0.0.daily" description="问卷分发查询服务" />
-		</group>
+		<property name="hsf.consumer.version.settle.cuntaoNewBailService" defaultValue="1.0.0.daily" description="保证金操作接口" />
+	</group>
+
 	<script>
 		<generate template="_application.properties" destfile="application.properties" charset="GBK"></generate>
 		<generate template="event-client-context.xml.vm" destfile="application/beans-event-client-context.xml" charset="GBK" />
