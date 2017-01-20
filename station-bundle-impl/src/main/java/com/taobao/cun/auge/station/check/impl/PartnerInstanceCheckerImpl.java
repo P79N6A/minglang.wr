@@ -66,7 +66,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
 		// 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
 		PartnerInstanceTypeEnum instanceType = PartnerInstanceTypeEnum.valueof(instance.getType());
-		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instanceId);
+		partnerInstanceHandler.validateExistChildrenForQuit(instanceType, instance);
 
 		// 校验资产是否归还
 		partnerInstanceHandler.validateAssetBack(instanceType, instanceId);

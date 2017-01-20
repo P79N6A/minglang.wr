@@ -418,6 +418,18 @@ public class PartnerInstance {
 	 */
 	private String courseStatus;
 	
+	private String flowerName;
+	
+	
+	
+	public String getFlowerName() {
+		return flowerName;
+	}
+
+	public void setFlowerName(String flowerName) {
+		this.flowerName = flowerName;
+	}
+
 	/**
 	 * 获取主键
 	 *

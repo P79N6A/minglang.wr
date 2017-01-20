@@ -122,8 +122,8 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).delete(deleteDto, rel);
 	}
 	
-	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,Long instanceId) {
-		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instanceId);
+	public void validateExistChildrenForQuit(PartnerInstanceTypeEnum typeEnum,PartnerStationRel instance) {
+		strategy.get(typeEnum.getCode()).validateExistChildrenForQuit(instance);
 	}
 	
 	public void validateClosePreCondition(PartnerInstanceTypeEnum typeEnum,PartnerStationRel partnerStationRel) {
@@ -135,10 +135,22 @@ public class PartnerInstanceHandler implements InitializingBean{
 		strategy.get(rel.getType()).settleSuccess(settleSuccessDto,rel);
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void startClosing(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).startClosing(instanceId, stationName, operatorDto);
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void autoClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).autoClosing(instanceId, operatorDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto)throws AugeServiceException {
+		strategy.get(typeEnum.getCode()).closed(instanceId, taobaoUserId,taobaoNick, typeEnum,operatorDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void startQuiting(Long instanceId, String stationName, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto)throws AugeServiceException {
 		strategy.get(typeEnum.getCode()).startQuiting(instanceId, stationName, operatorDto);
 	}

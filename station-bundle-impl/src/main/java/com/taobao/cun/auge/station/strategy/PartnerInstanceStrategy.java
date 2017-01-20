@@ -64,10 +64,10 @@ public interface PartnerInstanceStrategy {
 	 * 
 	 * 退出时，校验
 	 * 
-	 * @param instanceId
+	 * @param instance
 	 * @throws AugeServiceException
 	 */
-	public void validateExistChildrenForQuit(Long instanceId);
+	public void validateExistChildrenForQuit(PartnerStationRel instance);
 	
 	/**
 	 * 校验是否还有子成员，例如，校验合伙人下面是否存在淘帮手
@@ -81,8 +81,44 @@ public interface PartnerInstanceStrategy {
 
 	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException;
 	
+	/**
+	 * 停业中
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 	
+	/**
+	 * 系统主动停业
+	 * 
+	 * @param instanceId
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
+	public void autoClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException;
+	
+	/**
+	 * 已停业
+	 * @param instanceId
+	 * @param taobaoUserId
+	 * @param taobaoNick
+	 * @param typeEnum
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException;
+	
+	/**
+	 * 退出中
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @throws AugeServiceException
+	 */
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException;
 
 	/**

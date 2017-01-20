@@ -2,9 +2,7 @@ package com.taobao.cun.auge.station.strategy;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,11 +39,9 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
-import com.taobao.cun.auge.station.constant.PartnerInstanceExtConstant;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -74,11 +70,9 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -218,49 +212,13 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void validateExistChildrenForQuit(Long instanceId) {
-		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateQuit();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(instanceId, states);
+	public void validateExistChildrenForQuit(PartnerStationRel instance) {
 
-		if (CollectionUtils.isEmpty(children)) {
-			return;
-		}
-		for (PartnerStationRel rel : children) {
-			if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
-				logger.warn("合伙人存在淘帮手");
-				throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-			} else {
-				PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
-				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(),
-						item.getCurrentStep())) {
-					if (PartnerLifecycleBondEnum.WAIT_THAW.getCode().equals(item.getBond()) && PartnerLifecycleRoleApproveEnum.AUDIT_PASS.getCode().equals(item.getRoleApprove())) {
-						continue;
-					}
-					logger.warn("合伙人存在淘帮手");
-					throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_QUIT);
-				}
-			}
-		}
 	}
 	
 	@Override
 	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
-		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
-		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
 
-		if (CollectionUtils.isNotEmpty(children)) {
-			logger.warn("合伙人存在淘帮手");
-			throw new AugeBusinessException(StationExceptionEnum.HAS_CHILDREN_TPA_FOR_CLOSE);
-		}
-		
-		//如果是从装修中停业，则需要判断村点是否退出了装修
-		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
-			try {
-				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
-			} catch (Exception e) {
-				throw new AugeBusinessException("村点装修状态不允许退出，请先审核装修反馈记录");
-			}
-		}
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -622,38 +580,10 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
-		Long applyId = findCloseApplyId(instanceId);
-		
-		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
-		processTask.setBusinessName(stationName);
-		processTask.copyOperatorDto(operatorDto);
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("applyId", String.valueOf(applyId));
-		
-		processTask.setParams(params);
-		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
 
 	@Override
 	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
-		Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
-		Long applyId = findQuitApplyId(instanceId);
-		
-		ApproveProcessTask processTask = new ApproveProcessTask();
-		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(stationApplyId);
-		processTask.setBusinessName(stationName);
-		processTask.copyOperatorDto(operatorDto);
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("applyId", String.valueOf(applyId));
-		
-		processTask.setParams(params);
-		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
 	
 	@Override
@@ -674,39 +604,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startService(Long instanceId, Long taobaoUserId, OperatorDto operatorDto) {
-		// 合伙人进入服务中，默认拥有3个淘帮手名额
-		partnerInstanceExtService.initPartnerMaxChildNum(instanceId, PartnerInstanceExtConstant.DEFAULT_MAX_CHILD_NUM,
-				operatorDto);
 
-		// 如果以前是淘帮手，则奖励父合伙人一个淘帮手名额
-		rewardParentTp(taobaoUserId, operatorDto);
-	}
-
-	// 如果该账号以前是淘帮手，则奖励其原有合伙人1个淘帮手名额
-	private void rewardParentTp(Long taobaoUserId, OperatorDto operatorDto) {
-		// 根据服务结束时间，查询最后一次服务的实例
-		PartnerInstanceDto instanceDto = partnerInstanceBO.getLastPartnerInstance(taobaoUserId);
-		// 以前从未进入村淘
-		if (null == instanceDto) {
-			return;
-		}
-
-		// 如果上一次是淘帮手，则奖励原有合伙人一个淘帮手名额
-		if (!PartnerInstanceTypeEnum.TPA.equals(instanceDto.getType())) {
-			return;
-		}
-		// 上一次作为淘帮手时，所属合伙人的村点id
-		Long parentStationId = instanceDto.getParentStationId();
-
-		// 查询合伙人实例
-		PartnerStationRel parentInstance = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
-
-		// 原合伙人必须是服务中，才奖励一个名额
-		if (null != parentInstance && PartnerInstanceTypeEnum.TP.getCode().equals(parentInstance.getType())
-				&& PartnerInstanceStateEnum.SERVICING.getCode().equals(parentInstance.getState())) {
-			partnerInstanceExtService.addPartnerMaxChildNum(parentInstance.getId(),
-					PartnerInstanceExtConstant.REWARD_PARENT_NUM_FRO_SERVICE,
-					PartnerMaxChildNumChangeReasonEnum.TPA_UPGRADE_REWARD, operatorDto);
-		}
 	}
 }

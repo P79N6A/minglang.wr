@@ -19,6 +19,8 @@ public class UserProfile implements Serializable{
 	private Long stationId;
 	
 	private Date birthday;
+	
+	private String flowerName;
 
 	public String getStationName() {
 		return stationName;
@@ -58,6 +60,14 @@ public class UserProfile implements Serializable{
 
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
+	}
+
+	public String getFlowerName() {
+		return flowerName;
+	}
+
+	public void setFlowerName(String flowerName) {
+		this.flowerName = flowerName;
 	}
 	
 	

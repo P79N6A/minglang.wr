@@ -51,5 +51,4 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			throw new AugeServiceException("alipayStandardBailService.dealStandardBail error" + e.getMessage());
 		}
 	}
-
 }

@@ -38,6 +38,8 @@ public class PartnerConverter {
 		partnerDto.setSolidPoint(partner.getSolidPoint());
 		partnerDto.setLeaseArea(partner.getLeaseArea());
 		partnerDto.setAliLangUserId(partner.getAlilangUserId());
+		partnerDto.setBirthday(partner.getBirthday());
+		partnerDto.setFlowerName(partner.getFlowerName());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
@@ -50,7 +52,7 @@ public class PartnerConverter {
 		return partnerDto;
 	}
 
-	public static Partner toParnter(PartnerDto parnterDto) {
+	public static Partner toParnter(PartnerDto parnterDto,boolean isUpdate) {
 		if (parnterDto == null) {
 			return null;
 		}
@@ -75,7 +77,11 @@ public class PartnerConverter {
 		if (parnterDto.getState() != null) {
 			partner.setState(parnterDto.getState().getCode());
 		}
-		addBirthday(partner);
+		if(!isUpdate){
+			addBirthday(partner);
+		}else if(parnterDto.getBirthday()!=null){
+			partner.setBirthday(parnterDto.getBirthday());
+		}
 		return partner;
 	}
 	
@@ -111,7 +117,7 @@ public class PartnerConverter {
 
 		List<Partner> list = new ArrayList<Partner>();
 		for (PartnerDto partnerDto : partner) {
-			list.add(toParnter(partnerDto));
+			list.add(toParnter(partnerDto,false));
 		}
 
 		return list;

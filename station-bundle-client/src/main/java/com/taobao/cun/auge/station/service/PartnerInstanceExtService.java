@@ -54,9 +54,19 @@ public interface PartnerInstanceExtService {
 	   */
 	  public void addPartnerMaxChildNum(Long instanceId, Integer increaseNum, PartnerMaxChildNumChangeReasonEnum reason,
 	      OperatorDto operatorDto);
-
+	  
 	  /**
-	   * 修改最大子成员配额，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * 在原有的值上，减少decreaseNum个子成员，最少不少于@see#TpaGmvCheckConfiguration.defaultTpaNum4Tp
+	   * @param instanceId
+	   * @param decreaseNum
+	   * @param reason
+	   * @param operatorDto
+	   */
+	  public void decreasePartnerMaxChildNum(Long instanceId, Integer decreaseNum, PartnerMaxChildNumChangeReasonEnum reason,
+		      OperatorDto operatorDto);
+	  
+	  /**
+	   * 修改最大子成员配额，最大不超过@see#TpaGmvCheckConfiguration.maxTpaNum4Tp
 	   * 
 	   * @param instanceId
 	   * @param maxChildNum
@@ -70,7 +80,7 @@ public interface PartnerInstanceExtService {
 	   * 初始化最大子成员配额
 	   * 
 	   * @param instanceId
-	   * @param initMaxChildNum 初始化值，最大不超过@see#PartnerInstanceExtConstant.MAX_CHILD_NUM
+	   * @param initMaxChildNum 初始化值，最大不超过@see#TpaGmvCheckConfiguration.maxTpaNum4Tp
 	   * @param operatorDto
 	   */
 	  public void initPartnerMaxChildNum(Long instanceId, Integer initMaxChildNum, OperatorDto operatorDto);
