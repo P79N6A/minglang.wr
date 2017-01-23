@@ -72,7 +72,7 @@ public class PartnerJingweiTask extends JingweiTask {
             					partnerMessage.setAction("update");
             					partnerMessage.setEmail((String) row.get("email"));
             					partnerMessage.setName((String) row.get("name"));
-            					partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
+            					//partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
             					partnerMessage.setAlilangOrgId(alilangOrgId);
             					String str = JSONObject.toJSONString(partnerMessage);
             					
