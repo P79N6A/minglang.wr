@@ -27,6 +27,7 @@ import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -108,6 +109,8 @@ public class ProcessProcessor {
 	
 	@Autowired
 	PeixunPurchaseBO peixunPurchaseBO;
+	@Autowired
+	PartnerBO partnerBO;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -155,6 +158,8 @@ public class ProcessProcessor {
 		            logger.error("LevelAuditFlowProcessServiceImpl processAuditMessage error  ", e);
 		            throw e;
 		        }
+			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
+				handleFlowerNameApply(objectId,resultCode);
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -200,7 +205,12 @@ public class ProcessProcessor {
 
 				cuntaoFlowRecord.setTargetId(partnerStationRel.getStationId());
 				cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
-				cuntaoFlowRecord.setNodeTitle("审批");
+				
+				if(StringUtil.isNotBlank(ob.getString("result"))){
+					cuntaoFlowRecord.setNodeTitle("审批("+ob.getString("result")+")");
+				}else{
+					cuntaoFlowRecord.setNodeTitle("审批");
+				}
 				cuntaoFlowRecord.setOperatorName(ob.getString("approverName"));
 				cuntaoFlowRecord.setOperatorWorkid(ob.getString("approver"));
 				cuntaoFlowRecord.setOperateTime(new Date());
@@ -427,5 +437,8 @@ public class ProcessProcessor {
 	
 	private void handlePeixunPurchase(String id,String audit,String auditName,String desc,String result){
 		peixunPurchaseBO.audit(new Long(id), audit,auditName, desc, !"拒绝".equals(result));
+	}
+	private void handleFlowerNameApply(String id,String result){
+		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
 	}
 }

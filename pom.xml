@@ -28,8 +28,7 @@
 		<spring-cloud.version>Brixton.RELEASE</spring-cloud.version>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
-
-		<ague.station.client.version>1.8.4</ague.station.client.version>
+		<ague.station.client.version>1.8.9</ague.station.client.version>
 
 		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
 
@@ -353,6 +352,11 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>com.alibaba.middleware.jingwei</groupId>
+				<artifactId>jingwei-common</artifactId>
+				<version>3.1.8</version>
+		   </dependency>
+			<dependency>
 				<groupId>io.netty</groupId>
 				<artifactId>netty</artifactId>
 				<version>3.6.3.Final</version>
@@ -454,14 +458,7 @@
 			  	</exclusion>
 			  </exclusions>
 			 </dependency>
-			 	<dependency>
-				<groupId>org.aspectj</groupId>
-				<artifactId>aspectjweaver</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>cglib</groupId>
-				<artifactId>cglib-nodep</artifactId>
-			</dependency>
+			 	
             <dependency>
                 <groupId>com.taobao.cun</groupId>
                 <artifactId>cun-common-client</artifactId>
@@ -471,6 +468,11 @@
 				<groupId>com.esotericsoftware.kryo</groupId>
 				<artifactId>kryo</artifactId>
 				<version>999-not-exist</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaosettle.client</artifactId>
+				<version>1.0.21.jdk6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -18,6 +18,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
+import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerTpgBO;
+import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
@@ -34,12 +36,15 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -50,6 +55,7 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.chronus.dto.GeneralTaskDto;
 import com.taobao.cun.chronus.dto.GeneralTaskRetryConfigDto;
@@ -85,86 +91,49 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Autowired
 	PartnerTpgBO partnerTpgBO;
 	
+	@Autowired
+	PartnerInstanceService partnerInstanceService;
+	
+	@Autowired
+	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
+	
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 		try {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
-			String businessNo = String.valueOf(instance.getId());
-
 			// 菜鸟驿站同步 begin
-			GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
-			cainiaoTaskDto.setBusinessNo(businessNo);
-			cainiaoTaskDto.setBeanName("caiNiaoService");
-			cainiaoTaskDto.setMethodName("addCainiaoStation");
+			GeneralTaskDto cainiaoTaskDto;
+			
+			//是否是升级的合伙人
+			if (partnerTypeChangeApplyBO.isUpgradePartnerInstance(instance.getId(),PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP)) {
+				PartnerTypeChangeApplyDto typeChangeApplyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instance.getId());
+				// 解冻淘帮手保证金
+				partnerInstanceService.thawMoney(typeChangeApplyDto.getPartnerInstanceId());
+				cainiaoTaskDto = buildUpgradeCainiaoTask(typeChangeApplyDto.getPartnerInstanceId(),instance.getId(), operator);
+			} else {
+				cainiaoTaskDto = buildAddCainiaoTask(instance.getId(), operator);
+			}
+			
 			cainiaoTaskDto.setBusinessStepNo(1l);
-			cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			cainiaoTaskDto.setBusinessStepDesc("addCainiaoStation");
-			cainiaoTaskDto.setOperator(operator);
-			cainiaoTaskDto.setPriority(TaskPriority.HIGH);
-
-			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
-			syncAddCainiaoStationDto.setPartnerInstanceId(instance.getId());
-			cainiaoTaskDto.setParameterType(SyncAddCainiaoStationDto.class.getName());
-			cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
 			taskDtos.add(cainiaoTaskDto);
 			// TODO 菜鸟驿站同步 end
 
 			// TODO uic打标 begin
-			GeneralTaskDto uicGeneralTaskDto = new GeneralTaskDto();
-			uicGeneralTaskDto.setBusinessNo(businessNo);
-			uicGeneralTaskDto.setBeanName("uicTagService");
-			uicGeneralTaskDto.setMethodName("addUserTag");
+			GeneralTaskDto uicGeneralTaskDto = buildAddUicTagTask(instance, operator);
 			uicGeneralTaskDto.setBusinessStepNo(2l);
-			uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
-			uicGeneralTaskDto.setOperator(operator);
-			UserTagDto userTagDto = new UserTagDto();
-			userTagDto.setPartnerType(instance.getType());
-			userTagDto.setTaobaoUserId(instance.getTaobaoUserId());
-			uicGeneralTaskDto.setParameterType(UserTagDto.class.getName());
-			uicGeneralTaskDto.setParameter(JSON.toJSONString(userTagDto));
-			uicGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(uicGeneralTaskDto);
 			// TODO uic打标 end
 
 			// TODO 申请单更新为服务中 begin
-			GeneralTaskDto stationConfirmGeneralTaskDto = new GeneralTaskDto();
-			stationConfirmGeneralTaskDto.setBusinessNo(businessNo);
-			stationConfirmGeneralTaskDto.setBeanName("partnerInstanceService");
-			stationConfirmGeneralTaskDto.setMethodName("applySettleSuccess");
-			stationConfirmGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+			GeneralTaskDto stationConfirmGeneralTaskDto = buildInstanceSettleSuccessTask(instance.getId(), operator);
 			stationConfirmGeneralTaskDto.setBusinessStepNo(3l);
-			stationConfirmGeneralTaskDto.setBusinessStepDesc("applySettleSuccess");
-			stationConfirmGeneralTaskDto.setOperator(operator);
-
-			PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-			settleSuccessDto.setInstanceId(instance.getId());
-			settleSuccessDto.setOperator(operator);
-			settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
-			stationConfirmGeneralTaskDto.setParameterType(PartnerInstanceSettleSuccessDto.class.getName());
-			stationConfirmGeneralTaskDto.setParameter(JSON.toJSONString(settleSuccessDto));
-			stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(stationConfirmGeneralTaskDto);
 			// TODO 申请单更新为服务中 end
 
 			// TODO 旺旺打标 begin
-			GeneralTaskDto wangwangGeneralTaskDto = new GeneralTaskDto();
-			wangwangGeneralTaskDto.setBusinessNo(businessNo);
-			wangwangGeneralTaskDto.setBeanName("wangWangTagService");
-			wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
+			GeneralTaskDto wangwangGeneralTaskDto = buildAddWangwangTagTask(instance, operator);
 			wangwangGeneralTaskDto.setBusinessStepNo(4l);
-			wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
-			wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
-			wangwangGeneralTaskDto.setOperator(operator);
-			wangwangGeneralTaskDto.setParameterType(String.class.getName());
-			wangwangGeneralTaskDto.setParameter(instance.getPartnerDto().getTaobaoNick());
-			GeneralTaskRetryConfigDto retry = new GeneralTaskRetryConfigDto();
-			retry.setIntervalTime(6 * 3600);// 失败5小时重试
-			retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
-			retry.setIntervalIncrement(false);
-			wangwangGeneralTaskDto.setRetryTaskConfig(retry);
-			wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
 			taskDtos.add(wangwangGeneralTaskDto);
 			// TODO 旺旺打标 end
 
@@ -175,6 +144,111 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitSettlingSysProcessTasks] instanceId = {}, {}", instance.getId(), e);
 			throw new AugeServiceException("submitSettlingSysProcessTasks error: " + e.getMessage());
 		}
+	}
+	
+	private GeneralTaskDto buildUpgradeCainiaoTask(Long oldInsId,Long newInsId,String operator) {
+		String businessNo = String.valueOf(newInsId);
+		
+		GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
+		cainiaoTaskDto.setBusinessNo(businessNo);
+		cainiaoTaskDto.setBeanName("caiNiaoService");
+		cainiaoTaskDto.setMethodName("upgradeToTPForTpa");
+
+		cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		cainiaoTaskDto.setBusinessStepDesc("upgradeToTPForTpa");
+		cainiaoTaskDto.setOperator(operator);
+		cainiaoTaskDto.setPriority(TaskPriority.HIGH);
+
+		SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto = new SyncUpgradeToTPForTpaDto();
+		syncUpgradeToTPForTpaDto.setOldPartnerInstanceId(oldInsId);
+		syncUpgradeToTPForTpaDto.setPartnerInstanceId(newInsId);
+		cainiaoTaskDto.setParameterType(SyncUpgradeToTPForTpaDto.class.getName());
+		cainiaoTaskDto.setParameter(JSON.toJSONString(syncUpgradeToTPForTpaDto));
+		return cainiaoTaskDto;
+	}
+
+	private GeneralTaskDto buildAddCainiaoTask(Long instanceId, String operator) {
+		String businessNo = String.valueOf(instanceId);
+		
+		GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
+		cainiaoTaskDto.setBusinessNo(businessNo);
+		cainiaoTaskDto.setBeanName("caiNiaoService");
+		cainiaoTaskDto.setMethodName("addCainiaoStation");
+	
+		cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		cainiaoTaskDto.setBusinessStepDesc("addCainiaoStation");
+		cainiaoTaskDto.setOperator(operator);
+		cainiaoTaskDto.setPriority(TaskPriority.HIGH);
+
+		SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+		syncAddCainiaoStationDto.setPartnerInstanceId(instanceId);
+		cainiaoTaskDto.setParameterType(SyncAddCainiaoStationDto.class.getName());
+		cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
+		return cainiaoTaskDto;
+	}
+
+	private GeneralTaskDto buildAddUicTagTask(PartnerInstanceDto instance, String operator) {
+		String businessNo = String.valueOf(instance.getId());
+		
+		GeneralTaskDto uicGeneralTaskDto = new GeneralTaskDto();
+		uicGeneralTaskDto.setBusinessNo(businessNo);
+		uicGeneralTaskDto.setBeanName("uicTagService");
+		uicGeneralTaskDto.setMethodName("addUserTag");
+	
+		uicGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		uicGeneralTaskDto.setBusinessStepDesc("addUserTag");
+		uicGeneralTaskDto.setOperator(operator);
+		UserTagDto userTagDto = new UserTagDto();
+		userTagDto.setPartnerType(instance.getType());
+		userTagDto.setTaobaoUserId(instance.getTaobaoUserId());
+		uicGeneralTaskDto.setParameterType(UserTagDto.class.getName());
+		uicGeneralTaskDto.setParameter(JSON.toJSONString(userTagDto));
+		uicGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return uicGeneralTaskDto;
+	}
+
+	private GeneralTaskDto buildInstanceSettleSuccessTask(Long instanceId, String operator) {
+		String businessNo = String.valueOf(instanceId);
+		
+		GeneralTaskDto stationConfirmGeneralTaskDto = new GeneralTaskDto();
+		stationConfirmGeneralTaskDto.setBusinessNo(businessNo);
+		stationConfirmGeneralTaskDto.setBeanName("partnerInstanceService");
+		stationConfirmGeneralTaskDto.setMethodName("applySettleSuccess");
+		stationConfirmGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		
+		stationConfirmGeneralTaskDto.setBusinessStepDesc("applySettleSuccess");
+		stationConfirmGeneralTaskDto.setOperator(operator);
+
+		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
+		settleSuccessDto.setInstanceId(instanceId);
+		settleSuccessDto.setOperator(operator);
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		stationConfirmGeneralTaskDto.setParameterType(PartnerInstanceSettleSuccessDto.class.getName());
+		stationConfirmGeneralTaskDto.setParameter(JSON.toJSONString(settleSuccessDto));
+		stationConfirmGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return stationConfirmGeneralTaskDto;
+	}
+
+	private GeneralTaskDto buildAddWangwangTagTask(PartnerInstanceDto instance, String operator) {
+		String businessNo = String.valueOf(instance.getId());
+		
+		GeneralTaskDto wangwangGeneralTaskDto = new GeneralTaskDto();
+		wangwangGeneralTaskDto.setBusinessNo(businessNo);
+		wangwangGeneralTaskDto.setBeanName("wangWangTagService");
+		wangwangGeneralTaskDto.setMethodName("addWangWangTagByNick");
+		
+		wangwangGeneralTaskDto.setBusinessType(TaskBusinessTypeEnum.SETTLING_SYS_PROCESS.getCode());
+		wangwangGeneralTaskDto.setBusinessStepDesc("addWangWangTagByNick");
+		wangwangGeneralTaskDto.setOperator(operator);
+		wangwangGeneralTaskDto.setParameterType(String.class.getName());
+		wangwangGeneralTaskDto.setParameter(instance.getPartnerDto().getTaobaoNick());
+		GeneralTaskRetryConfigDto retry = new GeneralTaskRetryConfigDto();
+		retry.setIntervalTime(6 * 3600);// 失败5小时重试
+		retry.setMaxRetryTimes(120);// 失败一天执行4次,一个月120次，超过业务人工介入
+		retry.setIntervalIncrement(false);
+		wangwangGeneralTaskDto.setRetryTaskConfig(retry);
+		wangwangGeneralTaskDto.setPriority(TaskPriority.HIGH);
+		return wangwangGeneralTaskDto;
 	}
 
 	@Override
@@ -294,14 +368,13 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 */
 	public void submitApproveProcessTask(ApproveProcessTask processTask) {
 		BeanValidator.validateWithThrowable(processTask);
-		// 校验操作人的组织id
-		processTask.validateOperatorOrgId();
 		try {
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setBusiness(processTask.getBusiness());
 			startProcessDto.setBusinessId(processTask.getBusinessId());
 			startProcessDto.setBusinessName(processTask.getBusinessName());
+			startProcessDto.setBusinessOrgId(processTask.getBusinessOrgId());
 			startProcessDto.copyOperatorDto(processTask);
 			startProcessDto.setJsonParams(FeatureUtil.toStringUnencode(processTask.getParams()));
 			// 启动流程
@@ -369,7 +442,38 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public void submitAddUserTagTasks(Long instanceId,String operator) {
+		try {
+			PartnerInstanceDto instance =partnerInstanceBO.getPartnerInstanceById(instanceId);
+			
+			// 异构系统交互提交后台任务
+			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
+			// TODO uic打标 begin
+			GeneralTaskDto uicGeneralTaskDto = buildAddUicTagTask(instance, operator);
+			uicGeneralTaskDto.setBusinessStepNo(1l);
+			taskDtos.add(uicGeneralTaskDto);
+			// TODO uic打标 end
+
+			// TODO 旺旺打标 begin
+			GeneralTaskDto wangwangGeneralTaskDto = buildAddWangwangTagTask(instance, operator);
+			wangwangGeneralTaskDto.setBusinessStepNo(2l);
+			taskDtos.add(wangwangGeneralTaskDto);
+			// TODO 旺旺打标 end
+
+			// TODO 提交任务
+			taskSubmitService.submitTasks(taskDtos);
+			logger.info("submitAddUserTagTasks : {}", JSON.toJSONString(taskDtos));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitAddUserTagTasks] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitAddUserTagTasks error: " + e.getMessage());
+		}
+		
+	}
+	
+	@Override
 	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId,Long instanceId) {
 		try {
 			UserTagDto userTagDto = new UserTagDto();
@@ -436,24 +540,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
 			// 解除保证金
-			GeneralTaskDto dealStanderBailTaskVo = new GeneralTaskDto();
-			dealStanderBailTaskVo.setBusinessNo(String.valueOf(instanceId));
-			dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
-			dealStanderBailTaskVo.setMethodName("dealStandardBail");
-			dealStanderBailTaskVo.setBusinessStepNo(1l);
-			dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
-			dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
-			dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
-
-			AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
-			alipayStandardBailDto.setAmount(frozenMoney);
-			alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE);
-			alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
-			alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
-			alipayStandardBailDto.setTypeCode(standerBailTypeCode);
-			alipayStandardBailDto.setUserAccount(accountNo);
-			dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
-			dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
+			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
+					operatorDto);
 			taskLists.add(dealStanderBailTaskVo);
 
 			// 正式撤点
@@ -478,6 +566,63 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		} catch (Exception e) {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitQuitTask] instanceId = {}, {}", instanceId, e);
 			throw new AugeServiceException("submitQuitTask error: " + e.getMessage());
+		}
+	}
+
+	private GeneralTaskDto buildDealStanderBailTaskVo(Long instanceId, String accountNo, String frozenMoney,
+			OperatorDto operatorDto) {
+		GeneralTaskDto dealStanderBailTaskVo = new GeneralTaskDto();
+		dealStanderBailTaskVo.setBusinessNo(String.valueOf(instanceId));
+		dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
+		dealStanderBailTaskVo.setMethodName("dealStandardBail");
+		dealStanderBailTaskVo.setBusinessStepNo(1l);
+		dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+		dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
+		dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
+
+		AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
+		alipayStandardBailDto.setAmount(frozenMoney);
+		alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE);
+		alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
+		alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
+		alipayStandardBailDto.setTypeCode(standerBailTypeCode);
+		alipayStandardBailDto.setUserAccount(accountNo);
+		dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
+		dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
+		return dealStanderBailTaskVo;
+	}
+	
+	@Override
+	public void submitThawMoneyTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto) {
+		try {
+			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
+
+			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
+					operatorDto);
+			taskLists.add(dealStanderBailTaskVo);
+
+			// 调用解冻成功
+			GeneralTaskDto thawMoneyTaskVo = new GeneralTaskDto();
+			thawMoneyTaskVo.setBusinessNo(String.valueOf(instanceId));
+			thawMoneyTaskVo.setBeanName("partnerInstanceService");
+			thawMoneyTaskVo.setMethodName("thawMoneySuccess");
+			thawMoneyTaskVo.setBusinessStepNo(2l);
+			thawMoneyTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+			thawMoneyTaskVo.setBusinessStepDesc("thawMoneySuccess");
+			thawMoneyTaskVo.setOperator(operatorDto.getOperator());
+
+			PartnerInstanceThrawSuccessDto thrawSuccessDto = new PartnerInstanceThrawSuccessDto();
+			thrawSuccessDto.copyOperatorDto(operatorDto);
+			thrawSuccessDto.setInstanceId(instanceId);
+			thawMoneyTaskVo.setParameterType(PartnerInstanceThrawSuccessDto.class.getName());
+			thawMoneyTaskVo.setParameter(JSON.toJSONString(thrawSuccessDto));
+			taskLists.add(thawMoneyTaskVo);
+
+			taskSubmitService.submitTasks(taskLists);
+			logger.info("submitThawMoneyTask : {}", JSON.toJSONString(taskLists));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitThawMoneyTask] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitThawMoneyTask error: " + e.getMessage());
 		}
 	}
 
@@ -527,25 +672,20 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			alipayTagDto.setBelongTo(AlipayTagDto.ALIPAY_CUNTAO_BELONG_TO);
 			alipayTagDto.setTagValue(AlipayTagDto.ALIPAY_TAG_VALUE_F);
 
-			// Partner partner =
-			// partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
-			// String accountNo = partner.getAlipayAccount();
-			// if (StringUtils.isNotEmpty(accountNo)) {
-			// alipayTagDto.setUserId(accountNo.substring(0, accountNo.length()
-			// - 4));
-			// }
 			AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 			
-			String accountNo = accountMoney.getAccountNo();
-			
-			if (StringUtils.isEmpty(accountNo)) {
+			String accountNo ;
+			//村拍档没有保证金，所以accountMoney=null
+			if (null == accountMoney || StringUtils.isEmpty(accountMoney.getAccountNo())) {
 				OperatorDto operatorDto = new OperatorDto();
 				operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
 				operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 				operatorDto.setOperatorOrgId(0L);
 				PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(taobaoUserId, operatorDto);
 				accountNo = accountDto.getAccountNo();
+			}else{
+				accountNo = accountMoney.getAccountNo();
 			}
 			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
 			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());

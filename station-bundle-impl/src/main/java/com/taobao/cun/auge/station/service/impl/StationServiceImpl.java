@@ -113,6 +113,7 @@ public class StationServiceImpl implements StationService {
 		processTask.setBusiness(ProcessBusinessEnum.SHUT_DOWN_STATION);
 		processTask.setBusinessId(stationId);
 		processTask.setBusinessName(station.getName());
+		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(shutDownDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
@@ -103,8 +104,13 @@ public interface PartnerCourseRecordMapper {
      * 数据迁移临时用
      */
     List<ExamInstanceDto> queryExamInstanceList(Map<String,Object> param);
-    int updateApplyExamPoint(Map<String,Object> param);
+    List<PartnerDto> queryPartnerIden(Map<String,Object> param);
+    List<PartnerDto> queryAlilangPartner(Map<String,Object> param);
+
     
+    int updateApplyExamPoint(Map<String,Object> param);
+    int updatePartnerBirth(Map<String,Object> param);
+
     List<PartnerPeixunStatusCountDto> queryPeixunCountByCondition(Map<String,Object> param);
     
     List<PartnerPeixunListDetailDto> queryPeixunList(Map<String,Object> param);

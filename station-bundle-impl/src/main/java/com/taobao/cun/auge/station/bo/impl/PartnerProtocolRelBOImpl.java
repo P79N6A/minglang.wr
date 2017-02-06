@@ -44,7 +44,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
+	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
 		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		if (null == protocolId) {

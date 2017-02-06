@@ -6,11 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.event.StationBundleEventConstant;
+import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
+import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
@@ -24,6 +29,15 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 
 	@Autowired
 	PartnerInstanceExtService partnerInstanceExtService;
+	
+	@Autowired
+	GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
+	
+	@Autowired
+	PartnerBO partnerBO;
 
 	@Override
 	public void onMessage(Event event) {
@@ -42,6 +56,16 @@ public class PartnerInstanceTypeChangeListener implements EventListener {
 			updateDto.copyOperatorDto(typeChangeEvent);
 
 			partnerInstanceExtService.updatePartnerMaxChildNum(updateDto);
+		}else if(PartnerInstanceTypeChangeEnum.TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
+			//淘帮手升级
+			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+			
+			//淘帮手升级为合伙人，去淘帮手标
+			generalTaskSubmitService.submitRemoveUserTagTasks(partner.getTaobaoUserId(), partner.getTaobaoNick(), typeChangeEnum.getPrePartnerInstanceType(), typeChangeEvent.getOperator(), instanceId);
+		}else if(PartnerInstanceTypeChangeEnum.CANCEL_TPA_UPGRADE_2_TP.equals(typeChangeEnum)){
+			//淘帮手撤销升级为合伙人，打标淘帮手标
+			generalTaskSubmitService.submitAddUserTagTasks(instanceId, typeChangeEvent.getOperator());
 		}
 	}
 }

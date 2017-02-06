@@ -164,6 +164,10 @@ public class Partner {
      *
      * @mbggenerated Mon Sep 26 11:29:22 CST 2016
      */
+    
+    private Date birthday;
+    private String flowerName;
+    
     public Long getId() {
         return id;
     }
@@ -611,4 +615,22 @@ public class Partner {
     public void setAlilangUserId(String alilangUserId) {
         this.alilangUserId = alilangUserId;
     }
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getFlowerName() {
+		return flowerName;
+	}
+
+	public void setFlowerName(String flowerName) {
+		this.flowerName = flowerName;
+	}
+    
+    
 }

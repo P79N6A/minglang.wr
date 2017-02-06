@@ -23,9 +23,14 @@ public class PartnerProtocolRelTargetTypeEnum  implements Serializable {
 
 	public static final PartnerProtocolRelTargetTypeEnum PARTNER_INSTANCE = new PartnerProtocolRelTargetTypeEnum(
 			"PARTNER_INSTANCE", "合伙实例");
+	
+	public static final PartnerProtocolRelTargetTypeEnum PARTNER = new PartnerProtocolRelTargetTypeEnum(
+			"PARTNER", "合伙人");
 	static {
 		mappings.put("CRIUS_STATION", CRIUS_STATION);
 		mappings.put("PARTNER_INSTANCE", PARTNER_INSTANCE);
+		mappings.put("PARTNER", PARTNER);
+
 	}
 
 	public PartnerProtocolRelTargetTypeEnum(String code, String desc) {

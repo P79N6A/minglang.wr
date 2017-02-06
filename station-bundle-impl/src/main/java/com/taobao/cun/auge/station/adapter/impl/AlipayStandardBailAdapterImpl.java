@@ -1,45 +1,54 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
-import org.apache.commons.beanutils.BeanUtils;
+import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.bail.dto.BaiDtoBuilder;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.settle.common.model.ResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.common.utils.BeanCopyUtils;
-import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.common.resultmodel.ResultModel;
-import com.taobao.cun.service.alipay.AlipayStandardBailService;
+import org.springframework.util.StringUtils;
 
 @Component("alipayStandardBailAdapter")
 public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private AlipayStandardBailService alipayStandardBailService;
+	private PartnerInstanceBO partnerInstanceBO;
+
+	@Autowired
+	private BailService bailService;
 
 	@Override
-	public boolean dealStandardBail(com.taobao.cun.auge.station.dto.AlipayStandardBailDto alipayStandardBailDto) {
+	public boolean dealStandardBail(AlipayStandardBailDto alipayStandardBailDto) {
 		try {
 			logger.info("start dealStandardBail : " + JSON.toJSONString(alipayStandardBailDto));
-			com.taobao.cun.dto.alipay.AlipayStandardBailDto dto = new com.taobao.cun.dto.alipay.AlipayStandardBailDto();
-			BeanCopyUtils.copyNotNullProperties(alipayStandardBailDto,dto);
-			ResultModel<com.taobao.cun.dto.alipay.AlipayStandardBailDto> resultModel = alipayStandardBailService.dealStandardBail(dto);
-			if (!resultModel.isSuccess()) {
-				if (null != resultModel.getException()) {
-					logger.error("alipayStandardBailService.dealStandardBail error", resultModel.getException());
-				} else {
-					logger.error("alipayStandardBailService.dealStandardBail error" + JSON.toJSONString(resultModel));
-				}
-				throw resultModel.getException() == null ? new RuntimeException("dealStandardBail error") : resultModel.getException();
+			String outOrderNo = alipayStandardBailDto.getOutOrderNo();
+			if (StringUtils.isEmpty(outOrderNo)) {
+				throw new RuntimeException("outOrderNo is empty!");
 			}
-			return true;
+			ResultModel<Boolean> resultModel = null;
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(BaiDtoBuilder.parseInstanceIdFromOutOrderNo(outOrderNo));
+			if (AlipayStandardBailDto.ALIPAY_OP_TYPE_FREEZE.equals(alipayStandardBailDto.getOpType())) {
+				resultModel = bailService.freezeUserBail(BaiDtoBuilder.buildFreezeBailDtoFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
+			}else if(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE.equals(alipayStandardBailDto.getOpType())) {
+				resultModel = bailService.unfreezeUserBail(BaiDtoBuilder.buildFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
+			}else if (AlipayStandardBailDto.ALIPAY_OP_TYPE_TRANSFER.equals(alipayStandardBailDto.getOpType())) {
+				throw new RuntimeException("Not Support Operation Exception!");
+			}
+			if (resultModel != null && resultModel.isSuccess() && resultModel.getResult() != null) {
+				return resultModel.getResult();
+			}
+			return false;
 		} catch (Exception e) {
 			logger.error("alipayStandardBailService.dealStandardBail error", e);
 			throw new AugeServiceException("alipayStandardBailService.dealStandardBail error" + e.getMessage());
 		}
 	}
-
 }

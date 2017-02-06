@@ -1,7 +1,12 @@
 package com.taobao.cun.auge.station.convert;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -33,6 +38,8 @@ public class PartnerConverter {
 		partnerDto.setSolidPoint(partner.getSolidPoint());
 		partnerDto.setLeaseArea(partner.getLeaseArea());
 		partnerDto.setAliLangUserId(partner.getAlilangUserId());
+		partnerDto.setBirthday(partner.getBirthday());
+		partnerDto.setFlowerName(partner.getFlowerName());
 		if (partner.getBusinessType() != null) {
 			partnerDto.setBusinessType(PartnerBusinessTypeEnum.valueof(partner.getBusinessType()));
 		}
@@ -45,7 +52,7 @@ public class PartnerConverter {
 		return partnerDto;
 	}
 
-	public static Partner toParnter(PartnerDto parnterDto) {
+	public static Partner toParnter(PartnerDto parnterDto,boolean isUpdate) {
 		if (parnterDto == null) {
 			return null;
 		}
@@ -70,8 +77,24 @@ public class PartnerConverter {
 		if (parnterDto.getState() != null) {
 			partner.setState(parnterDto.getState().getCode());
 		}
-
+		if(!isUpdate){
+			addBirthday(partner);
+		}else if(parnterDto.getBirthday()!=null){
+			partner.setBirthday(parnterDto.getBirthday());
+		}
 		return partner;
+	}
+	
+	//初始化生日
+	private static void addBirthday(Partner partner){
+		if(StringUtils.isNotEmpty(partner.getIdenNum())&&partner.getIdenNum().length()==18){
+			DateFormat format = new SimpleDateFormat("yyyyMMdd");  
+			try {
+				partner.setBirthday(format.parse(partner.getIdenNum().substring(6, 14)));
+			} catch (Exception e) {
+				// 暂时不影响正常保存
+			}
+		}
 	}
 
 	public static List<PartnerDto> toPartnerDtos(List<Partner> partner) {
@@ -94,7 +117,7 @@ public class PartnerConverter {
 
 		List<Partner> list = new ArrayList<Partner>();
 		for (PartnerDto partnerDto : partner) {
-			list.add(toParnter(partnerDto));
+			list.add(toParnter(partnerDto,false));
 		}
 
 		return list;

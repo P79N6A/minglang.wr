@@ -87,16 +87,32 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
             Station station = stationBO.getStationById(partnerInstance.getStationId());
             if (station != null) {
                 profile.setStationName(station.getName());
+                profile.setStationId(station.getId());
             }
         }
         if (partnerInstance != null && partnerInstance.getPartnerId() != null) {
             Partner partner = partnerBO.getPartnerById(partnerInstance.getPartnerId());
             if (partner != null) {
                 profile.setUserName(partner.getName());
+                profile.setBirthday(partner.getBirthday());
+                profile.setFlowerName(partner.getFlowerName());
             }
         }
         return profile;
     }
+    
+    @Override
+	public UserProfile getUserProfileByAlilangUserId(String alilangUserId) {
+		if(StringUtils.isEmpty(alilangUserId)){
+			return null;
+		}
+		Partner partner=partnerBO.getPartnerByAliLangUserId(alilangUserId);
+		if(partner!=null){
+			return getUserProfile(partner.getTaobaoUserId());
+		}else{
+			return new UserProfile();
+		}
+	}
 
     @Override
     public AlilangProfileDto getAlilangProfile(Long taobaoUserId) {
@@ -160,5 +176,8 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         }
         return false;
     }
+
+
+	
 
 }

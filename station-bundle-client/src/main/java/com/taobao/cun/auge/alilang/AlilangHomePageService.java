@@ -14,5 +14,5 @@ public interface AlilangHomePageService {
 
 	AlilangProfileDto getAlilangProfile(Long taobaoUserId);
 	
-	
+	UserProfile getUserProfileByAlilangUserId(String alilangUserId);
 }

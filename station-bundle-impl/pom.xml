@@ -247,6 +247,10 @@
 			<artifactId>jingwei-client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.alibaba.middleware.jingwei</groupId>
+			<artifactId>jingwei-common</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.crius</groupId>
 			<artifactId>exam-client</artifactId>
 		</dependency>
@@ -300,6 +304,10 @@
         <dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cuntaosettle.client</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -20,8 +20,18 @@ public class ApproveProcessTask extends OperatorDto implements Serializable {
 	private Long businessId;
 
 	private String businessName;
+	
+	private Long businessOrgId;
 
 	private Map<String, String> params = new HashMap<String, String>();
+	
+	public Long getBusinessOrgId() {
+		return businessOrgId;
+	}
+
+	public void setBusinessOrgId(Long businessOrgId) {
+		this.businessOrgId = businessOrgId;
+	}
 
 	public ProcessBusinessEnum getBusiness() {
 		return business;
