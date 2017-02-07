@@ -474,6 +474,11 @@
 				<artifactId>cuntaosettle.client</artifactId>
 				<version>1.0.21.jdk6</version>
 			</dependency>
+			<dependency>
+			  	<groupId>com.alibaba.external</groupId>
+			  	<artifactId>jakarta.commons.lang</artifactId>
+			  	<version>999-not-exist-v3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
