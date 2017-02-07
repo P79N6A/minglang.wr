@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns="http://www.springframework.org/schema/beans"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
 	default-autowire="byName">
-	
 	<bean id="eventConsumer" class="com.taobao.cun.crius.event.client.impl.EventConsumerImpl">
-		<property name="group" value="c-cuntaobops-station-event"/>
-		<property name="topic" value="cuntao_event-1"/>
+		<property name="group" value="${event.consumer.group}"/>
+		<property name="topic" value="${event.consumer.topic}"/>
 	</bean>
 	
 	<bean id="eventProducer" class="com.taobao.cun.crius.event.client.impl.EventProducerImpl">
-		<property name="group" value="p-cuntaobops-station-event"/>
-		<property name="topic" value="cuntao_event-1"/>
+		<property name="group" value="${event.producer.group}"/>
+		<property name="topic" value="${event.producer.topic}"/>
 	</bean>
 	
 	<bean id="eventListenerDispatcher" class="com.taobao.cun.crius.event.client.impl.EventListenerDispatcherImpl"/>
@@ -21,7 +27,4 @@
 	<bean class="com.taobao.cun.crius.event.client.EventClientLifecycleListener"/>
 	
 	<bean class="com.taobao.cun.crius.event.client.EventDispatcher" factory-method="getInstance"/>
-	
-	<bean class="com.taobao.cun.auge.event.AEventListener"/>
-	<bean class="com.taobao.cun.auge.event.BEventListener"/>
 </beans>
