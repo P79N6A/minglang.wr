@@ -18,7 +18,7 @@ import com.alibaba.springframework.boot.util.env.EnvironmentUtil;
 @Component
 public class OnlineHsfApplicationListener implements ApplicationListener<ApplicationReadyEvent>, Ordered {
 
-	private static final String HSF_ONLINE_URL = "http://localhost:8080/hsf/online";
+	private static final String HSF_ONLINE_URL = "http://localhost:7002/hsf/online";
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {

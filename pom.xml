@@ -133,41 +133,7 @@
 				<artifactId>groovy-all</artifactId>
 				<version>2.4.5</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-core</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-el</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-jasper</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-logging-juli</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat.embed</groupId>
-				<artifactId>tomcat-embed-websocket</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jdbc</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jsp-api</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
+			
 			<dependency>
 				<groupId>com.cuntao.boot</groupId>
 				<artifactId>spring-boot-starter-mybatis</artifactId>
@@ -485,6 +451,12 @@
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>ceres.shard</artifactId>
 			  <version>1.0.0.39</version>
+			  <exclusions>
+			 	 <exclusion>
+			   	<groupId>com.alibaba.citrus</groupId>  
+     			 <artifactId>citrus-webx-all</artifactId>  
+			  	</exclusion>
+			  </exclusions>
 			 </dependency>
 			 	
             <dependency>
@@ -501,6 +473,11 @@
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
 				<version>1.0.21.jdk6</version>
+			</dependency>
+			<dependency>
+			  	<groupId>com.alibaba.external</groupId>
+			  	<artifactId>jakarta.commons.lang</artifactId>
+			  	<version>999-not-exist-v3</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
