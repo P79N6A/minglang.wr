@@ -53,8 +53,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		    option.setShowMemo(true);
 			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
 			if(queryResultDO == null || queryResultDO.getBizOrder() == null){
-				
-				queryResultDO = archiveTcBaseService.getBizOrderById(bizOrderId);
+				queryResultDO = archiveTcBaseService.querySingle(bizOrderId, null);
 				logger.info("query archiveOrder:"+queryResultDO);
 			}
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
