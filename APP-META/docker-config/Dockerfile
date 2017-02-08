@@ -20,4 +20,4 @@ WORKDIR /home/admin/${MS_APP_NAME}/bin
 
 #代码包
 COPY ${MS_APP_NAME}.tgz /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.tgz
-COPY ${MS_APP_NAME}.release /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.release
+COPY auge.release /home/admin/${MS_APP_NAME}/target/auge.release
