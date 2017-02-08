@@ -30,7 +30,7 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<ague.station.client.version>2.0.0-SNAPSHOT</ague.station.client.version>
 
-		<cuntaocenter.client.version>2.5.5</cuntaocenter.client.version>
+		<cuntaocenter.client.version>2.7.8-SNAPSHOT</cuntaocenter.client.version>
 
 	</properties>
 
