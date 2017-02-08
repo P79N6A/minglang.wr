@@ -34,11 +34,11 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 	@Override
 	public boolean isBackAsset(Long instanceId) {
 		try {
-			Long stationApplyId = partnerInstanceBO.findStationApplyId(instanceId);
+			Long stationId = partnerInstanceBO.findStationIdByInstanceId(instanceId);
 
 			CuntaoAssetQueryCondition queryCondition = new CuntaoAssetQueryCondition();
 
-			queryCondition.setStationId(String.valueOf(stationApplyId));
+			queryCondition.setStationId(String.valueOf(stationId));
 			queryCondition.getPage().setStart(0);
 			queryCondition.getPage().setSize(1000);
 			
