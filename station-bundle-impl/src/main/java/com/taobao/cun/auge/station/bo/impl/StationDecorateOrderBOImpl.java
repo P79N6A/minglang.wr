@@ -33,6 +33,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Autowired
 	private TcBaseService tcBaseService;
 	
+	private TcBaseService archiveTcBaseService;
 	@Value("${stationDecorateOrder.amount}")
 	private long orderAmount;
 	
@@ -47,13 +48,12 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		    option.setShowPayOrder(true);
 		    option.setShowDetail(true);
 		    option.setShowLogisticsOrder(true);
-		    option.setShowSnapShot(BizQueryOptionDO.MAIN_SNAPSHOT);
+		    option.setShowSnapShot(BizQueryOptionDO.NO_SNAPSHOT);
 		    option.setShowMemo(true);
 			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
-			if(queryResultDO.getBizOrder() == null){
-				queryResultDO = tcBaseService.queryCompleteSingle(bizOrderId, null, option);
+			if(queryResultDO == null || queryResultDO.getBizOrder() == null){
+				queryResultDO = archiveTcBaseService.getCachedBizOrderById(bizOrderId,option);
 			}
-				
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
