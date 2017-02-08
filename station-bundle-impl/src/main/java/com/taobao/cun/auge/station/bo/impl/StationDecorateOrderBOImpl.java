@@ -43,7 +43,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Override
 	public Optional<StationDecorateOrderDto> getDecorateOrderById(Long bizOrderId){
 		try {
-			SingleQueryResultDO queryResultDO = tcBaseService.getBizOrderById(bizOrderId);
+			SingleQueryResultDO queryResultDO = tcBaseService.getBizOrderById(bizOrderId,true);
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
