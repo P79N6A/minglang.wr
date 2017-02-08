@@ -43,14 +43,14 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Override
 	public Optional<StationDecorateOrderDto> getDecorateOrderById(Long bizOrderId){
 		try {
-			SingleQueryResultDO queryResultDO = tcBaseService.getBizOrderById(bizOrderId);
+			BizQueryOptionDO option = new BizQueryOptionDO();
+		    option.setShowPayOrder(true);
+		    option.setShowDetail(true);
+		    option.setShowLogisticsOrder(true);
+		    option.setShowSnapShot(BizQueryOptionDO.MAIN_SNAPSHOT);
+		    option.setShowMemo(true);
+			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
 			if(queryResultDO.getBizOrder() == null){
-				BizQueryOptionDO option = new BizQueryOptionDO();
-			    option.setShowPayOrder(true);
-			    option.setShowDetail(true);
-			    option.setShowLogisticsOrder(true);
-			    option.setShowSnapShot(BizQueryOptionDO.NO_SNAPSHOT);
-			    option.setShowMemo(false);
 				queryResultDO = tcBaseService.queryCompleteSingle(bizOrderId, null, option);
 			}
 				
