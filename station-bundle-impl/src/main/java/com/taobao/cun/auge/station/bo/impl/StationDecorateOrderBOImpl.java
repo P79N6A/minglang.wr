@@ -33,6 +33,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Autowired
 	private TcBaseService tcBaseService;
 	
+	@Autowired
 	private TcBaseService archiveTcBaseService;
 	@Value("${stationDecorateOrder.amount}")
 	private long orderAmount;
