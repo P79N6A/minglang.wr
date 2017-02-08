@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
-import com.taobao.tair.deploy.Main;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.domain.dataobject.PayOrderDO;
+import com.taobao.tc.domain.query.BizQueryOptionDO;
 import com.taobao.tc.domain.query.QueryBizOrderDO;
 import com.taobao.tc.domain.result.BatchQueryOrderInfoResultDO;
 import com.taobao.tc.domain.result.SingleQueryResultDO;
@@ -33,6 +33,8 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Autowired
 	private TcBaseService tcBaseService;
 	
+	@Autowired
+	private TcBaseService archiveTcBaseService;
 	@Value("${stationDecorateOrder.amount}")
 	private long orderAmount;
 	
@@ -43,7 +45,17 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	@Override
 	public Optional<StationDecorateOrderDto> getDecorateOrderById(Long bizOrderId){
 		try {
-			SingleQueryResultDO queryResultDO = tcBaseService.getBizOrderById(bizOrderId);
+			BizQueryOptionDO option = new BizQueryOptionDO();
+		    option.setShowPayOrder(true);
+		    option.setShowDetail(true);
+		    option.setShowLogisticsOrder(true);
+		    option.setShowSnapShot(BizQueryOptionDO.NO_SNAPSHOT);
+		    option.setShowMemo(true);
+			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
+			if(queryResultDO == null || queryResultDO.getBizOrder() == null){
+				queryResultDO = archiveTcBaseService.querySingle(bizOrderId, null);
+				logger.info("query archiveOrder:"+queryResultDO);
+			}
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
