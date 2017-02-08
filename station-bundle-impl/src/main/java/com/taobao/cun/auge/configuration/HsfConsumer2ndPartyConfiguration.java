@@ -24,6 +24,7 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.uic.common.cache.UICCacheService;
@@ -163,6 +164,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return getConsumerBean(UicDataWriteService.class, HSFGroup.HSF, version, 3000);
 	}
 	
+	 @Bean
+	  public TcBaseService archiveTcBaseService(HsfConsumerContext context,@Value("${archiveTcBaseService.version}") String version) {
+	      return context.hsfConsumerBuilder(TcBaseService.class,HSFGroup.HSF.name(),version).clientTimeout(5000).build();
+	  }
+	 
 	@Bean
 	public TagRecordServiceClient tagRecordServiceClient(TagRecordReadService tagRecordReadService,
 			TagRecordWriteService tagRecordWriteService,
