@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.AttachmentService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,4 +34,34 @@ public class AttachmentServiceImpl implements AttachmentService {
         attachementBO.addAttachementBatch(attachmentDtoList, objectId, bizTypeEnum, attachmentTypeId, operatorDto);
     }
 
+	@Override
+	public List<Long> modifyAttachementBatch(
+			List<AttachementDto> attachementDtoList, Long objectId,
+			AttachementBizTypeEnum bizTypeEnum, OperatorDto operatorDto)
+			throws AugeServiceException {
+		return attachementBO.modifyAttachementBatch(attachementDtoList, objectId, bizTypeEnum, operatorDto);
+	}
+
+	@Override
+	public void modifyAttachementBatch(List<AttachementDto> attachementDtoList,
+			Long objectId, AttachementBizTypeEnum bizTypeEnum,
+			AttachementTypeIdEnum attachementTypeId, OperatorDto operatorDto)
+			throws AugeServiceException {
+		attachementBO.modifyAttachementBatch(attachementDtoList, objectId, bizTypeEnum, attachementTypeId, operatorDto);
+		
+	}
+
+	@Override
+	public List<Long> addAttachementBatch(
+			List<AttachementDto> attachementDtoList, Long objectId,
+			AttachementBizTypeEnum bizTypeEnum, OperatorDto operatorDto)
+			throws AugeServiceException {
+		return attachementBO.addAttachementBatch(attachementDtoList, objectId, bizTypeEnum, operatorDto);
+	}
+
+	@Override
+	public List<AttachementDto> getAttachementList(Long objectId,
+			AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException {
+		return attachementBO.getAttachementList(objectId, bizTypeEnum);
+	}
 }
