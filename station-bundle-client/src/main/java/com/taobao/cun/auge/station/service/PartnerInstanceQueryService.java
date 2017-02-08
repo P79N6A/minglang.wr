@@ -263,4 +263,12 @@ public interface PartnerInstanceQueryService {
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
     
+    /**
+     * 重构过度使用
+     * 
+     * @param stationId
+     * @return
+     */
+    public Long findStationApplyIdByStationId(Long stationId);
+    
 }
