@@ -54,7 +54,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
 			if(queryResultDO == null || queryResultDO.getBizOrder() == null){
 				
-				queryResultDO = archiveTcBaseService.getCachedBizOrderById(bizOrderId,option);
+				queryResultDO = archiveTcBaseService.getBizOrderById(bizOrderId);
 				logger.info("query archiveOrder:"+queryResultDO);
 			}
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
