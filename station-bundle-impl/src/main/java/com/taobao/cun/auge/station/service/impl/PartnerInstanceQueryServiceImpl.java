@@ -606,4 +606,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     	ValidateUtils.notNull(stationId);
         return partnerInstanceBO.findStationApplyIdByStationId(stationId);
     }
+    
+    @Override
+    public Long findStationIdByStationApplyId(Long stationApplyId){
+    	ValidateUtils.notNull(stationApplyId);
+        return partnerInstanceBO.findStationIdByStationApplyId(stationApplyId);
+    }
 }

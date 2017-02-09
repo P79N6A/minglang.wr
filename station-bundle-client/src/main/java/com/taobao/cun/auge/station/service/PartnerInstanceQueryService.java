@@ -271,4 +271,11 @@ public interface PartnerInstanceQueryService {
      */
     public Long findStationApplyIdByStationId(Long stationId);
     
+    /**
+     * 重构过度使用
+     * @param stationApplyId
+     * @return
+     */
+    public Long findStationIdByStationApplyId(Long stationApplyId);
+    
 }
