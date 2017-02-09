@@ -6,6 +6,9 @@
 ## =========================================================================================
 
 ## in case there's more than one app tgz, we should only use the newest one
+SPRINGBOOT_OPTS="${SPRINGBOOT_OPTS} --logging.config=classpath:logback-spring.xml"
+export SPRINGBOOT_OPTS
+
 APP_TGZ_NUM=`ls ${APP_HOME}/target/*${APP_NAME}*.tgz | grep -v "appconf.tgz" | wc -l`
 if [[ $APP_TGZ_NUM -gt 1 ]];then
     echo "[ WARN] -- more than one tgz package found, using the newest one."
