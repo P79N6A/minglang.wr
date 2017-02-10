@@ -24,6 +24,7 @@ public class AttachementBizTypeEnum implements Serializable {
     public static final AttachementBizTypeEnum STATION_DECORATE = new AttachementBizTypeEnum("STATION_DECORATE", "村点装修记录");
     public static final AttachementBizTypeEnum WISDOM_COUNTY_APPLY = new AttachementBizTypeEnum("WISDOM_COUNTY_APPLY", "智慧县域报名附件");
     public static final AttachementBizTypeEnum CUNGOV_CONSULT = new AttachementBizTypeEnum("CUNGOV_CONSULT", "举报投诉附件");
+    public static final AttachementBizTypeEnum INCENTIVE_PROGRAM = new AttachementBizTypeEnum("INCENTIVE_PROGRAM", "激励方案附件");
 
 
     static {
@@ -32,6 +33,7 @@ public class AttachementBizTypeEnum implements Serializable {
         mappings.put("STATION_DECORATE", STATION_DECORATE);
         mappings.put("WISDOM_COUNTY_APPLY", WISDOM_COUNTY_APPLY);
         mappings.put("CUNGOV_CONSULT", CUNGOV_CONSULT);
+        mappings.put("INCENTIVE_PROGRAM", INCENTIVE_PROGRAM);
     }
 
     public AttachementBizTypeEnum(String code, String desc) {
