@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
@@ -52,4 +53,12 @@ public interface AttachmentService {
 	 * @throws AugeServiceException
 	 */
 	public List<AttachementDto>  getAttachementList(Long objectId,AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException;
+	
+	/**
+	 * 删除附件
+	 * @param attachementDeleteDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto) throws AugeServiceException;
 }

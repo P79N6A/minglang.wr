@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.bo.AttachementBO;
+import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
@@ -63,5 +64,12 @@ public class AttachmentServiceImpl implements AttachmentService {
 	public List<AttachementDto> getAttachementList(Long objectId,
 			AttachementBizTypeEnum bizTypeEnum) throws AugeServiceException {
 		return attachementBO.getAttachementList(objectId, bizTypeEnum);
+	}
+
+	@Override
+	public void deleteAttachement(AttachementDeleteDto attachementDeleteDto)
+			throws AugeServiceException {
+		attachementBO.deleteAttachement(attachementDeleteDto);
+		
 	}
 }
