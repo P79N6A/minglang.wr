@@ -3,8 +3,6 @@ package com.taobao.cun.auge.station.service.impl;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.lang3.StringUtils;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
@@ -34,6 +31,7 @@ import com.alibaba.crm.finance.dataobject.audit.AuditDto;
 import com.alibaba.crm.finance.dataobject.contract.ContractDto;
 import com.alibaba.crm.finance.dataobject.draft.RefundOrShiftDraftMaterialDto;
 import com.alibaba.crm.finance.dataobject.draft.ShiftDraftMaterialDetailDto;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
@@ -62,7 +60,7 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
-import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
+import com.taobao.cun.crius.exam.dto.ExamInstanceItemDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
@@ -368,40 +366,77 @@ public class DataTransferServiceImpl implements DataTransferService{
 //				partnerCourseRecordMapper.updatePartnerBirth(param);
 //			}
 //		}
+		//阿里郎同步
+//		if(id==null){
+//			return null;
+//		}
+//		Long returnLong=null;
+//		Map<String,Object> param=new HashMap<String,Object>();
+//		param.put("id", id);
+//		param.put("detailId", detailId);
+//		List<PartnerDto> instances=partnerCourseRecordMapper.queryAlilangPartner(param);
+//		if(instances.size()==0){
+//			return null;
+//		}else{
+//			for(PartnerDto dto:instances){
+//				try{
+//				returnLong=dto.getId();
+//				PartnerMessage partnerMessage = new PartnerMessage();
+//				partnerMessage.setTaobaoUserId(dto.getTaobaoUserId());
+//				partnerMessage.setMobile(dto.getMobile());
+//				partnerMessage.setAction("new");
+//				partnerMessage.setEmail(dto.getEmail());
+//				partnerMessage.setName(dto.getName());
+//				partnerMessage.setAlilangOrgId(alilangOrgId);
+//				String str = JSONObject.toJSONString(partnerMessage);
+//				StringMessage stringMessage = new StringMessage();
+//				stringMessage.setBody(str);
+//				stringMessage.setTopic(topic);
+//				stringMessage.setMessageType(messageType);
+//				SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
+//				}catch(Exception e){
+//					//
+//				}
+//			}
+//		}
+//		return returnLong;
 		
+		//考试答卷初始化
 		if(id==null){
 			return null;
 		}
-		Long returnLong=null;
+		try{
 		Map<String,Object> param=new HashMap<String,Object>();
-		param.put("id", id);
+		param.put("idmin", id);
+		param.put("idmax", id+50);
 		param.put("detailId", detailId);
-		List<PartnerDto> instances=partnerCourseRecordMapper.queryAlilangPartner(param);
+		List<ExamInstanceItemDto> instances=partnerCourseRecordMapper.queryExamInstanceItemList(param);
 		if(instances.size()==0){
 			return null;
 		}else{
-			for(PartnerDto dto:instances){
-				try{
-				returnLong=dto.getId();
-				PartnerMessage partnerMessage = new PartnerMessage();
-				partnerMessage.setTaobaoUserId(dto.getTaobaoUserId());
-				partnerMessage.setMobile(dto.getMobile());
-				partnerMessage.setAction("new");
-				partnerMessage.setEmail(dto.getEmail());
-				partnerMessage.setName(dto.getName());
-				partnerMessage.setAlilangOrgId(alilangOrgId);
-				String str = JSONObject.toJSONString(partnerMessage);
-				StringMessage stringMessage = new StringMessage();
-				stringMessage.setBody(str);
-				stringMessage.setTopic(topic);
-				stringMessage.setMessageType(messageType);
-				SendResult sendResult = notifyPublisherManagerBean.sendMessage(stringMessage);
-				}catch(Exception e){
-					//
+			Map<Long,List<ExamInstanceItemDto>> map=new HashMap<Long,List<ExamInstanceItemDto>>();
+			for(ExamInstanceItemDto dto:instances){
+				if(map.get(dto.getInstanceId())==null){
+					map.put(dto.getInstanceId(), new ArrayList<ExamInstanceItemDto>());
 				}
+				map.get(dto.getInstanceId()).add(dto);
+			}
+			for(Long temp:map.keySet()){
+				Map<String,Object> insertMap=new HashMap<String,Object>();
+				insertMap.put("instanceId", temp);
+				int count=partnerCourseRecordMapper.queryExamInstanceAnswer(insertMap);
+				if(count>=1){
+					continue;
+				}
+				String answer=JSON.toJSONString(map.get(temp));
+				insertMap.put("answer", answer);
+				partnerCourseRecordMapper.insertExamAnswer(insertMap);
 			}
 		}
-		return returnLong;
+		}catch(Exception e){
+			return id;
+		}
+		return id+50;
 	}
 	
 }
