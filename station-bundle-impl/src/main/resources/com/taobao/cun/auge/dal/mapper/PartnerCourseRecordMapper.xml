@@ -612,7 +612,7 @@
   </insert>
   
   
-   <select id="queryExamInstanceAnswer" resultMap="java.lang.Integer" parameterType="map" >
+   <select id="queryExamInstanceAnswer" resultType="java.lang.Integer" parameterType="map" >
   select count(*) from exam_instance_answer where is_deleted='n' and instance_id=#{instanceId}
   </select>
   
