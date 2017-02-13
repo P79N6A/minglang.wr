@@ -600,6 +600,7 @@
    <if test="detailId != null" >
       and instance_id=#{detailId}
     </if>
+    order by instance_id
   </select>
   
   <insert id="insertExamAnswer" parameterType="map">
