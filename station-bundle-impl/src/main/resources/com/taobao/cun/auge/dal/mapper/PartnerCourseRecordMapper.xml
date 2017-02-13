@@ -592,7 +592,7 @@
   </resultMap>
   
    <select id="queryExamInstanceItemList" resultMap="examInstaceItemResult" parameterType="map" >
-   select a.id,a.taobao_user_id,a.mobile,a.email,a.name
+   select instance_id,question_id,question_type,seq_order,is_right,answer,point
    from exam_instance_item
    where is_deleted='n'
    and instance_id>#{idmin}
