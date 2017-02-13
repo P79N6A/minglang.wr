@@ -583,7 +583,7 @@
   
    <resultMap id="examInstaceItemResult" type="com.taobao.cun.crius.exam.dto.ExamInstanceItemDto" >
     <id column="instance_id" property="instanceId" jdbcType="BIGINT" />
-    <result column="answer" property="taobaoUserId" jdbcType="VARCHAR" />
+    <result column="answer" property="answer" jdbcType="VARCHAR" />
     <result column="is_right" property="isRight" jdbcType="VARCHAR" />
     <result column="point" property="point" jdbcType="VARCHAR" />
     <result column="seq_order" property="seqOrder" jdbcType="VARCHAR" />
