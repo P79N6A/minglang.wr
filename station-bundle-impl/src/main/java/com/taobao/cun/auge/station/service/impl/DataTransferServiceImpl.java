@@ -408,7 +408,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		try{
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("idmin", id);
-		param.put("idmax", id+50);
+		param.put("idmax", id+500);
 		param.put("detailId", detailId);
 		List<ExamInstanceItemDto> instances=partnerCourseRecordMapper.queryExamInstanceItemList(param);
 		if(instances.size()==0){
@@ -436,7 +436,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		}catch(Exception e){
 			return id;
 		}
-		return id+50;
+		return id+500;
 	}
 	
 }
