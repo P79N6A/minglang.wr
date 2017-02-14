@@ -595,6 +595,7 @@
    select instance_id,question_id,question_type,seq_order,is_right,answer,point
    from exam_instance_item
    where is_deleted='n'
+   <![CDATA[ and gmt_create<'2016-02-14']]>   
    and instance_id>#{idmin}
    <![CDATA[ and instance_id<=#{idmax}]]>     
    <if test="detailId != null" >
