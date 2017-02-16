@@ -770,4 +770,23 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return PartnerInstanceConverter
 				.convert(ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example)));
 	}
+
+	@Override
+	public List<PartnerStationRel> getBatchActivePartnerInstance(
+			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException {
+		if(taobaoUserId.size()==0){
+			return new ArrayList<PartnerStationRel>();
+		}
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		Criteria c=example.createCriteria();
+		c.andIsDeletedEqualTo("n").andTaobaoUserIdIn(taobaoUserId).andIsCurrentEqualTo("y");
+		if(instanceType!=null&&instanceType.size()>0){
+			c.andTypeIn(instanceType);
+		}
+		if(statusList!=null&&statusList.size()>0){
+			c.andStateIn(statusList);
+		}
+		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
+		return resList;
+	}
 }

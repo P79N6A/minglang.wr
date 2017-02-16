@@ -318,4 +318,7 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId);
+	
+	public List<PartnerStationRel> getBatchActivePartnerInstance(
+			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException;
 }
