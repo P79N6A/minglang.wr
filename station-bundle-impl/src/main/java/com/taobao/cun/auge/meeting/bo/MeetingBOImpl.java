@@ -61,10 +61,12 @@ public class MeetingBOImpl implements MeetingBO{
 			throw new AugeServiceException("meet not find:"+meeting.getMeetingCode());
 		}
 		PartnerMeeting meet=meets.get(0);
-		if(meet.getOwnerId().equals(meeting.getOwnerId())){
+		if(!meet.getOwnerId().equals(meeting.getOwnerId())){
 			throw new AugeServiceException("不是会议发起人，无权限修改");
 		}
-		BeanUtils.copyProperties(meeting, meet);
+		meet.setGmtStart(meeting.getGmtStart());
+		meet.setGmtEnd(meeting.getGmtEnd());
+		meet.setTitle(meeting.getTitle());
 		meet.setGmtModified(new Date());
 		partnerMeetingMapper.updateByPrimaryKeySelective(meet);
 		//批量删除原先邀约人员
