@@ -30,7 +30,10 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("meetingService")
+@HSFProvider(serviceInterface = MeetingService.class)
 @SuppressWarnings("rawtypes")
 public class MeetingServiceImpl implements MeetingService {
 	private static final Logger logger = LoggerFactory.getLogger(MeetingService.class);
