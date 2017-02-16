@@ -21,6 +21,7 @@ import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.ali.com.google.common.collect.Sets;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -788,5 +789,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
 		return resList;
+	}
+
+	@Override
+	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,
+			String name) {
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("orgId", orgId);
+		param.put("name", name);
+		return partnerStationRelMapper.queryUserProfileForAlilangMeeting(param);
 	}
 }
