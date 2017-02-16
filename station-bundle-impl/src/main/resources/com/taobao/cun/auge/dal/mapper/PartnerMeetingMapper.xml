@@ -474,4 +474,30 @@
       meeting_code = #{meetingCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+   <select id="queryMeetingsByCondition" resultMap="BaseResultMap" parameterType="map" >
+   select a.*
+   from partner_meeting a,partner_meeting_attemp b
+   where a.is_deleted='n'
+   and b.is_deleted='n'
+   and a.id=b.meeting_id
+   and b.attemper_id=#{attemperId}
+   <if test="meetingCode != null" >
+       a.meeting_code=#{meetingCode}
+   </if>
+   <if test="gmtStartMax != null" >
+       <![CDATA[ and a.gmt_start<#{gmtStartMax}]]>     
+   </if>
+   <if test="gmtStartMin != null" >
+       <![CDATA[ and a.gmt_start>=#{gmtStartMin}]]>     
+   </if>
+   <if test="gmtEndMax != null" >
+       <![CDATA[ and a.gmt_end<#{gmtEndMax}]]>     
+   </if>
+   <if test="gmtEndMin != null" >
+       <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
+   </if>
+   order by a.gmt_start
+  </select>
+  
 </mapper>

@@ -1,7 +1,10 @@
 package com.taobao.cun.auge.meeting.bo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +46,7 @@ public class MeetingBOImpl implements MeetingBO{
 		meet.setCreator(meeting.getOwnerId());
 		meet.setModifier(meeting.getOwnerId());
 		meet.setIsDeleted("n");
+		meet.setStatus("NORMAL");
 		partnerMeetingMapper.insert(meet);
 		initMeetingAttemps(meeting.getMeetingAttemps(),meet.getId(),meeting.getOwnerId());
 		return meet.getMeetingCode();
@@ -94,5 +98,65 @@ public class MeetingBOImpl implements MeetingBO{
 			att.setMeetingId(meetingId);
 			partnerMeetingAttempMapper.insert(att);
 		}
+	}
+
+	@Override
+	public void cancelMeeting(String meetingCode, String operator) {
+		PartnerMeetingExample example = new PartnerMeetingExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andMeetingCodeEqualTo(meetingCode);
+		List<PartnerMeeting> meets=partnerMeetingMapper.selectByExample(example);
+		if(meets.size()==0){
+			throw new AugeServiceException("meet not find:"+meetingCode);
+		}
+		PartnerMeeting meet=meets.get(0);
+		if(!meet.getOwnerId().equals(operator)){
+			throw new AugeServiceException("不是会议发起人，无权限取消");
+		}
+		meet.setIsDeleted("y");
+		meet.setGmtModified(new Date());
+		partnerMeetingMapper.updateByPrimaryKey(meet);
+	}
+
+
+	public List<MeetingDto> queryMeetingsByCondition(String meetingCode,Date gmtStartMax,Date gmtStartMin,Date gmtEndMax,Date gmtEndMin,String userId) {
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("gmtStartMax", gmtStartMax);
+		param.put("gmtStartMin", gmtStartMin);
+		param.put("gmtEndMax", gmtEndMax);
+		param.put("gmtEndMin", gmtEndMin);
+		param.put("meetingCode", meetingCode);
+		param.put("attemperId", userId);
+		List<PartnerMeeting> meetings=partnerMeetingMapper.queryMeetingsByCondition(param);
+		List<MeetingDto> result=new ArrayList<MeetingDto>();
+		for(PartnerMeeting meeting:meetings){
+			MeetingDto dto=new MeetingDto();
+			BeanUtils.copyProperties(meeting, dto);
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public MeetingDto attempMeeting(String userId, String userType,
+			String meetingCode) {
+		if(StringUtils.isEmpty(userId)||StringUtils.isEmpty(userType)||StringUtils.isEmpty(meetingCode)){
+			throw new AugeServiceException("param is null");
+		}
+		List<MeetingDto> meetings=queryMeetingsByCondition(meetingCode,null,null,null,null,userId);
+		if(meetings.size()==0){
+			throw new AugeServiceException("您未被邀请参加会议");
+		}
+		MeetingDto meeting=meetings.get(0);
+		PartnerMeetingAttempExample ex=new PartnerMeetingAttempExample();
+		ex.createCriteria().andIsDeletedEqualTo("n").andMeetingIdEqualTo(meeting.getId());
+		List<PartnerMeetingAttemp> attemps=partnerMeetingAttempMapper.selectByExample(ex);
+		for(PartnerMeetingAttemp attemp:attemps){
+			attemp.setGmtModified(new Date());
+			attemp.setModifier(userId);
+			attemp.setStatus("ATTEMPED");
+			partnerMeetingAttempMapper.updateByPrimaryKey(attemp);
+		}
+		return meeting;
 	}
 }

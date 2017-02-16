@@ -14,9 +14,9 @@ public interface MeetingService {
 
 	public String saveMeeting(MeetingDto meeting);
 	
-	public void cancelMeeting(Long meetingId,String operator);
+	public void cancelMeeting(String meetingCode,String operator);
 	
 	public List<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition);
 	
-	public MeetingDto attempMeeting(String userId,String userType,Long meetingId);
+	public MeetingDto attempMeeting(String userId,String userType,String meetingCode);
 }

@@ -1,6 +1,10 @@
 package com.taobao.cun.auge.meeting.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +32,7 @@ import com.taobao.cun.auge.meeting.util.Request;
 import com.taobao.cun.auge.meeting.util.Response;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("meetingService")
 @HSFProvider(serviceInterface = MeetingService.class)
@@ -188,23 +190,60 @@ public class MeetingServiceImpl implements MeetingService {
 		}
 	}
 	@Override
-	public void cancelMeeting(Long meetingId, String operator) {
-		// TODO Auto-generated method stub
-
+	public void cancelMeeting(String meetingCode,String operator){
+       if(StringUtils.isEmpty(meetingCode)||StringUtils.isEmpty(operator)){
+			throw new AugeServiceException("取消会议失败：param is null");
+       }
 	}
 
 	@Override
-	public List<MeetingDto> queryMeetingForClient(
-			MeetingQueryCondition condition) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition) {
+		try {
+			if (StringUtils.isEmpty(condition.getUserId())
+					|| StringUtils.isEmpty(condition.getUserType())
+					|| StringUtils.isEmpty(condition.getQueryType())) {
+				throw new AugeServiceException("param is null");
+			}
+			Date now = new Date();
+			if (StringUtils.isNotEmpty(condition.getMeetingCode())) {
+				// 查询具体会议
+				return meetingBO.queryMeetingsByCondition(
+						condition.getMeetingCode(), null, null, null, null,
+						condition.getUserId());
+			} else if ("history".equals(condition.getQueryType())) {
+				// 查询历史会议
+				return meetingBO.queryMeetingsByCondition(
+						condition.getMeetingCode(), null, null, now, null,
+						condition.getUserId());
+			} else if ("future".equals(condition.getQueryType())) {
+				// 查询未来的会议
+				return meetingBO.queryMeetingsByCondition(
+						condition.getMeetingCode(), null, null, null, now,
+						condition.getUserId());
+			} else if ("today".equals(condition.getQueryType())) {
+				Calendar calendar = new GregorianCalendar();
+				calendar.setTime(now);
+				calendar.add(calendar.DATE, +1);
+				Date tommorow = calendar.getTime();
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				String dateToday = formatter.format(now);
+				String dateTommorow = formatter.format(tommorow);
+				return meetingBO.queryMeetingsByCondition(
+						condition.getMeetingCode(), formatter.parse(dateToday),
+						formatter.parse(dateTommorow), null, now,
+						condition.getUserId());
+			}
+			return new ArrayList<MeetingDto>();
+		} catch (Exception e) {
+			logger.error("queryMeeting error:", e);
+			throw new AugeServiceException("会议查询失败." + e.getMessage());
+		}
 	}
 
 	@Override
 	public MeetingDto attempMeeting(String userId, String userType,
-			Long meetingId) {
-		// TODO Auto-generated method stub
-		return null;
+			String meetingCode) {
+		return meetingBO.attempMeeting(userId, userType, meetingCode);
 	}
 
 }

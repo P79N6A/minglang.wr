@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.PartnerMeeting;
 import com.taobao.cun.auge.dal.domain.PartnerMeetingExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface PartnerMeetingMapper {
     /**
@@ -93,4 +96,7 @@ public interface PartnerMeetingMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(PartnerMeeting record);
+    
+    List<PartnerMeeting> queryMeetingsByCondition(Map<String,Object> param);
+    
 }

@@ -8,7 +8,7 @@ public class MeetingQueryCondition implements Serializable{
 	private String userId;
 	private String userType;
 	private String queryType;
-	private Long meetingId;
+	private String meetingCode;
 	public String getUserId() {
 		return userId;
 	}
@@ -27,11 +27,11 @@ public class MeetingQueryCondition implements Serializable{
 	public void setQueryType(String queryType) {
 		this.queryType = queryType;
 	}
-	public Long getMeetingId() {
-		return meetingId;
+	public String getMeetingCode() {
+		return meetingCode;
 	}
-	public void setMeetingId(Long meetingId) {
-		this.meetingId = meetingId;
+	public void setMeetingCode(String meetingCode) {
+		this.meetingCode = meetingCode;
 	}
 	
 	
