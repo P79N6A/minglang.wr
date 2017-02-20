@@ -497,7 +497,7 @@
    <if test="gmtEndMin != null" >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
-   order by a.gmt_start fuck
+   order by a.gmt_start
   </select>
   
 </mapper>
