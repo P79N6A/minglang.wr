@@ -485,19 +485,19 @@
    <if test="meetingCode != null and meetingCode != ''" >
      and   a.meeting_code=#{meetingCode}
    </if>
-   <if test="gmtStartMax != null and gmtStartMax != '' " >
+   <if test="gmtStartMax != null" >
        <![CDATA[ and a.gmt_start<#{gmtStartMax}]]>     
    </if>
-   <if test="gmtStartMin != null and gmtStartMin != '' " >
+   <if test="gmtStartMin != null" >
        <![CDATA[ and a.gmt_start>=#{gmtStartMin}]]>     
    </if>
-   <if test="gmtEndMax != null and gmtEndMax != ''" >
+   <if test="gmtEndMax != null" >
        <![CDATA[ and a.gmt_end<#{gmtEndMax}]]>     
    </if>
-   <if test="gmtEndMin != null and gmtEndMin != '' " >
+   <if test="gmtEndMin != null" >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
-   order by a.gmt_start
+   order by a.gmt_start fuck
   </select>
   
 </mapper>
