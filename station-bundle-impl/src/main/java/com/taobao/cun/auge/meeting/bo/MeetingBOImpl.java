@@ -155,6 +155,7 @@ public class MeetingBOImpl implements MeetingBO{
 				List<MeetingAttempDto> temp=resultMap.get(attemp.getMeetingId()).getMeetingAttemps();
 				if(temp==null){
 					temp=new ArrayList<MeetingAttempDto>();
+					resultMap.get(attemp.getMeetingId()).setMeetingAttemps(temp);
 				}
 				temp.add(attemp);
 			}

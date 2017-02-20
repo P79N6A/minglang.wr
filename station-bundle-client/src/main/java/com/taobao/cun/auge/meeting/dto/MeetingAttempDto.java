@@ -20,6 +20,8 @@ public class MeetingAttempDto implements Serializable {
 	private String status;
 	
 	private String attempName;
+	
+	private String attempFlowerName;
 
 	public Long getId() {
 		return id;
@@ -84,6 +86,14 @@ public class MeetingAttempDto implements Serializable {
 
 	public void setAttempName(String attempName) {
 		this.attempName = attempName;
+	}
+
+	public String getAttempFlowerName() {
+		return attempFlowerName;
+	}
+
+	public void setAttempFlowerName(String attempFlowerName) {
+		this.attempFlowerName = attempFlowerName;
 	}
 
 }
