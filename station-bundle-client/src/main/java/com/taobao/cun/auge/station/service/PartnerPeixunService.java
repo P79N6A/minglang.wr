@@ -5,10 +5,7 @@ import java.util.Map;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
-import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
+import com.taobao.cun.auge.station.dto.*;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 
 /**
@@ -53,5 +50,11 @@ public interface PartnerPeixunService {
 	 * 提供给村学习视频播放验权服务
 	 */
 	public Boolean checkCourseViewPermission(Long taobaoUserId,String courseCode);
+
+	/**
+	 * 查询课程培训供应商
+	 * @return
+	 */
+	public List<PartnerPeixunSupplierDto> getSupplierList();
 	
 }
