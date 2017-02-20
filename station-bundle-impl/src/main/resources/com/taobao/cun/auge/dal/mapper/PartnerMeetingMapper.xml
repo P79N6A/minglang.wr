@@ -501,7 +501,7 @@
     <if test="orderType != null and orderType != ''" >
       #{orderType}     
    </if> 
-   limit #{pageNum},#{pageSize}
+   limit #{pageN},#{pageS}
   </select>
   
   <select id="queryMeetingsCountByCondition" resultType="java.lang.Integer" parameterType="map">

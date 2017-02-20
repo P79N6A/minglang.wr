@@ -131,8 +131,8 @@ public class MeetingBOImpl implements MeetingBO{
 		param.put("gmtEndMin", gmtEndMin);
 		param.put("meetingCode", meetingCode);
 		param.put("attemperId", userId);
-		param.put("pageSize", pageSize);
-		param.put("pageNum", pageNum);
+		param.put("pageS", pageSize);
+		param.put("pageN", pageNum);
 		param.put("orderType", orderType);
 		int count=partnerMeetingMapper.queryMeetingsCountByCondition(param);
 		List<PartnerMeeting> meetings=partnerMeetingMapper.queryMeetingsByCondition(param);
