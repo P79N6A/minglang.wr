@@ -25,7 +25,6 @@ import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.enums.MeetingAttempStatusEnum;
 import com.taobao.cun.auge.meeting.enums.MeetingStatusEnum;
-import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 @Component("meetingBO")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -187,5 +186,23 @@ public class MeetingBOImpl implements MeetingBO{
 			partnerMeetingAttempMapper.updateByPrimaryKey(attemp);
 		}
 		return meeting;
+	}
+
+	@Override
+	public void closeMeeting(String meetingCode, String operator, Date gmtEnd) {
+		PartnerMeetingExample example = new PartnerMeetingExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andMeetingCodeEqualTo(meetingCode);
+		List<PartnerMeeting> meets=partnerMeetingMapper.selectByExample(example);
+		if(meets.size()==0){
+			throw new AugeServiceException("meet not find:"+meetingCode);
+		}
+		PartnerMeeting meet=meets.get(0);
+		if(!meet.getOwnerId().equals(operator)){
+			throw new AugeServiceException("不是会议发起人，无权限结束会议");
+		}
+		meet.setGmtEnd(gmtEnd);
+		meet.setGmtModified(new Date());
+		partnerMeetingMapper.updateByPrimaryKey(meet);
 	}
 }

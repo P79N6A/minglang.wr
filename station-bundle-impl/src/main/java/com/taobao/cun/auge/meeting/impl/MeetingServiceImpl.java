@@ -253,4 +253,13 @@ public class MeetingServiceImpl implements MeetingService {
 		return meetingBO.attempMeeting(userId, userType, meetingCode);
 	}
 
+	@Override
+	public void closeMeeting(String meetingCode, String operator, Date gmtEnd) {
+		if (StringUtils.isEmpty(meetingCode) || StringUtils.isEmpty(operator)
+				|| gmtEnd == null) {
+			throw new AugeServiceException("结束会议失败：param is null");
+		}
+		meetingBO.closeMeeting(meetingCode, operator,gmtEnd);
+	}
+
 }

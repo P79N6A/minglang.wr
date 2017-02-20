@@ -184,7 +184,6 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
 		if (taobaoUserId == null || taobaoUserId == 0l) {
 			throw new AugeServiceException("taobaoUserId is null");
 		}
-		try{
 		PartnerStationRel rel = partnerInstanceBO
 				.getActivePartnerInstance(taobaoUserId);
 		if (rel == null) {
@@ -199,9 +198,6 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
 			// 根据花名或姓名搜索全国村小二
 			return partnerInstanceBO.queryUserProfileForAlilangMeeting(null,
 					name);
-		}
-		}catch(Exception e){
-			return null;
 		}
 	}
 

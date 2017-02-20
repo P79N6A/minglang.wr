@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.meeting;
 
+import java.util.Date;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.dto.MeetingQueryCondition;
@@ -18,4 +20,7 @@ public interface MeetingService {
 	public PageDto<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition);
 	
 	public MeetingDto attempMeeting(String userId,String userType,String meetingCode);
+	
+	public void closeMeeting(String meetingCode,String operator,Date gmtEnd);
+
 }

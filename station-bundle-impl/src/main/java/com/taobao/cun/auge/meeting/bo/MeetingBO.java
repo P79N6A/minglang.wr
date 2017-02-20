@@ -19,4 +19,7 @@ public interface MeetingBO {
 	
 	public MeetingDto attempMeeting(String userId, String userType,
 			String meetingCode);
+	
+	public void closeMeeting(String meetingCode, String operator, Date gmtEnd);
+
 }
