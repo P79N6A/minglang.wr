@@ -482,19 +482,19 @@
    and b.is_deleted='n'
    and a.id=b.meeting_id
    and b.attemper_id=#{attemperId}
-   <if test="meetingCode != null" >
+   <if test="meetingCode != null and meetingCode != ''" >
      and   a.meeting_code=#{meetingCode}
    </if>
-   <if test="gmtStartMax != null" >
+   <if test="gmtStartMax != null and gmtStartMax != '' " >
        <![CDATA[ and a.gmt_start<#{gmtStartMax}]]>     
    </if>
-   <if test="gmtStartMin != null" >
+   <if test="gmtStartMin != null and gmtStartMin != '' " >
        <![CDATA[ and a.gmt_start>=#{gmtStartMin}]]>     
    </if>
-   <if test="gmtEndMax != null" >
+   <if test="gmtEndMax != null and gmtEndMax != ''" >
        <![CDATA[ and a.gmt_end<#{gmtEndMax}]]>     
    </if>
-   <if test="gmtEndMin != null" >
+   <if test="gmtEndMin != null and gmtEndMin != '' " >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
    order by a.gmt_start
