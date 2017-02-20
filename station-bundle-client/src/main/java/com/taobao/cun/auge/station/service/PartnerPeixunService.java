@@ -51,10 +51,6 @@ public interface PartnerPeixunService {
 	 */
 	public Boolean checkCourseViewPermission(Long taobaoUserId,String courseCode);
 
-	/**
-	 * 查询课程培训供应商
-	 * @return
-	 */
-	public List<PartnerPeixunSupplierDto> getSupplierList();
+
 	
 }
