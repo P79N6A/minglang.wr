@@ -497,7 +497,10 @@
    <if test="gmtEndMin != null" >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
-   order by a.gmt_start #{orderType}
+   order by a.gmt_start
+    <if test="orderType != null and orderType != ''" >
+      #{orderType}     
+   </if> 
   </select>
   
   <select id="queryMeetingsCountByCondition" resultType="java.lang.Integer" parameterType="map">
