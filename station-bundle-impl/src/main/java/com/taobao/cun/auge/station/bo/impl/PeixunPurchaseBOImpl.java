@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.ceres.service.Result;
-import com.alibaba.ceres.service.catalog.ProductService;
-import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
@@ -51,13 +47,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	
 	@Autowired
 	private PrService prService;
-	
-	@Resource
-	private ProductService cereProductService;
-	
-	@Resource
-	private CategoryService cereCategoryService;
-	
+
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
@@ -159,6 +149,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		if(StringUtils.isEmpty(dto.getOperator())){
 			throw new AugeServiceException("operator is null");
+		}
+		if(StringUtils.isEmpty(dto.getPurchaseSupplier())){
+			throw new AugeServiceException("purchaseSupplier is null");
 		}
 	}
 	
