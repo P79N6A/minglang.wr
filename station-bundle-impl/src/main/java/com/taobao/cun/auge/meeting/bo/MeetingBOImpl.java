@@ -151,7 +151,7 @@ public class MeetingBOImpl implements MeetingBO{
 		}
 		MeetingDto meeting=meetings.get(0);
 		PartnerMeetingAttempExample ex=new PartnerMeetingAttempExample();
-		ex.createCriteria().andIsDeletedEqualTo("n").andMeetingIdEqualTo(meeting.getId());
+		ex.createCriteria().andIsDeletedEqualTo("n").andMeetingIdEqualTo(meeting.getId()).andAttemperIdEqualTo(userId);
 		List<PartnerMeetingAttemp> attemps=partnerMeetingAttempMapper.selectByExample(ex);
 		for(PartnerMeetingAttemp attemp:attemps){
 			attemp.setGmtModified(new Date());
