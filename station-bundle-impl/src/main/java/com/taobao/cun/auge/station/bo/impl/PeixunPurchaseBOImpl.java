@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.constant.PurchaseEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,6 +380,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		result.setOrgFullName(county.getFullNamePath());
 		result.setStatusDesc(PeixunPurchaseStatusEnum.valueof(result.getStatus()).getDesc());
 		result.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(result.getPurchaseType()).getDesc());
+		if (!StringUtils.isEmpty(result.getPurchaseSupplier())) {
+			result.setPurchaseSupplierName(appResourceBO.queryAppNameByValue(PurchaseEnum.PURCHASE_SUPPLIER_TYPE, result.getPurchaseSupplier()));
+		}
 		return result;
 	}
 
