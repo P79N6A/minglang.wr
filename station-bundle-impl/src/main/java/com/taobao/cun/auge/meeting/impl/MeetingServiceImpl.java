@@ -208,9 +208,6 @@ public class MeetingServiceImpl implements MeetingService {
 					|| StringUtils.isEmpty(condition.getQueryType())) {
 				throw new AugeServiceException("param is null");
 			}
-			if(condition.getPageNum()==0){
-				condition.setPageNum(1);
-			}
 			if(condition.getPageSize()==0){
 				condition.setPageSize(20);
 			}
