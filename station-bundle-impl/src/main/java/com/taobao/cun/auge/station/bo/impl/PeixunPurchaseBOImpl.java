@@ -291,7 +291,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	private String applyReason(PeixunPurchase record){
 		CuntaoOrgDto county = cuntaoOrgServiceClient.getCuntaoOrg(record.getApplyOrgId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		StringBuilder sb=new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append("申请人:").append(record.getApplyName()).append("(").append(record.getApplyWorkNo()).append("),");
 		sb.append("申请县域:").append(county.getFullNamePath()).append(",");
 		sb.append("开班人数:").append(record.getExceptNum()).append(",");
@@ -303,7 +303,10 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
-		String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE",record.getPurchaseType()+"_SKU");
+        String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
+        if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+            skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
+        }
 		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
 		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
 //		String productCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","PRODUCT_CODE");
