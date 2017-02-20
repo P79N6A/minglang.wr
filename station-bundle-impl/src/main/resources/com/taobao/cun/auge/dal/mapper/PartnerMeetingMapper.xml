@@ -539,7 +539,7 @@
   </resultMap>
   
   <select id="queryMeetingAttemps" resultMap="queryAttempsResult" parameterType="map" >
-   select a.name as attempName,b.meeting_id as meetingId,b.attemper_id as attemperId,b.attemperType as attemperType from partner a,partner_meeting_attemp b
+   select a.name as attempName,b.meeting_id as meetingId,b.attemper_id as attemperId,b.attemper_type as attemperType from partner a,partner_meeting_attemp b
    where a.is_deleted='n' and b.is_deleted='n'
    and a.state='NORMAL'
    and a.taobao_user_id=b.attemper_id
