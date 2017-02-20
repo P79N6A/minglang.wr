@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.taobao.cun.auge.dal.domain.PartnerMeeting;
 import com.taobao.cun.auge.dal.domain.PartnerMeetingExample;
+import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 
 public interface PartnerMeetingMapper {
     /**
@@ -97,6 +98,10 @@ public interface PartnerMeetingMapper {
      */
     int updateByPrimaryKey(PartnerMeeting record);
     
+    int queryMeetingsCountByCondition(Map<String,Object> param);
+    
     List<PartnerMeeting> queryMeetingsByCondition(Map<String,Object> param);
+    
+    List<MeetingAttempDto> queryMeetingAttemps(Map<String,Object> param);
     
 }

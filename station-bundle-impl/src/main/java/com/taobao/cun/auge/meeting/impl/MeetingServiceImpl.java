@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.meeting.MeetingService;
@@ -33,6 +34,7 @@ import com.taobao.cun.auge.meeting.util.Request;
 import com.taobao.cun.auge.meeting.util.Response;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("meetingService")
@@ -199,29 +201,35 @@ public class MeetingServiceImpl implements MeetingService {
 	}
 
 	@Override
-	public List<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition) {
+	public PageDto<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition) {
 		try {
 			if (StringUtils.isEmpty(condition.getUserId())
 					|| StringUtils.isEmpty(condition.getUserType())
 					|| StringUtils.isEmpty(condition.getQueryType())) {
 				throw new AugeServiceException("param is null");
 			}
+			if(condition.getPageNum()==0){
+				condition.setPageNum(1);
+			}
+			if(condition.getPageSize()==0){
+				condition.setPageSize(20);
+			}
 			Date now = new Date();
 			if (StringUtils.isNotEmpty(condition.getMeetingCode())) {
 				// 查询具体会议
 				return meetingBO.queryMeetingsByCondition(
 						condition.getMeetingCode(), null, null, null, null,
-						condition.getUserId());
+						condition.getUserId(),condition.getPageNum(),condition.getPageSize(),null);
 			} else if ("history".equals(condition.getQueryType())) {
 				// 查询历史会议
 				return meetingBO.queryMeetingsByCondition(
 						condition.getMeetingCode(), null, null, now, null,
-						condition.getUserId());
+						condition.getUserId(),condition.getPageNum(),condition.getPageSize(),"desc");
 			} else if ("future".equals(condition.getQueryType())) {
 				// 查询未来的会议
 				return meetingBO.queryMeetingsByCondition(
 						condition.getMeetingCode(), null, null, null, now,
-						condition.getUserId());
+						condition.getUserId(),condition.getPageNum(),condition.getPageSize(),null);
 			} else if ("today".equals(condition.getQueryType())) {
 				Calendar calendar = new GregorianCalendar();
 				calendar.setTime(now);
@@ -231,11 +239,11 @@ public class MeetingServiceImpl implements MeetingService {
 				String dateToday = formatter.format(now);
 				String dateTommorow = formatter.format(tommorow);
 				return meetingBO.queryMeetingsByCondition(
-						condition.getMeetingCode(), formatter.parse(dateToday),
-						formatter.parse(dateTommorow), null, now,
-						condition.getUserId());
+						condition.getMeetingCode(), formatter.parse(dateTommorow),
+						formatter.parse(dateToday), null, now,
+						condition.getUserId(),condition.getPageNum(),condition.getPageSize(),null);
 			}
-			return new ArrayList<MeetingDto>();
+			return null;
 		} catch (Exception e) {
 			logger.error("queryMeeting error:", e);
 			throw new AugeServiceException("会议查询失败." + e.getMessage());

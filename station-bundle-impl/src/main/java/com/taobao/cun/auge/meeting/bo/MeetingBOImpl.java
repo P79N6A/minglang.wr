@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerMeeting;
 import com.taobao.cun.auge.dal.domain.PartnerMeetingAttemp;
 import com.taobao.cun.auge.dal.domain.PartnerMeetingAttempExample;
@@ -24,6 +25,7 @@ import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.enums.MeetingAttempStatusEnum;
 import com.taobao.cun.auge.meeting.enums.MeetingStatusEnum;
+import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 @Component("meetingBO")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -121,7 +123,7 @@ public class MeetingBOImpl implements MeetingBO{
 	}
 
 
-	public List<MeetingDto> queryMeetingsByCondition(String meetingCode,Date gmtStartMax,Date gmtStartMin,Date gmtEndMax,Date gmtEndMin,String userId) {
+	public PageDto<MeetingDto> queryMeetingsByCondition(String meetingCode,Date gmtStartMax,Date gmtStartMin,Date gmtEndMax,Date gmtEndMin,String userId,int pageNum,int pageSize,String orderType) {
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("gmtStartMax", gmtStartMax);
 		param.put("gmtStartMin", gmtStartMin);
@@ -129,13 +131,37 @@ public class MeetingBOImpl implements MeetingBO{
 		param.put("gmtEndMin", gmtEndMin);
 		param.put("meetingCode", meetingCode);
 		param.put("attemperId", userId);
+		param.put("pageSize", pageSize);
+		param.put("pageNum", pageNum);
+		param.put("orderType", orderType);
+		int count=partnerMeetingMapper.queryMeetingsCountByCondition(param);
 		List<PartnerMeeting> meetings=partnerMeetingMapper.queryMeetingsByCondition(param);
-		List<MeetingDto> result=new ArrayList<MeetingDto>();
+		List<MeetingDto> resultList=new ArrayList<MeetingDto>();
+		List<Long> meetingIds=new ArrayList<Long>();
+		Map<Long,MeetingDto> resultMap=new HashMap<Long,MeetingDto>();
 		for(PartnerMeeting meeting:meetings){
 			MeetingDto dto=new MeetingDto();
 			BeanUtils.copyProperties(meeting, dto);
-			result.add(dto);
+			resultList.add(dto);
+			meetingIds.add(meeting.getId());
+			resultMap.put(meeting.getId(), dto);
 		}
+		//组装参与者信息
+		if(meetingIds.size()>0){
+			param.clear();
+			param.put("meetingIds", meetingIds);
+			List<MeetingAttempDto> attemps=partnerMeetingMapper.queryMeetingAttemps(param);
+			for(MeetingAttempDto attemp:attemps){
+				List<MeetingAttempDto> temp=resultMap.get(attemp.getMeetingId()).getMeetingAttemps();
+				if(temp==null){
+					temp=new ArrayList<MeetingAttempDto>();
+				}
+				temp.add(attemp);
+			}
+		}
+		PageDto<MeetingDto> result=new PageDto<MeetingDto>();
+		result.setTotal(count);
+		result.setItems(resultList);
 		return result;
 	}
 
@@ -145,7 +171,7 @@ public class MeetingBOImpl implements MeetingBO{
 		if(StringUtils.isEmpty(userId)||StringUtils.isEmpty(userType)||StringUtils.isEmpty(meetingCode)){
 			throw new AugeServiceException("param is null");
 		}
-		List<MeetingDto> meetings=queryMeetingsByCondition(meetingCode,null,null,null,null,userId);
+		List<MeetingDto> meetings=queryMeetingsByCondition(meetingCode,null,null,null,null,userId,1,1,null).getItems();
 		if(meetings.size()==0){
 			throw new AugeServiceException("您未被邀请参加会议");
 		}

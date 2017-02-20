@@ -497,7 +497,51 @@
    <if test="gmtEndMin != null" >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
-   order by a.gmt_start
+   order by a.gmt_start #{orderType}
   </select>
+  
+  <select id="queryMeetingsCountByCondition" resultType="java.lang.Integer" parameterType="map">
+     select count(*)
+   from partner_meeting a,partner_meeting_attemp b
+   where a.is_deleted='n'
+   and b.is_deleted='n'
+   and a.id=b.meeting_id
+   and b.attemper_id=#{attemperId}
+   <if test="meetingCode != null and meetingCode != ''" >
+     and   a.meeting_code=#{meetingCode}
+   </if>
+   <if test="gmtStartMax != null" >
+       <![CDATA[ and a.gmt_start<#{gmtStartMax}]]>     
+   </if>
+   <if test="gmtStartMin != null" >
+       <![CDATA[ and a.gmt_start>=#{gmtStartMin}]]>     
+   </if>
+   <if test="gmtEndMax != null" >
+       <![CDATA[ and a.gmt_end<#{gmtEndMax}]]>     
+   </if>
+   <if test="gmtEndMin != null" >
+       <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
+   </if>
+  </select>
+  
+  
+  <resultMap id="queryAttempsResult" type="com.taobao.cun.auge.meeting.dto.MeetingAttempDto" >
+    <id column="meetingId" property="meetingId" jdbcType="BIGINT" />
+    <result column="attemperId" property="attemperId" jdbcType="VARCHAR" />
+    <result column="attemperType" property="attemperType" jdbcType="VARCHAR" />
+    <result column="attempName" property="attempName" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryMeetingAttemps" resultMap="queryAttempsResult" parameterType="map" >
+   select a.name as attempName,b.meeting_id as meetingId,b.attemper_id as attemperId,b.attemperType as attemperType from partner a,partner_meeting_attemp b
+   where a.is_deleted='n' and b.is_deleted='n'
+   and a.state='NORMAL'
+   and a.taobao_user_id=b.attemper_id
+   and b.meeting_id in
+   <foreach collection="meetingIds" item="meetingId" open="(" close=")" separator="," >
+   #{meetingId}
+   </foreach>
+  </select>
+  
   
 </mapper>

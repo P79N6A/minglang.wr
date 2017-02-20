@@ -18,6 +18,8 @@ public class MeetingAttempDto implements Serializable {
 	private Date gmtLeave;
 
 	private String status;
+	
+	private String attempName;
 
 	public Long getId() {
 		return id;
@@ -74,6 +76,14 @@ public class MeetingAttempDto implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getAttempName() {
+		return attempName;
+	}
+
+	public void setAttempName(String attempName) {
+		this.attempName = attempName;
 	}
 
 }

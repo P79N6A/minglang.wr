@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.meeting;
 
-import java.util.List;
-
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.dto.MeetingQueryCondition;
 
@@ -16,7 +15,7 @@ public interface MeetingService {
 	
 	public void cancelMeeting(String meetingCode,String operator);
 	
-	public List<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition);
+	public PageDto<MeetingDto> queryMeetingForClient(MeetingQueryCondition condition);
 	
 	public MeetingDto attempMeeting(String userId,String userType,String meetingCode);
 }

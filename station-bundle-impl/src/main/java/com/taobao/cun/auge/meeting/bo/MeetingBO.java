@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.meeting.bo;
 
 import java.util.Date;
-import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 
 public interface MeetingBO {
@@ -13,9 +13,9 @@ public interface MeetingBO {
 	
 	public void cancelMeeting(String meetingCode,String operator);
 	
-	public List<MeetingDto> queryMeetingsByCondition(String meetingCode,
+	public PageDto<MeetingDto> queryMeetingsByCondition(String meetingCode,
 			Date gmtStartMax, Date gmtStartMin, Date gmtEndMax, Date gmtEndMin,
-			String userId);
+			String userId,int pageNum,int pageSize,String orderType);
 	
 	public MeetingDto attempMeeting(String userId, String userType,
 			String meetingCode);
