@@ -497,9 +497,11 @@
    <if test="gmtEndMin != null" >
        <![CDATA[ and a.gmt_end>=#{gmtEndMin}]]>     
    </if>
-   order by a.gmt_start
     <if test="orderType != null and orderType != ''" >
-      #{orderType}     
+     order by a.gmt_start  desc 
+   </if> 
+    <if test="orderType = null or orderType = ''" >
+      order by a.gmt_start    
    </if> 
    limit #{pageN},#{pageS}
   </select>
