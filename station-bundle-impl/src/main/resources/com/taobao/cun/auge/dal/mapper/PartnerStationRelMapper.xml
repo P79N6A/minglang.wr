@@ -578,7 +578,7 @@
   </resultMap>
   
   <select id="queryUserProfileForAlilangMeeting" resultMap="queryUserProfileResult" parameterType="map" >
-  select a.name as userName,a.flowner_name as flowerName,c.name as stationName,a.taobao_user_id as taobaoUserId
+  select a.name as userName,a.flower_name as flowerName,c.name as stationName,a.taobao_user_id as taobaoUserId
   from partner a,partner_station_rel b,station c
    <if test="orgId != null" >
   ,cuntao_org d
