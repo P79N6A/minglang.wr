@@ -57,7 +57,7 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
     public List<PartnerPeixunSupplierDto> getSupplierList() {
         List<AppResource> resourceList = appResourceBO.queryAppResourceList("PARTNER_PEIXUN_SUPPLIER");
         if (!CollectionUtils.isEmpty(resourceList)) {
-            resourceList.stream().map(appResource -> {
+            return resourceList.stream().map(appResource -> {
                 PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
                 supplierDto.setName(appResource.getName());
                 supplierDto.setValue(appResource.getValue());
