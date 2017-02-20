@@ -22,6 +22,8 @@ import com.taobao.cun.auge.dal.mapper.PartnerMeetingAttempMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMeetingMapper;
 import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
+import com.taobao.cun.auge.meeting.enums.MeetingAttempStatusEnum;
+import com.taobao.cun.auge.meeting.enums.MeetingStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 @Component("meetingBO")
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -46,7 +48,7 @@ public class MeetingBOImpl implements MeetingBO{
 		meet.setCreator(meeting.getOwnerId());
 		meet.setModifier(meeting.getOwnerId());
 		meet.setIsDeleted("n");
-		meet.setStatus("NORMAL");
+		meet.setStatus(MeetingStatusEnum.NORMAL.getCode());
 		partnerMeetingMapper.insert(meet);
 		initMeetingAttemps(meeting.getMeetingAttemps(),meet.getId(),meeting.getOwnerId());
 		return meet.getMeetingCode();
@@ -94,7 +96,7 @@ public class MeetingBOImpl implements MeetingBO{
 			att.setCreator(operator);
 			att.setModifier(operator);
 			att.setIsDeleted("n");
-			att.setStatus("INVITED");
+			att.setStatus(MeetingAttempStatusEnum.INVITED.getCode());
 			att.setMeetingId(meetingId);
 			partnerMeetingAttempMapper.insert(att);
 		}
@@ -154,7 +156,7 @@ public class MeetingBOImpl implements MeetingBO{
 		for(PartnerMeetingAttemp attemp:attemps){
 			attemp.setGmtModified(new Date());
 			attemp.setModifier(userId);
-			attemp.setStatus("ATTEMPED");
+			attemp.setStatus(MeetingAttempStatusEnum.ATTEMPED.getCode());
 			partnerMeetingAttempMapper.updateByPrimaryKey(attemp);
 		}
 		return meeting;

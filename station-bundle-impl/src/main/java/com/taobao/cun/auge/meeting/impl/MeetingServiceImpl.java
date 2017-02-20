@@ -23,6 +23,7 @@ import com.taobao.cun.auge.meeting.bo.MeetingBO;
 import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.dto.MeetingQueryCondition;
+import com.taobao.cun.auge.meeting.enums.MeetingAttempTypeEnum;
 import com.taobao.cun.auge.meeting.util.Client;
 import com.taobao.cun.auge.meeting.util.Constants;
 import com.taobao.cun.auge.meeting.util.HttpHeader;
@@ -114,7 +115,7 @@ public class MeetingServiceImpl implements MeetingService {
 		for(MeetingAttempDto dto:meeting.getMeetingAttemps()){
 			userIds.add(new Long(dto.getAttemperId()));
 		}
-		instanceType.add("TP");
+		instanceType.add(MeetingAttempTypeEnum.TP.getCode());
 		states.add(PartnerInstanceStateEnum.DECORATING.getCode());
 		states.add(PartnerInstanceStateEnum.SERVICING.getCode());
 		List<PartnerStationRel> rels=partnerInstanceBO.getBatchActivePartnerInstance(userIds, instanceType, states);
@@ -194,6 +195,7 @@ public class MeetingServiceImpl implements MeetingService {
        if(StringUtils.isEmpty(meetingCode)||StringUtils.isEmpty(operator)){
 			throw new AugeServiceException("取消会议失败：param is null");
        }
+       meetingBO.cancelMeeting(meetingCode, operator);
 	}
 
 	@Override
