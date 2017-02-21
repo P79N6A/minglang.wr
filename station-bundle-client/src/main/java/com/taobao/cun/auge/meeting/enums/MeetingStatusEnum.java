@@ -10,11 +10,13 @@ public class MeetingStatusEnum implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	public static final MeetingStatusEnum NORMAL = new MeetingStatusEnum("NORMAL", "正常");
+	public static final MeetingStatusEnum CLOSE = new MeetingStatusEnum("CLOSE", "结束");
 
 	private static final Map<String, MeetingStatusEnum> mappings = new HashMap<String, MeetingStatusEnum>();
 
 	static {
 		mappings.put("NORMAL", NORMAL);
+		mappings.put("CLOSE", CLOSE);
 	}
 
 	private String code;

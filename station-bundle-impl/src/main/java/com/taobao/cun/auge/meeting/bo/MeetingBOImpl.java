@@ -171,7 +171,7 @@ public class MeetingBOImpl implements MeetingBO{
 		if(StringUtils.isEmpty(userId)||StringUtils.isEmpty(userType)||StringUtils.isEmpty(meetingCode)){
 			throw new AugeServiceException("param is null");
 		}
-		List<MeetingDto> meetings=queryMeetingsByCondition(meetingCode,null,null,null,null,userId,1,1,null).getItems();
+		List<MeetingDto> meetings=queryMeetingsByCondition(meetingCode,null,null,null,null,userId,0,1,null).getItems();
 		if(meetings.size()==0){
 			throw new AugeServiceException("您未被邀请参加会议");
 		}
@@ -203,6 +203,7 @@ public class MeetingBOImpl implements MeetingBO{
 		}
 		meet.setGmtEnd(gmtEnd);
 		meet.setGmtModified(new Date());
+		meet.setStatus(MeetingStatusEnum.CLOSE.getCode());
 		partnerMeetingMapper.updateByPrimaryKey(meet);
 	}
 }
