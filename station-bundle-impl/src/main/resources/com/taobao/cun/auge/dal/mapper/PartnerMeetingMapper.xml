@@ -536,7 +536,7 @@
     <result column="attemperId" property="attemperId" jdbcType="VARCHAR" />
     <result column="attemperType" property="attemperType" jdbcType="VARCHAR" />
     <result column="attempName" property="attempName" jdbcType="VARCHAR" />
-    <result column="flowerName" property="flowerName" jdbcType="VARCHAR" />
+    <result column="flowerName" property="attempFlowerName" jdbcType="VARCHAR" />
   </resultMap>
   
   <select id="queryMeetingAttemps" resultMap="queryAttempsResult" parameterType="map" >
