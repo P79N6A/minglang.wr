@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -612,4 +614,26 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     	ValidateUtils.notNull(stationApplyId);
         return partnerInstanceBO.findStationIdByStationApplyId(stationApplyId);
     }
+
+	@Override
+	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds) {
+		if(CollectionUtils.isEmpty(stationApplyIds)){
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstance> instances = partnerStationRelExtMapper.selectPartnerInstancesByStationApplyIds(stationApplyIds);
+		
+		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
+		return success;
+	}
+	
+	@Override
+	public List<PartnerInstanceDto> queryByPartnerInstanceIds(List<Long> partnerInstanceIds){
+		if(CollectionUtils.isEmpty(partnerInstanceIds)){
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstance> instances = partnerStationRelExtMapper.selectPartnerInstancesByIds(partnerInstanceIds);
+		
+		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
+		return success;
+	}
 }

@@ -92,6 +92,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setOpenDate(instance.getOpenDate());
 		instanceDto.setApplierType(instance.getApplierType());
 		instanceDto.setStationApplyId(instance.getStationApplyId());
+		instanceDto.setTaobaoUserId(instance.getTaobaoUserId());
 		instanceDto.setType(PartnerInstanceTypeEnum.valueof(instance.getType()));
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(instance.getIsCurrent()));
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(instance.getCloseType()));
