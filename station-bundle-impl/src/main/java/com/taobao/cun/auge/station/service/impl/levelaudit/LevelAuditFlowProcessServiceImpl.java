@@ -121,6 +121,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         initData.put("employeeName", levelProcessDto.getEmployeeName());
         initData.put("employeeId", levelProcessDto.getEmployeeId());
         initData.put("evaluateInfo", levelProcessDto.getEvaluateInfo());
+        initData.put("taskName", "村淘村小二(" + levelProcessDto.getPartnerName() + ")层级审批");
         ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(businessCode,
                 String.valueOf(businessId), applierId, UserTypeEnum.valueof(operatorType.getCode()), initData);
         if (!rm.isSuccess()) {

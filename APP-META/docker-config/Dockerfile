@@ -20,3 +20,6 @@ WORKDIR /home/admin/${MS_APP_NAME}/bin
 
 #代码包
 COPY ${MS_APP_NAME}.tgz /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.tgz
+
+ADD update_setenv.sh /home/admin/${MS_APP_NAME}/bin/update_setenv.sh
+
