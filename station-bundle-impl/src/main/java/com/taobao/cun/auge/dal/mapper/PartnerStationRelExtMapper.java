@@ -32,4 +32,12 @@ public interface PartnerStationRelExtMapper {
 	 * @return
 	 */
 	List<PartnerInstance> selectPartnerInstancesByStationApplyIds(List<Long> stationApplyIds);
+	
+	/**
+	 * 根据合伙人实例id,批量查询实例
+	 * 
+	 * @param partnerInstanceIds
+	 * @return
+	 */
+	List<PartnerInstance> selectPartnerInstancesByIds(List<Long> partnerInstanceIds);
 }

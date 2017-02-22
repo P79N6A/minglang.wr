@@ -625,4 +625,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
 		return success;
 	}
+	
+	@Override
+	public List<PartnerInstanceDto> queryByPartnerInstanceIds(List<Long> partnerInstanceIds){
+		if(CollectionUtils.isEmpty(partnerInstanceIds)){
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstance> instances = partnerStationRelExtMapper.selectPartnerInstancesByIds(partnerInstanceIds);
+		
+		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
+		return success;
+	}
 }
