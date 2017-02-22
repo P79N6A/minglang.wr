@@ -93,6 +93,13 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
+	
+	/**
+	 * 重构过度使用，请正常业务不要使用
+	 * 
+	 * @return
+	 */
+	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds);
 
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]
