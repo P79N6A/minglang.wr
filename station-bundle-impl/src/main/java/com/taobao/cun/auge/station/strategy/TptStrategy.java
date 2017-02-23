@@ -267,10 +267,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
 								"UPGRADE"));
 		Long partnerId = rel.getPartnerId();
-		Partner partner = partnerBO.getPartnerById(partnerId);
-		if (!StringUtils.equals(PartnerStateEnum.TEMP.getCode(), partner.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
-		}
+
 		partnerBO.deletePartner(partnerId, partnerInstanceDeleteDto.getOperator());
 	
 		partnerInstanceBO.deletePartnerStationRel(rel.getId(), operator);
