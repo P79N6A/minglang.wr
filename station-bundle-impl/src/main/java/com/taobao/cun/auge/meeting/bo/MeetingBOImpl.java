@@ -131,7 +131,7 @@ public class MeetingBOImpl implements MeetingBO{
 		param.put("meetingCode", meetingCode);
 		param.put("attemperId", userId);
 		param.put("pageS", pageSize);
-		param.put("pageN", pageNum);
+		param.put("pageN", pageNum <= 1 ? 0 : (pageNum - 1) * pageSize);
 		param.put("orderType", orderType);
 		int count=partnerMeetingMapper.queryMeetingsCountByCondition(param);
 		List<PartnerMeeting> meetings=partnerMeetingMapper.queryMeetingsByCondition(param);
@@ -153,13 +153,13 @@ public class MeetingBOImpl implements MeetingBO{
 			for(MeetingAttempDto attemp:attemps){
 				List<MeetingAttempDto> temp=resultMap.get(attemp.getMeetingId()).getMeetingAttemps();
 				if(temp==null){
-					temp=new ArrayList<MeetingAttempDto>();
+					temp= new ArrayList<>();
 					resultMap.get(attemp.getMeetingId()).setMeetingAttemps(temp);
 				}
 				temp.add(attemp);
 			}
 		}
-		PageDto<MeetingDto> result=new PageDto<MeetingDto>();
+		PageDto<MeetingDto> result= new PageDto<>();
 		result.setTotal(count);
 		result.setItems(resultList);
 		return result;
