@@ -781,6 +781,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 
+	@Override
 	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto) {
 		try {
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
@@ -805,5 +806,45 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
 			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * 启动激励方案审批流程
+	 * @param processTask
+	 */
+	@Override
+	public void submitIncentiveProgramAuditTask(ApproveProcessTask processTask) {
+		try{
+
+			GeneralTaskDto startProcessTask = buildGeneralTaskDto(processTask, "processService", "startIncentiveProgramAuditProcess");
+			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
+			config.setIntervalTime(20000);
+			taskSubmitService.submitTask(startProcessTask, config);
+			logger.info("submitIncentiveProgramAuditTask : {}", JSON.toJSONString(startProcessTask));
+		}catch (Exception e) {
+
+		}
+	}
+
+	private static GeneralTaskDto buildGeneralTaskDto(ApproveProcessTask processTask, String beanName, String methodName) {
+		StartProcessDto startProcessDto = new StartProcessDto();
+		startProcessDto.setBusiness(processTask.getBusiness());
+		startProcessDto.setBusinessId(processTask.getBusinessId());
+		startProcessDto.setBusinessName(processTask.getBusinessName());
+		startProcessDto.setBusinessOrgId(processTask.getBusinessOrgId());
+		startProcessDto.copyOperatorDto(processTask);
+		startProcessDto.setJsonParams(FeatureUtil.toStringUnencode(processTask.getParams()));
+		// 启动流程
+		GeneralTaskDto startProcessTask = new GeneralTaskDto();
+		startProcessTask.setBusinessNo(String.valueOf(processTask.getBusinessId()));
+		startProcessTask.setBusinessStepNo(1L);
+		startProcessTask.setBusinessType(processTask.getBusiness().getCode());
+		startProcessTask.setBusinessStepDesc(processTask.getBusiness().getDesc());
+		startProcessTask.setBeanName(beanName);
+		startProcessTask.setMethodName(methodName);
+		startProcessTask.setOperator(processTask.getOperator());
+		startProcessTask.setParameterType(StartProcessDto.class.getName());
+		startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
+		return startProcessTask;
 	}
 }

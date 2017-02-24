@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.service.interfaces.IncentiveAuditFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("processService")
-@HSFProvider(serviceInterface = ProcessService.class)
+@HSFProvider(serviceInterface = ProcessService.class, clientTimeout=15000)
 public class ProcessServiceImpl implements ProcessService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProcessService.class);
@@ -43,6 +44,9 @@ public class ProcessServiceImpl implements ProcessService {
 	
 	@Autowired
 	LevelAuditFlowService levelAuditFlowService;
+
+	@Autowired
+	IncentiveAuditFlowService incentiveAuditFlowService;
 
 	/**
 	 * 启动停业、退出流程审批流程
@@ -72,9 +76,14 @@ public class ProcessServiceImpl implements ProcessService {
 					rm.getException());
 		}
 	}
-		
-	
+
+	@Override
 	public void startLevelApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto){
 	    levelAuditFlowService.startApproveProcess(levelProcessDto);
+	}
+
+	@Override
+	public void startIncentiveProgramAuditProcess(StartProcessDto startProcessDto) {
+		incentiveAuditFlowService.startProcess(startProcessDto);
 	}
 }
