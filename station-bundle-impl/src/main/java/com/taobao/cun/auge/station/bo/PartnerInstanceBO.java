@@ -318,4 +318,6 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId);
+
+	public Long findStationIdByStationApplyId(Long stationApplyId);
 }

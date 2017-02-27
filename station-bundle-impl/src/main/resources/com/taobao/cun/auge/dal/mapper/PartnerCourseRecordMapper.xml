@@ -581,6 +581,39 @@
    limit 0,500
   </select>
   
+   <resultMap id="examInstaceItemResult" type="com.taobao.cun.crius.exam.dto.ExamInstanceItemDto" >
+    <id column="instance_id" property="instanceId" jdbcType="BIGINT" />
+    <result column="answer" property="answer" jdbcType="VARCHAR" />
+    <result column="is_right" property="isRight" jdbcType="VARCHAR" />
+    <result column="point" property="point" jdbcType="VARCHAR" />
+    <result column="seq_order" property="seqOrder" jdbcType="VARCHAR" />
+    <result column="question_type" property="questionType" jdbcType="VARCHAR" />
+    <result column="question_id" property="questionId" jdbcType="BIGINT" />
+  </resultMap>
   
+   <select id="queryExamInstanceItemList" resultMap="examInstaceItemResult" parameterType="map" >
+   select instance_id,question_id,question_type,seq_order,is_right,answer,point
+   from exam_instance_item
+   where is_deleted='n'
+   and instance_id>#{idmin}
+   <![CDATA[ and instance_id<=#{idmax}]]>     
+   <if test="detailId != null" >
+      and instance_id=#{detailId}
+    </if>
+    order by instance_id
+  </select>
+  
+  <insert id="insertExamAnswer" parameterType="map">
+  	insert into exam_instance_answer (gmt_create, gmt_modified, creator, 
+      modifier, is_deleted, instance_id, 
+      answer)
+    values (now(), now(), 'init', 'init', 'n', #{instanceId}, 
+      #{answer})
+  </insert>
+  
+  
+   <select id="queryExamInstanceAnswer" resultType="java.lang.Integer" parameterType="map" >
+  select count(*) from exam_instance_answer where is_deleted='n' and instance_id=#{instanceId}
+  </select>
   
 </mapper>

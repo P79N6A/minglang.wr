@@ -770,4 +770,10 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return PartnerInstanceConverter
 				.convert(ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example)));
 	}
+
+	@Override
+	public Long findStationIdByStationApplyId(Long stationApplyId) {
+		PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
+		return null != rel ? rel.getStationId() : null;
+	}
 }
