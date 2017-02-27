@@ -37,7 +37,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 		Result<Void> result = new Result<Void>();
 		try {
 			if(request.getContent()==null){
-				result.setCode(ResultCode.FROM_VALIDATE_FAIL.getCode());
+				result.setCode(11002);
 				result.setMessage("资质内容不存在");
 				return result;
 			}
@@ -49,22 +49,22 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 				return result;
 			}
 			if(CollectionUtils.isEmpty(c2bBizScopeKeyWords)){
-				return Result.result(ResultCode.SUCCESS);
+				return Result.result(1,"SUCCESS");
 			}
 			for (Iterator<String> iterator = c2bBizScopeKeyWords.iterator(); iterator.hasNext();) {
 				String keyword =  iterator.next();
 				if(bizScope.contains(keyword)){
-					return Result.result(ResultCode.SUCCESS);
+					return Result.result(1,"SUCCESS");
 				}
 			}
 		} catch (Exception e) {
 			logger.error("CuntaoQualificationFormValidator error!",e);
-			return Result.result(ResultCode.FROM_VALIDATE_EXECUTE_FAIL);
+			return Result.result(11003, "FROM_VALIDATE_EXECUTE_FAIL");
 		}
 		String bizScopeKeyWords = c2bBizScopeKeyWords.stream().collect(Collectors.joining(","));
 		result.setMessage("经营范围不合法，必须包含"+bizScopeKeyWords);
-		return Result.result(ResultCode.FROM_VALIDATE_FAIL);
-		
+		result.setCode(11002);
+		return result;
 	}
 
 }
