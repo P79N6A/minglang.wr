@@ -8,6 +8,7 @@ import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.AlipayTagService;
 import com.taobao.cun.auge.station.service.impl.incentive.audit.IncentiveAuditServiceFactory;
 import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
 import com.taobao.cun.auge.station.service.interfaces.IncentiveAuditFlowService;
@@ -16,9 +17,12 @@ import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
@@ -31,6 +35,8 @@ import java.util.Map;
  * @author xujianhui
  * @date 2017/02/22
  */
+@Service("incentiveAuditFlowService")
+@HSFProvider(serviceInterface= IncentiveAuditFlowService.class)
 public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService {
 
     private static final Logger logger = LoggerFactory.getLogger(IncentiveAuditFlowServiceImpl.class);
