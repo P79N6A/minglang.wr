@@ -496,4 +496,23 @@
 		and s.station_num = #{stationNum,jdbcType=VARCHAR}
 	</if>
 	</sql>
+	
+	
+ <select id="selectC2BTestUsers" resultType="java.lang.Long" parameterType="java.util.Map" >
+   <![CDATA[
+   		select psr.taobao_user_id from partner_station_rel psr,cuntao_org org,station s
+		where psr.is_deleted= 'n' 
+		and org.is_deleted= 'n'
+		and s.is_deleted= 'n'
+		and psr.station_id = s.id
+		s.apply_org = org.id
+		and psr.id = pli.partner_instance_id 
+		and psr.state =#{partnerState,jdbcType=VARCHAR}
+		and pli.current_step =#{currentStep,jdbcType=VARCHAR}
+		and pli.business_type = #{businessType,jdbcType=VARCHAR}
+		and pli.role_approve = #{roleApprove,jdbcType=VARCHAR}
+		and pli.bond = #{bond,jdbcType=VARCHAR}
+		and psr.service_end_time <= #{serviceEndTime,jdbcType=TIMESTAMP}
+	 ]]>
+   </select>
 </mapper>

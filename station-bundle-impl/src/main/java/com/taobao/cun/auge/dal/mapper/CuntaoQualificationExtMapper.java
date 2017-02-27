@@ -9,4 +9,6 @@ public interface CuntaoQualificationExtMapper {
 	 int countQualification(CuntaoQualificationPageCondition condition);
 	
 	 Page<CuntaoQualification> queryQualification(CuntaoQualificationPageCondition condition);
+	 
+	 Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition);
 }

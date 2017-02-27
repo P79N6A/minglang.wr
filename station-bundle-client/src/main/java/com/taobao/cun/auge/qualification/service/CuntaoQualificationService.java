@@ -12,6 +12,5 @@ public interface CuntaoQualificationService {
 	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 
-	
-	
+	public PageDto<C2BTestUser> querC2BTestUsers(CuntaoQualificationPageCondition condition);
 }

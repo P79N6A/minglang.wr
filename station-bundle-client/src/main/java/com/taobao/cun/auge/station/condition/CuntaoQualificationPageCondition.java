@@ -13,25 +13,16 @@ public class CuntaoQualificationPageCondition extends PageQuery{
 
 	private List<String> userTypes;
 	
-	private List<Long> orgIds;
+	private List<String> orgIdPaths;
 	
 	private List<String> invalidPartnerInstanceStatus;
 	
-
 	public List<String> getUserTypes() {
 		return userTypes;
 	}
 
 	public void setUserTypes(List<String> userTypes) {
 		this.userTypes = userTypes;
-	}
-
-	public List<Long> getOrgIds() {
-		return orgIds;
-	}
-
-	public void setOrgIds(List<Long> orgIds) {
-		this.orgIds = orgIds;
 	}
 
 	public List<String> getInvalidPartnerInstanceStatus() {
@@ -42,6 +33,12 @@ public class CuntaoQualificationPageCondition extends PageQuery{
 		this.invalidPartnerInstanceStatus = invalidPartnerInstanceStatus;
 	}
 
-	
-	
+	public List<String> getOrgIdPaths() {
+		return orgIdPaths;
+	}
+
+	public void setOrgIdPaths(List<String> orgIdPaths) {
+		this.orgIdPaths = orgIdPaths;
+	}
+
 }

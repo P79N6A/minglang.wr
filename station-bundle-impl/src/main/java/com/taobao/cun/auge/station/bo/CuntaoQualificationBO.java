@@ -14,4 +14,6 @@ public interface CuntaoQualificationBO {
 	public void saveQualification(CuntaoQualification cuntaoQualification);
 	
 	public Page<CuntaoQualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
+	
+	 Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition);
 }

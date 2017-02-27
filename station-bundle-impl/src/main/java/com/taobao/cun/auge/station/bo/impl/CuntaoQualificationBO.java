@@ -51,4 +51,9 @@ public class CuntaoQualificationBO implements com.taobao.cun.auge.station.bo.Cun
 		cuntaoQualificationMapper.insertSelective(cuntaoQualification);
 	}
 
+	@Override
+	public Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition) {
+		return cuntaoQualificationExtMapper.selectC2BTestUsers(condition);
+	}
+
 }

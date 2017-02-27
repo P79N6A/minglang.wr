@@ -37,8 +37,8 @@
   </resultMap>
   
    <select id="queryQualification" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition" >
-	select cq.* from partner_station_rel psr,cuntao_qualification cq,station s where psr.is_deleted = 'n' and s.is_deleted = 'n' 
-		and psr.is_current='y'  and cq.is_deleted ='n'
+	select cq.* from partner_station_rel psr,cuntao_qualification cq,station s,cuntao_org org where psr.is_deleted = 'n' and s.is_deleted = 'n' 
+		and psr.is_current='y'  and cq.is_deleted ='n' and s.apply_org = org.id
 		and cq.partner_instance_id = psr.id  and psr.station_id = s.id
 		<include refid="query_condition" />  
   </select>
@@ -56,11 +56,21 @@
 				#{userType}
 			</foreach>
 		</if>
-		<if test="orgIds != null and  orgIds.size() != 0" >
-			and s.type   in 
-			<foreach collection="orgIds" item="orgId" open="(" close=")" separator="," >
-				#{orgId}
+		<if test="orgIdPaths != null and  orgIdPaths.size() != 0" >
+			and
+			<foreach collection="orgIdPaths" item="orgIdPath" open="(" close=")" separator="or" >
+				 concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
 			</foreach>
 		</if>
   </sql>
+  
+  
+   <select id="selectC2BTestUsers" resultType="java.lang.Long"  parameterType="com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition" >
+   		select psr.taobao_user_id from partner_station_rel psr,station s
+		where psr.is_deleted= 'n' 
+		and s.is_deleted= 'n'
+		and psr.station_id = s.id
+		and s.apply_org = org.id
+	    <include refid="query_condition" />  
+   </select>
 </mapper>
