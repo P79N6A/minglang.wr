@@ -44,7 +44,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 			
 			String bizScope = qualificationBuilder.getContent(request.getContent(), qualificationBuilder.getBizScope());
 			if(StringUtils.isEmpty(bizScope)){
-				result.setCode(ResultCode.FROM_VALIDATE_FAIL.getCode());
+				result.setCode(11002);
 				result.setMessage("经营范围不存在");
 				return result;
 			}
