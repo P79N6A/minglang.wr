@@ -284,6 +284,18 @@
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaosettle.client</artifactId>
 		</dependency>
+		<dependency>
+			 <groupId>org.slf4j</groupId>
+			 <artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>log4j</groupId>
+			  <artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

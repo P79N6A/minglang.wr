@@ -166,4 +166,23 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
 		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
 	}
+
+	@Override
+	public PartnerProtocolRelDto getPartnerProtocolRelDto(Long objectId,
+			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException {
+		ValidateUtils.notNull(objectId);
+		ValidateUtils.notNull(targetType);
+		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
+		
+		Criteria criteria = example.createCriteria();
+
+		criteria.andObjectIdEqualTo(objectId);
+		criteria.andTargetTypeEqualTo(targetType.getCode());
+		criteria.andProtocolIdEqualTo(protocolId);
+		criteria.andIsDeletedEqualTo("n");
+		example.setOrderByClause("id DESC");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
+	}
 }

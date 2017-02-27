@@ -14,6 +14,9 @@ public class ProtocolTypeEnum implements Serializable {
     private String desc;
 
     public static final ProtocolTypeEnum SETTLE_PRO = new ProtocolTypeEnum("SETTLE_PRO", "入驻协议");
+    
+    public static final ProtocolTypeEnum C2B_SETTLE_PRO = new ProtocolTypeEnum("C2B_SETTLE_PRO", "C转B入驻协议");
+
 
     public static final ProtocolTypeEnum MANAGE_PRO = new ProtocolTypeEnum("MANAGE_PRO", "管理协议");
 
@@ -32,7 +35,7 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("GOV_FIXED", GOV_FIXED);
         mappings.put("TRIPARTITE_FIXED", TRIPARTITE_FIXED);
         mappings.put("COURSE_SCHEDULE", COURSE_SCHEDULE);
-
+        mappings.put("C2B_SETTLE_PRO", C2B_SETTLE_PRO);
     }
 
     public ProtocolTypeEnum(String code, String desc) {
