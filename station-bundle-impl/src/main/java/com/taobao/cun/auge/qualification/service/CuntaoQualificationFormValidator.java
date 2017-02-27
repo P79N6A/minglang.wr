@@ -2,7 +2,10 @@ package com.taobao.cun.auge.qualification.service;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,19 +48,22 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 				result.setMessage("经营范围不存在");
 				return result;
 			}
+			if(CollectionUtils.isEmpty(c2bBizScopeKeyWords)){
+				return Result.result(ResultCode.SUCCESS);
+			}
 			for (Iterator<String> iterator = c2bBizScopeKeyWords.iterator(); iterator.hasNext();) {
 				String keyword =  iterator.next();
 				if(bizScope.contains(keyword)){
-					result.setCode(ResultCode.FROM_VALIDATE_FAIL.getCode());
-					result.setMessage("经营范围不合法,不允许出现["+keyword+"]");
-					return result;
+					return Result.result(ResultCode.SUCCESS);
 				}
 			}
 		} catch (Exception e) {
 			logger.error("CuntaoQualificationFormValidator error!",e);
 			return Result.result(ResultCode.FROM_VALIDATE_EXECUTE_FAIL);
 		}
-		return Result.result(ResultCode.SUCCESS);
+		String bizScopeKeyWords = c2bBizScopeKeyWords.stream().collect(Collectors.joining(","));
+		result.setMessage("经营范围不合法，必须包含"+bizScopeKeyWords);
+		return Result.result(ResultCode.FROM_VALIDATE_FAIL);
 		
 	}
 
