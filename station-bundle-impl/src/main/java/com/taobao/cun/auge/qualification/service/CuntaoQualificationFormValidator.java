@@ -33,6 +33,12 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 	public Result<Void> validate(FormValidateRequest request) {
 		Result<Void> result = new Result<Void>();
 		try {
+			if(request.getContent()==null){
+				result.setCode(ResultCode.FROM_VALIDATE_FAIL.getCode());
+				result.setMessage("资质内容不存在");
+				return result;
+			}
+			
 			String bizScope = qualificationBuilder.getContent(request.getContent(), qualificationBuilder.getBizScope());
 			if(StringUtils.isEmpty(bizScope)){
 				result.setCode(ResultCode.FROM_VALIDATE_FAIL.getCode());

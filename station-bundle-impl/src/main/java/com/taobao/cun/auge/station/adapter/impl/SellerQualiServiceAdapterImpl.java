@@ -82,6 +82,14 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		}
 		return Optional.ofNullable(auditRecord.getData());
 	}
+
+	public Long getQualiInfoId() {
+		return qualiInfoId;
+	}
+
+	public void setQualiInfoId(Long qualiInfoId) {
+		this.qualiInfoId = qualiInfoId;
+	}
 	
 	
 }

@@ -27,4 +27,6 @@ public interface SellerQualiServiceAdapter {
 	public UserQualiRecord lastAuditQualiStatus(Long taobaoUserId);
 	
 	public Optional<List<UserQualiRecord>> getUserQuailRecords(Long taobaoUserId);
+	
+	 Long getQualiInfoId();
 }

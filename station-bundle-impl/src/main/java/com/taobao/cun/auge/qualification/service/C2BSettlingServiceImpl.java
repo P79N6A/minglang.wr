@@ -11,16 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
+import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+import com.alibaba.pm.sc.portal.api.constants.ResultCode;
+import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
+import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
 import com.taobao.cun.auge.common.TestUserContext;
 import com.taobao.cun.auge.common.TestUserSupport;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.qualification.service.C2BSettlingRequest;
-import com.taobao.cun.auge.qualification.service.C2BSettlingResponse;
-import com.taobao.cun.auge.qualification.service.C2BSettlingService;
-import com.taobao.cun.auge.qualification.service.C2BSignSettleProtocolRequest;
-import com.taobao.cun.auge.qualification.service.C2BSignSettleProtocolResponse;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -68,7 +67,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	@Autowired
 	private PartnerInstanceService partnerInstanceService;
 	
-	
+	@Autowired
+	private FormValidator cuntaoQualificationFormValidator;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -113,7 +113,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 
 	//???qualiInfoId是否是1，可能需要修改成村淘专用
 	private void  setStep(Long taobaoUserId,boolean isSignProtocol,boolean isFrozenMoeny,C2BSettlingResponse response){
-		boolean hasValidQuali = sellerQualiServiceAdapter.hasValidQuali(taobaoUserId);
+		 Optional<EntityQuali> quali = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
+		boolean hasValidQuali = quali.isPresent() && checkQualiBizScope(quali.get(),taobaoUserId);
 		//没有有效资质，并且没有提交或审核记录或者最新一条审核记录是审核失败，跳提交资质页面
 		UserQualiRecord lastAuditRecord = sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId);
 		int lastAuditRecodStatus = lastAuditRecord.getStatus();
@@ -125,6 +126,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			response.setStep(C2BSettlingService.AUDIT_AUTH_DETAIL);
 			return;
 		}
+		
 		if(hasValidQuali && !isSignProtocol){
 			response.setStep(C2BSettlingService.SIGN_PROTOCOL);
 			return;
@@ -135,6 +137,21 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			return;
 		}
 		response.setStep(C2BSettlingService.ALL_DONE);
+	}
+	
+	/**
+	 * 验证资质经营范围
+	 * @param quali
+	 * @param taobaoUserId
+	 * @return
+	 */
+	private boolean checkQualiBizScope(EntityQuali quali,Long taobaoUserId){
+		if(quali == null) return false;
+		FormValidateRequest request = new FormValidateRequest();
+		request.setQualiInfoId(quali.getQuali().getQualiInfoId());
+		request.setHid(taobaoUserId);
+		request.setContent(quali.getQuali().getContent());
+		return cuntaoQualificationFormValidator.validate(request).getCode() == ResultCode.SUCCESS.getCode();
 	}
 	
 	/**
