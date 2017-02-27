@@ -67,8 +67,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	@Autowired
 	private PartnerInstanceService partnerInstanceService;
 	
-	@Autowired
-	private FormValidator cuntaoQualificationFormValidator;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -113,8 +111,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 
 	//???qualiInfoId是否是1，可能需要修改成村淘专用
 	private void  setStep(Long taobaoUserId,boolean isSignProtocol,boolean isFrozenMoeny,C2BSettlingResponse response){
-		 Optional<EntityQuali> quali = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
-		boolean hasValidQuali = quali.isPresent() && checkQualiBizScope(quali.get(),taobaoUserId);
+		boolean hasValidQuali = sellerQualiServiceAdapter.hasValidQuali(taobaoUserId);
 		//没有有效资质，并且没有提交或审核记录或者最新一条审核记录是审核失败，跳提交资质页面
 		UserQualiRecord lastAuditRecord = sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId);
 		int lastAuditRecodStatus = lastAuditRecord.getStatus();
@@ -137,21 +134,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			return;
 		}
 		response.setStep(C2BSettlingService.ALL_DONE);
-	}
-	
-	/**
-	 * 验证资质经营范围
-	 * @param quali
-	 * @param taobaoUserId
-	 * @return
-	 */
-	private boolean checkQualiBizScope(EntityQuali quali,Long taobaoUserId){
-		if(quali == null) return false;
-		FormValidateRequest request = new FormValidateRequest();
-		request.setQualiInfoId(quali.getQuali().getQualiInfoId());
-		request.setHid(taobaoUserId);
-		request.setContent(quali.getQuali().getContent());
-		return cuntaoQualificationFormValidator.validate(request).getCode() == ResultCode.SUCCESS.getCode();
 	}
 	
 	/**

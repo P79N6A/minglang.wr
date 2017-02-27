@@ -15,6 +15,7 @@ import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -22,6 +23,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -46,10 +48,15 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
 	
+	@Autowired
+	private C2BTestUserConfig c2bTestUserConfig;
+	
 	private BeanCopier cuntaoQualificationCopier = BeanCopier.create(Qualification.class, CuntaoQualification.class, false);
 	
 	private BeanCopier cuntaoQualificationReverseCopier = BeanCopier.create(CuntaoQualification.class, Qualification.class, false);
 	
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
 	
 	@Override
@@ -82,7 +89,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		try {
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
-			if(entityQuail.isPresent()){
+			if(entityQuail.isPresent() && sellerQualiServiceAdapter.checkQualiBizScope(entityQuail.get(), taobaoUserId)){
 				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
 				if(auditRecords.isPresent()){
 					Optional<UserQualiRecord> userQualiRecord = auditRecords.get().stream().filter(record -> entityQuail.get().getQuali().getId().equals(record.getQid()) && record.getStatus() == UserQualiRecordStatus.AUDIT_PASS).findFirst();
@@ -144,6 +151,10 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	@Override
 	public PageDto<C2BTestUser> querC2BTestUsers(CuntaoQualificationPageCondition condition){
+		List<String> orgIdPaths = c2bTestUserConfig.getTestOrgIds().stream().map(orgId -> cuntaoOrgServiceClient.getCuntaoOrg(orgId).getFullIdPath()).collect(Collectors.toList());
+		condition.setOrgIdPaths(orgIdPaths);
+		condition.setUserTypes(c2bTestUserConfig.getTestUserTypes());
+		condition.setInvalidPartnerInstanceStatus(Lists.newArrayList("SETTLE_FAIL","QUIT","QUITING","TO_AUDIT"));
 		Page<Long> testTaobaoUserIds  = cuntaoQualificationBO.selectC2BTestUsers(condition);
 		List<C2BTestUser> testUsers = testTaobaoUserIds.getResult().stream().map(taobaoUserId -> buildTestUser(taobaoUserId)).collect(Collectors.toList());
 		return PageDtoUtil.success(testTaobaoUserIds, testUsers);

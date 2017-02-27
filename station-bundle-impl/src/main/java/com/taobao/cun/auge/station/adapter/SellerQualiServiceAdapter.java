@@ -29,4 +29,6 @@ public interface SellerQualiServiceAdapter {
 	public Optional<List<UserQualiRecord>> getUserQuailRecords(Long taobaoUserId);
 	
 	 Long getQualiInfoId();
+	 
+	 public boolean checkQualiBizScope(EntityQuali quali,Long taobaoUserId);
 }

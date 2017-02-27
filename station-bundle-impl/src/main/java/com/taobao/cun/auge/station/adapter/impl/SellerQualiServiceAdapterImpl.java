@@ -15,6 +15,9 @@ import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+import com.alibaba.pm.sc.portal.api.constants.ResultCode;
+import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
+import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
@@ -31,7 +34,8 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	@Value("${qualiInfoId}")
 	private Long qualiInfoId;
 	
-
+	@Autowired
+	private FormValidator cuntaoQualificationFormValidator;
 
 	/**
 	 * 是否有有效淘宝资质
@@ -40,8 +44,25 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	 */
 	@Override
 	public boolean hasValidQuali(Long taobaoUserId){
-		return this.queryValidQuali(taobaoUserId).isPresent();
+		Optional<EntityQuali>  quali = this.queryValidQuali(taobaoUserId);
+		return quali.isPresent() && checkQualiBizScope(quali.get(),taobaoUserId);
 	}
+	
+	/**
+	 * 验证资质经营范围
+	 * @param quali
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public boolean checkQualiBizScope(EntityQuali quali,Long taobaoUserId){
+		if(quali == null) return false;
+		FormValidateRequest request = new FormValidateRequest();
+		request.setQualiInfoId(quali.getQuali().getQualiInfoId());
+		request.setHid(taobaoUserId);
+		request.setContent(quali.getQuali().getContent());
+		return cuntaoQualificationFormValidator.validate(request).getCode() == ResultCode.SUCCESS.getCode();
+	}
+	
 	
 	@Override
 	public Optional<EntityQuali> queryValidQuali(Long taobaoUserId){
