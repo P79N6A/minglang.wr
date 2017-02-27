@@ -296,6 +296,10 @@
 			  <groupId>com.alibaba.pm</groupId>
 			  <artifactId>sc.api</artifactId>
 		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.portal.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

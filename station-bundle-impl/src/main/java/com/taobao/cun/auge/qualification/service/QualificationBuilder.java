@@ -110,7 +110,7 @@ public class QualificationBuilder {
 		return enterTypeStream.anyMatch(value -> enterpriceType.contains(value))?0:1;
 	}
 	
-	private String getContent(Map<Long,Object> content,Long key){
+	public String getContent(Map<Long,Object> content,Long key){
 		Optional<Object> optional =  Optional.ofNullable(content.get(key));
 		if(optional.isPresent()){
 			return optional.get().toString();
