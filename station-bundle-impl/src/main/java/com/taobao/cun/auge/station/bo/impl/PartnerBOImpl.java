@@ -167,6 +167,7 @@ public class PartnerBOImpl implements PartnerBO {
 			if(!PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode().equals(pf.getStatus())){
 				throw new AugeServiceException("当前状态不允许修改");
 			}
+			validateFlowerNameExist(dto);
 			pf.setNameMeaning(dto.getNameMeaning());
 			pf.setNameSource(dto.getNameSource());
 			pf.setFlowerName(dto.getFlowerName());
@@ -194,13 +195,7 @@ public class PartnerBOImpl implements PartnerBO {
 	
 	private void validateApply(PartnerFlowerNameApplyDto dto){
 		//判断花名是否已经存在
-		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
-		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
-		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
-		if(applys.size()>0){
-			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
-		}
+		validateFlowerNameExist(dto);
 		//判断是否已经申请过
 		PartnerFlowerNameApplyExample example1 = new PartnerFlowerNameApplyExample();
 		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria1 = example1.createCriteria();
@@ -208,6 +203,16 @@ public class PartnerBOImpl implements PartnerBO {
 		List<PartnerFlowerNameApply> applys1=partnerFlowerNameApplyMapper.selectByExample(example1);
 		if(applys1.size()>0){
 			throw new AugeServiceException("花名已经申请过，请不要重复申请");
+		}
+	}
+	
+	private void validateFlowerNameExist(PartnerFlowerNameApplyDto dto){
+		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
+		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+		if(applys.size()>0){
+			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
 		}
 	}
 	private void createFlow(Long applyId, Long loginId) {
