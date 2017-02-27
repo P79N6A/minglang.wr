@@ -66,7 +66,7 @@
   
   
    <select id="selectC2BTestUsers" resultType="java.lang.Long"  parameterType="com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition" >
-   		select psr.taobao_user_id from partner_station_rel psr,station s
+   		select psr.taobao_user_id from partner_station_rel psr,station s,cuntao_org org
 		where psr.is_deleted= 'n' 
 		and s.is_deleted= 'n'
 		and psr.station_id = s.id
