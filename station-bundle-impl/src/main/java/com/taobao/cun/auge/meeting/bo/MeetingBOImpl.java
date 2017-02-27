@@ -71,6 +71,9 @@ public class MeetingBOImpl implements MeetingBO{
 		if(!meet.getOwnerId().equals(meeting.getOwnerId())){
 			throw new AugeServiceException("不是会议发起人，无权限修改");
 		}
+		if(!MeetingStatusEnum.NORMAL.getCode().equals(meet.getStatus())){
+			throw new AugeServiceException("会议状态不允许修改");
+		}
 		meet.setGmtStart(meeting.getGmtStart());
 		meet.setGmtEnd(meeting.getGmtEnd());
 		meet.setTitle(meeting.getTitle());
@@ -176,6 +179,9 @@ public class MeetingBOImpl implements MeetingBO{
 			throw new AugeServiceException("您未被邀请参加会议");
 		}
 		MeetingDto meeting=meetings.get(0);
+		if(!MeetingStatusEnum.NORMAL.getCode().equals(meeting.getStatus())){
+			throw new AugeServiceException("会议已经结束");
+		}
 		PartnerMeetingAttempExample ex=new PartnerMeetingAttempExample();
 		ex.createCriteria().andIsDeletedEqualTo("n").andMeetingIdEqualTo(meeting.getId()).andAttemperIdEqualTo(userId);
 		List<PartnerMeetingAttemp> attemps=partnerMeetingAttempMapper.selectByExample(ex);
@@ -200,6 +206,9 @@ public class MeetingBOImpl implements MeetingBO{
 		PartnerMeeting meet=meets.get(0);
 		if(!meet.getOwnerId().equals(operator)){
 			throw new AugeServiceException("不是会议发起人，无权限结束会议");
+		}
+		if(!MeetingStatusEnum.NORMAL.getCode().equals(meet.getStatus())){
+			throw new AugeServiceException("会议状态不允许结束");
 		}
 		meet.setGmtEnd(gmtEnd);
 		meet.setGmtModified(new Date());

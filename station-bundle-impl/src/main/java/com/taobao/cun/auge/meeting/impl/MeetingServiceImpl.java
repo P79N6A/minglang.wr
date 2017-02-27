@@ -120,6 +120,7 @@ public class MeetingServiceImpl implements MeetingService {
 		instanceType.add(MeetingAttempTypeEnum.TP.getCode());
 		states.add(PartnerInstanceStateEnum.DECORATING.getCode());
 		states.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		states.add(PartnerInstanceStateEnum.CLOSING.getCode());
 		List<PartnerStationRel> rels=partnerInstanceBO.getBatchActivePartnerInstance(userIds, instanceType, states);
 		l1:for(MeetingAttempDto dto:meeting.getMeetingAttemps()){
 			for(PartnerStationRel rel:rels){
