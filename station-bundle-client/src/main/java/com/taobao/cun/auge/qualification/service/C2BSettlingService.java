@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.settling;
+package com.taobao.cun.auge.qualification.service;
 
 /**
  * 新合伙人实例前置入住流程服务接口，由于需要做村小二的C转B功能，为了避免对老业务产生影响，新开发一个接口

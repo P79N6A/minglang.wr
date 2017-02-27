@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.qualification.service;
 
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.settling.Qualification;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 
 public interface CuntaoQualificationService {
@@ -13,4 +12,6 @@ public interface CuntaoQualificationService {
 	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 
+	
+	
 }

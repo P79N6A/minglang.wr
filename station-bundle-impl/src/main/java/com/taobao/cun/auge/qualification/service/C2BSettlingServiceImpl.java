@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.settling;
+package com.taobao.cun.auge.qualification.service;
 
 import java.util.Optional;
 
@@ -16,6 +16,11 @@ import com.taobao.cun.auge.common.TestUserContext;
 import com.taobao.cun.auge.common.TestUserSupport;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.qualification.service.C2BSettlingRequest;
+import com.taobao.cun.auge.qualification.service.C2BSettlingResponse;
+import com.taobao.cun.auge.qualification.service.C2BSettlingService;
+import com.taobao.cun.auge.qualification.service.C2BSignSettleProtocolRequest;
+import com.taobao.cun.auge.qualification.service.C2BSignSettleProtocolResponse;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;

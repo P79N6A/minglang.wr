@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.settling;
+package com.taobao.cun.auge.qualification.service;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.qualification.service.Qualification;
 
 @RefreshScope
 @Component

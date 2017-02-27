@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.settling;
+package com.taobao.cun.auge.qualification.service;
 
 import java.io.Serializable;
 
