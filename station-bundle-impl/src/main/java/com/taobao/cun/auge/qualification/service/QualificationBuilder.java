@@ -107,7 +107,7 @@ public class QualificationBuilder {
 	private Integer getEnterpriceType(String enterpriceType){
 		Stream<String> enterTypeStream = Stream.of("自然人","个体","个体工商户","个体户");
 		if(StringUtils.isEmpty(enterpriceType)) return null;
-		return enterTypeStream.anyMatch(value -> enterpriceType.contains(value))?0:1;
+		return enterTypeStream.anyMatch(value -> enterpriceType.equals(value))?0:1;
 	}
 	
 	public String getContent(Map<Long,Object> content,Long key){

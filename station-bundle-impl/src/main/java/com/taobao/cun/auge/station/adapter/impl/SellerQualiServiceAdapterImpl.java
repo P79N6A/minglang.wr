@@ -14,6 +14,7 @@ import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
+import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.alibaba.pm.sc.portal.api.constants.ResultCode;
 import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
@@ -111,6 +112,23 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	public void setQualiInfoId(Long qualiInfoId) {
 		this.qualiInfoId = qualiInfoId;
 	}
+
+	@Override
+	public Optional<EntityQuali> queryValidQualiById(Long qualiId,int eidType) {
+		Result<EntityQuali> result = sellerQualiService.getEntityQualiByQid(qualiId,eidType);
+		if(!result.isSuccessful()){
+			logger.error("getEntityQualiByQid error qualiId["+qualiId+"]:"+result.toString());
+			throw new AugeBusinessException("查询企业资质异常");
+		}
+		return Optional.ofNullable(result.getData());
+	}
 	
-	
+	public Optional<ListHidByEidAndEidTypeResponse> queryHavanaIdByQuali(String eid, int eidType){
+		Result<ListHidByEidAndEidTypeResponse> result = sellerQualiService.listHidByEidAndEidType(eid, eidType);
+		if(!result.isSuccessful()){
+			logger.error("listHidByEidAndEidType error eid["+eid+"] eidType["+eidType+"]:"+result.toString());
+			throw new AugeBusinessException("查询havana信息异常");
+		}
+		return Optional.ofNullable(result.getData());
+	}
 }

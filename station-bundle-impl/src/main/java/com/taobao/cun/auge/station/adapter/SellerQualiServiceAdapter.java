@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
+import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 
 public interface SellerQualiServiceAdapter {
@@ -23,8 +24,11 @@ public interface SellerQualiServiceAdapter {
 	
 	public Optional<EntityQuali> queryValidQuali(Long taobaoUserId);
 	
+	public Optional<EntityQuali> queryValidQualiById(Long qualiId,int eidType);
 	
 	public UserQualiRecord lastAuditQualiStatus(Long taobaoUserId);
+	
+	public Optional<ListHidByEidAndEidTypeResponse> queryHavanaIdByQuali(String eid, int eidType);
 	
 	public Optional<List<UserQualiRecord>> getUserQuailRecords(Long taobaoUserId);
 	

@@ -50,8 +50,8 @@
 		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
 		<!-- AliExpress Starters -->
 		<dependency>
-			<groupId>com.aliexpress.boot</groupId>
-			<artifactId>spring-boot-starter-metaq</artifactId>
+    		<groupId>com.alibaba.cloud</groupId>
+    		<artifactId>spring-cloud-stream-starter-metaq</artifactId>
 		</dependency>
 		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> </dependency> -->
 		<dependency>

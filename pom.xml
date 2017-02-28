@@ -460,12 +460,17 @@
 			<dependency>
 			  <groupId>com.alibaba.pm</groupId>
 			  <artifactId>sc.api</artifactId>
-			  <version>0.2.4-SNAPSHOT</version>
+			  <version>0.2.9-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 			  <groupId>com.alibaba.pm</groupId>
 			  <artifactId>sc.portal.api</artifactId>
-			  <version>0.2.4-SNAPSHOT</version>
+			  <version>0.2.9-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.cloud</groupId>
+			    <artifactId>spring-cloud-stream-starter-metaq</artifactId>
+			    <version>1.0.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

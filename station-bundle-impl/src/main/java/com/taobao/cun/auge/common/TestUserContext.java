@@ -117,7 +117,6 @@ public class TestUserContext {
 		}else{
 			return checkTestOrg(cuntaoOrgDto.getParentId());
 		}
-		
 	}
 	
 	public String getUserType() {
