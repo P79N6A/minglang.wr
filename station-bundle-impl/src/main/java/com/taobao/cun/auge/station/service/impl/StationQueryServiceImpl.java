@@ -60,9 +60,9 @@ public class StationQueryServiceImpl implements StationQueryService {
 	}
 
 	@Override
-	public List<StationDto> queryStationsByName(StationCondition stationCondition) throws AugeServiceException {
+	public List<StationDto> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException {
 		ValidateUtils.validateParam(stationCondition);
-		List<Station> stations = stationBO.getStationsByName(stationCondition);
+		List<Station> stations = stationBO.getTpStationsByName(stationCondition);
 		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
 	}
 	
