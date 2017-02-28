@@ -22,5 +22,6 @@ public interface MeetingService {
 	public MeetingDto attempMeeting(String userId,String userType,String meetingCode);
 	
 	public void closeMeeting(String meetingCode,String operator,Date gmtEnd);
-
+	
+	public Long getFutureMeetingCount(String userId);
 }

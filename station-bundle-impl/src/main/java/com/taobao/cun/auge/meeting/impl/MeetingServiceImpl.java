@@ -263,4 +263,15 @@ public class MeetingServiceImpl implements MeetingService {
 		meetingBO.closeMeeting(meetingCode, operator,gmtEnd);
 	}
 
+	@Override
+	public Long getFutureMeetingCount(String userId) {
+		if (StringUtils.isEmpty(userId)){
+			throw new AugeServiceException("查询会议失败：param is null");
+		}
+		PageDto<MeetingDto> result=meetingBO.queryMeetingsByCondition(
+				null, null, null, null, new Date(),
+				userId,0,10,null);
+		return result.getTotal();
+	}
+
 }
