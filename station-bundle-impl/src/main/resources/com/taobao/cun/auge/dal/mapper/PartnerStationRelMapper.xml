@@ -593,7 +593,7 @@
    </if>
   and b.is_current='y'
   and b.type='TP'
-  and b.state in('DECORATING','SERVICING')
+  and b.state in('DECORATING','SERVICING','CLOSING')
    <if test="orgId != null and orgId !=0" >
       and d.id=#{orgId}
     </if>
