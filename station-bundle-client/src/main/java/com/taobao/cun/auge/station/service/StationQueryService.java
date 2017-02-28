@@ -36,7 +36,7 @@ public interface StationQueryService {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<StationDto> queryStationsByName(StationCondition stationCondition) throws AugeServiceException;
+	public List<StationDto> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException;
 
 	/**
 	 * 查询撤点申请单
