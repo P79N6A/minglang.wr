@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.configuration;
 
-import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
-import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +10,10 @@ import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.service.CuntaoOrgService;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
+import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -24,6 +25,7 @@ import com.taobao.cun.service.alipay.AlipayStandardBailService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 
 @Configuration
@@ -110,6 +112,14 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	public HSFSpringConsumerBean augeCuntaoUserService(
 			@Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
 		return getConsumerBean(CuntaoUserService.class, HSFGroup.HSF, version, 3000);
+	}
+	
+	@Bean(initMethod = "init")
+	public CuntaoOrgServiceClient cuntaoOrgServiceClient(CuntaoUserService augeCuntaoUserService,CuntaoOrgService augeCuntaoOrgService){
+		CuntaoOrgServiceClientImpl cuntaoOrgServiceClient = new CuntaoOrgServiceClientImpl();
+		cuntaoOrgServiceClient.setAugeCuntaoOrgService(augeCuntaoOrgService);
+		cuntaoOrgServiceClient.setAugeCuntaoUserService(augeCuntaoUserService);
+		return cuntaoOrgServiceClient;
 	}
 	
 	@Bean(initMethod = "init")
