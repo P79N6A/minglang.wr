@@ -30,7 +30,7 @@ public interface StationQueryService {
 	public List<StationDto> queryStations(List<Long> stationIds) throws AugeServiceException;
 
 	/**
-	 * 根据name、orgIdPath、stationStatusEnum查询station
+	 * 根据name、orgIdPath、stationStatusEnum查询TPstation
 	 * 
 	 * @param stationCondition
 	 * @return
