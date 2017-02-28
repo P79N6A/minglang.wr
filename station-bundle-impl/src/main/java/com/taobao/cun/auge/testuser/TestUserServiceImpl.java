@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,11 +35,14 @@ public class TestUserServiceImpl implements TestUserService,ApplicationContextAw
     	Assert.notNull(bizCode);
     	Map<String,String> config= testUserProperties.getConfigs().get(bizCode);
     	Map<String,TestUserRule> testUserRules = applicationContext.getBeansOfType(TestUserRule.class);
-    	List<TestUserRule> rules = testUserRules.values().stream().filter(rule -> config.containsKey(rule.getConfigKey())).collect(Collectors.toList());
+    	List<TestUserRule> rules = testUserRules.values().stream().filter(rule -> config.containsKey(rule.getConfigKey()) && StringUtils.isNotEmpty(config.get(rule.getConfigKey()))).collect(Collectors.toList());
+    	if(CollectionUtils.isEmpty(rules)){
+    		return false;
+    	}
     	if(allMatch){
-    		return rules.stream().allMatch(rule -> rule.checkTestUser(taobaoUserId, bizCode));
+    		return rules.stream().allMatch(rule -> rule.checkTestUser(taobaoUserId, config.get(rule.getConfigKey())));
     	}else{
-    		return  rules.stream().anyMatch(rule -> rule.checkTestUser(taobaoUserId, bizCode));
+    		return  rules.stream().anyMatch(rule -> rule.checkTestUser(taobaoUserId, config.get(rule.getConfigKey())));
     	}
     }
 
