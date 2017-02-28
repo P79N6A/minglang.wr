@@ -78,6 +78,7 @@ public class MeetingBOImpl implements MeetingBO{
 		meet.setGmtEnd(meeting.getGmtEnd());
 		meet.setTitle(meeting.getTitle());
 		meet.setGmtModified(new Date());
+		meet.setDescription(meeting.getDescription());
 		partnerMeetingMapper.updateByPrimaryKeySelective(meet);
 		//批量删除原先邀约人员
 		PartnerMeetingAttempExample ex=new PartnerMeetingAttempExample();
