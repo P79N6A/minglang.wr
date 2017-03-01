@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import com.taobao.cun.auge.station.constant.PurchaseEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.ceres.service.Result;
-import com.alibaba.ceres.service.catalog.ProductService;
-import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
@@ -51,13 +48,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	
 	@Autowired
 	private PrService prService;
-	
-	@Resource
-	private ProductService cereProductService;
-	
-	@Resource
-	private CategoryService cereCategoryService;
-	
+
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
@@ -159,6 +150,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		if(StringUtils.isEmpty(dto.getOperator())){
 			throw new AugeServiceException("operator is null");
+		}
+		if(StringUtils.isEmpty(dto.getPurchaseSupplier())){
+			throw new AugeServiceException("purchaseSupplier is null");
 		}
 	}
 	
@@ -297,7 +291,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	private String applyReason(PeixunPurchase record){
 		CuntaoOrgDto county = cuntaoOrgServiceClient.getCuntaoOrg(record.getApplyOrgId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		StringBuilder sb=new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append("申请人:").append(record.getApplyName()).append("(").append(record.getApplyWorkNo()).append("),");
 		sb.append("申请县域:").append(county.getFullNamePath()).append(",");
 		sb.append("开班人数:").append(record.getExceptNum()).append(",");
@@ -309,7 +303,10 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
-		String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE",record.getPurchaseType()+"_SKU");
+        String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
+        if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+            skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
+        }
 		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
 		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
 //		String productCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","PRODUCT_CODE");
@@ -386,6 +383,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		result.setOrgFullName(county.getFullNamePath());
 		result.setStatusDesc(PeixunPurchaseStatusEnum.valueof(result.getStatus()).getDesc());
 		result.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(result.getPurchaseType()).getDesc());
+		if (!StringUtils.isEmpty(result.getPurchaseSupplier())) {
+			result.setPurchaseSupplierName(appResourceBO.queryAppNameByValue(PurchaseEnum.PURCHASE_SUPPLIER_TYPE, result.getPurchaseSupplier()));
+		}
 		return result;
 	}
 

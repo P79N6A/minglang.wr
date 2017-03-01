@@ -21,8 +21,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.TestUserContext;
-import com.taobao.cun.auge.common.TestUserSupport;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
@@ -44,7 +42,6 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
-import com.taobao.cun.auge.qualification.service.C2BTestUserConfig;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
@@ -156,6 +153,7 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -241,10 +239,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
 	
 	@Autowired
-	private C2BTestUserConfig c2bTestUserConfig;
+	private TestUserService testUserService;
 	
-	@Autowired
-	private TestUserSupport testUserSupport;
 	
 	@Autowired
 	private FrozenMoneyAmountConfig frozenMoneyConfig;
@@ -628,8 +624,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney) throws AugeServiceException{
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		Station station = stationBO.getStationById(rel.getStationId());
-		boolean isTestUser = isTestUser(rel,station);
+		boolean isTestUser = isC2BTestUser(rel);
 		Double frozenMoney = this.frozenMoneyConfig.getFrozenMoneyByType(rel.getType());
 		Long version = rel.getVersion();
 		if(!isTestUser){
@@ -657,15 +652,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		signSettledProtocol(taobaoUserId,waitFrozenMoney,version, ProtocolTypeEnum.SETTLE_PRO,true);
 	}
 
-	private boolean isTestUser(PartnerStationRel parnterInstance, Station station) {
-		TestUserContext context = new TestUserContext();
-		context.setTaobaoUserId(parnterInstance.getTaobaoUserId());
-		context.setOrgId(station.getApplyOrg());
-		context.setUserType(parnterInstance.getType());
-		context.setTestUserConfig(c2bTestUserConfig);
-		
-		boolean testUser = testUserSupport.setCurrentContext(context).isTestUserOrg(true).and().isTestTaobaoUser(false).and().isTestUserType(true).getResult();
-		return testUser;
+	private boolean isC2BTestUser(PartnerStationRel parnterInstance) {
+		return testUserService.isTestUser(parnterInstance.getTaobaoUserId(), "c2b", true);
 	}
 
 	private void addWaitFrozenMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {

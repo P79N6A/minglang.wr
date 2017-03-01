@@ -169,7 +169,7 @@ public class StationBOImpl implements StationBO {
 	}
 
 	@Override
-	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException {
+	public List<Station> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException {
 		ValidateUtils.notNull(stationCondition);
 		StationExtExample stationExtExample = new StationExtExample();
 		stationExtExample.setName(stationCondition.getName());

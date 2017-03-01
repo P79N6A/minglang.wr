@@ -11,15 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
-import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
-import com.alibaba.pm.sc.portal.api.constants.ResultCode;
-import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
-import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
-import com.taobao.cun.auge.common.TestUserContext;
-import com.taobao.cun.auge.common.TestUserSupport;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -32,6 +25,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("settlingService")
@@ -56,10 +50,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	private Long c2bSettleProcotolId;
 	
 	@Autowired
-	private C2BTestUserConfig c2bTestUserConfig;
-	
-	@Autowired
-	private TestUserSupport testUserSupport;
+	private TestUserService testUserService;
 	
 	@Autowired
 	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
@@ -76,8 +67,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			Assert.notNull(settlingStepRequest.getTaobaoUserId());
 			
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(settlingStepRequest.getTaobaoUserId());
-			Station station = stationBO.getStationById(parnterInstance.getStationId());
-			boolean testUser = isTestUser(parnterInstance, station);
+			boolean testUser = isTestUser(parnterInstance.getTaobaoUserId());
 			response.setTestUser(testUser);
 			
 			boolean isSignProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
@@ -98,15 +88,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		}
 	}
 
-	private boolean isTestUser(PartnerStationRel parnterInstance, Station station) {
-		TestUserContext context = new TestUserContext();
-		context.setTaobaoUserId(parnterInstance.getTaobaoUserId());
-		context.setOrgId(station.getApplyOrg());
-		context.setUserType(parnterInstance.getType());
-		context.setTestUserConfig(c2bTestUserConfig);
-		
-		boolean testUser = testUserSupport.setCurrentContext(context).isTestUserOrg(true).and().isTestTaobaoUser(false).and().isTestUserType(true).getResult();
-		return testUser;
+	private boolean isTestUser(Long taobaoUserId) {
+		return this.testUserService.isTestUser(taobaoUserId, "c2b", true);
 	}
 
 	//???qualiInfoId是否是1，可能需要修改成村淘专用
