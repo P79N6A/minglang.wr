@@ -4,4 +4,4 @@ baseline.jdk=ajdk-8_0_0-b60
 build.output=station-bundle-impl/target/auge.jar
 build.pkgname=auge.tgz
 env.test.java-opts = -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000
-spring.diamond.group=meet
+spring.diamond.group=EXAM
