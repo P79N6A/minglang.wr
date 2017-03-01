@@ -78,6 +78,11 @@ public class Qualification implements Serializable{
 		 */
 		private String partnerInstanceState;
 		
+		/**
+		 * 转大B时间
+		 */
+		private Date bigBusinessTime;
+		
 		public String getCompanyName() {
 			return companyName;
 		}
@@ -273,6 +278,15 @@ public class Qualification implements Serializable{
 		public void setPartnerInstanceState(String partnerInstanceState) {
 			this.partnerInstanceState = partnerInstanceState;
 		}
+
+		public Date getBigBusinessTime() {
+			return bigBusinessTime;
+		}
+
+		public void setBigBusinessTime(Date bigBusinessTime) {
+			this.bigBusinessTime = bigBusinessTime;
+		}
+
 
 
 

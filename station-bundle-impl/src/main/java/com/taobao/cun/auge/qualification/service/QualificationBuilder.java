@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -17,6 +18,12 @@ import com.taobao.cun.auge.qualification.service.Qualification;
 @RefreshScope
 @Component
 public class QualificationBuilder {
+	
+	private static final int PERSONAL_BUSINESS = 0;
+	
+	private static final int SMALL_BUSINESS = 1;
+	
+	private static final int BIG_BUSINESS = 2;
 	
 	//公司名称
 	@Value("${quali.companyName}")
@@ -66,6 +73,11 @@ public class QualificationBuilder {
 	@Value("${quali.qualiPic}")
 	private Long qualiPic;
 	
+	private static Map<String,Integer> businessTypeMapping = Maps.newHashMap();
+	static{
+		businessTypeMapping.put("个体工商户", SMALL_BUSINESS);
+		businessTypeMapping.put("自然人", PERSONAL_BUSINESS);
+	}
 	
 	public Qualification build(PartnerStationRel parnterInstance,Optional<EntityQuali> entityQuail,Optional<UserQualiRecord> userQualiRecord){
 		Qualification qualification = new Qualification();
@@ -105,9 +117,11 @@ public class QualificationBuilder {
 	}
 	
 	private Integer getEnterpriceType(String enterpriceType){
-		Stream<String> enterTypeStream = Stream.of("自然人","个体","个体工商户","个体户");
-		if(StringUtils.isEmpty(enterpriceType)) return null;
-		return enterTypeStream.anyMatch(value -> enterpriceType.equals(value))?0:1;
+		Integer enterpriceTypeValue = businessTypeMapping.get(enterpriceType);
+		if(null != enterpriceTypeValue){
+			return enterpriceTypeValue;
+		}
+		return BIG_BUSINESS;
 	}
 	
 	public String getContent(Map<Long,Object> content,Long key){

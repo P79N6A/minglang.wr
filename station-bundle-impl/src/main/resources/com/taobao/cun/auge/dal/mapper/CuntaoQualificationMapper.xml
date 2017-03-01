@@ -34,6 +34,7 @@
     <result column="submit_time" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
     <result column="is_deleted" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="bigBusiness_time" property="bigbusinessTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -110,7 +111,7 @@
     quali_no, company_name, legal_person, enterprice_type_desc, quali_start_time, quali_end_time, 
     enterprice_type, regsiter_address, biz_scope, operation_status, agencies, quali_pic, 
     status, invalid_time, quali_info_id, quali_id, eid_type, eid, submit_time, audit_time, 
-    is_deleted
+    is_deleted, bigBusiness_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualificationExample" >
     <!--
@@ -175,8 +176,8 @@
       operation_status, agencies, quali_pic, 
       status, invalid_time, quali_info_id, 
       quali_id, eid_type, eid, 
-      submit_time, audit_time, is_deleted
-      )
+      submit_time, audit_time, is_deleted, 
+      bigBusiness_time)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{partnerInstanceId,jdbcType=BIGINT}, #{taobaoUserId,jdbcType=BIGINT}, 
       #{qualiNo,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR}, 
@@ -185,8 +186,8 @@
       #{operationStatus,jdbcType=VARCHAR}, #{agencies,jdbcType=VARCHAR}, #{qualiPic,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{invalidTime,jdbcType=TIMESTAMP}, #{qualiInfoId,jdbcType=BIGINT}, 
       #{qualiId,jdbcType=BIGINT}, #{eidType,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, 
-      #{submitTime,jdbcType=TIMESTAMP}, #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}
-      )
+      #{submitTime,jdbcType=TIMESTAMP}, #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}, 
+      #{bigbusinessTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualification" >
     <!--
@@ -279,6 +280,9 @@
       <if test="isDeleted != null" >
         is_deleted,
       </if>
+      <if test="bigbusinessTime != null" >
+        bigBusiness_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -361,6 +365,9 @@
       </if>
       <if test="isDeleted != null" >
         #{isDeleted,jdbcType=VARCHAR},
+      </if>
+      <if test="bigbusinessTime != null" >
+        #{bigbusinessTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -465,6 +472,9 @@
       <if test="record.isDeleted != null" >
         is_deleted = #{record.isDeleted,jdbcType=VARCHAR},
       </if>
+      <if test="record.bigbusinessTime != null" >
+        bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -503,7 +513,8 @@
       eid = #{record.eid,jdbcType=VARCHAR},
       submit_time = #{record.submitTime,jdbcType=TIMESTAMP},
       audit_time = #{record.auditTime,jdbcType=TIMESTAMP},
-      is_deleted = #{record.isDeleted,jdbcType=VARCHAR}
+      is_deleted = #{record.isDeleted,jdbcType=VARCHAR},
+      bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -596,6 +607,9 @@
       <if test="isDeleted != null" >
         is_deleted = #{isDeleted,jdbcType=VARCHAR},
       </if>
+      <if test="bigbusinessTime != null" >
+        bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -631,7 +645,8 @@
       eid = #{eid,jdbcType=VARCHAR},
       submit_time = #{submitTime,jdbcType=TIMESTAMP},
       audit_time = #{auditTime,jdbcType=TIMESTAMP},
-      is_deleted = #{isDeleted,jdbcType=VARCHAR}
+      is_deleted = #{isDeleted,jdbcType=VARCHAR},
+      bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

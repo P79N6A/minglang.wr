@@ -2024,6 +2024,66 @@ public class CuntaoQualificationExample {
             addCriterion("is_deleted not between", value1, value2, "isDeleted");
             return (Criteria) this;
         }
+
+        public Criteria andBigbusinessTimeIsNull() {
+            addCriterion("bigBusiness_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeIsNotNull() {
+            addCriterion("bigBusiness_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeEqualTo(Date value) {
+            addCriterion("bigBusiness_time =", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeNotEqualTo(Date value) {
+            addCriterion("bigBusiness_time <>", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeGreaterThan(Date value) {
+            addCriterion("bigBusiness_time >", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("bigBusiness_time >=", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeLessThan(Date value) {
+            addCriterion("bigBusiness_time <", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeLessThanOrEqualTo(Date value) {
+            addCriterion("bigBusiness_time <=", value, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeIn(List<Date> values) {
+            addCriterion("bigBusiness_time in", values, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeNotIn(List<Date> values) {
+            addCriterion("bigBusiness_time not in", values, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeBetween(Date value1, Date value2) {
+            addCriterion("bigBusiness_time between", value1, value2, "bigbusinessTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andBigbusinessTimeNotBetween(Date value1, Date value2) {
+            addCriterion("bigBusiness_time not between", value1, value2, "bigbusinessTime");
+            return (Criteria) this;
+        }
     }
 
     /**

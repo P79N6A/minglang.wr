@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -631,20 +632,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			//非测试用户走老代码
 			this.signSettledProtocol(taobaoUserId, frozenMoney, version);
 		}else{
-			if(!signedC2BProtocol){
-				PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto = new PartnerProtocolRelDeleteDto();
-				partnerProtocolRelDeleteDto.setObjectId(rel.getId());
-				partnerProtocolRelDeleteDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-				partnerProtocolRelDeleteDto.setProtocolTypeList(Lists.newArrayList(ProtocolTypeEnum.SETTLE_PRO));
-				partnerProtocolRelDeleteDto.setOperatorType(OperatorTypeEnum.HAVANA);
-				partnerProtocolRelDeleteDto.setOperator(taobaoUserId+"");
-				this.partnerProtocolRelBO.deletePartnerProtocolRel(partnerProtocolRelDeleteDto);
+			if(!signedC2BProtocol && !isSignSettleProtocol(rel.getId())){
 				signSettledProtocol(taobaoUserId,frozenMoney,version, ProtocolTypeEnum.C2B_SETTLE_PRO,!isFrozenMoney);
+			}else if(!signedC2BProtocol && isSignSettleProtocol(rel.getId())){
+				partnerProtocolRelBO.signProtocol(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO, rel.getId(),
+						PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 			}
 		}
-		
-		
 	}
+	
+	private boolean isSignSettleProtocol(Long partnerInstanceId){
+		return Optional.ofNullable(partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO, partnerInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE)).isPresent();
+	}
+	
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
