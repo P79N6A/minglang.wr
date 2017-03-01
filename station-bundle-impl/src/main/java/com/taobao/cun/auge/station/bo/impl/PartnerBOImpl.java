@@ -167,7 +167,6 @@ public class PartnerBOImpl implements PartnerBO {
 			if(!PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode().equals(pf.getStatus())){
 				throw new AugeServiceException("当前状态不允许修改");
 			}
-			validateFlowerNameExist(dto);
 			pf.setNameMeaning(dto.getNameMeaning());
 			pf.setNameSource(dto.getNameSource());
 			pf.setFlowerName(dto.getFlowerName());
@@ -178,6 +177,7 @@ public class PartnerBOImpl implements PartnerBO {
 			partnerFlowerNameApplyMapper.updateByPrimaryKey(pf);
 		}else{
 			validateApply(dto);
+			validateFlowerNameExist(dto);
 			PartnerFlowerNameApply apply=new PartnerFlowerNameApply();
 			BeanUtils.copyProperties(dto, apply);
 			apply.setStatus(PartnerFlowerNameApplyStatusEnum.WAIT_AUDIT.getCode());
@@ -205,16 +205,6 @@ public class PartnerBOImpl implements PartnerBO {
 			throw new AugeServiceException("花名已经申请过，请不要重复申请");
 		}
 	}
-	
-	private void validateFlowerNameExist(PartnerFlowerNameApplyDto dto){
-		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
-		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
-		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
-		if(applys.size()>0){
-			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
-		}
-	}
 	private void createFlow(Long applyId, Long loginId) {
 		//获取组织
 		PartnerStationRel rel=partnerInstanceBO.getActivePartnerInstance(loginId);
@@ -236,6 +226,16 @@ public class PartnerBOImpl implements PartnerBO {
 			}
 		} catch (Exception e) {
 			throw new AugeServiceException("申请花名失败", e);
+		}
+	}
+
+	private void validateFlowerNameExist(PartnerFlowerNameApplyDto dto){
+		PartnerFlowerNameApplyExample example = new PartnerFlowerNameApplyExample();
+		com.taobao.cun.auge.dal.domain.PartnerFlowerNameApplyExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
+		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
+		if(applys.size()>0){
+			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
 		}
 	}
 

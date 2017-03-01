@@ -90,6 +90,6 @@ public interface StationBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException;
+	public List<Station> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException;
 	
 }

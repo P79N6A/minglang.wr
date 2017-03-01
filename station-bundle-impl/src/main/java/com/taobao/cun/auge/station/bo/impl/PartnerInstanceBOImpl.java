@@ -773,6 +773,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
+	public Long findStationIdByStationApplyId(Long stationApplyId) {
+		PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
+		return null != rel ? rel.getStationId() : null;
+	}
+	@Override
 	public List<PartnerStationRel> getBatchActivePartnerInstance(
 			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException {
 		if(taobaoUserId.size()==0){

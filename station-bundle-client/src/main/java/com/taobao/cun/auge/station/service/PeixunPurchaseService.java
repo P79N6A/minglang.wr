@@ -2,7 +2,10 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
+import com.taobao.cun.auge.station.dto.PartnerPeixunSupplierDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
+
+import java.util.List;
 
 /**
  * 培训集采表
@@ -34,5 +37,11 @@ public interface PeixunPurchaseService {
 	public PageDto<PeixunPurchaseDto> queryPeixunPurchaseList(PeixunPuchaseQueryCondition condition);
 	
 	public PeixunPurchaseDto queryById(Long id);
+
+	/**
+	 * 查询课程培训供应商
+	 * @return
+	 */
+	public List<PartnerPeixunSupplierDto> getSupplierList();
 
 }
