@@ -36,8 +36,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	private static final Logger logger = LoggerFactory.getLogger(C2BSettlingServiceImpl.class);
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
-	@Autowired
-	private StationBO stationBO;
 	
 	@Autowired
 	private AccountMoneyBO accountMoneyBO;

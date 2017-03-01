@@ -15,7 +15,7 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 @EnableHSF
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@EnableBinding({Source.class, MultipleConsumersStreams.class})
+//@EnableBinding({Source.class, MultipleConsumersStreams.class})
 @ImportResource("classpath*:application/application-context.xml")
 public class Application{
 
