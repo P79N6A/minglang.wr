@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>1.9.7</ague.station.client.version>
+		<ague.station.client.version>1.9.8</ague.station.client.version>
 
 	</properties>
 
@@ -424,7 +424,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.0.21.jdk6</version>
+				<version>1.0.25.jdk6</version>
 			</dependency>
 			<dependency>
 			  	<groupId>com.alibaba.external</groupId>

@@ -22,7 +22,15 @@ public interface BailService {
      * 生成用户保证金签约地址
      * @return
      */
+    @Deprecated
     public ResultModel<String> buildSignBailUrl(Long taobaoUserId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel);
+
+    /**
+     * 生成用户保证金签约地址
+     * @return
+     */
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, Long partnerInstanceId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel);
+
 
     /**
      * 保证金解冻接口

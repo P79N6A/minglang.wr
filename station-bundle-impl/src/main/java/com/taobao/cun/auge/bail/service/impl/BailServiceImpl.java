@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.bail.service.impl;
 
 import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.bail.dto.BaiDtoBuilder;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.settle.bail.dto.*;
 import com.taobao.cun.settle.bail.enums.BailChannelEnum;
@@ -45,6 +46,7 @@ public class BailServiceImpl implements BailService {
     }
 
     @Override
+    @Deprecated
     public ResultModel<String> buildSignBailUrl(Long taobaoUserId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
         Assert.notNull(taobaoUserId);
         Assert.notNull(userTypeEnum);
@@ -55,6 +57,31 @@ public class BailServiceImpl implements BailService {
         signDto.setUserTypeEnum(userTypeEnum);
         signDto.setReturnUrl(returnUrl);
         signDto.setBailChannelEnum(channel);
+        try{
+            ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
+            if(result!=null && !result.isSuccess()){
+                logger.error("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
+            }
+            return result;
+        }catch (Exception e){
+            logger.error("BailServiceImpl bailService process error, taobaoUserId:"+taobaoUserId, e);
+            throw new AugeServiceException("buildSignBailUrl Exception, taobaoUserId:" + taobaoUserId);
+        }
+    }
+
+    @Override
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, Long partnerInstanceId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
+        Assert.notNull(taobaoUserId);
+        Assert.notNull(partnerInstanceId);
+        Assert.notNull(userTypeEnum);
+        Assert.notNull(channel);
+        Assert.notNull(returnUrl);
+        CuntaoBailSignDto signDto = new CuntaoBailSignDto();
+        signDto.setTaobaoUserId(taobaoUserId);
+        signDto.setUserTypeEnum(userTypeEnum);
+        signDto.setReturnUrl(returnUrl);
+        signDto.setBailChannelEnum(channel);
+        signDto.setOutRequestNo(BaiDtoBuilder.generateOutOrderNoByInstanceId(partnerInstanceId));
         try{
             ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
             if(result!=null && !result.isSuccess()){
