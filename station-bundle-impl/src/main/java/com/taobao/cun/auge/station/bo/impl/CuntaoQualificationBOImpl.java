@@ -9,13 +9,12 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 @Component("cuntaoQualificationBO")
-public class CuntaoQualificationBO implements com.taobao.cun.auge.station.bo.CuntaoQualificationBO {
+public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Autowired
 	private CuntaoQualificationMapper cuntaoQualificationMapper;
@@ -23,19 +22,23 @@ public class CuntaoQualificationBO implements com.taobao.cun.auge.station.bo.Cun
 	@Autowired
 	private CuntaoQualificationExtMapper cuntaoQualificationExtMapper;
 	
-	@Autowired
-	private PartnerInstanceBO partnerInstanceBO;
-	
 	@Override
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId) {
-		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-		if(partnerInstance == null) return null;
 		CuntaoQualificationExample example = new CuntaoQualificationExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andPartnerInstanceIdEqualTo(partnerInstance.getId());
+		example.createCriteria().andTaobaoUserIdEqualTo(taobaoUserId).andIsDeletedEqualTo("n");
 		List<CuntaoQualification> qualis = cuntaoQualificationMapper.selectByExample(example);
 		return ResultUtils.selectOne(qualis);
 	}
-
+	
+	@Override
+	public void deletedQualificationById(Long id){
+		CuntaoQualification record = new CuntaoQualification();
+		record.setIsDeleted("y");
+		record.setId(id);
+		cuntaoQualificationMapper.updateByPrimaryKeySelective(record);
+	}
+	
+	
 	@Override
 	public void updateQualification(CuntaoQualification cuntaoQualification) {
 		cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);

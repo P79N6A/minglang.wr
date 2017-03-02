@@ -515,66 +515,6 @@ public class CuntaoQualificationExample {
             return (Criteria) this;
         }
 
-        public Criteria andPartnerInstanceIdIsNull() {
-            addCriterion("partner_instance_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdIsNotNull() {
-            addCriterion("partner_instance_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdEqualTo(Long value) {
-            addCriterion("partner_instance_id =", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdNotEqualTo(Long value) {
-            addCriterion("partner_instance_id <>", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdGreaterThan(Long value) {
-            addCriterion("partner_instance_id >", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("partner_instance_id >=", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdLessThan(Long value) {
-            addCriterion("partner_instance_id <", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdLessThanOrEqualTo(Long value) {
-            addCriterion("partner_instance_id <=", value, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdIn(List<Long> values) {
-            addCriterion("partner_instance_id in", values, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdNotIn(List<Long> values) {
-            addCriterion("partner_instance_id not in", values, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdBetween(Long value1, Long value2) {
-            addCriterion("partner_instance_id between", value1, value2, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPartnerInstanceIdNotBetween(Long value1, Long value2) {
-            addCriterion("partner_instance_id not between", value1, value2, "partnerInstanceId");
-            return (Criteria) this;
-        }
-
         public Criteria andTaobaoUserIdIsNull() {
             addCriterion("taobao_user_id is null");
             return (Criteria) this;

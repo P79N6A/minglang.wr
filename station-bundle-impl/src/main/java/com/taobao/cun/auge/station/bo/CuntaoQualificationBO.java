@@ -16,4 +16,6 @@ public interface CuntaoQualificationBO {
 	public Page<CuntaoQualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	
 	 Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition);
+	 
+	 public void deletedQualificationById(Long id);
 }

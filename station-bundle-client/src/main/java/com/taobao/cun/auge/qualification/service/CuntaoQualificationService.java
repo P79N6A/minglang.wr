@@ -7,6 +7,8 @@ public interface CuntaoQualificationService {
 
 	Qualification syncCuntaoQulification(Long taobaoUserId);
 	
+	public Qualification syncCuntaoQulificationFromMetaq(Long taobaoUserId,Long qualiId,int eidType);
+	
 	Qualification queryC2BQualification(Long taobaoUserId,boolean isSyncHavana);
 	
 	

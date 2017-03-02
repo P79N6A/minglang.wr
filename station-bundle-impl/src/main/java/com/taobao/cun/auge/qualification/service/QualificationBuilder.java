@@ -79,14 +79,12 @@ public class QualificationBuilder {
 		businessTypeMapping.put("自然人", PERSONAL_BUSINESS);
 	}
 	
-	public Qualification build(PartnerStationRel parnterInstance,Optional<EntityQuali> entityQuail,Optional<UserQualiRecord> userQualiRecord){
+	public Qualification build(Long  taobaoUserId,Optional<EntityQuali> entityQuail,Optional<UserQualiRecord> userQualiRecord){
 		Qualification qualification = new Qualification();
 		if(entityQuail.isPresent()){
 			EntityQuali eq = entityQuail.get();
 			Map<Long,Object> content = eq.getQuali().getContent();
-			qualification.setPartnerInstanceId(parnterInstance.getId());
-			qualification.setTaobaoUserId(parnterInstance.getTaobaoUserId());
-			qualification.setPartnerInstanceState(parnterInstance.getState());
+			qualification.setTaobaoUserId(taobaoUserId);
 			qualification.setEid(eq.getEid());
 			qualification.setEidType(eq.getEidType());
 			qualification.setQualiId(eq.getQuali().getId());

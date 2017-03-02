@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.testuser.TestUserProperties;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -60,19 +61,74 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	
 	@Override
-	public Qualification syncCuntaoQulification(Long taobaoUserId) {
+	public Qualification syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
 		try {
-			Qualification qualification = queryHavanaC2BQualification(taobaoUserId);
-			if(qualification == null) {
+			PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			//如果为空说明合伙人已经退出了，
+			if(partnerInstance == null){
+				CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+				if(cuntaoQualification !=null){
+					cuntaoQualificationBO.deletedQualificationById(cuntaoQualification.getId());
+				}
 				return null;
 			}
+			
+			
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
+				Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
+				if(qualification == null) {
+					return null;
+				}
 				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				DomainUtils.beforeUpdate(cuntaoQualification, "system");
 				cuntaoQualificationBO.updateQualification(cuntaoQualification);
 				return qualification;
 			}else{
+				Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
+				if(qualification == null) {
+					return null;
+				}
+				 cuntaoQualification = new CuntaoQualification();
+				 cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+				 DomainUtils.beforeInsert(cuntaoQualification, "system");
+				 cuntaoQualificationBO.saveQualification(cuntaoQualification);
+				 return qualification;
+			}
+		} catch (Exception e) {
+			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"] !",e);
+		}
+		return null;
+	}
+	
+	@Override
+	public Qualification syncCuntaoQulification(Long taobaoUserId) {
+		try {
+			PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+			//如果为空说明合伙人已经退出了，
+			if(partnerInstance == null){
+				CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+				if(cuntaoQualification !=null){
+					cuntaoQualificationBO.deletedQualificationById(cuntaoQualification.getId());
+				}
+				return null;
+			}
+
+			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+			if(cuntaoQualification != null){
+				Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, cuntaoQualification.getQualiId(), cuntaoQualification.getEidType());
+				if(qualification == null) {
+					return null;
+				}
+				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+				DomainUtils.beforeUpdate(cuntaoQualification, "system");
+				cuntaoQualificationBO.updateQualification(cuntaoQualification);
+				return qualification;
+			}else{
+				Qualification qualification = queryHavanaC2BQualification(taobaoUserId);
+				if(qualification == null) {
+					return null;
+				}
 			    cuntaoQualification = new CuntaoQualification();
 				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				DomainUtils.beforeInsert(cuntaoQualification, "system");
@@ -80,23 +136,44 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				return qualification;
 			}
 		} catch (Exception e) {
-			logger.error("syncCuntaoQulification["+taobaoUserId+"] error!",e);
+			logger.error("syncCuntaoQulification error taobaoUserId["+taobaoUserId+"] !",e);
 		}
 		return null;
 	}
 
-	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
+	public Qualification queryHavanaC2BQualificationByQualiId(Long taobaoUserId,Long qualiId,int eidType){
 		try {
-			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
-			if(entityQuail.isPresent() && sellerQualiServiceAdapter.checkQualiBizScope(entityQuail.get(), taobaoUserId)){
+			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQualiById(qualiId, eidType);
+			if(entityQuail.isPresent()){
 				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
 				if(auditRecords.isPresent()){
 					Optional<UserQualiRecord> userQualiRecord = auditRecords.get().stream().filter(record -> entityQuail.get().getQuali().getId().equals(record.getQid()) && record.getStatus() == UserQualiRecordStatus.AUDIT_PASS).findFirst();
-					Qualification qulification = qualificationBuilder.build(parnterInstance,entityQuail,userQualiRecord);
+					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,userQualiRecord);
 					return qulification;
 				}else{
-					Qualification qulification = qualificationBuilder.build(parnterInstance,entityQuail,Optional.empty());
+					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,Optional.empty());
+					return qulification;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("queryHavanaC2BQualification["+taobaoUserId+"] error!",e);
+		}
+		
+		return null;
+	}
+	
+	
+	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
+		try {
+			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
+			if(entityQuail.isPresent()){
+				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
+				if(auditRecords.isPresent()){
+					Optional<UserQualiRecord> userQualiRecord = auditRecords.get().stream().filter(record -> entityQuail.get().getQuali().getId().equals(record.getQid()) && record.getStatus() == UserQualiRecordStatus.AUDIT_PASS).findFirst();
+					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,userQualiRecord);
+					return qulification;
+				}else{
+					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,Optional.empty());
 					return qulification;
 				}
 			}
@@ -114,12 +191,16 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			if(isSyncHavana){
 				syncCuntaoQulification(taobaoUserId);
 			}
-			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
-				qualification.setPartnerInstanceState(parnterInstance.getState());
+				PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+				if(parnterInstance!=null){
+					qualification.setPartnerInstanceState(parnterInstance.getState());
+				}else{
+					qualification.setPartnerInstanceState(PartnerInstanceStateEnum.QUIT.getCode());
+				}
 				return qualification;
 			}
 		} catch (Exception e) {
@@ -161,6 +242,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		List<C2BTestUser> testUsers = testTaobaoUserIds.getResult().stream().map(taobaoUserId -> buildTestUser(taobaoUserId)).collect(Collectors.toList());
 		return PageDtoUtil.success(testTaobaoUserIds, testUsers);
 	}
+
+	
 
 
 

@@ -47,7 +47,7 @@ public class C2BQualificationConsumer implements InitializingBean{
 			ListHidByEidAndEidTypeResponse listHidByEidAndEidTypeResponse = sellerQualiServiceAdapter.queryHavanaIdByQuali(quali.getEid(), quali.getEidType()).get();
 			Assert.notNull(listHidByEidAndEidTypeResponse);
 			if(CollectionUtils.isNotEmpty(listHidByEidAndEidTypeResponse.getQualiBindHids())){
-				listHidByEidAndEidTypeResponse.getQualiBindHids().stream().forEach(taobaoUserId -> cuntaoQualificationService.syncCuntaoQulification(taobaoUserId));
+				listHidByEidAndEidTypeResponse.getQualiBindHids().stream().forEach(taobaoUserId -> cuntaoQualificationService.syncCuntaoQulificationFromMetaq(taobaoUserId,qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()));
 			}
 		} catch (Exception e) {
 			logger.error("receiveMessage quali error!messageId["+ext.getMsgId()+"]",e);
