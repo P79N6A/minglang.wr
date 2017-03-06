@@ -196,8 +196,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	}
 
 	@Override
-	public void submitHavanaQualification(Long cuntaoQualificationId) {
-		cuntaoQualificationBO.submitHavanaQualification(cuntaoQualificationId);
+	public void submitHavanaQualification(Long taobaoUserId) {
+		cuntaoQualificationBO.submitHavanaQualification(taobaoUserId);
 	}
 
 

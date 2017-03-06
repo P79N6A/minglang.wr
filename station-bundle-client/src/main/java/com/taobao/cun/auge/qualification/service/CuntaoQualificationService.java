@@ -14,7 +14,7 @@ public interface CuntaoQualificationService {
 	
 	void submitLocalQualification(Qualification qualification);
 	
-	void submitHavanaQualification(Long qualiId);
+	void submitHavanaQualification(Long taobaoUserId);
 	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	

@@ -11,7 +11,6 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
-import com.taobao.cun.auge.dal.mapper.CuntaoQualificationExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
@@ -66,14 +65,10 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 		
 	}
 
-	@Override
-	public CuntaoQualification getCuntaoQualificationById(Long id) {
-		return cuntaoQualificationMapper.selectByPrimaryKey(id);
-	}
 
 	@Override
-	public void submitHavanaQualification(Long cuntaoQualificationId) {
-		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationById(cuntaoQualificationId);
+	public void submitHavanaQualification(Long taobaoUserId) {
+		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
 			//checkQualification
 			//submitQualificationToHavana

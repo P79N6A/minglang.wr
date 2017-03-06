@@ -10,8 +10,6 @@ public interface CuntaoQualificationBO {
 
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId);
 	
-	public CuntaoQualification getCuntaoQualificationById(Long cuntaoQualiId);
-	
 	public void updateQualification(CuntaoQualification cuntaoQualification);
 	
 	public void saveQualification(CuntaoQualification cuntaoQualification);
@@ -22,6 +20,6 @@ public interface CuntaoQualificationBO {
 	 
 	 public void submitLocalQualification(CuntaoQualification qualification);
 	 
-	 public void submitHavanaQualification(Long cuntaoQualificationId);
+	 public void submitHavanaQualification(Long taobaoUserId);
 
 }
