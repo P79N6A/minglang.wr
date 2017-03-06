@@ -137,12 +137,13 @@ public class MeetingServiceImpl implements MeetingService {
         String appId=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appId");
         String appKey=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appKey");
 		String host=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","host");
+		String schema=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","schema");
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(HttpHeader.HTTP_HEADER_ACCEPT, "application/json");
 		List<String> CUSTOM_HEADERS_TO_SIGN_PREFIX = new ArrayList<String>();
-		Request request = new Request(Method.POST_STRING, HttpSchema.HTTP
+		Request request = new Request(Method.POST_STRING, schema
 				+ host, path, appId,appKey,
-				Constants.DEFAULT_TIMEOUT);
+				Constants.DEFAULT_TIMEOUT*10);
 		request.setHeaders(headers);
 		request.setSignHeaderPrefixList(CUSTOM_HEADERS_TO_SIGN_PREFIX);
 
@@ -169,15 +170,15 @@ public class MeetingServiceImpl implements MeetingService {
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(HttpHeader.HTTP_HEADER_ACCEPT, "application/json");
 		List<String> CUSTOM_HEADERS_TO_SIGN_PREFIX = new ArrayList<String>();
-		Request request = new Request(Method.POST_STRING, HttpSchema.HTTP
-				+ "100.69.195.131", "/alimeetingvc/api/tp/video/conferenceCreate.json", "demo_test","d574c6ab-5123-4498-abdf-7be38b717b7a",
+		Request request = new Request(Method.POST_STRING, HttpSchema.HTTPS
+				+ "alimeeting-vc-aliyun.alibaba.com", "/alimeetingvc/api/tp/video/conferenceCreate.json", "23632356","d7b608bf38e1642c7b68edb202503d75",
 				Constants.DEFAULT_TIMEOUT);
 		request.setHeaders(headers);
 		request.setSignHeaderPrefixList(CUSTOM_HEADERS_TO_SIGN_PREFIX);
 
 		Map<String, String> querys = new HashMap<String, String>();
-		querys.put("clientappid", "demo_test");
-		querys.put("conferencename", "test");
+		querys.put("clientappid", "23632356");
+		querys.put("conferencename", "testMeeting");
 		querys.put("ts", String.valueOf(System.currentTimeMillis()));
 		request.setQuerys(querys);
 		// 调用服务端
