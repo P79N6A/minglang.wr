@@ -36,6 +36,9 @@ public class C2BQualificationConsumer implements InitializingBean{
 	@Value("${qualiCID}")
 	private String qualiCID;
 	
+	@Value("${qualiInfoId}")
+	private Long qualiInfoId;
+	
 	@Autowired
 	SellerQualiServiceAdapter sellerQualiServiceAdapter;
     public void receiveMessage(MessageExt ext) {
@@ -44,6 +47,10 @@ public class C2BQualificationConsumer implements InitializingBean{
 			QualiLifeCycleMessage qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
 			EntityQuali quali = sellerQualiServiceAdapter.queryValidQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
 			Assert.notNull(quali);
+			//不是营业执照的消息不处理
+			if(quali.getQuali().getQualiInfoId() !=qualiInfoId){
+				return;
+			}
 			ListHidByEidAndEidTypeResponse listHidByEidAndEidTypeResponse = sellerQualiServiceAdapter.queryHavanaIdByQuali(quali.getEid(), quali.getEidType()).get();
 			Assert.notNull(listHidByEidAndEidTypeResponse);
 			if(CollectionUtils.isNotEmpty(listHidByEidAndEidTypeResponse.getQualiBindHids())){
