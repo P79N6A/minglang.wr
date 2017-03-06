@@ -22,9 +22,9 @@ public interface SellerQualiServiceAdapter {
 	public boolean hasValidQuali(Long taobaoUserId);
 	
 	
-	public Optional<EntityQuali> queryValidQuali(Long taobaoUserId);
+	public Optional<EntityQuali> queryQuali(Long taobaoUserId);
 	
-	public Optional<EntityQuali> queryValidQualiById(Long qualiId,int eidType);
+	public Optional<EntityQuali> queryQualiById(Long qualiId,int eidType);
 	
 	public UserQualiRecord lastAuditQualiStatus(Long taobaoUserId);
 	

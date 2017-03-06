@@ -6,7 +6,9 @@ import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 public interface CuntaoQualificationService {
 
 	
-	public Qualification syncCuntaoQulificationFromMetaq(Long taobaoUserId,Long qualiId,int eidType);
+	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId,Long qualiId,int eidType);
+	
+	public void syncCuntaoQulification(Long taobaoUserId);
 	
 	Qualification queryC2BQualification(Long taobaoUserId);
 	

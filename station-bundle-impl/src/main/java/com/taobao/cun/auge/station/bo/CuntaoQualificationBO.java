@@ -10,7 +10,7 @@ public interface CuntaoQualificationBO {
 
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId);
 	
-	public CuntaoQualification getCuntaoQualificationById(Long taobaoUserId);
+	public CuntaoQualification getCuntaoQualificationById(Long cuntaoQualiId);
 	
 	public void updateQualification(CuntaoQualification cuntaoQualification);
 	

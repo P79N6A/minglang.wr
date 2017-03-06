@@ -19,11 +19,11 @@ import com.taobao.cun.auge.qualification.service.Qualification;
 @Component
 public class QualificationBuilder {
 	
-	private static final int PERSONAL_BUSINESS = 0;
+	public static final int PERSONAL_BUSINESS = 0;
 	
-	private static final int SMALL_BUSINESS = 1;
+	public static final int SMALL_BUSINESS = 1;
 	
-	private static final int BIG_BUSINESS = 2;
+	public static final int BIG_BUSINESS = 2;
 	
 	//公司名称
 	@Value("${quali.companyName}")

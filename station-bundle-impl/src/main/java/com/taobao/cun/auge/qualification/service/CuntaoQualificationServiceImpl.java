@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
@@ -22,11 +24,15 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationService")
+@RefreshScope
 @HSFProvider(serviceInterface= CuntaoQualificationService.class)
 public class CuntaoQualificationServiceImpl implements CuntaoQualificationService {
 
@@ -48,51 +54,63 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	private BeanCopier cuntaoQualificationReverseCopier = BeanCopier.create(CuntaoQualification.class, Qualification.class, false);
 	
+	@Value("${c2bSettleProcotolId}")
+	//B类用户新的入住协议ID
+	private Long c2bSettleProcotolId;
 	
+	@Autowired
+	private PartnerProtocolRelBO partnerProtocolRelBO;
 	
 	@Override
-	public Qualification syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
+	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
 		try {
-			PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-			//如果为空说明合伙人已经退出了，
-			if(partnerInstance == null){
-				CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
-				if(cuntaoQualification !=null){
-					cuntaoQualificationBO.deletedQualificationById(cuntaoQualification.getId());
-				}
-				return null;
+			Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
+			if(qualification == null) {
+				return ;
 			}
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
-				Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
-				if(qualification == null) {
-					return null;
-				}
 				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				DomainUtils.beforeUpdate(cuntaoQualification, "system");
 				cuntaoQualificationBO.updateQualification(cuntaoQualification);
-				return qualification;
 			}else{
-				Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
-				if(qualification == null) {
-					return null;
-				}
 				 cuntaoQualification = new CuntaoQualification();
 				 cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				 DomainUtils.beforeInsert(cuntaoQualification, "system");
 				 cuntaoQualificationBO.saveQualification(cuntaoQualification);
-				 return qualification;
 			}
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"] !",e);
 		}
-		return null;
 	}
 	
-
+	public void syncCuntaoQulification(Long taobaoUserId) {
+		try {
+			Qualification qualification = this.queryHavanaC2BQualification(taobaoUserId);
+			if(qualification == null) {
+				return ;
+			}
+			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+			if(cuntaoQualification != null){
+				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+				DomainUtils.beforeUpdate(cuntaoQualification, "system");
+				cuntaoQualificationBO.updateQualification(cuntaoQualification);
+			}else{
+				 cuntaoQualification = new CuntaoQualification();
+				 cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+				 DomainUtils.beforeInsert(cuntaoQualification, "system");
+				 cuntaoQualificationBO.saveQualification(cuntaoQualification);
+			}
+		} catch (Exception e) {
+			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"]!",e);
+		}
+	}
+	
+	
+	
 	public Qualification queryHavanaC2BQualificationByQualiId(Long taobaoUserId,Long qualiId,int eidType){
 		try {
-			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQualiById(qualiId, eidType);
+			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQualiById(qualiId, eidType);
 			if(entityQuail.isPresent()){
 				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
 				if(auditRecords.isPresent()){
@@ -114,7 +132,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
 		try {
-			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryValidQuali(taobaoUserId);
+			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQuali(taobaoUserId);
 			if(entityQuail.isPresent()){
 				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
 				if(auditRecords.isPresent()){
@@ -141,12 +159,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
-				PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-				if(parnterInstance!=null){
-					qualification.setPartnerInstanceState(parnterInstance.getState());
-				}else{
-					qualification.setPartnerInstanceState(PartnerInstanceStateEnum.QUIT.getCode());
-				}
 				return qualification;
 			}
 		} catch (Exception e) {
@@ -191,8 +203,27 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 
 	@Override
 	public C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		C2BSettleInfo c2bSettleInfo = new C2BSettleInfo();
+		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if(partnerInstance!=null){
+			PartnerProtocolRelDto partnerProtocolDto = partnerProtocolRelBO.getPartnerProtocolRelDto(partnerInstance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,c2bSettleProcotolId);
+			if(partnerProtocolDto != null){
+				c2bSettleInfo.setSignC2BTime(partnerProtocolDto.getConfirmTime());
+			}
+			c2bSettleInfo.setPartnerInstanceStatus(partnerInstance.getState());
+		}else{
+			c2bSettleInfo.setPartnerInstanceStatus(PartnerInstanceStateEnum.QUIT.getCode());
+		}
+		syncCuntaoQulification(taobaoUserId);
+		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if(null != cuntaoQualification && (cuntaoQualification.getStatus()==QualificationStatus.IN_VALID||cuntaoQualification.getStatus()==QualificationStatus.VALID)){
+			c2bSettleInfo.setQualiAuditPassTime(cuntaoQualification.getAuditTime());
+			c2bSettleInfo.setInvalidTime(cuntaoQualification.getInvalidTime());
+			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType());
+		}else{
+			c2bSettleInfo.setSettleIdentity(QualificationBuilder.PERSONAL_BUSINESS);
+		}
+		return c2bSettleInfo;
 	}
 
 

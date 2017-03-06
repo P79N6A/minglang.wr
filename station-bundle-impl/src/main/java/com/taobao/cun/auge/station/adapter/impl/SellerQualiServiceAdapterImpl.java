@@ -45,7 +45,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	 */
 	@Override
 	public boolean hasValidQuali(Long taobaoUserId){
-		Optional<EntityQuali>  quali = this.queryValidQuali(taobaoUserId);
+		Optional<EntityQuali>  quali = this.queryQuali(taobaoUserId);
 		return quali.isPresent() && checkQualiBizScope(quali.get(),taobaoUserId);
 	}
 	
@@ -66,8 +66,8 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	
 	@Override
-	public Optional<EntityQuali> queryValidQuali(Long taobaoUserId){
-		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId,QualiStatus.VALID);
+	public Optional<EntityQuali> queryQuali(Long taobaoUserId){
+		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId);
 		if(!result.isSuccessful()){
 			logger.error("listEntityQualiByHid error["+taobaoUserId+"]:"+result.toString());
 			throw new AugeBusinessException("查询企业资质异常");
@@ -114,7 +114,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	}
 
 	@Override
-	public Optional<EntityQuali> queryValidQualiById(Long qualiId,int eidType) {
+	public Optional<EntityQuali> queryQualiById(Long qualiId,int eidType) {
 		Result<EntityQuali> result = sellerQualiService.getEntityQualiByQid(qualiId,eidType);
 		if(!result.isSuccessful()){
 			logger.error("getEntityQualiByQid error qualiId["+qualiId+"]:"+result.toString());

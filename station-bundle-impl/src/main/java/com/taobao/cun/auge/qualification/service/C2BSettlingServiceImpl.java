@@ -52,9 +52,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	private TestUserService testUserService;
 	
 	@Autowired
-	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
-	
-	@Autowired
 	private PartnerInstanceService partnerInstanceService;
 	
 	@Autowired

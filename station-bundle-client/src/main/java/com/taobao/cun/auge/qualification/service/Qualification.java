@@ -82,10 +82,6 @@ public class Qualification implements Serializable{
 		 * 转大B时间
 		 */
 		private Date bigBusinessTime;
-		/**
-		 * C2B签约时间
-		 */
-		private Date signC2BProtocolTime;
 		
 		public String getCompanyName() {
 			return companyName;

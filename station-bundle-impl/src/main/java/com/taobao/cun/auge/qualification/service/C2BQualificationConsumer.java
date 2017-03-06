@@ -45,7 +45,7 @@ public class C2BQualificationConsumer implements InitializingBean{
 		 try {
 			 logger.info("recevieQualiMessage:["+ext.toString()+"]");
 			QualiLifeCycleMessage qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
-			EntityQuali quali = sellerQualiServiceAdapter.queryValidQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
+			EntityQuali quali = sellerQualiServiceAdapter.queryQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
 			Assert.notNull(quali);
 			//不是营业执照的消息不处理
 			if(quali.getQuali().getQualiInfoId() !=qualiInfoId){
