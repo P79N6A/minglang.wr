@@ -28,7 +28,7 @@
 		<spring-cloud.version>Brixton.RELEASE</spring-cloud.version>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
-		<ague.station.client.version>1.9.8</ague.station.client.version>
+		<ague.station.client.version>1.9.10-SNAPSHOT</ague.station.client.version>
 
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 

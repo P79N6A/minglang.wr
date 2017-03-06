@@ -10,15 +10,18 @@ public interface CuntaoQualificationBO {
 
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId);
 	
+	public CuntaoQualification getCuntaoQualificationById(Long taobaoUserId);
+	
 	public void updateQualification(CuntaoQualification cuntaoQualification);
 	
 	public void saveQualification(CuntaoQualification cuntaoQualification);
 	
 	public Page<CuntaoQualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	
-	 Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition);
-	 
 	 public void deletedQualificationById(Long id);
 	 
-	 public void submitUncheckedQualification(CuntaoQualification qualification);
+	 public void submitLocalQualification(CuntaoQualification qualification);
+	 
+	 public void submitHavanaQualification(Long cuntaoQualificationId);
+
 }

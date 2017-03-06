@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
+import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 @Component("cuntaoQualificationBO")
@@ -19,9 +21,6 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Autowired
 	private CuntaoQualificationMapper cuntaoQualificationMapper;
-	
-	@Autowired
-	private CuntaoQualificationExtMapper cuntaoQualificationExtMapper;
 	
 	@Override
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId) {
@@ -47,7 +46,10 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Override
 	public Page<CuntaoQualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition) {
-		return cuntaoQualificationExtMapper.queryQualification(condition);
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+		CuntaoQualificationExample example = new CuntaoQualificationExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStatusIn(condition.getStatusList());
+		return (Page<CuntaoQualification>) cuntaoQualificationMapper.selectByExample(example);
 	}
 
 	@Override
@@ -55,17 +57,27 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 		cuntaoQualificationMapper.insertSelective(cuntaoQualification);
 	}
 
-	@Override
-	public Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition) {
-		return cuntaoQualificationExtMapper.selectC2BTestUsers(condition);
-	}
 
 	@Override
-	public void submitUncheckedQualification(CuntaoQualification qualification) {
+	public void submitLocalQualification(CuntaoQualification qualification) {
 		DomainUtils.beforeInsert(qualification, "system");
 		qualification.setStatus(-1);
 		cuntaoQualificationMapper.insert(qualification);
 		
+	}
+
+	@Override
+	public CuntaoQualification getCuntaoQualificationById(Long id) {
+		return cuntaoQualificationMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void submitHavanaQualification(Long cuntaoQualificationId) {
+		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationById(cuntaoQualificationId);
+		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
+			//checkQualification
+			//submitQualificationToHavana
+		}
 	}
 
 }

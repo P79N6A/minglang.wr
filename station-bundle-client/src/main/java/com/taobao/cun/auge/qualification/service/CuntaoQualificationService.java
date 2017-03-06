@@ -5,15 +5,17 @@ import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 
 public interface CuntaoQualificationService {
 
-	Qualification syncCuntaoQulification(Long taobaoUserId);
 	
 	public Qualification syncCuntaoQulificationFromMetaq(Long taobaoUserId,Long qualiId,int eidType);
 	
-	Qualification queryC2BQualification(Long taobaoUserId,boolean isSyncHavana);
+	Qualification queryC2BQualification(Long taobaoUserId);
 	
-	void submitUncheckedQualification(Qualification qualification);
+	void submitLocalQualification(Qualification qualification);
+	
+	void submitHavanaQualification(Long qualiId);
 	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
+	
+	C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId);
 
-	public PageDto<C2BTestUser> querC2BTestUsers(CuntaoQualificationPageCondition condition);
 }
