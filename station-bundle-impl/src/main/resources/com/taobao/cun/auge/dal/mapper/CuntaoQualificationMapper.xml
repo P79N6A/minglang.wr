@@ -34,6 +34,8 @@
     <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
     <result column="is_deleted" property="isDeleted" jdbcType="VARCHAR" />
     <result column="bigBusiness_time" property="bigbusinessTime" jdbcType="TIMESTAMP" />
+    <result column="quali_oss" property="qualiOss" jdbcType="VARCHAR" />
+    <result column="error_message" property="errorMessage" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -109,7 +111,8 @@
     id, gmt_create, gmt_modified, creator, modifier, taobao_user_id, quali_no, company_name, 
     legal_person, enterprice_type_desc, quali_start_time, quali_end_time, enterprice_type, 
     regsiter_address, biz_scope, operation_status, agencies, quali_pic, status, invalid_time, 
-    quali_info_id, quali_id, eid_type, eid, submit_time, audit_time, is_deleted, bigBusiness_time
+    quali_info_id, quali_id, eid_type, eid, submit_time, audit_time, is_deleted, bigBusiness_time, 
+    quali_oss, error_message
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualificationExample" >
     <!--
@@ -174,8 +177,8 @@
       agencies, quali_pic, status, 
       invalid_time, quali_info_id, quali_id, 
       eid_type, eid, submit_time, 
-      audit_time, is_deleted, bigBusiness_time
-      )
+      audit_time, is_deleted, bigBusiness_time, 
+      quali_oss, error_message)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{taobaoUserId,jdbcType=BIGINT}, #{qualiNo,jdbcType=VARCHAR}, 
       #{companyName,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR}, #{enterpriceTypeDesc,jdbcType=VARCHAR}, 
@@ -184,8 +187,8 @@
       #{agencies,jdbcType=VARCHAR}, #{qualiPic,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
       #{invalidTime,jdbcType=TIMESTAMP}, #{qualiInfoId,jdbcType=BIGINT}, #{qualiId,jdbcType=BIGINT}, 
       #{eidType,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, 
-      #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}, #{bigbusinessTime,jdbcType=TIMESTAMP}
-      )
+      #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}, #{bigbusinessTime,jdbcType=TIMESTAMP}, 
+      #{qualiOss,jdbcType=VARCHAR}, #{errorMessage,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualification" >
     <!--
@@ -278,6 +281,12 @@
       <if test="bigbusinessTime != null" >
         bigBusiness_time,
       </if>
+      <if test="qualiOss != null" >
+        quali_oss,
+      </if>
+      <if test="errorMessage != null" >
+        error_message,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -360,6 +369,12 @@
       </if>
       <if test="bigbusinessTime != null" >
         #{bigbusinessTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qualiOss != null" >
+        #{qualiOss,jdbcType=VARCHAR},
+      </if>
+      <if test="errorMessage != null" >
+        #{errorMessage,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -464,6 +479,12 @@
       <if test="record.bigbusinessTime != null" >
         bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.qualiOss != null" >
+        quali_oss = #{record.qualiOss,jdbcType=VARCHAR},
+      </if>
+      <if test="record.errorMessage != null" >
+        error_message = #{record.errorMessage,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -502,7 +523,9 @@
       submit_time = #{record.submitTime,jdbcType=TIMESTAMP},
       audit_time = #{record.auditTime,jdbcType=TIMESTAMP},
       is_deleted = #{record.isDeleted,jdbcType=VARCHAR},
-      bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP}
+      bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP},
+      quali_oss = #{record.qualiOss,jdbcType=VARCHAR},
+      error_message = #{record.errorMessage,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -595,6 +618,12 @@
       <if test="bigbusinessTime != null" >
         bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="qualiOss != null" >
+        quali_oss = #{qualiOss,jdbcType=VARCHAR},
+      </if>
+      <if test="errorMessage != null" >
+        error_message = #{errorMessage,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -630,7 +659,9 @@
       submit_time = #{submitTime,jdbcType=TIMESTAMP},
       audit_time = #{auditTime,jdbcType=TIMESTAMP},
       is_deleted = #{isDeleted,jdbcType=VARCHAR},
-      bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP}
+      bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP},
+      quali_oss = #{qualiOss,jdbcType=VARCHAR},
+      error_message = #{errorMessage,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

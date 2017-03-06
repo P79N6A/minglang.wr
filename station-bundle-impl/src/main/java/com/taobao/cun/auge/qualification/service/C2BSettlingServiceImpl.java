@@ -12,12 +12,13 @@ import org.springframework.util.Assert;
 
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -56,6 +57,9 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	@Autowired
 	private PartnerInstanceService partnerInstanceService;
 	
+	@Autowired
+	private CuntaoQualificationBO cuntaoQulificationBO;
+	
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -92,25 +96,26 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 
 	//???qualiInfoId是否是1，可能需要修改成村淘专用
 	private void  setStep(Long taobaoUserId,boolean isSignProtocol,boolean isFrozenMoeny,C2BSettlingResponse response){
-		boolean hasValidQuali = sellerQualiServiceAdapter.hasValidQuali(taobaoUserId);
+		
+		CuntaoQualification  qualification = cuntaoQulificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+	//	boolean hasValidQuali = sellerQualiServiceAdapter.hasValidQuali(taobaoUserId);
 		//没有有效资质，并且没有提交或审核记录或者最新一条审核记录是审核失败，跳提交资质页面
-		UserQualiRecord lastAuditRecord = sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId);
-		int lastAuditRecodStatus = lastAuditRecord.getStatus();
-		if(!hasValidQuali && (lastAuditRecodStatus == SellerQualiServiceAdapter.NO_AUDIT_RECORD||lastAuditRecodStatus == UserQualiRecordStatus.AUDIT_PASS)){
+	//	UserQualiRecord lastAuditRecord = sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId);
+	//	int lastAuditRecodStatus = lastAuditRecord.getStatus();
+		if(qualification == null){
 			response.setStep(C2BSettlingService.SUBMIT_AUTH_METERAIL);
 			return;
 		}
-		if(!hasValidQuali && (lastAuditRecodStatus == UserQualiRecordStatus.TO_BE_AUDITED||lastAuditRecodStatus == UserQualiRecordStatus.AUDIT_FAIL)){
-			response.setStep(C2BSettlingService.AUDIT_AUTH_DETAIL);
-			return;
+		if(qualification != null){
+			response.setQualificationStatus(qualification.getStatus());
 		}
 		
-		if(hasValidQuali && !isSignProtocol){
+		if(!isSignProtocol){
 			response.setStep(C2BSettlingService.SIGN_PROTOCOL);
 			return;
 		}
 		
-		if(hasValidQuali && isSignProtocol && !isFrozenMoeny){
+		if(!isFrozenMoeny){
 			response.setStep(C2BSettlingService.FRZONE_MONEY);
 			return;
 		}

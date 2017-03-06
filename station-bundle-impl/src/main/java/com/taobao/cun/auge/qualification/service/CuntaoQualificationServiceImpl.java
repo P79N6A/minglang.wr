@@ -243,6 +243,17 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		return PageDtoUtil.success(testTaobaoUserIds, testUsers);
 	}
 
+	@Override
+	public void submitUncheckedQualification(Qualification qualification) {
+			CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
+			if(cuntaoQulification != null){
+				return;
+			}
+			cuntaoQulification  = new CuntaoQualification();
+			cuntaoQualificationCopier.copy(qualification, cuntaoQulification, null);
+			cuntaoQualificationBO.saveQualification(cuntaoQulification);
+	}
+
 	
 
 

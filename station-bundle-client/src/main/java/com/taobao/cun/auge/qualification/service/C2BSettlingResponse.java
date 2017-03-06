@@ -34,6 +34,11 @@ public class C2BSettlingResponse implements Serializable{
 	private boolean successful;
 	
 	/**
+	 * 资质的状态
+	 */
+	private int qualificationStatus;
+	
+	/**
 	 * 错误消息
 	 */
 	private String errorMessage;
@@ -84,6 +89,16 @@ public class C2BSettlingResponse implements Serializable{
 
 	public void setTestUser(boolean testUser) {
 		this.testUser = testUser;
+	}
+
+
+	public int getQualificationStatus() {
+		return qualificationStatus;
+	}
+
+
+	public void setQualificationStatus(int qualificationStatus) {
+		this.qualificationStatus = qualificationStatus;
 	}
 
 

@@ -2024,6 +2024,146 @@ public class CuntaoQualificationExample {
             addCriterion("bigBusiness_time not between", value1, value2, "bigbusinessTime");
             return (Criteria) this;
         }
+
+        public Criteria andQualiOssIsNull() {
+            addCriterion("quali_oss is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssIsNotNull() {
+            addCriterion("quali_oss is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssEqualTo(String value) {
+            addCriterion("quali_oss =", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssNotEqualTo(String value) {
+            addCriterion("quali_oss <>", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssGreaterThan(String value) {
+            addCriterion("quali_oss >", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssGreaterThanOrEqualTo(String value) {
+            addCriterion("quali_oss >=", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssLessThan(String value) {
+            addCriterion("quali_oss <", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssLessThanOrEqualTo(String value) {
+            addCriterion("quali_oss <=", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssLike(String value) {
+            addCriterion("quali_oss like", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssNotLike(String value) {
+            addCriterion("quali_oss not like", value, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssIn(List<String> values) {
+            addCriterion("quali_oss in", values, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssNotIn(List<String> values) {
+            addCriterion("quali_oss not in", values, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssBetween(String value1, String value2) {
+            addCriterion("quali_oss between", value1, value2, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiOssNotBetween(String value1, String value2) {
+            addCriterion("quali_oss not between", value1, value2, "qualiOss");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageIsNull() {
+            addCriterion("error_message is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageIsNotNull() {
+            addCriterion("error_message is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageEqualTo(String value) {
+            addCriterion("error_message =", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageNotEqualTo(String value) {
+            addCriterion("error_message <>", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageGreaterThan(String value) {
+            addCriterion("error_message >", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageGreaterThanOrEqualTo(String value) {
+            addCriterion("error_message >=", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageLessThan(String value) {
+            addCriterion("error_message <", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageLessThanOrEqualTo(String value) {
+            addCriterion("error_message <=", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageLike(String value) {
+            addCriterion("error_message like", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageNotLike(String value) {
+            addCriterion("error_message not like", value, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageIn(List<String> values) {
+            addCriterion("error_message in", values, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageNotIn(List<String> values) {
+            addCriterion("error_message not in", values, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageBetween(String value1, String value2) {
+            addCriterion("error_message between", value1, value2, "errorMessage");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorMessageNotBetween(String value1, String value2) {
+            addCriterion("error_message not between", value1, value2, "errorMessage");
+            return (Criteria) this;
+        }
     }
 
     /**

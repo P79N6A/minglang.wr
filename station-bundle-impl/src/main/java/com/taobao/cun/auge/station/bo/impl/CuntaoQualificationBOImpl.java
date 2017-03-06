@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
@@ -57,6 +58,14 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Override
 	public Page<Long> selectC2BTestUsers(CuntaoQualificationPageCondition condition) {
 		return cuntaoQualificationExtMapper.selectC2BTestUsers(condition);
+	}
+
+	@Override
+	public void submitUncheckedQualification(CuntaoQualification qualification) {
+		DomainUtils.beforeInsert(qualification, "system");
+		qualification.setStatus(-1);
+		cuntaoQualificationMapper.insert(qualification);
+		
 	}
 
 }

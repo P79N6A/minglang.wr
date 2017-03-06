@@ -11,6 +11,7 @@ public interface CuntaoQualificationService {
 	
 	Qualification queryC2BQualification(Long taobaoUserId,boolean isSyncHavana);
 	
+	void submitUncheckedQualification(Qualification qualification);
 	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 
