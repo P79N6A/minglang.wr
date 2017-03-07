@@ -59,10 +59,14 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Override
 	public void submitLocalQualification(CuntaoQualification qualification) {
-		DomainUtils.beforeInsert(qualification, "system");
 		qualification.setStatus(-1);
-		cuntaoQualificationMapper.insert(qualification);
-		
+		if(qualification.getId()==null){
+			DomainUtils.beforeInsert(qualification, "system");
+			cuntaoQualificationMapper.insertSelective(qualification);
+		}else{
+			DomainUtils.beforeUpdate(qualification, "system");
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(qualification);
+		}
 	}
 
 
@@ -70,7 +74,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	public void submitHavanaQualification(Long taobaoUserId) {
 		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
-			//checkQualification
+			
 			//submitQualificationToHavana
 		}
 	}

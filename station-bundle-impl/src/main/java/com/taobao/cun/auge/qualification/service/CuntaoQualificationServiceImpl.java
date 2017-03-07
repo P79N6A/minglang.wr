@@ -187,12 +187,11 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Override
 	public void submitLocalQualification(Qualification qualification) {
 			CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
-			if(cuntaoQulification != null){
-				return;
+			if(cuntaoQulification == null){
+				cuntaoQulification  = new CuntaoQualification();
 			}
-			cuntaoQulification  = new CuntaoQualification();
 			cuntaoQualificationCopier.copy(qualification, cuntaoQulification, null);
-			cuntaoQualificationBO.saveQualification(cuntaoQulification);
+			cuntaoQualificationBO.submitLocalQualification(cuntaoQulification);
 	}
 
 	@Override
@@ -206,13 +205,13 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		C2BSettleInfo c2bSettleInfo = new C2BSettleInfo();
 		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if(partnerInstance!=null){
-			PartnerProtocolRelDto partnerProtocolDto = partnerProtocolRelBO.getPartnerProtocolRelDto(partnerInstance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,c2bSettleProcotolId);
-			if(partnerProtocolDto != null){
-				c2bSettleInfo.setSignC2BTime(partnerProtocolDto.getConfirmTime());
-			}
 			c2bSettleInfo.setPartnerInstanceStatus(partnerInstance.getState());
 		}else{
 			c2bSettleInfo.setPartnerInstanceStatus(PartnerInstanceStateEnum.QUIT.getCode());
+		}
+		PartnerProtocolRelDto partnerProtocolDto = partnerProtocolRelBO.getPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,c2bSettleProcotolId);
+		if(partnerProtocolDto != null){
+			c2bSettleInfo.setSignC2BTime(partnerProtocolDto.getConfirmTime());
 		}
 		syncCuntaoQulification(taobaoUserId);
 		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);

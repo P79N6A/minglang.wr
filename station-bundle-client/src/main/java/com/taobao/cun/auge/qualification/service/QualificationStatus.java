@@ -12,5 +12,5 @@ public class QualificationStatus {
 
 	public static final int IN_VALID = 2;
 
-
+	public static final int AUDIT_FAIL = -3;
 }
