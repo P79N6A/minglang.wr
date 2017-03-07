@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
+import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
@@ -66,7 +67,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	@Override
 	public Optional<EntityQuali> queryQuali(Long taobaoUserId){
-		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId);
+		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId,QualiStatus.VALID,QualiStatus.INVALID);
 		if(!result.isSuccessful()){
 			logger.error("listEntityQualiByHid error["+taobaoUserId+"]:"+result.toString());
 			throw new AugeBusinessException("查询企业资质异常");
