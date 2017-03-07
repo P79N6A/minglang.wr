@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
-import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
