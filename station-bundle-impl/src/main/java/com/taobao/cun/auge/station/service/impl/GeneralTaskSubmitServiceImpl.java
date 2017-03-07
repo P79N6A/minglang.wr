@@ -688,6 +688,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 				accountNo = accountMoney.getAccountNo();
 			}
 
+			/**
+			 * 注意:accountNo有两种形式:alipayId(16位)还有老的accountNo(20位且2088开头 0156结尾)
+			 */
 			if(StringUtils.length(accountNo) == 20) {
 				accountNo = accountNo.substring(0, accountNo.length() - 4);
 			}
