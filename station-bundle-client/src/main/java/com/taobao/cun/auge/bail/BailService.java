@@ -29,7 +29,7 @@ public interface BailService {
      * 生成用户保证金签约地址
      * @return
      */
-    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, Long partnerInstanceId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel);
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, String outOrderNo, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel);
 
 
     /**

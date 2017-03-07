@@ -36,7 +36,7 @@ public class BailServiceImpl implements BailService {
         try {
             ResultModel<Boolean> result = cuntaoNewBailService.isUserSignBail(taobaoUserId, alipayId, userTypeEnum);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail, alipayId:{}, ,message:{}, errorMsg:{}", alipayId, result.getMessage(), result.getException());
+                logger.error("BailServiceImpl bailService process fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
             }
             return result;
         }catch (Exception e){
@@ -70,9 +70,9 @@ public class BailServiceImpl implements BailService {
     }
 
     @Override
-    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, Long partnerInstanceId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, String outerOrderNo, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
         Assert.notNull(taobaoUserId);
-        Assert.notNull(partnerInstanceId);
+        Assert.notNull(outerOrderNo);
         Assert.notNull(userTypeEnum);
         Assert.notNull(channel);
         Assert.notNull(returnUrl);
@@ -81,7 +81,7 @@ public class BailServiceImpl implements BailService {
         signDto.setUserTypeEnum(userTypeEnum);
         signDto.setReturnUrl(returnUrl);
         signDto.setBailChannelEnum(channel);
-        signDto.setOutRequestNo(BaiDtoBuilder.generateOutOrderNoByInstanceId(partnerInstanceId));
+        signDto.setOutRequestNo(outerOrderNo);
         try{
             ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
             if(result!=null && !result.isSuccess()){
