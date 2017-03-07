@@ -168,6 +168,26 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	}
 
 	@Override
+	public PartnerProtocolRelDto getPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,
+			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException {
+		ValidateUtils.notNull(taobaoUserId);
+		ValidateUtils.notNull(targetType);
+		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
+		
+		Criteria criteria = example.createCriteria();
+
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andTargetTypeEqualTo(targetType.getCode());
+		criteria.andProtocolIdEqualTo(protocolId);
+		criteria.andIsDeletedEqualTo("n");
+		example.setOrderByClause("id DESC");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
+	}
+	
+	
+	@Override
 	public PartnerProtocolRelDto getPartnerProtocolRelDto(Long objectId,
 			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException {
 		ValidateUtils.notNull(objectId);

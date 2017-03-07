@@ -33,6 +33,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 	@Override
 	public Result<Void> validate(FormValidateRequest request) {
 		Result<Void> result = new Result<Void>();
+		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
 			if(request.getContent()==null){
 				result.setCode(11002);

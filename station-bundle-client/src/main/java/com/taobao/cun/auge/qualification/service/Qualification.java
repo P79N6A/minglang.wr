@@ -83,6 +83,8 @@ public class Qualification implements Serializable{
 		 */
 		private Date bigBusinessTime;
 		
+		private String errorMessage;
+		
 		public String getCompanyName() {
 			return companyName;
 		}
@@ -285,6 +287,14 @@ public class Qualification implements Serializable{
 
 		public void setBigBusinessTime(Date bigBusinessTime) {
 			this.bigBusinessTime = bigBusinessTime;
+		}
+
+		public String getErrorMessage() {
+			return errorMessage;
+		}
+
+		public void setErrorMessage(String errorMessage) {
+			this.errorMessage = errorMessage;
 		}
 
 

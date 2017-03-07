@@ -105,6 +105,9 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		}
 		if(qualification != null){
 			response.setQualificationStatus(qualification.getStatus());
+			if(qualification.getStatus() == QualificationStatus.AUDIT_FAIL){
+				response.setErrorMessage(qualification.getErrorMessage());
+			}
 		}
 		
 		if(!isSignProtocol){

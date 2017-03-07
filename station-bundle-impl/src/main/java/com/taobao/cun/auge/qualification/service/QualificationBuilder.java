@@ -10,6 +10,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import com.ali.com.google.common.collect.Maps;
+import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -107,6 +108,11 @@ public class QualificationBuilder {
 			
 		}
 		if(userQualiRecord.isPresent()){
+			int auditStatus = userQualiRecord.get().getStatus();
+			if(UserQualiRecordStatus.AUDIT_FAIL ==  auditStatus){
+				qualification.setStatus(QualificationStatus.AUDIT_FAIL);
+				qualification.setErrorMessage(userQualiRecord.get().getReason());
+			}
 			qualification.setSubmitTime(userQualiRecord.get().getSubmitTime());
 			qualification.setAuditTime(userQualiRecord.get().getAuditTime());
 		}

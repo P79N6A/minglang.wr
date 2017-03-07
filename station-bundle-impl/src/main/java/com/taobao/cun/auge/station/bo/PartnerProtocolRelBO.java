@@ -63,6 +63,7 @@ public interface PartnerProtocolRelBO {
 	
 	public PartnerProtocolRelDto  getPartnerProtocolRelDto(Long objectId,PartnerProtocolRelTargetTypeEnum targetType,Long protocolId)  throws AugeServiceException;
 
+    public PartnerProtocolRelDto getPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException;
 	
 	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType);
