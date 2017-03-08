@@ -2,9 +2,10 @@ package com.taobao.cun.auge.qualification.service;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import com.alibaba.pm.sc.api.quali.dto.QualiLifeCycleMessage;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.metaq.client.MetaPushConsumer;
@@ -23,7 +25,7 @@ import com.taobao.tc.domain.util.JavaSerializationUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 @Component
-public class C2BQualificationConsumer implements InitializingBean{
+public class C2BQualificationConsumer {
 
 	@Autowired
 	private CuntaoQualificationService cuntaoQualificationService;
@@ -39,8 +41,32 @@ public class C2BQualificationConsumer implements InitializingBean{
 	@Value("${qualiInfoId}")
 	private Long qualiInfoId;
 	
+	private MetaPushConsumer consumer;
+	 
 	@Autowired
-	SellerQualiServiceAdapter sellerQualiServiceAdapter;
+	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
+	
+	@PostConstruct
+	public void init() throws MQClientException {
+		 consumer = new MetaPushConsumer(qualiCID);
+		 
+	        consumer.subscribe(qualiTopic, "*");
+	 
+	        consumer.registerMessageListener(new MessageListenerConcurrently() {
+	            @Override
+	            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+	                for (MessageExt msg : msgs) {
+	                		receiveMessage(msg);
+	                    }
+	                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+	                }
+	            }
+	        );
+	        consumer.start();
+	}
+	
+	
+
     public void receiveMessage(MessageExt ext) {
 		 try {
 			 logger.info("recevieQualiMessage:["+ext.toString()+"]");
@@ -61,25 +87,5 @@ public class C2BQualificationConsumer implements InitializingBean{
 			throw e;
 		}
      }
-	@Override
-	public void afterPropertiesSet() throws Exception {
-	        MetaPushConsumer consumer = new MetaPushConsumer(qualiCID);
-	 
-	        consumer.subscribe(qualiTopic, "*");
-	 
-	        consumer.registerMessageListener(new MessageListenerConcurrently() {
-	            @Override
-	            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-	                for (MessageExt msg : msgs) {
-	                		C2BQualificationConsumer.this.receiveMessage(msg);
-	                    }
-	                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-	                }
-	            }
-	        );
-	        consumer.start();
-	 
-	        System.out.println("Consumer Started.");
-		
-	}
+    
 }

@@ -24,7 +24,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 @Component("sellerQualiServiceAdapter")
-@RefreshScope
 public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 
 	private static final Logger logger = LoggerFactory.getLogger(SellerQualiServiceAdapterImpl.class);

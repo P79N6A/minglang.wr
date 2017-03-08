@@ -33,7 +33,6 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationService")
-@RefreshScope
 @HSFProvider(serviceInterface= CuntaoQualificationService.class)
 public class CuntaoQualificationServiceImpl implements CuntaoQualificationService {
 
