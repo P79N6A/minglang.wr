@@ -51,4 +51,3 @@ if [ -f "$APP_RELEASE" ] && grep -q 'baseline.jdk' "$APP_RELEASE" ; then
         fi
     fi
 fi
-
