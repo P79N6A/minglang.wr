@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
@@ -64,6 +63,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Override
 	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
 		try {
+			logger.info("syncCuntaoQulificationFromMetaq taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"]");
 			Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
 			if(qualification == null) {
 				return ;
@@ -73,11 +73,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				DomainUtils.beforeUpdate(cuntaoQualification, "system");
 				cuntaoQualificationBO.updateQualification(cuntaoQualification);
-			}else{
-				 cuntaoQualification = new CuntaoQualification();
-				 cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
-				 DomainUtils.beforeInsert(cuntaoQualification, "system");
-				 cuntaoQualificationBO.saveQualification(cuntaoQualification);
 			}
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"] !",e);
@@ -95,11 +90,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 				DomainUtils.beforeUpdate(cuntaoQualification, "system");
 				cuntaoQualificationBO.updateQualification(cuntaoQualification);
-			}else{
-				 cuntaoQualification = new CuntaoQualification();
-				 cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
-				 DomainUtils.beforeInsert(cuntaoQualification, "system");
-				 cuntaoQualificationBO.saveQualification(cuntaoQualification);
 			}
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"]!",e);
