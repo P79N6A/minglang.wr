@@ -22,7 +22,6 @@ public class PayUtil {
 		params.put("sign", sign);
 		params.put("ali_id", param.getAliId());
 		params.put("site", param.getSite());
-		params.put("paymentType","OnlineBankCreditCard");
 		String queryString=SignatureUtil.getQueryString(params);
 		StringBuilder sb=new StringBuilder(param.getGetway());
 		return sb.append("?").append(queryString).toString();
