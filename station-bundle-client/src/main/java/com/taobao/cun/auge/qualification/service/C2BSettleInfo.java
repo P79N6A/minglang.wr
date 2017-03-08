@@ -20,7 +20,8 @@ public class C2BSettleInfo implements Serializable{
 	private int settleIdentity;
 	
 	private String partnerInstanceStatus;
-
+	
+	private boolean newPartner;
 
 	public Date getInvalidTime() {
 		return invalidTime;
@@ -60,6 +61,14 @@ public class C2BSettleInfo implements Serializable{
 
 	public void setQualiAuditPassTime(Date qualiAuditPassTime) {
 		this.qualiAuditPassTime = qualiAuditPassTime;
+	}
+
+	public boolean isNewPartner() {
+		return newPartner;
+	}
+
+	public void setNewPartner(boolean newPartner) {
+		this.newPartner = newPartner;
 	}
 	
 }
