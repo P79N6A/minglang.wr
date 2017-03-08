@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
 import java.util.List;
-
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -28,6 +28,15 @@ public interface StationQueryService {
 	 * @throws AugeServiceException
 	 */
 	public List<StationDto> queryStations(List<Long> stationIds) throws AugeServiceException;
+	
+	/**
+	 * 根据name、orgId、stationStatusEnum查询station
+	 * 
+	 * @param stationCondition
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PageDto<StationDto> queryStations(StationCondition stationCondition) throws AugeServiceException;
 
 	/**
 	 * 根据name、orgIdPath、stationStatusEnum查询TPstation

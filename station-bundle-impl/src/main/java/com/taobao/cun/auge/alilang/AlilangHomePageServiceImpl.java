@@ -25,6 +25,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -176,6 +177,29 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
         }
         return false;
     }
+
+
+	@Override
+	public List<UserProfile> queryUserForMeeting(String name, Long taobaoUserId) {
+		if (taobaoUserId == null || taobaoUserId == 0l) {
+			throw new AugeServiceException("taobaoUserId is null");
+		}
+		PartnerStationRel rel = partnerInstanceBO
+				.getActivePartnerInstance(taobaoUserId);
+		if (rel == null) {
+			return null;
+		}
+		if (StringUtils.isEmpty(name)) {
+			Station station = stationBO.getStationById(rel.getStationId());
+			// 默认查询同一县的村小二
+			return partnerInstanceBO.queryUserProfileForAlilangMeeting(
+					station.getApplyOrg(), null);
+		} else {
+			// 根据花名或姓名搜索全国村小二
+			return partnerInstanceBO.queryUserProfileForAlilangMeeting(null,
+					name);
+		}
+	}
 
 
 	
