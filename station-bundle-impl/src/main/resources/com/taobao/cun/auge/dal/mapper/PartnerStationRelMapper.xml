@@ -569,4 +569,38 @@
       taobao_user_id = #{taobaoUserId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <resultMap id="queryUserProfileResult" type="com.taobao.cun.auge.alilang.UserProfile" >
+    <id column="stationName" property="stationName" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="flowerName" property="flowerName" jdbcType="VARCHAR" />
+    <result column="taobaoUserId" property="taobaoUserId" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <select id="queryUserProfileForAlilangMeeting" resultMap="queryUserProfileResult" parameterType="map" >
+  select a.name as userName,a.flower_name as flowerName,c.name as stationName,a.taobao_user_id as taobaoUserId
+  from partner a,partner_station_rel b,station c
+   <if test="orgId != null" >
+  ,cuntao_org d
+   </if>
+  where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' 
+  <if test="orgId != null" >
+  and d.is_deleted='n'
+   </if>
+  and a.id=b.partner_id and b.station_id=c.id 
+   <if test="orgId != null" >
+  and c.apply_org=d.id
+   </if>
+  and b.is_current='y'
+  and b.type='TP'
+  and b.state in('DECORATING','SERVICING','CLOSING')
+   <if test="orgId != null and orgId !=0" >
+      and d.id=#{orgId}
+    </if>
+     <if test="name != null" >
+      and (a.name=#{name} or a.flower_name=#{name})
+    </if>
+  </select>
+  
+  
 </mapper>

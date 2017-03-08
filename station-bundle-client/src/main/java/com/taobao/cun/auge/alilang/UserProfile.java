@@ -21,6 +21,8 @@ public class UserProfile implements Serializable{
 	private Date birthday;
 	
 	private String flowerName;
+	
+	private Long taobaoUserId;
 
 	public String getStationName() {
 		return stationName;
@@ -68,6 +70,14 @@ public class UserProfile implements Serializable{
 
 	public void setFlowerName(String flowerName) {
 		this.flowerName = flowerName;
+	}
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
 	}
 	
 	

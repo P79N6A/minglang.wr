@@ -38,17 +38,17 @@ public class OrgTestUserRule extends AbstractTestUserRule{
 		Assert.notNull(station);
 		String orgIds = config;
 		List<Long> testOrgIds = Lists.newArrayList(orgIds.split(",")).stream().map(orgId -> Long.parseLong(orgId)).collect(Collectors.toList());
-		return checkTestUserOrg(station.getApplyOrg(),testOrgIds);
+		return checkTestUser(station.getApplyOrg(),testOrgIds);
 	}
 
 	
-	private boolean checkTestUserOrg(Long userOrgId,List<Long> testUserOrgIds){
+	private boolean checkTestUser(Long userOrgId,List<Long> testUserOrgIds){
 		CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(userOrgId);
 		if(testUserOrgIds.contains(cuntaoOrgDto.getId())){
 			return true;
 		}else{
 			if(cuntaoOrgDto.getParent()!=null){
-				return checkTestUserOrg(cuntaoOrgDto.getParentId(),testUserOrgIds);
+				return checkTestUser(cuntaoOrgDto.getParentId(),testUserOrgIds);
 			}
 			return false;
 		}

@@ -15,4 +15,6 @@ public interface AlilangHomePageService {
 	AlilangProfileDto getAlilangProfile(Long taobaoUserId);
 	
 	UserProfile getUserProfileByAlilangUserId(String alilangUserId);
+	
+	List<UserProfile> queryUserForMeeting(String name,Long taobaoUserId);
 }

@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -568,7 +567,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	
 	private void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version,ProtocolTypeEnum protocolTypeEnum,boolean needFrozenMoney){
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(waitFrozenMoney);
@@ -655,6 +653,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private boolean isC2BTestUser(PartnerStationRel parnterInstance) {
 		return testUserService.isTestUser(parnterInstance.getTaobaoUserId(), "c2b", true);
 	}
+	
 
 	private void addWaitFrozenMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
 		ValidateUtils.notNull(instanceId);

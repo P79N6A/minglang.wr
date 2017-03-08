@@ -425,7 +425,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.0.21.jdk6</version>
+				<version>1.0.25.jdk6</version>
 			</dependency>
 			<dependency>
 			  	<groupId>com.alibaba.external</groupId>
