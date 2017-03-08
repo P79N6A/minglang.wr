@@ -167,24 +167,6 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
 	}
 
-	@Override
-	public PartnerProtocolRelDto getPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,
-			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException {
-		ValidateUtils.notNull(taobaoUserId);
-		ValidateUtils.notNull(targetType);
-		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
-		
-		Criteria criteria = example.createCriteria();
-
-		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
-		criteria.andTargetTypeEqualTo(targetType.getCode());
-		criteria.andProtocolIdEqualTo(protocolId);
-		criteria.andIsDeletedEqualTo("n");
-		example.setOrderByClause("id DESC");
-		
-		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
-		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
-	}
 	
 	
 	@Override
@@ -199,6 +181,34 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		criteria.andObjectIdEqualTo(objectId);
 		criteria.andTargetTypeEqualTo(targetType.getCode());
 		criteria.andProtocolIdEqualTo(protocolId);
+		criteria.andIsDeletedEqualTo("n");
+		example.setOrderByClause("id DESC");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
+	}
+
+	@Override
+	public PartnerProtocolRelDto getLastPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId, ProtocolTypeEnum type,
+			PartnerProtocolRelTargetTypeEnum targetType) throws AugeServiceException {
+		ValidateUtils.notNull(type);
+		ValidateUtils.notNull(taobaoUserId);
+		ValidateUtils.notNull(targetType);
+		
+		List<ProtocolTypeEnum> types = new ArrayList<ProtocolTypeEnum>();
+		types.add(type);
+		List<Long>  protocolIds = protocolBO.getAllProtocolId(types);
+		if (protocolIds == null) {
+			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+		}
+		
+		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
+		
+		Criteria criteria = example.createCriteria();
+
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andTargetTypeEqualTo(targetType.getCode());
+		criteria.andProtocolIdIn(protocolIds);
 		criteria.andIsDeletedEqualTo("n");
 		example.setOrderByClause("id DESC");
 		
