@@ -25,6 +25,8 @@ public class StationCondition extends OperatorDto implements Serializable {
 	private Boolean needAttachementInfo = Boolean.TRUE;
 
 	private String name;
+	
+	private Long orgId;
 
 	private String orgIdPath;
 
@@ -88,5 +90,13 @@ public class StationCondition extends OperatorDto implements Serializable {
 
 	public void setNeedAttachementInfo(Boolean needAttachementInfo) {
 		this.needAttachementInfo = needAttachementInfo;
+	}
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
 	}
 }
