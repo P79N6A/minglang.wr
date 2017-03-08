@@ -10,11 +10,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
-import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -105,6 +102,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		}
 		if(qualification != null){
 			response.setQualificationStatus(qualification.getStatus());
+			response.setErrorCode(qualification.getErrorCode());
 			if(qualification.getStatus() == QualificationStatus.AUDIT_FAIL){
 				response.setErrorMessage(qualification.getErrorMessage());
 			}

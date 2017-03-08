@@ -43,6 +43,12 @@ public class C2BSettlingResponse implements Serializable{
 	 */
 	private String errorMessage;
 	
+	/**
+	 * 错误码
+	 */
+	private String errorCode;
+	
+	
 	public boolean isSuccessful() {
 		return successful;
 	}
@@ -99,6 +105,16 @@ public class C2BSettlingResponse implements Serializable{
 
 	public void setQualificationStatus(int qualificationStatus) {
 		this.qualificationStatus = qualificationStatus;
+	}
+
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 
 
