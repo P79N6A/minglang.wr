@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.github.pagehelper.Page;
 import com.ali.com.google.common.collect.Lists;
+import com.alibaba.common.lang.StringUtil;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -179,5 +181,25 @@ public class StationBOImpl implements StationBO {
 		stationExtExample.setPageStart(stationCondition.getPageStart());
 		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
+	
+	@Override
+	public Page<Station> getStations(StationCondition stationCondition) throws AugeServiceException{
+		ValidateUtils.notNull(stationCondition);
 
+		StationExample example = new StationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+
+		if (StringUtil.isNotBlank(stationCondition.getName())) {
+			criteria.andNameLike(stationCondition.getName());
+		}
+		if (null != stationCondition.getOrgId()) {
+			criteria.andApplyOrgEqualTo(stationCondition.getOrgId());
+		}
+		if (null != stationCondition.getStationStatusEnum()) {
+			criteria.andStatusEqualTo(stationCondition.getStationStatusEnum().getCode());
+		}
+		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
+		return (Page<Station>)stationMapper.selectByExample(example);
+	}
 }
