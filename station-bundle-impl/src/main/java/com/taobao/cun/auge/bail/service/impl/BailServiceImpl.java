@@ -36,11 +36,11 @@ public class BailServiceImpl implements BailService {
         try {
             ResultModel<Boolean> result = cuntaoNewBailService.isUserSignBail(taobaoUserId, alipayId, userTypeEnum);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
+                logger.error("BailServiceImpl bailService isUserSignBail fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
             }
             return result;
         }catch (Exception e){
-            logger.error("BailServiceImpl bailService process error, alipayId:"+alipayId, e);
+            logger.error("BailServiceImpl bailService isUserSignBail error, alipayId:"+alipayId, e);
             throw new AugeServiceException("UserSignBail Exception:" + alipayId);
         }
     }
@@ -85,11 +85,11 @@ public class BailServiceImpl implements BailService {
         try{
             ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
+                logger.error("BailServiceImpl bailService buildSignBailUrl fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
             }
             return result;
         }catch (Exception e){
-            logger.error("BailServiceImpl bailService process error, taobaoUserId:"+taobaoUserId, e);
+            logger.error("BailServiceImpl bailService buildSignBailUrl error, taobaoUserId:"+taobaoUserId, e);
             throw new AugeServiceException("buildSignBailUrl Exception, taobaoUserId:" + taobaoUserId);
         }
     }
@@ -101,11 +101,11 @@ public class BailServiceImpl implements BailService {
         try {
             ResultModel<Boolean> result = cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", cuntaoUnFreezeBailDto.getTaobaoUserId(), result.getMessage(), result.getException());
+                logger.error("BailServiceImpl bailService unfreezeUserBail fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", cuntaoUnFreezeBailDto.getTaobaoUserId(), result.getMessage(), result.getException());
             }
             return result;
         }catch (Exception e) {
-            logger.error("BailServiceImpl bailService process error, taobaoUserId:"+cuntaoUnFreezeBailDto.getTaobaoUserId(), e);
+            logger.error("BailServiceImpl bailService unfreezeUserBail error, taobaoUserId:"+cuntaoUnFreezeBailDto.getTaobaoUserId(), e);
             throw new AugeServiceException("unfreezeUserBail Exception, taobaoUserId:" + cuntaoUnFreezeBailDto.getTaobaoUserId());
         }
     }
@@ -118,11 +118,11 @@ public class BailServiceImpl implements BailService {
         try{
             ResultModel<Boolean> result = cuntaoNewBailService.freezeUserBail(cuntaoFreezeBailDto);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail, alipayId:{}, ,message:{}, errorMsg:{}", cuntaoFreezeBailDto.getAlipayId(), result.getMessage(), result.getException());
+                logger.error("BailServiceImpl bailService freezeUserBail fail, alipayId:{}, ,message:{}, errorMsg:{}", cuntaoFreezeBailDto.getAlipayId(), result.getMessage(), result.getException());
             }
             return result;
         }catch (Exception e){
-            logger.error("BailServiceImpl bailService process error, alipayId:"+cuntaoFreezeBailDto.getAlipayId(), e);
+            logger.error("BailServiceImpl bailService freezeUserBail error, alipayId:"+cuntaoFreezeBailDto.getAlipayId(), e);
             throw new AugeServiceException("freezeUserBail Exception:" + cuntaoFreezeBailDto.getAlipayId());
         }
     }
