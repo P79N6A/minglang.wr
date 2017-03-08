@@ -36,6 +36,7 @@
     <result column="bigBusiness_time" property="bigbusinessTime" jdbcType="TIMESTAMP" />
     <result column="quali_oss" property="qualiOss" jdbcType="VARCHAR" />
     <result column="error_message" property="errorMessage" jdbcType="VARCHAR" />
+    <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -112,7 +113,7 @@
     legal_person, enterprice_type_desc, quali_start_time, quali_end_time, enterprice_type, 
     regsiter_address, biz_scope, operation_status, agencies, quali_pic, status, invalid_time, 
     quali_info_id, quali_id, eid_type, eid, submit_time, audit_time, is_deleted, bigBusiness_time, 
-    quali_oss, error_message
+    quali_oss, error_message, error_code
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualificationExample" >
     <!--
@@ -178,7 +179,8 @@
       invalid_time, quali_info_id, quali_id, 
       eid_type, eid, submit_time, 
       audit_time, is_deleted, bigBusiness_time, 
-      quali_oss, error_message)
+      quali_oss, error_message, error_code
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{taobaoUserId,jdbcType=BIGINT}, #{qualiNo,jdbcType=VARCHAR}, 
       #{companyName,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR}, #{enterpriceTypeDesc,jdbcType=VARCHAR}, 
@@ -188,7 +190,8 @@
       #{invalidTime,jdbcType=TIMESTAMP}, #{qualiInfoId,jdbcType=BIGINT}, #{qualiId,jdbcType=BIGINT}, 
       #{eidType,jdbcType=INTEGER}, #{eid,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, 
       #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}, #{bigbusinessTime,jdbcType=TIMESTAMP}, 
-      #{qualiOss,jdbcType=VARCHAR}, #{errorMessage,jdbcType=VARCHAR})
+      #{qualiOss,jdbcType=VARCHAR}, #{errorMessage,jdbcType=VARCHAR}, #{errorCode,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualification" >
     <!--
@@ -287,6 +290,9 @@
       <if test="errorMessage != null" >
         error_message,
       </if>
+      <if test="errorCode != null" >
+        error_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -375,6 +381,9 @@
       </if>
       <if test="errorMessage != null" >
         #{errorMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="errorCode != null" >
+        #{errorCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -485,6 +494,9 @@
       <if test="record.errorMessage != null" >
         error_message = #{record.errorMessage,jdbcType=VARCHAR},
       </if>
+      <if test="record.errorCode != null" >
+        error_code = #{record.errorCode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -525,7 +537,8 @@
       is_deleted = #{record.isDeleted,jdbcType=VARCHAR},
       bigBusiness_time = #{record.bigbusinessTime,jdbcType=TIMESTAMP},
       quali_oss = #{record.qualiOss,jdbcType=VARCHAR},
-      error_message = #{record.errorMessage,jdbcType=VARCHAR}
+      error_message = #{record.errorMessage,jdbcType=VARCHAR},
+      error_code = #{record.errorCode,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -624,6 +637,9 @@
       <if test="errorMessage != null" >
         error_message = #{errorMessage,jdbcType=VARCHAR},
       </if>
+      <if test="errorCode != null" >
+        error_code = #{errorCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -661,7 +677,8 @@
       is_deleted = #{isDeleted,jdbcType=VARCHAR},
       bigBusiness_time = #{bigbusinessTime,jdbcType=TIMESTAMP},
       quali_oss = #{qualiOss,jdbcType=VARCHAR},
-      error_message = #{errorMessage,jdbcType=VARCHAR}
+      error_message = #{errorMessage,jdbcType=VARCHAR},
+      error_code = #{errorCode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
