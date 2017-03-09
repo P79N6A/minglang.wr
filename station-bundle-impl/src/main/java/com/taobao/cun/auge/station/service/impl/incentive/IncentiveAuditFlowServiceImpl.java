@@ -36,7 +36,7 @@ import java.util.Map;
  * @date 2017/02/22
  */
 @Service("incentiveAuditFlowService")
-@HSFProvider(serviceInterface= IncentiveAuditFlowService.class)
+@HSFProvider(serviceInterface= IncentiveAuditFlowService.class, clientTimeout = 15000)
 public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService {
 
     private static final Logger logger = LoggerFactory.getLogger(IncentiveAuditFlowServiceImpl.class);
