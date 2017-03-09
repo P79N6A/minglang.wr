@@ -2,14 +2,11 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.dal.domain.AppResource;
+import com.taobao.cun.auge.station.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,11 +25,6 @@ import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
-import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -46,6 +38,8 @@ import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.util.CollectionUtils;
+
 /**
  * 
  * @author yi.shaoy
@@ -264,5 +258,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		}
 		return true;
 	}
-	
+
+
+
 }

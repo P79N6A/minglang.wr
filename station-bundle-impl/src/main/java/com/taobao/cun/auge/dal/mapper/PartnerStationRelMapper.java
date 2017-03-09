@@ -1,9 +1,13 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface PartnerStationRelMapper {
     /**
@@ -93,4 +97,6 @@ public interface PartnerStationRelMapper {
      * @mbggenerated Wed Jun 01 17:02:18 CST 2016
      */
     int updateByPrimaryKey(PartnerStationRel record);
+    
+    List<UserProfile> queryUserProfileForAlilangMeeting(Map<String,Object> param);
 }

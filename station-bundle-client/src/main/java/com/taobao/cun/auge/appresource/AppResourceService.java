@@ -11,6 +11,6 @@ public interface AppResourceService {
 	public AppResourceDto queryAppResource(String type, String key);
 	
 	public String queryAppResourceValue(String type, String key);
-	
+
 	public String queryAppValueNotAllowNull(String type, String key);
 }

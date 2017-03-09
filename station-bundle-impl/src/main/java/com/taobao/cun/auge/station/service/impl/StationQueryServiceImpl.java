@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.github.pagehelper.Page;
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.AttachementBO;
@@ -60,9 +62,9 @@ public class StationQueryServiceImpl implements StationQueryService {
 	}
 
 	@Override
-	public List<StationDto> queryStationsByName(StationCondition stationCondition) throws AugeServiceException {
+	public List<StationDto> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException {
 		ValidateUtils.validateParam(stationCondition);
-		List<Station> stations = stationBO.getStationsByName(stationCondition);
+		List<Station> stations = stationBO.getTpStationsByName(stationCondition);
 		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
 	}
 	
@@ -76,5 +78,16 @@ public class StationQueryServiceImpl implements StationQueryService {
 	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId) throws AugeServiceException{
 		ValidateUtils.notNull(applyId);
 		return shutDownStationApplyBO.findShutDownStationApplyById(applyId);
+	}
+	
+	@Override
+	public PageDto<StationDto> queryStations(StationCondition stationCondition) throws AugeServiceException {
+		ValidateUtils.validateParam(stationCondition);
+		Page<Station> page = stationBO.getStations(stationCondition);
+
+		PageDto<StationDto> result = PageDtoUtil.success(page,
+				page.stream().map(StationConverter::toStationDto).collect(Collectors.toList()));
+
+		return result;
 	}
 }

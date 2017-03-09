@@ -45,7 +45,7 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			if (resultModel != null && resultModel.isSuccess() && resultModel.getResult() != null) {
 				return resultModel.getResult();
 			}
-			return false;
+			throw new AugeServiceException("alipayStandardBailService.dealStandardBail false, outOrderNo is:" + alipayStandardBailDto.getOutOrderNo());
 		} catch (Exception e) {
 			logger.error("alipayStandardBailService.dealStandardBail error", e);
 			throw new AugeServiceException("alipayStandardBailService.dealStandardBail error" + e.getMessage());
