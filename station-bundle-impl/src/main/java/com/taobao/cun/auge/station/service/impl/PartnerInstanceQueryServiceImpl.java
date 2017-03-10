@@ -636,4 +636,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
 		return success;
 	}
+
+	@Override
+	public Long getCurStationIdByTaobaoUserId(Long taobaoUserId) {
+		PartnerStationRel instance = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		return null != instance ? instance.getStationId() : null;
+	}
 }
