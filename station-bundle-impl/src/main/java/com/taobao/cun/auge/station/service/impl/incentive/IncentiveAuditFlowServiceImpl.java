@@ -103,7 +103,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
      * @return
      */
     private String isFundIncentive(List<IncentiveProgramIncentiveTypeEnum> incentiveTypes) {
-        if (incentiveTypes == null) {
+        if (incentiveTypes != null) {
             for (IncentiveProgramIncentiveTypeEnum type : incentiveTypes) {
                 if (IncentiveProgramIncentiveTypeEnum.MONEY.getCode().equals(type.getCode())) {
                     return "TRUE";
