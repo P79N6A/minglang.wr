@@ -3,7 +3,9 @@ package com.taobao.cun.auge.station.service.impl.incentive;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramDto;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramFundsSourcesEnum;
+import com.taobao.cun.auge.incentive.enums.IncentiveProgramIncentiveTypeEnum;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -50,6 +52,9 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Autowired
     protected CuntaoWorkFlowService cuntaoWorkFlowService;
 
+    @Autowired
+    private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
     @Override
     public void startProcess(StartProcessDto startProcessDto) {
         validateParams(startProcessDto);
@@ -81,12 +86,31 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
         List<IncentiveAreaDto> areas = incentiveProgramDto.getIncentiveAreaList();
         Long auditOperatorOrgId = incentiveAuditServiceFactory.getAuditOperatorOrgCheckService(source).getAuditOperatorOrgId(areas);
         initData.put("orgId", String.valueOf(auditOperatorOrgId));
+        initData.put("headquarterOrgId", String.valueOf(cuntaoOrgServiceClient.getRoot().getId()));
+
+        initData.put("need_finance_audit", isFundIncentive(incentiveProgramDto.getIncentiveTypeList()));
         initData.put("submitorCode", submitorCode);
         initData.put("submitorType", String.valueOf(submitorType));
         initData.put("operatorAuditPermission", AclPermissionEnum.incentive_operator_01.getCode());
         initData.put("riskAuditPermission", AclPermissionEnum.incentive_risk_01.getCode());
         initData.put("financeAuditPermission", AclPermissionEnum.incentive_finance_01.getCode());
         return initData;
+    }
+
+    /**
+     * 激励方案是否包含资金:这里决定是否需要财务审批,流程中有一个属性依赖这个值
+     * @param incentiveTypes
+     * @return
+     */
+    private String isFundIncentive(List<IncentiveProgramIncentiveTypeEnum> incentiveTypes) {
+        if (incentiveTypes == null) {
+            for (IncentiveProgramIncentiveTypeEnum type : incentiveTypes) {
+                if (IncentiveProgramIncentiveTypeEnum.MONEY.getCode().equals(type.getCode())) {
+                    return "TRUE";
+                }
+            }
+        }
+        return "FALSE";
     }
 
     @Override
