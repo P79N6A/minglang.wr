@@ -6,6 +6,7 @@ import com.taobao.cun.auge.incentive.enums.IncentiveProgramFundsSourcesEnum;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramIncentiveTypeEnum;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -21,15 +22,19 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * Created by xujianhui on 17/2/22.
@@ -54,6 +59,9 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
+    @Autowired
+    Emp360Adapter emp360Adapter;
 
     @Override
     public void startProcess(StartProcessDto startProcessDto) {
@@ -91,9 +99,12 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
         initData.put("need_finance_audit", isFundIncentive(incentiveProgramDto.getIncentiveTypeList()));
         initData.put("submitorCode", submitorCode);
         initData.put("submitorType", String.valueOf(submitorType));
+        initData.put("applierName", buildOperatorName(submitorCode, submitorType));
+        initData.put("applyDate", DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.format(Calendar.getInstance()));
         initData.put("operatorAuditPermission", AclPermissionEnum.incentive_operator_01.getCode());
         initData.put("riskAuditPermission", AclPermissionEnum.incentive_risk_01.getCode());
         initData.put("financeAuditPermission", AclPermissionEnum.incentive_finance_01.getCode());
+        initData.put("dtoJson", JSON.toJSONString(incentiveProgramDto));
         return initData;
     }
 
@@ -126,6 +137,13 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Override
     public void taskNodeFinishAuditMessage(Long businessId, Long taskNodeId, ProcessApproveResultEnum result) {
 
+    }
+
+    private String buildOperatorName(String operator, OperatorTypeEnum type) {
+        if (OperatorTypeEnum.BUC.equals(type)) {
+            return emp360Adapter.getName(operator);
+        }
+        return operator;
     }
 
     private void validateParams(StartProcessDto startProcessDto) {
