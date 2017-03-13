@@ -49,7 +49,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 
     private static final Logger logger = LoggerFactory.getLogger(IncentiveAuditFlowServiceImpl.class);
 
-    private static final String INCENTIVE_AUDIT_PROCESS_CODE = "PROC-DG6666A1-NCJIFQ68NI4ZK7HQFMXS1-NCRJ6FZI-0";
+    private static final String INCENTIVE_AUDIT_BUSINESS_CODE = "incentive_program_audit";
 
     @Autowired
     private IncentiveProgramQueryService incentiveProgramQueryService;
@@ -157,7 +157,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
         }
         try {
             ResultModel<CuntaoProcessInstance> resultModel = cuntaoWorkFlowService.findRunningProcessInstance(
-                INCENTIVE_AUDIT_PROCESS_CODE, incentiveId.toString());
+                INCENTIVE_AUDIT_BUSINESS_CODE, incentiveId.toString());
             if (resultModel != null && resultModel.getResult() != null) {
                 String processInstanceId = resultModel.getResult().getProcessInstanceId();
                 cuntaoWorkFlowService.teminateProcessInstance(processInstanceId, operator);
