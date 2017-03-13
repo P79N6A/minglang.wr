@@ -59,13 +59,15 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Override
 	public void submitLocalQualification(CuntaoQualification qualification) {
-		qualification.setStatus(-1);
 		if(qualification.getId()==null){
+			qualification.setStatus(QualificationStatus.UN_SUBMIT);
 			DomainUtils.beforeInsert(qualification, "system");
 			cuntaoQualificationMapper.insertSelective(qualification);
 		}else{
-			DomainUtils.beforeUpdate(qualification, "system");
-			cuntaoQualificationMapper.updateByPrimaryKeySelective(qualification);
+			if(QualificationStatus.UN_SUBMIT== qualification.getStatus() || QualificationStatus.SUBMIT_FAIL== qualification.getStatus()){
+				DomainUtils.beforeUpdate(qualification, "system");
+				cuntaoQualificationMapper.updateByPrimaryKeySelective(qualification);
+			}
 		}
 	}
 

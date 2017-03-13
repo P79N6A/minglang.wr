@@ -49,9 +49,9 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
 	
-	private BeanCopier cuntaoQualificationCopier = BeanCopier.create(Qualification.class, CuntaoQualification.class, false);
+	private static final BeanCopier cuntaoQualificationCopier = BeanCopier.create(Qualification.class, CuntaoQualification.class, false);
 	
-	private BeanCopier cuntaoQualificationReverseCopier = BeanCopier.create(CuntaoQualification.class, Qualification.class, false);
+	private static final BeanCopier cuntaoQualificationReverseCopier = BeanCopier.create(CuntaoQualification.class, Qualification.class, false);
 	
 	@Value("${c2bSettleProcotolId}")
 	//B类用户新的入住协议ID
