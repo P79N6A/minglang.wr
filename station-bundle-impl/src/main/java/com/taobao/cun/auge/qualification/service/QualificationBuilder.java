@@ -76,6 +76,8 @@ public class QualificationBuilder {
 	
 	private static Map<String,Integer> businessTypeMapping = Maps.newHashMap();
 	static{
+		businessTypeMapping.put("个体户", SMALL_BUSINESS);
+		businessTypeMapping.put("个体", SMALL_BUSINESS);
 		businessTypeMapping.put("个体工商户", SMALL_BUSINESS);
 		businessTypeMapping.put("自然人", PERSONAL_BUSINESS);
 	}
