@@ -55,5 +55,13 @@ public interface IncentiveAuditFlowService {
      * @return
      */
     boolean terminateProcess(Long incentiveId, String operator);
+
+    /**
+     * 审批完成的消息
+     * @param objectId
+     * @param resultEnum
+     * @return
+     */
+    boolean handProcessFinish(Long objectId, ProcessApproveResultEnum resultEnum);
 }
 

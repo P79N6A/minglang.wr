@@ -2,10 +2,13 @@ package com.taobao.cun.auge.station.service.impl.incentive;
 
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
+import com.taobao.cun.auge.incentive.dto.IncentiveProgramAuditDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramDto;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramFundsSourcesEnum;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramIncentiveTypeEnum;
+import com.taobao.cun.auge.incentive.enums.IncentiveProgramStateEnum;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
+import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
@@ -55,6 +58,9 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     private IncentiveProgramQueryService incentiveProgramQueryService;
 
     @Autowired
+    private IncentiveProgramService incentiveProgramService;
+
+    @Autowired
     private IncentiveAuditServiceFactory incentiveAuditServiceFactory;
 
     @Autowired
@@ -77,7 +83,6 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Override
     public void startProcess(StartProcessDto startProcessDto) {
         validateParams(startProcessDto);
-        String orgId = "";
         Map<String, String> initData = initWorkflowVariables(startProcessDto.getBusinessId(), startProcessDto.getOperator(), startProcessDto.getOperatorType());
         ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(
                 startProcessDto.getBusiness().getCode(),
@@ -142,7 +147,20 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 
     @Override
     public void processFinishAuditMessage(Long businessId, ProcessApproveResultEnum result) {
-
+        if (businessId == null || result == null) {
+            throw new RuntimeException("激励审批非法消息");
+        }
+        IncentiveProgramAuditDto auditDto = new IncentiveProgramAuditDto();
+        auditDto.setOperatorType(OperatorTypeEnum.BUC);
+        auditDto.setOperator("financeAuditor");
+        auditDto.setOperatorOrgId(cuntaoOrgServiceClient.getRoot().getId());
+        auditDto.setId(businessId);
+        if (ProcessApproveResultEnum.APPROVE_PASS.equals(result)) {
+            auditDto.setStatEnum(IncentiveProgramStateEnum.AUDIT_PASS);
+        }else if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(result)) {
+            auditDto.setStatEnum(IncentiveProgramStateEnum.AUDIT_NOT_PASS);
+        }
+        incentiveProgramService.auditIncentiveProgram(auditDto);
     }
 
     @Override
@@ -166,6 +184,11 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
         }catch(Exception e) {
             logger.error("terminate incentive audit process error:" + incentiveId, e);
         }
+        return false;
+    }
+
+    @Override
+    public boolean handProcessFinish(Long objectId, ProcessApproveResultEnum resultEnum) {
         return false;
     }
 
