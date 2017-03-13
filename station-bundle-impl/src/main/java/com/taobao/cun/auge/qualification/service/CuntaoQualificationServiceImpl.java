@@ -53,10 +53,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	private static final BeanCopier cuntaoQualificationReverseCopier = BeanCopier.create(CuntaoQualification.class, Qualification.class, false);
 	
-	@Value("${c2bSettleProcotolId}")
-	//B类用户新的入住协议ID
-	private Long c2bSettleProcotolId;
-	
 	@Autowired
 	private PartnerProtocolRelBO partnerProtocolRelBO;
 	

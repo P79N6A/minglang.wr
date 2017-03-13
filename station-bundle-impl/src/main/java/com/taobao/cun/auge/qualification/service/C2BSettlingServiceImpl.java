@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,12 +21,12 @@ import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("settlingService")
-@RefreshScope
 @HSFProvider(serviceInterface= C2BSettlingService.class)
 public class C2BSettlingServiceImpl implements C2BSettlingService {
 
@@ -40,10 +39,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	
 	@Autowired
 	private PartnerProtocolRelBO partnerProtocolRelBO;
-	
-	@Value("${c2bSettleProcotolId}")
-	//B类用户新的入住协议ID
-	private Long c2bSettleProcotolId;
 	
 	@Autowired
 	private TestUserService testUserService;
@@ -66,7 +61,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			boolean testUser = isTestUser(parnterInstance.getTaobaoUserId());
 			response.setTestUser(testUser);
 			
-			boolean isSignProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
+			boolean isSignProcotol = this.hasC2BSignProcotol(settlingStepRequest.getTaobaoUserId());
 			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
@@ -125,9 +120,9 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	 * @param parnterInstanceId
 	 * @return
 	 */
-	private boolean hasC2BSignProcotol(Long parnterInstanceId){
-		PartnerProtocolRelDto partnerProtocolDto = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,c2bSettleProcotolId);
-		return Optional.ofNullable(partnerProtocolDto).isPresent();
+	private boolean hasC2BSignProcotol(Long taobaoUserId){
+		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+		return Optional.ofNullable(settleC2BProtocol).isPresent();
 	}
 	
 	/**
