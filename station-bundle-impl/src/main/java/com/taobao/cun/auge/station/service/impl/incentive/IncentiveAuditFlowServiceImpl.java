@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl.incentive;
 
+import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramDto;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramFundsSourcesEnum;
@@ -7,14 +8,14 @@ import com.taobao.cun.auge.incentive.enums.IncentiveProgramIncentiveTypeEnum;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.service.AlipayTagService;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.impl.incentive.audit.IncentiveAuditServiceFactory;
 import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
-import com.taobao.cun.auge.station.service.interfaces.IncentiveAuditFlowService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
@@ -64,6 +65,14 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 
     @Autowired
     Emp360Adapter emp360Adapter;
+
+    @Autowired
+    private GeneralTaskSubmitService generalTaskSubmitService;
+
+    @Override
+    public void submitStartAuditTask(ApproveProcessTask processTask) {
+        generalTaskSubmitService.submitIncentiveProgramAuditTask(processTask);
+    }
 
     @Override
     public void startProcess(StartProcessDto startProcessDto) {

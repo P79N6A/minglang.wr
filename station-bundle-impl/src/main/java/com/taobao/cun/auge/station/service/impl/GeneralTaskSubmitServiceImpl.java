@@ -829,7 +829,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			taskSubmitService.submitTask(startProcessTask, config);
 			logger.info("submitIncentiveProgramAuditTask : {}", JSON.toJSONString(startProcessTask));
 		}catch (Exception e) {
-
+			logger.error("submitIncentiveProgramAuditTask error: " + JSON.toJSONString(processTask), e);
 		}
 	}
 

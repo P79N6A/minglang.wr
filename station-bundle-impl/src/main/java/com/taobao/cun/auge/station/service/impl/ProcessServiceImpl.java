@@ -3,7 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.taobao.cun.auge.station.service.interfaces.IncentiveAuditFlowService;
+import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
