@@ -39,4 +39,11 @@ public interface IncentiveAuditFlowService {
      * @param result
      */
     void taskNodeFinishAuditMessage(Long businessId, Long taskNodeId, ProcessApproveResultEnum result);
+
+    /**
+     * 结束一个审批流程
+     * @param incentiveId
+     * @return
+     */
+    boolean terminateProcess(Long incentiveId, String operator);
 }

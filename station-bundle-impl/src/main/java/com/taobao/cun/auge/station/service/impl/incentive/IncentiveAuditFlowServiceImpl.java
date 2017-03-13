@@ -48,6 +48,8 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 
     private static final Logger logger = LoggerFactory.getLogger(IncentiveAuditFlowServiceImpl.class);
 
+    private static final String INCENTIVE_AUDIT_PROCESS_CODE = "PROC-DG6666A1-NCJIFQ68NI4ZK7HQFMXS1-NCRJ6FZI-0";
+
     @Autowired
     private IncentiveProgramQueryService incentiveProgramQueryService;
 
@@ -137,6 +139,25 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Override
     public void taskNodeFinishAuditMessage(Long businessId, Long taskNodeId, ProcessApproveResultEnum result) {
 
+    }
+
+    @Override
+    public boolean terminateProcess(Long incentiveId, String operator) {
+        if (incentiveId == null) {
+            return false;
+        }
+        try {
+            ResultModel<CuntaoProcessInstance> resultModel = cuntaoWorkFlowService.findRunningProcessInstance(
+                INCENTIVE_AUDIT_PROCESS_CODE, incentiveId.toString());
+            if (resultModel != null && resultModel.getResult() != null) {
+                String processInstanceId = resultModel.getResult().getProcessInstanceId();
+                cuntaoWorkFlowService.teminateProcessInstance(processInstanceId, operator);
+                return true;
+            }
+        }catch(Exception e) {
+            logger.error("terminate incentive audit process error:" + incentiveId, e);
+        }
+        return false;
     }
 
     private String buildOperatorName(String operator, OperatorTypeEnum type) {
