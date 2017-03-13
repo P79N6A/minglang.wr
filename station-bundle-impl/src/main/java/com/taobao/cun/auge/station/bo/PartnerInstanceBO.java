@@ -301,7 +301,7 @@ public interface PartnerInstanceBO {
 	
 	
 	/**
-	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 * 
 	 *
 	 * @param partnerId
 	 * @return
