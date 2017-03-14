@@ -13,6 +13,7 @@
 		<module>./station-bundle-impl</module>
 		<module>./station-bundle-client</module>
     	<module>./station-quali-validator</module>
+    	<module>station-bundle.validator</module>
   </modules>
 
 	<properties>
