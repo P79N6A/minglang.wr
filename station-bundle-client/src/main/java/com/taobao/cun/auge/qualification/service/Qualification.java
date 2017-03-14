@@ -85,6 +85,8 @@ public class Qualification implements Serializable{
 		
 		private String errorMessage;
 		
+		private String qualiOss;
+		
 		public String getCompanyName() {
 			return companyName;
 		}
@@ -297,7 +299,12 @@ public class Qualification implements Serializable{
 			this.errorMessage = errorMessage;
 		}
 
+		public String getQualiOss() {
+			return qualiOss;
+		}
 
-
+		public void setQualiOss(String qualiOss) {
+			this.qualiOss = qualiOss;
+		}
 
 }
