@@ -296,17 +296,20 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		sb.append("申请县域:").append(county.getFullNamePath()).append(",");
 		sb.append("开班人数:").append(record.getExceptNum()).append(",");
 		sb.append("期望开班时间:").append(sdf.format(record.getGmtExceptOpen())).append(",");
-		sb.append("是否凑班：").append("y".equals(record.getIsShare())?"是,":"否,");
-		sb.append("凑班原因:").append(record.getShareDesc()).append(",");
+		if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+			sb.append("培训供应商:").append(appResourceBO.queryAppNameByValue(PurchaseEnum.PURCHASE_SUPPLIER_TYPE, record.getPurchaseSupplier())).append(",");
+		}
 		sb.append("备注:").append(record.getDescription());
 		return sb.toString();
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
-        String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
-        if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
-            skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
-        }
+		String skuCode;
+		if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+			skuCode = appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
+		} else {
+			skuCode = appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
+		}
 		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
 		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
 //		String productCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","PRODUCT_CODE");
