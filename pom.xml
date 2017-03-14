@@ -12,7 +12,7 @@
 	<modules>
 		<module>./station-bundle-impl</module>
 		<module>./station-bundle-client</module>
-    	<module>station-quali-validator</module>
+    	<module>./station-quali-validator</module>
   </modules>
 
 	<properties>
@@ -30,6 +30,8 @@
 		<tomcat.version>7.0.64</tomcat.version>		
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 		<ague.station.client.version>2.0.7-SNAPSHOT</ague.station.client.version>
+		<station.quali.validator.version>1.0.0-SNAPSHOT</station.quali.validator.version>
+		
 	</properties>
 
 	<dependencyManagement>
