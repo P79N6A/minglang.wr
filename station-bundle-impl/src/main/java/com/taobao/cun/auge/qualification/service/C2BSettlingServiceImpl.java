@@ -139,19 +139,25 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	
 
 	@Override
-	public C2BSignSettleProtocolResponse signC2BSettleProtocol(C2BSignSettleProtocolRequest newSettleProtocolRequest) {
+	public C2BSignSettleProtocolResponse signC2BSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
 		C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
 		try {
-			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(newSettleProtocolRequest.getTaobaoUserId());
+			CuntaoQualification  qualification = cuntaoQulificationBO.getCuntaoQualificationByTaobaoUserId(c2bSignSettleProtocolRequest.getTaobaoUserId());
+			if(qualification == null){
+				response.setSuccessful(false);
+				response.setErrorMessage("未提交认证资料");
+				return response;
+			}
+			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
 
 			boolean isSignC2BProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
 			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
-			this.partnerInstanceService.signC2BSettledProtocol(newSettleProtocolRequest.getTaobaoUserId(), isSignC2BProcotol, isFrozenMoney);
+			this.partnerInstanceService.signC2BSettledProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), isSignC2BProcotol, isFrozenMoney);
 			response.setSuccessful(true);
 		} catch (Exception e) {
-			logger.error("signNewSettleProtocol error!taobaoUserId["+newSettleProtocolRequest.getTaobaoUserId()+"]",e);
+			logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);
 			response.setErrorMessage("系统异常");
 			response.setSuccessful(false);
 		}
