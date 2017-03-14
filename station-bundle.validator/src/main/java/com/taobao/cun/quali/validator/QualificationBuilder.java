@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
-import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
-import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
-
 public class QualificationBuilder {
 	
 	public static final int PERSONAL_BUSINESS = 0;
