@@ -26,10 +26,18 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoQualificationFormValidator.class);
 	@Value("#{'${c2bBizScopeKeyWords}'.split(',')}")
 	private List<String> c2bBizScopeKeyWords;
+	
+	@Value("${isCheckBizScope}")
+	private boolean isCheckBizScope;
+	
 
 	@Override
 	public Result<Void> validate(FormValidateRequest request) {
 		Result<Void> result = new Result<Void>();
+		if(!isCheckBizScope){
+			return Result.result(ResultCode.SUCCESS);
+		}
+		
 		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
 			if(request.getContent()==null){
@@ -39,10 +47,9 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 			}
 			String bizScope = (String)request.getContent().get("operateScope");
 			if(StringUtils.isEmpty(bizScope)){
-			//	result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
-			//	result.setMessage("没有获取到经营范围");
-				//return result;
-				return Result.result(ResultCode.SUCCESS);
+				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
+				result.setMessage("没有获取到经营范围");
+				return result;
 			}
 			if(CollectionUtils.isEmpty(c2bBizScopeKeyWords)){
 				return Result.result(ResultCode.SUCCESS);
