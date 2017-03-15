@@ -132,7 +132,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	 */
 	private boolean hasFrozenMoney(Long parnterInstanceId){
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, parnterInstanceId);
-		return accountMoney != null && AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(accountMoney.getState());
+		return accountMoney != null && AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(accountMoney.getState().getCode());
 	}
 	
 	
