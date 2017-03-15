@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -42,7 +44,15 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	
 	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateQualification(CuntaoQualification cuntaoQualification) {
+		if(cuntaoQualification.getStatus() == QualificationStatus.VALID){
+			CuntaoQualification record = new CuntaoQualification();
+			record.setId(cuntaoQualification.getId());
+			record.setErrorCode(null);
+			record.setErrorMessage(null);
+			cuntaoQualificationMapper.updateByPrimaryKey(record);
+		}
 		cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 	}
 
