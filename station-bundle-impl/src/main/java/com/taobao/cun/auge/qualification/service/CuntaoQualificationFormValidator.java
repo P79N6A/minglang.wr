@@ -26,10 +26,6 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoQualificationFormValidator.class);
 	@Value("#{'${c2bBizScopeKeyWords}'.split(',')}")
 	private List<String> c2bBizScopeKeyWords;
-	
-	@Autowired
-	private QualificationBuilder qualificationBuilder;
-	
 
 	@Override
 	public Result<Void> validate(FormValidateRequest request) {
@@ -41,7 +37,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 				result.setMessage("资质内容不存在");
 				return result;
 			}
-			String bizScope = qualificationBuilder.getContent(request.getContent(), qualificationBuilder.getBizScope());
+			String bizScope = (String)request.getContent().get("operateScope");
 			if(StringUtils.isEmpty(bizScope)){
 				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 				result.setMessage("没有获取到经营范围");
