@@ -13,7 +13,6 @@
 	<modules>
 		<module>./station-bundle-impl</module>
 		<module>./station-bundle-client</module>
-		<module>./sc.portal.api-cuntao</module>
 	</modules>
 
 	<properties>
