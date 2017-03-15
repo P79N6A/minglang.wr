@@ -80,6 +80,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
 			sellerQualiServiceAdapter.insertQualiRecord(cuntaoQualification);
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 		}
 	}
 

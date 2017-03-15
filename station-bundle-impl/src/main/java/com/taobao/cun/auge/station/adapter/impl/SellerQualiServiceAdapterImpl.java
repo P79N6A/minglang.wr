@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
@@ -51,8 +53,11 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		QualiAddRequest request = new QualiAddRequest();
 		request.setSource("cuntao");
 		request.setUserId(qualification.getTaobaoUserId());
-		//request.setContent(content);
-		//qualiAccessService.getQualiMetaData(arg0)
+		Map<String, String> content = Maps.newHashMap();
+		content.put("companyName", qualification.getCompanyName());
+		content.put("regNo", qualification.getQualiNo());
+		content.put("qualiImage", qualification.getQualiOss());
+		request.setContent(content);
 		Result<Void> result = qualiAccessService.insertQualiRecord(request);
 		if(!result.isSuccessful()||!result.isExecuteSuccessful()){
 			qualification.setErrorCode(result.getCode()+"");
