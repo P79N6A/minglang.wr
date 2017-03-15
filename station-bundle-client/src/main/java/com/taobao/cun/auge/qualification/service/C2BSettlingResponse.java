@@ -38,6 +38,7 @@ public class C2BSettlingResponse implements Serializable{
 	 */
 	private Integer qualificationStatus;
 	
+	
 	/**
 	 * 错误消息
 	 */

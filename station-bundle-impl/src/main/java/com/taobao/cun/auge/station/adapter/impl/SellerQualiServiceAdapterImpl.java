@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.pm.sc.api.Result;
@@ -16,9 +15,10 @@ import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
-import com.alibaba.pm.sc.portal.api.constants.ResultCode;
-import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
-import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
+import com.alibaba.pm.sc.portal.api.QualiAccessService;
+import com.alibaba.pm.sc.portal.api.quali.dto.QualiAddRequest;
+import com.taobao.cun.auge.dal.domain.CuntaoQualification;
+import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
@@ -35,8 +35,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	private Long qualiInfoId;
 	
 	@Autowired
-	private FormValidator cuntaoQualificationFormValidator;
-
+	private QualiAccessService qualiAccessService;
 	/**
 	 * 是否有有效淘宝资质
 	 * @param taobaoUserId
@@ -45,22 +44,23 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	@Override
 	public boolean hasValidQuali(Long taobaoUserId){
 		Optional<EntityQuali>  quali = this.queryQuali(taobaoUserId);
-		return quali.isPresent() && checkQualiBizScope(quali.get(),taobaoUserId);
+		return quali.isPresent();
 	}
 	
-	/**
-	 * 验证资质经营范围
-	 * @param quali
-	 * @param taobaoUserId
-	 * @return
-	 */
-	public boolean checkQualiBizScope(EntityQuali quali,Long taobaoUserId){
-		if(quali == null) return false;
-		FormValidateRequest request = new FormValidateRequest();
-		request.setQualiInfoId(quali.getQuali().getQualiInfoId());
-		request.setHid(taobaoUserId);
-		request.setContent(quali.getQuali().getContent());
-		return cuntaoQualificationFormValidator.validate(request).getCode() == ResultCode.SUCCESS.getCode();
+	public void insertQualiRecord(CuntaoQualification qualification){
+		QualiAddRequest request = new QualiAddRequest();
+		request.setSource("cuntao");
+		request.setUserId(qualification.getTaobaoUserId());
+		//request.setContent(content);
+		//qualiAccessService.getQualiMetaData(arg0)
+		Result<Void> result = qualiAccessService.insertQualiRecord(request);
+		if(!result.isSuccessful()||!result.isExecuteSuccessful()){
+			qualification.setErrorCode(result.getCode()+"");
+			qualification.setErrorMessage(result.getMessage());
+			qualification.setStatus(QualificationStatus.SUBMIT_FAIL);
+		}else{
+			qualification.setStatus(QualificationStatus.SUBMIT_SUCESS);
+		}
 	}
 	
 	
@@ -104,13 +104,6 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		return Optional.ofNullable(auditRecord.getData());
 	}
 
-	public Long getQualiInfoId() {
-		return qualiInfoId;
-	}
-
-	public void setQualiInfoId(Long qualiInfoId) {
-		this.qualiInfoId = qualiInfoId;
-	}
 
 	@Override
 	public Optional<EntityQuali> queryQualiById(Long qualiId,int eidType) {
