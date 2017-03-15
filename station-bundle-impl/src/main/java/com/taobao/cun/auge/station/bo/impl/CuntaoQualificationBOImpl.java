@@ -67,10 +67,8 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			DomainUtils.beforeInsert(qualification, "system");
 			cuntaoQualificationMapper.insertSelective(qualification);
 		}else{
-			if(QualificationStatus.UN_SUBMIT== qualification.getStatus() || QualificationStatus.SUBMIT_FAIL== qualification.getStatus()){
-				DomainUtils.beforeUpdate(qualification, "system");
-				cuntaoQualificationMapper.updateByPrimaryKeySelective(qualification);
-			}
+			DomainUtils.beforeUpdate(qualification, "system");
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(qualification);
 		}
 	}
 
