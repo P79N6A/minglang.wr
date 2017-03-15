@@ -440,6 +440,36 @@
 		      <artifactId>commons-logging</artifactId>
 		      <version>1.2</version>
    			 </dependency>
+   			 <dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>log4j-over-slf4j</artifactId>
+			  <version>1.7.22</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.vipserver</groupId>
+			  <artifactId>vipserver-client</artifactId>
+			  <version>4.6.2</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.csp</groupId>
+			  <artifactId>courier</artifactId>
+			  <version>1.0.6.3-jdklog</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.api</artifactId>
+			  <version>0.2.9-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.portal.api</artifactId>
+			  <version>0.2.9-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.cloud</groupId>
+			    <artifactId>spring-cloud-stream-starter-metaq</artifactId>
+			    <version>1.0.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -599,7 +629,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
