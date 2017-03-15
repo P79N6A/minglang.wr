@@ -14,6 +14,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.pm.sc.api.Result;
+import com.alibaba.pm.sc.portal.api.constants.ResultCode;
 import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
 import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -36,34 +37,32 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
 			if(request.getContent()==null){
-				result.setCode(11002);
+				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 				result.setMessage("资质内容不存在");
 				return result;
 			}
-			
 			String bizScope = qualificationBuilder.getContent(request.getContent(), qualificationBuilder.getBizScope());
 			if(StringUtils.isEmpty(bizScope)){
-/*				result.setCode(11002);
-				result.setMessage("经营范围不存在");
-				return result;*/
-				return Result.result(1,"SUCCESS");
+				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
+				result.setMessage("没有获取到经营范围");
+				return result;
 			}
 			if(CollectionUtils.isEmpty(c2bBizScopeKeyWords)){
-				return Result.result(1,"SUCCESS");
+				return Result.result(ResultCode.SUCCESS);
 			}
 			for (Iterator<String> iterator = c2bBizScopeKeyWords.iterator(); iterator.hasNext();) {
 				String keyword =  iterator.next();
 				if(bizScope.contains(keyword)){
-					return Result.result(1,"SUCCESS");
+					return Result.result(ResultCode.SUCCESS);
 				}
 			}
 		} catch (Exception e) {
 			logger.error("CuntaoQualificationFormValidator error!",e);
-			return Result.result(11003, "FROM_VALIDATE_EXECUTE_FAIL");
+			return Result.result(ResultCode.FORM_VALIDATE_EXECUTE_FAIL);
 		}
-		String bizScopeKeyWords = c2bBizScopeKeyWords.stream().collect(Collectors.joining(","));
-		result.setMessage("经营范围不合法，必须包含"+bizScopeKeyWords);
-		result.setCode(11002);
+		String bizScopeKeyWords = String.join(",",c2bBizScopeKeyWords);
+		result.setMessage("经营范围必须包含其中一项["+bizScopeKeyWords+"]");
+		result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 		return result;
 	}
 

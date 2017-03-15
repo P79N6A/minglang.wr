@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
+import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 @Component("cuntaoQualificationBO")
@@ -21,6 +22,8 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Autowired
 	private CuntaoQualificationMapper cuntaoQualificationMapper;
 	
+	@Autowired
+	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
 	@Override
 	public CuntaoQualification getCuntaoQualificationByTaobaoUserId(Long taobaoUserId) {
 		CuntaoQualificationExample example = new CuntaoQualificationExample();
@@ -76,8 +79,8 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	public void submitHavanaQualification(Long taobaoUserId) {
 		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
-			
-			//submitQualificationToHavana
+			sellerQualiServiceAdapter.insertQualiRecord(cuntaoQualification);
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 		}
 	}
 
