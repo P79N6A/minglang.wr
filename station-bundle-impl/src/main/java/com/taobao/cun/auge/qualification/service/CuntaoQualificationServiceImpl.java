@@ -172,17 +172,19 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 
 	@Override
-	public void submitLocalQualification(Qualification qualification) {
-			try {
-				CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
-				if(cuntaoQulification == null){
-					cuntaoQulification  = new CuntaoQualification();
-				}
-				cuntaoQualificationCopier.copy(qualification, cuntaoQulification, null);
-				cuntaoQualificationBO.submitLocalQualification(cuntaoQulification);
-			} catch (Exception e) {
-				logger.error("submitLocalQualification error ", e);
+	public boolean submitLocalQualification(Qualification qualification) {
+		try {
+			CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
+			if(cuntaoQulification == null){
+				cuntaoQulification  = new CuntaoQualification();
 			}
+			cuntaoQualificationCopier.copy(qualification, cuntaoQulification, null);
+			cuntaoQualificationBO.submitLocalQualification(cuntaoQulification);
+		} catch (Exception e) {
+			logger.error("submitLocalQualification error！tabaoUserId["+qualification.getTaobaoUserId()+"]",e);
+			return false;
+		}
+			return true;
 	}
 
 	@Override

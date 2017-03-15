@@ -12,7 +12,7 @@ public interface CuntaoQualificationService {
 	
 	Qualification queryC2BQualification(Long taobaoUserId);
 	
-	void submitLocalQualification(Qualification qualification);
+	boolean submitLocalQualification(Qualification qualification);
 	
 	void submitHavanaQualification(Long taobaoUserId);
 	
