@@ -29,6 +29,7 @@ public class AppResourceBOImpl implements AppResourceBO {
 	public List<AppResource> queryAppResourceList(String type) {
 		ValidateUtils.notNull(type);
 		AppResourceExample example = new AppResourceExample();
+        example.setOrderByClause("code");
 		Criteria criteria = example.createCriteria();
 		criteria.andTypeEqualTo(type);
 		criteria.andIsDeletedEqualTo("n");
