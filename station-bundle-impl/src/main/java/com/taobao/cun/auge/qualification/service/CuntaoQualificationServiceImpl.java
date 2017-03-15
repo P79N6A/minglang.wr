@@ -59,16 +59,17 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
 		try {
 			logger.info("syncCuntaoQulificationFromMetaq taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"]");
+			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+			if(cuntaoQualification == null) {
+				return;
+			}
 			Qualification qualification = queryHavanaC2BQualificationByQualiId(taobaoUserId, qualiId, eidType);
 			if(qualification == null) {
 				return ;
 			}
-			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
-			if(cuntaoQualification != null){
-				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
-				DomainUtils.beforeUpdate(cuntaoQualification, "system");
-				cuntaoQualificationBO.updateQualification(cuntaoQualification);
-			}
+			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+			DomainUtils.beforeUpdate(cuntaoQualification, "system");
+			cuntaoQualificationBO.updateQualification(cuntaoQualification);
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"] !",e);
 		}
@@ -76,16 +77,17 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	public void syncCuntaoQulification(Long taobaoUserId) {
 		try {
+			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+			if(cuntaoQualification == null) {
+				return;
+			}
 			Qualification qualification = this.queryHavanaC2BQualification(taobaoUserId);
 			if(qualification == null) {
 				return ;
 			}
-			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
-			if(cuntaoQualification != null){
-				cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
-				DomainUtils.beforeUpdate(cuntaoQualification, "system");
-				cuntaoQualificationBO.updateQualification(cuntaoQualification);
-			}
+			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+			DomainUtils.beforeUpdate(cuntaoQualification, "system");
+			cuntaoQualificationBO.updateQualification(cuntaoQualification);
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"]!",e);
 		}
