@@ -46,6 +46,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateQualification(CuntaoQualification cuntaoQualification) {
+		cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 		if(cuntaoQualification.getStatus() == QualificationStatus.VALID){
 			CuntaoQualification record = new CuntaoQualification();
 			record.setId(cuntaoQualification.getId());
@@ -53,7 +54,6 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			record.setErrorMessage(null);
 			cuntaoQualificationMapper.updateByPrimaryKey(record);
 		}
-		cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 	}
 
 	@Override
