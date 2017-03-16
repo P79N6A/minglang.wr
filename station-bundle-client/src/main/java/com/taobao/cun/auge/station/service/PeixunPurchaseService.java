@@ -44,4 +44,5 @@ public interface PeixunPurchaseService {
 	 */
 	public List<PartnerPeixunSupplierDto> getSupplierList();
 
+	public String getPurchaseJson();
 }
