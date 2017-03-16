@@ -99,12 +99,12 @@ public class C2BSettlingResponse implements Serializable{
 	}
 
 
-	public int getQualificationStatus() {
+	public Integer getQualificationStatus() {
 		return qualificationStatus;
 	}
 
 
-	public void setQualificationStatus(int qualificationStatus) {
+	public void setQualificationStatus(Integer qualificationStatus) {
 		this.qualificationStatus = qualificationStatus;
 	}
 
