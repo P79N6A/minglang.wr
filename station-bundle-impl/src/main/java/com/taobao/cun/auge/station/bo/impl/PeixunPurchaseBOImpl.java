@@ -26,7 +26,6 @@ import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
@@ -52,9 +51,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
-	@Autowired
-	AppResourceBO appResourceBO;
-
 	@Autowired
 	DiamondConfiguredProperties configuredProperties;
 	
@@ -298,14 +294,15 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
-		String skuCode;
+        Map<String, String> purchaseMap = configuredProperties.getPurchaseMap();
+        String skuCode;
 		if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
-			skuCode = appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
+			skuCode = purchaseMap.get(record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
 		} else {
-			skuCode = appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
+			skuCode = purchaseMap.get(record.getPurchaseType()+"_SKU");
 		}
-		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
-		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
+		String useCode = purchaseMap.get("USE_CODE");
+        String address = purchaseMap.get("ADDRESS");
 		List<PrLineDto> prLineList = new ArrayList<PrLineDto>();
 		PrLineDto prLine = new PrLineDto();
 		prLine.setSkuId(skuCode);

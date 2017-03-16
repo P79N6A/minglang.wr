@@ -31,6 +31,9 @@ public class DiamondConfiguredProperties {
     @Value("${train.supplier}")
     private String supplier;
 
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${train.purchase}')}")
+    private Map<String, String> purchaseMap;
+
     public String getApply() {
         return apply;
     }
@@ -49,5 +52,9 @@ public class DiamondConfiguredProperties {
 
     public Map<String, String> getSupplierMap() {
         return JSON.parseObject(supplier, new TypeReference<LinkedHashMap<String, String>>(){});
+    }
+
+    public Map<String, String> getPurchaseMap() {
+        return purchaseMap;
     }
 }
