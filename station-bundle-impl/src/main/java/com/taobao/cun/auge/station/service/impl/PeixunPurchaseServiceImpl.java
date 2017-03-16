@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.dto.PartnerPeixunSupplierDto;
@@ -14,6 +15,7 @@ import com.taobao.cun.auge.station.service.PeixunPurchaseService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.util.CollectionUtils;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,15 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
             }).collect(Collectors.toList());
         }
         return null;
+    }
+
+    @Override
+    public String getSupplierJson() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        for (PartnerPeixunSupplierDto dto : getSupplierList()) {
+            map.put(dto.getValue(), dto.getName());
+        }
+        return JSON.toJSONString(map);
     }
 
 }
