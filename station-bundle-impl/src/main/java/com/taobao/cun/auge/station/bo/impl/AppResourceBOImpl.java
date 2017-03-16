@@ -58,20 +58,6 @@ public class AppResourceBOImpl implements AppResourceBO {
 	}
 
     @Override
-    public String queryAppNameByValue(String type, String value) {
-        AppResourceExample example = new AppResourceExample();
-        Criteria criteria = example.createCriteria();
-        criteria.andTypeEqualTo(type);
-        criteria.andValueEqualTo(value);
-        criteria.andIsDeletedEqualTo("n");
-        List<AppResource> resourceList = appResourceMapper.selectByExample(example);
-        if (!CollectionUtils.isEmpty(resourceList)) {
-            return resourceList.get(0).getName();
-        }
-        return "";
-    }
-
-    @Override
     public boolean configAppResource(String type, String key, String value,  boolean isDelete, String configurePerson) {
         ValidateUtils.notNull(type);
         ValidateUtils.notNull(key);
