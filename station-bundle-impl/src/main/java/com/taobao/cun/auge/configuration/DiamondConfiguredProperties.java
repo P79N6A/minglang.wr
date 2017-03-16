@@ -1,8 +1,13 @@
 package com.taobao.cun.auge.configuration;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by xiao on 16/11/30.
@@ -23,6 +28,9 @@ public class DiamondConfiguredProperties {
     @Value("${wisdom.audit.mobile}")
     private String mobile;
 
+    @Value("${train.supplier}")
+    private String supplier;
+
     public String getApply() {
         return apply;
     }
@@ -39,4 +47,7 @@ public class DiamondConfiguredProperties {
         return mobile;
     }
 
+    public Map<String, String> getSupplierMap() {
+        return JSON.parseObject(supplier, new TypeReference<LinkedHashMap<String, String>>(){});
+    }
 }

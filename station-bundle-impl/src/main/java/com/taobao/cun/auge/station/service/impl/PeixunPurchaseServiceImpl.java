@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.dto.PartnerPeixunSupplierDto;
+import org.apache.ecs.html.P;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("peixunPurchaseService")
@@ -28,6 +31,9 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
 
     @Autowired
     private AppResourceBO appResourceBO;
+
+    @Autowired
+    DiamondConfiguredProperties configuredProperties;
 
     @Override
     public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
@@ -55,18 +61,28 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
         return peixunPurchaseBO.queryById(id);
     }
 
+//    @Override
+//    public List<PartnerPeixunSupplierDto> getSupplierList() {
+//        List<AppResource> resourceList = appResourceBO.queryAppResourceList("PARTNER_PEIXUN_SUPPLIER");
+//        if (!CollectionUtils.isEmpty(resourceList)) {
+//            return resourceList.stream().map(appResource -> {
+//                PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
+//                supplierDto.setName(appResource.getName());
+//                supplierDto.setValue(appResource.getValue());
+//                return supplierDto;
+//            }).collect(Collectors.toList());
+//        }
+//        return null;
+//    }
+
     @Override
     public List<PartnerPeixunSupplierDto> getSupplierList() {
-        List<AppResource> resourceList = appResourceBO.queryAppResourceList("PARTNER_PEIXUN_SUPPLIER");
-        if (!CollectionUtils.isEmpty(resourceList)) {
-            return resourceList.stream().map(appResource -> {
-                PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
-                supplierDto.setName(appResource.getName());
-                supplierDto.setValue(appResource.getValue());
-                return supplierDto;
-            }).collect(Collectors.toList());
-        }
-        return null;
+        return configuredProperties.getSupplierMap().entrySet().stream().map(entry -> {
+            PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
+            supplierDto.setName(entry.getValue());
+            supplierDto.setValue(entry.getKey());
+            return supplierDto;
+        }).collect(Collectors.toList());
     }
 
     @Override
