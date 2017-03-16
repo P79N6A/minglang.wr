@@ -19,7 +19,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("peixunPurchaseService")
@@ -30,10 +29,10 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
     PeixunPurchaseBO peixunPurchaseBO;
 
     @Autowired
-    private AppResourceBO appResourceBO;
+    DiamondConfiguredProperties configuredProperties;
 
     @Autowired
-    DiamondConfiguredProperties configuredProperties;
+    AppResourceBO appResourceBO;
 
     @Override
     public Long createOrUpdatePeixunPurchase(PeixunPurchaseDto dto) {
@@ -61,20 +60,6 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
         return peixunPurchaseBO.queryById(id);
     }
 
-//    @Override
-//    public List<PartnerPeixunSupplierDto> getSupplierList() {
-//        List<AppResource> resourceList = appResourceBO.queryAppResourceList("PARTNER_PEIXUN_SUPPLIER");
-//        if (!CollectionUtils.isEmpty(resourceList)) {
-//            return resourceList.stream().map(appResource -> {
-//                PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
-//                supplierDto.setName(appResource.getName());
-//                supplierDto.setValue(appResource.getValue());
-//                return supplierDto;
-//            }).collect(Collectors.toList());
-//        }
-//        return null;
-//    }
-
     @Override
     public List<PartnerPeixunSupplierDto> getSupplierList() {
         return configuredProperties.getSupplierMap().entrySet().stream().map(entry -> {
@@ -86,12 +71,22 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
     }
 
     @Override
-    public String getSupplierJson() {
-        LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        for (PartnerPeixunSupplierDto dto : getSupplierList()) {
-            map.put(dto.getValue(), dto.getName());
+    public String getPurchaseJson() {
+        List<AppResource> resourceList = appResourceBO.queryAppResourceList("PEIXUN_PURCHASE");
+        if (!CollectionUtils.isEmpty(resourceList)) {
+            List<PartnerPeixunSupplierDto> dtoList = resourceList.stream().map(appResource -> {
+                PartnerPeixunSupplierDto supplierDto = new PartnerPeixunSupplierDto();
+                supplierDto.setName(appResource.getName());
+                supplierDto.setValue(appResource.getValue());
+                return supplierDto;
+            }).collect(Collectors.toList());
+            LinkedHashMap<String, String> map = new LinkedHashMap<>();
+            for (PartnerPeixunSupplierDto dto : dtoList) {
+                map.put(dto.getName(), dto.getValue());
+            }
+            return JSON.toJSONString(map);
         }
-        return JSON.toJSONString(map);
+        return null;
     }
 
 }
