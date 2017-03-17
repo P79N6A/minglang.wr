@@ -40,12 +40,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 		
 		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
-			if(request.getContent()==null){
-				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
-				result.setMessage("资质内容不存在");
-				return result;
-			}
-			String bizScope = (String)request.getContent().get("operateScope");
+			String bizScope = (String)request.getContent("operateScope");
 			if(StringUtils.isEmpty(bizScope)){
 				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 				result.setMessage("没有获取到经营范围");
