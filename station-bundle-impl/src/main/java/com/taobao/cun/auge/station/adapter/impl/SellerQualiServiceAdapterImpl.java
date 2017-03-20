@@ -17,7 +17,7 @@ import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
-import com.alibaba.pm.sc.portal.api.QualiAccessService;
+import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.pm.sc.portal.api.quali.dto.QualiAddRequest;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
