@@ -22,6 +22,7 @@ import com.alibaba.pm.sc.portal.api.quali.dto.QualiAddRequest;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
@@ -38,6 +39,8 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	@Autowired
 	private QualiAccessService qualiAccessService;
+	@Autowired
+	private UicReadAdapter uicReadAdapter;
 	/**
 	 * 是否有有效淘宝资质
 	 * @param taobaoUserId
@@ -51,7 +54,9 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	public void insertQualiRecord(CuntaoQualification qualification){
 		QualiAddRequest request = new QualiAddRequest();
+		request.setQualiInfoKey("bizLicense");
 		request.setSource("cuntao");
+		request.setNick(uicReadAdapter.getTaobaoNickByTaobaoUserId(qualification.getTaobaoUserId()));
 		request.setUserId(qualification.getTaobaoUserId());
 		Map<String, String> content = Maps.newHashMap();
 		content.put("companyName", qualification.getCompanyName());
