@@ -150,7 +150,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			}
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
 
-			boolean isSignC2BProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
+			boolean isSignC2BProcotol = this.hasC2BSignProcotol(parnterInstance.getTaobaoUserId());
 			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
