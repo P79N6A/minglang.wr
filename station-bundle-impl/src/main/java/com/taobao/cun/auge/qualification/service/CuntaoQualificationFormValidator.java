@@ -8,7 +8,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
@@ -26,18 +25,21 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoQualificationFormValidator.class);
 	@Value("#{'${c2bBizScopeKeyWords}'.split(',')}")
 	private List<String> c2bBizScopeKeyWords;
+	
+	@Value("${isCheckBizScope}")
+	private boolean isCheckBizScope;
+	
 
 	@Override
 	public Result<Void> validate(FormValidateRequest request) {
 		Result<Void> result = new Result<Void>();
+		if(!isCheckBizScope){
+			return Result.result(ResultCode.SUCCESS);
+		}
+		
 		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
-			if(request.getContent()==null){
-				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
-				result.setMessage("资质内容不存在");
-				return result;
-			}
-			String bizScope = (String)request.getContent().get("operateScope");
+			String bizScope = (String)request.getContent("operateScope");
 			if(StringUtils.isEmpty(bizScope)){
 				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 				result.setMessage("没有获取到经营范围");

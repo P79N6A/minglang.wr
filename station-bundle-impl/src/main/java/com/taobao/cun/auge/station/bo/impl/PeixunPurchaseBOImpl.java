@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.station.constant.PurchaseEnum;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,6 @@ import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
@@ -53,7 +52,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	DiamondConfiguredProperties configuredProperties;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -121,18 +120,9 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		if(StringUtils.isEmpty(dto.getIsShare())){
 			throw new AugeServiceException("isShare is null");
 		}
-//		if(StringUtils.isEmpty(dto.getCategoryId())){
-//			throw new AugeServiceException("categoryId is null");
-//		}
-//		if(StringUtils.isEmpty(dto.getOuCode())){
-//			throw new AugeServiceException("ouCode is null");
-//		}
 		if(StringUtils.isEmpty(dto.getPurchaseType())){
 			throw new AugeServiceException("purchaseType is null");
 		}
-//		if(StringUtils.isEmpty(dto.getReceiveAddress())){
-//			throw new AugeServiceException("receiveAddress is null");
-//		}
 		if(StringUtils.isEmpty(dto.getReceiverMobile())){
 			throw new AugeServiceException("recevieMobile is null");
 		}
@@ -296,20 +286,23 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		sb.append("申请县域:").append(county.getFullNamePath()).append(",");
 		sb.append("开班人数:").append(record.getExceptNum()).append(",");
 		sb.append("期望开班时间:").append(sdf.format(record.getGmtExceptOpen())).append(",");
-		sb.append("是否凑班：").append("y".equals(record.getIsShare())?"是,":"否,");
-		sb.append("凑班原因:").append(record.getShareDesc()).append(",");
+		if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+			sb.append("培训供应商:").append(configuredProperties.getSupplierMap().get(record.getPurchaseSupplier())).append(",");
+		}
 		sb.append("备注:").append(record.getDescription());
 		return sb.toString();
 	}
 	
 	private List<PrLineDto> getPrList(PeixunPurchase record) {
-        String skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseType()+"_SKU");
-        if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
-            skuCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE", record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
-        }
-		String useCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","USE_CODE");
-		String address=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","ADDRESS");
-//		String productCode=appResourceBO.queryAppValueNotAllowNull("PEIXUN_PURCHASE","PRODUCT_CODE");
+        Map<String, String> purchaseMap = configuredProperties.getPurchaseMap();
+        String skuCode;
+		if (!StringUtils.isEmpty(record.getPurchaseSupplier())) {
+			skuCode = purchaseMap.get(record.getPurchaseSupplier() + "_" + record.getPurchaseType()+"_SKU");
+		} else {
+			skuCode = purchaseMap.get(record.getPurchaseType()+"_SKU");
+		}
+		String useCode = purchaseMap.get("USE_CODE");
+        String address = purchaseMap.get("ADDRESS");
 		List<PrLineDto> prLineList = new ArrayList<PrLineDto>();
 		PrLineDto prLine = new PrLineDto();
 		prLine.setSkuId(skuCode);
@@ -319,7 +312,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prLine.setReceiver(record.getReceiverWorkNo());
 		prLine.setQuantity(record.getExceptNum());
 		prLine.setRemark(applyReason(record));
-//		prLine.setAcceptanceStandard("123");
 		prLineList.add(prLine);
 		return prLineList;
 	}
@@ -384,7 +376,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		result.setStatusDesc(PeixunPurchaseStatusEnum.valueof(result.getStatus()).getDesc());
 		result.setPurchaseTypeDesc(PeixunPurchaseTypeEnum.valueof(result.getPurchaseType()).getDesc());
 		if (!StringUtils.isEmpty(result.getPurchaseSupplier())) {
-			result.setPurchaseSupplierName(appResourceBO.queryAppNameByValue(PurchaseEnum.PURCHASE_SUPPLIER_TYPE, result.getPurchaseSupplier()));
+			result.setPurchaseSupplierName(configuredProperties.getSupplierMap().get(result.getPurchaseSupplier()));
 		}
 		return result;
 	}

@@ -2,6 +2,8 @@ package com.taobao.cun.auge.qualification.service;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("invoiceQualificationService")
 @HSFProvider(serviceInterface= InvoiceQualificationService.class)
 public class InvoiceQualificationServiceImpl implements InvoiceQualificationService{
-
+	private static final Logger logger = LoggerFactory.getLogger(InvoiceQualificationServiceImpl.class);
 	@Autowired
 	private CuntaoInvoiceQualificationMapper cuntaoInvoiceQualificationMapper;
 	
@@ -28,21 +30,27 @@ public class InvoiceQualificationServiceImpl implements InvoiceQualificationServ
 
 	
 	@Override
-	public void saveSettleInvoiceInfo(InvoiceQualification invoiceQualification){
-		BeanValidator.validateWithThrowable(invoiceQualification);
-		CuntaoInvoiceQualificationExample example = new  CuntaoInvoiceQualificationExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(invoiceQualification.getTaobaoUserId());
-		CuntaoInvoiceQualification cuntaoInvoiceQualification = ResultUtils.selectOne(cuntaoInvoiceQualificationMapper.selectByExample(example));
-		if(cuntaoInvoiceQualification == null){
-			cuntaoInvoiceQualification = new CuntaoInvoiceQualification();
-			DomainUtils.beforeInsert(cuntaoInvoiceQualification, "system");
-			cuntaoInvoiceQualification.setUploadTime(new Date());
-			cuntaoQualificationCopier.copy(invoiceQualification, cuntaoInvoiceQualification, null);
-			cuntaoInvoiceQualificationMapper.insertSelective(cuntaoInvoiceQualification);
-		}else{
-			DomainUtils.beforeUpdate(cuntaoInvoiceQualification, "system");
-			cuntaoQualificationCopier.copy(invoiceQualification, cuntaoInvoiceQualification, null);
-			cuntaoInvoiceQualificationMapper.updateByPrimaryKeySelective(cuntaoInvoiceQualification);
+	public boolean saveSettleInvoiceInfo(InvoiceQualification invoiceQualification){
+		try {
+			BeanValidator.validateWithThrowable(invoiceQualification);
+			CuntaoInvoiceQualificationExample example = new  CuntaoInvoiceQualificationExample();
+			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(invoiceQualification.getTaobaoUserId());
+			CuntaoInvoiceQualification cuntaoInvoiceQualification = ResultUtils.selectOne(cuntaoInvoiceQualificationMapper.selectByExample(example));
+			if(cuntaoInvoiceQualification == null){
+				cuntaoInvoiceQualification = new CuntaoInvoiceQualification();
+				DomainUtils.beforeInsert(cuntaoInvoiceQualification, "system");
+				cuntaoInvoiceQualification.setUploadTime(new Date());
+				cuntaoQualificationCopier.copy(invoiceQualification, cuntaoInvoiceQualification, null);
+				cuntaoInvoiceQualificationMapper.insertSelective(cuntaoInvoiceQualification);
+			}else{
+				DomainUtils.beforeUpdate(cuntaoInvoiceQualification, "system");
+				cuntaoQualificationCopier.copy(invoiceQualification, cuntaoInvoiceQualification, null);
+				cuntaoInvoiceQualificationMapper.updateByPrimaryKeySelective(cuntaoInvoiceQualification);
+			}
+			return true;
+		} catch (Exception e) {
+			logger.error("saveSettleInvoiceInfo error!taobaoUserId["+invoiceQualification.getTaobaoUserId()+"]",e);
+			return false;
 		}
 		
 	}
