@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ali.com.google.common.collect.Maps;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.api.quali.constants.QualiStatus;
@@ -61,7 +65,17 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		Map<String, String> content = Maps.newHashMap();
 		content.put("companyName", qualification.getCompanyName());
 		content.put("regNo", qualification.getQualiNo());
-		content.put("qualiImage", qualification.getQualiOss());
+		String ossPics = qualification.getQualiOss();
+		if (StringUtils.isNotEmpty(ossPics)) {
+			String[] ossPic = ossPics.split(",");
+			List<Map<String, String>> ossList = new ArrayList<Map<String, String>>();
+			for (String ossPicName : ossPic) {
+				Map<String, String> ossPicMap = new HashMap<String, String>();
+				ossPicMap.put("imgURL", ossPicName);
+				ossList.add(ossPicMap);
+			}
+			content.put("qualiImage", JSON.toJSONString(ossList));
+		}
 		request.setContent(content);
 		Result<Void> result = qualiAccessService.insertQualiRecord(request);
 		if(!result.isSuccessful()||!result.isExecuteSuccessful()){
@@ -70,6 +84,8 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 			qualification.setStatus(QualificationStatus.SUBMIT_FAIL);
 		}else{
 			qualification.setStatus(QualificationStatus.SUBMIT_SUCESS);
+			qualification.setErrorMessage("");
+			qualification.setErrorCode("");
 		}
 	}
 	
