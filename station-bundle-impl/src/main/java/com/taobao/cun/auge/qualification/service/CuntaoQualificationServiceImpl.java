@@ -86,7 +86,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				return ;
 			}
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
-			DomainUtils.beforeUpdate(cuntaoQualification, "system");
+			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
 		} catch (Exception e) {
 			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"]!",e);

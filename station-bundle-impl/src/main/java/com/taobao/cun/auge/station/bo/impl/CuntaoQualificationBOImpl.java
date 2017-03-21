@@ -50,9 +50,9 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 		if(cuntaoQualification.getStatus() == QualificationStatus.VALID){
 			CuntaoQualification record = new CuntaoQualification();
 			record.setId(cuntaoQualification.getId());
-			record.setErrorCode(null);
-			record.setErrorMessage(null);
-			cuntaoQualificationMapper.updateByPrimaryKey(record);
+			record.setErrorCode("");
+			record.setErrorMessage("");
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(record);
 		}
 	}
 
