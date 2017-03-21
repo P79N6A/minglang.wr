@@ -58,7 +58,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	public void insertQualiRecord(CuntaoQualification qualification){
 		QualiAddRequest request = new QualiAddRequest();
-		request.setQualiInfoKey("bizLicense");
+		request.setQualiInfoName("bizLicense");
 		request.setSource("cuntao");
 		request.setNick(uicReadAdapter.getTaobaoNickByTaobaoUserId(qualification.getTaobaoUserId()));
 		request.setUserId(qualification.getTaobaoUserId());
@@ -76,7 +76,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 			}
 			content.put("qualiImage", JSON.toJSONString(ossList));
 		}
-		request.setContent(content);
+		request.setContentWithName(content);
 		Result<Void> result = qualiAccessService.insertQualiRecord(request);
 		if(!result.isSuccessful()||!result.isExecuteSuccessful()){
 			qualification.setErrorCode(result.getCode()+"");
