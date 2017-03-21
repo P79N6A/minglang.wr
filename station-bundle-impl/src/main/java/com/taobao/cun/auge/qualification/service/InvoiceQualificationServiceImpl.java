@@ -34,7 +34,7 @@ public class InvoiceQualificationServiceImpl implements InvoiceQualificationServ
 		try {
 			BeanValidator.validateWithThrowable(invoiceQualification);
 			CuntaoInvoiceQualificationExample example = new  CuntaoInvoiceQualificationExample();
-			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(invoiceQualification.getTaobaoUserId());
+			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(invoiceQualification.getTaobaoUserId()).andInvoiceFileTypeEqualTo(invoiceQualification.getInvoiceFileType());
 			CuntaoInvoiceQualification cuntaoInvoiceQualification = ResultUtils.selectOne(cuntaoInvoiceQualificationMapper.selectByExample(example));
 			if(cuntaoInvoiceQualification == null){
 				cuntaoInvoiceQualification = new CuntaoInvoiceQualification();
