@@ -90,6 +90,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	public void submitHavanaQualification(Long taobaoUserId) {
 		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
+			DomainUtils.beforeUpdate(cuntaoQualification, "system");
 			sellerQualiServiceAdapter.insertQualiRecord(cuntaoQualification);
 			cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 		}
