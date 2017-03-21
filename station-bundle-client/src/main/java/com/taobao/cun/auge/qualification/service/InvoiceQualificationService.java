@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.qualification.service;
 
+import java.util.List;
+
 public interface InvoiceQualificationService {
 
 	/**
@@ -8,5 +10,5 @@ public interface InvoiceQualificationService {
 	 */
 	public boolean saveSettleInvoiceInfo(InvoiceQualification settleInvoiceInfo);
 
-	public InvoiceQualification queryInvoiceQualification(Long taobaoUserId);
+	public List<InvoiceQualification> queryInvoiceQualification(Long taobaoUserId);
 }

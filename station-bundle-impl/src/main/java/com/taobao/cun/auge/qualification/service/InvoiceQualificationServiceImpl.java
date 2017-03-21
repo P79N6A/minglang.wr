@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.qualification.service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,15 +58,18 @@ public class InvoiceQualificationServiceImpl implements InvoiceQualificationServ
 	}
 
 	@Override
-	public InvoiceQualification queryInvoiceQualification(Long taobaoUserId) {
+	public List<InvoiceQualification> queryInvoiceQualification(Long taobaoUserId) {
 		Assert.notNull(taobaoUserId);
 		CuntaoInvoiceQualificationExample example = new  CuntaoInvoiceQualificationExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId);
-		CuntaoInvoiceQualification cuntaoInvoiceQualification = ResultUtils.selectOne(cuntaoInvoiceQualificationMapper.selectByExample(example));
-		if(cuntaoInvoiceQualification != null){
-			InvoiceQualification invoiceQualification = new InvoiceQualification();
-			reverseCuntaoQualificationCopier.copy(cuntaoInvoiceQualification, invoiceQualification, null);
-			return invoiceQualification;
+		List<CuntaoInvoiceQualification> cuntaoInvoiceQualifications = cuntaoInvoiceQualificationMapper.selectByExample(example);
+		if(cuntaoInvoiceQualifications != null){
+			return cuntaoInvoiceQualifications.stream().map(cuntaoInvoiceQualification -> {
+				InvoiceQualification invoiceQualification = new InvoiceQualification();
+				reverseCuntaoQualificationCopier.copy(cuntaoInvoiceQualification, invoiceQualification, null);
+				return invoiceQualification;
+			}).collect(Collectors.toList());
+			
 		}
 		return  null;
 	}
