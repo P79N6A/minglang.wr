@@ -687,7 +687,14 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			}else{
 				accountNo = accountMoney.getAccountNo();
 			}
-			alipayTagDto.setUserId(accountNo.substring(0, accountNo.length() - 4));
+
+			/**
+			 * 注意:accountNo有两种形式:alipayId(16位)还有老的accountNo(20位且2088开头 0156结尾)
+			 */
+			if(StringUtils.length(accountNo) == 20) {
+				accountNo = accountNo.substring(0, accountNo.length() - 4);
+			}
+			alipayTagDto.setUserId(accountNo);
 			dealStationTagTaskVo.setParameterType(AlipayTagDto.class.getName());
 			dealStationTagTaskVo.setParameter(JSON.toJSONString(alipayTagDto));
 			taskLists.add(dealStationTagTaskVo);
@@ -822,7 +829,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			taskSubmitService.submitTask(startProcessTask, config);
 			logger.info("submitIncentiveProgramAuditTask : {}", JSON.toJSONString(startProcessTask));
 		}catch (Exception e) {
-
+			logger.error("submitIncentiveProgramAuditTask error: " + JSON.toJSONString(processTask), e);
 		}
 	}
 

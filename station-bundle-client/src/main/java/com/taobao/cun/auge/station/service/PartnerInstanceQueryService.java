@@ -93,6 +93,21 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
+	
+	/**
+	 * 重构过度使用，请正常业务不要使用
+	 * 
+	 * @return
+	 */
+	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds);
+	
+	/**
+	 * 根据合伙人实例id，批量查询合伙人实例
+	 * 
+	 * @param partnerInstanceIds
+	 * @return
+	 */
+	public List<PartnerInstanceDto> queryByPartnerInstanceIds(List<Long> partnerInstanceIds);
 
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]
@@ -277,5 +292,13 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public Long findStationIdByStationApplyId(Long stationApplyId);
+    
+    /**
+     * 根据淘宝userId，查询当前所在的村点id
+     * 
+     * @param taobaoUserId
+     * @return
+     */
+    public Long getCurStationIdByTaobaoUserId(Long taobaoUserId);
     
 }

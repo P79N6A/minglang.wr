@@ -82,6 +82,10 @@ public class PeixunPurchaseDto implements Serializable {
 
 	private List<Operation> operations;
 	private long topIndex;
+
+	private String purchaseSupplier;
+
+	private String purchaseSupplierName = "";
 	
 	public String getApplyWorkNo() {
 		return applyWorkNo;
@@ -411,5 +415,19 @@ public class PeixunPurchaseDto implements Serializable {
 		this.topIndex = topIndex;
 	}
 
-	
+	public String getPurchaseSupplier() {
+		return purchaseSupplier;
+	}
+
+	public void setPurchaseSupplier(String purchaseSupplier) {
+		this.purchaseSupplier = purchaseSupplier;
+	}
+
+	public String getPurchaseSupplierName() {
+		return purchaseSupplierName;
+	}
+
+	public void setPurchaseSupplierName(String purchaseSupplierName) {
+		this.purchaseSupplierName = purchaseSupplierName;
+	}
 }

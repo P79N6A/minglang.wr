@@ -128,9 +128,9 @@ public interface GeneralTaskSubmitService {
 	 */
 	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto);
 
-
 	/**
 	 * 启动激励方案审批流程
 	 */
 	public void submitIncentiveProgramAuditTask(ApproveProcessTask processTask);
+
 }

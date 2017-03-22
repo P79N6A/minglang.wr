@@ -17,7 +17,7 @@ public interface AttachmentService {
     public List<AttachementDto> getAttachmentList(Long objectId, AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachementTypeId) throws AugeServiceException;
 
     public void addAttachmentBatch(List<AttachementDto> attachmentDtoList,Long objectId,AttachementBizTypeEnum bizTypeEnum, AttachementTypeIdEnum attachmentTypeId,OperatorDto operatorDto) throws AugeServiceException;
-    
+
     /**
 	 * 批量修改,   先删除,后新增
 	 * @param attachementDtoList
@@ -38,7 +38,7 @@ public interface AttachmentService {
 	
 	/**
 	 * 批量新增附件
-	 * @param attachementDto
+	 * @param attachementDtoList
 	 * @param objectId
 	 * @param bizTypeEnum
 	 * @throws AugeServiceException

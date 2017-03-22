@@ -2,10 +2,12 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
 
+import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,6 +108,9 @@ public class ProcessProcessor {
 	
 	@Autowired
 	LevelAuditFlowService levelAuditFlowService;
+
+	@Autowired
+	IncentiveAuditFlowService incentiveAuditFlowService;
 	
 	@Autowired
 	PeixunPurchaseBO peixunPurchaseBO;
@@ -137,7 +142,10 @@ public class ProcessProcessor {
 			} else if (ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
 					|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
 					|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
-					|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)) {
+					|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
+					|| ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)) {
 				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
 			//村点撤点
 			}else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
@@ -160,6 +168,8 @@ public class ProcessProcessor {
 		        }
 			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
 				handleFlowerNameApply(objectId,resultCode);
+			}else if (ProcessBusinessEnum.incentiveProgramAudit.getCode().equals(businessCode)) {
+
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

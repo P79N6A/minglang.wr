@@ -1,6 +1,13 @@
-package com.taobao.cun.auge.station.service.interfaces;
+package com.taobao.cun.auge.incentive;
 
-import com.alibaba.fastjson.JSONObject;
+/**
+ * Created by xujianhui on 17/3/13.
+ *
+ * @author xujianhui
+ * @date 2017/03/13
+ */
+
+import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 
@@ -11,6 +18,8 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
  * @date 2017/02/22
  */
 public interface IncentiveAuditFlowService {
+
+    void submitStartAuditTask(ApproveProcessTask processTask);
 
     /**
      * 启动一个激励方案审批流程
@@ -39,4 +48,20 @@ public interface IncentiveAuditFlowService {
      * @param result
      */
     void taskNodeFinishAuditMessage(Long businessId, Long taskNodeId, ProcessApproveResultEnum result);
+
+    /**
+     * 结束一个审批流程
+     * @param incentiveId
+     * @return
+     */
+    boolean terminateProcess(Long incentiveId, String operator);
+
+    /**
+     * 审批完成的消息
+     * @param objectId
+     * @param resultEnum
+     * @return
+     */
+    boolean handProcessFinish(Long objectId, ProcessApproveResultEnum resultEnum);
 }
+

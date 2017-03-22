@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
@@ -300,7 +301,7 @@ public interface PartnerInstanceBO {
 	
 	
 	/**
-	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
+	 * 
 	 *
 	 * @param partnerId
 	 * @return
@@ -320,4 +321,9 @@ public interface PartnerInstanceBO {
 	public PartnerInstanceDto getLastPartnerInstance(Long taobaoUserId);
 
 	public Long findStationIdByStationApplyId(Long stationApplyId);
+	
+	public List<PartnerStationRel> getBatchActivePartnerInstance(
+			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException;
+	
+	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,String name);
 }

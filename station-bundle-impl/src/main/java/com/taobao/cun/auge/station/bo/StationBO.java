@@ -7,7 +7,7 @@ import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-
+import com.github.pagehelper.Page;
 /**
  *服务站表基础服务
  * @author quanzhu.wangqz
@@ -90,6 +90,14 @@ public interface StationBO {
 	 * @return
 	 * @throws AugeServiceException
 	 */
-	public List<Station> getStationsByName(StationCondition stationCondition) throws AugeServiceException;
+	public List<Station> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException;
 	
+	/**
+	 * 根据name、orgId、stationStatusEnum查询station
+	 * 
+	 * @param stationCondition
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public Page<Station> getStations(StationCondition stationCondition) throws AugeServiceException;
 }
