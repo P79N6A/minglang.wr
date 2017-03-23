@@ -293,12 +293,11 @@ public interface PartnerInstanceQueryService {
      */
     public Long findStationIdByStationApplyId(Long stationApplyId);
     
-    /**
+     /**
      * 根据淘宝userId，查询当前所在的村点id
      * 
      * @param taobaoUserId
      * @return
      */
     public Long getCurStationIdByTaobaoUserId(Long taobaoUserId);
-    
 }

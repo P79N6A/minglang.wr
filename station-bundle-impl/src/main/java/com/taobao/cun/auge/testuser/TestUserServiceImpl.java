@@ -35,16 +35,24 @@ public class TestUserServiceImpl implements TestUserService,ApplicationContextAw
     	Assert.notNull(bizCode);
     	Map<String,String> config= testUserProperties.getConfigs().get(bizCode);
     	Map<String,TestUserRule> testUserRules = applicationContext.getBeansOfType(TestUserRule.class);
-    	List<TestUserRule> rules = testUserRules.values().stream().filter(rule -> config.containsKey(rule.getConfigKey()) && StringUtils.isNotEmpty(config.get(rule.getConfigKey()))).collect(Collectors.toList());
+    	List<TestUserRule> rules = testUserRules.values().stream().filter(rule -> rule.isMatch(config)).collect(Collectors.toList());
     	if(CollectionUtils.isEmpty(rules)){
     		return false;
     	}
     	if(allMatch){
-    		return rules.stream().allMatch(rule -> rule.checkTestUser(taobaoUserId, config.get(rule.getConfigKey())));
+    		return rules.stream().allMatch(rule -> rule.checkTestUser(taobaoUserId,config));
     	}else{
-    		return  rules.stream().anyMatch(rule -> rule.checkTestUser(taobaoUserId, config.get(rule.getConfigKey())));
+    		return  rules.stream().anyMatch(rule -> rule.checkTestUser(taobaoUserId,config));
     	}
     }
+
+	private boolean existConfig(Map<String, String> config, TestUserRule rule) {
+		return StringUtils.isNotEmpty(config.get(rule.getConfigKey()))||StringUtils.isNotEmpty("!"+config.get(rule.getConfigKey()));
+	}
+
+	private boolean mathRule(Map<String, String> config, TestUserRule rule) {
+		return config.containsKey(rule.getConfigKey())||config.containsKey("!"+rule.getConfigKey());
+	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

@@ -301,4 +301,13 @@ public interface PartnerInstanceService {
 	 */
 	public void thawMoneySuccess(PartnerInstanceThrawSuccessDto partnerInstanceThrawSuccessDto) throws AugeServiceException, AugeSystemException;
 	
+	/**
+	 * C2B升级签订入住协议
+	 * @param taobaoUserId
+	 * @param signedNewProtocol
+	 * @param isFrozenMoney
+	 * @throws AugeServiceException
+	 */
+	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney) throws AugeServiceException;
+	
 }

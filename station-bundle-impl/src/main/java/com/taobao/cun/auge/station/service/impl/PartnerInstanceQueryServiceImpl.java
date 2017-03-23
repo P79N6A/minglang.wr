@@ -88,6 +88,7 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
+import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
@@ -145,6 +146,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Autowired
 	TairCache tairCache;
 
+	@Autowired
+	private TestUserService testUserService;
+	
+	private boolean isC2BTestUser(Long taobaoUserId) {
+		return testUserService.isTestUser(taobaoUserId, "c2b", true);
+	}
+	
 	@Override
 	public PartnerInstanceDto queryInfo(Long stationId, OperatorDto operator) throws AugeServiceException {
 		ValidateUtils.notNull(stationId);
@@ -394,7 +402,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			condition.setOperator(String.valueOf(taobaoUserId));
 			condition.setOperatorType(OperatorTypeEnum.HAVANA);
 			PartnerInstanceDto instance = queryInfo(condition);
-			ProtocolDto protocol = protocolBO.getValidProtocol(type);
+			ProtocolDto protocol = null;
+			if(this.isC2BTestUser(taobaoUserId)&&ProtocolTypeEnum.SETTLE_PRO.equals(type)){
+				 protocol = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO);
+			}else{
+				 protocol = protocolBO.getValidProtocol(type);
+			}
 			info.setPartnerInstance(instance);
 			info.setProtocol(protocol);
 
@@ -453,8 +466,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			PartnerInstanceDto instance = queryInfo(condition);
 			AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-			PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
-					instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			PartnerProtocolRelDto settleProtocol = null;
+			settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
+						instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			 if(settleProtocol == null){
+				 settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
+							instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			 }
 			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
 				throw new NullPointerException("bond money or settle protocol not exist");
 			}

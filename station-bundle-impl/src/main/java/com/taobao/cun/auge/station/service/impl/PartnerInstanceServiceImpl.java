@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -151,6 +153,7 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -234,6 +237,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
+	
+	@Autowired
+	private TestUserService testUserService;
+	
+	
+	@Autowired
+	private FrozenMoneyAmountConfig frozenMoneyConfig;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -557,9 +567,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	@Override
-	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException {
+	private void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version,ProtocolTypeEnum protocolTypeEnum,boolean needFrozenMoney){
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(waitFrozenMoney);
 		try {
@@ -577,10 +585,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE);
 			}
 
-			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.SETTLE_PRO, instanceId,
-					PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-
-			addWaitFrozenMoney(instanceId, taobaoUserId, waitFrozenMoney);
+		
+			partnerProtocolRelBO.signProtocol(taobaoUserId,protocolTypeEnum, instanceId,
+						PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			
+			if(needFrozenMoney){
+				addWaitFrozenMoney(instanceId, taobaoUserId, waitFrozenMoney);
+			}
 
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
 			param.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNED);
@@ -606,7 +617,43 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			logger.error(error, e);
 			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
+	
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney) throws AugeServiceException{
+		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		boolean isTestUser = isC2BTestUser(rel);
+		Double frozenMoney = this.frozenMoneyConfig.getFrozenMoneyByType(rel.getType());
+		Long version = rel.getVersion();
+		if(!isTestUser){
+			//非测试用户走老代码
+			this.signSettledProtocol(taobaoUserId, frozenMoney, version);
+		}else{
+			if(!signedC2BProtocol && !isSignSettleProtocol(rel.getId())){
+				signSettledProtocol(taobaoUserId,frozenMoney,version, ProtocolTypeEnum.C2B_SETTLE_PRO,!isFrozenMoney);
+			}else if(!signedC2BProtocol && isSignSettleProtocol(rel.getId())){
+				partnerProtocolRelBO.signProtocol(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO, rel.getId(),
+						PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			}
+		}
+	}
+	
+	private boolean isSignSettleProtocol(Long partnerInstanceId){
+		return Optional.ofNullable(partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO, partnerInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE)).isPresent();
+	}
+	
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException {
+		signSettledProtocol(taobaoUserId,waitFrozenMoney,version, ProtocolTypeEnum.SETTLE_PRO,true);
+	}
+
+	private boolean isC2BTestUser(PartnerStationRel parnterInstance) {
+		return testUserService.isTestUser(parnterInstance.getTaobaoUserId(), "c2b", true);
+	}
+	
 
 	private void addWaitFrozenMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
 		ValidateUtils.notNull(instanceId);
