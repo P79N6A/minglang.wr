@@ -467,14 +467,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
 					AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 			PartnerProtocolRelDto settleProtocol = null;
-			if(!isC2BTestUser(taobaoUserId)){
+			settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
+						instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			 if(settleProtocol == null){
 				 settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
 							instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			}else{
-				 settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
-							instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-			}
-			
+			 }
 			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
 				throw new NullPointerException("bond money or settle protocol not exist");
 			}
