@@ -19,5 +19,14 @@ public class TestUserProperties {
 	}
 
 
+	public String getTestUserProperty(String bizCode,String configKey){
+		if(configs.containsKey(bizCode)){
+			Map<String,String> config = configs.get(bizCode);
+			if(config.containsKey(configKey)){
+				return config.get(configKey);
+			}
+		}
+		return null;
+	}
 
 }

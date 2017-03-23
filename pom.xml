@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.0.4</ague.station.client.version>
+		<ague.station.client.version>2.0.7</ague.station.client.version>
 	</properties>
 
 	<dependencyManagement>
@@ -440,6 +440,36 @@
 		      <artifactId>commons-logging</artifactId>
 		      <version>1.2</version>
    			 </dependency>
+   			 <dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>log4j-over-slf4j</artifactId>
+			  <version>1.7.22</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.vipserver</groupId>
+			  <artifactId>vipserver-client</artifactId>
+			  <version>4.6.2</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.csp</groupId>
+			  <artifactId>courier</artifactId>
+			  <version>1.0.6.3-jdklog</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.api</artifactId>
+			  <version>0.3.4</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.portal.api</artifactId>
+			  <version>0.2.9</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.cloud</groupId>
+			    <artifactId>spring-cloud-stream-starter-metaq</artifactId>
+			    <version>1.0.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -548,7 +578,7 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!-- add java sources by default -->
+			<!-- add java sources by default
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -562,7 +592,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+ 			-->
 			<!-- generate git.properties -->
 			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
 				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
@@ -599,7 +629,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore />
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
