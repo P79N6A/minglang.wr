@@ -202,13 +202,12 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}else{
 			c2bSettleInfo.setPartnerInstanceStatus(PartnerInstanceStateEnum.QUIT.getCode());
 		}
-		/*PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+		PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 		if(settleC2BProtocol!=null){
 			c2bSettleInfo.setSignC2BTime(settleC2BProtocol.getConfirmTime());
-		}*/
-		c2bSettleInfo.setNewPartner(false);
-		//c2bSettleInfo.setNewPartner(!Optional.ofNullable(settleProtocol).isPresent());
+		}
+		c2bSettleInfo.setNewPartner(!Optional.ofNullable(settleProtocol).isPresent());
 		syncCuntaoQulification(taobaoUserId);
 		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 		if(null != cuntaoQualification && (cuntaoQualification.getStatus()==QualificationStatus.IN_VALID||cuntaoQualification.getStatus()==QualificationStatus.VALID)){
