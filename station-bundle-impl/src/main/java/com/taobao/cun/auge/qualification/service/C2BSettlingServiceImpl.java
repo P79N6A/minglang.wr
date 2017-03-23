@@ -121,9 +121,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	 * @return
 	 */
 	private boolean hasC2BSignProcotol(Long taobaoUserId){
-		//PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-		//return Optional.ofNullable(settleC2BProtocol).isPresent();
-		return false;
+		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+		return Optional.ofNullable(settleC2BProtocol).isPresent();
 	}
 	
 	/**
