@@ -20,7 +20,7 @@ public abstract class AbstractTestUserRule implements TestUserRule{
 
 	@Override
 	public boolean isMatch(Map<String,String> config){
-			return StringUtils.isNotEmpty(config.get(getConfigKey()))||StringUtils.isNotEmpty(REVERSE_CHAR+this.getConfigKey());
+			return StringUtils.isNotEmpty(config.get(getConfigKey()))||StringUtils.isNotEmpty(config.get(REVERSE_CHAR+this.getConfigKey()));
 	}
 
 	private boolean isMatchKey(String configKey) {
