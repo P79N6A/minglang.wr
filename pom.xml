@@ -458,12 +458,12 @@
 			<dependency>
 			  <groupId>com.alibaba.pm</groupId>
 			  <artifactId>sc.api</artifactId>
-			  <version>0.2.9-SNAPSHOT</version>
+			  <version>0.3.3</version>
 			</dependency>
 			<dependency>
 			  <groupId>com.alibaba.pm</groupId>
 			  <artifactId>sc.portal.api</artifactId>
-			  <version>0.2.9-SNAPSHOT</version>
+			  <version>0.2.9</version>
 			</dependency>
 			<dependency>
 			    <groupId>com.alibaba.cloud</groupId>
