@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.testuser;
 
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -20,7 +22,7 @@ public class UserTypeTestUserRule extends AbstractTestUserRule{
 		String[] userTypes = StringUtils.commaDelimitedListToStringArray(config);
 		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		Assert.notNull(partnerInstance);
-		return ObjectUtils.containsElement(userTypes, partnerInstance.getType());
+		return Stream.of(userTypes).filter(value -> partnerInstance.getType().equals(value)).findFirst().isPresent();
 	}
 
 	@Override
