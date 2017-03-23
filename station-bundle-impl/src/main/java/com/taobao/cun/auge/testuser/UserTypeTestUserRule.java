@@ -22,7 +22,7 @@ public class UserTypeTestUserRule extends AbstractTestUserRule{
 		String[] userTypes = StringUtils.commaDelimitedListToStringArray(config);
 		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		Assert.notNull(partnerInstance);
-		return Stream.of(userTypes).filter(value -> partnerInstance.getType().equals(value)).findFirst().isPresent();
+		return Stream.of(userTypes).anyMatch(value -> partnerInstance.getType().equals(value));
 	}
 
 	@Override
