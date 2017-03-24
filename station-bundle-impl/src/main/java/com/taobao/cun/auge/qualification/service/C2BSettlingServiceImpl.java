@@ -142,6 +142,12 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	public C2BSignSettleProtocolResponse signC2BSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
 		C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
 		try {
+			boolean isSignC2BProcotol = this.hasC2BSignProcotol(c2bSignSettleProtocolRequest.getTaobaoUserId());
+			if(isSignC2BProcotol){
+				response.setSuccessful(true);
+				return response;
+			}
+			
 			CuntaoQualification  qualification = cuntaoQulificationBO.getCuntaoQualificationByTaobaoUserId(c2bSignSettleProtocolRequest.getTaobaoUserId());
 			if(qualification == null){
 				response.setSuccessful(false);
@@ -149,9 +155,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 				return response;
 			}
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
-
-			boolean isSignC2BProcotol = this.hasC2BSignProcotol(parnterInstance.getTaobaoUserId());
-			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
 			this.partnerInstanceService.signC2BSettledProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), isSignC2BProcotol, isFrozenMoney);
