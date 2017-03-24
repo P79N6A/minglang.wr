@@ -210,7 +210,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		c2bSettleInfo.setNewPartner(!Optional.ofNullable(settleProtocol).isPresent());
 		syncCuntaoQulification(taobaoUserId);
 		CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
-		if(null != cuntaoQualification && (cuntaoQualification.getStatus()==QualificationStatus.IN_VALID||cuntaoQualification.getStatus()==QualificationStatus.VALID)){
+		if(null != cuntaoQualification){
+			c2bSettleInfo.setQualiStatus(cuntaoQualification.getStatus());
 			c2bSettleInfo.setQualiAuditPassTime(cuntaoQualification.getAuditTime());
 			c2bSettleInfo.setInvalidTime(cuntaoQualification.getInvalidTime());
 			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType());
