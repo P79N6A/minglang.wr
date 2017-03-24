@@ -17,7 +17,9 @@ public class C2BSettleInfo implements Serializable{
 	
 	private Date signC2BTime;
 	
-	private int settleIdentity;
+	private Integer settleIdentity;
+	
+	private Integer qualiStatus;
 	
 	private String partnerInstanceStatus;
 	
@@ -39,11 +41,11 @@ public class C2BSettleInfo implements Serializable{
 		this.signC2BTime = signC2BTime;
 	}
 
-	public int getSettleIdentity() {
+	public Integer getSettleIdentity() {
 		return settleIdentity;
 	}
 
-	public void setSettleIdentity(int settleIdentity) {
+	public void setSettleIdentity(Integer settleIdentity) {
 		this.settleIdentity = settleIdentity;
 	}
 
@@ -69,6 +71,14 @@ public class C2BSettleInfo implements Serializable{
 
 	public void setNewPartner(boolean newPartner) {
 		this.newPartner = newPartner;
+	}
+
+	public Integer getQualiStatus() {
+		return qualiStatus;
+	}
+
+	public void setQualiStatus(Integer qualiStatus) {
+		this.qualiStatus = qualiStatus;
 	}
 	
 }
