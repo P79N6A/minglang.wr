@@ -1442,4 +1442,5 @@ public class CountyStation {
     public void setStorageArea(String storageArea) {
         this.storageArea = storageArea;
     }
+
 }

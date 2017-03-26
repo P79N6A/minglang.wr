@@ -10,4 +10,5 @@ public interface ProcessService {
 	public void startLevelApproveProcess(PartnerInstanceLevelProcessDto levelProcessDto);
 
 	public void startIncentiveProgramAuditProcess(StartProcessDto startProcessDto);
+
 }

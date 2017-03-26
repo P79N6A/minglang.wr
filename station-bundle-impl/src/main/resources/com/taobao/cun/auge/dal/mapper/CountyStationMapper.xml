@@ -903,4 +903,5 @@
       storage_area = #{storageArea,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
 </mapper>

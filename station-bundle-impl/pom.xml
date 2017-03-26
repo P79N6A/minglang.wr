@@ -48,11 +48,12 @@
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
 		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
-		<!-- AliExpress Starters -->
+		<!-- AliExpress Starters 
 		<dependency>
-			<groupId>com.aliexpress.boot</groupId>
-			<artifactId>spring-boot-starter-metaq</artifactId>
+    		<groupId>com.alibaba.cloud</groupId>
+    		<artifactId>spring-cloud-stream-starter-metaq</artifactId>
 		</dependency>
+		-->
 		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> </dependency> -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
@@ -288,6 +289,22 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			 <groupId>org.slf4j</groupId>
+			 <artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>log4j</groupId>
+			  <artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.api</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.pm</groupId>
+			  <artifactId>sc.portal.api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

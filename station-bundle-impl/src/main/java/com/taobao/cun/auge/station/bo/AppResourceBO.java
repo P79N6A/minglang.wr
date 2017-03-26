@@ -20,8 +20,6 @@ public interface AppResourceBO {
 	
 	public String queryAppResourceValue(String type, String key);
 
-	public String queryAppNameByValue(String type, String value);
-
 	public Map<String, AppResource> queryAppResourceMap(String type);
 	
 	public boolean configAppResource(@NotNull String type,@NotNull  String key, String value, boolean isDelete, @NotNull String configurePerson);

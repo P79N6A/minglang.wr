@@ -50,6 +50,7 @@ import java.util.Map;
 public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 
     private static final Logger logger = LoggerFactory.getLogger(LevelAuditFlowProcessServiceImpl.class);
+    private static final String SPLITER_CHAR = "#";
 
     @Autowired
     protected CuntaoWorkFlowService cuntaoWorkFlowService;

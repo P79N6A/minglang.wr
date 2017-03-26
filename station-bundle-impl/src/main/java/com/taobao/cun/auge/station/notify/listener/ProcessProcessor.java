@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,14 +107,14 @@ public class ProcessProcessor {
 	
 	@Autowired
 	LevelAuditFlowService levelAuditFlowService;
-
-	@Autowired
-	IncentiveAuditFlowService incentiveAuditFlowService;
 	
 	@Autowired
 	PeixunPurchaseBO peixunPurchaseBO;
 	@Autowired
 	PartnerBO partnerBO;
+
+	@Autowired
+	IncentiveAuditFlowService incentiveAuditFlowService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -169,7 +168,7 @@ public class ProcessProcessor {
 			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
 				handleFlowerNameApply(objectId,resultCode);
 			}else if (ProcessBusinessEnum.incentiveProgramAudit.getCode().equals(businessCode)) {
-
+				incentiveAuditFlowService.processFinishAuditMessage(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -452,3 +451,4 @@ public class ProcessProcessor {
 		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
 	}
 }
+

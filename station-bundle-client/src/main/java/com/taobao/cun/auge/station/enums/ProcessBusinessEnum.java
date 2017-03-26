@@ -24,7 +24,6 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum partnerFlowerNameApply = new ProcessBusinessEnum("partner_flower_name_apply", "花名申请");
 	public static final ProcessBusinessEnum incentiveProgramAudit = new ProcessBusinessEnum("incentive_program_audit", "激励方案审批");
 
-
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
 		mappings.put("stationQuitRecord", stationQuitRecord);
