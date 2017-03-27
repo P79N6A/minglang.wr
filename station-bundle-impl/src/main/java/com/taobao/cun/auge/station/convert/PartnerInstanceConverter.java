@@ -441,6 +441,10 @@ public final class PartnerInstanceConverter {
 			}
 		}
 		
+		if (null != condition.getInstanceState()) {
+			example.setPartnerState(condition.getInstanceState().getCode());
+		}
+		 
 		if (null != condition.getParentStationId()) {
 			example.setParentStationId(condition.getParentStationId());
 		}
