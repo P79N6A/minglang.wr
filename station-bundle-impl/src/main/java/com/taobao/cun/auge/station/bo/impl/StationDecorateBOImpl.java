@@ -117,42 +117,32 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			logger.error("stationBO.getStationById is null"+stationId);
 			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
 		}
-		
-		Long largeAreaOrgId = getLargeAreaOrgId(station);
-		return getSellerTaobaoUserId(String.valueOf(largeAreaOrgId));
+		return getStationDecorateSellerInfo(station);
 	}
 
-	private Long getLargeAreaOrgId(Station station) {
-		
-		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getCuntaoOrg(station.getApplyOrg());
-		Long largeAreaOrgId = null;
-		CuntaoOrgDto cunOrg = coDto;
-		
-		while(true){ 
-			if(OrgRangeType.LARGE_AREA.type.equals(cunOrg.getOrgRangeType())){ 
-				largeAreaOrgId = cunOrg.getId();
-				break;
-			}
-			cunOrg = cunOrg.getParent();
-			if (cunOrg == null) {
-				break;
-			}		
+	/**
+	 * 村点装修根据村点所在org获取对应卖家信息,规则如下:
+	 * 1.先从省一级卖家信息看,如果没有的话
+	 * 2.获取所在大区的卖家信息看
+	 * @param station
+	 * @return
+	 */
+	private String getStationDecorateSellerInfo(Station station) {
+		if (station == null || station.getApplyOrg() == null) {
+			throw new AugeServiceException("非法的村点对象!");
 		}
-		if (largeAreaOrgId == null) {
-			logger.error("getCuntaoOrg error: stationId"+station.getId());
-			throw new RuntimeException("getCuntaoOrg error: stationId"+station.getId());
+		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.PROVINCE);
+		AppResource resource = appResourceBO.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
+		if (resource == null) {
+			coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.LARGE_AREA);
+			resource = appResourceBO.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		}
-		return largeAreaOrgId;
+		if (resource == null || StringUtils.isEmpty(resource.getValue())) {
+			throw new AugeServiceException("找不到装修卖家信息,station org:" + station.getApplyOrg());
+		}
+		return resource.getValue();
 	}
-	
-	private String getSellerTaobaoUserId(String key) {
-		AppResource resource = appResourceBO.queryAppResource("decorate_Selller", key);
-		if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-			return resource.getValue();
-		}
-		logger.error("getShop error: key"+key);
-		throw new RuntimeException("getShop error: key"+key);
-	}
+
 
 	@Override
 	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize)
