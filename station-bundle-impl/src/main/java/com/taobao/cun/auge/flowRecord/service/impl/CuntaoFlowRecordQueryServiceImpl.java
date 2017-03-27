@@ -25,7 +25,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 
 @Service("cuntaoFlowRecordQueryService")
-@HSFProvider(serviceInterface = CuntaoFlowRecordQueryService.class,serviceVersion="1.0.0.daily.refactor")
+@HSFProvider(serviceInterface = CuntaoFlowRecordQueryService.class)
 public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQueryService{
 	
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordQueryService.class);
