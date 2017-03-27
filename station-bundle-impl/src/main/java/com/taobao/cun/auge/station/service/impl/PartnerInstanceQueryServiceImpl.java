@@ -604,6 +604,29 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		ValidateUtils.notNull(partnerId);
 		return partnerInstanceBO.getHistoryPartnerInstanceByPartnerId(partnerId);
 	}
+	
+	/**
+	 * 查询服务站，当前实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	@Override
+	public PartnerInstanceDto getCurrentPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
+		ValidateUtils.notNull(stationId);
+		Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+
+		PartnerInstanceCondition condition = new PartnerInstanceCondition();
+		condition.setInstanceId(instanceId);
+		condition.setNeedPartnerInfo(Boolean.TRUE);
+		condition.setNeedStationInfo(Boolean.TRUE);
+		condition.setNeedDesensitization(Boolean.TRUE);
+		condition.setNeedPartnerLevelInfo(Boolean.TRUE);
+		condition.copyOperatorDto(OperatorDto.defaultOperator());
+
+		return queryInfo(condition);
+	}
 
 	@Override
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
