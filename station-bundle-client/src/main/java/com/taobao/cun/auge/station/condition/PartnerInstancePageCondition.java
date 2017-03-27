@@ -4,6 +4,7 @@ package com.taobao.cun.auge.station.condition;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 
@@ -32,8 +33,12 @@ public class PartnerInstancePageCondition extends PageQuery{
 	// 合伙人姓名
 	private String partnerName;
 
-	// 合伙人状态
+	// 老的状态
 	private StationApplyStateEnum stationApplyState;
+
+	// 这个状态和上面老的状态，只能传一个
+	// 合伙人状态
+	private PartnerInstanceStateEnum instanceState;
 
 	// 合伙人类型
 //	@NotNull(message = "partnerType is null")
@@ -153,5 +158,13 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	public void setIsCurrent(Boolean isCurrent) {
 		this.isCurrent = isCurrent;
+	}
+
+	public PartnerInstanceStateEnum getInstanceState() {
+		return instanceState;
+	}
+
+	public void setInstanceState(PartnerInstanceStateEnum instanceState) {
+		this.instanceState = instanceState;
 	}
 }

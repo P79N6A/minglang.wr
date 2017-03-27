@@ -250,6 +250,15 @@ public interface PartnerInstanceQueryService {
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
 	
 	/**
+	 * 查询服务站，当前实例
+	 * 
+	 * @param stationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public PartnerInstanceDto getCurrentPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	
+	/**
 	 * 获得当前服务站的历史对应关系
 	 * @param stationId
 	 * @return
