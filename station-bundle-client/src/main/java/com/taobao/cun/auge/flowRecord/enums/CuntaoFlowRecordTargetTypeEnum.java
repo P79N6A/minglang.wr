@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.enums;
+package com.taobao.cun.auge.flowRecord.enums;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -18,6 +18,9 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 	public static final CuntaoFlowRecordTargetTypeEnum ASSET_CHECK = new CuntaoFlowRecordTargetTypeEnum("assetCheck","村点资产盘点");
 	//资产申请business code
 	public static final CuntaoFlowRecordTargetTypeEnum ASSET_APPLY = new CuntaoFlowRecordTargetTypeEnum("assetApply","县资产申请");
+	
+	public static final CuntaoFlowRecordTargetTypeEnum ASSET_FLOW_EDIT = new CuntaoFlowRecordTargetTypeEnum("assetFlowEdit","县资产申请单修改");
+	
 	//合伙人申请信息数据导出流程  business code
 	public static final CuntaoFlowRecordTargetTypeEnum PARTNER_APPLY_DOWNLOAD = new CuntaoFlowRecordTargetTypeEnum("partnerApplyDownload","合伙人申请信息数据导出");
 	
@@ -35,6 +38,7 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 		mappings.put("stationForcedClosure", STATION_FORCED_CLOSURE);
 		mappings.put("assetSign", ASSET_SIGN);
 		mappings.put("assetCheck", ASSET_CHECK);
+		mappings.put("ASSET_FLOW_EDIT", ASSET_FLOW_EDIT);
 		mappings.put("assetApply", ASSET_APPLY);
 		mappings.put("partnerApplyDownload", PARTNER_APPLY_DOWNLOAD);
 		
