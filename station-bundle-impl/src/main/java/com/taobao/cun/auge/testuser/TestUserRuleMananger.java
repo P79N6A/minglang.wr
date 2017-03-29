@@ -40,11 +40,11 @@ public class TestUserRuleMananger implements ApplicationContextAware{
 	@PostConstruct
 	public void init(){
 		testUserProperties.getConfigs().forEach((bizCode,configs) ->{
-			configs.forEach((rule,config) -> this.register(bizCode,rule,config));
+			configs.forEach((rule,config) -> this.register(bizCode,rule));
 		});
 	}
 	
-	public void register(String bizCode,String rule,String config){
+	public void register(String bizCode,String rule){
 		TestUserRule testUserRule = applicationContext.getBean(StringUtils.remove(rule, "!"),TestUserRule.class);
 		Assert.notNull(testUserRule);
 		Map<String,DelegateTestUserRule> rules = rulesMap.get(bizCode);
