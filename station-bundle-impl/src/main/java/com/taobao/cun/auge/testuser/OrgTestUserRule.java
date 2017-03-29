@@ -33,6 +33,7 @@ public class OrgTestUserRule implements  TestUserRule{
 	public boolean checkTestUser(Long taobaoUserId, String config) {
 		Assert.notNull(taobaoUserId);
 		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		Assert.notNull(partnerInstance);
 		Station station = stationBO.getStationById(partnerInstance.getStationId());
 		Assert.notNull(partnerInstance);
 		Assert.notNull(station);
