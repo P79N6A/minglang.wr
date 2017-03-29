@@ -16,8 +16,8 @@ import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 
-@Component
-public class OrgTestUserRule extends AbstractTestUserRule{
+@Component("testOrgIds")
+public class OrgTestUserRule implements  TestUserRule{
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -30,7 +30,7 @@ public class OrgTestUserRule extends AbstractTestUserRule{
 	
 	
 	@Override
-	public boolean doCheckTestUser(Long taobaoUserId, String config) {
+	public boolean checkTestUser(Long taobaoUserId, String config) {
 		Assert.notNull(taobaoUserId);
 		PartnerStationRel partnerInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		Station station = stationBO.getStationById(partnerInstance.getStationId());
@@ -53,10 +53,9 @@ public class OrgTestUserRule extends AbstractTestUserRule{
 			return false;
 		}
 	}
+
+
+
 	
-	@Override
-	public String getConfigKey() {
-		return "testOrgIds";
-	}
 
 }

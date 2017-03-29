@@ -5,17 +5,13 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-@Component
-public class TaobaoUserIdTestUserRule extends AbstractTestUserRule{
+@Component("testTaobaoUserIds")
+public class TaobaoUserIdTestUserRule implements  TestUserRule{
 
 	@Override
-	public boolean doCheckTestUser(Long taobaoUserId,String config) {
-		return Stream.of(StringUtils.commaDelimitedListToStringArray(config)).map(Long::parseLong).anyMatch(id -> id.equals(taobaoUserId));
+	public boolean checkTestUser(Long taobaoUserId,String config) {
+		return Stream.of(StringUtils.commaDelimitedListToStringArray(config)).filter(value -> !StringUtils.isEmpty(value)).map(Long::parseLong).anyMatch(id -> id.equals(taobaoUserId));
 	}
 
-	@Override
-	public String getConfigKey() {
-		return "testTaobaoUserIds";
-	}
 
 }
