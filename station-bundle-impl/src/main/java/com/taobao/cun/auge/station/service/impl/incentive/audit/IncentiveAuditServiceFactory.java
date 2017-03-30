@@ -28,7 +28,7 @@ public class IncentiveAuditServiceFactory {
         }else if (IncentiveProgramFundsSourcesEnum.GOV.equals(fundsSource)) {
             return governAllowanceAuditOperatorOrgCheckService;
         }else {
-            return governAllowanceAuditOperatorOrgCheckService;
+            return cunAllowanceAuditOperatorOrgCheckService;
         }
 
 
