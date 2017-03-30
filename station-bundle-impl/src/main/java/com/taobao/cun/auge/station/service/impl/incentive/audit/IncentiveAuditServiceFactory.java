@@ -22,6 +22,10 @@ public class IncentiveAuditServiceFactory {
     @Qualifier("governAllowanceAuditOperatorOrgCheckService")
     private AuditOperatorOrgCheckService governAllowanceAuditOperatorOrgCheckService;
 
+    @Autowired
+    @Qualifier("nonFundAuditOperatorOrgCheckService")
+    private AuditOperatorOrgCheckService nonFundAuditOperatorOrgCheckService;
+
     public AuditOperatorOrgCheckService getAuditOperatorOrgCheckService(IncentiveProgramFundsSourcesEnum fundsSource) {
         if (IncentiveProgramFundsSourcesEnum.CUNTAO.equals(fundsSource)) {
             return cunAllowanceAuditOperatorOrgCheckService;
