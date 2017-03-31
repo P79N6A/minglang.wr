@@ -20,6 +20,7 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
@@ -133,10 +134,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
     
     @Override
     public String generateApproverOrgIdAndRoleCode(String type, String orgId, String aclRoleCode){
-        logger.info(String.format("查询流程节点执行人。orgId = %s , roleCode = %s", orgId, aclRoleCode));
-        JSONArray result = new JSONArray();
-        result.add(0, type + SPLITER_CHAR + orgId + SPLITER_CHAR + aclRoleCode);
-        return result.toString();
+        return ApproverTaskCodeGenerator.generateOrgAclTaskCode(orgId, aclRoleCode);
     }
 
     @Override
