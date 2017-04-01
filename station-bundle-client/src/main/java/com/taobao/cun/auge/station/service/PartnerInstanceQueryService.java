@@ -108,6 +108,14 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public List<PartnerInstanceDto> queryByPartnerInstanceIds(List<Long> partnerInstanceIds);
+	
+	/**
+	 * 根据合伙人实例id，批量查询合伙人实例
+	 * 
+	 * @param taobaoUserIds
+	 * @return
+	 */
+	public List<PartnerInstanceDto> queryByTaobaoUserIds(List<Long> taobaoUserIds);
 
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(退出待解冻除外)]
