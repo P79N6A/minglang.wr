@@ -1,5 +1,18 @@
 package com.taobao.cun.auge.station.service.impl.incentive;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramAuditDto;
@@ -20,25 +33,12 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.impl.incentive.audit.IncentiveAuditServiceFactory;
 import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
-import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
+import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.alibaba.fastjson.JSON;
 
 /**
  * Created by xujianhui on 17/2/22.
@@ -84,12 +84,18 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     public void startProcess(StartProcessDto startProcessDto) {
         validateParams(startProcessDto);
         Map<String, String> initData = initWorkflowVariables(startProcessDto.getBusinessId(), startProcessDto.getOperator(), startProcessDto.getOperatorType());
-        ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService.startProcessInstance(
-                startProcessDto.getBusiness().getCode(),
-                String.valueOf(startProcessDto.getBusinessId()),
-                startProcessDto.getOperator(),
-                UserTypeEnum.valueof(startProcessDto.getOperatorType().getCode()),
-                initData);
+        
+		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
+
+		startDto.setBusinessCode(startProcessDto.getBusiness().getCode());
+		startDto.setBusinessId(String.valueOf(startProcessDto.getBusinessId()));
+
+		startDto.setOperator(startProcessDto.getOperator());
+		startDto.setUserType(UserTypeEnum.valueof(startProcessDto.getOperatorType().getCode()));
+		startDto.setInitData(initData);
+		startDto.setCuntaoOrgId(Long.valueOf(initData.get("orgId")));
+
+		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {
             logger.error("启动审批流程失败。param=" + startProcessDto.getBusinessId(), rm.getException());
             throw new AugeServiceException("启动流程失败。param = " + startProcessDto.getBusinessId(), rm.getException());
