@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -34,8 +36,8 @@ import com.taobao.cun.auge.station.enums.PartnerFlowerNameSourceEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.diamond.client.Diamond;
 
@@ -212,15 +214,16 @@ public class PartnerBOImpl implements PartnerBO {
 		if(s==null){
 			throw new AugeServiceException("村点状态无效");
 		}
+		Map<String, String> initData = new HashMap<String, String>();
+		initData.put("orgId", String.valueOf(s.getApplyOrg()));
 		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
 			startDto.setBusinessId(String.valueOf(applyId));
-
-			startDto.setCuntaoOrgId(s.getApplyOrg());
-			startDto.setOperator(String.valueOf(loginId));
-			startDto.setUserType(UserTypeEnum.HAVANA);
+			startDto.setApplierId(String.valueOf(loginId));
+			startDto.setApplierUserType(UserTypeEnum.HAVANA);
+			startDto.setInitData(initData);
 
 			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {

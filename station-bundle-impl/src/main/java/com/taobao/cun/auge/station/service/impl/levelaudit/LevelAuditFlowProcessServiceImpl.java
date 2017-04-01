@@ -34,8 +34,8 @@ import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
@@ -103,7 +103,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
         initData.put("currentLevelDesc", levelProcessDto.getCurrentLevel().getDescription());
         PartnerInstanceLevelEnum expectedLevel = levelProcessDto.getExpectedLevel();
         OrgPermissionHolder approveHolder = getApproversOrgId(expectedLevel, levelProcessDto.getCountyOrgId());
-       
+        initData.put("orgId", String.valueOf(approveHolder.getOrgId()));
         initData.put("permission", approveHolder.getPermission());
         
         String evaluateToLevelKey = "ToLevel";
@@ -126,13 +126,12 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 		startDto.setBusinessCode(businessCode);
-		startDto.setBusinessName("村淘村小二(" + levelProcessDto.getPartnerName() + ")层级审批");
 		startDto.setBusinessId(String.valueOf(businessId));
+		startDto.setBusinessName("村淘村小二(" + levelProcessDto.getPartnerName() + ")层级审批");
 
-		startDto.setCuntaoOrgId(approveHolder.getOrgId());
+		startDto.setApplierId(applierId);
+		startDto.setApplierUserType(UserTypeEnum.valueof(operatorType.getCode()));
 		startDto.setInitData(initData);
-		startDto.setOperator(applierId);
-		startDto.setUserType(UserTypeEnum.valueof(operatorType.getCode()));
 
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {

@@ -35,8 +35,8 @@ import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerat
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.AclPermissionEnum;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -90,10 +90,9 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 		startDto.setBusinessCode(startProcessDto.getBusiness().getCode());
 		startDto.setBusinessId(String.valueOf(startProcessDto.getBusinessId()));
 
-		startDto.setOperator(startProcessDto.getOperator());
-		startDto.setUserType(UserTypeEnum.valueof(startProcessDto.getOperatorType().getCode()));
+		startDto.setApplierId(startProcessDto.getOperator());
+		startDto.setApplierUserType(UserTypeEnum.valueof(startProcessDto.getOperatorType().getCode()));
 		startDto.setInitData(initData);
-		startDto.setCuntaoOrgId(Long.valueOf(initData.get("orgId")));
 
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {

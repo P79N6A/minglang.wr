@@ -20,8 +20,8 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -55,6 +55,7 @@ public class ProcessServiceImpl implements ProcessService {
 		Map<String, String> initData = new HashMap<String, String>(FeatureUtil.toMap(startProcessDto.getJsonParams()));
 		Long orgId = null != startProcessDto.getBusinessOrgId() ? startProcessDto.getBusinessOrgId()
 				: startProcessDto.getOperatorOrgId();
+		initData.put("orgId", String.valueOf(orgId));
 
 		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
@@ -65,10 +66,9 @@ public class ProcessServiceImpl implements ProcessService {
 			startDto.setBusinessName("(" + startProcessDto.getBusinessName() + ")" + business.getDesc());
 		}
 
-		startDto.setCuntaoOrgId(orgId);
+		startDto.setApplierId(applierId);
+		startDto.setApplierUserType(UserTypeEnum.valueof(operatorType.getCode()));
 		startDto.setInitData(initData);
-		startDto.setOperator(applierId);
-		startDto.setUserType(UserTypeEnum.valueof(operatorType.getCode()));
 
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if (!rm.isSuccess()) {

@@ -33,8 +33,8 @@ import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.common.enums.UserTypeEnum;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 @Component("peixunPurchaseBO")
 public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
@@ -98,15 +98,16 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private void createFlow(Long applyId, String loginId, Long orgId) {
+	    Map<String, String> initData = new HashMap<String, String>();
+	    initData.put("orgId", String.valueOf(orgId));
 		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
 			startDto.setBusinessId(String.valueOf(applyId));
 
-			startDto.setCuntaoOrgId(orgId);
-			startDto.setOperator(loginId);
-			startDto.setUserType(UserTypeEnum.BUC);
+			startDto.setApplierId(loginId);
+			startDto.setApplierUserType(UserTypeEnum.BUC);
 
 			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
