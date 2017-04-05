@@ -205,7 +205,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			c2bSettleInfo.setQualiStatus(cuntaoQualification.getStatus());
 			c2bSettleInfo.setQualiAuditPassTime(cuntaoQualification.getAuditTime());
 			c2bSettleInfo.setInvalidTime(cuntaoQualification.getInvalidTime());
-			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType());
+			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType() == null?QualificationBuilder.PERSONAL_BUSINESS:cuntaoQualification.getEnterpriceType());
 		}else{
 			c2bSettleInfo.setSettleIdentity(QualificationBuilder.PERSONAL_BUSINESS);
 		}
