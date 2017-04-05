@@ -25,7 +25,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.ExPartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerFlowerNameApplyMapper;
-import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -36,7 +35,7 @@ import com.taobao.cun.auge.station.enums.PartnerFlowerNameApplyStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerFlowerNameSourceEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -218,9 +217,15 @@ public class PartnerBOImpl implements PartnerBO {
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(s.getApplyOrg()));
 		try {
-			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
-					.startProcessInstance(FLOW_BUSINESS_CODE,
-							String.valueOf(applyId), String.valueOf(loginId),UserTypeEnum.HAVANA, initData);
+			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
+
+			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
+			startDto.setBusinessId(String.valueOf(applyId));
+			startDto.setApplierId(String.valueOf(loginId));
+			startDto.setApplierUserType(UserTypeEnum.HAVANA);
+			startDto.setInitData(initData);
+
+			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}

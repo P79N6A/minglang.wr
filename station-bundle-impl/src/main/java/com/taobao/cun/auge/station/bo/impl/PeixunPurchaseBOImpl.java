@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
@@ -32,6 +32,8 @@ import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
+import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 @Component("peixunPurchaseBO")
@@ -96,12 +98,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private void createFlow(Long applyId, String loginId, Long orgId) {
-		Map<String, String> initData = new HashMap<String, String>();
-		initData.put("orgId", String.valueOf(orgId));
+	    Map<String, String> initData = new HashMap<String, String>();
+	    initData.put("orgId", String.valueOf(orgId));
 		try {
-			ResultModel<CuntaoProcessInstance> rm = cuntaoWorkFlowService
-					.startProcessInstance(FLOW_BUSINESS_CODE,
-							String.valueOf(applyId), loginId, initData);
+			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
+
+			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
+			startDto.setBusinessId(String.valueOf(applyId));
+
+			startDto.setApplierId(loginId);
+			startDto.setApplierUserType(UserTypeEnum.BUC);
+
+			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}
