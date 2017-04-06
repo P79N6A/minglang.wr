@@ -95,7 +95,7 @@ import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.RandomUtil;
 
 @Service("partnerInstanceQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
+@HSFProvider(serviceInterface = PartnerInstanceQueryService.class,serviceVersion="1.0.0.daily.meeting")
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
@@ -367,6 +367,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		instance.setStationDto(stationDto);
 
 		return instance;
+	}
+	
+	@Override
+	public List<PartnerInstanceDto> getBatchActivePartnerInstance(List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException {
+		List<PartnerStationRel> rels = partnerInstanceBO.getBatchActivePartnerInstance2(taobaoUserId, instanceTypes, states);
+		List<PartnerInstanceDto> instances = PartnerInstanceConverter.convertRel2Dto(rels);
+		return instances;
 	}
 
 	@Override
