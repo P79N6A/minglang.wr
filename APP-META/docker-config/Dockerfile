@@ -22,7 +22,4 @@ WORKDIR /home/admin/${MS_APP_NAME}/bin
 COPY ${MS_APP_NAME}.tgz /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.tgz
 
 ADD update_setenv.sh /home/admin/${MS_APP_NAME}/bin/update_setenv.sh
-ADD start.sh /home/admin/start.sh
-RUN chmod u+x /home/admin/health.sh /home/admin/start.sh /home/admin/stop.sh
 
-ENTRYPOINT ["/home/admin/start.sh"]
