@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "c2b.error")
+@ConfigurationProperties(prefix = "c2berror")
 public class ErrorMessageProperties {
 
 	private Map<String, String> messages = new HashMap<>();
