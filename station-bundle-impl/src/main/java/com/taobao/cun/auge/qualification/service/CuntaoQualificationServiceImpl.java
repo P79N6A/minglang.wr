@@ -120,21 +120,12 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
 		try {
 			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQuali(taobaoUserId);
-			if(entityQuail.isPresent()){
-				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
-				if(auditRecords.isPresent()){
-					Optional<UserQualiRecord> userQualiRecord = auditRecords.get().stream().filter(record -> entityQuail.get().getQuali().getId().equals(record.getQid()) && record.getStatus() == UserQualiRecordStatus.AUDIT_PASS).findFirst();
-					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,userQualiRecord);
-					return qulification;
-				}else{
-					Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,Optional.empty());
-					return qulification;
-				}
-			}
+			Optional<UserQualiRecord> auditRecords = Optional.ofNullable(sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId));
+			Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,auditRecords);
+			return qulification;
 		} catch (Exception e) {
 			logger.error("queryHavanaC2BQualification["+taobaoUserId+"] error!",e);
 		}
-		
 		return null;
 	}
 	
@@ -214,7 +205,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			c2bSettleInfo.setQualiStatus(cuntaoQualification.getStatus());
 			c2bSettleInfo.setQualiAuditPassTime(cuntaoQualification.getAuditTime());
 			c2bSettleInfo.setInvalidTime(cuntaoQualification.getInvalidTime());
-			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType());
+			c2bSettleInfo.setSettleIdentity(cuntaoQualification.getEnterpriceType() == null?QualificationBuilder.PERSONAL_BUSINESS:cuntaoQualification.getEnterpriceType());
 		}else{
 			c2bSettleInfo.setSettleIdentity(QualificationBuilder.PERSONAL_BUSINESS);
 		}
