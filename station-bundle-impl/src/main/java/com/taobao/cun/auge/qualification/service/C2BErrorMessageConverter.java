@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.qualification.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@EnableConfigurationProperties({ErrorMessageProperties.class})
 public class C2BErrorMessageConverter {
 
 	@Autowired

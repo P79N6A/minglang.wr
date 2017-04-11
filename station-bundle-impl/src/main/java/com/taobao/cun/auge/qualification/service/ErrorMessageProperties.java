@@ -1,14 +1,13 @@
 package com.taobao.cun.auge.qualification.service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "c2berror")
 public class ErrorMessageProperties {
-
-	private Map<String, String> messages = new HashMap<>();
+	
+	private Map<String, String> messages;
 
 	public Map<String, String> getMessages() {
 		return messages;
