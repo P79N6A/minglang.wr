@@ -146,7 +146,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     }
 
     @Override
-    public void processFinishAuditMessage(Long businessId, ProcessApproveResultEnum result) {
+    public void processFinishAuditMessage(String processInstanceId, Long businessId, ProcessApproveResultEnum result, String financeRemarks) {
         if (businessId == null || result == null) {
             throw new RuntimeException("激励审批非法消息");
         }
@@ -155,6 +155,8 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
         auditDto.setOperator("financeAuditor");
         auditDto.setOperatorOrgId(cuntaoOrgServiceClient.getRoot().getId());
         auditDto.setId(businessId);
+        auditDto.setAuditInstanceId(processInstanceId);
+        auditDto.setFinanceAuditRemarks(financeRemarks);
         if (ProcessApproveResultEnum.APPROVE_PASS.equals(result)) {
             auditDto.setStatEnum(IncentiveProgramStateEnum.AUDIT_PASS);
         }else if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(result)) {
