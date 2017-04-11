@@ -55,6 +55,9 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Autowired
 	private PartnerProtocolRelBO partnerProtocolRelBO;
 	
+	@Autowired
+	private C2BErrorMessageConverter c2BErrorMessageConverter;
+	
 	@Override
 	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
 		try {
@@ -137,6 +140,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
+				String errorMsg = c2BErrorMessageConverter.convertErrorMsg(cuntaoQualification.getErrorCode(), cuntaoQualification.getErrorMessage());
+				qualification.setErrorMessage(errorMsg);
 				return qualification;
 			}
 		} catch (Exception e) {
