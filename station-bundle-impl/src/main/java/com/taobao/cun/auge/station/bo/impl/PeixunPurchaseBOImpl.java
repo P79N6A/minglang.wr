@@ -108,6 +108,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
 			startDto.setApplierId(loginId);
 			startDto.setApplierUserType(UserTypeEnum.BUC);
+			startDto.setInitData(initData);
 
 			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
