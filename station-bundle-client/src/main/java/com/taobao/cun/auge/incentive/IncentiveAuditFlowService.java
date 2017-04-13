@@ -39,7 +39,7 @@ public interface IncentiveAuditFlowService {
      * 整个流程实例(不是某个节点)完成审批消息的处理
      * @param businessId
      */
-    void processFinishAuditMessage(Long businessId, ProcessApproveResultEnum result);
+    void processFinishAuditMessage(String processInstanceId, Long businessId, ProcessApproveResultEnum result, String financeRemarks);
 
     /**
      * 某个流程节点审批结束的消息处理
