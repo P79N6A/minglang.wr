@@ -10,6 +10,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -62,6 +63,7 @@ public class StationConverter {
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
 		stationDto.setAddress(address);
 		stationDto.setFeature(FeatureUtil.toMap(station.getFeature()));
+		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(station.getIsOnTown()));
 		return stationDto;
 	}
 
