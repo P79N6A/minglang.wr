@@ -45,6 +45,7 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
     <result column="version" jdbcType="BIGINT" property="version" />
+    <result column="is_on_town" jdbcType="CHAR" property="isOnTown" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -124,7 +125,7 @@
     taobao_nick, state, is_deleted, province, city, county, town, province_detail, city_detail, 
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
-    manager_id, provider_id, feature, status, fixed_type, version
+    manager_id, provider_id, feature, status, fixed_type, version,
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
@@ -198,7 +199,7 @@
       products, logistics_state, format, 
       area_type, manager_id, provider_id, 
       feature, status, fixed_type, 
-      version)
+      version,is_on_town)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoNick,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
@@ -211,7 +212,7 @@
       #{products,jdbcType=VARCHAR}, #{logisticsState,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, 
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
-      #{version,jdbcType=BIGINT})
+      #{version,jdbcType=BIGINT},#{isOnTown,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -335,6 +336,9 @@
       <if test="version != null">
         version,
       </if>
+      <if test="isOnTown != null">
+        is_on_town,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -447,6 +451,9 @@
       </if>
       <if test="version != null">
         #{version,jdbcType=BIGINT},
+      </if>
+      <if test="isOnTown != null">
+        #{isOnTown,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -583,6 +590,9 @@
       <if test="record.version != null">
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.isOnTown != null">
+        is_on_town = #{record.isOnTown,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -632,7 +642,8 @@
       feature = #{record.feature,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
       fixed_type = #{record.fixedType,jdbcType=VARCHAR},
-      version = #{record.version,jdbcType=BIGINT}
+      version = #{record.version,jdbcType=BIGINT},
+      is_on_town = #{record.isOnTown,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -756,6 +767,9 @@
       <if test="version != null">
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="isOnTown != null">
+        is_on_town = #{isOnTown,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -802,7 +816,8 @@
       feature = #{feature,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
       fixed_type = #{fixedType,jdbcType=VARCHAR},
-      version = #{version,jdbcType=BIGINT}
+      version = #{version,jdbcType=BIGINT},
+      is_on_town = #{isOnTown,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

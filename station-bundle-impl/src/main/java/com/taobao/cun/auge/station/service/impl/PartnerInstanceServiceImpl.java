@@ -513,6 +513,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setProducts(sDto.getProducts());
 
 		stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+		stationDto.setPartnerInstanceIsOnTown(sDto.getPartnerInstanceIsOnTown());
 		stationBO.updateStation(stationDto);
 
 		// 更新固点协议

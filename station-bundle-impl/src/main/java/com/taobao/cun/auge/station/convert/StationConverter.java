@@ -105,6 +105,8 @@ public class StationConverter {
 		station.setTaobaoNick(stationDto.getTaobaoNick());
 		station.setTaobaoUserId(stationDto.getTaobaoUserId());
 		station.setAlipayAccount(stationDto.getAlipayAccount());
+		station.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null
+				: stationDto.getPartnerInstanceIsOnTown().getCode());
 		return station;
 	}
 
