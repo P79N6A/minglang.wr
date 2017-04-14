@@ -166,7 +166,6 @@ public class CountyBOImpl implements CountyBO {
 		if (county != null) {
 			CountyDto dto = toCountyDto(county);
 			List<CnWarehouseDto> warehouses = getWarehouses(id);
-			dto.setWarehouseDtos(warehouses);
 			return dto;
 		} else {
 			return null;
