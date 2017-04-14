@@ -75,6 +75,7 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	CaiNiaoAdapter caiNiaoAdapter;
     MessageCenterService messageCenterService;
+    
     @Autowired
     AttachementBO attachementBO;
 	private static final String TEMPLATE_ID = "580107779";
