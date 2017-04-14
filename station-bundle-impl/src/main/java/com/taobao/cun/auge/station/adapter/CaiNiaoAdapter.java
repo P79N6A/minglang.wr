@@ -1,11 +1,17 @@
 package com.taobao.cun.auge.station.adapter;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
+import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseListParam;
+import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseOption;
+import com.alibaba.cainiao.cuntaonetwork.result.Result;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.common.exception.ServiceException;
 
 public interface CaiNiaoAdapter {
 	/**
@@ -157,5 +163,6 @@ public interface CaiNiaoAdapter {
 	 * @throws AugeServiceException
 	 */
 	public boolean removeStationFeatures(Long stationId,Set<String> keys) throws AugeServiceException;
-
+	
+	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException; 
 }

@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.county.bo.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +16,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
+import com.alibaba.masterdata.client.service.Employee360Service;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
+import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
@@ -34,6 +41,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoOrgAdminAddressMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -41,6 +49,7 @@ import com.taobao.cun.auge.station.dto.AttachementDeleteDto;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
+import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
@@ -58,6 +67,9 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Component("countyBO")
 public class CountyBOImpl implements CountyBO {
 
+	public static final String SP = ";";
+	public static final String SSP = ":";
+	
 	ChinaDivisionManager chinaDivisionManager;
 	@Autowired
 	CountyStationMapper countyStationMapper;
@@ -73,16 +85,258 @@ public class CountyBOImpl implements CountyBO {
 	CountyStationBO countyStationBO;
 	@Autowired
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	@Autowired
 	CaiNiaoAdapter caiNiaoAdapter;
     MessageCenterService messageCenterService;
-    
+    @Autowired
+    Employee360Service employee360Service;
     @Autowired
     AttachementBO attachementBO;
+    @Autowired
+    Emp360Adapter emp360Adapter;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
 	
 	
+	public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
+		if(areaOrgIds==null||areaOrgIds.size()==0){
+			throw new AugeBusinessException("areaOrgIds is null");
+		}
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("areaOrgIds", areaOrgIds);
+		List<CountyStation> countys=countyStationMapper.getProvinceList(param);
+		List<CountyDto> result=new ArrayList<CountyDto>();
+		for(CountyStation county:countys){
+			CountyDto  csdto = new CountyDto();
+			csdto.setId(Long.parseLong(county.getProvince())); //省行政编码
+			csdto.setName(county.getProvinceDetail()); //省名称
+			result.add(csdto);
+		}
+		return result;
+	}
+	
+	public List<CountyDto> getCountyStationByProvince(String provinceCode) {
+		Validate.notNull(provinceCode, "provinceCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andProvinceEqualTo(provinceCode)
+				.andParentIdNotEqualTo(new Long(25));
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+		List<CountyDto> result = new ArrayList<CountyDto>();
+		List<Long> orgids = new ArrayList<Long>();
+		for (CountyStation csdo : stations) {
+			CountyDto county = new CountyDto();
+			Long orgId = csdo.getOrgId();
+			if (!orgids.contains(orgId)) {
+				orgids.add(orgId);
+				county.setOrgId(orgId);
+				county.setCountyDetail(csdo.getName());
+				result.add(county);
+			}
+		}
+		return result;
+	}
+    
+    
+	public List<CountyDto> getCountyStationList(List<Long> areaIds){
+		Validate.notNull(areaIds, "areaIds is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING").andParentIdIn(areaIds).andCountyDetailIsNotNull();
+		List<CountyStation> stations = countyStationMapper.selectByExample(example);
+		List<CountyDto> result = new ArrayList<CountyDto>();
+        for(CountyStation station:stations){
+        	result.add(toCountyDto(station));
+        }
+        return result;
+	}
+	
+	public CountyDto getCountyStation(Long id) {
+		Validate.notNull(id, "id is null");
+		CountyStation county = countyStationMapper.selectByPrimaryKey(id);
+		if (county != null) {
+			CountyDto dto = toCountyDto(county);
+			List<CnWarehouseDto> warehouses = getWarehouses(id);
+			dto.setWarehouseDtos(warehouses);
+			return dto;
+		} else {
+			return null;
+		}
+	}
+
+	public CountyDto getCountyStationByOrgId(Long id) {
+		Validate.notNull(id, "id is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andOrgIdEqualTo(id);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+		if (CollectionUtils.isNotEmpty(stations)) {
+			CountyDto dto = toCountyDto(stations.get(0));
+			return dto;
+		} else {
+			return null;
+		}
+	}
+	
+	private CountyDto toCountyDto(CountyStation cs) {
+		CountyDto dto = new CountyDto();
+		BeanUtils.copyProperties(cs, dto);
+		dto.setManageModel(CountyStationManageModelEnum.valueof(cs
+				.getManageModel()));
+		dto.setManageStatus(CountyStationManageStatusEnum.valueof(cs
+				.getManageStatus()));
+		dto.setLeaseTypeEnum(CountyStationLeaseTypeEnum.valueof(cs
+				.getLeaseType()));
+		if (dto.getManageModel() == null) {
+			dto.setManageModel(CountyStationManageModelEnum.SELF);
+		}
+		if (dto.getManageStatus() == null) {
+			dto.setManageStatus(CountyStationManageStatusEnum.PLANNING);
+		}
+		// 创建时间
+		dto.setCreateTime(cs.getGmtCreate());
+		// 开始运营时间
+		dto.setStartOperationTime(cs.getGmtStartOperation());
+		if (cs.getEmployeeId() != null) {
+			String empName = emp360Adapter.getName(cs.getEmployeeId());
+			if (!StringUtils.isEmpty(empName)) {
+				dto.setEmployeeName(empName);
+			}
+		}
+
+		if (dto.getParentId() != null) {
+			CuntaoOrgExample example = new CuntaoOrgExample();
+			com.taobao.cun.auge.dal.domain.CuntaoOrgExample.Criteria c = example
+					.createCriteria();
+			c.andIsDeletedEqualTo("n").andIdEqualTo(dto.getParentId());
+			List<CuntaoOrg> list = cuntaoOrgMapper.selectByExample(example);
+			if (CollectionUtils.isNotEmpty(list)) {
+				CuntaoOrg cuntaoOrg = list.get(0);
+				dto.setParentName(cuntaoOrg.getName());
+			}
+		}
+		// 查询附件
+		dto.setAttachements(attachementBO.getAttachementList(cs.getId(),
+				AttachementBizTypeEnum.COUNTY_STATION));
+		// 构建featureMap
+		if (StringUtils.isNotEmpty(cs.getFeature())) {
+			Map<String, String> featureMap = toMap(cs.getFeature());
+			dto.setFeatureMap(featureMap);
+		}
+		dto.setWarehouseDtos(getWarehouses(cs.getOrgId()));
+		return dto;
+	}
+
+	 private List<CnWarehouseDto> getWarehouses(Long countyId) {
+	    	List<WarehouseDTO> results = getCountyWarehouseDto(countyId);
+	    	List<CnWarehouseDto> list = new ArrayList<CnWarehouseDto>();
+	    	for (WarehouseDTO dto : results) {
+	    		list.add(convert2CnWarehouseDto(dto));
+	    	}
+	    	return list;
+	    }
+	 
+	private CnWarehouseDto convert2CnWarehouseDto(WarehouseDTO warehouseDto) {
+		CnWarehouseDto cnWarehouseDto = new CnWarehouseDto();
+		cnWarehouseDto.setId(warehouseDto.getId());
+		cnWarehouseDto.setName(warehouseDto.getName());
+		cnWarehouseDto.setAddress(warehouseDto.getAddress());
+		cnWarehouseDto.setProvinceId(warehouseDto.getProvinceId());
+		cnWarehouseDto.setCityId(warehouseDto.getCityId());
+		cnWarehouseDto.setCountyId(warehouseDto.getCountyId());
+		cnWarehouseDto.setTownId(warehouseDto.getTownId());
+		cnWarehouseDto.setResCode(warehouseDto.getResCode());
+		cnWarehouseDto.setDescription(warehouseDto.getDescription());
+		cnWarehouseDto.setLng(warehouseDto.getLng());
+		cnWarehouseDto.setLat(warehouseDto.getLat());
+		cnWarehouseDto.setBizStart(warehouseDto.getBizStart());
+		cnWarehouseDto.setBizEnd(warehouseDto.getBizEnd());
+		cnWarehouseDto.setZipCode(warehouseDto.getZipCode());
+		cnWarehouseDto.setCountyDomainId(warehouseDto.getCountyDomainId());
+		cnWarehouseDto.setStationCount(warehouseDto.getStationCount());
+		cnWarehouseDto.setCnUserName(warehouseDto.getCnUserName());
+		cnWarehouseDto.setWhOwnerName(warehouseDto.getWhOwnerName());
+		cnWarehouseDto.setWhOwnerMobile(warehouseDto.getWhOwnerMobile());
+		cnWarehouseDto.setWhOwnerEmail(warehouseDto.getWhOwnerEmail());
+		cnWarehouseDto.setCtCode(warehouseDto.getCtCode());
+		cnWarehouseDto.setWarehouseStatus(convertStatus2String(warehouseDto
+				.getWarehouseStatus()));
+		return cnWarehouseDto;
+	}
+	 
+	private String convertStatus2String(WarehouseStatus status) {
+    	switch(status) {
+    	case CLOSE:
+    		return "已关闭";
+    	case DELETE:
+    		return "已删除";
+    	case INIT:
+    		return "装修中";
+    	case USE:
+    		return "运营中";
+		default:
+			return "";
+    	}
+    }
+	/**
+	 * 通过菜鸟获取县仓信息
+	 * 
+	 * @param countyId
+	 * @return
+	 */
+	private List<WarehouseDTO> getCountyWarehouseDto(Long countyId) {
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO
+				.queryCuntaoCainiaoStationRel(countyId,
+						CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+		if (rel == null) {
+			return new ArrayList<WarehouseDTO>(0);
+		}
+		long stationId = rel.getObjectId();
+		List<WarehouseDTO> warehouseResults = caiNiaoAdapter
+				.queryWarehouseById(stationId);
+		return warehouseResults;
+	}
+	    
+	private Map<String, String> toMap(final String featureString) {
+		if (StringUtils.isBlank(featureString)) {
+			return Collections.<String, String> emptyMap();
+		}
+
+		final Map<String, String> map = new HashMap<String, String>();
+		for (String kv : StringUtils.split(featureString, SP)) {
+			if (StringUtils.isBlank(kv)) {
+				// 过滤掉为空的字符串片段
+				continue;
+			}
+
+			final String[] ar = StringUtils.split(kv, SSP, 2);
+			if (ar.length != 2) {
+				// 过滤掉不符合K:V单目的情况
+				continue;
+			}
+
+			final String k = ar[0];
+			final String v = ar[1];
+			if (StringUtils.isNotBlank(k) && StringUtils.isNotBlank(v)) {
+				try {
+					decode(map, k, v);
+				} catch (UnsupportedEncodingException e) {
+					// TODO : log this
+				}
+			}
+		}
+		return map;
+	}
+
+	private static void decode(final Map<String, String> map, final String k,
+			final String v) throws UnsupportedEncodingException {
+		map.put(URLDecoder.decode(k, "UTF-8"), URLDecoder.decode(v, "UTF-8"));
+	}
+	 
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto){
 		validateSaveCountyStationParam(countyDto);
 		//TODO 解决前台没有传入detail问题
@@ -600,4 +854,6 @@ public class CountyBOImpl implements CountyBO {
 						: countyStation.getAddressDetail());
 		return address.toString();
 	}
+
+	
 }
