@@ -75,12 +75,13 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	CaiNiaoAdapter caiNiaoAdapter;
     MessageCenterService messageCenterService;
-	
+    @Autowired
+    AttachementBO attachementBO;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
 	
-	AttachementBO attachementBO;
+	
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto){
 		validateSaveCountyStationParam(countyDto);
 		//TODO 解决前台没有传入detail问题
