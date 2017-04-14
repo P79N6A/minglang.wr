@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
@@ -28,6 +29,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CountyStationExample.Criteria;
@@ -58,9 +60,13 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
+import com.taobao.cun.dto.BucContext;
+import com.taobao.cun.dto.SystemTypeEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
+import com.taobao.cun.dto.station.CountyStationDto;
 import com.taobao.cun.service.mc.MessageCenterService;
+import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
@@ -182,6 +188,68 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
+	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
+        Validate.notNull(queryCondition, "queryCondition is null");
+        Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
+        if (queryCondition.getPageStart() < 0) {
+            queryCondition.setPageStart(0);
+        }
+        if (queryCondition.getPageSize() <= 0) {
+            queryCondition.setPageSize(10);
+        }
+        if (queryCondition.getPageSize() > 100) {
+            queryCondition.setPageSize(100);
+        }
+        //移动端，特殊处理
+        dealWithMobile(queryCondition);
+        CountyStationExample example =new CountyStationExample();
+        Criteria c = example.createCriteria().andIsDeletedEqualTo("n");
+        if(queryCondition.getParentId()!=null){
+        	c.andParentIdEqualTo(queryCondition.getParentId());
+        }
+        if(StringUtils.isNotEmpty(queryCondition.getName())){
+        	c.andNameEqualTo(queryCondition.getName());
+        }
+        if(queryCondition.getStatusArray()!=null&&queryCondition.getStatusArray().size()>0){
+        	c.andManageStatusIn(queryCondition.getStatusArray());
+        }
+        int total=countyStationMapper.countByExample(example);
+        if (null == queryCondition.getOrderByEnum()) {
+        	  example.setOrderByClause("gmt_modified desc");
+        } else {
+        	example.setOrderByClause(queryCondition.getOrderByEnum().toOrderBySQL());
+        }
+		List<CountyStation> countys = countyStationMapper.selectByExample(example);
+        List<CountyDto> rst = new ArrayList<CountyDto>();
+        for (CountyStation cs : countys) {
+            CountyDto dto = toCountyDto(cs);
+            rst.add(dto);
+        }
+        PagedResultModel<List<CountyDto>> returnModel = new PagedResultModel<List<CountyDto>>();
+        returnModel.setResult(rst);
+		returnModel.setTotalResultSize(new Long(total));
+		returnModel.setSuccess(true);
+        return returnModel;
+	}
+	
+
+	private void dealWithMobile(CountyStationQueryCondition queryCondition) {
+		// 移动端，parentId==orgId,如果当前组织是县服务中心，则查询的parentId设置为该县所属大区的Id
+		// pc端parentId最低级别为大区id,不存在该问题
+		if (queryCondition.isMobile() && null != queryCondition.getParentId()) {
+			CuntaoOrg queryOrg = cuntaoOrgMapper
+					.selectByPrimaryKey(queryCondition.getParentId());
+			// parentId为全国，则设置为null
+			if (queryOrg.getOrderLevel().equals("1")) {
+				queryCondition.setParentId(null);
+				// parentId为县点，则设置为大区Id
+			} else if (queryOrg.getOrderLevel().equals("3")) {
+				queryCondition.setParentId(queryOrg.getParentId());
+			}
+		}
+	}
+
+	 
 	private CountyDto toCountyDto(CountyStation cs) {
 		CountyDto dto = new CountyDto();
 		BeanUtils.copyProperties(cs, dto);

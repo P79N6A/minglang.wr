@@ -11,10 +11,10 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.common.resultmodel.ResultModel;
-import com.taobao.cun.dto.BucContext;
 import com.taobao.cun.dto.station.CountyStationDto;
+import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
 @HSFProvider(serviceInterface = CountyService.class)
@@ -57,4 +57,9 @@ public class CountyServiceImpl implements CountyService{
 	public CountyDto getCountyStationByOrgId(Long id){
 		return countyBO.getCountyStationByOrgId(id);
 	}
+	
+	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
+		return countyBO.getCountyStationList(queryCondition); 
+	}
+
 }
