@@ -125,7 +125,7 @@
     taobao_nick, state, is_deleted, province, city, county, town, province_detail, city_detail, 
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
-    manager_id, provider_id, feature, status, fixed_type, version,
+    manager_id, provider_id, feature, status, fixed_type, version,is_on_town
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
