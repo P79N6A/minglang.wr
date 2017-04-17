@@ -240,10 +240,10 @@ public class CountyBOImpl implements CountyBO {
 			CuntaoOrg queryOrg = cuntaoOrgMapper
 					.selectByPrimaryKey(queryCondition.getParentId());
 			// parentId为全国，则设置为null
-			if (queryOrg.getOrderLevel().equals("1")) {
+			if (queryOrg.getOrderLevel()==1) {
 				queryCondition.setParentId(null);
 				// parentId为县点，则设置为大区Id
-			} else if (queryOrg.getOrderLevel().equals("3")) {
+			} else if (queryOrg.getOrderLevel()==3) {
 				queryCondition.setParentId(queryOrg.getParentId());
 			}
 		}
