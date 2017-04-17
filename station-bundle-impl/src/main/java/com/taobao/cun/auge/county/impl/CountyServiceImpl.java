@@ -14,9 +14,6 @@ import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.bops.mobile.convert.CountyAddressConvert;
-import com.taobao.cun.bops.mobile.dto.county.CountyDetailDto;
-import com.taobao.cun.dto.station.CountyStationDto;
 import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
