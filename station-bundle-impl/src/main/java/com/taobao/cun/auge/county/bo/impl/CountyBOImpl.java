@@ -238,7 +238,7 @@ public class CountyBOImpl implements CountyBO {
 	private void dealWithMobile(CountyStationQueryCondition queryCondition) {
 		// 移动端，parentId==orgId,如果当前组织是县服务中心，则查询的parentId设置为该县所属大区的Id
 		// pc端parentId最低级别为大区id,不存在该问题
-		if (null != queryCondition.getParentId()) {
+		if (queryCondition.isMobile()&&null != queryCondition.getParentId()) {
 			CuntaoOrg queryOrg = cuntaoOrgMapper
 					.selectByPrimaryKey(queryCondition.getParentId());
 			// parentId为全国，则设置为null

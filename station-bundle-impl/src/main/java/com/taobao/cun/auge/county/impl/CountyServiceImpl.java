@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.county.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -66,7 +67,15 @@ public class CountyServiceImpl implements CountyService{
 	}
 	
 	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
-		return countyBO.getCountyStationList(queryCondition); 
+		PagedResultModel<List<CountyDto>> result=countyBO.getCountyStationList(queryCondition);
+		if(queryCondition.isMobile()){
+			List<CountyDto> dtos=new ArrayList<CountyDto>();
+			for(CountyDto dto:result.getResult()){
+				dtos.add(convertForMobile(dto));
+			}
+			result.setResult(dtos);
+		}
+		return result;
 	}
 	
 	private  CountyDto convertForMobile(CountyDto countyDto) {
