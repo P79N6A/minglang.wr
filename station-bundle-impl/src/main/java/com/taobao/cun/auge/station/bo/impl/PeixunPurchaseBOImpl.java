@@ -60,7 +60,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Autowired
 	DiamondConfiguredProperties configuredProperties;
 
-	private static final Logger logger = LoggerFactory.getLogger(PeixunPurchaseBOImpl.class)
+	private static final Logger logger = LoggerFactory.getLogger(PeixunPurchaseBOImpl.class);
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
