@@ -21,6 +21,7 @@ import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.masterdata.client.service.Employee360Service;
+import com.github.pagehelper.PageHelper;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
 import com.taobao.cun.auge.cache.TairCache;
@@ -166,6 +167,7 @@ public class CountyBOImpl implements CountyBO {
 		if (county != null) {
 			CountyDto dto = toCountyDto(county);
 			List<CnWarehouseDto> warehouses = getWarehouses(id);
+			dto.setWarehouseDtos(warehouses);
 			return dto;
 		} else {
 			return null;
@@ -203,9 +205,7 @@ public class CountyBOImpl implements CountyBO {
         dealWithMobile(queryCondition);
         CountyStationExample example =new CountyStationExample();
         Criteria c = example.createCriteria().andIsDeletedEqualTo("n");
-        if(queryCondition.getParentId()!=null){
-        	c.andParentIdEqualTo(queryCondition.getParentId());
-        }
+        c.andParentIdEqualTo(queryCondition.getParentId());
         if(StringUtils.isNotEmpty(queryCondition.getName())){
         	c.andNameEqualTo(queryCondition.getName());
         }
@@ -218,6 +218,7 @@ public class CountyBOImpl implements CountyBO {
         } else {
         	example.setOrderByClause(queryCondition.getOrderByEnum().toOrderBySQL());
         }
+        PageHelper.startPage(queryCondition.getPageStart(), queryCondition.getPageSize());
 		List<CountyStation> countys = countyStationMapper.selectByExample(example);
         List<CountyDto> rst = new ArrayList<CountyDto>();
         for (CountyStation cs : countys) {
@@ -298,14 +299,14 @@ public class CountyBOImpl implements CountyBO {
 		return dto;
 	}
 
-	 private List<CnWarehouseDto> getWarehouses(Long countyId) {
-	    	List<WarehouseDTO> results = getCountyWarehouseDto(countyId);
-	    	List<CnWarehouseDto> list = new ArrayList<CnWarehouseDto>();
-	    	for (WarehouseDTO dto : results) {
-	    		list.add(convert2CnWarehouseDto(dto));
-	    	}
-	    	return list;
-	    }
+	private List<CnWarehouseDto> getWarehouses(Long countyId) {
+		List<WarehouseDTO> results = getCountyWarehouseDto(countyId);
+		List<CnWarehouseDto> list = new ArrayList<CnWarehouseDto>();
+		for (WarehouseDTO dto : results) {
+			list.add(convert2CnWarehouseDto(dto));
+		}
+		return list;
+	}
 	 
 	private CnWarehouseDto convert2CnWarehouseDto(WarehouseDTO warehouseDto) {
 		CnWarehouseDto cnWarehouseDto = new CnWarehouseDto();
