@@ -55,7 +55,7 @@ public interface CountyService {
 	 *            县运营中心id
 	 * @return
 	 */
-	public CountyDto getCountyStation(Long id);
+	public CountyDto getCountyStation(Long id,Boolean isMobile);
 
 	/**
 	 * 查询县运营中心的信息
