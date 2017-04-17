@@ -16,10 +16,10 @@ import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Lists;
 import com.ali.com.google.common.collect.Sets;
-import com.taobao.cun.auge.dal.domain.AppResource;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.LevelCourse;
 import com.taobao.cun.auge.dal.domain.LevelCourseExample;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.LevelCourseBO;
 import com.taobao.cun.auge.station.bo.impl.LevelCourseBOImpl;
 import com.taobao.cun.auge.station.condition.LevelCourseCondition;
@@ -43,7 +43,7 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
     private LevelCourseBO courseBo;
     
     @Autowired
-    private AppResourceBO appResourceBo;
+    private AppResourceService appResourceService;
     
     @Autowired
     private PartnerPeixunService partnerPeixunService;
@@ -57,7 +57,7 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
             return LevelCourseLearningStatisticsDto.getNullDto();
         }
         String key = LevelCourseConfigUtil.getResourceKey(condition.getUserLevel(), LevelCourseTypeEnum.REQUIRED);
-        AppResource resource = appResourceBo.queryAppResource(LevelCourseConfigUtil.getResourceType(), key);
+        AppResourceDto resource = appResourceService.queryAppResource(LevelCourseConfigUtil.getResourceType(), key);
         Set<String> totalCodeSet = Collections.emptySet();
         if(resource!=null){
             totalCodeSet = LevelCourseConfigUtil.parseCourseCodeSet(resource.getValue());
@@ -101,7 +101,7 @@ public class LevelCourseQueryServiceImpl implements LevelCourseQueryService {
     }
     
     private Set<String> getCourseCodeList(String level, LevelCourseTypeEnum type) {
-        AppResource resource = appResourceBo.queryAppResource(LevelCourseConfigUtil.getResourceType(), LevelCourseConfigUtil.getResourceKey(level, type));
+        AppResourceDto resource = appResourceService.queryAppResource(LevelCourseConfigUtil.getResourceType(), LevelCourseConfigUtil.getResourceKey(level, type));
         if(resource==null || StringUtils.isBlank(resource.getValue())){
             return Sets.newHashSet();
         }
