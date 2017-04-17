@@ -16,7 +16,6 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -96,7 +95,7 @@ import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.RandomUtil;
 
 @Service("partnerInstanceQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceQueryService.class,serviceVersion="1.0.0.daily.fjx")
+@HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
@@ -149,9 +148,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	private TestUserService testUserService;
-	
-	@Autowired
-	AppResourceService appResourceService;
 	
 	private boolean isC2BTestUser(Long taobaoUserId) {
 		return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -657,10 +653,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     @Override
     public Long findStationIdByStationApplyId(Long stationApplyId){
     	ValidateUtils.notNull(stationApplyId);
-    	
-    	String value = appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-				"APPLY_IN");
-    	
         return partnerInstanceBO.findStationIdByStationApplyId(stationApplyId);
     }
 
