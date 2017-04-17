@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import com.alibaba.ceres.service.Result;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
+import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
@@ -55,6 +59,8 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	
 	@Autowired
 	DiamondConfiguredProperties configuredProperties;
+
+	private static final Logger logger = LoggerFactory.getLogger(PeixunPurchaseBOImpl.class)
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -278,6 +284,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			String prNo=(String)result.getValue();
 			record.setPrNo(prNo);
 		} catch (Exception e) {
+			logger.error("submit pr error " + JSON.toJSONString(prDto), e);
 			throw new RuntimeException("提交pr失败，失败原因：" + e);
 		}
 		record.setGmtModified(new Date());
