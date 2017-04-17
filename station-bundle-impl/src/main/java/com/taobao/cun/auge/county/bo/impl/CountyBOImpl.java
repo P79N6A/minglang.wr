@@ -205,7 +205,9 @@ public class CountyBOImpl implements CountyBO {
         dealWithMobile(queryCondition);
         CountyStationExample example =new CountyStationExample();
         Criteria c = example.createCriteria().andIsDeletedEqualTo("n");
-        c.andParentIdEqualTo(queryCondition.getParentId());
+        if(queryCondition.getParentId()!=null){
+            c.andParentIdEqualTo(queryCondition.getParentId());
+        }
         if(StringUtils.isNotEmpty(queryCondition.getName())){
         	c.andNameEqualTo(queryCondition.getName());
         }
