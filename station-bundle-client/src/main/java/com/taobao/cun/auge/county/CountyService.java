@@ -2,6 +2,7 @@ package com.taobao.cun.auge.county;
 
 import java.util.List;
 
+import com.taobao.cun.auge.county.dto.CountyDetailDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.settle.common.model.PagedResultModel;
