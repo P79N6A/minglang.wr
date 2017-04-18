@@ -3,6 +3,10 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+
 public class ProtocolDto implements Serializable {
 	
 	private static final long serialVersionUID = -2730692635052885624L;
@@ -10,12 +14,15 @@ public class ProtocolDto implements Serializable {
 	private Long id;
 	private Date submitTime;
 	private String type;
+	private ProtocolTypeEnum protocolTypeEnum;
 	private String name;
 	private Long version;
 	private String submitId;
 	private String state;
+	private ProtocolStateEnum protocolStateEnum;
 	private String description;
 	private String groupType;
+	private ProtocolGroupTypeEnum protocolGroupTypeEnum;
 	private String groupName;
 
 	public Long getId() {
@@ -98,4 +105,27 @@ public class ProtocolDto implements Serializable {
 		this.groupName = groupName;
 	}
 
+	public ProtocolTypeEnum getProtocolTypeEnum() {
+		return protocolTypeEnum;
+	}
+
+	public void setProtocolTypeEnum(ProtocolTypeEnum protocolTypeEnum) {
+		this.protocolTypeEnum = protocolTypeEnum;
+	}
+
+	public ProtocolStateEnum getProtocolStateEnum() {
+		return protocolStateEnum;
+	}
+
+	public void setProtocolStateEnum(ProtocolStateEnum protocolStateEnum) {
+		this.protocolStateEnum = protocolStateEnum;
+	}
+
+	public ProtocolGroupTypeEnum getProtocolGroupTypeEnum() {
+		return protocolGroupTypeEnum;
+	}
+
+	public void setProtocolGroupTypeEnum(ProtocolGroupTypeEnum protocolGroupTypeEnum) {
+		this.protocolGroupTypeEnum = protocolGroupTypeEnum;
+	}
 }
