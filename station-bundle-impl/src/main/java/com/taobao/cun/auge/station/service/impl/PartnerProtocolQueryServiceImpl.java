@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExt;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelExtMapper;
@@ -27,7 +28,7 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
 	
 	@Override
 	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId) throws AugeServiceException {
-		
+		ValidateUtils.notNull(partnerInstanceId);
 		PartnerProtocolRelExtExample example = new PartnerProtocolRelExtExample();
 		
 		example.setObjectId(partnerInstanceId);
