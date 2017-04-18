@@ -473,7 +473,7 @@
 			<dependency>
 			  <groupId>com.taobao.crius</groupId>
 			  <artifactId>biz-client</artifactId>
-			  <version>1.2.5</version>
+			  <version>1.2.6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
