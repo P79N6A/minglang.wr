@@ -28,9 +28,10 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
@@ -39,7 +40,6 @@ import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.notify.DefaultNotifyPublish;
 import com.taobao.cun.auge.notify.NotifyFuwuOrderChangeVo;
 import com.taobao.cun.auge.partner.service.PartnerQueryService;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
@@ -75,7 +75,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Autowired
 	ExamInstanceService examInstanceService;
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	@Autowired
 	DefaultNotifyPublish defaultNotifyPublish;
 	@Autowired
@@ -137,8 +137,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private String getCourseTypeByCode(String code){
-		List<AppResource> apps=appResourceBO.queryAppResourceList("PARTNER_PEIXUN_CODE");
-		for(AppResource app:apps){
+		List<AppResourceDto> apps=appResourceService.queryAppResourceList("PARTNER_PEIXUN_CODE");
+		for(AppResourceDto app:apps){
 			if(app.getValue().equals(code)){
 				return app.getName();
 			}
@@ -201,7 +201,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle
-        if(code.equals(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+        if(code.equals(appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 				"APPLY_IN"))){
 			try {
 				partnerInstanceBO.finishCourse(userId);

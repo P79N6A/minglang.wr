@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -47,7 +48,6 @@ import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
@@ -203,7 +203,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	@Autowired
 	StationApplySyncBO syncStationApplyBO;
 
@@ -1842,12 +1842,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		partnerLifecycleDto.setPartnerInstanceId(psl.getId());
 		//初始化培训记录
 		PartnerCourseRecord record=partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
-				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"APPLY_IN"));
 		partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
-				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"UPGRADE"));
 		if(record!=null&&PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);

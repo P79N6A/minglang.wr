@@ -15,11 +15,12 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
@@ -28,7 +29,6 @@ import com.taobao.cun.auge.dal.mapper.StationDecorateMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
@@ -54,7 +54,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	@Autowired
 	StationDecorateMapper stationDecorateMapper;
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	@Autowired
 	CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	@Autowired
@@ -132,10 +132,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			throw new AugeServiceException("非法的村点对象!");
 		}
 		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.PROVINCE);
-		AppResource resource = appResourceBO.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
+		AppResourceDto resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		if (resource == null) {
 			coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.LARGE_AREA);
-			resource = appResourceBO.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
+			resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		}
 		if (resource == null || StringUtils.isEmpty(resource.getValue())) {
 			throw new AugeServiceException("找不到装修卖家信息,station org:" + station.getApplyOrg());
