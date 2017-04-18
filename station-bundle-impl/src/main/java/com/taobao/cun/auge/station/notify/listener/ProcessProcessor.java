@@ -26,7 +26,6 @@ import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -94,9 +93,6 @@ public class ProcessProcessor {
 	@Autowired
 	StationService stationService;
 	
-	@Autowired
-	AppResourceBO appResourceBO;
-
 	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 	
