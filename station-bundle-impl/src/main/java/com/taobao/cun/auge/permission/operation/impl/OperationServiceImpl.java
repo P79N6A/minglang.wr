@@ -18,9 +18,8 @@ import com.alibaba.buc.acl.api.service.AccessControlService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
-import com.taobao.cun.auge.dal.domain.AppResource;
-import com.taobao.cun.auge.dal.domain.AppResourceExample;
-import com.taobao.cun.auge.dal.mapper.AppResourceMapper;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.permission.operation.Operation;
 import com.taobao.cun.auge.permission.operation.OperationData;
 import com.taobao.cun.auge.permission.operation.OperationService;
@@ -41,7 +40,7 @@ public class OperationServiceImpl implements OperationService {
 	private String accessKey;
 	
 	@Autowired
-	private AppResourceMapper appResourceMapper;
+	private AppResourceService appResourceService;
 	
 	OperationMatcher permissionMatcher = new PermissionMatcher();
 	 
@@ -87,16 +86,14 @@ public class OperationServiceImpl implements OperationService {
 	}
 
 	private List<Operation> getOperations(List<String> operationsCode) throws BucException {
-		AppResourceExample example = new AppResourceExample();
-		example.createCriteria().andTypeIn(operationsCode).andIsDeletedEqualTo("n");
-		List<AppResource> resources = appResourceMapper.selectByExample(example);
+		List<AppResourceDto> resources = appResourceService.queryAppResourceList(operationsCode);
 		List<Operation> operations = resources.stream().map(resource -> {
 			 return createOperation(resource);
 		}).collect(Collectors.toList());
 		return operations;
 	}
 
-	private Operation createOperation(AppResource resource) {
+	private Operation createOperation(AppResourceDto resource) {
 		Operation operation = new Operation();
 		operation.setPermission(resource.getPermissionNames());
 		operation.setCondition(resource.getDataCondition());
