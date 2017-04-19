@@ -21,6 +21,8 @@ import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -118,6 +120,17 @@ public interface PartnerInstanceQueryService {
 	 * @throws AugeServiceException
 	 */
 	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException;
+	
+	/**
+	 * 批量查询
+	 * 
+	 * @param taobaoUserId
+	 * @param instanceTypes
+	 * @param states
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public List<PartnerInstanceDto> getBatchActivePartnerInstance(List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException;
 
 	/**
 	 * 获取用户账户资金情况，如保证金
