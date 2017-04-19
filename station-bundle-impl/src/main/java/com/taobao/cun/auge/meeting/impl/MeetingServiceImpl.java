@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -32,9 +33,7 @@ import com.taobao.cun.auge.meeting.util.HttpSchema;
 import com.taobao.cun.auge.meeting.util.Method;
 import com.taobao.cun.auge.meeting.util.Request;
 import com.taobao.cun.auge.meeting.util.Response;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("meetingService")
@@ -47,7 +46,7 @@ public class MeetingServiceImpl implements MeetingService {
 	PartnerInstanceBO partnerInstanceBO;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 
 	@Autowired
 	MeetingBO meetingBO;
@@ -133,11 +132,11 @@ public class MeetingServiceImpl implements MeetingService {
 	}
 
 	private Map createRemoteMeeting(String title) {
-		String path=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","path");
-        String appId=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appId");
-        String appKey=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appKey");
-		String host=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","host");
-		String schema=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","schema");
+		String path=appResourceService.queryAppResourceValue("PARTNER_MEETING","path");
+        String appId=appResourceService.queryAppResourceValue("PARTNER_MEETING","appId");
+        String appKey=appResourceService.queryAppResourceValue("PARTNER_MEETING","appKey");
+		String host=appResourceService.queryAppResourceValue("PARTNER_MEETING","host");
+		String schema=appResourceService.queryAppResourceValue("PARTNER_MEETING","schema");
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(HttpHeader.HTTP_HEADER_ACCEPT, "application/json");
 		List<String> CUSTOM_HEADERS_TO_SIGN_PREFIX = new ArrayList<String>();

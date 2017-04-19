@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.auge.msg.service.MessageService;
@@ -41,6 +42,11 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean cuntaoWorkFlowService(@Value("${hsf.consumer.version.crius.cuntaoWorkFlowService}") String version) {
 		return getConsumerBean(CuntaoWorkFlowService.class, HSFGroup.HSF, version, 10000);
+	}
+	
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean appResourceService(@Value("${hsf.consumer.version.crius.appResourceService}") String version) {
+		return getConsumerBean(AppResourceService.class, HSFGroup.HSF, version, 10000);
 	}
 	
 	@Bean(initMethod = "init")
