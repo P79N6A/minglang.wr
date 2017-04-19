@@ -88,6 +88,8 @@ import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
+import com.taobao.cun.auge.station.util.PartnerInstanceStateEnumUtil;
+import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -367,6 +369,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		instance.setStationDto(stationDto);
 
 		return instance;
+	}
+	
+	@Override
+	public List<PartnerInstanceDto> getBatchActivePartnerInstance(List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException {
+		List<PartnerStationRel> rels = partnerInstanceBO.getBatchActivePartnerInstance(taobaoUserId, PartnerInstanceTypeEnumUtil.extractCode(instanceTypes), PartnerInstanceStateEnumUtil.extractCode(states));
+		List<PartnerInstanceDto> instances = PartnerInstanceConverter.convertRel2Dto(rels);
+		return instances;
 	}
 
 	@Override
