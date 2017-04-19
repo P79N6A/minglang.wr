@@ -2182,6 +2182,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			BatchMailDto mailDto = new BatchMailDto();
 			mailDto.setMailAddresses(addressUpdateNotifyMailList);
 			mailDto.setTemplateId(addressUpdateNotifyMailTemplateId);
+			mailDto.setMessageTypeId(addressUpdateNotifyMailMessageTypeId);
+			mailDto.setSourceId(addressUpdateNotifyMailSourceId);
 			mailDto.setOperator(station.getOperator());
 			mailDto.setContentMap(contentMap);
 			generalTaskSubmitService.submitMailTask(mailDto);

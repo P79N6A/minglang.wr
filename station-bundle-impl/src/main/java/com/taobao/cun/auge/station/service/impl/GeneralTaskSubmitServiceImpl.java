@@ -20,7 +20,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
-import com.taobao.cun.auge.msg.dto.McMessageDto;
+import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -453,13 +453,14 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			return;
 		}
 		try {
-			McMessageDto mailDto = new McMessageDto();
+			MailSendDto mailDto = new MailSendDto();
 
 			mailDto.setContent(batchMailDto.getTemplateId());
 			mailDto.setSourceId(batchMailDto.getSourceId());
 			mailDto.setMessageType(batchMailDto.getMessageTypeId());
 			mailDto.setOperator(batchMailDto.getOperator());
-
+			mailDto.setMailAddress(batchMailDto.getMailAddresses());
+			
 			GeneralTaskDto task = new GeneralTaskDto();
 
 			task.setBusinessNo(String.valueOf(batchMailDto.getOperator()));
@@ -469,7 +470,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setBusinessType(TaskBusinessTypeEnum.MAIL.getCode());
 			task.setBusinessStepDesc("发邮件");
 			task.setOperator(batchMailDto.getOperator());
-			task.setParameterType(McMessageDto.class.getName());
+			task.setParameterType(MailSendDto.class.getName());
 			task.setParameter(JSON.toJSONString(mailDto));
 			taskSubmitService.submitTask(task);
 			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
