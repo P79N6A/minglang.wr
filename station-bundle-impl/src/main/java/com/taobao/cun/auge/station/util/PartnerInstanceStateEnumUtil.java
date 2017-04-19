@@ -17,7 +17,7 @@ public final class PartnerInstanceStateEnumUtil {
 		if (CollectionUtil.isEmpty(states)) {
 			return Collections.<String> emptyList();
 		}
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<String>(states.size());
 		for (PartnerInstanceStateEnum state : states) {
 			codes.add(state.getCode());
 		}

@@ -7,7 +7,7 @@ import java.util.List;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.util.CollectionUtil;
 
-public class PartnerInstanceTypeEnumUtil {
+public final class PartnerInstanceTypeEnumUtil {
 	private PartnerInstanceTypeEnumUtil() {
 
 	}
@@ -16,7 +16,7 @@ public class PartnerInstanceTypeEnumUtil {
 		if (CollectionUtil.isEmpty(instanceTypes)) {
 			return Collections.<String> emptyList();
 		}
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<String>(instanceTypes.size());
 		for (PartnerInstanceTypeEnum type : instanceTypes) {
 			codes.add(type.getCode());
 		}
