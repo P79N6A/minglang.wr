@@ -8,7 +8,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceBO {
@@ -325,9 +324,6 @@ public interface PartnerInstanceBO {
 	
 	public List<PartnerStationRel> getBatchActivePartnerInstance(
 			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException;
-	
-	public List<PartnerStationRel> getBatchActivePartnerInstance2(
-			List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException;
 	
 	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,String name);
 }

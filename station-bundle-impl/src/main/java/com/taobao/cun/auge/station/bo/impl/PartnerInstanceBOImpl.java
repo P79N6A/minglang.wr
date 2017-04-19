@@ -61,8 +61,6 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.cun.auge.station.util.PartnerInstanceStateEnumUtil;
-import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
 import com.taobao.pandora.util.StringUtils;
 
 @Component("partnerInstanceBO")
@@ -779,6 +777,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
 		return null != rel ? rel.getStationId() : null;
 	}
+	
 	@Override
 	public List<PartnerStationRel> getBatchActivePartnerInstance(
 			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException {
@@ -793,26 +792,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		if(statusList!=null&&statusList.size()>0){
 			c.andStateIn(statusList);
-		}
-		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
-		return resList;
-	}
-	
-	@Override
-	public List<PartnerStationRel> getBatchActivePartnerInstance2(
-			List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException
-	{
-		if(taobaoUserId.size()==0){
-			return new ArrayList<PartnerStationRel>();
-		}
-		PartnerStationRelExample example = new PartnerStationRelExample();
-		Criteria c=example.createCriteria();
-		c.andIsDeletedEqualTo("n").andTaobaoUserIdIn(taobaoUserId).andIsCurrentEqualTo("y");
-		if(instanceTypes!=null&&instanceTypes.size()>0){
-			c.andTypeIn(PartnerInstanceTypeEnumUtil.extractCode(instanceTypes));
-		}
-		if(states!=null&&states.size()>0){
-			c.andStateIn(PartnerInstanceStateEnumUtil.extractCode(states));
 		}
 		List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
 		return resList;
