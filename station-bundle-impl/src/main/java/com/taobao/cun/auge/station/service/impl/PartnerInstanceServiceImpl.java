@@ -12,11 +12,13 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -71,6 +73,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -244,6 +247,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	@Autowired
 	private FrozenMoneyAmountConfig frozenMoneyConfig;
+	
+	@Value("#{'${addressUpdateNotifyMailList}'.split(',')}")
+	private List<String> addressUpdateNotifyMailList;
+	
+	@Value("${addressUpdateNotifyMailTemplateId}")
+	private String addressUpdateNotifyMailTemplateId;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -2132,8 +2141,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 			if(isSendMail){
-				
+				sendMail(updateStation);
 			}
+		}
+	}
+	
+	private void sendMail(StationDto station) {
+		try {
+			Map<String, String> contentMap = Maps.newHashMap();
+			// TODO 模板参数拼装
+			BatchMailDto mailDto = new BatchMailDto();
+			mailDto.setMailAddresses(addressUpdateNotifyMailList);
+			mailDto.setTemplateId(addressUpdateNotifyMailTemplateId);
+			mailDto.setOperator(station.getOperator());
+			mailDto.setContentMap(contentMap);
+			generalTaskSubmitService.submitMailTask(mailDto);
+		} catch (Exception e) {
+			logger.error("updateStationAddress [sendMail] address = {}, {}", String.join(",",	 addressUpdateNotifyMailList), e);
+			throw new AugeServiceException("updateStationAddress [sendMail] error: " + e.getMessage());
 		}
 	}
 	

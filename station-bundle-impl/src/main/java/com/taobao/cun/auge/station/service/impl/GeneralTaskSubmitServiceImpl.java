@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
@@ -31,6 +32,7 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
+import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
@@ -443,6 +445,41 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 	
+	@Override
+	public void submitMailTask(BatchMailDto batchMailDto) {
+		if (CollectionUtils.isEmpty(batchMailDto.getMailAddresses())) {
+			logger.error("邮件地址为空");
+			return;
+		}
+
+		try {
+			SmsSendDto smsDto = new SmsSendDto();
+
+			smsDto.setContent(batchMailDto.getTemplateId());
+			smsDto.setMobilelist(batchMailDto.getMailAddresses().toArray(new String[0]));
+			smsDto.setOperator(batchMailDto.getOperator());
+
+			GeneralTaskDto task = new GeneralTaskDto();
+
+			task.setBusinessNo(String.valueOf(batchMailDto.getOperator()));
+			task.setBeanName("messageService");
+			task.setMethodName("sendMail");
+			task.setBusinessStepNo(1l);
+			task.setBusinessType(TaskBusinessTypeEnum.SMS.getCode());
+			task.setBusinessStepDesc("发短信");
+			task.setOperator(batchMailDto.getOperator());
+			task.setParameterType(SmsSendDto.class.getName());
+			task.setParameter(JSON.toJSONString(smsDto));
+			taskSubmitService.submitTask(task);
+			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
+		} catch (Exception e) {
+			String msg = TASK_SUBMIT_ERROR_MSG + " [submitMailTask] address=" + String.join(",", batchMailDto.getMailAddresses()) + " operator = " + batchMailDto.getOperator() + " templateId = "
+					+ batchMailDto.getTemplateId();
+			logger.error(msg, e);
+			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
+		}
+	}
+
 	@Override
 	public void submitAddUserTagTasks(Long instanceId,String operator) {
 		try {
