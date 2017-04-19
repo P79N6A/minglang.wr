@@ -43,6 +43,8 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
+import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
@@ -244,6 +246,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	private TestUserService testUserService;
 	
+	@Autowired
+	private CuntaoFlowRecordQueryService cuntaoFlowRecordQueryService;
 	
 	@Autowired
 	private FrozenMoneyAmountConfig frozenMoneyConfig;
@@ -2140,12 +2144,27 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(updateStation.getId());
 			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
 			StationDto oldStation = instance.getStationDto();
-			oldStation.setAddress(updateStation.getAddress());
-			oldStation.setOperator(String.valueOf(taobaoUserId));
-			oldStation.setOperatorType(OperatorTypeEnum.HAVANA);
-			stationBO.updateStation(oldStation);
+			StationDto newStation = new StationDto();
+			newStation.setId(oldStation.getId());
+			newStation.setAddress(updateStation.getAddress());
+			newStation.setOperator(String.valueOf(taobaoUserId));
+			newStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			stationBO.updateStation(newStation);
+			// 同步菜鸟地址更新
+			if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
+				generalTaskSubmitService.submitUpdateCainiaoStation(instanceId, String.valueOf(taobaoUserId));
+			}
 			// 同步station_apply
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+			// 日志
+			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
+			record.setTargetId(oldStation.getId());
+			record.setNodeTitle("村服务站地址信息变更");
+			record.setOperatorWorkid(String.valueOf(taobaoUserId));
+			record.setOperatorName(oldStation.getTaobaoNick());
+			record.setOperateTime(new Date());
+			record.setRemarks(PartnerInstanceEventUtil.buildAddressInfo(oldStation,newStation));
+			cuntaoFlowRecordQueryService.insertRecord(record);
 			if(isSendMail){
 				sendMail(updateStation);
 			}
