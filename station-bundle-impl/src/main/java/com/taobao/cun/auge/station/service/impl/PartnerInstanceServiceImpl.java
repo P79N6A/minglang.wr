@@ -2117,4 +2117,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+
+	/** 更新服务站地址信息*/
+	public void updateStationAddress(Long taobaoUserId, StationDto updateStation, boolean isSendMail)
+			throws AugeServiceException {
+		if(updateStation != null){
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(updateStation.getId());
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			StationDto oldStation = instance.getStationDto();
+			oldStation.setAddress(updateStation.getAddress());
+			oldStation.setOperator(String.valueOf(taobaoUserId));
+			oldStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			stationBO.updateStation(oldStation);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+			if(isSendMail){
+				
+			}
+		}
+	}
+	
 }

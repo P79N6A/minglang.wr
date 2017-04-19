@@ -29,6 +29,11 @@ public class PartnerDetailDto implements Serializable{
 	private Long stationId;
 	private String partnerType;
 	private Date birthday;
+	private String lng;
+	private String lat;
+	private String villageDetail;
+	private String isOnTown;
+	
 	public Date getBirthday() {
 		return birthday;
 	}
@@ -143,6 +148,29 @@ public class PartnerDetailDto implements Serializable{
 	public void setPartnerType(String partnerType) {
 		this.partnerType = partnerType;
 	}
-	
+	public String getLng() {
+		return lng;
+	}
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getVillageDetail() {
+		return villageDetail;
+	}
+	public void setVillageDetail(String villageDetail) {
+		this.villageDetail = villageDetail;
+	}
+	public String getIsOnTown() {
+		return isOnTown;
+	}
+	public void setIsOnTown(String isOnTown) {
+		this.isOnTown = isOnTown;
+	}
 	
 }
