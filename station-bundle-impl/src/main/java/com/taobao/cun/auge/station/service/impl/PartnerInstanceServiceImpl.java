@@ -254,6 +254,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Value("${addressUpdateNotifyMailTemplateId}")
 	private String addressUpdateNotifyMailTemplateId;
 	
+	@Value("${addressUpdateNotifyMailSourceId}")
+	private String addressUpdateNotifyMailSourceId;
+	
+	@Value("${addressUpdateNotifyMailMessageTypeId}")
+	private String addressUpdateNotifyMailMessageTypeId;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
@@ -2149,6 +2155,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void sendMail(StationDto station) {
 		try {
 			Map<String, String> contentMap = Maps.newHashMap();
+			contentMap.put("station_id", station.getId() + "");
+			contentMap.put("station_name", station.getName());
+			contentMap.put("type", station.getFeature().get("type"));
+			contentMap.put("description", station.getFeature().get("description"));
 			// TODO 模板参数拼装
 			BatchMailDto mailDto = new BatchMailDto();
 			mailDto.setMailAddresses(addressUpdateNotifyMailList);

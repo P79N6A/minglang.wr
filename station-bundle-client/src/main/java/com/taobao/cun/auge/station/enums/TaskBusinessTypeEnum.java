@@ -37,6 +37,8 @@ public class TaskBusinessTypeEnum implements Serializable {
 
 	public static final TaskBusinessTypeEnum SMS = new TaskBusinessTypeEnum("SMS", "短信任务");
 	
+	public static final TaskBusinessTypeEnum MAIL = new TaskBusinessTypeEnum("MAIL", "邮件任务");
+	
 	public static final TaskBusinessTypeEnum STATION_SHUTDOWN_APPROVED = new TaskBusinessTypeEnum("STATION_SHUTDOWN_APPROVED","关闭物流站");
 
 	public static final TaskBusinessTypeEnum CLOSE_TO_SERVICE = new TaskBusinessTypeEnum("CLOSE_TO_SERVICE", "已停业回到服务中");

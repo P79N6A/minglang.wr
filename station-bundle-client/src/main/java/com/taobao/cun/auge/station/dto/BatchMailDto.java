@@ -9,6 +9,10 @@ public class BatchMailDto {
 	
 	private String templateId;
 	
+	private String sourceId;
+	
+	private String messageTypeId;
+	
 	private Map<String, String> contentMap;
 	
 	private String operator;
@@ -43,6 +47,22 @@ public class BatchMailDto {
 
 	public void setOperator(String operator) {
 		this.operator = operator;
+	}
+
+	public String getSourceId() {
+		return sourceId;
+	}
+
+	public void setSourceId(String sourceId) {
+		this.sourceId = sourceId;
+	}
+
+	public String getMessageTypeId() {
+		return messageTypeId;
+	}
+
+	public void setMessageTypeId(String messageTypeId) {
+		this.messageTypeId = messageTypeId;
 	}
 
 }

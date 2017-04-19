@@ -20,6 +20,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
+import com.taobao.cun.auge.msg.dto.McMessageDto;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -451,13 +452,13 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error("邮件地址为空");
 			return;
 		}
-
 		try {
-			SmsSendDto smsDto = new SmsSendDto();
+			McMessageDto mailDto = new McMessageDto();
 
-			smsDto.setContent(batchMailDto.getTemplateId());
-			smsDto.setMobilelist(batchMailDto.getMailAddresses().toArray(new String[0]));
-			smsDto.setOperator(batchMailDto.getOperator());
+			mailDto.setContent(batchMailDto.getTemplateId());
+			mailDto.setSourceId(batchMailDto.getSourceId());
+			mailDto.setMessageType(batchMailDto.getMessageTypeId());
+			mailDto.setOperator(batchMailDto.getOperator());
 
 			GeneralTaskDto task = new GeneralTaskDto();
 
@@ -465,11 +466,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setBeanName("messageService");
 			task.setMethodName("sendMail");
 			task.setBusinessStepNo(1l);
-			task.setBusinessType(TaskBusinessTypeEnum.SMS.getCode());
-			task.setBusinessStepDesc("发短信");
+			task.setBusinessType(TaskBusinessTypeEnum.MAIL.getCode());
+			task.setBusinessStepDesc("发邮件");
 			task.setOperator(batchMailDto.getOperator());
-			task.setParameterType(SmsSendDto.class.getName());
-			task.setParameter(JSON.toJSONString(smsDto));
+			task.setParameterType(McMessageDto.class.getName());
+			task.setParameter(JSON.toJSONString(mailDto));
 			taskSubmitService.submitTask(task);
 			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
 		} catch (Exception e) {
