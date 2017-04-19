@@ -18,6 +18,9 @@ public final class PartnerInstanceTypeEnumUtil {
 		}
 		List<String> codes = new ArrayList<String>(instanceTypes.size());
 		for (PartnerInstanceTypeEnum type : instanceTypes) {
+			if(null == type){
+				continue;
+			}
 			codes.add(type.getCode());
 		}
 

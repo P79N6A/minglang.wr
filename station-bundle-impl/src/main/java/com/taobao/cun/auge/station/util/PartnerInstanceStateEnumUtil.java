@@ -19,6 +19,9 @@ public final class PartnerInstanceStateEnumUtil {
 		}
 		List<String> codes = new ArrayList<String>(states.size());
 		for (PartnerInstanceStateEnum state : states) {
+			if(null == state){
+				continue;
+			}
 			codes.add(state.getCode());
 		}
 		return codes;
