@@ -32,7 +32,6 @@ import com.alibaba.crm.finance.dataobject.contract.ContractDto;
 import com.alibaba.crm.finance.dataobject.draft.RefundOrShiftDraftMaterialDto;
 import com.alibaba.crm.finance.dataobject.draft.ShiftDraftMaterialDetailDto;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
@@ -43,17 +42,15 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
-import com.taobao.cun.auge.alilang.jingwei.PartnerMessage;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
-import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -62,9 +59,7 @@ import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.exam.dto.ExamInstanceItemDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
-import com.taobao.notify.remotingclient.SendResult;
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
 public class DataTransferServiceImpl implements DataTransferService{
@@ -73,7 +68,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	PartnerCourseRecordMapper partnerCourseRecordMapper;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	private AppResourceService appResourceService;
 	
 	@Autowired
 	FuwuOrderService fuwuOrderService;
@@ -126,17 +121,17 @@ public class DataTransferServiceImpl implements DataTransferService{
 		// 判断是否已经初始化过新培训记录
 		PartnerCourseRecord pcr = partnerPeixunBO.queryOfflinePeixunRecord(dto
 				.getPartnerUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
-				appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 						"APPLY_IN"));
 		if (pcr == null) {
 			// 初始化 新培训记录
 			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-					PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-							.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+					PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
+							.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 									"APPLY_IN"));
 			partnerPeixunBO.initPeixunRecord(dto.getPartnerUserId(),
-					PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-							.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+					PartnerPeixunCourseTypeEnum.UPGRADE, appResourceService
+							.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 									"UPGRADE"));
 		}
 		if (dto.getStatus().equals(PartnerPeixunStatusEnum.NEW.getCode())) {
@@ -148,7 +143,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 			}
 		}
 		// 判断是否已经下过订单，若下过，则直接返回true，若未下单，则下单
-		String courseCode = appResourceBO.queryAppValueNotAllowNull(
+		String courseCode = appResourceService.queryAppResourceValue(
 				"PARTNER_PEIXUN_CODE", "APPLY_IN");
 		Long userId = dto.getPartnerUserId();
 		List<String> courseCodes = new ArrayList<String>();
@@ -158,7 +153,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		if (orders.size() > 0) {
 			return true;
 		} else {
-			String mkey = appResourceBO.queryAppValueNotAllowNull(
+			String mkey = appResourceService.queryAppResourceValue(
 					"CRM_ORDER_PARAM", "MKEY");
 			fuwuOrderService.createOrderByPolicyId(userId, mkey, "0.0.0.0");
 		}
@@ -172,7 +167,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新订单是否已经创建
-		String courseCodeNew=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN");
+		String courseCodeNew=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN");
 		Long userId=dto.getPartnerUserId();
 		List<String> courseCodes=new ArrayList<String>();
 		courseCodes.add(courseCodeNew);
@@ -252,7 +247,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新的培训记录是不是已付款状态,若是，则获取签到码
-		PartnerPeixunDto peixun=partnerPeixunService.queryOfflinePeixunProcess(dto.getPartnerUserId(), appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE", "APPLY_IN"), PartnerPeixunCourseTypeEnum.APPLY_IN);
+		PartnerPeixunDto peixun=partnerPeixunService.queryOfflinePeixunProcess(dto.getPartnerUserId(), appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN"), PartnerPeixunCourseTypeEnum.APPLY_IN);
         if(peixun!=null&&peixun.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
         	String ticketNo=peixun.getTicketNo();
         	sign(ticketNo);

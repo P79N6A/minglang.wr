@@ -309,7 +309,11 @@
 		<dependency>
 				<groupId>com.taobao.common.division</groupId>
 				<artifactId>common-division</artifactId>
-		</dependency>		
+		</dependency>	
+		<dependency>	
+		  <groupId>com.taobao.crius</groupId>
+		  <artifactId>biz-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

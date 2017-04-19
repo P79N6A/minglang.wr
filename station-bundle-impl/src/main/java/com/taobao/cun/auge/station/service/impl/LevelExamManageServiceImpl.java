@@ -14,8 +14,8 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.taobao.cun.auge.dal.domain.AppResource;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.convert.LevelExamUtil.ExamLevelExtendInfo;
 import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
@@ -37,7 +37,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     private static final LevelExamConfigurationDto EMPTY_CONFIG_OBJECT = new LevelExamConfigurationDto(); 
     
     @Autowired
-    private AppResourceBO appResourceBO;
+    private AppResourceService appResourceService;
     
     @Autowired
     ExamUserDispatchService  examUserDispatchService;
@@ -55,7 +55,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
             return false;
         }
         String value = JSON.toJSONString(configurationDto.getLevelExamMap());
-        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY, value, false, configurePerson);
+        return appResourceService.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY, value, false, configurePerson);
     }
 
     /**
@@ -63,7 +63,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
      */
     @Override
     public LevelExamConfigurationDto queryConfigure() {
-        AppResource appResource =  appResourceBO.queryAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY);
+        AppResourceDto appResource =  appResourceService.queryAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY);
         if(appResource==null || StringUtils.isBlank(appResource.getValue())){
             return EMPTY_CONFIG_OBJECT; 
         }
@@ -97,7 +97,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
      */
     @Override
     public boolean configureSwitchForDispatchPaper(boolean open) {
-        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY_SWITCH, Boolean.valueOf(open).toString(), false, "system");
+        return appResourceService.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_KEY_SWITCH, Boolean.valueOf(open).toString(), false, "system");
     }
 
     /**
@@ -107,7 +107,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
     @Override
     public boolean configureSwitchForEvaluate(boolean open) {
         String switchStr = Boolean.toString(open);
-        return appResourceBO.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH, switchStr, false, "system");
+        return appResourceService.configAppResource(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH, switchStr, false, "system");
     }
     
     /**

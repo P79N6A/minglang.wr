@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -33,7 +32,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.StationDecorateService;
@@ -59,7 +57,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	StationDecorateOrderBO stationDecorateOrderBO;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	
 	@Autowired
 	StationBO stationBO;
@@ -185,7 +183,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private void setShopItemInfo(StationDecorateDto sdDto) {
 		try {
 			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
-				AppResource resource = appResourceBO.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
+				AppResourceDto resource = appResourceService.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
 				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 					sdDto.setTaobaoItemUrl(taobaoItemUrl+resource.getValue());
 				}
