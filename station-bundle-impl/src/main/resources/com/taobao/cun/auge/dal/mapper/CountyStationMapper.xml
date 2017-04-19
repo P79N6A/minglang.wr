@@ -904,4 +904,17 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
+  <resultMap id="ProvinceResultMap" type="com.taobao.cun.auge.dal.domain.CountyStation">
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+  </resultMap>
+
+  <select id="getProvinceList" resultMap="ProvinceResultMap" parameterType="map" >
+	SELECT DISTINCT  province as province, province_detail as provinceDetail
+	 FROM county_station where is_deleted = 'n' AND manage_status ='OPERATING' AND parent_id !=25
+	 and parent_id in
+	 <foreach collection="areaOrgIds" item="areaOrgId" open="(" close=")" separator="," >
+   		#{areaOrgId}
+   	</foreach>
+  </select>  
 </mapper>
