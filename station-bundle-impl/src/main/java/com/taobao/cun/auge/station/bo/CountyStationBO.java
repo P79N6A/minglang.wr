@@ -18,4 +18,6 @@ public interface CountyStationBO {
 	 * @throws AugeServiceException
 	 */
 	public CountyStation getCountyStationByOrgId(Long orgId)  throws AugeServiceException;
+	
+	public Long addCountyStation(CountyStation cs);
 }

@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.1.3</ague.station.client.version>
+		<ague.station.client.version>2.1.4</ague.station.client.version>
 	</properties>
 
 	<dependencyManagement>
@@ -413,7 +413,7 @@
             <dependency>
                 <groupId>com.taobao.cun</groupId>
                 <artifactId>cun-common-client</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.2</version>
             </dependency>
 			   <dependency>
 				<groupId>com.esotericsoftware.kryo</groupId>
@@ -469,6 +469,17 @@
 			    <groupId>com.alibaba.cloud</groupId>
 			    <artifactId>spring-cloud-stream-starter-metaq</artifactId>
 			    <version>1.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.common.division</groupId>
+				<artifactId>common-division</artifactId>
+				<version>2.3.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.commons</groupId>
+						<artifactId>commons-lang3</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 			  <groupId>com.taobao.crius</groupId>
