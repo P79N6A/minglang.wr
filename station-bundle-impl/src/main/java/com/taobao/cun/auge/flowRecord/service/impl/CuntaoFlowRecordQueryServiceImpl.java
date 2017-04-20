@@ -70,6 +70,7 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			record.setNodeTitle(recordDto.getNodeTitle());
 			record.setTargetId(recordDto.getTargetId());
 			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+			record.setRemarks(recordDto.getRemarks());
 			cuntaoFlowRecordMapper.insertSelective(record);
 		} catch (Exception e) {
 			logger.error("insertRecord error recordDto = "+JSONObject.toJSONString(recordDto), e);
