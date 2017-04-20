@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
+import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -50,6 +51,11 @@ public class PartnerInstanceLevelServiceImpl implements PartnerInstanceLevelServ
         }
         if (!PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
             return false;
+        }
+
+        PartnerInstanceLevel instanceLevel = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceId);
+        if (instanceLevel!=null) {
+            throw new AugeServiceException("该村小二层级信息已存在!");
         }
 
         PartnerInstanceLevelDto dto = new PartnerInstanceLevelDto();
