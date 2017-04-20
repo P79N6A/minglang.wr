@@ -244,7 +244,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return getConsumerBean(WarehouseReadService.class, HSFGroup.HSF,
 				version, 3000);
 	}
-	
+
 	@Bean
 	public MessageService messageService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
