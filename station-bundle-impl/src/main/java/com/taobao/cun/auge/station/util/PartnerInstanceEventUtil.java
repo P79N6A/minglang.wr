@@ -6,6 +6,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
+import com.taobao.cun.auge.station.dto.StationDto;
 
 public final class PartnerInstanceEventUtil {
 	private PartnerInstanceEventUtil() {
@@ -34,5 +35,33 @@ public final class PartnerInstanceEventUtil {
 		event.copyOperatorDto(operatorDto);
 		
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT, event);
+	}
+	
+	public static String buildAddressInfo(StationDto oldStation,StationDto newStation){
+		StringBuffer sb = new StringBuffer();
+		sb.append(oldStation.getAddress().getProvinceDetail());
+		sb.append(" | ");
+		sb.append(oldStation.getAddress().getCityDetail());
+		sb.append(" | ");
+		sb.append(oldStation.getAddress().getCountyDetail());
+		sb.append(" | ");
+		sb.append(oldStation.getAddress().getTownDetail());
+		sb.append(" | ");
+		sb.append(oldStation.getAddress().getVillageDetail());
+		sb.append(" | ");
+		sb.append(oldStation.getAddress().getAddressDetail());
+		sb.append("====>");
+		sb.append(newStation.getAddress().getProvinceDetail());
+		sb.append(" | ");
+		sb.append(newStation.getAddress().getCityDetail());
+		sb.append(" | ");
+		sb.append(newStation.getAddress().getCountyDetail());
+		sb.append(" | ");
+		sb.append(newStation.getAddress().getTownDetail());
+		sb.append(" | ");
+		sb.append(newStation.getAddress().getVillageDetail());
+		sb.append(" | ");
+		sb.append(newStation.getAddress().getAddressDetail());
+		return sb.toString();
 	}
 }

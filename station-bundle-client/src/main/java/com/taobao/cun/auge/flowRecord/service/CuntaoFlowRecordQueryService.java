@@ -12,4 +12,6 @@ public interface CuntaoFlowRecordQueryService {
 	 * @return
 	 */
 	public PageDto<CuntaoFlowRecordDto> queryByPage(CuntaoFlowRecordPageCondition pageCondition);
+	
+	public void insertRecord(CuntaoFlowRecordDto record);
 }
