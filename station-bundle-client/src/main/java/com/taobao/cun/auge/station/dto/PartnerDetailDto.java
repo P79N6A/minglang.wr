@@ -16,6 +16,10 @@ public class PartnerDetailDto implements Serializable{
 	private String city;
 	private String town;
 	private String county;
+	private String countyCode;
+	private String townCode;
+	private String cityCode;
+	private String provinceCode;
 	private String addressDetail;
 	private Date gmtServiceBegin;
 	private String stationName;
@@ -29,6 +33,11 @@ public class PartnerDetailDto implements Serializable{
 	private Long stationId;
 	private String partnerType;
 	private Date birthday;
+	private String lng;
+	private String lat;
+	private String villageDetail;
+	private String isOnTown;
+	
 	public Date getBirthday() {
 		return birthday;
 	}
@@ -143,6 +152,52 @@ public class PartnerDetailDto implements Serializable{
 	public void setPartnerType(String partnerType) {
 		this.partnerType = partnerType;
 	}
-	
-	
+	public String getLng() {
+		return lng;
+	}
+	public void setLng(String lng) {
+		this.lng = lng;
+	}
+	public String getLat() {
+		return lat;
+	}
+	public void setLat(String lat) {
+		this.lat = lat;
+	}
+	public String getVillageDetail() {
+		return villageDetail;
+	}
+	public void setVillageDetail(String villageDetail) {
+		this.villageDetail = villageDetail;
+	}
+	public String getIsOnTown() {
+		return isOnTown;
+	}
+	public void setIsOnTown(String isOnTown) {
+		this.isOnTown = isOnTown;
+	}
+	public String getCountyCode() {
+		return countyCode;
+	}
+	public void setCountyCode(String countyCode) {
+		this.countyCode = countyCode;
+	}
+	public String getTownCode() {
+		return townCode;
+	}
+	public void setTownCode(String townCode) {
+		this.townCode = townCode;
+	}
+	public String getCityCode() {
+		return cityCode;
+	}
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+	public String getProvinceCode() {
+		return provinceCode;
+	}
+	public void setProvinceCode(String provinceCode) {
+		this.provinceCode = provinceCode;
+	}
 }
