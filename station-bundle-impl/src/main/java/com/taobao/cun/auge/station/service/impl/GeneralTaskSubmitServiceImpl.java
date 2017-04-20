@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
@@ -462,8 +463,12 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			mailDto.setMailAddress(batchMailDto.getMailAddresses());
 			
 			GeneralTaskDto task = new GeneralTaskDto();
-
-			task.setBusinessNo(String.valueOf(batchMailDto.getOperator()));
+			Map<String, String> contentMap = batchMailDto.getContentMap();
+			if (contentMap != null) {
+				task.setBusinessNo(String.valueOf(contentMap.get("station_id")));
+			} else {
+				task.setBusinessNo(String.valueOf(batchMailDto.getOperator()));
+			}
 			task.setBeanName("messageService");
 			task.setMethodName("sendMail");
 			task.setBusinessStepNo(1l);
