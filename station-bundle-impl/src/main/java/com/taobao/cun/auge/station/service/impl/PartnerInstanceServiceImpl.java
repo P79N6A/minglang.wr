@@ -2176,9 +2176,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			Map<String, String> contentMap = Maps.newHashMap();
 			contentMap.put("station_id", station.getId() + "");
 			contentMap.put("station_name", station.getName());
-			contentMap.put("type", station.getFeature().get("type"));
-			contentMap.put("description", station.getFeature().get("description"));
-			// TODO 模板参数拼装
+			if (station.getFeature() != null) {
+				contentMap.put("type", station.getFeature().get("type"));
+				contentMap.put("description", station.getFeature().get("description"));
+			}
+			
 			BatchMailDto mailDto = new BatchMailDto();
 			mailDto.setMailAddresses(addressUpdateNotifyMailList);
 			mailDto.setTemplateId(addressUpdateNotifyMailTemplateId);
