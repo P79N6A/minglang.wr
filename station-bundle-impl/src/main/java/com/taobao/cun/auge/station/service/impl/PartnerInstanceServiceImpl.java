@@ -2177,8 +2177,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			contentMap.put("station_id", station.getId() + "");
 			contentMap.put("station_name", station.getName());
 			if (station.getFeature() != null) {
-				contentMap.put("type", station.getFeature().get("type"));
-				contentMap.put("description", station.getFeature().get("description"));
+				contentMap.put("type", station.getFeature().get("st_fk_type"));
+				contentMap.put("description", station.getFeature().get("st_fk_desc"));
 			}
 			
 			BatchMailDto mailDto = new BatchMailDto();

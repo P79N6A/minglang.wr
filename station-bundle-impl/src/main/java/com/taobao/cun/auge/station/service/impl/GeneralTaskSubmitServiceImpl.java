@@ -459,6 +459,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			mailDto.setContent(batchMailDto.getTemplateId());
 			mailDto.setSourceId(batchMailDto.getSourceId());
 			mailDto.setMessageType(batchMailDto.getMessageTypeId());
+			mailDto.setTemplateId(batchMailDto.getTemplateId());
 			mailDto.setOperator(batchMailDto.getOperator());
 			mailDto.setMailAddress(batchMailDto.getMailAddresses());
 			
