@@ -36,6 +36,7 @@ public class PartnerDetailDto implements Serializable{
 	private String lng;
 	private String lat;
 	private String villageDetail;
+	private String villageCode;
 	private String isOnTown;
 	
 	public Date getBirthday() {
@@ -199,5 +200,11 @@ public class PartnerDetailDto implements Serializable{
 	}
 	public void setProvinceCode(String provinceCode) {
 		this.provinceCode = provinceCode;
+	}
+	public String getVillageCode() {
+		return villageCode;
+	}
+	public void setVillageCode(String villageCode) {
+		this.villageCode = villageCode;
 	}
 }

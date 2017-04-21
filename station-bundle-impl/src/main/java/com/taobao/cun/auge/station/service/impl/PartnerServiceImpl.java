@@ -109,6 +109,7 @@ public class PartnerServiceImpl implements PartnerService {
 		result.setLng(station.getLng());
 		result.setVillageDetail(station.getVillageDetail());
 		result.setIsOnTown(station.getIsOnTown());
+		result.setVillageCode(station.getVillage());
 		//县信息
 		CountyStation county=countyStationBO.getCountyStationByOrgId(station.getApplyOrg());
 		if(county==null){
