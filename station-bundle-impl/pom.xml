@@ -28,6 +28,10 @@
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>station-bundle-base</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
