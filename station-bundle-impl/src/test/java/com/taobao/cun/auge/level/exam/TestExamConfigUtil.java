@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.ali.com.google.common.collect.Lists;
-import com.taobao.cun.auge.dal.domain.AppResource;
+import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.CourseLevelInfo;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.ResourceValueUpdateResult;
@@ -72,7 +72,7 @@ public class TestExamConfigUtil {
     
     @Test
     public void testGroupLevelByCourseCode(){
-        Collection<AppResource> resourceList = generateAppResources();
+        Collection<AppResourceDto> resourceList = generateAppResources();
         Map<String, CourseLevelInfo> codeToLevelInfo =LevelCourseConfigUtil.groupLevelByCourseCode(resourceList);
         CourseLevelInfo code1Levels = codeToLevelInfo.get("1");
         Assert.assertNotNull(code1Levels);
@@ -98,27 +98,27 @@ public class TestExamConfigUtil {
         Assert.assertEquals("", codeStr);
     }
     
-    Collection<AppResource> generateAppResources(){
-        Collection<AppResource> resources = new ArrayList<AppResource>(4);
-        AppResource appResource = new AppResource();
+    Collection<AppResourceDto> generateAppResources(){
+        Collection<AppResourceDto> resources = new ArrayList<AppResourceDto>(4);
+        AppResourceDto appResource = new AppResourceDto();
         resources.add(appResource);
         appResource.setType(LevelCourseConfigUtil.getResourceType());
         appResource.setName(LevelCourseConfigUtil.getResourceKey("S5", LevelCourseTypeEnum.REQUIRED));
         appResource.setValue("1,2,3,4");
         
-        appResource = new AppResource();
+        appResource = new AppResourceDto();
         resources.add(appResource);
         appResource.setType(LevelCourseConfigUtil.getResourceType());
         appResource.setName(LevelCourseConfigUtil.getResourceKey("S5", LevelCourseTypeEnum.ELECTIVE));
         appResource.setValue("4,5");
         
-        appResource = new AppResource();
+        appResource = new AppResourceDto();
         resources.add(appResource);
         appResource.setType(LevelCourseConfigUtil.getResourceType());
         appResource.setName(LevelCourseConfigUtil.getResourceKey("S6", LevelCourseTypeEnum.REQUIRED));
         appResource.setValue("5,6,7");
         
-        appResource = new AppResource();
+        appResource = new AppResourceDto();
         resources.add(appResource);
         appResource.setType(LevelCourseConfigUtil.getResourceType());
         appResource.setName(LevelCourseConfigUtil.getResourceKey("S6", LevelCourseTypeEnum.ELECTIVE));

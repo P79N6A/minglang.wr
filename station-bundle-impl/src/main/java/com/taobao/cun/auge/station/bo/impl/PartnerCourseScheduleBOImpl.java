@@ -25,6 +25,7 @@ import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleExample;
@@ -33,7 +34,6 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleReflectMapper;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleReflectDto;
@@ -60,7 +60,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 	private String peixunClientKey;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	
 	@Autowired
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
@@ -170,7 +170,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 		List<PartnerCourseScheduleShowDto> result=new ArrayList<PartnerCourseScheduleShowDto>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat dateFm = new SimpleDateFormat("EEEE");
-		String onlineCourseUrl=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "ONLINE_COURSE_URL");
+		String onlineCourseUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_COURSE_URL");
 
 		for(PartnerCourseSchedule schedule:list){
 			String date=dateFormat.format(schedule.getGmtCourse());

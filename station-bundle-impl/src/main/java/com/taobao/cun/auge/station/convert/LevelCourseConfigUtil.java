@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.taobao.cun.auge.dal.domain.AppResource;
+import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 
 /**
@@ -96,13 +96,13 @@ public class LevelCourseConfigUtil {
         return s.substring(0, s.length() - 1);
     }
     
-    public static Map<String, CourseLevelInfo>  groupLevelByCourseCode(Collection<AppResource> resourceList){
+    public static Map<String, CourseLevelInfo>  groupLevelByCourseCode(Collection<AppResourceDto> resourceList){
         if(CollectionUtils.isEmpty(resourceList)){
             return Maps.newHashMap();
         }
         
         Map<String, CourseLevelInfo> codeToLevelInfoMap = Maps.newHashMap();
-        for(AppResource resource:resourceList){
+        for(AppResourceDto resource:resourceList){
             if(StringUtils.isNotBlank(resource.getValue()) && StringUtils.isNotBlank(resource.getName())){
                 Set<String> courseCodeSet = parseCourseCodeSet(resource.getValue());
                 for(String code:courseCodeSet){

@@ -14,10 +14,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Sets;
-import com.taobao.cun.auge.dal.domain.AppResource;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.LevelCourse;
 import com.taobao.cun.auge.dal.domain.LevelCourseExample;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.LevelCourseBO;
 import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil;
@@ -40,7 +40,7 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
     private LevelCourseBO courseBo;
     
     @Autowired
-    private AppResourceBO appResourceBo;
+    private AppResourceService appResourceService;
     
     /**
      * 新增一个晋升培训课程,目前不支持更新课程所以如果已存在则直接返回false;
@@ -103,7 +103,7 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
         example.setLimitEnd(200);
         
         List<LevelCourse> levelCourseList =  courseBo.queryLevelCourse(example);
-        Map<String, AppResource> resourceList = appResourceBo.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
+        Map<String, AppResourceDto> resourceList = appResourceService.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
         Map<String, CourseLevelInfo> courseLevelInfoMap = LevelCourseConfigUtil.groupLevelByCourseCode(resourceList.values());
         return LevelCourseConvertor.toCourseEditDto(levelCourseList, courseLevelInfoMap);
     }
@@ -112,16 +112,16 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
         if(CollectionUtils.isEmpty(levels)){
             return true;
         }
-        Map<String, AppResource> resourceMap = appResourceBo.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
+        Map<String, AppResourceDto> resourceMap = appResourceService.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
         for (String level : levels) {
             String key = LevelCourseConfigUtil.getResourceKey(level, type);
-            AppResource resource = resourceMap.get(key);
+            AppResourceDto resource = resourceMap.get(key);
             if (resource == null) {
-                appResourceBo.configAppResource(LevelCourseConfigUtil.getResourceType(), key, courseCode, false, "system");
+            	appResourceService.configAppResource(LevelCourseConfigUtil.getResourceType(), key, courseCode, false, "system");
             }else{
                 ResourceValueUpdateResult result = LevelCourseConfigUtil.addCourseCodeToResourceValue(courseCode, resource.getValue());
                 if(result.isModified()){
-                    appResourceBo.configAppResource(LevelCourseConfigUtil.getResourceType(), key, result.getUpdatedResourceValue(), false, "system");
+                	appResourceService.configAppResource(LevelCourseConfigUtil.getResourceType(), key, result.getUpdatedResourceValue(), false, "system");
                 }
             }
         }
@@ -129,7 +129,7 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
     }
     
     private Set<String> getCourseCodeList(String level, LevelCourseTypeEnum type) {
-        AppResource resource = appResourceBo.queryAppResource(LevelCourseConfigUtil.getResourceType(), LevelCourseConfigUtil.getResourceKey(level, type));
+    	AppResourceDto resource = appResourceService.queryAppResource(LevelCourseConfigUtil.getResourceType(), LevelCourseConfigUtil.getResourceKey(level, type));
         if(resource==null || StringUtils.isBlank(resource.getValue())){
             return Sets.newHashSet();
         }
@@ -137,11 +137,11 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
     }
     
     private boolean removeLevelCourseCode(String courseCode) {
-        Map<String, AppResource> resourceMap = appResourceBo.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
-        for(AppResource resource:resourceMap.values()){
+        Map<String, AppResourceDto> resourceMap = appResourceService.queryAppResourceMap(LevelCourseConfigUtil.getResourceType());
+        for(AppResourceDto resource:resourceMap.values()){
             ResourceValueUpdateResult result = LevelCourseConfigUtil.removeCourseCodeFrom(courseCode, resource.getValue());
             if(result.isModified()){
-                appResourceBo.configAppResource(LevelCourseConfigUtil.getResourceType(), resource.getName(), result.getUpdatedResourceValue(), false, "system");
+            	appResourceService.configAppResource(LevelCourseConfigUtil.getResourceType(), resource.getName(), result.getUpdatedResourceValue(), false, "system");
             }
         }
         return true;
