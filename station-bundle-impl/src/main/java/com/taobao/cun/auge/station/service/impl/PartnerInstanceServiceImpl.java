@@ -2176,7 +2176,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	
 	private void sendMail(StationDto station) {
 		try {
-			Map<String, String> contentMap = Maps.newHashMap();
+			Map<String, Object> contentMap = Maps.newHashMap();
 			contentMap.put("station_id", station.getId() + "");
 			contentMap.put("station_name", station.getName());
 			if (station.getFeature() != null) {
