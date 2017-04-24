@@ -83,11 +83,12 @@ public class AssetBOImpl implements AssetBO {
 		if(CollectionUtils.isNotEmpty(cuntaoAssetQueryCondition.getStates())){
 			cri.andStatusIn(cuntaoAssetQueryCondition.getStates());
 		}
-		
 		if(CollectionUtils.isNotEmpty(cuntaoAssetQueryCondition.getNoStates())){
 			cri.andStatusNotIn(cuntaoAssetQueryCondition.getStates());
 		}
-
+		if(StringUtils.isNotEmpty(cuntaoAssetQueryCondition.getRole())){
+			cri.andOperatorRoleEqualTo(cuntaoAssetQueryCondition.getRole());
+		}
 		if(StringUtils.isNotEmpty(cuntaoAssetQueryCondition.getAliNo())){
 			cri.andAliNoEqualTo(cuntaoAssetQueryCondition.getAliNo());
 		}
