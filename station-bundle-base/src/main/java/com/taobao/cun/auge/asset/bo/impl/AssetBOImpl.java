@@ -119,7 +119,7 @@ public class AssetBOImpl implements AssetBO {
 		if(Objects.nonNull(cuntaoAssetQueryCondition.getStationId())){
 			cri.andNewStationIdEqualTo(cuntaoAssetQueryCondition.getStationId());
 		}
-		
+		cri.andIsDeletedEqualTo("n");
 		if(cuntaoAssetQueryCondition.getOrgId() != null){
 			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(cuntaoAssetQueryCondition.getOrgId());
 			if(cuntaoOrgDto!=null){
@@ -228,6 +228,7 @@ public class AssetBOImpl implements AssetBO {
 				example.setFullIdPath(cuntaoOrgDto.getFullIdPath());
 			}
 		}
+		cri.andIsDeletedEqualTo("n");
 		Page<String> page =  (Page<String>)cuntaoAssetExtMapper.selectBoNoByExample(example);
 		PageDto<String> result = PageDtoHelper.of(page);
 		return result;
