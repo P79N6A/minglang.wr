@@ -101,6 +101,15 @@ public class PartnerServiceImpl implements PartnerService {
 		result.setStationId(station.getId());
 		result.setStationName(station.getName());
 		result.setTown(station.getTownDetail());
+		result.setProvinceCode(station.getProvince());
+		result.setCityCode(station.getCity());
+		result.setCountyCode(station.getCounty());
+		result.setTownCode(station.getTown());
+		result.setLat(station.getLat());
+		result.setLng(station.getLng());
+		result.setVillageDetail(station.getVillageDetail());
+		result.setIsOnTown(station.getIsOnTown());
+		result.setVillageCode(station.getVillage());
 		//县信息
 		CountyStation county=countyStationBO.getCountyStationByOrgId(station.getApplyOrg());
 		if(county==null){
