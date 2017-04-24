@@ -10,6 +10,7 @@ import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -62,6 +63,7 @@ public class StationConverter {
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
 		stationDto.setAddress(address);
 		stationDto.setFeature(FeatureUtil.toMap(station.getFeature()));
+		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(station.getIsOnTown()));
 		return stationDto;
 	}
 
@@ -70,19 +72,19 @@ public class StationConverter {
 
 		Address address = stationDto.getAddress();
 		if (address != null) {
-			station.setProvince(address.getProvince());
-			station.setProvinceDetail(address.getProvinceDetail());
-			station.setCity(address.getCity());
-			station.setCityDetail(address.getCityDetail());
-			station.setCounty(address.getCounty());
-			station.setCountyDetail(address.getCountyDetail());
-			station.setTown(address.getTown());
-			station.setTownDetail(address.getTownDetail());
-			station.setVillage(address.getVillage());
-			station.setVillageDetail(address.getVillageDetail());
-			station.setAddress(address.getAddressDetail());
-			station.setLat(address.getLat());
-			station.setLng(address.getLng());
+			station.setProvince("".equals(address.getProvince()) ? null : address.getProvince());
+			station.setProvinceDetail("".equals(address.getProvinceDetail()) ? null : address.getProvinceDetail());
+			station.setCity("".equals(address.getCity()) ? null : address.getCity());
+			station.setCityDetail("".equals(address.getCityDetail()) ? null :address.getCityDetail());
+			station.setCounty("".equals(address.getCounty())? null :address.getCounty());
+			station.setCountyDetail("".equals(address.getCountyDetail())? null :address.getCountyDetail());
+			station.setTown("".equals(address.getTown())? null :address.getTown());
+			station.setTownDetail("".equals(address.getTownDetail())? null :address.getTownDetail());
+			station.setVillage("".equals(address.getVillage())? null :address.getVillage());
+			station.setVillageDetail("".equals(address.getVillageDetail())? null :address.getVillageDetail());
+			station.setAddress("".equals(address.getAddressDetail())? null :address.getAddressDetail());
+			station.setLat("".equals(address.getLat())? null :address.getLat());
+			station.setLng("".equals(address.getLng())? null :address.getLng());
 		}
 		station.setApplyOrg(stationDto.getApplyOrg());
 		station.setAreaType(stationDto.getAreaType()==null? null:stationDto.getAreaType().getCode());
@@ -105,6 +107,8 @@ public class StationConverter {
 		station.setTaobaoNick(stationDto.getTaobaoNick());
 		station.setTaobaoUserId(stationDto.getTaobaoUserId());
 		station.setAlipayAccount(stationDto.getAlipayAccount());
+		station.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null
+				: stationDto.getPartnerInstanceIsOnTown().getCode());
 		return station;
 	}
 

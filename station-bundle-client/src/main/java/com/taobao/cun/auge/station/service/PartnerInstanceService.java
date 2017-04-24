@@ -18,6 +18,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
@@ -309,5 +310,12 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney) throws AugeServiceException;
+	
+	/**
+	 * 更新服务站地址
+	 * @param taobaoUserId
+	 * @throws AugeServiceException
+	 */
+	public void updateStationAddress(Long taobaoUserId,StationDto station,boolean isSendMail) throws AugeServiceException;
 	
 }
