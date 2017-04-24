@@ -13,7 +13,7 @@ public class BatchMailDto {
 	
 	private String messageTypeId;
 	
-	private Map<String, String> contentMap;
+	private Map<String, Object> contentMap;
 	
 	private String operator;
 
@@ -33,11 +33,11 @@ public class BatchMailDto {
 		this.templateId = templateId;
 	}
 
-	public Map<String, String> getContentMap() {
+	public Map<String, Object> getContentMap() {
 		return contentMap;
 	}
 
-	public void setContentMap(Map<String, String> contentMap) {
+	public void setContentMap(Map<String, Object> contentMap) {
 		this.contentMap = contentMap;
 	}
 

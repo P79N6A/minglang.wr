@@ -462,9 +462,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			mailDto.setTemplateId(batchMailDto.getTemplateId());
 			mailDto.setOperator(batchMailDto.getOperator());
 			mailDto.setMailAddress(batchMailDto.getMailAddresses());
+			mailDto.setContentMap(batchMailDto.getContentMap());
 			
 			GeneralTaskDto task = new GeneralTaskDto();
-			Map<String, String> contentMap = batchMailDto.getContentMap();
+			Map<String, Object> contentMap = batchMailDto.getContentMap();
 			if (contentMap != null) {
 				task.setBusinessNo(String.valueOf(contentMap.get("station_id")));
 			} else {
