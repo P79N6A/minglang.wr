@@ -69,7 +69,8 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			record.setOperateTime(recordDto.getOperateTime());
 			record.setNodeTitle(recordDto.getNodeTitle());
 			record.setTargetId(recordDto.getTargetId());
-			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+			record.setTargetType("santong-dzwl");
+			record.setOperateOpinion(recordDto.getOperateOpinion());
 			record.setRemarks(recordDto.getRemarks());
 			cuntaoFlowRecordMapper.insertSelective(record);
 		} catch (Exception e) {

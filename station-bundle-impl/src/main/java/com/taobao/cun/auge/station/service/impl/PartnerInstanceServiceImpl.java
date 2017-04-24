@@ -2164,6 +2164,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			record.setOperatorName(oldStation.getTaobaoNick());
 			record.setOperateTime(new Date());
 			record.setRemarks(PartnerInstanceEventUtil.buildAddressInfo(oldStation,newStation));
+			if (updateStation.getFeature() != null) {
+				record.setOperateOpinion(updateStation.getFeature().get("st_fk_type"));
+			}
 			cuntaoFlowRecordQueryService.insertRecord(record);
 			if(isSendMail){
 				sendMail(updateStation);
