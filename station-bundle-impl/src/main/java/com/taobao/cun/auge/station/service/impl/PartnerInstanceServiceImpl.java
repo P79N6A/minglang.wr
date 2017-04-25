@@ -12,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +26,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
+import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -252,17 +252,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	private FrozenMoneyAmountConfig frozenMoneyConfig;
 	
-	@Value("#{'${addressUpdateNotifyMailList}'.split(',')}")
-	private List<String> addressUpdateNotifyMailList;
-	
-	@Value("${addressUpdateNotifyMailTemplateId}")
-	private String addressUpdateNotifyMailTemplateId;
-	
-	@Value("${addressUpdateNotifyMailSourceId}")
-	private String addressUpdateNotifyMailSourceId;
-	
-	@Value("${addressUpdateNotifyMailMessageTypeId}")
-	private String addressUpdateNotifyMailMessageTypeId;
+	@Autowired
+	private MailConfiguredProperties mailConfiguredProperties;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -2185,15 +2176,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			}
 			
 			BatchMailDto mailDto = new BatchMailDto();
-			mailDto.setMailAddresses(addressUpdateNotifyMailList);
-			mailDto.setTemplateId(addressUpdateNotifyMailTemplateId);
-			mailDto.setMessageTypeId(addressUpdateNotifyMailMessageTypeId);
-			mailDto.setSourceId(addressUpdateNotifyMailSourceId);
+			mailDto.setMailAddresses(mailConfiguredProperties.getAddressUpdateNotifyMailList());
+			mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
+			mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
+			mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
 			mailDto.setOperator(station.getOperator());
 			mailDto.setContentMap(contentMap);
+			
 			generalTaskSubmitService.submitMailTask(mailDto);
 		} catch (Exception e) {
-			logger.error("updateStationAddress [sendMail] address = {}, {}", String.join(",",	 addressUpdateNotifyMailList), e);
+			logger.error("updateStationAddress [sendMail] address = {}, {}", String.join(",",	 mailConfiguredProperties.getAddressUpdateNotifyMailList()), e);
 			throw new AugeServiceException("updateStationAddress [sendMail] error: " + e.getMessage());
 		}
 	}
