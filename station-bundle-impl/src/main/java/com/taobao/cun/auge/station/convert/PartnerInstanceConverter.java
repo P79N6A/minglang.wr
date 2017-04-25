@@ -365,6 +365,10 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getOrgIdPath())) {
 			example.setOrgIdPath(condition.getOrgIdPath());
 		}
+		
+		if (StringUtil.isNotBlank(condition.getFullIdPath())) {
+			example.setFullIdPath(condition.getFullIdPath());
+		}
 
 		StationApplyStateEnum stationApplyState = condition.getStationApplyState();
 		if (null != stationApplyState) {
