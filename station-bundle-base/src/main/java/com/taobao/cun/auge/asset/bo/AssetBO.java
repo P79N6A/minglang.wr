@@ -10,7 +10,7 @@ import com.taobao.cun.auge.common.PageDto;
 public interface AssetBO {
 
 
-    public Long saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto);
+    public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto);
    
     public CuntaoAssetDto getCuntaoAssetById(Long cuntaoAssetId);
 

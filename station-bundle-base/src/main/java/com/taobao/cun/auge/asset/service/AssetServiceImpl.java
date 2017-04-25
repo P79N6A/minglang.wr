@@ -18,8 +18,8 @@ public class AssetServiceImpl implements AssetService{
 	private AssetBO assetBO;
 	
 	@Override
-	public Long saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
-		return assetBO.saveCuntaoAsset(cuntaoAssetDto);
+	public void saveAsset(CuntaoAssetDto cuntaoAssetDto) {
+		assetBO.saveCuntaoAsset(cuntaoAssetDto);
 	}
 
 	@Override

@@ -58,14 +58,19 @@ public class AssetBOImpl implements AssetBO {
 	
 	
 	@Override
-	public Long saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
+	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
 	
 		Assert.notNull(cuntaoAssetDto,"cuntaoAssetDto can not be null");
-		Long stationId = partnerInstanceQueryService.findStationIdByStationApplyId(Long.parseLong(cuntaoAssetDto.getStationId()));
-		Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(Long.valueOf(cuntaoAssetDto.getStationId()));
-		cuntaoAssetDto.setNewStationId(stationId);
-		cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
-		return Long.valueOf(cuntaoAssetMapper.insertSelective(convert2CuntaoAsset(cuntaoAssetDto)));
+		if(cuntaoAssetDto.getId() == null){
+			Long stationId = partnerInstanceQueryService.findStationIdByStationApplyId(Long.parseLong(cuntaoAssetDto.getStationId()));
+			Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(Long.valueOf(cuntaoAssetDto.getStationId()));
+			cuntaoAssetDto.setNewStationId(stationId);
+			cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
+			cuntaoAssetMapper.insertSelective(convert2CuntaoAsset(cuntaoAssetDto));
+		}else{
+			cuntaoAssetMapper.updateByPrimaryKeySelective(convert2CuntaoAsset(cuntaoAssetDto));
+		}
+		
 	}
 
 	@Override

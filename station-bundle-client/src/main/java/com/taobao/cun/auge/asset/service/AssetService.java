@@ -11,10 +11,10 @@ import com.taobao.cun.auge.common.PageDto;
  */
 public interface AssetService {
 
-	   public Long saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto);
+	   public void saveAsset(CuntaoAssetDto cuntaoAssetDto);
 
 	   public CuntaoAssetDto getCuntaoAssetById(Long cuntaoAssetId);
-
+	   
 	   public PageDto<CuntaoAssetDto> queryByPage(AssetQueryCondition cuntaoAssetQueryCondition);
 
 	   /**
