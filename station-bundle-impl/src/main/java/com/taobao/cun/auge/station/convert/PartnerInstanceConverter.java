@@ -441,8 +441,21 @@ public final class PartnerInstanceConverter {
 			}
 		}
 		
+		//手机端调用，会传instancestate
 		if (null != condition.getInstanceState()) {
 			example.setPartnerState(condition.getInstanceState().getCode());
+			if(PartnerInstanceStateEnum.SETTLING.equals(condition.getInstanceState())){
+				example.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING.getCode());
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			}
+			if(PartnerInstanceStateEnum.CLOSING.equals(condition.getInstanceState())){
+				example.setBusinessType(PartnerLifecycleBusinessTypeEnum.CLOSING.getCode());
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			}
+			if(PartnerInstanceStateEnum.QUITING.equals(condition.getInstanceState())){
+				example.setBusinessType(PartnerLifecycleBusinessTypeEnum.QUITING.getCode());
+				example.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode());
+			}
 		}
 		 
 		if (null != condition.getParentStationId()) {
