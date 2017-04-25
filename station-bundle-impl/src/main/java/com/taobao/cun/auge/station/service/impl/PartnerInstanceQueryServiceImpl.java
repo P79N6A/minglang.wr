@@ -22,6 +22,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
@@ -34,6 +35,7 @@ import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
+import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
@@ -144,6 +146,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	
 	@Autowired
 	PartnerInstanceHandler partnerInstanceHandler;
+	
+	@Autowired
+	CountyStationBO countyStationBO;
 
 	@Autowired
 	TairCache tairCache;
@@ -209,6 +214,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				StationDto stationDto = StationConverter.toStationDto(station);
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
+				
+			    CountyStation countyStation = countyStationBO.getCountyStationByOrgId(stationDto.getApplyOrg());
+		        stationDto.setCountyStationName(countyStation.getName());
 			}
 
 			if (null != condition.getNeedPartnerLevelInfo() && condition.getNeedPartnerLevelInfo()) {

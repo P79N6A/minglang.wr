@@ -6,6 +6,7 @@ public class PartnerInstanceExample implements Serializable {
 
 	private static final long serialVersionUID = 1232528817432543217L;
 
+	private String fullIdPath;
 	/**
 	 * 村点所属组织id path
 	 */
@@ -49,11 +50,11 @@ public class PartnerInstanceExample implements Serializable {
 
 	// 合伙人状态
 	private String partnerState;
-	
-	//合伙人级别
+
+	// 合伙人级别
 	private String partnerInstanceLevel;
-	
-	//是否是当前人
+
+	// 是否是当前人
 	private String isCurrent;
 
 	// ======生命週期========
@@ -104,16 +105,15 @@ public class PartnerInstanceExample implements Serializable {
 
 	// 系统操作操作符
 	private boolean systemOp;
-	
+
 	// ======培训和课程========
-	
-	//培训状态
+
+	// 培训状态
 	private String courseStatus;
-	
-	//课程状态
+
+	// 课程状态
 	private String decorateStatus;
-	
-	
+
 	public String getCourseStatus() {
 		return courseStatus;
 	}
@@ -385,4 +385,13 @@ public class PartnerInstanceExample implements Serializable {
 	public void setIsCurrent(String isCurrent) {
 		this.isCurrent = isCurrent;
 	}
+
+	public String getFullIdPath() {
+		return fullIdPath;
+	}
+
+	public void setFullIdPath(String fullIdPath) {
+		this.fullIdPath = fullIdPath;
+	}
+
 }
