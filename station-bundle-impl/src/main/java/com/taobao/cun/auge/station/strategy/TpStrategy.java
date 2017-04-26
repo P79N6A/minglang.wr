@@ -346,8 +346,25 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		PartnerStationRel preCurRel = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(preTaobaoUserId);
 		if (preCurRel == null) {//没有入驻其他服务站
 			partnerInstanceBO.updateIsCurrentByInstanceId(preInstanceId,PartnerInstanceIsCurrentEnum.Y);
+			//还原station信息为上一个合伙人信息
+			setStationToPre(preTaobaoUserId);
+			
 		}
 	}
+	
+    private void  setStationToPre(Long preTaobaoUserId) {
+    	PartnerInstanceDto psl = partnerInstanceQueryService.getActivePartnerInstance(preTaobaoUserId);
+    	if (psl != null) {
+    		PartnerDto pDto = psl.getPartnerDto();
+    		StationDto stationDto = psl.getStationDto();
+    		stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+    		stationDto.setTaobaoNick(pDto.getTaobaoNick());
+    		stationDto.setTaobaoUserId(pDto.getTaobaoUserId());
+    		stationDto.setState(StationStateEnum.NORMAL);
+    		stationDto.setAlipayAccount(pDto.getAlipayAccount());
+    		stationBO.updateStation(stationDto);
+    	}
+    }
 
 	private boolean isBondHasFrozen(Long id) {
 		AccountMoneyDto accountMoneyDto = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
