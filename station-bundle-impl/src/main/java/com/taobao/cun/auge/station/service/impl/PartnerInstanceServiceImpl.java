@@ -1811,6 +1811,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
 		partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
 		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
+		//防止有垃圾数据 导致  staiton实体信息 不一致，更新成  当前人的信息
+		StationDto stationDto = new StationDto();
+		stationDto.setId(psl.getStationId());
+		stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+    	stationDto.setState(StationStateEnum.NORMAL);
+    	Partner p = partnerBO.getPartnerById(psl.getPartnerId());
+		stationDto.setTaobaoNick(p.getTaobaoNick());
+		stationDto.setTaobaoUserId(p.getTaobaoUserId());
+		stationDto.setAlipayAccount(p.getAlipayAccount());
+		stationBO.updateStation(stationDto);
+		
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 		generalTaskSubmitService.submitCloseToServiceTask(instanceId, psl.getTaobaoUserId(),PartnerInstanceTypeEnum.valueof(psl.getType()), operator);
