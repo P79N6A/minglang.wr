@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.masterdata.client.service.Employee360Service;
@@ -28,6 +30,9 @@ import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
+import com.taobao.cun.auge.event.AssetChangeEvent;
+import com.taobao.cun.auge.event.EventConstant;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -58,7 +63,8 @@ public class AssetBOImpl implements AssetBO {
 	
 	
 	@Override
-	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
 	
 		Assert.notNull(cuntaoAssetDto,"cuntaoAssetDto can not be null");
 		if(cuntaoAssetDto.getId() == null){
@@ -66,11 +72,31 @@ public class AssetBOImpl implements AssetBO {
 			Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(Long.valueOf(cuntaoAssetDto.getStationId()));
 			cuntaoAssetDto.setNewStationId(stationId);
 			cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
-			cuntaoAssetMapper.insertSelective(convert2CuntaoAsset(cuntaoAssetDto));
+			CuntaoAsset asset = convert2CuntaoAsset(cuntaoAssetDto);
+			cuntaoAssetMapper.insertSelective(asset);
 		}else{
 			cuntaoAssetMapper.updateByPrimaryKeySelective(convert2CuntaoAsset(cuntaoAssetDto));
+			if (CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAssetDto.getStatus())){
+				AssetChangeEvent event = new AssetChangeEvent();
+				event.setAssetId(cuntaoAssetDto.getId());
+				event.setOperateTime(new Date());
+				event.setDescription(CuntaoAssetEnum.STATION_SIGN.getDesc());
+				event.setType(ASSET_SIGN);
+				event.setOperatorId(operator);
+				event.setOperator(operator);
+				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
+			}
+			if (CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAssetDto.getCheckStatus())){
+				AssetChangeEvent event = new AssetChangeEvent();
+				event.setAssetId(cuntaoAssetDto.getId());
+				event.setOperateTime(new Date());
+				event.setDescription(CuntaoAssetEnum.CHECKED.getDesc());
+				event.setType(ASSET_CHECK);
+				event.setOperatorId(operator);
+				event.setOperator(operator);
+				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
+			}
 		}
-		
 	}
 
 	@Override

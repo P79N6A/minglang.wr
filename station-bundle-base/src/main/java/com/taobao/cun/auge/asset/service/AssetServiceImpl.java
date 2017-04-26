@@ -18,8 +18,8 @@ public class AssetServiceImpl implements AssetService{
 	private AssetBO assetBO;
 	
 	@Override
-	public void saveAsset(CuntaoAssetDto cuntaoAssetDto) {
-		assetBO.saveCuntaoAsset(cuntaoAssetDto);
+	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
+		assetBO.saveCuntaoAsset(cuntaoAssetDto,operator);
 	}
 
 	@Override

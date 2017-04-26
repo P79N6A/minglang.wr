@@ -49,6 +49,10 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>hr.masterdata.client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>event-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
