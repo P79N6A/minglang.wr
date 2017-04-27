@@ -16,9 +16,6 @@ public interface AssetBO {
 
     public PageDto<CuntaoAssetDto> queryByPage(AssetQueryCondition cuntaoAssetQueryCondition);
 
-    @Deprecated
-    public Integer updateCuntaoAsset(CuntaoAssetDto cuntaoAssetDto);
-    
     /**
      * 资产签收
      * @return

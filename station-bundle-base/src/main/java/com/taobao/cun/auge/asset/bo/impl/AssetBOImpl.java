@@ -77,26 +77,25 @@ public class AssetBOImpl implements AssetBO {
 		}else{
 			cuntaoAssetMapper.updateByPrimaryKeySelective(convert2CuntaoAsset(cuntaoAssetDto));
 			if (CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAssetDto.getStatus())){
-				AssetChangeEvent event = new AssetChangeEvent();
-				event.setAssetId(cuntaoAssetDto.getId());
-				event.setOperateTime(new Date());
-				event.setDescription(CuntaoAssetEnum.STATION_SIGN.getDesc());
-				event.setType(ASSET_SIGN);
-				event.setOperatorId(operator);
-				event.setOperator(operator);
+				AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(),ASSET_SIGN,operator,cuntaoAssetDto.getStatus());
 				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 			}
 			if (CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAssetDto.getCheckStatus())){
-				AssetChangeEvent event = new AssetChangeEvent();
-				event.setAssetId(cuntaoAssetDto.getId());
-				event.setOperateTime(new Date());
-				event.setDescription(CuntaoAssetEnum.CHECKED.getDesc());
-				event.setType(ASSET_CHECK);
-				event.setOperatorId(operator);
-				event.setOperator(operator);
+				AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(),ASSET_CHECK,operator,cuntaoAssetDto.getCheckStatus());
 				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 			}
 		}
+	}
+
+	private AssetChangeEvent buildAssetChangeEvent(Long assetId,String type,String operator,String desc) {
+		AssetChangeEvent event = new AssetChangeEvent();
+		event.setAssetId(assetId);
+		event.setOperateTime(new Date());
+		event.setDescription(desc);
+		event.setType(type);
+		event.setOperatorId(operator);
+		event.setOperator(operator);
+		return event;
 	}
 
 	@Override
@@ -166,17 +165,10 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 
-	@Override
-	//TODO do send recordEvent
-	public Integer updateCuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
-		Assert.notNull(cuntaoAssetDto.getId(),"asset_id can not  null");
-		Converter<CuntaoAssetDto,CuntaoAsset> converter = (source) -> this.convert2CuntaoAsset(source);
-		CuntaoAsset asset = converter.convert(cuntaoAssetDto);
-		return cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
-	}
+
 	
 	@Override
-	//TODO do send recordEvent
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void signAsset(Long assetId, String operator) {
 		Assert.notNull(assetId,"assetId can not be null");
 		Assert.notNull(operator,"operator can not be null");
@@ -190,10 +182,12 @@ public class AssetBOImpl implements AssetBO {
 		asset.setOperatorRole(CuntaoAssetEnum.PARTNER.getCode());
 		asset.setOperateTime(new Date());
 		cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
+		AssetChangeEvent event = buildAssetChangeEvent(assetId,ASSET_CHECK,operator,asset.getCheckStatus());
+		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 	}
 
 	@Override
-	//TODO do send recordEvent
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void checkAsset(Long assetId,String operator,CuntaoAssetEnum checkRole) {
 		Assert.notNull(assetId,"assetId can not be null");
 		Assert.notNull(operator,"operator can not be null");
@@ -206,11 +200,13 @@ public class AssetBOImpl implements AssetBO {
 		asset.setCheckOperator(operator);
 		asset.setCheckRole(checkRole.getCode());
 		cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
+		AssetChangeEvent event = buildAssetChangeEvent(assetId,ASSET_SIGN,operator,asset.getStatus());
+		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 	}
 	
 	
 	@Override
-	//TODO do send recordEvent
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void callbackAsset(Long assetId,String operator) {
 		Assert.notNull(assetId,"assetId can not be null");
 		Assert.notNull(operator,"operator can not be null");
@@ -222,6 +218,8 @@ public class AssetBOImpl implements AssetBO {
 		asset.setNewStationId(null);
 		asset.setPartnerInstanceId(null);
 		cuntaoAssetMapper.updateByPrimaryKey(asset);
+		AssetChangeEvent event = buildAssetChangeEvent(assetId,ASSET_SIGN,operator,asset.getStatus());
+		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 	}
 
 	@Override
