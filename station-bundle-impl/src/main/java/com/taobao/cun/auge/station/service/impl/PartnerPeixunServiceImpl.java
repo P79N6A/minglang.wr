@@ -3,9 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.station.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
 import com.taobao.common.category.util.StringUtil;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
@@ -21,7 +20,6 @@ import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
@@ -38,7 +36,6 @@ import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.springframework.util.CollectionUtils;
 
 /**
  * 
@@ -53,7 +50,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	PartnerPeixunBO partnerPeixunBO;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	
 	@Autowired
 	ExamInstanceService examInstanceService;
@@ -78,10 +75,10 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcess(Long userId,String courseType) {
 		Assert.notNull(userId);
-		String code=appResourceBO.queryAppValueNotAllowNull(courseType, "COURSE_CODE");
-		String examId=appResourceBO.queryAppResourceValue(courseType, "EXAM_ID");
-		String onlineCourseUrl=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "ONLINE_COURSE_URL");
-		String examUrl=appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "EXAM_URL");
+		String code=appResourceService.queryAppResourceValue(courseType, "COURSE_CODE");
+		String examId=appResourceService.queryAppResourceValue(courseType, "EXAM_ID");
+		String onlineCourseUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_COURSE_URL");
+		String examUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "EXAM_URL");
 		PartnerOnlinePeixunDto result=new PartnerOnlinePeixunDto();
 		result.setCourseUrl(onlineCourseUrl+code);
 		result.setTaobaoUserId(userId);
@@ -170,7 +167,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			result.setGmtOrderDesc(sdf.format(result.getGmtOrder()));
 		}
 		//组装下单地址
-		result.setCourseDetailUrl(appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
+		result.setCourseDetailUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
 		return result;
 	}
 	

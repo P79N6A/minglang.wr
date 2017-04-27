@@ -16,15 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.meeting.MeetingService;
 import com.taobao.cun.auge.meeting.bo.MeetingBO;
 import com.taobao.cun.auge.meeting.dto.MeetingAttempDto;
 import com.taobao.cun.auge.meeting.dto.MeetingDto;
 import com.taobao.cun.auge.meeting.dto.MeetingQueryCondition;
-import com.taobao.cun.auge.meeting.enums.MeetingAttempTypeEnum;
 import com.taobao.cun.auge.meeting.util.Client;
 import com.taobao.cun.auge.meeting.util.Constants;
 import com.taobao.cun.auge.meeting.util.HttpHeader;
@@ -32,10 +31,10 @@ import com.taobao.cun.auge.meeting.util.HttpSchema;
 import com.taobao.cun.auge.meeting.util.Method;
 import com.taobao.cun.auge.meeting.util.Request;
 import com.taobao.cun.auge.meeting.util.Response;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("meetingService")
 @HSFProvider(serviceInterface = MeetingService.class)
@@ -44,10 +43,10 @@ public class MeetingServiceImpl implements MeetingService {
 	private static final Logger logger = LoggerFactory.getLogger(MeetingService.class);
 
 	@Autowired
-	PartnerInstanceBO partnerInstanceBO;
+	PartnerInstanceQueryService partnerInstanceQueryService;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 
 	@Autowired
 	MeetingBO meetingBO;
@@ -112,18 +111,18 @@ public class MeetingServiceImpl implements MeetingService {
 		//目前只有村小二会议，
 		//验证参与者是否都是服务中或者装修中的村小二
 		List<Long> userIds=new ArrayList<Long>();
-		List<String> instanceType=new ArrayList<String>();
-		List<String> states=new ArrayList<String>();
+		List<PartnerInstanceTypeEnum> instanceType=new ArrayList<PartnerInstanceTypeEnum>();
+		List<PartnerInstanceStateEnum> states=new ArrayList<PartnerInstanceStateEnum>();
 		for(MeetingAttempDto dto:meeting.getMeetingAttemps()){
 			userIds.add(new Long(dto.getAttemperId()));
 		}
-		instanceType.add(MeetingAttempTypeEnum.TP.getCode());
-		states.add(PartnerInstanceStateEnum.DECORATING.getCode());
-		states.add(PartnerInstanceStateEnum.SERVICING.getCode());
-		states.add(PartnerInstanceStateEnum.CLOSING.getCode());
-		List<PartnerStationRel> rels=partnerInstanceBO.getBatchActivePartnerInstance(userIds, instanceType, states);
+		instanceType.add(PartnerInstanceTypeEnum.TP);
+		states.add(PartnerInstanceStateEnum.DECORATING);
+		states.add(PartnerInstanceStateEnum.SERVICING);
+		states.add(PartnerInstanceStateEnum.CLOSING);
+		List<PartnerInstanceDto> rels=partnerInstanceQueryService.getBatchActivePartnerInstance(userIds, instanceType, states);
 		l1:for(MeetingAttempDto dto:meeting.getMeetingAttemps()){
-			for(PartnerStationRel rel:rels){
+			for(PartnerInstanceDto rel:rels){
 				if(rel.getTaobaoUserId().compareTo(new Long(dto.getAttemperId()))==0){
 					continue l1;
 				}
@@ -133,11 +132,11 @@ public class MeetingServiceImpl implements MeetingService {
 	}
 
 	private Map createRemoteMeeting(String title) {
-		String path=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","path");
-        String appId=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appId");
-        String appKey=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","appKey");
-		String host=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","host");
-		String schema=appResourceBO.queryAppValueNotAllowNull("PARTNER_MEETING","schema");
+		String path=appResourceService.queryAppResourceValue("PARTNER_MEETING","path");
+        String appId=appResourceService.queryAppResourceValue("PARTNER_MEETING","appId");
+        String appKey=appResourceService.queryAppResourceValue("PARTNER_MEETING","appKey");
+		String host=appResourceService.queryAppResourceValue("PARTNER_MEETING","host");
+		String schema=appResourceService.queryAppResourceValue("PARTNER_MEETING","schema");
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(HttpHeader.HTTP_HEADER_ACCEPT, "application/json");
 		List<String> CUSTOM_HEADERS_TO_SIGN_PREFIX = new ArrayList<String>();

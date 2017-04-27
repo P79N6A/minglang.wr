@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
+import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -52,6 +53,14 @@ public interface GeneralTaskSubmitService {
 	 * @param content
 	 */
 	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content);
+	
+	/**
+	 * 发送邮件
+	 * @param mailAddresses
+	 * @param operatorId
+	 * @param content
+	 */
+	void submitMailTask(BatchMailDto batchMailDto);
 	
 	/**
 	 * 打标

@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
@@ -37,7 +37,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     private static final Logger logger = LoggerFactory.getLogger(LevelExamQueryServiceImpl.class);
 
     @Autowired
-    private AppResourceBO appResourceBO;
+    private AppResourceService appResourceService;
     
     @Autowired
     ExamUserDispatchService  examUserDispatchService;
@@ -75,7 +75,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     }
     
     public boolean isOpenEvaluateCheckExamPass() {
-        String isEvaluate = appResourceBO.queryAppResourceValue(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH);
+        String isEvaluate = appResourceService.queryAppResourceValue(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH);
         if(StringUtils.isNotBlank(isEvaluate)){
             return Boolean.parseBoolean(isEvaluate);
         }

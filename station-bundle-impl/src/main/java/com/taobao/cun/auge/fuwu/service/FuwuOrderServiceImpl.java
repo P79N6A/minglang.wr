@@ -20,11 +20,11 @@ import com.ali.dowjones.service.portal.OrderPortalService;
 import com.ali.dowjones.service.portal.ShoppingCartPortalService;
 import com.ali.dowjones.service.result.ResultModel;
 import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.PayParam;
 import com.taobao.cun.auge.common.utils.PayUtil;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 /**
@@ -43,7 +43,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	@Autowired
 	ShoppingCartPortalService shoppingCartPortalService;
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	@Autowired
 	OrderItemFacade orderItemFacade;
 	
@@ -145,15 +145,15 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		PayParam param = new PayParam();
 		param.setAliId(aliId);
 		param.setItemNum(itemNum);
-		param.setSite(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+		param.setSite(appResourceService.queryAppResourceValue("NASDAQ_PAY",
 				"SYSTEM"));
-		param.setKey(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+		param.setKey(appResourceService.queryAppResourceValue("NASDAQ_PAY",
 				"KEY"));
-		param.setGetway(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+		param.setGetway(appResourceService.queryAppResourceValue("NASDAQ_PAY",
 				"URL"));
-		param.setSystem(appResourceBO.queryAppValueNotAllowNull("NASDAQ_PAY",
+		param.setSystem(appResourceService.queryAppResourceValue("NASDAQ_PAY",
 				"SYSTEM"));
-		param.setReturnUrl(appResourceBO.queryAppValueNotAllowNull(
+		param.setReturnUrl(appResourceService.queryAppResourceValue(
 				"NASDAQ_PAY", "RETURN_URL"));
 		return PayUtil.createUrl(param);
 	}

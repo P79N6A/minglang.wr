@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
@@ -19,6 +21,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
+import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.dto.SmsSendDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -31,6 +34,7 @@ import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
+import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.DegradePartnerInstanceSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
@@ -443,6 +447,48 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		}
 	}
 	
+	@Override
+	public void submitMailTask(BatchMailDto batchMailDto) {
+		if (CollectionUtils.isEmpty(batchMailDto.getMailAddresses())) {
+			logger.error("邮件地址为空");
+			return;
+		}
+		try {
+			MailSendDto mailDto = new MailSendDto();
+
+			mailDto.setContent(batchMailDto.getTemplateId());
+			mailDto.setSourceId(batchMailDto.getSourceId());
+			mailDto.setMessageType(batchMailDto.getMessageTypeId());
+			mailDto.setTemplateId(batchMailDto.getTemplateId());
+			mailDto.setOperator(batchMailDto.getOperator());
+			mailDto.setMailAddress(batchMailDto.getMailAddresses());
+			mailDto.setContentMap(batchMailDto.getContentMap());
+			
+			GeneralTaskDto task = new GeneralTaskDto();
+			Map<String, Object> contentMap = batchMailDto.getContentMap();
+			if (contentMap != null) {
+				task.setBusinessNo(String.valueOf(contentMap.get("station_id")));
+			} else {
+				task.setBusinessNo(String.valueOf(batchMailDto.getOperator()));
+			}
+			task.setBeanName("messageService");
+			task.setMethodName("sendMail");
+			task.setBusinessStepNo(1l);
+			task.setBusinessType(TaskBusinessTypeEnum.MAIL.getCode());
+			task.setBusinessStepDesc("发邮件");
+			task.setOperator(batchMailDto.getOperator());
+			task.setParameterType(MailSendDto.class.getName());
+			task.setParameter(JSON.toJSONString(mailDto));
+			taskSubmitService.submitTask(task);
+			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
+		} catch (Exception e) {
+			String msg = TASK_SUBMIT_ERROR_MSG + " [submitMailTask] address=" + String.join(",", batchMailDto.getMailAddresses()) + " operator = " + batchMailDto.getOperator() + " templateId = "
+					+ batchMailDto.getTemplateId();
+			logger.error(msg, e);
+			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
+		}
+	}
+
 	@Override
 	public void submitAddUserTagTasks(Long instanceId,String operator) {
 		try {

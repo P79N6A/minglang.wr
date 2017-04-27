@@ -26,7 +26,6 @@ import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -95,9 +94,6 @@ public class ProcessProcessor {
 	StationService stationService;
 	
 	@Autowired
-	AppResourceBO appResourceBO;
-
-	@Autowired
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 	
 	@Autowired
@@ -162,7 +158,9 @@ public class ProcessProcessor {
 			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
 				handleFlowerNameApply(objectId,resultCode);
 			}else if (ProcessBusinessEnum.incentiveProgramAudit.getCode().equals(businessCode)) {
-				incentiveAuditFlowService.processFinishAuditMessage(businessId, ProcessApproveResultEnum.valueof(resultCode));
+				String financeRemarks = ob.getString("financeRemarks");
+				String processInstanceId = ob.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
+				incentiveAuditFlowService.processFinishAuditMessage(processInstanceId, businessId, ProcessApproveResultEnum.valueof(resultCode), financeRemarks);
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
@@ -192,35 +190,6 @@ public class ProcessProcessor {
 				levelAuditFlowService.afterStartApproveProcessSuccess(ob);
 			}
 		}
-	}
-
-	private boolean isSmyProcess(String businessCode){
-		return ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)
-
-				|| ProcessBusinessCodeEnum.audioHomePage.name().equals(businessCode)
-
-				|| ProcessBusinessCodeEnum.partnerNoticeHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerNoticeCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaCunmiHomePage.name().equals(businessCode)
-
-				|| ProcessBusinessCodeEnum.partnerProjectHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaCunmiHomePage.name().equals(businessCode)
-
-				|| ProcessBusinessCodeEnum.partnerTrainingHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaCunmiHomePage.name().equals(businessCode);
 	}
 	
 	// 停业、退出打印日志
@@ -341,11 +310,41 @@ public class ProcessProcessor {
 			throw e;
 		}
 	}
+	
+	private boolean isSmyProcess(String businessCode){
+		return ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)
+
+				|| ProcessBusinessCodeEnum.audioHomePage.name().equals(businessCode)
+
+				|| ProcessBusinessCodeEnum.partnerNoticeHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerNoticeCunmiHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerActivityHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerActivityCunmiHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaCunmiHomePage.name().equals(businessCode)
+
+				|| ProcessBusinessCodeEnum.partnerProjectHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerProjectCunmiHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaCunmiHomePage.name().equals(businessCode)
+
+				|| ProcessBusinessCodeEnum.partnerTrainingHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerTrainingCunmiHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaHomePage.name().equals(businessCode)
+				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaCunmiHomePage.name().equals(businessCode);
+	}
 
 	/**
 	 * 更新生命周期表，流程审批结果
 	 * 
 	 * @param instanceId
+	 * @param operator
 	 * @param approveResult
 	 */
 	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {

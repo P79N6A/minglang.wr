@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -21,7 +22,6 @@ import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
@@ -49,7 +49,7 @@ public class SmsListener implements EventListener {
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -98,7 +98,7 @@ public class SmsListener implements EventListener {
 			logger.info("没有找到钉钉模板.");
 			return;
 		}
-		String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
+		String content = appResourceService.queryAppResourceValue(SMS_SEND_TYPE, dingTalkType.getCode());
 
 		generalTaskSubmitService.submitSmsTask(taobaoUserId, mobile, operatorId, content);
 	}
@@ -130,7 +130,7 @@ public class SmsListener implements EventListener {
 				// tpa partner
 				Partner tpaPartner = partnerBO.getPartnerById(tpaInstance.getPartnerId());
 				
-				String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE_SMS_2_TP.getCode());
+				String content = appResourceService.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_AUTO_CLOSE_SMS_2_TP.getCode());
 				// 替换淘帮手姓名和减少淘帮手名额
 				content = String.format(content, tpaPartner.getName(),tpaGmvCheckConfiguration.getReduceTpaNum4AutoClose());
 				
@@ -236,7 +236,7 @@ public class SmsListener implements EventListener {
 			Partner tpaPartner = partnerBO.getPartnerById(tpaInstance.getPartnerId());
 
 			String operatorId = event.getOperator();
-			String content = appResourceBO.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
+			String content = appResourceService.queryAppResourceValue(SMS_SEND_TYPE,	DingtalkTemplateEnum.TPA_UPGRADE_2_TP.getCode());
 			//替换淘帮手姓名和奖励淘帮手名额
 			content = String.format(content, tpaPartner.getName(),	tpaGmvCheckConfiguration.getRewardTpaNum4TpaUpgrade());
 

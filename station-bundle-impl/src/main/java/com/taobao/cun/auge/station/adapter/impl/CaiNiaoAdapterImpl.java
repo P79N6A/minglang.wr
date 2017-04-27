@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
+import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
@@ -21,10 +23,13 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
+import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseListParam;
+import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseOption;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
+import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
@@ -48,7 +53,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private StationUserWriteService stationUserWriteService;
 	@Resource
 	private Emp360Adapter emp360Adapter;
-
+	@Resource
+	private WarehouseReadService warehouseReadService;
 
 	@Override
 	public Long addCounty(CaiNiaoStationDto station) throws AugeServiceException {
@@ -295,8 +301,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setTownId(Long.parseLong(stationAddress.getTown()));
 			}
 			
-			cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
-			cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
+			//cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
+			//cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
 			//cnStation.setAreaCode(addressMap.get("countyId"));
 			if (dto.getStationAddress() != null && StringUtil.isNotEmpty(dto.getStationAddress().getVillage())) {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
@@ -571,5 +577,14 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.error(error,e);
 			throw new AugeServiceException(error);
 	    }
+	}
+	
+	@Override
+	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException{
+		QueryWarehouseOption option = new QueryWarehouseOption();
+		QueryWarehouseListParam listParam = new QueryWarehouseListParam();
+		listParam.setOrgId(id);
+		Result<List<WarehouseDTO>> result = warehouseReadService.queryWareHouses(listParam, option);
+		return result.getData();
 	}
 }

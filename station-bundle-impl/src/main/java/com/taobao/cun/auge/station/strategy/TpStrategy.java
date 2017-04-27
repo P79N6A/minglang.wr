@@ -16,10 +16,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
-import com.taobao.cun.auge.dal.domain.AppResource;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -32,7 +33,6 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AppResourceBO;
 import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -133,7 +133,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	StationDecorateBO stationDecorateBO;
 
 	@Autowired
-	AppResourceBO appResourceBO;
+	AppResourceService appResourceService;
 	
 	@Autowired
 	PartnerAssetService partnerAssetService;
@@ -174,16 +174,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
 		// 生成启航班培训记录和成长营培训记录
 		partnerPeixunBO.initPeixunRecord(taobaoUserId,
-				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"APPLY_IN"));
 		partnerPeixunBO.initPeixunRecord(taobaoUserId,
-				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"UPGRADE"));
 		// 分发启航班试卷
 		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick,
-				appResourceBO.queryAppValueNotAllowNull(
+				appResourceService.queryAppResourceValue(
 						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));
 		// 生成装修记录
 		StationDecorateDto stationDecorateDto = new StationDecorateDto();
@@ -308,12 +308,12 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		stationDecorateBO.invalidStationDecorate(stationId);
 		//删除启航班培训记录和成长营培训记录
 		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
-				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"APPLY_IN"));
 		partnerPeixunBO.invalidPeixunRecord(rel.getTaobaoUserId(),
-				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceBO
-						.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceService
+						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 								"UPGRADE"));
 		Long partnerId = rel.getPartnerId();
 		Partner partner = partnerBO.getPartnerById(partnerId);
@@ -346,8 +346,25 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		PartnerStationRel preCurRel = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(preTaobaoUserId);
 		if (preCurRel == null) {//没有入驻其他服务站
 			partnerInstanceBO.updateIsCurrentByInstanceId(preInstanceId,PartnerInstanceIsCurrentEnum.Y);
+			//还原station信息为上一个合伙人信息
+			setStationToPre(preTaobaoUserId);
+			
 		}
 	}
+	
+    private void  setStationToPre(Long preTaobaoUserId) {
+    	PartnerInstanceDto psl = partnerInstanceQueryService.getActivePartnerInstance(preTaobaoUserId);
+    	if (psl != null) {
+    		PartnerDto pDto = psl.getPartnerDto();
+    		StationDto stationDto = psl.getStationDto();
+    		stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+    		stationDto.setTaobaoNick(pDto.getTaobaoNick());
+    		stationDto.setTaobaoUserId(pDto.getTaobaoUserId());
+    		stationDto.setState(StationStateEnum.NORMAL);
+    		stationDto.setAlipayAccount(pDto.getAlipayAccount());
+    		stationBO.updateStation(stationDto);
+    	}
+    }
 
 	private boolean isBondHasFrozen(Long id) {
 		AccountMoneyDto accountMoneyDto = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
@@ -497,7 +514,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	private Boolean containCountyOrgId(Long countyOrgId) {
 
 		if (countyOrgId != null) {
-			AppResource resource = appResourceBO.queryAppResource("gudian_county", "countyid");
+			AppResourceDto resource = appResourceService.queryAppResource("gudian_county", "countyid");
 			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
 				return countyIdList.contains(countyOrgId);
@@ -532,7 +549,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		//培训
 		PartnerCourseRecord record = partnerPeixunBO.queryOfflinePeixunRecord(
 				rel.getTaobaoUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
-				appResourceBO.queryAppValueNotAllowNull("PARTNER_PEIXUN_CODE",
+				appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 						"APPLY_IN"));
 		if(record!=null&&PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
 			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
