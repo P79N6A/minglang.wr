@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
+import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -42,6 +44,8 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
+import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
@@ -71,6 +75,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
+import com.taobao.cun.auge.station.dto.BatchMailDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -241,9 +246,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	@Autowired
 	private TestUserService testUserService;
 	
+	@Autowired
+	private CuntaoFlowRecordQueryService cuntaoFlowRecordQueryService;
 	
 	@Autowired
 	private FrozenMoneyAmountConfig frozenMoneyConfig;
+	
+	@Autowired
+	private MailConfiguredProperties mailConfiguredProperties;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -513,6 +523,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setProducts(sDto.getProducts());
 
 		stationDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
+		stationDto.setPartnerInstanceIsOnTown(sDto.getPartnerInstanceIsOnTown());
 		stationBO.updateStation(stationDto);
 
 		// 更新固点协议
@@ -1800,6 +1811,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
 		partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
 		stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
+		//防止有垃圾数据 导致  staiton实体信息 不一致，更新成  当前人的信息
+		StationDto stationDto = new StationDto();
+		stationDto.setId(psl.getStationId());
+		stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+    	stationDto.setState(StationStateEnum.NORMAL);
+    	Partner p = partnerBO.getPartnerById(psl.getPartnerId());
+		stationDto.setTaobaoNick(p.getTaobaoNick());
+		stationDto.setTaobaoUserId(p.getTaobaoUserId());
+		stationDto.setAlipayAccount(p.getAlipayAccount());
+		stationBO.updateStation(stationDto);
+		
 		// 同步station_apply
 		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 		generalTaskSubmitService.submitCloseToServiceTask(instanceId, psl.getTaobaoUserId(),PartnerInstanceTypeEnum.valueof(psl.getType()), operator);
@@ -2116,4 +2138,67 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 	}
+
+	/** 更新服务站地址信息*/
+	public void updateStationAddress(Long taobaoUserId, StationDto updateStation, boolean isSendMail)
+			throws AugeServiceException {
+		if(updateStation != null){
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(updateStation.getId());
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			StationDto oldStation = instance.getStationDto();
+			StationDto newStation = new StationDto();
+			newStation.setId(oldStation.getId());
+			newStation.setAddress(updateStation.getAddress());
+			newStation.setOperator(String.valueOf(taobaoUserId));
+			newStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			stationBO.updateStation(newStation);
+			// 同步菜鸟地址更新
+			if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
+				generalTaskSubmitService.submitUpdateCainiaoStation(instanceId, String.valueOf(taobaoUserId));
+			}
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+			// 日志
+			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
+			record.setTargetId(oldStation.getId());
+			record.setNodeTitle("村服务站地址信息变更");
+			record.setOperatorWorkid(String.valueOf(taobaoUserId));
+			record.setOperatorName(oldStation.getTaobaoNick());
+			record.setOperateTime(new Date());
+			record.setRemarks(PartnerInstanceEventUtil.buildAddressInfo(oldStation,newStation));
+			if (updateStation.getFeature() != null) {
+				record.setOperateOpinion(updateStation.getFeature().get("st_fk_type"));
+			}
+			cuntaoFlowRecordQueryService.insertRecord(record);
+			if(isSendMail){
+				sendMail(updateStation);
+			}
+		}
+	}
+	
+	private void sendMail(StationDto station) {
+		try {
+			Map<String, Object> contentMap = Maps.newHashMap();
+			contentMap.put("station_id", station.getId() + "");
+			contentMap.put("station_name", station.getName());
+			if (station.getFeature() != null) {
+				contentMap.put("type", station.getFeature().get("st_fk_type"));
+				contentMap.put("description", station.getFeature().get("st_fk_desc"));
+			}
+			
+			BatchMailDto mailDto = new BatchMailDto();
+			mailDto.setMailAddresses(mailConfiguredProperties.getAddressUpdateNotifyMailList());
+			mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
+			mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
+			mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
+			mailDto.setOperator(station.getOperator());
+			mailDto.setContentMap(contentMap);
+			
+			generalTaskSubmitService.submitMailTask(mailDto);
+		} catch (Exception e) {
+			logger.error("updateStationAddress [sendMail] address = {}, {}", String.join(",",	 mailConfiguredProperties.getAddressUpdateNotifyMailList()), e);
+			throw new AugeServiceException("updateStationAddress [sendMail] error: " + e.getMessage());
+		}
+	}
+	
 }

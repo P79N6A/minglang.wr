@@ -11,6 +11,9 @@ import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 public class PartnerInstancePageCondition extends PageQuery{
 
 	private static final long serialVersionUID = 2555611748293416838L;
+	
+	//老的组织idpath，只有手机端传，待周老师，组织改造完成后，再使用orgIdPath
+	private String fullIdPath;
 
 	// 村服务站所属村淘组织
 	private String orgIdPath;
@@ -166,5 +169,13 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	public void setInstanceState(PartnerInstanceStateEnum instanceState) {
 		this.instanceState = instanceState;
+	}
+
+	public String getFullIdPath() {
+		return fullIdPath;
+	}
+
+	public void setFullIdPath(String fullIdPath) {
+		this.fullIdPath = fullIdPath;
 	}
 }

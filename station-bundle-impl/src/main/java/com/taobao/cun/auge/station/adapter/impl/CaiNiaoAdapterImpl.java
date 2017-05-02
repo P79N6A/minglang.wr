@@ -301,8 +301,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setTownId(Long.parseLong(stationAddress.getTown()));
 			}
 			
-			cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
-			cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
+			//cnStation.setLat(StringUtil.isEmpty(stationAddress.getLat()) ? "0" : PositionUtil.converDown(stationAddress.getLat()));
+			//cnStation.setLng(StringUtil.isEmpty(stationAddress.getLng()) ? "0" : PositionUtil.converDown(stationAddress.getLng()));
 			//cnStation.setAreaCode(addressMap.get("countyId"));
 			if (dto.getStationAddress() != null && StringUtil.isNotEmpty(dto.getStationAddress().getVillage())) {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));

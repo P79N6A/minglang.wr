@@ -40,6 +40,7 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 		c2bBizScopeKeyWords = c2bBizScopeKeyWords.stream().filter(value -> value!=null).collect(Collectors.toList());
 		try {
 			String bizScope = (String)request.getContentByName("operateScope");
+			logger.info("CuntaoQualificationFormValidator validate param:" + bizScope);
 			if(StringUtils.isEmpty(bizScope)){
 				result.setCode(ResultCode.FORM_VALIDATE_FAIL.getCode());
 				result.setMessage("没有获取到经营范围");
@@ -51,9 +52,11 @@ public class CuntaoQualificationFormValidator implements FormValidator{
 			for (Iterator<String> iterator = c2bBizScopeKeyWords.iterator(); iterator.hasNext();) {
 				String keyword =  iterator.next();
 				if(bizScope.contains(keyword)){
+					logger.info("CuntaoQualificationFormValidator validate sucess, scope:" + bizScope);
 					return Result.result(ResultCode.SUCCESS);
 				}
 			}
+			logger.info("CuntaoQualificationFormValidator validate failed, scope:" + bizScope);
 		} catch (Exception e) {
 			logger.error("CuntaoQualificationFormValidator error!",e);
 			return Result.result(ResultCode.FORM_VALIDATE_EXECUTE_FAIL);

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
@@ -124,6 +125,11 @@ public class StationDto extends OperatorDto implements Serializable{
     private String taobaoNick;
     
     private Long taobaoUserId;
+
+    /**
+	 * 是否在镇上
+	 */
+	private PartnerInstanceIsOnTown partnerInstanceIsOnTown;
 
 	public Long getId() {
 		return id;
@@ -307,5 +313,14 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setCountyStationName(String countyStationName) {
 		this.countyStationName = countyStationName;
-	}	
+	}
+
+	public PartnerInstanceIsOnTown getPartnerInstanceIsOnTown() {
+		return partnerInstanceIsOnTown;
+	}
+
+	public void setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown partnerInstanceIsOnTown) {
+		this.partnerInstanceIsOnTown = partnerInstanceIsOnTown;
+	}
+	
 }
