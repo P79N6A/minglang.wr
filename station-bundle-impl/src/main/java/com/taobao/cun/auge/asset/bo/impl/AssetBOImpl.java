@@ -3,19 +3,18 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.alibaba.masterdata.client.service.Employee360Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -23,7 +22,7 @@ import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.common.helper.PageDtoHelper;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
@@ -35,6 +34,7 @@ import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 
@@ -59,7 +59,7 @@ public class AssetBOImpl implements AssetBO {
 	
 	
 	@Autowired
-	private Employee360Service employee360Service;
+	private Emp360Adapter emp360Adapter;
 	
 	
 	@Override
@@ -164,8 +164,8 @@ public class AssetBOImpl implements AssetBO {
 		}
 		example.setOrderByClause("a.id desc");
 		Page<CuntaoAsset> page =  (Page<CuntaoAsset>)cuntaoAssetExtMapper.selectByExample(example);
-		Converter<CuntaoAsset,CuntaoAssetDto> converter = (source) -> this.convert2CuntaoAssetDto(source);
-		PageDto<CuntaoAssetDto> result = PageDtoHelper.of(page,converter);
+		List<CuntaoAssetDto> targetList = page.getResult().stream().map(source -> convert2CuntaoAssetDto(source)).collect(Collectors.toList());
+		PageDto<CuntaoAssetDto> result = PageDtoUtil.success(page, targetList);
 		return result;
 	}
 
@@ -265,7 +265,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		cri.andIsDeletedEqualTo("n");
 		Page<String> page =  (Page<String>)cuntaoAssetExtMapper.selectBoNoByExample(example);
-		PageDto<String> result = PageDtoHelper.of(page);
+		PageDto<String> result = PageDtoUtil.success(page, page.getResult());
 		return result;
 	}
 

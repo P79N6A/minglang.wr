@@ -13,7 +13,6 @@
 	<modules>
 		<module>./station-bundle-impl</module>
 		<module>./station-bundle-client</module>
-		<module>./station-bundle-base</module>
 	</modules>
 
 	<properties>
@@ -161,11 +160,6 @@
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>station-bundle-client</artifactId>
 				<version>${ague.station.client.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.taobao.cun.module</groupId>
-				<artifactId>station-bundle-base</artifactId>
-				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
