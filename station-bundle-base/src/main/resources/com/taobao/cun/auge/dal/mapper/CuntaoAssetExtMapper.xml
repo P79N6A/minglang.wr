@@ -53,7 +53,7 @@
       <include refid="Example_Where_Clause" />
     </if>
     <if test="fullIdPath != null" >
-		<![CDATA[concat(o.temp_full_id_path,'/') like concat('${fullIdPath}','/%')]]>
+		AND <![CDATA[concat(o.temp_full_id_path,'/') like concat('${fullIdPath}','/%')]]>
 	 </if>
 	
     <if test="orderByClause != null" >
@@ -70,7 +70,7 @@
       <include refid="Example_Where_Clause" />
     </if>
     <if test="fullIdPath != null" >
-			<![CDATA[AND concat(o.temp_full_id_path,'/') like concat('${fullIdPath}','/%')]]>
+			AND <![CDATA[AND concat(o.temp_full_id_path,'/') like concat('${fullIdPath}','/%')]]>
 	 </if>
     <if test="orderByClause != null" >
       order by ${orderByClause}

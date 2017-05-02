@@ -40,6 +40,9 @@ public class AssetQueryCondition implements Serializable{
 	private List<String> noStates;
 	
 	private String fullIdPath;
+	
+	private Long partnerInstanceId;
+	
 
 	public String getAliNo() {
 		return aliNo;
@@ -160,6 +163,14 @@ public class AssetQueryCondition implements Serializable{
 
 	public void setNoStates(List<String> noStates) {
 		this.noStates = noStates;
+	}
+
+	public Long getPartnerInstanceId() {
+		return partnerInstanceId;
+	}
+
+	public void setPartnerInstanceId(Long partnerInstanceId) {
+		this.partnerInstanceId = partnerInstanceId;
 	}
 	
 	
