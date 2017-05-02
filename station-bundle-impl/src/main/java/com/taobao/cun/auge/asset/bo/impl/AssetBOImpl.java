@@ -35,8 +35,10 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.hsf.util.RequestCtxUtil;
 
 @Component
 public class AssetBOImpl implements AssetBO {
@@ -57,11 +59,11 @@ public class AssetBOImpl implements AssetBO {
 	
 	private static final String ASEET_CATEGORY_YUNOS = "云OS";
 	
-	
 	@Autowired
 	private Emp360Adapter emp360Adapter;
 	
-	
+	@Autowired
+	private UicReadAdapter uicReadAdapter;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -94,7 +96,15 @@ public class AssetBOImpl implements AssetBO {
 		event.setDescription(desc);
 		event.setType(type);
 		event.setOperatorId(operator);
-		event.setOperator(operator);
+		if("cuntaobops".equals(RequestCtxUtil.getAppNameOfClient())){
+			String operatorName = emp360Adapter.getName(operator);
+			event.setOperator(operatorName);
+		}else if("cuntaoadmin".equals(RequestCtxUtil.getAppNameOfClient())){
+			String taobaoNick = uicReadAdapter.getTaobaoNickByTaobaoUserId(Long.parseLong(operator));
+			event.setOperator(taobaoNick);
+		}else{
+			event.setOperator(operator);
+		}
 		return event;
 	}
 
