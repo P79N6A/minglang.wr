@@ -936,7 +936,7 @@
   	<if test="teamLeader != null and teamLeader != ''">,cuntao_user_org d,cuntao_org e</if>
 	where a.org_id=b.id and a.is_deleted='n' and b.org_range_type='county'
 	<if test="state != null and state != ''"> and a.manage_status=#{state} </if>
-	<if test="fullIdPaths != null and fullIdPaths.size()>0" ">
+	<if test="fullIdPaths != null and fullIdPaths.size()>0">
 		and(
 		<foreach collection="fullIdPaths" item="fullIdPath" separator=" or ">
 	  	CONCAT(b.temp_full_id_path,'/') like CONCAT(#{fullIdPath}, '/%') 
