@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,9 +207,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(stationAddress.getVillage()));
 			}
 			cnStation.setAddress(getAddress(stationAddress));
-			cnStation.setVillageName(stationAddress.getVillageDetail());
+			//cnStation.setVillageName(stationAddress.getVillageDetail());
 		}
-		//TODOxxxxxxxxxcnStation.setStationOpenTime(new Date());
+		cnStation.setStationOpenTime(new Date());
 		//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
 		return cnStation;
 	}
@@ -310,9 +311,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
 			}
 			cnStation.setAddress(getAddress(dto.getStationAddress()));
-			//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
 			//TODOxxxxxxxxxcnStation.setVillageName(dto.getStationAddress().getVillageDetail());
 		}
+		//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
 		return cnStation;
 	}
 
