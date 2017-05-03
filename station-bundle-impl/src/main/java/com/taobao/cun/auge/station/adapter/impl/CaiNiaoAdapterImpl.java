@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,6 +174,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		cnStation.setCtCode(dto.getStationNum());
 		FeatureDTO feature = new FeatureDTO();
 		feature.put(CaiNiaoAdapter.CUNTAO_CODE, dto.getStationNum());
+		
 		cnStation.setFeature(feature);
 		// cnStation.setId(id);
 		cnStation.setMobile(dto.getMobile());
@@ -206,8 +206,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(stationAddress.getVillage()));
 			}
 			cnStation.setAddress(getAddress(stationAddress));
+			cnStation.setVillageName(stationAddress.getVillageDetail());
 		}
-		cnStation.setStationOpenTime(new Date());
+		//TODOxxxxxxxxxcnStation.setStationOpenTime(new Date());
+		//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
 		return cnStation;
 	}
 
@@ -308,6 +310,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
 			}
 			cnStation.setAddress(getAddress(dto.getStationAddress()));
+			//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
+			//TODOxxxxxxxxxcnStation.setVillageName(dto.getStationAddress().getVillageDetail());
 		}
 		return cnStation;
 	}
