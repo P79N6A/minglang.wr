@@ -77,12 +77,13 @@ public class AssetBOImpl implements AssetBO {
 			CuntaoAsset asset = convert2CuntaoAsset(cuntaoAssetDto);
 			cuntaoAssetMapper.insertSelective(asset);
 		}else{
+			CuntaoAsset cuntaoAsset = cuntaoAssetMapper.selectByPrimaryKey(cuntaoAssetDto.getId());
 			cuntaoAssetMapper.updateByPrimaryKeySelective(convert2CuntaoAsset(cuntaoAssetDto));
-			if (CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAssetDto.getStatus())){
+			if (!CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAsset.getStatus())&&CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAssetDto.getStatus())){
 				AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(),ASSET_SIGN,operator,cuntaoAssetDto.getStatus());
 				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 			}
-			if (CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAssetDto.getCheckStatus())){
+			if (!CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAsset.getCheckStatus())&&CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAssetDto.getCheckStatus())){
 				AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(),ASSET_CHECK,operator,cuntaoAssetDto.getCheckStatus());
 				EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 			}
@@ -320,6 +321,7 @@ public class AssetBOImpl implements AssetBO {
 	
 	private CuntaoAsset convert2CuntaoAsset(CuntaoAssetDto cuntaoAssetDto) {
 		CuntaoAsset cuntaoAsset = new CuntaoAsset();
+		cuntaoAsset.setId(cuntaoAssetDto.getId());
 		cuntaoAsset.setModifier("system");
 		cuntaoAsset.setGmtModified(new Date());
 		cuntaoAsset.setIsDeleted("n");
