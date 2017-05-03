@@ -944,7 +944,7 @@
 	  	)
   	</if>
 	<if test="countyName != null and countyName != ''"> and a.name like CONCAT('%', #{countyName}, '%')  </if>
-	<if test="leaseProtocolEndTime != null and leaseProtocolEndTime != ''"><![CDATA[ and a.lease_protocol_end_time <= #{leaseProtocolEndTime}]]></if>
+	<if test="leaseProtocolEndTime != null"><![CDATA[ and a.lease_protocol_end_time <= #{leaseProtocolEndTime}]]></if>
 	<if test="countyOfficial != null and countyOfficial != ''"> and c.org_id=a.org_id and c.login_id = #{countyOfficial} and c.role='COUNTY_LEADER' and c.status='VALID' and c.is_deleted='n'</if>
   	<if test="teamLeader != null and teamLeader != ''"> and d.org_id=e.id and d.login_id = #{teamLeader} and d.role='TEAM_LEADER' and e.id=b.temp_parent_id and d.status='VALID' and d.is_deleted='n'</if>
   </sql>
