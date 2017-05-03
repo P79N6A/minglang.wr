@@ -58,6 +58,8 @@ public class CaiNiaoStationDto implements Serializable {
 	private Long tpTaobaoUserId;
 
 	private String applierId;
+	
+	private String isOnTown;
 
 
 	public String getStationName() {
@@ -187,6 +189,14 @@ public class CaiNiaoStationDto implements Serializable {
 
 	public void setApplierId(String applierId) {
 		this.applierId = applierId;
+	}
+
+	public String getIsOnTown() {
+		return isOnTown;
+	}
+
+	public void setIsOnTown(String isOnTown) {
+		this.isOnTown = isOnTown;
 	}
 
 }

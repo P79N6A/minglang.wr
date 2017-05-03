@@ -2151,6 +2151,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			newStation.setAddress(updateStation.getAddress());
 			newStation.setOperator(String.valueOf(taobaoUserId));
 			newStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			newStation.setPartnerInstanceIsOnTown(updateStation.getPartnerInstanceIsOnTown());
 			stationBO.updateStation(newStation);
 			// 同步菜鸟地址更新
 			if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
