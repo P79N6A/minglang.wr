@@ -2,7 +2,9 @@ package com.taobao.cun.auge.county;
 
 import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.settle.common.model.PagedResultModel;
 /**
@@ -76,4 +78,15 @@ public interface CountyService {
 	 */
 	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition);
 	
+	/**
+	 * 县点分页查询  原crius服务 迁移至auge
+	 * 查询参数：countyName 			- 县点名称
+	 * 			state				- 经营状态
+	 * 			countyOfficial		- 县负责人
+	 * 			teamLeader			- 特战队长
+	 * 			fullIdPath			- 组织的全路径
+	 * @param in
+	 * @return
+	 */
+	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
 }

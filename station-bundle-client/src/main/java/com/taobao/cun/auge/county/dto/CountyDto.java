@@ -46,7 +46,8 @@ public class CountyDto implements Serializable{
 	private String logisticsOperator;
 	private String logisticsPhone;
 	private Long specialTeamId;
-
+	private String operator;
+	private Date gmtStartOperation;
 	private List<StationManagerDto> managers;
 
 	private Date createTime;
@@ -78,6 +79,9 @@ public class CountyDto implements Serializable{
 	 * 租赁协议结束时间
 	 */
 	private Date leaseProtocolEndTime;
+	
+	private String leaseProtocolBeginTimeFormat;
+	private String leaseProtocolEndTimeFormat;
 	/**
 	 * 租赁类型
 	 */
@@ -106,6 +110,32 @@ public class CountyDto implements Serializable{
 	 * 仓储面积
 	 */
 	private String storageArea;
+
+	private AddressDto addressDto;
+	
+	public AddressDto getAddressDto() {
+		return addressDto;
+	}
+
+	public void setAddressDto(AddressDto addressDto) {
+		this.addressDto = addressDto;
+	}
+
+	public Date getGmtStartOperation() {
+		return gmtStartOperation;
+	}
+
+	public void setGmtStartOperation(Date gmtStartOperation) {
+		this.gmtStartOperation = gmtStartOperation;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 
 	public Long getId() {
 		return id;
@@ -513,6 +543,22 @@ public class CountyDto implements Serializable{
 
 	public void setStorageArea(String storageArea) {
 		this.storageArea = storageArea;
+	}
+
+	public String getLeaseProtocolBeginTimeFormat() {
+		return leaseProtocolBeginTimeFormat;
+	}
+
+	public void setLeaseProtocolBeginTimeFormat(String leaseProtocolBeginTimeFormat) {
+		this.leaseProtocolBeginTimeFormat = leaseProtocolBeginTimeFormat;
+	}
+
+	public String getLeaseProtocolEndTimeFormat() {
+		return leaseProtocolEndTimeFormat;
+	}
+
+	public void setLeaseProtocolEndTimeFormat(String leaseProtocolEndTimeFormat) {
+		this.leaseProtocolEndTimeFormat = leaseProtocolEndTimeFormat;
 	}
 
 

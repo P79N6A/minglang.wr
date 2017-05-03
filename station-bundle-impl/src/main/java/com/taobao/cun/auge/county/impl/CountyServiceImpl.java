@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.settle.common.model.PagedResultModel;
@@ -132,5 +134,11 @@ public class CountyServiceImpl implements CountyService{
 			}
 			return address.toString();
 		}
+	}
+
+	@Override
+	public PageDto<CountyDto> queryCountyStation(
+			CountyQueryCondition queryCondition) {
+		return countyBO.queryCountyStation(queryCondition);
 	}
 }
