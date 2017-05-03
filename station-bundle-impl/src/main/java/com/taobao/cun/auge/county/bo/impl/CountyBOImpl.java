@@ -239,6 +239,7 @@ public class CountyBOImpl implements CountyBO {
 	}
 	
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
+		try{
 		Assert.notNull(queryCondition);
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("countyOfficial", queryCondition.getCountyOfficial());
@@ -292,6 +293,9 @@ public class CountyBOImpl implements CountyBO {
 		result.setTotal(total);
 		result.setItems(countyStationDtos);
 		return result;
+		}catch(Exception e){
+			return null;
+		}
 	}
 	
 	private String formatDate(Date date) {
