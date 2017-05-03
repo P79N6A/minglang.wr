@@ -175,6 +175,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		param.setApplierId(instanceDto.getApplierId());
 
 		param.setParentId(getCountyCainiaoStationId(stationDto.getApplyOrg()));
+		param.setIsOnTown(stationDto.getPartnerInstanceIsOnTown().getCode());
 		// param.setStationType(StationStationTypeConstants.COUNTRY_DSH);
 		return param;
 	}
