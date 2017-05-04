@@ -69,13 +69,13 @@ public class CountyServiceImpl implements CountyService{
 	}
 	
 	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
-		PagedResultModel<List<CountyDto>> result=countyBO.getCountyStationList(queryCondition);
+		PageDto<CountyDto> result=countyBO.getCountyStationList(queryCondition);
 		if(queryCondition.isMobile()){
 			List<CountyDto> dtos=new ArrayList<CountyDto>();
-			for(CountyDto dto:result.getResult()){
+			for(CountyDto dto:result.getItems()){
 				dtos.add(convertForMobile(dto));
 			}
-			result.setResult(dtos);
+			result.setItems(dtos);
 		}
 		return result;
 	}
