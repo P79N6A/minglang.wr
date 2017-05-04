@@ -53,7 +53,7 @@ public class CountyDto implements Serializable{
 	private Date createTime;
 
 	private Date startOperationTime;
-
+	private String startOperationTimeStr;
 	private boolean viewCounty = false;
 	private boolean manageCounty = false;
 
@@ -559,6 +559,14 @@ public class CountyDto implements Serializable{
 
 	public void setLeaseProtocolEndTimeFormat(String leaseProtocolEndTimeFormat) {
 		this.leaseProtocolEndTimeFormat = leaseProtocolEndTimeFormat;
+	}
+
+	public String getStartOperationTimeStr() {
+		return startOperationTimeStr;
+	}
+
+	public void setStartOperationTimeStr(String startOperationTimeStr) {
+		this.startOperationTimeStr = startOperationTimeStr;
 	}
 
 
