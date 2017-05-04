@@ -6,7 +6,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 /**
  * 从center迁移至auge
  * 供org、motion、无线端调用
@@ -76,7 +75,7 @@ public interface CountyService {
 	 * @param queryCondition
 	 * @return
 	 */
-	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition);
+	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition);
 	
 	/**
 	 * 县点分页查询  原crius服务 迁移至auge

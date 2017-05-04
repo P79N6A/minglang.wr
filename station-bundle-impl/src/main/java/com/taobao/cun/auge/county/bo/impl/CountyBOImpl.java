@@ -36,7 +36,6 @@ import com.taobao.cun.auge.county.dto.AddressDto;
 import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
-import com.taobao.cun.auge.county.dto.CountyQueryResult;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
@@ -71,7 +70,6 @@ import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
 import com.taobao.cun.service.mc.MessageCenterService;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
@@ -193,7 +191,7 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
+	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
         Validate.notNull(queryCondition, "queryCondition is null");
         Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
         if (queryCondition.getPageStart() < 0) {
@@ -231,15 +229,13 @@ public class CountyBOImpl implements CountyBO {
             CountyDto dto = toCountyDto(cs);
             rst.add(dto);
         }
-        PagedResultModel<List<CountyDto>> returnModel = new PagedResultModel<List<CountyDto>>();
-        returnModel.setResult(rst);
-		returnModel.setTotalResultSize(new Long(total));
-		returnModel.setSuccess(true);
+        PageDto<CountyDto> returnModel = new PageDto<CountyDto>();
+        returnModel.setItems(rst);
+		returnModel.setTotal(new Long(total));
         return returnModel;
 	}
 	
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
-		try{
 		Assert.notNull(queryCondition);
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("countyOfficial", queryCondition.getCountyOfficial());
@@ -293,9 +289,6 @@ public class CountyBOImpl implements CountyBO {
 		result.setTotal(total);
 		result.setItems(countyStationDtos);
 		return result;
-		}catch(Exception e){
-			return null;
-		}
 	}
 	
 	private String formatDate(Date date) {
