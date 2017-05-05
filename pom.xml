@@ -324,7 +324,7 @@
 			<dependency>
 				<groupId>com.alibaba.middleware.jingwei</groupId>
 				<artifactId>jingwei-client</artifactId>
-				<version>3.1.8</version>
+				<version>3.2.2</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.httpcomponents</groupId>
@@ -335,7 +335,7 @@
 			<dependency>
 				<groupId>com.alibaba.middleware.jingwei</groupId>
 				<artifactId>jingwei-common</artifactId>
-				<version>3.1.8</version>
+				<version>3.2.2</version>
 		   </dependency>
 			<dependency>
 				<groupId>io.netty</groupId>
@@ -485,6 +485,16 @@
 			  <groupId>com.taobao.crius</groupId>
 			  <artifactId>biz-client</artifactId>
 			  <version>1.2.7</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.tair</groupId>
+			  <artifactId>tair-mc-client</artifactId>
+			  <version>2.2.7</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.taobao.tair</groupId>
+			  <artifactId>tair-client</artifactId>
+			  <version>2.6.7</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
