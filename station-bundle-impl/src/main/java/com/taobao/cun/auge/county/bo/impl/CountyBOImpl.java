@@ -362,6 +362,9 @@ public class CountyBOImpl implements CountyBO {
 			dto.setFeatureMap(featureMap);
 		}
 		dto.setWarehouseDtos(getWarehouses(cs.getOrgId()));
+		AddressDto addressDto=new AddressDto();
+		BeanUtils.copyProperties(cs, addressDto);
+		dto.setAddressDto(addressDto);
 		return dto;
 	}
 
