@@ -61,7 +61,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			boolean testUser = isTestUser(parnterInstance.getTaobaoUserId());
 			response.setTestUser(testUser);
 			
-			boolean isSignProcotol = this.hasC2BSignProcotol(settlingStepRequest.getTaobaoUserId());
+			boolean isSignProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
 			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
@@ -120,8 +120,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	 * @param parnterInstanceId
 	 * @return
 	 */
-	private boolean hasC2BSignProcotol(Long taobaoUserId){
-		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+	private boolean hasC2BSignProcotol(Long parnterInstanceId){
+		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstanceId, PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 		return Optional.ofNullable(settleC2BProtocol).isPresent();
 	}
 	
@@ -142,7 +142,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	public C2BSignSettleProtocolResponse signC2BSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
 		C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
 		try {
-			boolean isSignC2BProcotol = this.hasC2BSignProcotol(c2bSignSettleProtocolRequest.getTaobaoUserId());
+			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
+			boolean isSignC2BProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
 			if(isSignC2BProcotol){
 				response.setSuccessful(true);
 				return response;
@@ -154,7 +155,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 				response.setErrorMessage("未提交认证资料");
 				return response;
 			}
-			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
 			this.partnerInstanceService.signC2BSettledProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), isSignC2BProcotol, isFrozenMoney);
