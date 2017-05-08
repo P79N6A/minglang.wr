@@ -7,19 +7,20 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.github.pagehelper.Page;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -30,9 +31,9 @@ public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
 	StationBO stationBO;
-	
-	@Autowired
-	AttachementBO attachementBO;
+
+    @Autowired
+    AttachmentService criusAttachmentService;
 	
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
@@ -46,7 +47,7 @@ public class StationQueryServiceImpl implements StationQueryService {
 		Station station = stationBO.getStationById(stationCondition.getId());
 		StationDto stationDto = StationConverter.toStationDto(station);
 		if (stationCondition.getNeedAttachementInfo()) {
-			stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(),AttachementBizTypeEnum.CRIUS_STATION));
+			stationDto.setAttachments(criusAttachmentService.getAttachmentList(stationDto.getId(),AttachmentBizTypeEnum.CRIUS_STATION));
 		}
 		return stationDto;
 	}
