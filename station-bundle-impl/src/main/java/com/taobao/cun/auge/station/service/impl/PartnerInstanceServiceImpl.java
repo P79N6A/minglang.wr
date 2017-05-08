@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -69,6 +72,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.CloseStationApplyConverter;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceLevelEventConverter;
@@ -199,6 +203,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	TradeAdapter tradeAdapter;
 	@Autowired
 	AttachementBO attachementBO;
+	@Autowired
+	AttachmentService criusAttachmentService;
 	@Autowired
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
 	@Autowired
@@ -530,6 +536,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		saveStationFixProtocol(stationDto, stationId);
 		attachementBO.modifyAttachementBatch(sDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION,
 				partnerInstanceUpdateServicingDto);
+//		criusAttachmentService.modifyAttachementBatch(sDto.getAttachments(), stationId, AttachmentBizTypeEnum.CRIUS_STATION,
+//				OperatorConverter.convert(partnerInstanceUpdateServicingDto));
 	}
 
 	private void updatePartnerForServicing(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto, Long partnerId) {
@@ -1371,6 +1379,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerDto.setState(PartnerStateEnum.NORMAL);
 			Long partnerId = partnerBO.addPartner(partnerDto);
 			attachementBO.addAttachementBatch(partnerDto.getAttachements(), partnerId, AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
+			//criusAttachmentService.addAttachmentBatch(partnerDto.getAttachments(), partnerId, AttachmentBizTypeEnum.PARTNER, OperatorConverter.convert(partnerInstanceDto));
 			return partnerId;
 		}else{
 			partnerDto.setId(partner.getId());
@@ -1378,6 +1387,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerDto.setState(PartnerStateEnum.NORMAL);
 			partnerBO.updatePartner(partnerDto);
 			attachementBO.modifyAttachementBatch(partnerDto.getAttachements(), partner.getId(), AttachementBizTypeEnum.PARTNER, partnerInstanceDto);
+			//criusAttachmentService.modifyAttachementBatch(partnerDto.getAttachments(), partner.getId(), AttachmentBizTypeEnum.PARTNER, OperatorConverter.convert(partnerInstanceDto));
 			return partner.getId();
 		}
 		
@@ -1405,6 +1415,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			partnerInstanceDto.setPartnerId(stationId);
 		}
 		attachementBO.addAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, partnerInstanceDto);
+		//criusAttachmentService.addAttachmentBatch(stationDto.getAttachments(), stationId, AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(partnerInstanceDto));
 		saveStationFixProtocol(stationDto, stationId);
 		return stationId;
 	}
@@ -1584,6 +1595,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void updatePartner(PartnerDto partnerDto) {
 		partnerBO.updatePartner(partnerDto);
 		attachementBO.modifyAttachementBatch(partnerDto.getAttachements(), partnerDto.getId(), AttachementBizTypeEnum.PARTNER, partnerDto);
+		//criusAttachmentService.modifyAttachementBatch(partnerDto.getAttachments(), partnerDto.getId(), AttachmentBizTypeEnum.PARTNER, OperatorConverter.convert(partnerDto));
 	}
 
 	private void updateStation(Long stationId, PartnerInstanceDto partnerInstanceDto) {
@@ -1601,6 +1613,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationBO.updateStation(stationDto);
 		saveStationFixProtocol(stationDto, stationId);
 		attachementBO.modifyAttachementBatch(stationDto.getAttachements(), stationId, AttachementBizTypeEnum.CRIUS_STATION, stationDto);
+		//criusAttachmentService.modifyAttachementBatch(stationDto.getAttachments(), stationId, AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(stationDto));
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

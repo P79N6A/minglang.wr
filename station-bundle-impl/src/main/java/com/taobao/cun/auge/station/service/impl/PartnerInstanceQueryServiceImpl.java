@@ -16,6 +16,8 @@ import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -119,6 +121,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	AttachementBO attachementBO;
+	
+    @Autowired
+    AttachmentService criusAttachmentService;
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
@@ -206,6 +211,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 					setSafedInfo(partnerDto);
 				}
 				partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
+				partnerDto.setAttachments(criusAttachmentService.getAttachmentList(partner.getId(), AttachmentBizTypeEnum.PARTNER));
 				insDto.setPartnerDto(partnerDto);
 			}
 
@@ -213,6 +219,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
 				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
+				stationDto.setAttachments(criusAttachmentService.getAttachmentList(stationDto.getId(), AttachmentBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 				
 			    CountyStation countyStation = countyStationBO.getCountyStationByOrgId(stationDto.getApplyOrg());
