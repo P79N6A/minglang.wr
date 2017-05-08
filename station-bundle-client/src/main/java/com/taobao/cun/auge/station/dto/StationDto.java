@@ -107,6 +107,7 @@ public class StationDto extends OperatorDto implements Serializable{
     private StationFixedTypeEnum fixedType;
     
     //FIXME 待下线
+    private List<AttachementDto> attachements;
     /**
      * 服务站相关附件
      */
@@ -227,6 +228,13 @@ public class StationDto extends OperatorDto implements Serializable{
 		this.status = status;
 	}
 
+	public List<AttachementDto> getAttachements() {
+		return attachements;
+	}
+
+	public void setAttachements(List<AttachementDto> attachements) {
+		this.attachements = attachements;
+	}
 
 	public Address getAddress() {
 		return address;

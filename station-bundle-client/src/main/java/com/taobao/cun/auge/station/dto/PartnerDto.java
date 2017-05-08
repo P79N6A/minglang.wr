@@ -71,6 +71,8 @@ public class PartnerDto extends OperatorDto implements Serializable{
      */
     private PartnerStateEnum state;
     
+    private List<AttachementDto> attachements;
+    
     private List<AttachmentDto> attachments;
     
     /**
@@ -200,6 +202,15 @@ public class PartnerDto extends OperatorDto implements Serializable{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+
+	public List<AttachementDto> getAttachements() {
+		return attachements;
+	}
+
+	public void setAttachements(List<AttachementDto> attachements) {
+		this.attachements = attachements;
 	}
 
 	public PartnerBusinessTypeEnum getBusinessType() {
