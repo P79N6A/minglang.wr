@@ -46,6 +46,14 @@
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cuntaosettle.client</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>attachement-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cun-common-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
