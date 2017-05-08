@@ -26,7 +26,7 @@ import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("stationQueryService")
-@HSFProvider(serviceInterface = StationQueryService.class)
+@HSFProvider(serviceInterface = StationQueryService.class,serviceVersion="1.0.0.daily.fjx")
 public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
