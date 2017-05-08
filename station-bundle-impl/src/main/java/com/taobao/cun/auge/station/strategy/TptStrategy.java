@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.dto.AttachmentDto;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -30,7 +34,6 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -39,10 +42,10 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.dto.AttachementDto;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -56,8 +59,6 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -108,8 +109,8 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	@Autowired
 	QuitStationApplyBO quitStationApplyBO;
 
-	@Autowired
-	AttachementBO attachementBO;
+    @Autowired
+    AttachmentService criusAttachmentService;
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
@@ -503,11 +504,11 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 
 	private void syncNewPartnerInfoToOldPartnerId(Long newPartnerId, Long oldPartnerId, OperatorDto operatorDto) {
 		// 更新身份证
-		List<AttachementDto> attDtoList = attachementBO.getAttachementList(newPartnerId, AttachementBizTypeEnum.PARTNER,
-				AttachementTypeIdEnum.IDCARD_IMG);
+		List<AttachmentDto> attDtoList = criusAttachmentService.getAttachmentList(newPartnerId, AttachmentBizTypeEnum.PARTNER,
+				AttachmentTypeIdEnum.IDCARD_IMG);
 		if (CollectionUtils.isNotEmpty(attDtoList)) {
-			attachementBO.modifyAttachementBatch(attDtoList, oldPartnerId, AttachementBizTypeEnum.PARTNER, AttachementTypeIdEnum.IDCARD_IMG,
-					operatorDto);
+			criusAttachmentService.modifyAttachmentBatch(attDtoList, oldPartnerId, AttachmentBizTypeEnum.PARTNER, AttachmentTypeIdEnum.IDCARD_IMG,
+					OperatorConverter.convert(operatorDto));
 		}
 		// 更新合伙人表信息
 		Partner newPartner = partnerBO.getPartnerById(newPartnerId);
