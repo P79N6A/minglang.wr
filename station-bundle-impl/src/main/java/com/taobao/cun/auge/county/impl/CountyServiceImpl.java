@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
 @HSFProvider(serviceInterface = CountyService.class)
@@ -66,14 +67,14 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.getCountyStationByOrgId(id);
 	}
 	
-	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
-		PagedResultModel<List<CountyDto>> result=countyBO.getCountyStationList(queryCondition);
+	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
+		PageDto<CountyDto> result=countyBO.getCountyStationList(queryCondition);
 		if(queryCondition.isMobile()){
 			List<CountyDto> dtos=new ArrayList<CountyDto>();
-			for(CountyDto dto:result.getResult()){
+			for(CountyDto dto:result.getItems()){
 				dtos.add(convertForMobile(dto));
 			}
-			result.setResult(dtos);
+			result.setItems(dtos);
 		}
 		return result;
 	}
@@ -132,5 +133,11 @@ public class CountyServiceImpl implements CountyService{
 			}
 			return address.toString();
 		}
+	}
+
+	@Override
+	public PageDto<CountyDto> queryCountyStation(
+			CountyQueryCondition queryCondition) {
+		return countyBO.queryCountyStation(queryCondition);
 	}
 }
