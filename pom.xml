@@ -413,7 +413,7 @@
             <dependency>
                 <groupId>com.taobao.cun</groupId>
                 <artifactId>cun-common-client</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.5</version>
             </dependency>
 			   <dependency>
 				<groupId>com.esotericsoftware.kryo</groupId>
@@ -485,6 +485,11 @@
 			  <groupId>com.taobao.crius</groupId>
 			  <artifactId>biz-client</artifactId>
 			  <version>1.2.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>attachement-client</artifactId>
+				<version>1.2.4</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
