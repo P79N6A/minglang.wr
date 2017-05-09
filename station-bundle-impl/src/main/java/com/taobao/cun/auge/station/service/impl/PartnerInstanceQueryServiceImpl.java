@@ -101,7 +101,7 @@ import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.RandomUtil;
 
 @Service("partnerInstanceQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceQueryService.class,serviceVersion="1.0.0.daily.fjx")
+@HSFProvider(serviceInterface = PartnerInstanceQueryService.class)
 public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryService {
 
 	private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceQueryService.class);
