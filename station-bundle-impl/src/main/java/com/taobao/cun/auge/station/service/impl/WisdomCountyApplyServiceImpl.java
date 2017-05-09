@@ -1,26 +1,24 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.WisdomCountyApply;
-import com.taobao.cun.auge.event.EventConstant;
-import com.taobao.cun.auge.event.EventDispatcherUtil;
-import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
-import com.taobao.cun.auge.station.bo.AttachementBO;
-import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
-import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
-import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
-import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.service.WisdomCountyApplyService;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
+import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
+import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.service.WisdomCountyApplyService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
  * Created by xiao on 16/10/17.
@@ -33,14 +31,14 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     WisdomCountyApplyBO wisdomCountyApplyBO;
 
     @Autowired
-    AttachementBO attachementBO;
+    AttachmentService criusAttachmentService;
 
     @Override
     public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException {
         ValidateUtils.notNull(countyId);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyByCountyId(countyId);
         if (dto != null){
-            dto.setAttachementDtos(attachementBO.getAttachementList(dto.getId(), AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+            dto.setAttachmentDtos(criusAttachmentService.getAttachmentList(dto.getId(), AttachmentBizTypeEnum.WISDOM_COUNTY_APPLY));
         }
         return dto;
     }
@@ -49,9 +47,9 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     @Override
     public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
         ValidateUtils.notNull(wisdomCountyApplyDto);
-        ValidateUtils.notEmpty(wisdomCountyApplyDto.getAttachementDtos());
+        ValidateUtils.notEmpty(wisdomCountyApplyDto.getAttachmentDtos());
         Long applyId = wisdomCountyApplyBO.addWisdomCountyApply(wisdomCountyApplyDto);
-        attachementBO.modifyAttachementBatch(wisdomCountyApplyDto.getAttachementDtos(), applyId, AttachementBizTypeEnum.WISDOM_COUNTY_APPLY, wisdomCountyApplyDto);
+        criusAttachmentService.modifyAttachementBatch(wisdomCountyApplyDto.getAttachmentDtos(), applyId, AttachmentBizTypeEnum.WISDOM_COUNTY_APPLY, OperatorConverter.convert(wisdomCountyApplyDto));
         return applyId;
     }
 
@@ -60,7 +58,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
         ValidateUtils.notNull(id);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyById(id);
         if (dto != null){
-            dto.setAttachementDtos(attachementBO.getAttachementList(id, AttachementBizTypeEnum.WISDOM_COUNTY_APPLY));
+            dto.setAttachmentDtos(criusAttachmentService.getAttachmentList(id, AttachmentBizTypeEnum.WISDOM_COUNTY_APPLY));
         }
         return dto;
     }

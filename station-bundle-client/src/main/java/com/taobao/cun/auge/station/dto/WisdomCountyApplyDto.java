@@ -1,11 +1,12 @@
 package com.taobao.cun.auge.station.dto;
 
-import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import com.taobao.cun.attachment.dto.AttachmentDto;
+import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
 
 /**
  * Created by xiao on 16/10/17.
@@ -44,7 +45,7 @@ public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
 
     private WisdomCountyStateEnum state;
 
-    private List<AttachementDto> attachementDtos;
+    private List<AttachmentDto> attachmentDtos;
 
     public String getMail() {
         return mail;
@@ -54,12 +55,12 @@ public class WisdomCountyApplyDto extends OperatorDto implements Serializable {
         this.mail = mail;
     }
 
-    public List<AttachementDto> getAttachementDtos() {
-        return attachementDtos;
+    public List<AttachmentDto> getAttachmentDtos() {
+        return attachmentDtos;
     }
 
-    public void setAttachementDtos(List<AttachementDto> attachementDtos) {
-        this.attachementDtos = attachementDtos;
+    public void setAttachmentDtos(List<AttachmentDto> attachmentDtos) {
+        this.attachmentDtos = attachmentDtos;
     }
 
     public Long getId() {
