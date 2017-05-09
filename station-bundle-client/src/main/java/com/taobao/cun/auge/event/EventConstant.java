@@ -65,5 +65,10 @@ public final class EventConstant {
 	 * 资产变更事件
 	 */
 	public static final String ASSET_CHANGE_EVENT = "ASSET_CHANGE_EVENT";
+	
+	/**
+	 * 资产详情变更事件
+	 */
+	public static final String ASSET_DETAIL_CHANGE_EVENT = "ASSET_DETAIL_CHANGE_EVENT";
 
 }
