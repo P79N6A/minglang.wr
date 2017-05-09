@@ -40,4 +40,12 @@ public interface PartnerStationRelExtMapper {
 	 * @return
 	 */
 	List<PartnerInstance> selectPartnerInstancesByIds(List<Long> partnerInstanceIds);
+	
+	/**
+	 * 根据合伙人 taobao_user_id,批量查询实例
+	 * 
+	 * @param partnerInstanceIds
+	 * @return
+	 */
+	List<PartnerInstance> selectPartnerInstancesByTaobaoUserIds(List<Long> taobaoUserIds);
 }
