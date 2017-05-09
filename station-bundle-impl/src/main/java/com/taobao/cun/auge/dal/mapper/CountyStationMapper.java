@@ -98,4 +98,8 @@ public interface CountyStationMapper {
     int updateByPrimaryKey(CountyStation record);
     
     List<CountyStation> getProvinceList(Map<String,Object> param);
+    
+    int countCountyStation(Map<String,Object> param);
+    
+    List<CountyStation> queryCountyStation(Map<String,Object> param);
 }
