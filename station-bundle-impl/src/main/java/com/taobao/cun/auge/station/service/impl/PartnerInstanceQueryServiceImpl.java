@@ -700,4 +700,16 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		PartnerStationRel instance = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
 		return null != instance ? instance.getStationId() : null;
 	}
+
+	@Override
+	public List<PartnerInstanceDto> queryByTaobaoUserIds(
+			List<Long> taobaoUserIds) {
+		if(CollectionUtils.isEmpty(taobaoUserIds)){
+			return Collections.<PartnerInstanceDto>emptyList();
+		}
+		List<PartnerInstance> instances = partnerStationRelExtMapper.selectPartnerInstancesByTaobaoUserIds(taobaoUserIds);
+		
+		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
+		return success;
+	}
 }

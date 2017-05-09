@@ -17,7 +17,6 @@ import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
 @HSFProvider(serviceInterface = CountyService.class)
