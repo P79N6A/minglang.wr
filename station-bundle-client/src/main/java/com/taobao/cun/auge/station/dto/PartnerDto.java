@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
@@ -71,6 +72,8 @@ public class PartnerDto extends OperatorDto implements Serializable{
     private PartnerStateEnum state;
     
     private List<AttachementDto> attachements;
+    
+    private List<AttachmentDto> attachments;
     
     /**
      * 是否固点
@@ -226,4 +229,11 @@ public class PartnerDto extends OperatorDto implements Serializable{
 		this.state = state;
 	}
 
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
+	}
 }

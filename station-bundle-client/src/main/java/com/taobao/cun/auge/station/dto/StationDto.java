@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsOnTown;
@@ -105,12 +106,12 @@ public class StationDto extends OperatorDto implements Serializable{
      */
     private StationFixedTypeEnum fixedType;
     
-    
+    //FIXME 待下线
+    private List<AttachementDto> attachements;
     /**
      * 服务站相关附件
      */
-    private List<AttachementDto> attachements;
-    
+    private List<AttachmentDto> attachments;
     
     /**
      * 服务站地址相关信息
@@ -322,5 +323,12 @@ public class StationDto extends OperatorDto implements Serializable{
 	public void setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown partnerInstanceIsOnTown) {
 		this.partnerInstanceIsOnTown = partnerInstanceIsOnTown;
 	}
-	
+
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
+	}
 }

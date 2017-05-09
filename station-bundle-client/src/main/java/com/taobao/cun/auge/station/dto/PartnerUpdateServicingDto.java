@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 
@@ -37,6 +38,8 @@ public class PartnerUpdateServicingDto extends OperatorDto implements Serializab
 
     
     private List<AttachementDto> attachements;
+    
+    private List<AttachmentDto> attachments;
 
 	public String getMobile() {
 		return mobile;
@@ -86,6 +89,14 @@ public class PartnerUpdateServicingDto extends OperatorDto implements Serializab
 	public void setAttachements(List<AttachementDto> attachements) {
 		this.attachements = attachements;
 	}
-    
-    
+
+
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
+	}
 }
