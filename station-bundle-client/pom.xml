@@ -43,8 +43,9 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.taobao.cun</groupId>
-			<artifactId>cuntaosettle.client</artifactId>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaosettle.client</artifactId>
+				<version>1.0.25.jdk6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>

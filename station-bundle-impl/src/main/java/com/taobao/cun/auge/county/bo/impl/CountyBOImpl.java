@@ -2,6 +2,7 @@ package com.taobao.cun.auge.county.bo.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,21 +16,26 @@ import org.apache.commons.lang.Validate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.github.pagehelper.PageHelper;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
+import com.taobao.cun.auge.county.dto.AddressDto;
 import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
@@ -61,13 +67,9 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
-import com.taobao.cun.dto.BucContext;
-import com.taobao.cun.dto.SystemTypeEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
-import com.taobao.cun.dto.station.CountyStationDto;
 import com.taobao.cun.service.mc.MessageCenterService;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
@@ -189,7 +191,7 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public PagedResultModel<List<CountyDto>> getCountyStationList(CountyStationQueryCondition queryCondition){
+	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
         Validate.notNull(queryCondition, "queryCondition is null");
         Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
         if (queryCondition.getPageStart() < 0) {
@@ -227,13 +229,75 @@ public class CountyBOImpl implements CountyBO {
             CountyDto dto = toCountyDto(cs);
             rst.add(dto);
         }
-        PagedResultModel<List<CountyDto>> returnModel = new PagedResultModel<List<CountyDto>>();
-        returnModel.setResult(rst);
-		returnModel.setTotalResultSize(new Long(total));
-		returnModel.setSuccess(true);
+        PageDto<CountyDto> returnModel = new PageDto<CountyDto>();
+        returnModel.setItems(rst);
+		returnModel.setTotal(new Long(total));
         return returnModel;
 	}
 	
+	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
+		Assert.notNull(queryCondition);
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("countyOfficial", queryCondition.getCountyOfficial());
+		param.put("teamLeader", queryCondition.getTeamLeader());
+		param.put("state", queryCondition.getState());
+        param.put("fullIdPaths", queryCondition.getFullIdPaths());
+        param.put("countyName", queryCondition.getCountyName());
+        param.put("leaseProtocolEndTime", queryCondition.getLeaseProtocolEndTime());
+		int total = countyStationMapper.countCountyStation(param);
+		List<CountyDto> countyStationDtos = null;
+		if(total > 0){
+			param.put("startItem", queryCondition.getPageSize() * (queryCondition.getPage() - 1));
+			param.put("pageSize", queryCondition.getPageSize());
+			List<CountyStation> countyStations = countyStationMapper.queryCountyStation(param);
+			countyStationDtos = Lists.transform(countyStations, new Function<CountyStation, CountyDto>(){
+				@Override
+				public CountyDto apply(CountyStation countyStation) {
+					CountyDto countyStationDto = new CountyDto();
+					countyStationDto.setId(countyStation.getId());
+					countyStationDto.setOrgId(countyStation.getOrgId());
+					countyStationDto.setEmployeeId(countyStation.getEmployeeId());
+					countyStationDto.setFreeDeadline(countyStation.getFreeDeadline());
+					countyStationDto.setGmtStartOperation(countyStation.getGmtStartOperation());
+					countyStationDto.setAcreage(countyStation.getAcreage());
+					countyStationDto.setLeasingModel(countyStation.getLeasingModel());
+					countyStationDto.setLogisticsOperator(countyStation.getLogisticsOperator());
+					countyStationDto.setLogisticsPhone(countyStation.getLogisticsPhone());
+					countyStationDto.setManageModel(CountyStationManageModelEnum.valueof(countyStation.getManageModel()));
+					countyStationDto.setManageStatus(CountyStationManageStatusEnum.valueof(countyStation.getManageStatus()));
+					countyStationDto.setName(countyStation.getName());
+					countyStationDto.setOfficeDetail(countyStation.getOfficeDetail());
+					countyStationDto.setOperator(countyStation.getCreator());
+					countyStationDto.setOrgId(countyStation.getOrgId());
+					countyStationDto.setName(countyStation.getName());
+					AddressDto addressDto=new AddressDto();
+					BeanUtils.copyProperties(countyStation, addressDto);
+					countyStationDto.setAddressDto(addressDto);
+					countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
+					countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
+					countyStationDto.setLeaseProtocolBeginTime(countyStation.getLeaseProtocolBeginTime());
+					countyStationDto.setLeaseProtocolEndTime(countyStation.getLeaseProtocolEndTime());
+					countyStationDto.setLeaseProtocolBeginTimeFormat(formatDate(countyStation.getLeaseProtocolBeginTime()));
+					countyStationDto.setLeaseProtocolEndTimeFormat(formatDate(countyStation.getLeaseProtocolEndTime()));
+					countyStationDto.setLeaseTypeEnum(CountyStationLeaseTypeEnum.valueof(countyStation.getLeaseType()));
+					countyStationDto.setLeasePayment(countyStation.getLeasePayment());
+					return countyStationDto;
+				}
+			});
+		}
+		PageDto<CountyDto> result= new PageDto<CountyDto>();
+		result.setTotal(total);
+		result.setItems(countyStationDtos);
+		return result;
+	}
+	
+	private String formatDate(Date date) {
+		if (date==null) {
+			return null;
+		}
+		SimpleDateFormat sdf =	new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(date);
+	}
 
 	private void dealWithMobile(CountyStationQueryCondition queryCondition) {
 		// 移动端，parentId==orgId,如果当前组织是县服务中心，则查询的parentId设置为该县所属大区的Id
@@ -298,6 +362,9 @@ public class CountyBOImpl implements CountyBO {
 			dto.setFeatureMap(featureMap);
 		}
 		dto.setWarehouseDtos(getWarehouses(cs.getOrgId()));
+		AddressDto addressDto=new AddressDto();
+		BeanUtils.copyProperties(cs, addressDto);
+		dto.setAddressDto(addressDto);
 		return dto;
 	}
 

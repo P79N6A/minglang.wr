@@ -917,4 +917,37 @@
    		#{areaOrgId}
    	</foreach>
   </select>  
+  
+  <select id="queryCountyStation" parameterType="map" resultMap="BaseResultMap">
+ 	 select a.* from county_station a, cuntao_org b 
+  	<include refid="sql_queryCountyStation"/>
+  	order by a.id desc
+  	limit #{startItem}, #{pageSize}
+  </select>
+  
+  
+   <select id="countCountyStation" parameterType="map" resultType="int">
+  	select count(*) from county_station a, cuntao_org b 
+  	<include refid="sql_queryCountyStation"/>
+  </select>
+  
+  <sql id="sql_queryCountyStation">
+  	<if test="countyOfficial != null and countyOfficial != ''">,cuntao_user_org c</if>
+  	<if test="teamLeader != null and teamLeader != ''">,cuntao_user_org d,cuntao_org e</if>
+	where a.org_id=b.id and a.is_deleted='n' and b.org_range_type='county'
+	<if test="state != null and state != ''"> and a.manage_status=#{state} </if>
+	<if test="fullIdPaths != null and fullIdPaths.size()>0">
+		and(
+		<foreach collection="fullIdPaths" item="fullIdPath" separator=" or ">
+	  	CONCAT(b.temp_full_id_path,'/') like CONCAT(#{fullIdPath}, '/%') 
+	  	</foreach>
+	  	)
+  	</if>
+	<if test="countyName != null and countyName != ''"> and a.name like CONCAT('%', #{countyName}, '%')  </if>
+	<if test="leaseProtocolEndTime != null"><![CDATA[ and a.lease_protocol_end_time <= #{leaseProtocolEndTime}]]></if>
+	<if test="countyOfficial != null and countyOfficial != ''"> and c.org_id=a.org_id and c.login_id = #{countyOfficial} and c.role='COUNTY_LEADER' and c.status='VALID' and c.is_deleted='n'</if>
+  	<if test="teamLeader != null and teamLeader != ''"> and d.org_id=e.id and d.login_id = #{teamLeader} and d.role='TEAM_LEADER' and e.id=b.temp_parent_id and d.status='VALID' and d.is_deleted='n'</if>
+  </sql>
+  
+  
 </mapper>
