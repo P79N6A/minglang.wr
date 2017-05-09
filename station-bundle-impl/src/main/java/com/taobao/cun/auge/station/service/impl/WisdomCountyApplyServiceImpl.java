@@ -24,7 +24,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * Created by xiao on 16/10/17.
  */
 @Service("wisdomCountyApplyService")
-@HSFProvider(serviceInterface = WisdomCountyApplyService.class,serviceVersion="1.0.0.daily.fjx")
+@HSFProvider(serviceInterface = WisdomCountyApplyService.class)
 public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
 
     @Autowired
