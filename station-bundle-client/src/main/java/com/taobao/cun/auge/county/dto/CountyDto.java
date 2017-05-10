@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.station.dto.AttachementDto;
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
@@ -60,7 +60,7 @@ public class CountyDto implements Serializable{
 	// 资产申请
 	private boolean assetPurchaseApply = false;
 
-	protected List<AttachementDto> attachements;// 所有附件,这个是增加的所有附件
+	protected List<AttachmentDto> attachments;// 所有附件,这个是增加的所有附件
 
 	private Map<String, String> featureMap;
 	// 起航班
@@ -449,12 +449,12 @@ public class CountyDto implements Serializable{
 		this.assetPurchaseApply = assetPurchaseApply;
 	}
 
-	public List<AttachementDto> getAttachements() {
-		return attachements;
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
 	}
 
-	public void setAttachements(List<AttachementDto> attachements) {
-		this.attachements = attachements;
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
 	}
 
 	public Map<String, String> getFeatureMap() {
