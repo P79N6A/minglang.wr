@@ -19,7 +19,7 @@ import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
-@HSFProvider(serviceInterface = CountyService.class)
+@HSFProvider(serviceInterface = CountyService.class,serviceVersion="1.0.0.daily.fjx")
 public class CountyServiceImpl implements CountyService{
 
 	private static final Logger logger = LoggerFactory.getLogger(CountyServiceImpl.class);
