@@ -55,7 +55,6 @@ public class StationDecorateReflectDto extends OperatorDto {
     /**
      * 附件
      */
-    private List<AttachementDto> attachements;
     private List<AttachmentDto> attachments;
     
     /**
@@ -106,14 +105,6 @@ public class StationDecorateReflectDto extends OperatorDto {
 
 	public void setInsideArea(String insideArea) {
 		this.insideArea = insideArea;
-	}
-
-	public List<AttachementDto> getAttachements() {
-		return attachements;
-	}
-
-	public void setAttachements(List<AttachementDto> attachements) {
-		this.attachements = attachements;
 	}
 
 	public Long getReflectUserId() {
