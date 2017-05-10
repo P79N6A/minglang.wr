@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.buc.api.EnhancedUserQueryService;
+import com.alibaba.buc.api.exception.BucException;
+import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
@@ -23,6 +26,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
+import com.alibaba.cainiao.cuntaonetwork.param.warehouse.CreateWarehouseByOrgParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseListParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseOption;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
@@ -30,6 +34,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
+import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.auge.common.Address;
@@ -38,6 +43,7 @@ import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.common.exception.ServiceException;
 
 @Component("caiNiaoAdapter")
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
@@ -55,6 +61,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private Emp360Adapter emp360Adapter;
 	@Resource
 	private WarehouseReadService warehouseReadService;
+	@Resource
+	private WarehouseWriteService warehouseWriteService;
+	@Resource
+	private EnhancedUserQueryService userQueryService;
 
 	@Override
 	public Long addCounty(CaiNiaoStationDto station) throws AugeServiceException {
@@ -74,6 +84,52 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.error(error,e);
 			throw new AugeServiceException(error);
 		}
+	}
+	
+	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException {
+		if (stationDto == null) {
+			throw new ServiceException("CaiNiaoAdapterBO.addCounty.param.error:station is null!");
+		}
+		try {
+			logger.info("addCounty.info param"+JSONObject.toJSONString(stationDto));
+			CreateWarehouseByOrgParam param = buildAddWarehouseParam(stationDto);
+			Result<WarehouseDTO> res= warehouseWriteService.createWarehouseByOrg(param);
+			if (!res.isSuccess()) {
+				throw new ServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			}
+			return res.getData().getId();
+		} catch (Exception e) {
+			String error = getErrorMessage("addCounty", JSONObject.toJSONString(stationDto),e.getMessage());
+			logger.error(error,e);
+			throw new ServiceException(error);
+		}
+	}
+	
+	private CreateWarehouseByOrgParam buildAddWarehouseParam(CaiNiaoStationDto dto) {
+		CreateWarehouseByOrgParam param = new CreateWarehouseByOrgParam();
+		param.setAddress(dto.getStationAddress().getAddressDetail());
+		param.setProvinceId(Long.parseLong(dto.getStationAddress().getProvince()));
+		if(!StringUtils.isEmpty(dto.getStationAddress().getCity())){
+			param.setCityId(Long.parseLong(dto.getStationAddress().getCity()));
+		}
+		if(!StringUtils.isEmpty(dto.getStationAddress().getTown())){
+			param.setTownId(Long.parseLong(dto.getStationAddress().getTown()));
+		}
+		if(!StringUtils.isEmpty(dto.getStationAddress().getCounty())){
+			param.setCountyId(Long.parseLong(dto.getStationAddress().getCounty()));
+		}
+		param.setName(dto.getStationName());
+		param.setOrgId(dto.getStationId());
+		EnhancedUser user;
+		try {
+			user = userQueryService.getUser(dto.getLoginId());
+			if (user != null) {
+				param.setFontUserName(user.getAccount());
+			}
+		} catch (BucException e) {
+			logger.error("Query user failed, user id : " + dto.getLoginId());
+		}
+		return param;
 	}
 
 	private AddCountyDomainParam buildAddCountyDomainParam(CaiNiaoStationDto dto) {

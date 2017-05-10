@@ -634,7 +634,7 @@ public class CountyBOImpl implements CountyBO {
 	            //更新组织树中的名称和parentId等
 	        	updateCuntaoOrg(countyDto,operator);
 	            //清楚缓存
-	            tairCache.invalid("cuntao_orgid_1");
+//	            tairCache.invalid("cuntao_orgid_1");
 	        }
 	    }
 
@@ -757,7 +757,7 @@ public class CountyBOImpl implements CountyBO {
             return;
         }
         CaiNiaoStationDto stationDto = toNewCaiNiaoStationDto(countyDto);
-        Long caiNiaostationId = caiNiaoAdapter.addCounty(stationDto);
+        Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(stationDto);
         if (caiNiaostationId == null) {
             throw new BusinessException("同步菜鸟驿站失败");
         } else {
@@ -947,7 +947,7 @@ public class CountyBOImpl implements CountyBO {
         List<String> mailList=new ArrayList<String>();
         while (mailList.size() > 50) {
             List<String> subMailList = mailList.subList(0, 49);
-            messageCenterService.sendMail(subMailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
+//            messageCenterService.sendMail(subMailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
             mailList.removeAll(subMailList);
         }
         messageCenterService.sendMail(mailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);

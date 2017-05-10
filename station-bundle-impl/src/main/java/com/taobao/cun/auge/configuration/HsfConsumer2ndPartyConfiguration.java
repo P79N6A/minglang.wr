@@ -17,6 +17,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
+import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
@@ -245,6 +246,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				version, 3000);
 	}
 
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean warehouseWriteService(
+			@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
+		return getConsumerBean(WarehouseWriteService.class, HSFGroup.HSF,
+				version, 3000);
+	}
 	@Bean
 	public MessageService messageService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
