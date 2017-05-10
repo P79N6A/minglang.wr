@@ -17,6 +17,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -29,15 +31,14 @@ import com.taobao.cun.auge.dal.mapper.StationDecorateMapper;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
-import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
@@ -59,8 +60,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	@Autowired
 	StationBO stationBO;
-	@Autowired
-	AttachementBO attachementBO;
+    @Autowired
+    AttachmentService criusAttachmentService;
 	@Autowired
 	StationDecorateOrderBO stationDecorateOrderBO;
 	
@@ -189,10 +190,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		StationDecorate record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
 		DomainUtils.beforeUpdate(record, stationDecorateDto.getOperator());
 		
-		//更新附件
-		if (stationDecorateDto.getAttachements() != null) {
-			attachementBO.modifyAttachementBatch(stationDecorateDto.getAttachements(), stationDecorateDto.getId(), AttachementBizTypeEnum.STATION_DECORATE, stationDecorateDto);
-			
+		if(stationDecorateDto.getAttachments() != null){
+			criusAttachmentService.modifyAttachementBatch(stationDecorateDto.getAttachments(), stationDecorateDto.getId(), AttachmentBizTypeEnum.STATION_DECORATE, OperatorConverter.convert(stationDecorateDto));
 		}
 		stationDecorateMapper.updateByPrimaryKeySelective(record);
 	}
@@ -207,8 +206,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		}
 		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
 		//添加附件
-		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
-		
+		sdDto.setAttachments(criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
 		if (sdDto.getStationId() != null) {
 			Station s = stationBO.getStationById(stationId);
 			if (s != null) {
