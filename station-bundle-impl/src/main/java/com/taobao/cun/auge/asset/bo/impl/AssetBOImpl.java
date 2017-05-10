@@ -166,7 +166,6 @@ public class AssetBOImpl implements AssetBO {
 			cri.andPartnerInstanceIdEqualTo(cuntaoAssetQueryCondition.getPartnerInstanceId());
 		}
 		
-		cri.andIsDeletedEqualTo("n");
 		if(cuntaoAssetQueryCondition.getOrgId() != null){
 			CuntaoOrgDto cuntaoOrgDto = cuntaoOrgServiceClient.getCuntaoOrg(cuntaoAssetQueryCondition.getOrgId());
 			if(cuntaoOrgDto!=null){

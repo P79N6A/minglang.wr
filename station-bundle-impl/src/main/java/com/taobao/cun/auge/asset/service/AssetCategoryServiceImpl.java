@@ -107,6 +107,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService{
 	@Override
 	public List<CuntaoAssetCategoryDto> getAllList() {
 		CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
+		example.createCriteria().andIsDeletedEqualTo("n");
 		example.setOrderByClause("gmt_create desc");
 		List<CuntaoAssetCategory> cates = cuntaoAssetCategoryMapper.selectByExample(example);
 		return cates.stream().map(cate -> this.convertToDto(cate)).collect(Collectors.toList());
@@ -116,7 +117,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService{
 	public void updateCategory(CuntaoAssetCategoryDto cuntaoAssetCategoryDto,String operator) {
 		Assert.notNull(cuntaoAssetCategoryDto);
 		CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
-		cuntaoAssetCategory.setGmtCreate(new Date());
+		cuntaoAssetCategory.setGmtModified(new Date());
 		cuntaoAssetCategory.setModifier(operator==null?"system":operator);
 		cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
 		
