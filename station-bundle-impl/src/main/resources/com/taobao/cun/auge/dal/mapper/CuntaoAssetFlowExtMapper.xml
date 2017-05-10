@@ -67,7 +67,7 @@
 	and cafd.is_deleted='n' 
 	and caf.is_deleted='n' 
 	<if test="applyOrg != null">
-		AND <![CDATA[ caf.apply_org = #applyOrg#]]>
+		AND <![CDATA[ caf.apply_org = #{applyOrg}]]>
 	 </if>
 	 <if test="applyStatusArray != null">
 	  AND  caf.apply_status  in
@@ -76,7 +76,7 @@
 	     </foreach>
 	 </if>
 	 <if test="applyStatus != null">
-	   AND  <![CDATA[ caf.apply_status  = #applyStatus#]]>
+	   AND  <![CDATA[ caf.apply_status  = #{applyStatus}]]>
 	</if>
 	group by cafd.name
 	</select>
@@ -107,16 +107,16 @@
 	AND caf.is_deleted = 'n'
 	and caf.apply_org=org.id
 		<if test="applierNo != null">
-			AND caf.applier_no=#applierNo#
+			AND caf.applier_no=#{applierNo}
 		 </if>
 		 <if test="purchaseStatus != null">
-			AND caf.purchase_status=#purchaseStatus#
+			AND caf.purchase_status=#{purchaseStatus}
 		 </if>
 		 <if test="planReceiveTimeBegin != null">
-			AND <![CDATA[caf.plan_receive_time >= #planReceiveTimeBegin#]]>
+			AND <![CDATA[caf.plan_receive_time >= #{planReceiveTimeBegin}]]>
 		</if>
 		 <if test="planReceiveTimeEnd != null">
-			AND <![CDATA[caf.plan_receive_time <= #planReceiveTimeEnd#]]>
+			AND <![CDATA[caf.plan_receive_time <= #{planReceiveTimeEnd}]]>
 		</if>
 		 <if test="applyIdArray != null">
 	   	AND  caf.id  in
@@ -131,7 +131,7 @@
 	     </foreach>
 		</if>
 		 <if test="fullIdPath != null">
-		AND <![CDATA[concat(org.temp_full_id_path,'/') like concat(#fullIdPath#,'/%')]]>
+		AND <![CDATA[concat(org.temp_full_id_path,'/') like concat(#{fullIdPath},'/%')]]>
 		</if>
 </select>
 
@@ -143,21 +143,21 @@
 	AND caf.is_deleted = 'n'
 	and caf.apply_org=org.id
 	 	<if test="applierNo != null">
-		AND	caf.applier_no=#applierNo#
+		AND	caf.applier_no=#{applierNo}
 		</if>
 		<if test="purchaseStatus != null">
-		AND	caf.purchase_status=#purchaseStatus#
+		AND	caf.purchase_status=#{purchaseStatus}
 		</if>
 		<if test="planReceiveTimeBegin != null">
-			AND <![CDATA[caf.plan_receive_time >= #planReceiveTimeBegin#]]>
+			AND <![CDATA[caf.plan_receive_time >= #{planReceiveTimeBegin}]]>
 		</if>
 		<if test="planReceiveTimeEnd != null">
-			AND <![CDATA[caf.plan_receive_time <= #planReceiveTimeEnd#]]>
+			AND <![CDATA[caf.plan_receive_time <= #{planReceiveTimeEnd}]]>
 		</if>
 		<if test="applyIdArray != null">
 	    AND caf.id  in
 	     <foreach item="item" collection="applyIdArray" separator="," open="(" close=")" index="">
-			#applyIdArray[]# 
+			  #{item}
          </foreach>
 	</if>
 	<if test="orgIdArray != null">
@@ -167,7 +167,7 @@
 	     </foreach>
 	</if>
 	<if test="fullIdPath != null">
-		AND <![CDATA[concat(org.temp_full_id_path,'/') like concat(#fullIdPath#,'/%')]]>
+		AND <![CDATA[concat(org.temp_full_id_path,'/') like concat(#{fullIdPath},'/%')]]>
 	</if>
 </select>
 

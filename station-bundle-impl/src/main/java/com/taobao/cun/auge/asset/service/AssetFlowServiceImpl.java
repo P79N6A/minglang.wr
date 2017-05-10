@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.asset.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -338,7 +339,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			for (Map<String,Object> detailDo : detailLists) {
 				CuntaoAssetSituationDto countyasset2 = new CuntaoAssetSituationDto();
 				countyasset2.setCategory((String)detailDo.get("name"));
-				countyasset2.setCount((Long)detailDo.get("categoryCount"));
+				countyasset2.setCount(((BigDecimal)detailDo.get("categoryCount")).longValue());
 				countyAssetDtoList2.add(countyasset2);
 			}
 			res.put(CuntaoAssetSituationDto.COUNTY_APPLY__ASSET, countyAssetDtoList2);

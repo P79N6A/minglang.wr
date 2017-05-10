@@ -79,9 +79,7 @@
   
     <select id="getAssetSituation" parameterType="java.lang.Long" resultType="map">
 		select category,count(1) as categoryCount from  cuntao_asset where is_deleted = 'n' and status = 'COUNTY_SIGN'
-		   <if test="orgId != null" >
-			AND	org_id =#orgId#
-		 </if>
+			AND	org_id =#{orgId,jdbcType=BIGINT} 
 		 group by category 
 	</select>
 	

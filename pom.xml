@@ -448,7 +448,7 @@
 			<dependency>
 			  <groupId>com.taobao.vipserver</groupId>
 			  <artifactId>vipserver-client</artifactId>
-			  <version>4.6.2</version>
+			  <version>4.6.4</version>
 			</dependency>
 			<dependency>
 			  <groupId>com.taobao.csp</groupId>
