@@ -39,7 +39,7 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("stationDecorateService")
-@HSFProvider(serviceInterface = StationDecorateService.class)
+@HSFProvider(serviceInterface = StationDecorateService.class,serviceVersion="1.0.0.daily.fjx")
 public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(StationDecorateService.class);
@@ -236,6 +236,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		sdDto.setCarpetArea(stationDecorateReflectDto.getCarpetArea());
 		sdDto.setReflectSatisfySolid(stationDecorateReflectDto.getReflectSatisfySolid());
 		sdDto.setAttachements(stationDecorateReflectDto.getAttachements());
+		sdDto.setAttachments(stationDecorateReflectDto.getAttachments());
 		sdDto.copyOperatorDto(stationDecorateReflectDto);
 		return sdDto;
 		

@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.dto;
 
 import java.util.List;
 
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
@@ -86,6 +87,7 @@ public class StationDecorateDto  extends OperatorDto {
      * 附件
      */
     private List<AttachementDto> attachements;
+    private List<AttachmentDto> attachments;
 
     /**
      * 装修反馈人
@@ -320,5 +322,12 @@ public class StationDecorateDto  extends OperatorDto {
 	public void setDecorateType(StationDecorateTypeEnum decorateType) {
 		this.decorateType = decorateType;
 	}
-	
+
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
+	}
 }

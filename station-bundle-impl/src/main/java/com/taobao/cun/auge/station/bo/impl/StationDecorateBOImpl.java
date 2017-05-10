@@ -17,6 +17,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -33,6 +35,7 @@ import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
@@ -61,6 +64,8 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	StationBO stationBO;
 	@Autowired
 	AttachementBO attachementBO;
+    @Autowired
+    AttachmentService criusAttachmentService;
 	@Autowired
 	StationDecorateOrderBO stationDecorateOrderBO;
 	
@@ -194,6 +199,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			attachementBO.modifyAttachementBatch(stationDecorateDto.getAttachements(), stationDecorateDto.getId(), AttachementBizTypeEnum.STATION_DECORATE, stationDecorateDto);
 			
 		}
+		if(stationDecorateDto.getAttachments() != null){
+			criusAttachmentService.modifyAttachementBatch(stationDecorateDto.getAttachments(), stationDecorateDto.getId(), AttachmentBizTypeEnum.STATION_DECORATE, OperatorConverter.convert(stationDecorateDto));
+		}
 		stationDecorateMapper.updateByPrimaryKeySelective(record);
 	}
 
@@ -208,7 +216,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
 		//添加附件
 		sdDto.setAttachements(attachementBO.getAttachementList(sd.getId(), AttachementBizTypeEnum.STATION_DECORATE));
-		
+		sdDto.setAttachments(criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
 		if (sdDto.getStationId() != null) {
 			Station s = stationBO.getStationById(stationId);
 			if (s != null) {
