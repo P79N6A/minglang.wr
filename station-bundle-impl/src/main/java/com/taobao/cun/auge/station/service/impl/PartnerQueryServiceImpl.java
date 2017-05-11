@@ -25,7 +25,7 @@ import com.taobao.security.util.SensitiveDataUtil;
  * Created by jingxiao.gjx on 2016/8/31.
  */
 @Service("partnerQueryService")
-@HSFProvider(serviceInterface = PartnerQueryService.class)
+@HSFProvider(serviceInterface = PartnerQueryService.class,serviceVersion="1.0.0.daily.fjx")
 public class PartnerQueryServiceImpl implements PartnerQueryService {
 
 	@Autowired
