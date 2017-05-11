@@ -250,5 +250,5 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
-	 
+	
 }
