@@ -207,10 +207,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(stationAddress.getVillage()));
 			}
 			cnStation.setAddress(getAddress(stationAddress));
-			//cnStation.setVillageName(stationAddress.getVillageDetail());
+			cnStation.setVillageName(stationAddress.getVillageDetail());
 		}
 		cnStation.setStationOpenTime(new Date());
-		//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
+		cnStation.setInTown(dto.getIsOnTown());
 		return cnStation;
 	}
 
@@ -311,9 +311,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				cnStation.setCountryId(Long.parseLong(dto.getStationAddress().getVillage()));
 			}
 			cnStation.setAddress(getAddress(dto.getStationAddress()));
-			//TODOxxxxxxxxxcnStation.setVillageName(dto.getStationAddress().getVillageDetail());
+			cnStation.setVillageName(dto.getStationAddress().getVillageDetail());
 		}
-		//TODOxxxxxxxxxcnStation.setInTown(dto.getIsOnTown());
+		cnStation.setInTown(dto.getIsOnTown());
 		return cnStation;
 	}
 
