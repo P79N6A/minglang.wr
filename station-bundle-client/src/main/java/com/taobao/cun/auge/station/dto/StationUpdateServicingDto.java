@@ -83,7 +83,6 @@ public class StationUpdateServicingDto extends OperatorDto implements Serializab
     /**
      * 服务站相关附件
      */
-    private List<AttachementDto> attachements;
     private List<AttachmentDto> attachments;
     
     /**
@@ -176,14 +175,6 @@ public class StationUpdateServicingDto extends OperatorDto implements Serializab
 
 	public void setFeature(Map<String, String> feature) {
 		this.feature = feature;
-	}
-
-	public List<AttachementDto> getAttachements() {
-		return attachements;
-	}
-
-	public void setAttachements(List<AttachementDto> attachements) {
-		this.attachements = attachements;
 	}
 
 	public Address getAddress() {
