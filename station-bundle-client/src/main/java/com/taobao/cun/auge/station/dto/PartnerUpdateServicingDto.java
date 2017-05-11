@@ -36,9 +36,6 @@ public class PartnerUpdateServicingDto extends OperatorDto implements Serializab
      */
     private String description;
 
-    
-    private List<AttachementDto> attachements;
-    
     private List<AttachmentDto> attachments;
 
 	public String getMobile() {
@@ -79,17 +76,6 @@ public class PartnerUpdateServicingDto extends OperatorDto implements Serializab
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
-	public List<AttachementDto> getAttachements() {
-		return attachements;
-	}
-
-
-	public void setAttachements(List<AttachementDto> attachements) {
-		this.attachements = attachements;
-	}
-
 
 	public List<AttachmentDto> getAttachments() {
 		return attachments;
