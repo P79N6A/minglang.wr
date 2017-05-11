@@ -15,7 +15,7 @@ import com.taobao.cun.auge.dal.domain.StationManagerExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationManagerMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("StationManagerService")
-@HSFProvider(serviceInterface = StationManagerService.class,serviceVersion="1.0.0.daily.fjx")
+@HSFProvider(serviceInterface = StationManagerService.class)
 public class StationManagerServiceImpl implements StationManagerService{
 
 	@Autowired
