@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -18,12 +20,14 @@ import com.taobao.cun.auge.asset.service.CuntaoAssetCategoryDto.Sku;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetCategory;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetCategoryExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetCategoryMapper;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetCategoryService")
 @HSFProvider(serviceInterface = AssetCategoryService.class)
 public class AssetCategoryServiceImpl implements AssetCategoryService{
-
+	private static final Logger logger = LoggerFactory.getLogger(AssetCategoryServiceImpl.class);
+	
 	@Autowired
 	private CuntaoAssetCategoryMapper cuntaoAssetCategoryMapper;
 	
@@ -106,51 +110,81 @@ public class AssetCategoryServiceImpl implements AssetCategoryService{
 	
 	@Override
 	public List<CuntaoAssetCategoryDto> getAllList() {
-		CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
-		example.createCriteria().andIsDeletedEqualTo("n");
-		example.setOrderByClause("gmt_create desc");
-		List<CuntaoAssetCategory> cates = cuntaoAssetCategoryMapper.selectByExample(example);
-		return cates.stream().map(cate -> this.convertToDto(cate)).collect(Collectors.toList());
+		try {
+			CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
+			example.createCriteria().andIsDeletedEqualTo("n");
+			example.setOrderByClause("gmt_create desc");
+			List<CuntaoAssetCategory> cates = cuntaoAssetCategoryMapper.selectByExample(example);
+			return cates.stream().map(cate -> this.convertToDto(cate)).collect(Collectors.toList());
+		} catch (Exception e) {
+			logger.error("getAllList error",e);
+			throw new AugeBusinessException("getAllList error");
+		}
+		
 	}
 
 	@Override
 	public void updateCategory(CuntaoAssetCategoryDto cuntaoAssetCategoryDto,String operator) {
-		Assert.notNull(cuntaoAssetCategoryDto);
-		CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
-		cuntaoAssetCategory.setGmtModified(new Date());
-		cuntaoAssetCategory.setModifier(operator==null?"system":operator);
-		cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
+		try {
+			Assert.notNull(cuntaoAssetCategoryDto);
+			CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
+			cuntaoAssetCategory.setGmtModified(new Date());
+			cuntaoAssetCategory.setModifier(operator==null?"system":operator);
+			cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
+		} catch (Exception e) {
+			logger.error("updateCategory error",e);
+			throw new AugeBusinessException("updateCategory error");
+		}
+		
 		
 		
 	}
 
 	@Override
 	public void addCategory(CuntaoAssetCategoryDto cuntaoAssetCategoryDto,String operator) {
-		Assert.notNull(cuntaoAssetCategoryDto);
-		CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
-		cuntaoAssetCategory.setCreator(operator==null?"system":operator);
-		cuntaoAssetCategory.setModifier(operator==null?"system":operator);
-		cuntaoAssetCategory.setGmtCreate(new Date());
-		cuntaoAssetCategory.setGmtModified(new Date());
-		cuntaoAssetCategory.setIsDeleted("n");
-		cuntaoAssetCategoryMapper.insertSelective(cuntaoAssetCategory);
+		try {
+			Assert.notNull(cuntaoAssetCategoryDto);
+			CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
+			cuntaoAssetCategory.setCreator(operator==null?"system":operator);
+			cuntaoAssetCategory.setModifier(operator==null?"system":operator);
+			cuntaoAssetCategory.setGmtCreate(new Date());
+			cuntaoAssetCategory.setGmtModified(new Date());
+			cuntaoAssetCategory.setIsDeleted("n");
+			cuntaoAssetCategoryMapper.insertSelective(cuntaoAssetCategory);
+		} catch (Exception e) {
+			logger.error("addCategory error",e);
+			throw new AugeBusinessException("addCategory error");
+		}
+		
 	}
 
 	@Override
 	public void deleteCategory(Long categoryId,String operator) {
-		CuntaoAssetCategory cuntaoAssetCategory  = new CuntaoAssetCategory();
-		cuntaoAssetCategory.setId(categoryId);
-		cuntaoAssetCategory.setIsDeleted("y");
-		cuntaoAssetCategory.setGmtModified(new Date());
-		cuntaoAssetCategory.setModifier(operator==null?"system":operator);
-		cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
+		try {
+			CuntaoAssetCategory cuntaoAssetCategory  = new CuntaoAssetCategory();
+			cuntaoAssetCategory.setId(categoryId);
+			cuntaoAssetCategory.setIsDeleted("y");
+			cuntaoAssetCategory.setGmtModified(new Date());
+			cuntaoAssetCategory.setModifier(operator==null?"system":operator);
+			cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
+		} catch (Exception e) {
+			logger.error("deleteCategory error",e);
+			throw new AugeBusinessException("deleteCategory error");
+		}
+		
 	}
 
 	@Override
 	public Integer getCountByName(String name) {
-		CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
-		example.createCriteria().andNameEqualTo(name).andIsDeletedEqualTo("n");
-		return cuntaoAssetCategoryMapper.countByExample(example);
+		try {
+			CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
+			example.createCriteria().andNameEqualTo(name).andIsDeletedEqualTo("n");
+			return cuntaoAssetCategoryMapper.countByExample(example);
+		} catch (Exception e) {
+			logger.error("getCountByName error",e);
+			throw new AugeBusinessException("getCountByName error");
+		}
+		
 	}
 
 }

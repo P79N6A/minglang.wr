@@ -13,6 +13,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,7 @@ import com.taobao.cun.auge.event.domain.CuntaoFlowRecordEvent;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.bpm.dto.CuntaoTaskExecuteDto;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.NodeActionEnum;
@@ -64,6 +67,8 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = AssetFlowService.class)
 
 public class AssetFlowServiceImpl implements AssetFlowService{
+
+    private static final Logger logger = LoggerFactory.getLogger(AssetFlowServiceImpl.class);
 
 	@Autowired
 	private CuntaoAssetFlowExtMapper cuntaoAssetFlowExtMapper;
@@ -104,36 +109,42 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	private String receiverId; 
 	@Override
 	public PageDto<CuntaoAssetFlowDto> queryByPage(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		CuntaoAssetFlowExtExample example = new CuntaoAssetFlowExtExample();
-		com.taobao.cun.auge.dal.domain.CuntaoAssetFlowExtExample.Criteria cri = example.createCriteria();
-		PageHelper.startPage(cuntaoAssetFlowQueryDto.getPageNum(), cuntaoAssetFlowQueryDto.getPageSize());
-		if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getApplier())){
-			cri.andApplierEqualTo(cuntaoAssetFlowQueryDto.getApplier());
+		try {
+			CuntaoAssetFlowExtExample example = new CuntaoAssetFlowExtExample();
+			com.taobao.cun.auge.dal.domain.CuntaoAssetFlowExtExample.Criteria cri = example.createCriteria();
+			PageHelper.startPage(cuntaoAssetFlowQueryDto.getPageNum(), cuntaoAssetFlowQueryDto.getPageSize());
+			if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getApplier())){
+				cri.andApplierEqualTo(cuntaoAssetFlowQueryDto.getApplier());
+			}
+			if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getApplierNo())){
+				cri.andApplierNoEqualTo(cuntaoAssetFlowQueryDto.getApplierNo());
+			}
+			if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getFullIdPath())){
+				example.setFullIdPath(cuntaoAssetFlowQueryDto.getFullIdPath());
+			}
+			if(cuntaoAssetFlowQueryDto.getPurchaseStatus() != null){
+				cri.andPurchaseStatusEqualTo(cuntaoAssetFlowQueryDto.getPurchaseStatus().getCode());
+			}
+			if(cuntaoAssetFlowQueryDto.getApplyStatus() != null){
+				cri.andApplyStatusEqualTo(cuntaoAssetFlowQueryDto.getApplyStatus().getCode());
+			}
+			if(cuntaoAssetFlowQueryDto.getPlanReceiveTimeBegin() != null){
+				cri.andPlanReceiveTimeGreaterThanOrEqualTo(cuntaoAssetFlowQueryDto.getPlanReceiveTimeBegin());
+			}
+			if(cuntaoAssetFlowQueryDto.getPlanReceiveTimeEnd() != null){
+				cri.andPlanReceiveTimeLessThanOrEqualTo(cuntaoAssetFlowQueryDto.getPlanReceiveTimeEnd());
+			}
+			example.setOrderByClause("apply_time DESC");
+			Page<CuntaoAssetFlow> page =  (Page<CuntaoAssetFlow>)cuntaoAssetFlowExtMapper.selectByExample(example);
+			
+			List<CuntaoAssetFlowDto> targetList = page.getResult().stream().map(source -> convertToflowDto(source)).collect(Collectors.toList());
+			PageDto<CuntaoAssetFlowDto> result = PageDtoUtil.success(page, targetList);
+			return result;
+		} catch (Exception e) {
+			logger.error("queryByPage error",e);
+			throw new AugeBusinessException("queryByPage error");
 		}
-		if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getApplierNo())){
-			cri.andApplierNoEqualTo(cuntaoAssetFlowQueryDto.getApplierNo());
-		}
-		if(StringUtils.isNotEmpty(cuntaoAssetFlowQueryDto.getFullIdPath())){
-			example.setFullIdPath(cuntaoAssetFlowQueryDto.getFullIdPath());
-		}
-		if(cuntaoAssetFlowQueryDto.getPurchaseStatus() != null){
-			cri.andPurchaseStatusEqualTo(cuntaoAssetFlowQueryDto.getPurchaseStatus().getCode());
-		}
-		if(cuntaoAssetFlowQueryDto.getApplyStatus() != null){
-			cri.andApplyStatusEqualTo(cuntaoAssetFlowQueryDto.getApplyStatus().getCode());
-		}
-		if(cuntaoAssetFlowQueryDto.getPlanReceiveTimeBegin() != null){
-			cri.andPlanReceiveTimeGreaterThanOrEqualTo(cuntaoAssetFlowQueryDto.getPlanReceiveTimeBegin());
-		}
-		if(cuntaoAssetFlowQueryDto.getPlanReceiveTimeEnd() != null){
-			cri.andPlanReceiveTimeLessThanOrEqualTo(cuntaoAssetFlowQueryDto.getPlanReceiveTimeEnd());
-		}
-		example.setOrderByClause("apply_time DESC");
-		Page<CuntaoAssetFlow> page =  (Page<CuntaoAssetFlow>)cuntaoAssetFlowExtMapper.selectByExample(example);
 		
-		List<CuntaoAssetFlowDto> targetList = page.getResult().stream().map(source -> convertToflowDto(source)).collect(Collectors.toList());
-		PageDto<CuntaoAssetFlowDto> result = PageDtoUtil.success(page, targetList);
-		return result;
 	}
 
 	private CuntaoAssetFlowDto convertToflowDto(CuntaoAssetFlow fd) {
@@ -198,16 +209,22 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public CuntaoAssetFlowDto getFlowById(Long assetFlowId) {
-		Assert.notNull(assetFlowId);
-		CuntaoAssetFlow flow= cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
-		CuntaoAssetFlowDetailExample example = new CuntaoAssetFlowDetailExample();
-		example.createCriteria().andApplyIdEqualTo(assetFlowId);
-		List<CuntaoAssetFlowDetail> details= cuntaoAssetFlowDetailMapper.selectByExample(example);
+		try {
+			Assert.notNull(assetFlowId);
+			CuntaoAssetFlow flow= cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
+			CuntaoAssetFlowDetailExample example = new CuntaoAssetFlowDetailExample();
+			example.createCriteria().andApplyIdEqualTo(assetFlowId);
+			List<CuntaoAssetFlowDetail> details= cuntaoAssetFlowDetailMapper.selectByExample(example);
+			
+			CuntaoAssetFlowDto convertToflowDto =this.convertToflowDto(flow);
+			List<CuntaoAssetFlowDetailDto> detailDtoList =	details.stream().map(souce -> convertToDetailDto(souce)).collect(Collectors.toList());
+			convertToflowDto.setAssetFlowDetailList(detailDtoList);
+			return convertToflowDto;
+		} catch (Exception e) {
+			logger.error("getFlowById error! flowId["+assetFlowId+"]",e);
+			throw new AugeBusinessException("getFlowById error! flowId["+assetFlowId+"]");
+		}
 		
-		CuntaoAssetFlowDto convertToflowDto =this.convertToflowDto(flow);
-		List<CuntaoAssetFlowDetailDto> detailDtoList =	details.stream().map(souce -> convertToDetailDto(souce)).collect(Collectors.toList());
-		convertToflowDto.setAssetFlowDetailList(detailDtoList);
-		return convertToflowDto;
 	}
 
 	private CuntaoAssetFlowDetailDto convertToDetailDto(CuntaoAssetFlowDetail flowDetailDO) {
@@ -248,20 +265,26 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public void saveFlow(CuntaoAssetFlowDto cuntaoAssetFlowDto, String operator) {
-		Assert.notNull(cuntaoAssetFlowDto);
-		CuntaoAssetFlow cuntaoAssetFlow = this.convertToCuntaoAssetFlow(cuntaoAssetFlowDto, operator);
-		this.cuntaoAssetFlowMapper.insertSelective(cuntaoAssetFlow);
-		Long flowId = cuntaoAssetFlow.getId();
-		List<CuntaoAssetFlowDetailDto> detailList = cuntaoAssetFlowDto.getAssetFlowDetailList();
-		if(CollectionUtils.isNotEmpty(detailList)){
-			for (CuntaoAssetFlowDetailDto detailDto : detailList) {
-				detailDto.setApplyId(flowId);
-				CuntaoAssetFlowDetail detailDo = convertToDetailDOForInsert(detailDto,operator);
-				this.cuntaoAssetFlowDetailMapper.insertSelective(detailDo);
+		try {
+			Assert.notNull(cuntaoAssetFlowDto);
+			CuntaoAssetFlow cuntaoAssetFlow = this.convertToCuntaoAssetFlow(cuntaoAssetFlowDto, operator);
+			this.cuntaoAssetFlowMapper.insertSelective(cuntaoAssetFlow);
+			Long flowId = cuntaoAssetFlow.getId();
+			List<CuntaoAssetFlowDetailDto> detailList = cuntaoAssetFlowDto.getAssetFlowDetailList();
+			if(CollectionUtils.isNotEmpty(detailList)){
+				for (CuntaoAssetFlowDetailDto detailDto : detailList) {
+					detailDto.setApplyId(flowId);
+					CuntaoAssetFlowDetail detailDo = convertToDetailDOForInsert(detailDto,operator);
+					this.cuntaoAssetFlowDetailMapper.insertSelective(detailDo);
+				}
 			}
+			CuntaoOrgDto org = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(cuntaoAssetFlowDto.getApplyOrg()));
+			createTask(flowId,String.valueOf(org.getParentId()),operator);
+		} catch (Exception e) {
+			logger.error("saveFlow error!",e);
+			throw new AugeBusinessException("saveFlow error");
 		}
-		CuntaoOrgDto org = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(cuntaoAssetFlowDto.getApplyOrg()));
-		createTask(flowId,String.valueOf(org.getParentId()),operator);
+		
 	}
 
 	
@@ -286,6 +309,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 		if (dto != null) {
 			flowDetailDO.setGmtModified(new Date());
 			flowDetailDO.setApplyId(dto.getApplyId());
+			flowDetailDO.setGmtCreate(new Date());
 			flowDetailDO.setApplyNum(dto.getApplyNum());
 			flowDetailDO.setName(dto.getName());
 			flowDetailDO.setIsDeleted("n");
@@ -316,57 +340,69 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public Map<String, List<CuntaoAssetSituationDto>> getAssetSituation(Long applyOrgId) {
-		Assert.notNull(applyOrgId);
-		Map<String, List<CuntaoAssetSituationDto>> res = new HashMap<String, List<CuntaoAssetSituationDto>>();
-		List<Map<String,Object>> assetSituation = this.cuntaoAssetExtMapper.getAssetSituation(applyOrgId);
-		//县库存资产
-		if(CollectionUtils.isNotEmpty(assetSituation)){
-			List<CuntaoAssetSituationDto> countyAssetDtoList = Lists.newArrayList();
-			for (Map<String, Object> assetDo : assetSituation) {
-				CuntaoAssetSituationDto countyasset = new CuntaoAssetSituationDto();
-				countyasset.setCategory((String)assetDo.get("category"));
-				countyasset.setCount((Long)assetDo.get("categoryCount"));
-				countyAssetDtoList.add(countyasset);
+		try {
+			Assert.notNull(applyOrgId);
+			Map<String, List<CuntaoAssetSituationDto>> res = new HashMap<String, List<CuntaoAssetSituationDto>>();
+			List<Map<String,Object>> assetSituation = this.cuntaoAssetExtMapper.getAssetSituation(applyOrgId);
+			//县库存资产
+			if(CollectionUtils.isNotEmpty(assetSituation)){
+				List<CuntaoAssetSituationDto> countyAssetDtoList = Lists.newArrayList();
+				for (Map<String, Object> assetDo : assetSituation) {
+					CuntaoAssetSituationDto countyasset = new CuntaoAssetSituationDto();
+					countyasset.setCategory((String)assetDo.get("category"));
+					countyasset.setCount((Long)assetDo.get("categoryCount"));
+					countyAssetDtoList.add(countyasset);
+				}
+				res.put(CuntaoAssetSituationDto.COUNTY_HAS_ASSET, countyAssetDtoList);
 			}
-			res.put(CuntaoAssetSituationDto.COUNTY_HAS_ASSET, countyAssetDtoList);
-		}
-		Map<String,Object> param = Maps.newHashMap();
-		param.put("applyOrg", String.valueOf(applyOrgId));
-		param.put("applyStatus", AssetFlowApplyStatusEnum.AUDIT_PASS.getCode());
-		List<Map<String,Object>> detailLists= this.cuntaoAssetFlowExtMapper.getApplyAssetCount(param);
-		if(CollectionUtils.isNotEmpty(detailLists)){
-			List<CuntaoAssetSituationDto> countyAssetDtoList2 = Lists.newArrayList();
-			for (Map<String,Object> detailDo : detailLists) {
-				CuntaoAssetSituationDto countyasset2 = new CuntaoAssetSituationDto();
-				countyasset2.setCategory((String)detailDo.get("name"));
-				countyasset2.setCount(((BigDecimal)detailDo.get("categoryCount")).longValue());
-				countyAssetDtoList2.add(countyasset2);
+			Map<String,Object> param = Maps.newHashMap();
+			param.put("applyOrg", String.valueOf(applyOrgId));
+			param.put("applyStatus", AssetFlowApplyStatusEnum.AUDIT_PASS.getCode());
+			List<Map<String,Object>> detailLists= this.cuntaoAssetFlowExtMapper.getApplyAssetCount(param);
+			if(CollectionUtils.isNotEmpty(detailLists)){
+				List<CuntaoAssetSituationDto> countyAssetDtoList2 = Lists.newArrayList();
+				for (Map<String,Object> detailDo : detailLists) {
+					CuntaoAssetSituationDto countyasset2 = new CuntaoAssetSituationDto();
+					countyasset2.setCategory((String)detailDo.get("name"));
+					countyasset2.setCount(((BigDecimal)detailDo.get("categoryCount")).longValue());
+					countyAssetDtoList2.add(countyasset2);
+				}
+				res.put(CuntaoAssetSituationDto.COUNTY_APPLY__ASSET, countyAssetDtoList2);
 			}
-			res.put(CuntaoAssetSituationDto.COUNTY_APPLY__ASSET, countyAssetDtoList2);
+			return res;
+		} catch (Exception e) {
+			logger.error("getAssetSituation error!",e);
+			throw new AugeBusinessException("getAssetSituation error");
 		}
-		return res;
+		
 	}
 
 	@Override
 	public void updateFlow(CuntaoAssetFlowDto cuntaoAssetFlowDto, String operator) {
-		Assert.notNull(cuntaoAssetFlowDto);
-		Assert.notNull(operator);
-		
-		CuntaoAssetFlow flow = convertToflowDOForUpdate(cuntaoAssetFlowDto,operator);
-		
-		this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(flow);
-		
-		if(cuntaoAssetFlowDto.getAssetFlowDetailList() !=null){
-			for(CuntaoAssetFlowDetailDto flowDetail : cuntaoAssetFlowDto.getAssetFlowDetailList()) {
-				
-				CuntaoAssetFlowDetail detail = convertToDetailDOForUpdate(flowDetail, operator);
-				this.cuntaoAssetFlowDetailMapper.updateByPrimaryKeySelective(detail);
+		try {
+			Assert.notNull(cuntaoAssetFlowDto);
+			Assert.notNull(operator);
+			
+			CuntaoAssetFlow flow = convertToflowDOForUpdate(cuntaoAssetFlowDto,operator);
+			
+			this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(flow);
+			
+			if(cuntaoAssetFlowDto.getAssetFlowDetailList() !=null){
+				for(CuntaoAssetFlowDetailDto flowDetail : cuntaoAssetFlowDto.getAssetFlowDetailList()) {
+					
+					CuntaoAssetFlowDetail detail = convertToDetailDOForUpdate(flowDetail, operator);
+					this.cuntaoAssetFlowDetailMapper.updateByPrimaryKeySelective(detail);
+				}
 			}
+			
+			if(cuntaoAssetFlowDto.isApplyPr()) {
+				syncAsset(operator, flow, flow.getId());
+			}
+		} catch (Exception e) {
+			logger.error("updateFlow error!",e);
+			throw new AugeBusinessException("getAssetSituation error");
 		}
 		
-		if(cuntaoAssetFlowDto.isApplyPr()) {
-			syncAsset(operator, flow, flow.getId());
-		}
 	}
 
 	private void syncAsset(String operator, CuntaoAssetFlow cuntaoAssetFlow, Long assetFlowId) {
@@ -525,17 +561,23 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public void audit(CuntaoAssetFlowAuditDto cuntaoAssetFlowAuditDto, String operator) {
-		Assert.notNull(cuntaoAssetFlowAuditDto);
-		Assert.notNull(operator);
-		CuntaoAssetFlow flow = new CuntaoAssetFlow();
-		flow.setModifier(operator);
-		flow.setGmtModified(new Date());
-		flow.setId(cuntaoAssetFlowAuditDto.getAssetFlowId());
-		flow.setApplyStatus(cuntaoAssetFlowAuditDto.getApplyStatus().getCode());
-		Integer c = this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(flow);
-		if(c != null && c > 0){
-			finishTask(cuntaoAssetFlowAuditDto,operator);
+		try {
+			Assert.notNull(cuntaoAssetFlowAuditDto);
+			Assert.notNull(operator);
+			CuntaoAssetFlow flow = new CuntaoAssetFlow();
+			flow.setModifier(operator);
+			flow.setGmtModified(new Date());
+			flow.setId(cuntaoAssetFlowAuditDto.getAssetFlowId());
+			flow.setApplyStatus(cuntaoAssetFlowAuditDto.getApplyStatus().getCode());
+			Integer c = this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(flow);
+			if(c != null && c > 0){
+				finishTask(cuntaoAssetFlowAuditDto,operator);
+			}
+		} catch (Exception e) {
+			logger.error("auditAssetFlow error!",e);
+			throw new AugeBusinessException("auditAssetFlow error");
 		}
+		
 		
 	}
 
@@ -558,35 +600,41 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public List<CuntaoAssetFlowDetailForExcelDto> getDetailForExcel(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		Assert.notNull(cuntaoAssetFlowQueryDto);
-		List<CuntaoAssetFlowDetailForExcelDto>  resList = Lists.newArrayList();
-		
-		List<CuntaoAssetFlowDetailForExcel> excelDOList = this.cuntaoAssetFlowExtMapper.selectForExcel(buildParamForExcel(cuntaoAssetFlowQueryDto));
-		if(CollectionUtils.isNotEmpty(excelDOList)){
-			for (CuntaoAssetFlowDetailForExcel excelDo: excelDOList) {
-				CuntaoAssetFlowDetailForExcelDto excelDto  = new CuntaoAssetFlowDetailForExcelDto();
-				excelDto.setApplier(excelDo.getApplier());
-				excelDto.setApplierNo(excelDo.getApplierNo());
-				excelDto.setApplyId(excelDo.getApplyId());
-				excelDto.setApplyNum(excelDo.getApplyNum());
-				excelDto.setApplyOrgDesc(excelDo.getApplyOrgDesc());
-				excelDto.setApplyStatusDesc(AssetFlowApplyStatusEnum.valueof(excelDo.getApplyStatus())==null?"":AssetFlowApplyStatusEnum.valueof(excelDo.getApplyStatus()).getDesc());
-				excelDto.setApplyTime(DateUtil.formatTime(excelDo.getApplyTime()));
-				excelDto.setAssetOwner(excelDo.getAssetOwner());
-				excelDto.setAssetOwnerNo(excelDo.getAssetOwnerNo());
-				excelDto.setMobile(excelDo.getMobile());
-				excelDto.setName(excelDo.getName());
-				excelDto.setPlanReceiveTime(DateUtil.format(excelDo.getPlanReceiveTime()));
-				excelDto.setPurchaseStatusDesc(AssetFlowPurchaseStatusEnum.valueof(excelDo.getPurchaseStatus())==null?"":AssetFlowPurchaseStatusEnum.valueof(excelDo.getPurchaseStatus()).getDesc());
-				excelDto.setReceiveAddress(excelDo.getReceiveAddress());
-				excelDto.setReceiver(excelDo.getReceiver());
-				excelDto.setRemark(excelDo.getRemark());
-				excelDto.setSku(excelDo.getSku());
-				excelDto.setTypeDesc(AssetFlowDetailAssetTypeEnum.valueof(excelDo.getType())==null?"":AssetFlowDetailAssetTypeEnum.valueof(excelDo.getType()).getDesc());
-				resList.add(excelDto);
+		try {
+			Assert.notNull(cuntaoAssetFlowQueryDto);
+			List<CuntaoAssetFlowDetailForExcelDto>  resList = Lists.newArrayList();
+			
+			List<CuntaoAssetFlowDetailForExcel> excelDOList = this.cuntaoAssetFlowExtMapper.selectForExcel(buildParamForExcel(cuntaoAssetFlowQueryDto));
+			if(CollectionUtils.isNotEmpty(excelDOList)){
+				for (CuntaoAssetFlowDetailForExcel excelDo: excelDOList) {
+					CuntaoAssetFlowDetailForExcelDto excelDto  = new CuntaoAssetFlowDetailForExcelDto();
+					excelDto.setApplier(excelDo.getApplier());
+					excelDto.setApplierNo(excelDo.getApplierNo());
+					excelDto.setApplyId(excelDo.getApplyId());
+					excelDto.setApplyNum(excelDo.getApplyNum());
+					excelDto.setApplyOrgDesc(excelDo.getApplyOrgDesc());
+					excelDto.setApplyStatusDesc(AssetFlowApplyStatusEnum.valueof(excelDo.getApplyStatus())==null?"":AssetFlowApplyStatusEnum.valueof(excelDo.getApplyStatus()).getDesc());
+					excelDto.setApplyTime(DateUtil.formatTime(excelDo.getApplyTime()));
+					excelDto.setAssetOwner(excelDo.getAssetOwner());
+					excelDto.setAssetOwnerNo(excelDo.getAssetOwnerNo());
+					excelDto.setMobile(excelDo.getMobile());
+					excelDto.setName(excelDo.getName());
+					excelDto.setPlanReceiveTime(DateUtil.format(excelDo.getPlanReceiveTime()));
+					excelDto.setPurchaseStatusDesc(AssetFlowPurchaseStatusEnum.valueof(excelDo.getPurchaseStatus())==null?"":AssetFlowPurchaseStatusEnum.valueof(excelDo.getPurchaseStatus()).getDesc());
+					excelDto.setReceiveAddress(excelDo.getReceiveAddress());
+					excelDto.setReceiver(excelDo.getReceiver());
+					excelDto.setRemark(excelDo.getRemark());
+					excelDto.setSku(excelDo.getSku());
+					excelDto.setTypeDesc(AssetFlowDetailAssetTypeEnum.valueof(excelDo.getType())==null?"":AssetFlowDetailAssetTypeEnum.valueof(excelDo.getType()).getDesc());
+					resList.add(excelDto);
+				}
 			}
+			return resList;
+		} catch (Exception e) {
+			logger.error("getDetailForExcel error!",e);
+			throw new AugeBusinessException("getDetailForExcel error");
 		}
-		return resList;
+		
 	}
 
 	 private CuntaoAssetFlowDetailForExcel buildParamForExcel(CuntaoAssetFlowQueryDto queryDto) {
@@ -607,59 +655,82 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	 
 	@Override
 	public Integer getDetailCountForExcel(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		Assert.notNull(cuntaoAssetFlowQueryDto);
-		return this.cuntaoAssetFlowExtMapper.selectCountForExcel(buildParamForExcel(cuntaoAssetFlowQueryDto));
+		try {
+			Assert.notNull(cuntaoAssetFlowQueryDto);
+			return this.cuntaoAssetFlowExtMapper.selectCountForExcel(buildParamForExcel(cuntaoAssetFlowQueryDto));
+		} catch (Exception e) {
+			logger.error("getDetailCountForExcel error!",e);
+			throw new AugeBusinessException("getDetailCountForExcel error");
+		}
+		
 	}
 
 	@Override
 	public void cancelFlow(Long assetFlowId, String operator) {
-		Assert.notNull(assetFlowId);
-		Assert.notNull(operator);
-		CuntaoAssetFlow flow = this.cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
-		if( flow != null){
-			if (!AssetFlowApplyStatusEnum.AUDITING.getCode().equals(flow.getApplyStatus())) {
-				String applyStatusDesc = AssetFlowApplyStatusEnum.valueof(flow.getApplyStatus()).getDesc();
-				throw new RuntimeException("申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
+		try {
+			Assert.notNull(assetFlowId);
+			Assert.notNull(operator);
+			CuntaoAssetFlow flow = this.cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
+			if( flow != null){
+				if (!AssetFlowApplyStatusEnum.AUDITING.getCode().equals(flow.getApplyStatus())) {
+					String applyStatusDesc = AssetFlowApplyStatusEnum.valueof(flow.getApplyStatus()).getDesc();
+					throw new RuntimeException("申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
+				}
+			}else{
+				throw new RuntimeException("查询不到当前申请单");
 			}
-		}else{
-			throw new RuntimeException("查询不到当前申请单");
+			
+			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(assetFlowId), "assetApply", operator);
+			CuntaoAssetFlow cuntaoAssetFlow = new CuntaoAssetFlow();
+			cuntaoAssetFlow.setId(assetFlowId);
+			cuntaoAssetFlow.setModifier(operator);
+			cuntaoAssetFlow.setGmtModified(new Date());
+			cuntaoAssetFlow.setApplyStatus(AssetFlowApplyStatusEnum.CANCEL.getCode());
+			this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
+		} catch (Exception e) {
+			logger.error("cancelFlow error!",e);
+			throw new AugeBusinessException("cancelFlow error");
 		}
 		
-		cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(assetFlowId), "assetApply", operator);
-		CuntaoAssetFlow cuntaoAssetFlow = new CuntaoAssetFlow();
-		cuntaoAssetFlow.setId(assetFlowId);
-		cuntaoAssetFlow.setModifier(operator);
-		cuntaoAssetFlow.setGmtModified(new Date());
-		cuntaoAssetFlow.setApplyStatus(AssetFlowApplyStatusEnum.CANCEL.getCode());
-		this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
 	}
 
 	@Override
 	public void deleteFlow(Long assetFlowId, String operator) {
-
-		Assert.notNull(assetFlowId);
-		Assert.notNull(operator);
-		CuntaoAssetFlow cuntaoAssetFlow = new CuntaoAssetFlow();
-		cuntaoAssetFlow.setId(assetFlowId);
-		cuntaoAssetFlow.setModifier(operator);
-		cuntaoAssetFlow.setGmtModified(new Date());
-		cuntaoAssetFlow.setIsDeleted("y");
-		this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
+		try {
+			Assert.notNull(assetFlowId);
+			Assert.notNull(operator);
+			CuntaoAssetFlow cuntaoAssetFlow = new CuntaoAssetFlow();
+			cuntaoAssetFlow.setId(assetFlowId);
+			cuntaoAssetFlow.setModifier(operator);
+			cuntaoAssetFlow.setGmtModified(new Date());
+			cuntaoAssetFlow.setIsDeleted("y");
+			this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
+		} catch (Exception e) {
+			logger.error("deleteFlow error!flowId:["+assetFlowId+"]",e);
+			throw new AugeBusinessException("deleteFlow error");
+		}
+		
 		
 	}
 
 	@Override
 	public void updateFlowDetails(List<CuntaoAssetFlowDetailDto> details, String operator) {
-		Assert.notNull(details);
-		Assert.notNull(operator);
-		if(details !=null){
-			CuntaoAssetFlowDetail detailDo = null;
-			for(CuntaoAssetFlowDetailDto detailDto : details) {
-				detailDo = convertFlowDetailDO(detailDto, operator);
-				this.cuntaoAssetFlowDetailMapper.updateByPrimaryKeySelective(detailDo);
-				sendQuitEvent(detailDo, operator);
+		try {
+			Assert.notNull(details);
+			Assert.notNull(operator);
+			if(details !=null){
+				CuntaoAssetFlowDetail detailDo = null;
+				for(CuntaoAssetFlowDetailDto detailDto : details) {
+					detailDo = convertFlowDetailDO(detailDto, operator);
+					this.cuntaoAssetFlowDetailMapper.updateByPrimaryKeySelective(detailDo);
+					sendQuitEvent(detailDo, operator);
+				}
 			}
+		} catch (Exception e) {
+			logger.error("updateFlowDetails error!",e);
+			throw new AugeBusinessException("updateFlowDetails error");
 		}
+		
 		
 	}
 
