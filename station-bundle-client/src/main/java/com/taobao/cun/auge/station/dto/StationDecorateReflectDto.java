@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.OperatorDto;
 
 public class StationDecorateReflectDto extends OperatorDto {
@@ -54,7 +55,7 @@ public class StationDecorateReflectDto extends OperatorDto {
     /**
      * 附件
      */
-    private List<AttachementDto> attachements;
+    private List<AttachmentDto> attachments;
     
     /**
      * 装修反馈人
@@ -106,14 +107,6 @@ public class StationDecorateReflectDto extends OperatorDto {
 		this.insideArea = insideArea;
 	}
 
-	public List<AttachementDto> getAttachements() {
-		return attachements;
-	}
-
-	public void setAttachements(List<AttachementDto> attachements) {
-		this.attachements = attachements;
-	}
-
 	public Long getReflectUserId() {
 		return reflectUserId;
 	}
@@ -152,5 +145,13 @@ public class StationDecorateReflectDto extends OperatorDto {
 
 	public void setReflectSatisfySolid(String reflectSatisfySolid) {
 		this.reflectSatisfySolid = reflectSatisfySolid;
+	}
+
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
 	}
 }
