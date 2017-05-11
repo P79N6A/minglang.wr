@@ -34,6 +34,14 @@ public class DiamondConfiguredProperties {
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${train.purchase}')}")
     private Map<String, String> purchaseMap;
 
+    @Value("${asset.assetOrg}")
+    private String assetOrg;
+    
+    @Value("${asset.assetUse}")
+    private String assetUse;
+    
+    @Value("${asset.acceptanceStandard}")
+    private String acceptanceStandard;
     public String getApply() {
         return apply;
     }
@@ -57,4 +65,17 @@ public class DiamondConfiguredProperties {
     public Map<String, String> getPurchaseMap() {
         return purchaseMap;
     }
+
+	public String getAssetOrg() {
+		return assetOrg;
+	}
+
+	public String getAssetUse() {
+		return assetUse;
+	}
+
+	public String getAcceptanceStandard() {
+		return acceptanceStandard;
+	}
+
 }

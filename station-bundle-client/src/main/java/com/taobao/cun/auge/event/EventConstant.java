@@ -60,5 +60,15 @@ public final class EventConstant {
 	 * 智慧县域报名
 	 */
 	public static final String WISDOM_COUNTY_APPLY_EVENT = "WISDOM_COUNTY_APPLY_EVENT";
+	
+	/**
+	 * 资产变更事件
+	 */
+	public static final String ASSET_CHANGE_EVENT = "ASSET_CHANGE_EVENT";
+	
+	/**
+	 * 资产详情变更事件
+	 */
+	public static final String ASSET_DETAIL_CHANGE_EVENT = "ASSET_DETAIL_CHANGE_EVENT";
 
 }
