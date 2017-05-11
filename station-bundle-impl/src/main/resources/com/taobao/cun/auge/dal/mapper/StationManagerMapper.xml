@@ -364,4 +364,13 @@
       is_deleted = #{isDeleted,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  
+  <update id="deleteByStationId" parameterType="map">
+   update station_manager
+   set is_deleted='y',
+   gmt_modified=now(),
+   modifier=#{modifier}
+   where station_id=#{stationId}  
+  </update>
 </mapper>

@@ -16,6 +16,8 @@ import org.apache.commons.lang.Validate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
@@ -74,6 +76,7 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Component("countyBO")
+@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 public class CountyBOImpl implements CountyBO {
 
 	public static final String SP = ";";
