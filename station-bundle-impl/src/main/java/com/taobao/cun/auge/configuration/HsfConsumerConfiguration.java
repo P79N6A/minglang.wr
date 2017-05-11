@@ -28,6 +28,7 @@ import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.cun.attachment.service.AttachmentService;
 
 @Configuration
 public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
@@ -47,6 +48,12 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean appResourceService(@Value("${hsf.consumer.version.crius.appResourceService}") String version) {
 		return getConsumerBean(AppResourceService.class, HSFGroup.HSF, version, 10000);
+	}
+	
+	//FIXME 配置项未换
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean criusAttachmentService(@Value("${hsf.consumer.version.crius.appResourceService}") String version) {
+		return getConsumerBean(AttachmentService.class, HSFGroup.HSF, version, 10000);
 	}
 	
 	@Bean(initMethod = "init")

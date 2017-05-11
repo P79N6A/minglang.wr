@@ -18,6 +18,7 @@ import org.springframework.util.Assert;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
@@ -50,7 +51,6 @@ import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementTypeIdEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
@@ -458,7 +458,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 	private void syncAttachment(Long partnerInstanceId, Long stationApplyId) {
 		Date now = new Date();
-		Set<Long> typeIdSet = AttachementTypeIdEnum.mappings.keySet();
+		Set<Long> typeIdSet = AttachmentTypeIdEnum.mappings.keySet();
 		List<Attachement> stationApplyAttList = getAttachment(stationApplyId, "STATION", null);
 		Map<Long, List<Attachement>> stationApplyAttMap = Maps.newHashMap();
 		// 根据attachement_type_id映射

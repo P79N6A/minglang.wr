@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
+import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerChildMaxNumChangeEvent;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
 import com.taobao.cun.auge.event.StationStatusChangeEvent;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
+import com.taobao.cun.auge.event.domain.CuntaoFlowRecordEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.StationStatusChangeEnum;
@@ -39,7 +41,7 @@ import com.taobao.cun.crius.event.client.EventListener;
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,
 		EventConstant.PARTNER_CHILD_MAX_NUM_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_LEVEL_CHANGE_EVENT,
-		EventConstant.CHANGE_TP_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT,EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT})
+		EventConstant.CHANGE_TP_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT,EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT,EventConstant.ASSET_CHANGE_EVENT,EventConstant.ASSET_DETAIL_CHANGE_EVENT})
 public class CuntaoFlowRecordListener implements EventListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoFlowRecordListener.class);
@@ -72,8 +74,39 @@ public class CuntaoFlowRecordListener implements EventListener {
 			processWisdomCountyApplyEvent(event);
 		}else if (event.getValue() instanceof StationStatusChangeEvent) {
 		    processStationStatusChangeEvent(event);
+	    }else if(event.getValue() instanceof AssetChangeEvent){
+	    	processAssetChangeEvent(event);
+	    }else if(EventConstant.ASSET_DETAIL_CHANGE_EVENT.equals(event.getName())){
+	    	processAssetDetailChangeEvent(event);
 	    }
 
+	}
+
+	private void processAssetDetailChangeEvent(Event event) {
+		CuntaoFlowRecordEvent event1 =  (CuntaoFlowRecordEvent)event.getValue();
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		cuntaoFlowRecord.setOperateTime(event1.getOperateTime());
+		cuntaoFlowRecord.setOperatorName(event1.getOperatorName());
+		cuntaoFlowRecord.setOperatorWorkid(event1.getOperatorWorkid());
+		cuntaoFlowRecord.setTargetId(event1.getTargetId());
+		cuntaoFlowRecord.setNodeTitle(event1.getNodeTitle());
+		cuntaoFlowRecord.setTargetType(event1.getTargetType());
+		cuntaoFlowRecord.setRemarks(event1.getRemarks());
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+		logger.info("Finished to handle AssetDetailChangeEvent." + JSON.toJSONString(cuntaoFlowRecord));
+	}
+
+	private void processAssetChangeEvent(Event event) {
+		AssetChangeEvent assetChangeEvent = (AssetChangeEvent) event.getValue();
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		cuntaoFlowRecord.setTargetId(assetChangeEvent.getAssetId());
+		cuntaoFlowRecord.setTargetType(assetChangeEvent.getType());
+		cuntaoFlowRecord.setNodeTitle(assetChangeEvent.getDescription());
+		cuntaoFlowRecord.setOperatorName(assetChangeEvent.getOperator());
+		cuntaoFlowRecord.setOperatorWorkid(assetChangeEvent.getOperatorId());
+		cuntaoFlowRecord.setOperateTime(assetChangeEvent.getOperateTime());
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
+		logger.info("Finished to handle AssetChangeEvent." + JSON.toJSONString(assetChangeEvent));
 	}
 
 	private void processChangeTPEvent(Event event) {
