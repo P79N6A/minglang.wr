@@ -35,7 +35,6 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -76,7 +75,6 @@ import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -119,9 +117,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	@Autowired
 	ProtocolBO protocolBO;
 
-	@Autowired
-	AttachementBO attachementBO;
-	
     @Autowired
     AttachmentService criusAttachmentService;
 
@@ -210,7 +205,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				if (condition.getNeedDesensitization()) {
 					setSafedInfo(partnerDto);
 				}
-				partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 				partnerDto.setAttachments(criusAttachmentService.getAttachmentList(partner.getId(), AttachmentBizTypeEnum.PARTNER));
 				insDto.setPartnerDto(partnerDto);
 			}
@@ -218,7 +212,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			if (null != condition.getNeedStationInfo() && condition.getNeedStationInfo()) {
 				Station station = stationBO.getStationById(insDto.getStationId());
 				StationDto stationDto = StationConverter.toStationDto(station);
-				stationDto.setAttachements(attachementBO.getAttachementList(stationDto.getId(), AttachementBizTypeEnum.CRIUS_STATION));
 				stationDto.setAttachments(criusAttachmentService.getAttachmentList(stationDto.getId(), AttachmentBizTypeEnum.CRIUS_STATION));
 				insDto.setStationDto(stationDto);
 				

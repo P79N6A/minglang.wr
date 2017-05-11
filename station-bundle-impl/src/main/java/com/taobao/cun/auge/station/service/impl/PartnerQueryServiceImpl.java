@@ -13,12 +13,10 @@ import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.partner.service.PartnerQueryService;
-import com.taobao.cun.auge.station.bo.AttachementBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.enums.AttachementBizTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
@@ -33,9 +31,6 @@ public class PartnerQueryServiceImpl implements PartnerQueryService {
 	@Autowired
 	PartnerBO partnerBO;
 
-	@Autowired
-	AttachementBO attachementBO;
-	
 	@Autowired
 	AttachmentService criusAttachmentService;
 
@@ -79,7 +74,6 @@ public class PartnerQueryServiceImpl implements PartnerQueryService {
 		if (StringUtil.isNotEmpty(partnerDto.getTaobaoNick())) {
 			partnerDto.setTaobaoNick(SensitiveDataUtil.taobaoNickHide(partnerDto.getTaobaoNick()));
 		}
-		partnerDto.setAttachements(attachementBO.getAttachementList(partner.getId(), AttachementBizTypeEnum.PARTNER));
 		partnerDto.setAttachments(criusAttachmentService.getAttachmentList(partner.getId(), AttachmentBizTypeEnum.PARTNER));
 		return partnerDto;
 	}
