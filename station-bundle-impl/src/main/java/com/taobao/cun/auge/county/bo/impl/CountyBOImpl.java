@@ -996,4 +996,24 @@ public class CountyBOImpl implements CountyBO {
 	}
 
 	
+	public CountyDto startOperate(String operator,CountyDto countyDto){
+	        validateStartOperateParam(countyDto);
+	        countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
+	        return saveCountyStation(operator, countyDto);
+	}
+	
+	
+	private  void validateStartOperateParam(CountyDto countyDto) {
+        Validate.notNull(countyDto, "countyDto is null");
+        Validate.notEmpty(countyDto.getName(), "countyDto.name is empty");
+        Validate.notEmpty(countyDto.getProvince(), "countyDto.province is empty");
+        Validate.notEmpty(countyDto.getCity(), "countyDto.city is empty");
+        Validate.notEmpty(countyDto.getAddressDetail(), "countyDto.addressDetail is empty");
+        Validate.notNull(countyDto.getParentId(), "countyDto.parentId is null");
+        Validate.notEmpty(countyDto.getAcreage(), "countyDto.acreage is empty");
+        Validate.notNull(countyDto.getWarehouseNum(), "countyDto.warehouseNum is null");
+        Validate.notEmpty(countyDto.getLeasingModel(), "countyDto.leasingModel is empty");
+        Validate.notEmpty(countyDto.getOfficeDetail(), "countyDto.officeDetail is empty");
+    }
+
 }
