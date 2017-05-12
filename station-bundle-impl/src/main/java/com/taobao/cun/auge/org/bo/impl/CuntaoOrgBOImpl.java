@@ -45,6 +45,7 @@ public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 		sod.setOrderPro(0);
 		sod.setOrgType(org.getOrgType());
 		sod.setParentId(org.getParentId());
+		sod.setDingtalkDeptId(0L);
 		cuntaoOrgMapper.insert(sod);
 		CuntaoOrg tempCuntaoOrg = cuntaoOrgMapper.selectByPrimaryKey(org
 				.getTempParentId());
