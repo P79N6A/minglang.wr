@@ -504,6 +504,7 @@ public class CountyBOImpl implements CountyBO {
             if(!ListUtils.isEmpty(countyDto.getAttachments())){
             	OperatorDto operatorDto =new OperatorDto();
             	operatorDto.setOperator(operator);
+            	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
             	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, OperatorConverter.convert(operatorDto));
             }
             //自动绑定村淘组织和行政地址
@@ -521,6 +522,7 @@ public class CountyBOImpl implements CountyBO {
             if(!ListUtils.isEmpty(countyDto.getAttachments())) {
             	OperatorDto operatorDto =new OperatorDto();
             	operatorDto.setOperator(operator);
+            	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
             	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
             	AttachmentDeleteDto deletedDto=new AttachmentDeleteDto();
             	deletedDto.setObjectId(countyStation.getId());
