@@ -70,10 +70,12 @@ public class AssetBOImpl implements AssetBO {
 	
 		Assert.notNull(cuntaoAssetDto,"cuntaoAssetDto can not be null");
 		if(cuntaoAssetDto.getId() == null){
-			Long stationId = partnerInstanceQueryService.findStationIdByStationApplyId(Long.parseLong(cuntaoAssetDto.getStationId()));
-			Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(Long.valueOf(cuntaoAssetDto.getStationId()));
-			cuntaoAssetDto.setNewStationId(stationId);
-			cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
+			if(cuntaoAssetDto.getStationId() != null){
+				Long stationId = partnerInstanceQueryService.findStationIdByStationApplyId(Long.parseLong(cuntaoAssetDto.getStationId()));
+				Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(Long.valueOf(cuntaoAssetDto.getStationId()));
+				cuntaoAssetDto.setNewStationId(stationId);
+				cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
+			}
 			CuntaoAsset asset = convert2CuntaoAsset(cuntaoAssetDto);
 			cuntaoAssetMapper.insertSelective(asset);
 		}else{
