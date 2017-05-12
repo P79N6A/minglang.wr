@@ -3,6 +3,7 @@ package com.taobao.cun.auge.org.bo.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
@@ -13,7 +14,7 @@ import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 @Component("cuntaoOrgBO")
 public class CuntaoOrgBOImpl implements CuntaoOrgBO {
-
+	@Autowired
 	CuntaoOrgMapper cuntaoOrgMapper;
 
 	public Long addOrg(CuntaoOrg org, String operator) {
