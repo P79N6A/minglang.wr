@@ -502,11 +502,11 @@ public class CountyBOImpl implements CountyBO {
             syncNewCountyStationToCainiao(operator, countyDto, taobaoUserId);
             //新增绑定附件
             if(!ListUtils.isEmpty(countyDto.getAttachments())){
-            	OperatorDto operatorDto =new OperatorDto();
+            	com.taobao.cun.common.operator.OperatorDto operatorDto =new com.taobao.cun.common.operator.OperatorDto();
             	operatorDto.setOperator(operator);
-            	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
+            	operatorDto.setOperatorType(com.taobao.cun.common.operator.OperatorTypeEnum.BUC);
             	operatorDto.setOperatorOrgId(1L);
-            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, OperatorConverter.convert(operatorDto));
+            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, operatorDto);
             }
             //自动绑定村淘组织和行政地址
             bindOrg2Address(countyStation,operator);
@@ -521,15 +521,16 @@ public class CountyBOImpl implements CountyBO {
             }
             //因为修改县服务中心，不知道有没有修改附件，一律删除，再新增
             if(!ListUtils.isEmpty(countyDto.getAttachments())) {
-            	OperatorDto operatorDto =new OperatorDto();
+            	com.taobao.cun.common.operator.OperatorDto operatorDto =new com.taobao.cun.common.operator.OperatorDto();
             	operatorDto.setOperator(operator);
-            	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
+            	operatorDto.setOperatorType(com.taobao.cun.common.operator.OperatorTypeEnum.BUC);
             	operatorDto.setOperatorOrgId(1L);
             	AttachmentDeleteDto deletedDto=new AttachmentDeleteDto();
             	deletedDto.setObjectId(countyStation.getId());
             	deletedDto.setBizType( AttachmentBizTypeEnum.COUNTY_STATION);
+            	deletedDto.copyOperatorDto(operatorDto);
             	criusAttachmentService.deleteAttachment(deletedDto);
-            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, OperatorConverter.convert(operatorDto));
+            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, operatorDto);
             }
         }
         return countyDto;
