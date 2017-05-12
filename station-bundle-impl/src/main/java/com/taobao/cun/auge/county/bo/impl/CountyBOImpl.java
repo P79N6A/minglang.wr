@@ -737,6 +737,9 @@ public class CountyBOImpl implements CountyBO {
         BeanUtils.copyProperties(countyDto, countyStation);
         countyStation.setCreator(operator);
         countyStation.setModifier(operator);
+        countyStation.setGmtCreate(new Date());
+        countyStation.setGmtModified(new Date());
+        countyStation.setIsDeleted("n");
         countyStation.setManageModel(countyDto.getManageModel().getCode());
         countyStation.setManageStatus(countyDto.getManageStatus().getCode());
         if (taobaoUserId != null) {
