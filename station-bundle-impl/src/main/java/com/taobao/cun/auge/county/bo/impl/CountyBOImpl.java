@@ -776,6 +776,7 @@ public class CountyBOImpl implements CountyBO {
             relDO.setObjectId(countyDto.getId());
             relDO.setCainiaoStationId(caiNiaostationId);
             relDO.setType(CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+            relDO.setOperator(operator);
             cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDO);
         }
     }
