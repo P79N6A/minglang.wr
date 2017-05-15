@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.springframework.beans.BeanUtils;
@@ -23,18 +25,18 @@ import org.springframework.util.Assert;
 import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
-import com.alibaba.masterdata.client.service.Employee360Service;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDeleteDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.Address;
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.AddressDto;
@@ -58,14 +60,13 @@ import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
-import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
+import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
@@ -92,6 +93,7 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoOrgAdminAddressMapper cuntaoOrgAdminAddressMapper;
 	@Autowired
 	CuntaoOrgBO cuntaoOrgBO;
+	@Autowired
 	TairCache tairCache;
     UicReadServiceClient uicReadServiceClient;
 	@Autowired
@@ -100,13 +102,14 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	@Autowired
 	CaiNiaoAdapter caiNiaoAdapter;
+	@Autowired
     MessageCenterService messageCenterService;
-    @Autowired
-    Employee360Service employee360Service;
     @Autowired
     AttachmentService criusAttachmentService;
     @Autowired
     Emp360Adapter emp360Adapter;
+    @Autowired
+	AppResourceService appResourceService;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
@@ -642,7 +645,7 @@ public class CountyBOImpl implements CountyBO {
 	            //更新组织树中的名称和parentId等
 	        	updateCuntaoOrg(countyDto,operator);
 	            //清楚缓存
-//	            tairCache.invalid("cuntao_orgid_1");
+	            tairCache.invalid("cuntao_orgid_1");
 	        }
 	    }
 
@@ -955,14 +958,39 @@ public class CountyBOImpl implements CountyBO {
         params.put("curAddress", convertToStationAddressString(old));
         params.put("orgName", StringUtils.isEmpty(countyDto.getName()) ? old.getName() : countyDto.getName());
         params.put("orgType", "县服务中心");
-//        List<String> mailList = findEmailReceiverFromResource(STATION_ADDRESS_CHANGE_RECEIVERS);
-        List<String> mailList=new ArrayList<String>();
-        while (mailList.size() > 50) {
-            List<String> subMailList = mailList.subList(0, 49);
-//            messageCenterService.sendMail(subMailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
-            mailList.removeAll(subMailList);
-        }
+        List<String> mailList = findEmailReceiverFromResource("station_address_change_receivers");
         messageCenterService.sendMail(mailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
+    }
+    private  List<String> findEmailReceiverFromResource(String resourceType) {
+    	 List<AppResourceDto> appResourceDOs = appResourceService.queryAppResourceList(resourceType);
+        if (null == appResourceDOs || 0 == appResourceDOs.size() || null == appResourceDOs.get(0)) {
+            return Collections.<String>emptyList();
+        }
+        return convertResourceToAccounts(appResourceDOs.get(0));
+    }
+    
+    private List<String> convertResourceToAccounts(AppResourceDto appResourceDO) {
+        if (null == appResourceDO || StringUtils.isEmpty(appResourceDO.getValue())) {
+            return Collections.<String>emptyList();
+        }
+        String[] workNos = appResourceDO.getValue().split(",");
+        if (ArrayUtils.isEmpty(workNos)) {
+            return Collections.<String>emptyList();
+        } else {
+            return emailAddress(Arrays.<String>asList(workNos));
+        }
+    }
+    
+    private List<String> emailAddress(List<String> workNos) {
+    	Map<String, EmpInfoDto> empInfoListVo = emp360Adapter.getEmpInfoByWorkNos(workNos);
+        List<String> mailList = new ArrayList<String>(workNos.size());
+        for (EmpInfoDto emp : empInfoListVo.values()) {
+            String loginAccount = StringUtils.trim(emp.getLoginAccount());
+            if (StringUtils.isNotEmpty(loginAccount)) {
+                mailList.add(loginAccount + "@alibaba-inc.com");
+            }
+        }
+        return mailList;
     }
     
     private Map<String,String> mailParam(String templateId,String sourceId,String messageTypeId){

@@ -32,6 +32,7 @@ import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
+import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.uic.common.cache.UICCacheService;
@@ -255,6 +256,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean
 	public MessageService messageService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public MessageCenterService messageCenterService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
+		return context.hsfConsumerBuilder(MessageCenterService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
 	
