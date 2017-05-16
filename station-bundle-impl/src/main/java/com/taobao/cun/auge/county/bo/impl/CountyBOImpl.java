@@ -492,7 +492,7 @@ public class CountyBOImpl implements CountyBO {
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto){
 		validateSaveCountyStationParam(countyDto);
 		//TODO 解决前台没有传入detail问题
-        converDetail(countyDto);
+//        converDetail(countyDto);
         //在绑定组织树之前做
         if (countyDto.getOrgId() == null && countyDto.getId() != null) {
         	CountyStation old=countyStationMapper.selectByPrimaryKey(countyDto.getId());
