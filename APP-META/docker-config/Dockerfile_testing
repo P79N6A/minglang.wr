@@ -1,0 +1,28 @@
+FROM reg.docker.alibaba-inc.com/aliexpress/spring-boot-server:1.2-5u7
+
+# 设置应用变量
+ENV MS_APP_NAME=auge
+
+#启停脚本;设置应用名（务必包含此四项）
+RUN mkdir /home/admin/cai && \
+mkdir -p /home/admin/auge/target && \
+echo "/home/admin/${MS_APP_NAME}/bin/jbossctl stop" > /home/admin/stop.sh && \
+echo "/home/admin/${MS_APP_NAME}/bin/jbossctl pubstart" > /home/admin/start.sh && \
+echo "/home/admin/${MS_APP_NAME}/bin/preload.sh" > /home/admin/health.sh && \
+chmod u+x /home/admin/health.sh /home/admin/start.sh /home/admin/stop.sh && \
+echo "${MS_APP_NAME}" > /home/admin/.appname
+
+#如果需要保留日志，请设置挂载目录
+VOLUME /home/admin/logs  /home/admin/cai/logs /home/admin/${MS_APP_NAME}/logs
+
+#工作目录
+WORKDIR /home/admin/${MS_APP_NAME}/bin
+
+#代码包
+COPY ${MS_APP_NAME}.tgz /home/admin/${MS_APP_NAME}/target/${MS_APP_NAME}.tgz
+
+ADD update_setenv.sh /home/admin/${MS_APP_NAME}/bin/update_setenv.sh
+ADD start.sh /home/admin/start.sh
+RUN chmod u+x /home/admin/health.sh /home/admin/start.sh /home/admin/stop.sh
+
+ENTRYPOINT ["/home/admin/start.sh"]
