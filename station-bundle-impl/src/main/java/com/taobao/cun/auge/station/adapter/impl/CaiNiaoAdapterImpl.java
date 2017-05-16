@@ -97,6 +97,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			if (!res.isSuccess()) {
 				throw new ServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
 			}
+			if(res.getData()==null){
+				return null;
+			}
 			return res.getData().getId();
 		} catch (Exception e) {
 			String error = getErrorMessage("addCounty", JSONObject.toJSONString(stationDto),e.getMessage());
