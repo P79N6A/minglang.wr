@@ -15,4 +15,8 @@
 	  <property name="augeCuntaoOrgService" ref="augeCuntaoOrgService"></property>
 	  <property name="augeCuntaoUserService" ref="augeCuntaoUserService"></property>
 	</bean>
+	
+	<bean id="chinaDivisionManager" class="com.taobao.biz.common.division.impl.DefaultChinaDivisionManager"
+          depends-on="categoryClientExtends" init-method="init">
+    </bean>
 </beans>

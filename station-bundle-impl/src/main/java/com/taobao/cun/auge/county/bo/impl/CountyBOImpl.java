@@ -88,7 +88,7 @@ public class CountyBOImpl implements CountyBO {
 
 	public static final String SP = ";";
 	public static final String SSP = ":";
-
+	@Autowired
 	ChinaDivisionManager chinaDivisionManager;
 	@Autowired
 	CountyStationMapper countyStationMapper;
@@ -100,6 +100,7 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoOrgBO cuntaoOrgBO;
 	@Autowired
 	TairCache tairCache;
+	@Autowired
     UicReadServiceClient uicReadServiceClient;
 	@Autowired
 	CountyStationBO countyStationBO;
@@ -593,7 +594,7 @@ public class CountyBOImpl implements CountyBO {
 	        }
 	        String town = countyDto.getTown();
 	        String townDetail = countyDto.getTownDetail();
-	        if (StringUtils.isNotEmpty(town) &&!"0".equals(town)&& StringUtils.isEmpty(townDetail)) {
+	        if (StringUtils.isNotEmpty(town) && StringUtils.isEmpty(townDetail)) {
 	            DivisionVO divisionVO = chinaDivisionManager.getDivisionById(Long.parseLong(town));
 	            if (divisionVO != null) {
 	            	countyDto.setTownDetail(divisionVO.getDivisionName());
