@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.buc.api.EnhancedUserQueryService;
@@ -63,7 +64,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private WarehouseReadService warehouseReadService;
 	@Resource
 	private WarehouseWriteService warehouseWriteService;
-	@Resource
+	@Autowired
 	private EnhancedUserQueryService enhancedUserQueryService;
 
 	@Override
@@ -98,6 +99,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 				throw new ServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			if(res.getData()==null){
+				logger.error(res.getErrorMessage());
 				return null;
 			}
 			return res.getData().getId();
