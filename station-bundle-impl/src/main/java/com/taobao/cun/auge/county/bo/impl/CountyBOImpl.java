@@ -88,7 +88,6 @@ public class CountyBOImpl implements CountyBO {
 
 	public static final String SP = ";";
 	public static final String SSP = ":";
-	@Autowired
 	ChinaDivisionManager chinaDivisionManager;
 	@Autowired
 	CountyStationMapper countyStationMapper;
