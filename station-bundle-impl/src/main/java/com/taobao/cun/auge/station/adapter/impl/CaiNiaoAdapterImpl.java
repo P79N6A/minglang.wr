@@ -64,7 +64,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	@Resource
 	private WarehouseWriteService warehouseWriteService;
 	@Resource
-	private EnhancedUserQueryService userQueryService;
+	private EnhancedUserQueryService enhancedUserQueryService;
 
 	@Override
 	public Long addCounty(CaiNiaoStationDto station) throws AugeServiceException {
@@ -101,7 +101,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		} catch (Exception e) {
 			String error = getErrorMessage("addCounty", JSONObject.toJSONString(stationDto),e.getMessage());
 			logger.error(error,e);
-			throw new ServiceException(error);
+			throw new AugeServiceException(error);
 		}
 	}
 	
@@ -122,7 +122,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		param.setOrgId(dto.getStationId());
 		EnhancedUser user;
 		try {
-			user = userQueryService.getUser(dto.getLoginId());
+			user = enhancedUserQueryService.getUser(dto.getLoginId());
 			if (user != null) {
 				param.setFontUserName(user.getAccount());
 			}

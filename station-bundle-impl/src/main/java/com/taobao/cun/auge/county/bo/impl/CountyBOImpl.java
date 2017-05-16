@@ -15,6 +15,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.jcabi.log.Logger;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
 import com.taobao.cun.appResource.dto.AppResourceDto;
@@ -45,6 +47,7 @@ import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.county.impl.CountyServiceImpl;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CountyStationExample.Criteria;
@@ -85,7 +88,7 @@ public class CountyBOImpl implements CountyBO {
 
 	public static final String SP = ";";
 	public static final String SSP = ":";
-	
+
 	ChinaDivisionManager chinaDivisionManager;
 	@Autowired
 	CountyStationMapper countyStationMapper;
