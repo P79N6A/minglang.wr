@@ -593,7 +593,7 @@ public class CountyBOImpl implements CountyBO {
 	        }
 	        String town = countyDto.getTown();
 	        String townDetail = countyDto.getTownDetail();
-	        if (StringUtils.isNotEmpty(town) && StringUtils.isEmpty(townDetail)) {
+	        if (StringUtils.isNotEmpty(town) &&!"0".equals(town)&& StringUtils.isEmpty(townDetail)) {
 	            DivisionVO divisionVO = chinaDivisionManager.getDivisionById(Long.parseLong(town));
 	            if (divisionVO != null) {
 	            	countyDto.setTownDetail(divisionVO.getDivisionName());
