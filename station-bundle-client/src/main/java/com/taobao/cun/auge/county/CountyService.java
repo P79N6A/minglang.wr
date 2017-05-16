@@ -88,4 +88,6 @@ public interface CountyService {
 	 * @return
 	 */
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
+	
+	public CountyDto startOperate(String operator,CountyDto countyDto);
 }

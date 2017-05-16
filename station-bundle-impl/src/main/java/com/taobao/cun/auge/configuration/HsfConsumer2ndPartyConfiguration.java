@@ -17,6 +17,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationUserWriteService
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
+import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
@@ -31,6 +32,8 @@ import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
+import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.uic.common.cache.UICCacheService;
@@ -245,10 +248,27 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				version, 3000);
 	}
 
+	@Bean(initMethod = "init")
+	public HSFSpringConsumerBean warehouseWriteService(
+			@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
+		return getConsumerBean(WarehouseWriteService.class, HSFGroup.HSF,
+				version, 3000);
+	}
 	@Bean
 	public MessageService messageService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
 	
+	@Bean
+	public MessageCenterService messageCenterService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
+		return context.hsfConsumerBuilder(MessageCenterService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public PartnerApplyService partnerApplyService(HsfConsumerContext context, @Value("${recuit.service.version}") String version) {
+		return context.hsfConsumerBuilder(PartnerApplyService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
 }

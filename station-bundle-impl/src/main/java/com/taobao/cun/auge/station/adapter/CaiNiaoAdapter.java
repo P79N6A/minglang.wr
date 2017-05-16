@@ -165,4 +165,6 @@ public interface CaiNiaoAdapter {
 	public boolean removeStationFeatures(Long stationId,Set<String> keys) throws AugeServiceException;
 	
 	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException; 
+	
+	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException ;
 }

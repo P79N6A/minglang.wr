@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,28 +12,34 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.cainiao.cuntaonetwork.constants.warehouse.WarehouseConst.WarehouseStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.common.lang.StringUtil;
-import com.alibaba.masterdata.client.service.Employee360Service;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.jcabi.log.Logger;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDeleteDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
+import com.taobao.cun.auge.client.address.DefaultAddress;
 import com.taobao.cun.auge.common.Address;
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.AddressDto;
@@ -40,6 +47,7 @@ import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.county.impl.CountyServiceImpl;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CountyStationExample.Criteria;
@@ -56,30 +64,31 @@ import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
-import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
+import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.auge.station.enums.CountyStationLeaseTypeEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Component("countyBO")
+@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 public class CountyBOImpl implements CountyBO {
 
 	public static final String SP = ";";
 	public static final String SSP = ":";
-	
+
 	ChinaDivisionManager chinaDivisionManager;
 	@Autowired
 	CountyStationMapper countyStationMapper;
@@ -89,6 +98,7 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoOrgAdminAddressMapper cuntaoOrgAdminAddressMapper;
 	@Autowired
 	CuntaoOrgBO cuntaoOrgBO;
+	@Autowired
 	TairCache tairCache;
     UicReadServiceClient uicReadServiceClient;
 	@Autowired
@@ -97,13 +107,16 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	@Autowired
 	CaiNiaoAdapter caiNiaoAdapter;
+	@Autowired
     MessageCenterService messageCenterService;
-    @Autowired
-    Employee360Service employee360Service;
     @Autowired
     AttachmentService criusAttachmentService;
     @Autowired
     Emp360Adapter emp360Adapter;
+    @Autowired
+	AppResourceService appResourceService;
+    @Autowired
+    PartnerApplyService partnerApplyService;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
@@ -499,9 +512,11 @@ public class CountyBOImpl implements CountyBO {
             syncNewCountyStationToCainiao(operator, countyDto, taobaoUserId);
             //新增绑定附件
             if(!ListUtils.isEmpty(countyDto.getAttachments())){
-            	OperatorDto operatorDto =new OperatorDto();
+            	com.taobao.cun.common.operator.OperatorDto operatorDto =new com.taobao.cun.common.operator.OperatorDto();
             	operatorDto.setOperator(operator);
-            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, OperatorConverter.convert(operatorDto));
+            	operatorDto.setOperatorType(com.taobao.cun.common.operator.OperatorTypeEnum.BUC);
+            	operatorDto.setOperatorOrgId(1L);
+            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, operatorDto);
             }
             //自动绑定村淘组织和行政地址
             bindOrg2Address(countyStation,operator);
@@ -516,14 +531,16 @@ public class CountyBOImpl implements CountyBO {
             }
             //因为修改县服务中心，不知道有没有修改附件，一律删除，再新增
             if(!ListUtils.isEmpty(countyDto.getAttachments())) {
-            	OperatorDto operatorDto =new OperatorDto();
+            	com.taobao.cun.common.operator.OperatorDto operatorDto =new com.taobao.cun.common.operator.OperatorDto();
             	operatorDto.setOperator(operator);
-            	operatorDto.setOperatorType(OperatorTypeEnum.BUC);
+            	operatorDto.setOperatorType(com.taobao.cun.common.operator.OperatorTypeEnum.BUC);
+            	operatorDto.setOperatorOrgId(1L);
             	AttachmentDeleteDto deletedDto=new AttachmentDeleteDto();
             	deletedDto.setObjectId(countyStation.getId());
             	deletedDto.setBizType( AttachmentBizTypeEnum.COUNTY_STATION);
+            	deletedDto.copyOperatorDto(operatorDto);
             	criusAttachmentService.deleteAttachment(deletedDto);
-            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, OperatorConverter.convert(operatorDto));
+            	criusAttachmentService.addAttachmentBatch(countyDto.getAttachments(), countyStation.getId(), AttachmentBizTypeEnum.COUNTY_STATION, operatorDto);
             }
         }
         return countyDto;
@@ -734,6 +751,9 @@ public class CountyBOImpl implements CountyBO {
         BeanUtils.copyProperties(countyDto, countyStation);
         countyStation.setCreator(operator);
         countyStation.setModifier(operator);
+        countyStation.setGmtCreate(new Date());
+        countyStation.setGmtModified(new Date());
+        countyStation.setIsDeleted("n");
         countyStation.setManageModel(countyDto.getManageModel().getCode());
         countyStation.setManageStatus(countyDto.getManageStatus().getCode());
         if (taobaoUserId != null) {
@@ -758,7 +778,7 @@ public class CountyBOImpl implements CountyBO {
             return;
         }
         CaiNiaoStationDto stationDto = toNewCaiNiaoStationDto(countyDto);
-        Long caiNiaostationId = caiNiaoAdapter.addCounty(stationDto);
+        Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(stationDto);
         if (caiNiaostationId == null) {
             throw new BusinessException("同步菜鸟驿站失败");
         } else {
@@ -766,6 +786,7 @@ public class CountyBOImpl implements CountyBO {
             relDO.setObjectId(countyDto.getId());
             relDO.setCainiaoStationId(caiNiaostationId);
             relDO.setType(CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+            relDO.setOperator(operator);
             cuntaoCainiaoStationRelBO.insertCuntaoCainiaoStationRel(relDO);
         }
     }
@@ -838,11 +859,25 @@ public class CountyBOImpl implements CountyBO {
             cuntaoOrgAdminAddressDO.setIsDeleted("n");
             //绑定组织和行政地址
             cuntaoOrgAdminAddressMapper.insert(cuntaoOrgAdminAddressDO);
-
             //激活因该地区未开通的合伙人
-//            activeRefusedPartner(countyStation, context);
+            activeRefusedPartner(countyStation,operator);
         }
     }
+    
+    private void activeRefusedPartner(CountyStation countyStation,String operator) {
+    	DefaultAddress address =new DefaultAddress();
+        if (StringUtil.isNotEmpty(countyStation.getProvince())) {
+        	address.setProvince(countyStation.getProvince());
+        }
+        if (StringUtil.isNotEmpty(countyStation.getCity())) {
+        	address.setCity(countyStation.getCity());
+        }
+        if (StringUtil.isNotEmpty(countyStation.getCounty())) {
+        	address.setCounty(countyStation.getCounty());
+        }
+        partnerApplyService.activeRefusedPartner(address,operator);
+    }
+
     
     /**
      * 只有存在市或者县时，才自动关联
@@ -944,14 +979,39 @@ public class CountyBOImpl implements CountyBO {
         params.put("curAddress", convertToStationAddressString(old));
         params.put("orgName", StringUtils.isEmpty(countyDto.getName()) ? old.getName() : countyDto.getName());
         params.put("orgType", "县服务中心");
-//        List<String> mailList = findEmailReceiverFromResource(STATION_ADDRESS_CHANGE_RECEIVERS);
-        List<String> mailList=new ArrayList<String>();
-        while (mailList.size() > 50) {
-            List<String> subMailList = mailList.subList(0, 49);
-            messageCenterService.sendMail(subMailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
-            mailList.removeAll(subMailList);
-        }
+        List<String> mailList = findEmailReceiverFromResource("station_address_change_receivers");
         messageCenterService.sendMail(mailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
+    }
+    private  List<String> findEmailReceiverFromResource(String resourceType) {
+    	 List<AppResourceDto> appResourceDOs = appResourceService.queryAppResourceList(resourceType);
+        if (null == appResourceDOs || 0 == appResourceDOs.size() || null == appResourceDOs.get(0)) {
+            return Collections.<String>emptyList();
+        }
+        return convertResourceToAccounts(appResourceDOs.get(0));
+    }
+    
+    private List<String> convertResourceToAccounts(AppResourceDto appResourceDO) {
+        if (null == appResourceDO || StringUtils.isEmpty(appResourceDO.getValue())) {
+            return Collections.<String>emptyList();
+        }
+        String[] workNos = appResourceDO.getValue().split(",");
+        if (ArrayUtils.isEmpty(workNos)) {
+            return Collections.<String>emptyList();
+        } else {
+            return emailAddress(Arrays.<String>asList(workNos));
+        }
+    }
+    
+    private List<String> emailAddress(List<String> workNos) {
+    	Map<String, EmpInfoDto> empInfoListVo = emp360Adapter.getEmpInfoByWorkNos(workNos);
+        List<String> mailList = new ArrayList<String>(workNos.size());
+        for (EmpInfoDto emp : empInfoListVo.values()) {
+            String loginAccount = StringUtils.trim(emp.getLoginAccount());
+            if (StringUtils.isNotEmpty(loginAccount)) {
+                mailList.add(loginAccount + "@alibaba-inc.com");
+            }
+        }
+        return mailList;
     }
     
     private Map<String,String> mailParam(String templateId,String sourceId,String messageTypeId){
@@ -994,4 +1054,24 @@ public class CountyBOImpl implements CountyBO {
 	}
 
 	
+	public CountyDto startOperate(String operator,CountyDto countyDto){
+	        validateStartOperateParam(countyDto);
+	        countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
+	        return saveCountyStation(operator, countyDto);
+	}
+	
+	
+	private  void validateStartOperateParam(CountyDto countyDto) {
+        Validate.notNull(countyDto, "countyDto is null");
+        Validate.notEmpty(countyDto.getName(), "countyDto.name is empty");
+        Validate.notEmpty(countyDto.getProvince(), "countyDto.province is empty");
+        Validate.notEmpty(countyDto.getCity(), "countyDto.city is empty");
+        Validate.notEmpty(countyDto.getAddressDetail(), "countyDto.addressDetail is empty");
+        Validate.notNull(countyDto.getParentId(), "countyDto.parentId is null");
+        Validate.notEmpty(countyDto.getAcreage(), "countyDto.acreage is empty");
+        Validate.notNull(countyDto.getWarehouseNum(), "countyDto.warehouseNum is null");
+        Validate.notEmpty(countyDto.getLeasingModel(), "countyDto.leasingModel is empty");
+        Validate.notEmpty(countyDto.getOfficeDetail(), "countyDto.officeDetail is empty");
+    }
+
 }
