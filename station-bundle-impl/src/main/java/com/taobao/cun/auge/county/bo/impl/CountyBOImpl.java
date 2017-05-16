@@ -99,7 +99,6 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoOrgBO cuntaoOrgBO;
 	@Autowired
 	TairCache tairCache;
-	@Autowired
     UicReadServiceClient uicReadServiceClient;
 	@Autowired
 	CountyStationBO countyStationBO;
