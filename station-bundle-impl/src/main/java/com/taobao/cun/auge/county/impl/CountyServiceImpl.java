@@ -140,4 +140,15 @@ public class CountyServiceImpl implements CountyService{
 			CountyQueryCondition queryCondition) {
 		return countyBO.queryCountyStation(queryCondition);
 	}
+	
+	public CountyDto startOperate(String operator,CountyDto countyDto){
+		logger.info("startOperate"+JSON.toJSONString(countyDto));
+		try {
+			CountyDto rst = countyBO.startOperate(operator,countyDto);
+			return rst;
+		} catch (Exception e){
+			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
+			throw new AugeBusinessException("保存县点失败："+e);
+		}
+	}
 }

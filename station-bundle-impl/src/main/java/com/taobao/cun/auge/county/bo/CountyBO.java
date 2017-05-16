@@ -24,4 +24,7 @@ public interface CountyBO {
 	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition);
 	
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
+	
+	public CountyDto startOperate(String operator,CountyDto countyDto);
+	
 }
