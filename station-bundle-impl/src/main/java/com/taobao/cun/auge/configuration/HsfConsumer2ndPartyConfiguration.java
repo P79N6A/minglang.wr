@@ -217,7 +217,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
-		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.DUBBO, version, 3000);
+		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
 	}
 
 	@Bean(initMethod = "init")
