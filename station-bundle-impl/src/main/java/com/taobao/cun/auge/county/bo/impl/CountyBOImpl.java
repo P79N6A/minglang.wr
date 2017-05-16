@@ -36,6 +36,7 @@ import com.taobao.cun.attachment.dto.AttachmentDeleteDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
+import com.taobao.cun.auge.client.address.DefaultAddress;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.bo.CountyBO;
@@ -73,6 +74,7 @@ import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -110,6 +112,8 @@ public class CountyBOImpl implements CountyBO {
     Emp360Adapter emp360Adapter;
     @Autowired
 	AppResourceService appResourceService;
+    @Autowired
+    PartnerApplyService partnerApplyService;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
@@ -852,11 +856,25 @@ public class CountyBOImpl implements CountyBO {
             cuntaoOrgAdminAddressDO.setIsDeleted("n");
             //绑定组织和行政地址
             cuntaoOrgAdminAddressMapper.insert(cuntaoOrgAdminAddressDO);
-
             //激活因该地区未开通的合伙人
-//            activeRefusedPartner(countyStation, context);
+            activeRefusedPartner(countyStation,operator);
         }
     }
+    
+    private void activeRefusedPartner(CountyStation countyStation,String operator) {
+    	DefaultAddress address =new DefaultAddress();
+        if (StringUtil.isNotEmpty(countyStation.getProvince())) {
+        	address.setProvince(countyStation.getProvince());
+        }
+        if (StringUtil.isNotEmpty(countyStation.getCity())) {
+        	address.setCity(countyStation.getCity());
+        }
+        if (StringUtil.isNotEmpty(countyStation.getCounty())) {
+        	address.setCounty(countyStation.getCounty());
+        }
+        partnerApplyService.activeRefusedPartner(address,operator);
+    }
+
     
     /**
      * 只有存在市或者县时，才自动关联

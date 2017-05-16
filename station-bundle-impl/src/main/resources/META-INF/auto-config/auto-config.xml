@@ -92,6 +92,9 @@
 		<property name="hsf.consumer.version.cunbiz.questionnireManageService" defaultValue="1.0.0.daily" description="问卷分发查询服务" />
 		<property name="hsf.consumer.version.settle.cuntaoNewBailService" defaultValue="1.0.0.daily" description="保证金操作接口" />
 		<property name="hsf.consumer.version.incentiveProgramQueryService" defaultValue="1.0.0.daily" description="激励方案查询接口" />
+		<property name=recuit.service.version defaultValue="1.0.0.daily" description="招募服务" />
+	
+	
 	</group>
 
 	<script>
