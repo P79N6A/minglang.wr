@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byName">
+
+    <bean id="chinaDivisionManager" class="com.taobao.biz.common.division.impl.DefaultChinaDivisionManager"
+          depends-on="categoryClientExtends" init-method="init">
+    </bean>
+
+    <bean id="categoryClientExtends" class="com.taobao.common.category.remote.CategoryClient"
+          init-method="init">
+        <property name="group" value="${cuntao.millau.config}"/>
+        <property name="appName" value="LOCATIONSERVICE"></property>
+        <property name="serverPort" value="4002"/>
+        <property name="timeout" value="1000000"/>
+        <property name="reconnectInterval" value="20000"/>
+        <property name="registerBO">
+            <map>
+                <entry>
+                    <key>
+                        <value>lgArea</value>
+                    </key>
+                    <ref bean="areaBO"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+	<!-- 不推荐对这个类进行封装，如果必须要封装的时候，切记不能在封装的类中引用ChinaDivisionManager这个类作为property，因为这样造成循环依赖，会让启动的时候加载不到millau推送过来的数据 -->
+    <bean id="areaBO" class="com.taobao.common.category.biz.impl.DefaultAreaBO">
+        <property name="store" value="true"></property>
+        <property name="path" value="d:/millaucache/data"></property>
+    </bean>
+
+</beans>
