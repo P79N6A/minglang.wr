@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
@@ -59,6 +60,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.pandora.util.StringUtils;
@@ -804,5 +806,42 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		param.put("orgId", orgId);
 		param.put("name", name);
 		return partnerStationRelMapper.queryUserProfileForAlilangMeeting(param);
+	}
+
+	@Override
+	public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile) {
+		Assert.notNull(mobile);
+		List<String> types = new ArrayList<String>();
+		types.add(PartnerInstanceTypeEnum.TP.getCode());
+		types.add(PartnerInstanceTypeEnum.TPA.getCode());
+		types.add(PartnerInstanceTypeEnum.TPT.getCode());
+		List<String> statuses = new ArrayList<String>();
+		statuses.add(PartnerInstanceStateEnum.DECORATING.getCode());
+		statuses.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		statuses.add(PartnerInstanceStateEnum.SETTLING.getCode());
+		statuses.add(PartnerInstanceStateEnum.QUITING.getCode());
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("mobile", mobile);
+		param.put("instanceTypes", types);
+		param.put("statusLists", statuses);
+		List<PartnerStationRel> rels = partnerStationRelMapper
+				.getInstanceForMobileJudge(param);
+		if(taobaoUserId != null){
+			for (PartnerStationRel p : rels) {
+				if (p.getTaobaoUserId().compareTo(taobaoUserId) != 0) {
+					return false;
+				}
+			}
+		}else if(partnerId !=null){
+			for (PartnerStationRel p : rels) {
+				if (p.getPartnerId().compareTo(partnerId) != 0) {
+					return false;
+				}
+			}
+		}else{
+			throw new AugeServiceException("user id is null");
+
+		}
+		return true;
 	}
 }

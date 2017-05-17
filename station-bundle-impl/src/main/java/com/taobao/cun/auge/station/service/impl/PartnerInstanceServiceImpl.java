@@ -381,12 +381,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_TAOBAOUSERID_HAS_USED);
 		}
 		//判断手机号是否已经被使用
-		List<Partner> partners=partnerBO.getPartnerByMobile(partnerDto.getMobile());
-        for(Partner p:partners){
-        	if(p.getTaobaoUserId().compareTo(partnerDto.getTaobaoUserId())!=0){
-    			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
-        	}
-        }
+		//逻辑变更只判断入驻中、装修中、服务中，退出中用户
+		if(!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null,partnerDto.getMobile())){
+			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
+		}
 		// 入驻老村点，村点状态为已停业
 		Long stationId = stationDto.getId();
 		if (stationId != null) {
@@ -536,11 +534,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void updatePartnerForServicing(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto, Long partnerId) {
 		PartnerUpdateServicingDto pDto = partnerInstanceUpdateServicingDto.getPartnerDto();
 		//验证手机号唯一性
-		List<Partner> ps=partnerBO.getPartnerByMobile(pDto.getMobile());
-		for(Partner p:ps){
-			if(p.getId().compareTo(partnerId)!=0){
-    			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
-			}
+		if(!partnerInstanceBO.judgeMobileUseble(null,partnerId, pDto.getMobile())){
+			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
 		}
 		PartnerDto partnerDto = new PartnerDto();
 		partnerDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
