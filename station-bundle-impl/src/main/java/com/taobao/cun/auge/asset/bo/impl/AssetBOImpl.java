@@ -289,7 +289,7 @@ public class AssetBOImpl implements AssetBO {
 		Assert.notNull(assetIds);
 		Assert.notNull(operator);
 		CuntaoAsset record = new CuntaoAsset();
-		record.setStatus(CuntaoAssetEnum.CHECKING.getCode());
+		record.setCheckStatus(CuntaoAssetEnum.CHECKING.getCode());
 		record.setOperator(operator);
 		CuntaoAssetExample example = new CuntaoAssetExample();
 		example.createCriteria().andIdIn(assetIds);
