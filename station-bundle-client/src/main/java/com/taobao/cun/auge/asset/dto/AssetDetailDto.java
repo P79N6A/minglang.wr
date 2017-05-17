@@ -21,6 +21,8 @@ public class AssetDetailDto implements Serializable{
 
     private String status;
 
+    private String checkStatus;
+
     public Long getId() {
         return id;
     }
@@ -67,5 +69,13 @@ public class AssetDetailDto implements Serializable{
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCheckStatus() {
+        return checkStatus;
+    }
+
+    public void setCheckStatus(String checkStatus) {
+        this.checkStatus = checkStatus;
     }
 }

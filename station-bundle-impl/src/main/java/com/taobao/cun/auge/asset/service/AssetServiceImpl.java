@@ -14,7 +14,6 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetService")
 @HSFProvider(serviceInterface = AssetService.class)
-
 public class AssetServiceImpl implements AssetService{
 
 	private static final Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);

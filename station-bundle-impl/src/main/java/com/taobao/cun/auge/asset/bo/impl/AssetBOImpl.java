@@ -12,6 +12,12 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCountDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.dal.domain.Asset;
@@ -19,7 +25,6 @@ import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -50,8 +55,6 @@ import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
-
-import static java.util.stream.Collectors.groupingBy;
 
 @Component
 public class AssetBOImpl implements AssetBO {
@@ -426,8 +429,8 @@ public class AssetBOImpl implements AssetBO {
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
-			listDto.setDutyArea(asset.getOwnerName());
-			listDto.setDutyUser(asset.getUserName());
+			listDto.setDutyArea(asset.getOwnerOrgId().toString());
+			listDto.setDutyUser(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
 			listDto.setWaitIncome(String.valueOf(
 				list.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
@@ -437,5 +440,144 @@ public class AssetBOImpl implements AssetBO {
 		}
 		categoryAssetList.sort(Comparator.comparing(CategoryAssetListDto::getCategory));
 		return categoryAssetList;
+	}
+
+	@Override
+	public List<AreaAssetListDto> getAreaAssetListByWorkNo(String workNo) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(workNo).andStatusIn(AssetStatusEnum.getValidStatusList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		Map<Long, List<Asset>> listMap = new HashMap<>();
+		for (Asset asset : assetList) {
+			listMap.computeIfAbsent(asset.getUseAreaId(), k -> new ArrayList<>()).add(asset);
+		}
+		List<AreaAssetListDto> dtoList = new ArrayList<>();
+		for (Entry<Long, List<Asset>> entry : listMap.entrySet()) {
+			AreaAssetListDto dto = new AreaAssetListDto();
+			List<Asset> list = entry.getValue();
+			Asset asset = list.get(0);
+			dto.setDutyArea(asset.getOwnerOrgId().toString());
+			dto.setDutyUser(asset.getOwnerName());
+			dto.setUseArea(asset.getUseAreaId().toString());
+			dto.setUseAreaId(asset.getUseAreaId());
+			dto.setWaitIncome(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
+			dto.setWaitRecycle(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+			dto.setCountList(buildAssetCountDtoList(list));
+			dtoList.add(dto);
+		}
+		return dtoList;
+	}
+
+	@Override
+	public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition) {
+		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
+		Objects.requireNonNull(condition.getCategory(), "category is null");
+		Objects.requireNonNull(condition.getAreaType(), "area type is null");
+		AssetExample assetExample = new AssetExample();
+		AssetExample.Criteria criteria = assetExample.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).
+			andCategoryEqualTo(condition.getCategory()).andUseAreaTypeEqualTo(condition.getAreaType());
+		//组织头部
+		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
+		if (CollectionUtils.isEmpty(preAssets)) {
+			return null;
+		}
+		CategoryAssetDetailDto assetDetailDto = new CategoryAssetDetailDto();
+		assetDetailDto.setCategory(condition.getCategory());
+		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
+		assetDetailDto.setWaitIncome(String.valueOf(
+			preAssets.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
+		assetDetailDto.setWaitRecycle(String.valueOf(
+			preAssets.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+		assetDetailDto.setDutyArea(preAssets.get(0).getOwnerOrgId().toString());
+		assetDetailDto.setDutyUser(condition.getWorkNo());
+		//组织尾巴
+		if (StringUtils.isNotEmpty(condition.getCheckStatus())) {
+			criteria.andCheckStatusEqualTo(condition.getCheckStatus());
+		}
+		if (StringUtils.isNotEmpty(condition.getStatus())) {
+			criteria.andStatusEqualTo(condition.getStatus());
+		}
+		if (StringUtils.isNotEmpty(condition.getAliNo())) {
+			criteria.andAliNoEqualTo(condition.getAliNo());
+		}
+		List<Asset> assets = assetMapper.selectByExample(assetExample);
+		assetDetailDto.setDetailList(buildAssetDetailDtoList(assets));
+		return assetDetailDto;
+	}
+
+	@Override
+	public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition) {
+		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
+		Objects.requireNonNull(condition.getUseAreaId(), "use area id is null");
+		AssetExample assetExample = new AssetExample();
+		AssetExample.Criteria criteria = assetExample.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId());
+		//组织头部
+		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
+		if (CollectionUtils.isEmpty(preAssets)) {
+			return null;
+		}
+		AreaAssetDetailDto assetDetailDto = new AreaAssetDetailDto();
+		assetDetailDto.setWaitIncome(String.valueOf(
+			preAssets.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
+		assetDetailDto.setWaitRecycle(String.valueOf(
+			preAssets.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+		assetDetailDto.setDutyArea(preAssets.get(0).getOwnerOrgId().toString());
+		assetDetailDto.setDutyUser(condition.getWorkNo());
+		assetDetailDto.setCountList(buildAssetCountDtoList(preAssets));
+		//组织尾巴
+		if (StringUtils.isNotEmpty(condition.getCheckStatus())) {
+			criteria.andCheckStatusEqualTo(condition.getCheckStatus());
+		}
+		if (StringUtils.isNotEmpty(condition.getStatus())) {
+			criteria.andStatusEqualTo(condition.getStatus());
+		}
+		if (StringUtils.isNotEmpty(condition.getAliNo())) {
+			criteria.andAliNoEqualTo(condition.getAliNo());
+		}
+		List<Asset> assets = assetMapper.selectByExample(assetExample);
+		assetDetailDto.setDetailList(buildAssetDetailDtoList(assets));
+		return assetDetailDto;
+	}
+
+	/**
+	 * 计算出不同类型的资产数量 电脑->20 显示器->10
+	 * @param list
+	 * @return
+	 */
+	private List<AssetCountDto> buildAssetCountDtoList(List<Asset> list) {
+		Map<String, List<Asset>> countListMap = new HashMap<>();
+		for (Asset countAsset : list) {
+			countListMap.computeIfAbsent(countAsset.getCategory(), k -> new ArrayList<>()).add(countAsset);
+		}
+		List<AssetCountDto> countList = new ArrayList<>();
+		for (Entry<String, List<Asset>> countEntry : countListMap.entrySet()) {
+			AssetCountDto assetCountDto = new AssetCountDto();
+			assetCountDto.setName(countEntry.getKey());
+			assetCountDto.setNumber(String.valueOf(countEntry.getValue().size()));
+			countList.add(assetCountDto);
+		}
+		return countList;
+	}
+
+	private List<AssetDetailDto> buildAssetDetailDtoList(List<Asset> assetList) {
+		if (CollectionUtils.isEmpty(assetList)) {
+			return null;
+		}
+		List<AssetDetailDto> detailDtoList = new ArrayList<>();
+		for (Asset asset : assetList) {
+			AssetDetailDto detailDto = new AssetDetailDto();
+			detailDto.setAliNo(asset.getAliNo());
+			detailDto.setCheckStatus(asset.getCheckStatus());
+			detailDto.setId(asset.getId());
+			detailDto.setName(asset.getBrand());
+			detailDto.setUser(asset.getUserId());
+			detailDto.setStatus(asset.getStatus());
+			detailDtoList.add(detailDto);
+		}
+		return detailDtoList;
 	}
 }

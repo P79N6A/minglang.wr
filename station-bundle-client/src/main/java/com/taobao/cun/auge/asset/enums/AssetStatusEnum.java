@@ -8,7 +8,7 @@ import java.util.List;
  */
 public enum  AssetStatusEnum {
 
-    USE("USE", "使用中"), RECYCLE("RECYCLE", "待回收"),TRANSFER("TRANSFER", "转移中"),DISTRIBUTE("distribute", "分发中"),SCRAP("SCRAP", "已报废");
+    USE("USE", "使用中"), RECYCLE("RECYCLE", "待回收"),TRANSFER("TRANSFER", "转移中"),DISTRIBUTE("DISTRIBUTE", "分发中"),SCRAP("SCRAP", "已报废");
 
     private String code;
 

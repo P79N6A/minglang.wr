@@ -22,7 +22,7 @@ public class AreaAssetDetailDto implements Serializable{
 
     private List<AssetCountDto> countList;
 
-    private List<CategoryAssetDetailDto> detailList;
+    private List<AssetDetailDto> detailList;
 
     public String getDutyArea() {
         return dutyArea;
@@ -72,11 +72,11 @@ public class AreaAssetDetailDto implements Serializable{
         this.countList = countList;
     }
 
-    public List<CategoryAssetDetailDto> getDetailList() {
+    public List<AssetDetailDto> getDetailList() {
         return detailList;
     }
 
-    public void setDetailList(List<CategoryAssetDetailDto> detailList) {
+    public void setDetailList(List<AssetDetailDto> detailList) {
         this.detailList = detailList;
     }
 }

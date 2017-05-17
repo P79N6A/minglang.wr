@@ -9,7 +9,7 @@ public class AssetDetailQueryCondition implements Serializable{
 
     private static final long serialVersionUID = 2282592861027828317L;
 
-    private String userId;
+    private String workNo;
 
     /**
      * county || station
@@ -18,7 +18,7 @@ public class AssetDetailQueryCondition implements Serializable{
 
     private String category;
 
-    private String useAreaId;
+    private Long useAreaId;
 
     private String checkStatus;
 
@@ -26,12 +26,12 @@ public class AssetDetailQueryCondition implements Serializable{
 
     private String aliNo;
 
-    public String getUserId() {
-        return userId;
+    public String getWorkNo() {
+        return workNo;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setWorkNo(String workNo) {
+        this.workNo = workNo;
     }
 
     public String getAreaType() {
@@ -50,11 +50,11 @@ public class AssetDetailQueryCondition implements Serializable{
         this.category = category;
     }
 
-    public String getUseAreaId() {
+    public Long getUseAreaId() {
         return useAreaId;
     }
 
-    public void setUseAreaId(String useAreaId) {
+    public void setUseAreaId(Long useAreaId) {
         this.useAreaId = useAreaId;
     }
 
