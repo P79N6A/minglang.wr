@@ -621,7 +621,7 @@
    	</foreach>
    		and b.state in 
    	<foreach collection="statusLists" item="statusList" open="(" close=")" separator="," >
- 	  #{"statusList"}
+ 	  #{statusList}
    	</foreach>
   
   </select>
