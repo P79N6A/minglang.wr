@@ -124,7 +124,19 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 	-->
-		<table tableName="cuntao_org_admin_address" enableCountByExample="true" enableUpdateByExample="true"
+		<table tableName="asset" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		<table tableName="asset_income" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		<table tableName="asset_rollout" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		<table tableName="asset_rollout_income_detail" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
