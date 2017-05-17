@@ -1,14 +1,25 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetExample;
+import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,8 +51,13 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @Component
 public class AssetBOImpl implements AssetBO {
+
+	@Autowired
+	private AssetMapper assetMapper;
 
 	@Autowired
 	private CuntaoAssetMapper cuntaoAssetMapper;
@@ -395,6 +411,31 @@ public class AssetBOImpl implements AssetBO {
 		return convert2CuntaoAssetDto(assets.iterator().next());
 	}
 
-	
-	
+	@Override
+	public List<CategoryAssetListDto> getCategoryAssetListByUserId(String userId) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andUserIdEqualTo(userId).andStatusIn(AssetStatusEnum.getValidStatusList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		Map<String, List<Asset>> listMap = new HashMap<>();
+		for (Asset asset : assetList) {
+			listMap.computeIfAbsent(asset.getCategory(), k -> new ArrayList<>()).add(asset);
+		}
+		List<CategoryAssetListDto> categoryAssetList = new ArrayList<>();
+		for (Entry<String, List<Asset>> entry : listMap.entrySet()) {
+			CategoryAssetListDto listDto = new CategoryAssetListDto();
+			List<Asset> list = entry.getValue();
+			Asset asset = list.get(0);
+			listDto.setCategory(entry.getKey());
+			listDto.setDutyArea(asset.getOwnerName());
+			listDto.setDutyUser(asset.getUserName());
+			listDto.setTotal(String.valueOf(list.size()));
+			listDto.setWaitIncome(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
+			listDto.setWaitRecycle(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+			categoryAssetList.add(listDto);
+		}
+		categoryAssetList.sort(Comparator.comparing(CategoryAssetListDto::getCategory));
+		return categoryAssetList;
+	}
 }

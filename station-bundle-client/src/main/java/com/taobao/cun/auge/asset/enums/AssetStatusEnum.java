@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.asset.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by xiao on 17/5/17.
  */
@@ -30,5 +33,14 @@ public enum  AssetStatusEnum {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public static List<String> getValidStatusList() {
+        List<String> list = new ArrayList<String>();
+        list.add(USE.getCode());
+        list.add(RECYCLE.getCode());
+        list.add(TRANSFER.getCode());
+        list.add(DISTRIBUTE.getCode());
+        return list;
     }
 }
