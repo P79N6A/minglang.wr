@@ -67,8 +67,10 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private CuntaoAssetExtMapper cuntaoAssetExtMapper;
-	
+
+	@Autowired
 	private PartnerInstanceQueryService partnerInstanceQueryService;
+
 	@Resource
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
@@ -474,11 +476,11 @@ public class AssetBOImpl implements AssetBO {
 	public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition) {
 		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
 		Objects.requireNonNull(condition.getCategory(), "category is null");
-		Objects.requireNonNull(condition.getAreaType(), "area type is null");
+		Objects.requireNonNull(condition.getUseAreaType(), "use area type is null");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).
-			andCategoryEqualTo(condition.getCategory()).andUseAreaTypeEqualTo(condition.getAreaType());
+			andCategoryEqualTo(condition.getCategory()).andUseAreaTypeEqualTo(condition.getUseAreaType());
 		//组织头部
 		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
 		if (CollectionUtils.isEmpty(preAssets)) {

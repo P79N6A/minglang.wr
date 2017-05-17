@@ -14,14 +14,14 @@ import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 public interface AssetMobileService {
 
     /**
-     * 我的资产按类目聚合在一起
+     * 我的资产列表(按类目聚合)查询
      * @param workNo
      * @return
      */
     public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo);
 
     /**
-     * 我的资产按区域聚合在一起
+     * 我的资产列表(按使用区域聚合)查询
      * @param workNo
      * @return
      */

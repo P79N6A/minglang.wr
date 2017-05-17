@@ -14,7 +14,7 @@ public class AssetDetailQueryCondition implements Serializable{
     /**
      * county || station
      */
-    private String areaType;
+    private String useAreaType;
 
     private String category;
 
@@ -34,12 +34,12 @@ public class AssetDetailQueryCondition implements Serializable{
         this.workNo = workNo;
     }
 
-    public String getAreaType() {
-        return areaType;
+    public String getUseAreaType() {
+        return useAreaType;
     }
 
-    public void setAreaType(String areaType) {
-        this.areaType = areaType;
+    public void setUseAreaType(String useAreaType) {
+        this.useAreaType = useAreaType;
     }
 
     public String getCategory() {
