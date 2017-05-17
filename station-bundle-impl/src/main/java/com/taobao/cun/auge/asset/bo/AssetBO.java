@@ -57,5 +57,5 @@ public interface AssetBO {
     
     public CuntaoAssetDto queryAssetByAliNoOrSerialNo(String serialNoOrAliNo);
 
-    public List<CategoryAssetListDto> getCategoryAssetListByUserId(String userId);
+    public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo);
 }

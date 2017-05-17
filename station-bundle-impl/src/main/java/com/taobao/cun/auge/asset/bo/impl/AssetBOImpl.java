@@ -412,9 +412,9 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public List<CategoryAssetListDto> getCategoryAssetListByUserId(String userId) {
+	public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo) {
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andUserIdEqualTo(userId).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(workNo).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		Map<String, List<Asset>> listMap = new HashMap<>();
 		for (Asset asset : assetList) {

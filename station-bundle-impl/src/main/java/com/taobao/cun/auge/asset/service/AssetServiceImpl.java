@@ -2,11 +2,6 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
-import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
-import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
-import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,23 +143,4 @@ public class AssetServiceImpl implements AssetService{
 		
 	}
 
-	@Override
-	public List<CategoryAssetListDto> getCategoryAssetListByUserId(String userId) {
-		return assetBO.getCategoryAssetListByUserId(userId);
-	}
-
-	@Override
-	public List<AreaAssetListDto> getAreaAssetListByUserId(String userId) {
-		return null;
-	}
-
-	@Override
-	public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition) {
-		return null;
-	}
-
-	@Override
-	public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition) {
-		return null;
-	}
 }
