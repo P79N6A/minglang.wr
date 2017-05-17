@@ -267,7 +267,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean
-	public PartnerApplyService partnerApplyService(HsfConsumerContext context, @Value("${recuit.service.version}") String version) {
+	public PartnerApplyService partnerApplyService(HsfConsumerContext context, @Value("${recruit.service.version}") String version) {
 		return context.hsfConsumerBuilder(PartnerApplyService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}

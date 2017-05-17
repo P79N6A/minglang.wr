@@ -323,9 +323,13 @@
 			<artifactId>cun-common-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.cun.module</groupId>
-				<artifactId>recruit-bundle-client</artifactId>
-			</dependency>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>recruit-bundle-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
