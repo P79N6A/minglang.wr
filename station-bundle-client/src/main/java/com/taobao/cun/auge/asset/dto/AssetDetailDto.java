@@ -13,11 +13,15 @@ public class AssetDetailDto implements Serializable{
 
     private String aliNo;
 
-    private String name;
+    private String brand;
+
+    private String model;
+
+    private String category;
 
     private String useArea;
 
-    private String user;
+    private String userName;
 
     private String status;
 
@@ -39,12 +43,28 @@ public class AssetDetailDto implements Serializable{
         this.aliNo = aliNo;
     }
 
-    public String getName() {
-        return name;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getUseArea() {
@@ -55,12 +75,12 @@ public class AssetDetailDto implements Serializable{
         this.useArea = useArea;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getStatus() {

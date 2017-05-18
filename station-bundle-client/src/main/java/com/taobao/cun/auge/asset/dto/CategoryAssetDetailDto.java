@@ -2,6 +2,10 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.client.page.DefaultPageResult;
 
 /**
  * Created by xiao on 17/5/17.
@@ -12,17 +16,15 @@ public class CategoryAssetDetailDto implements Serializable{
 
     private String category;
 
-    private String waitRecycle;
+    private Map<AssetStatusEnum, String> statusMap;
 
-    private String waitIncome;
+    private String ownerArea;
 
-    private String dutyArea;
-
-    private String dutyUser;
+    private String owner;
 
     private String total;
 
-    private List<AssetDetailDto> detailList;
+    private DefaultPageResult<AssetDetailDto> detailList;
 
     public String getCategory() {
         return category;
@@ -32,36 +34,28 @@ public class CategoryAssetDetailDto implements Serializable{
         this.category = category;
     }
 
-    public String getWaitRecycle() {
-        return waitRecycle;
+    public Map<AssetStatusEnum, String> getStatusMap() {
+        return statusMap;
     }
 
-    public void setWaitRecycle(String waitRecycle) {
-        this.waitRecycle = waitRecycle;
+    public void setStatusMap(Map<AssetStatusEnum, String> statusMap) {
+        this.statusMap = statusMap;
     }
 
-    public String getWaitIncome() {
-        return waitIncome;
+    public String getOwnerArea() {
+        return ownerArea;
     }
 
-    public void setWaitIncome(String waitIncome) {
-        this.waitIncome = waitIncome;
+    public void setOwnerArea(String ownerArea) {
+        this.ownerArea = ownerArea;
     }
 
-    public String getDutyArea() {
-        return dutyArea;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setDutyArea(String dutyArea) {
-        this.dutyArea = dutyArea;
-    }
-
-    public String getDutyUser() {
-        return dutyUser;
-    }
-
-    public void setDutyUser(String dutyUser) {
-        this.dutyUser = dutyUser;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getTotal() {
@@ -72,11 +66,12 @@ public class CategoryAssetDetailDto implements Serializable{
         this.total = total;
     }
 
-    public List<AssetDetailDto> getDetailList() {
+    public DefaultPageResult<AssetDetailDto> getDetailList() {
         return detailList;
     }
 
-    public void setDetailList(List<AssetDetailDto> detailList) {
+    public void setDetailList(
+        DefaultPageResult<AssetDetailDto> detailList) {
         this.detailList = detailList;
     }
 }

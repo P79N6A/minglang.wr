@@ -2,10 +2,12 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 
+import com.taobao.cun.auge.client.page.DefaultPageQuery;
+
 /**
  * Created by xiao on 17/5/17.
  */
-public class AssetDetailQueryCondition implements Serializable{
+public class AssetDetailQueryCondition extends DefaultPageQuery implements Serializable{
 
     private static final long serialVersionUID = 2282592861027828317L;
 
