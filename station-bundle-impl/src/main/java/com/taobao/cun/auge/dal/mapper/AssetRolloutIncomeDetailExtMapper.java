@@ -6,5 +6,5 @@ import com.taobao.cun.auge.asset.dto.AssetCountDto;
 
 public interface AssetRolloutIncomeDetailExtMapper {
     
-	public List<AssetCountDto> queryCountByIncomeId(Long incomeId, String status);
+	public List<AssetCountDto> queryCountGroupByCategory(AssetRolloutIncomeDetailExtMapper extMapper);
 }
