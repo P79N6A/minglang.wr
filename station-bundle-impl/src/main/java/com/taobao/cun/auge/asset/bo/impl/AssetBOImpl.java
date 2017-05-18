@@ -15,19 +15,22 @@ import javax.annotation.Resource;
 
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
-import com.taobao.cun.auge.asset.dto.AssetCountDto;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -79,7 +82,10 @@ public class AssetBOImpl implements AssetBO {
 
 	@Autowired
 	private CountyStationBO countyStationBO;
-	
+
+	@Autowired
+    private StationBO stationBO;
+
 	private static final String ASSET_SIGN = "assetSign";
 	
 	private static final String ASSET_CHECK = "assetCheck";
@@ -438,8 +444,8 @@ public class AssetBOImpl implements AssetBO {
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
-			//listDto.setDutyArea(asset.getOwnerOrgId().toString());
-			listDto.setOwner(emp360Adapter.getName(asset.getOwnerName()));
+			listDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+			listDto.setOwner(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
 			listDto.setStatusMap(buildStatusMap(list));
 			categoryAssetList.add(listDto);
@@ -463,14 +469,16 @@ public class AssetBOImpl implements AssetBO {
 			AreaAssetListDto dto = new AreaAssetListDto();
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
-			dto.setDutyArea(asset.getOwnerOrgId().toString());
-			dto.setDutyUser(asset.getOwnerName());
-			dto.setUseArea(asset.getUseAreaId().toString());
+            dto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+			dto.setOwner(asset.getOwnerName());
+            if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
+                dto.setUseArea(countyStationBO.getCountyStationById(asset.getUseAreaId()).getName());
+            } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
+                dto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
+            }
+			dto.setUseAreaType(asset.getUseAreaType());
 			dto.setUseAreaId(asset.getUseAreaId());
-			dto.setWaitIncome(String.valueOf(
-				list.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
-			dto.setWaitRecycle(String.valueOf(
-				list.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+			dto.setStatusMap(buildStatusMap(list));
 			dto.setCountList(buildAssetCountDtoList(list));
 			dtoList.add(dto);
 		}
@@ -494,12 +502,9 @@ public class AssetBOImpl implements AssetBO {
 		CategoryAssetDetailDto assetDetailDto = new CategoryAssetDetailDto();
 		assetDetailDto.setCategory(condition.getCategory());
 		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
-		assetDetailDto.setWaitIncome(String.valueOf(
-			preAssets.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
-		assetDetailDto.setWaitRecycle(String.valueOf(
-			preAssets.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
-		assetDetailDto.setDutyArea(preAssets.get(0).getOwnerOrgId().toString());
-		assetDetailDto.setDutyUser(condition.getWorkNo());
+		assetDetailDto.setStatusMap(buildStatusMap(preAssets));
+		assetDetailDto.setOwnerArea(countyStationBO.getCountyStationById(preAssets.get(0).getOwnerOrgId()).getName());
+		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
 		//组织尾巴
 		if (StringUtils.isNotEmpty(condition.getCheckStatus())) {
 			criteria.andCheckStatusEqualTo(condition.getCheckStatus());
@@ -510,8 +515,10 @@ public class AssetBOImpl implements AssetBO {
 		if (StringUtils.isNotEmpty(condition.getAliNo())) {
 			criteria.andAliNoEqualTo(condition.getAliNo());
 		}
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		List<Asset> assets = assetMapper.selectByExample(assetExample);
-		assetDetailDto.setDetailList(buildAssetDetailDtoList(assets));
+		Page<Asset> assetPage = (Page<Asset>) assets;
+		assetDetailDto.setDetailList(PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assets)));
 		return assetDetailDto;
 	}
 
@@ -528,13 +535,9 @@ public class AssetBOImpl implements AssetBO {
 			return null;
 		}
 		AreaAssetDetailDto assetDetailDto = new AreaAssetDetailDto();
-		assetDetailDto.setWaitIncome(String.valueOf(
-			preAssets.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
-		assetDetailDto.setWaitRecycle(String.valueOf(
-			preAssets.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
-		assetDetailDto.setDutyArea(preAssets.get(0).getOwnerOrgId().toString());
-		assetDetailDto.setDutyUser(condition.getWorkNo());
-		assetDetailDto.setCountList(buildAssetCountDtoList(preAssets));
+		assetDetailDto.setOwnerArea(countyStationBO.getCountyStationById(preAssets.get(0).getOwnerOrgId()).getName());
+		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
+		assetDetailDto.setCategoryCountDtoList(buildAssetCountDtoList(preAssets));
 		//组织尾巴
 		if (StringUtils.isNotEmpty(condition.getCheckStatus())) {
 			criteria.andCheckStatusEqualTo(condition.getCheckStatus());
@@ -545,8 +548,10 @@ public class AssetBOImpl implements AssetBO {
 		if (StringUtils.isNotEmpty(condition.getAliNo())) {
 			criteria.andAliNoEqualTo(condition.getAliNo());
 		}
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		List<Asset> assets = assetMapper.selectByExample(assetExample);
-		assetDetailDto.setDetailList(buildAssetDetailDtoList(assets));
+		Page<Asset> assetPage = (Page<Asset>) assets;
+		assetDetailDto.setDetailList(PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assets)));
 		return assetDetailDto;
 	}
 
@@ -555,37 +560,33 @@ public class AssetBOImpl implements AssetBO {
 	 * @param list
 	 * @return
 	 */
-	private List<AssetCountDto> buildAssetCountDtoList(List<Asset> list) {
+	private List<AssetCategoryCountDto> buildAssetCountDtoList(List<Asset> list) {
 		Map<String, List<Asset>> countListMap = new HashMap<>();
 		for (Asset countAsset : list) {
 			countListMap.computeIfAbsent(countAsset.getCategory(), k -> new ArrayList<>()).add(countAsset);
 		}
-		List<AssetCountDto> countList = new ArrayList<>();
+		List<AssetCategoryCountDto> countList = new ArrayList<>();
 		for (Entry<String, List<Asset>> countEntry : countListMap.entrySet()) {
-			AssetCountDto assetCountDto = new AssetCountDto();
+			AssetCategoryCountDto assetCountDto = new AssetCategoryCountDto();
 			assetCountDto.setCategory(countEntry.getKey());
-			assetCountDto.setNumber(String.valueOf(countEntry.getValue().size()));
+			assetCountDto.setTotal(String.valueOf(countEntry.getValue().size()));
+			assetCountDto.setStatusMap(buildStatusMap(countEntry.getValue()));
 			countList.add(assetCountDto);
 		}
 		return countList;
 	}
 
 	private List<AssetDetailDto> buildAssetDetailDtoList(List<Asset> assetList) {
-		if (CollectionUtils.isEmpty(assetList)) {
-			return null;
-		}
-		List<AssetDetailDto> detailDtoList = new ArrayList<>();
-		for (Asset asset : assetList) {
-			AssetDetailDto detailDto = new AssetDetailDto();
-			detailDto.setAliNo(asset.getAliNo());
-			detailDto.setCheckStatus(asset.getCheckStatus());
-			detailDto.setId(asset.getId());
-			detailDto.setName(asset.getBrand());
-			detailDto.setUser(asset.getUserId());
-			detailDto.setStatus(asset.getStatus());
-			detailDtoList.add(detailDto);
-		}
-		return detailDtoList;
+        return assetList.stream().map(asset -> {
+            AssetDetailDto detailDto = new AssetDetailDto();
+            BeanUtils.copyProperties(asset, detailDto);
+            if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
+                detailDto.setUseArea(countyStationBO.getCountyStationById(asset.getUseAreaId()).getName());
+            } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
+                detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
+            }
+            return detailDto;
+        }).collect(Collectors.toList());
 	}
 
 	private Map<AssetStatusEnum, String> buildStatusMap(List<Asset> assetList) {

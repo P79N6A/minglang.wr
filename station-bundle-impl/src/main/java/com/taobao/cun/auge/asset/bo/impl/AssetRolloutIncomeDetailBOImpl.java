@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
-import com.taobao.cun.auge.asset.dto.AssetCountDto;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExtExample;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailMapper;
+
+
 
 @Component
 public class AssetRolloutIncomeDetailBOImpl implements
@@ -23,9 +25,8 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	@Autowired
 	private AssetRolloutIncomeDetailExtMapper assetRolloutIncomeDetailExtMapper;
 	
-	
-	@Override
-	public List<AssetCountDto> queryCountByIncomeId(Long incomeId, String status) {
+
+	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, String status) {
 		ValidateUtils.notNull(incomeId);
 		ValidateUtils.notNull(status);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
@@ -33,6 +34,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andIncomeIdEqualTo(incomeId).andStatusEqualTo(status);
 		//assetRolloutIncomeDetailExtMapper.queryCountGroupByCategory(example);
+
 		return null;
 	}
 
