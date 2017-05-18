@@ -1,11 +1,11 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.client.page.DefaultPageResult;
+import com.taobao.cun.auge.common.PageDto;
 
 /**
  * Created by xiao on 17/5/17.
@@ -24,7 +24,7 @@ public class CategoryAssetDetailDto implements Serializable{
 
     private String total;
 
-    private DefaultPageResult<AssetDetailDto> detailList;
+    private PageDto<AssetDetailDto> detailList;
 
     public String getCategory() {
         return category;
@@ -66,12 +66,11 @@ public class CategoryAssetDetailDto implements Serializable{
         this.total = total;
     }
 
-    public DefaultPageResult<AssetDetailDto> getDetailList() {
+    public PageDto<AssetDetailDto> getDetailList() {
         return detailList;
     }
 
-    public void setDetailList(
-        DefaultPageResult<AssetDetailDto> detailList) {
+    public void setDetailList(PageDto<AssetDetailDto> detailList) {
         this.detailList = detailList;
     }
 }

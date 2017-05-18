@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.github.pagehelper.PageInfo;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
@@ -24,7 +23,6 @@ import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
-import com.taobao.cun.auge.common.utils.DefaultPageResultUtil;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
@@ -520,7 +518,7 @@ public class AssetBOImpl implements AssetBO {
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		List<Asset> assets = assetMapper.selectByExample(assetExample);
 		Page<Asset> assetPage = (Page<Asset>) assets;
-		assetDetailDto.setDetailList(DefaultPageResultUtil.success(assetPage, buildAssetDetailDtoList(assets)));
+		assetDetailDto.setDetailList(PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assets)));
 		return assetDetailDto;
 	}
 
@@ -550,8 +548,10 @@ public class AssetBOImpl implements AssetBO {
 		if (StringUtils.isNotEmpty(condition.getAliNo())) {
 			criteria.andAliNoEqualTo(condition.getAliNo());
 		}
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		List<Asset> assets = assetMapper.selectByExample(assetExample);
-		assetDetailDto.setDetailList(buildAssetDetailDtoList(assets));
+		Page<Asset> assetPage = (Page<Asset>) assets;
+		assetDetailDto.setDetailList(PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assets)));
 		return assetDetailDto;
 	}
 

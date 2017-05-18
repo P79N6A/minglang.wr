@@ -2,9 +2,7 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.common.PageDto;
 
 /**
  * Created by xiao on 17/5/17.
@@ -19,7 +17,7 @@ public class AreaAssetDetailDto implements Serializable{
 
     private List<AssetCategoryCountDto> categoryCountDtoList;
 
-    private List<AssetDetailDto> detailList;
+    private PageDto<AssetDetailDto> detailList;
 
     public String getOwnerArea() {
         return ownerArea;
@@ -45,11 +43,11 @@ public class AreaAssetDetailDto implements Serializable{
         this.categoryCountDtoList = categoryCountDtoList;
     }
 
-    public List<AssetDetailDto> getDetailList() {
+    public PageDto<AssetDetailDto> getDetailList() {
         return detailList;
     }
 
-    public void setDetailList(List<AssetDetailDto> detailList) {
+    public void setDetailList(PageDto<AssetDetailDto> detailList) {
         this.detailList = detailList;
     }
 }
