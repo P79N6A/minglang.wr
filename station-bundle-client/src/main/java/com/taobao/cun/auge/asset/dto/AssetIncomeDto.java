@@ -85,12 +85,12 @@ public class AssetIncomeDto implements Serializable{
     /**
      * 资产总数
      */
-    private List<AssetCountDto>  countList;
+    private List<AssetCategoryCountDto>  countList;
     
     /**
      *待入库资产总数
      */
-	private List<AssetCountDto> waitSignCountList;
+	private List<AssetCategoryCountDto> waitSignCountList;
 
 	public Long getId() {
 		return id;
@@ -204,19 +204,19 @@ public class AssetIncomeDto implements Serializable{
 		this.remark = remark;
 	}
 
-	public List<AssetCountDto> getCountList() {
+	public List<AssetCategoryCountDto> getCountList() {
 		return countList;
 	}
 
-	public void setCountList(List<AssetCountDto> countList) {
+	public void setCountList(List<AssetCategoryCountDto> countList) {
 		this.countList = countList;
 	}
 
-	public List<AssetCountDto> getWaitSignCountList() {
+	public List<AssetCategoryCountDto> getWaitSignCountList() {
 		return waitSignCountList;
 	}
 
-	public void setWaitSignCountList(List<AssetCountDto> waitSignCountList) {
+	public void setWaitSignCountList(List<AssetCategoryCountDto> waitSignCountList) {
 		this.waitSignCountList = waitSignCountList;
 	}
 }

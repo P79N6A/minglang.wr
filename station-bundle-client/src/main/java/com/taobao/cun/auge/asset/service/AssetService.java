@@ -57,12 +57,4 @@ public interface AssetService {
 	    
 	    public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
 	  
-		public List<CategoryAssetListDto> getCategoryAssetListByUserId(String userId);
-
-		public List<AreaAssetListDto> getAreaAssetListByUserId(String userId);
-
-		public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition);
-
-		public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
-
 }

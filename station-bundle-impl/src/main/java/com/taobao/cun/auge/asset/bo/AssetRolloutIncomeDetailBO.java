@@ -2,7 +2,7 @@ package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
 
-import com.taobao.cun.auge.asset.dto.AssetCountDto;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 
 public interface AssetRolloutIncomeDetailBO {
 
@@ -12,5 +12,5 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @param status
 	 * @return
 	 */
-	public List<AssetCountDto> queryCountByIncomeId(Long incomeId,String status);
+	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, String status);
 }
