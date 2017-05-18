@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -23,13 +24,13 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     private AssetBO assetBO;
 
     @Override
-    public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo) {
-        return assetBO.getCategoryAssetListByWorkNo(workNo);
+    public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto) {
+        return assetBO.getCategoryAssetList(operatorDto);
     }
 
     @Override
-    public List<AreaAssetListDto> getAreaAssetListByWorkNo(String workNo) {
-        return assetBO.getAreaAssetListByWorkNo(workNo);
+    public List<AreaAssetListDto> getAreaAssetList(AssetOperatorDto operatorDto) {
+        return assetBO.getAreaAssetList(operatorDto);
     }
 
     @Override

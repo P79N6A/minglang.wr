@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 
 /**
  * Created by xiao on 17/5/17.
@@ -9,32 +12,30 @@ public class CategoryAssetListDto implements Serializable{
 
     private static final long serialVersionUID = -2800218032622909374L;
 
-    private String dutyArea;
+    private String ownerArea;
 
-    private String dutyUser;
+    private String owner;
 
     private String category;
 
     private String total;
 
-    private String waitRecycle;
+    private Map<AssetStatusEnum, String> statusMap;
 
-    private String waitIncome;
-
-    public String getDutyArea() {
-        return dutyArea;
+    public String getOwnerArea() {
+        return ownerArea;
     }
 
-    public void setDutyArea(String dutyArea) {
-        this.dutyArea = dutyArea;
+    public void setOwnerArea(String ownerArea) {
+        this.ownerArea = ownerArea;
     }
 
-    public String getDutyUser() {
-        return dutyUser;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setDutyUser(String dutyUser) {
-        this.dutyUser = dutyUser;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getCategory() {
@@ -53,19 +54,11 @@ public class CategoryAssetListDto implements Serializable{
         this.total = total;
     }
 
-    public String getWaitRecycle() {
-        return waitRecycle;
+    public Map<AssetStatusEnum, String> getStatusMap() {
+        return statusMap;
     }
 
-    public void setWaitRecycle(String waitRecycle) {
-        this.waitRecycle = waitRecycle;
-    }
-
-    public String getWaitIncome() {
-        return waitIncome;
-    }
-
-    public void setWaitIncome(String waitIncome) {
-        this.waitIncome = waitIncome;
+    public void setStatusMap(Map<AssetStatusEnum, String> statusMap) {
+        this.statusMap = statusMap;
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,12 +18,14 @@ import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
+import com.taobao.cun.auge.station.bo.CountyStationBO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Resource
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
+	@Autowired
+	private CountyStationBO countyStationBO;
 	
 	private static final String ASSET_SIGN = "assetSign";
 	
@@ -417,9 +423,10 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo) {
+	public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto) {
+		Objects.requireNonNull(operatorDto.getWorkNo(), "workNo is null");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(workNo).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		Map<String, List<Asset>> listMap = new HashMap<>();
 		for (Asset asset : assetList) {
@@ -431,13 +438,10 @@ public class AssetBOImpl implements AssetBO {
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
-			listDto.setDutyArea(asset.getOwnerOrgId().toString());
-			listDto.setDutyUser(asset.getOwnerName());
+			//listDto.setDutyArea(asset.getOwnerOrgId().toString());
+			listDto.setOwner(emp360Adapter.getName(asset.getOwnerName()));
 			listDto.setTotal(String.valueOf(list.size()));
-			listDto.setWaitIncome(String.valueOf(
-				list.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
-			listDto.setWaitRecycle(String.valueOf(
-				list.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+			listDto.setStatusMap(buildStatusMap(list));
 			categoryAssetList.add(listDto);
 		}
 		categoryAssetList.sort(Comparator.comparing(CategoryAssetListDto::getCategory));
@@ -445,9 +449,10 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public List<AreaAssetListDto> getAreaAssetListByWorkNo(String workNo) {
+	public List<AreaAssetListDto> getAreaAssetList(AssetOperatorDto operatorDto) {
+		Objects.requireNonNull(operatorDto.getWorkNo(), "workNo is null");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(workNo).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		Map<Long, List<Asset>> listMap = new HashMap<>();
 		for (Asset asset : assetList) {
@@ -581,5 +586,18 @@ public class AssetBOImpl implements AssetBO {
 			detailDtoList.add(detailDto);
 		}
 		return detailDtoList;
+	}
+
+	private Map<AssetStatusEnum, String> buildStatusMap(List<Asset> assetList) {
+		Map<AssetStatusEnum, String> statusMap = new LinkedHashMap<>();
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			statusMap.put(AssetStatusEnum.RECYCLE, String.valueOf(
+				assetList.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
+			statusMap.put(AssetStatusEnum.DISTRIBUTE, String.valueOf(
+				assetList.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
+			statusMap.put(AssetStatusEnum.TRANSFER, String.valueOf(
+				assetList.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
+		}
+		return statusMap;
 	}
 }

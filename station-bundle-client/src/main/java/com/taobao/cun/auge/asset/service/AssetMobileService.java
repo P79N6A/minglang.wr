@@ -5,6 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 
@@ -15,17 +16,17 @@ public interface AssetMobileService {
 
     /**
      * 我的资产列表(按类目聚合)查询
-     * @param workNo
+     * @param operatorDto
      * @return
      */
-    public List<CategoryAssetListDto> getCategoryAssetListByWorkNo(String workNo);
+    public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto);
 
     /**
      * 我的资产列表(按使用区域聚合)查询
-     * @param workNo
+     * @param operatorDto
      * @return
      */
-    public List<AreaAssetListDto> getAreaAssetListByWorkNo(String workNo);
+    public List<AreaAssetListDto> getAreaAssetList(AssetOperatorDto operatorDto);
 
     /**
      * 通过我的资产类目聚合列表点击进入的详情页
