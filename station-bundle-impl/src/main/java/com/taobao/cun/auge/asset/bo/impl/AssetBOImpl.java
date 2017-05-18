@@ -585,6 +585,7 @@ public class AssetBOImpl implements AssetBO {
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
                 detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
             }
+            detailDto.setStatus(AssetStatusEnum.valueof(asset.getStatus()));
             return detailDto;
         }).collect(Collectors.toList());
 	}

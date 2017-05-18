@@ -2,6 +2,8 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+
 /**
  * Created by xiao on 17/5/17.
  */
@@ -23,7 +25,7 @@ public class AssetDetailDto implements Serializable{
 
     private String userName;
 
-    private String status;
+    private AssetStatusEnum status;
 
     private String checkStatus;
 
@@ -83,11 +85,11 @@ public class AssetDetailDto implements Serializable{
         this.userName = userName;
     }
 
-    public String getStatus() {
+    public AssetStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AssetStatusEnum status) {
         this.status = status;
     }
 

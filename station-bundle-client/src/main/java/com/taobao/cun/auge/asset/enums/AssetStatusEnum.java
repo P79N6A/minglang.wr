@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by xiao on 17/5/17.
  */
@@ -36,6 +38,13 @@ public class AssetStatusEnum implements Serializable{
     private String code;
 
     private String desc;
+
+    public static AssetStatusEnum valueof(String code) {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        return mappings.get(code);
+    }
 
     public AssetStatusEnum(String code, String desc) {
         this.code = code;
