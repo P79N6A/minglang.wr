@@ -563,7 +563,7 @@ public class AssetBOImpl implements AssetBO {
 		List<AssetCountDto> countList = new ArrayList<>();
 		for (Entry<String, List<Asset>> countEntry : countListMap.entrySet()) {
 			AssetCountDto assetCountDto = new AssetCountDto();
-			assetCountDto.setName(countEntry.getKey());
+			assetCountDto.setCategory(countEntry.getKey());
 			assetCountDto.setNumber(String.valueOf(countEntry.getValue().size()));
 			countList.add(assetCountDto);
 		}

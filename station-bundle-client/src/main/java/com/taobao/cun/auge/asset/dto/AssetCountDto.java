@@ -9,19 +9,19 @@ public class AssetCountDto implements Serializable{
 
     private static final long serialVersionUID = 6998191282561709835L;
 
-    private String name;
+    private String category;
 
     private String number;
+    
+    public String getCategory() {
+		return category;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getNumber() {
+	public String getNumber() {
         return number;
     }
 
