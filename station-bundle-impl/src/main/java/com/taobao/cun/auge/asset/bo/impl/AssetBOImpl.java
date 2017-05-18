@@ -85,7 +85,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Autowired
     private StationBO stationBO;
-	
+
 	private static final String ASSET_SIGN = "assetSign";
 	
 	private static final String ASSET_CHECK = "assetCheck";

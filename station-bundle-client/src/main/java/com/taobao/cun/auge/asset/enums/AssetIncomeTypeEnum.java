@@ -9,10 +9,10 @@ import java.util.Map;
  * @author quanzhu.wangqz
  *
  */
-public class AssetIncomeStatusEnum implements Serializable{
+public class AssetIncomeTypeEnum implements Serializable{
 
 
-    private static final Map<String, AssetIncomeStatusEnum> mappings = new HashMap<String, AssetIncomeStatusEnum>();
+    private static final Map<String, AssetIncomeTypeEnum> mappings = new HashMap<String, AssetIncomeTypeEnum>();
 
 
     private static final long serialVersionUID = -2325045809951928493L;
@@ -20,25 +20,23 @@ public class AssetIncomeStatusEnum implements Serializable{
     private String code;
     private String desc;
     
-    public static final AssetIncomeStatusEnum TODO  = new AssetIncomeStatusEnum("TODO", "待入库");
-    public static final AssetIncomeStatusEnum DOING = new AssetIncomeStatusEnum("DOING", "部分入库");
-    public static final AssetIncomeStatusEnum DONE = new AssetIncomeStatusEnum("DONE", "全部入库");
-    public static final AssetIncomeStatusEnum CANCEL = new AssetIncomeStatusEnum("CANCEL", "对方已撤回");
+    public static final AssetIncomeTypeEnum PURCHASE  = new AssetIncomeTypeEnum("PURCHASE", "采购");
+    public static final AssetIncomeTypeEnum TRANSFER = new AssetIncomeTypeEnum("TRANSFER", "转移");
+    public static final AssetIncomeTypeEnum RECOVER = new AssetIncomeTypeEnum("RECOVER", "回收");
 
-    
+
     static {
-    	mappings.put("TODO", TODO);
-        mappings.put("DOING", DOING);
-        mappings.put("DONE", DONE);
-        mappings.put("CANCEL", CANCEL);
+    	mappings.put("PURCHASE", PURCHASE);
+        mappings.put("TRANSFER", TRANSFER);
+        mappings.put("RECOVER", RECOVER);
     }
 
-    public AssetIncomeStatusEnum(String code, String desc) {
+    public AssetIncomeTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public AssetIncomeStatusEnum() {
+    public AssetIncomeTypeEnum() {
 
     }
 
@@ -58,7 +56,7 @@ public class AssetIncomeStatusEnum implements Serializable{
         this.desc = desc;
     }
 
-    public static AssetIncomeStatusEnum valueof(String code) {
+    public static AssetIncomeTypeEnum valueof(String code) {
         if (code == null)
             return null;
         return mappings.get(code);
@@ -80,7 +78,7 @@ public class AssetIncomeStatusEnum implements Serializable{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AssetIncomeStatusEnum other = (AssetIncomeStatusEnum) obj;
+        AssetIncomeTypeEnum other = (AssetIncomeTypeEnum) obj;
         if (code == null) {
             if (other.code != null)
                 return false;
