@@ -525,10 +525,11 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition) {
 		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
-		Objects.requireNonNull(condition.getUseAreaId(), "use area id is null");
+		Objects.requireNonNull(condition.getUseAreaId(), "useAreaId is null");
+		Objects.requireNonNull(condition.getUseAreaType(), "useAreaTypeId is null");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId());
+		criteria.andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId());
 		//组织头部
 		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
 		if (CollectionUtils.isEmpty(preAssets)) {
