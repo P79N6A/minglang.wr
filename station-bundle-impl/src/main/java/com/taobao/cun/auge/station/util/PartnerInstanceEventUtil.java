@@ -50,7 +50,7 @@ public final class PartnerInstanceEventUtil {
 		sb.append(oldStation.getAddress().getVillageDetail());
 		sb.append(" | ");
 		sb.append(oldStation.getAddress().getAddressDetail());
-		sb.append("====>");
+		sb.append(" ====> ");
 		sb.append(newStation.getAddress().getProvinceDetail());
 		sb.append(" | ");
 		sb.append(newStation.getAddress().getCityDetail());
@@ -62,6 +62,21 @@ public final class PartnerInstanceEventUtil {
 		sb.append(newStation.getAddress().getVillageDetail());
 		sb.append(" | ");
 		sb.append(newStation.getAddress().getAddressDetail());
+		return sb.toString();
+	}
+	
+	public static String buildLngLatInfo(StationDto oldStation,StationDto newStation){
+		StringBuffer sb = new StringBuffer();
+		sb.append(oldStation.getAddress().getProvinceDetail());
+		sb.append(" Lng: ");
+		sb.append(oldStation.getAddress().getLng());
+		sb.append(" Lat: ");
+		sb.append(oldStation.getAddress().getLat());
+		sb.append(" ====> ");
+		sb.append(" Lng: ");
+		sb.append(newStation.getAddress().getLng());
+		sb.append(" Lat: ");
+		sb.append(newStation.getAddress().getLat());
 		return sb.toString();
 	}
 }

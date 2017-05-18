@@ -47,6 +47,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
+import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -2137,6 +2138,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	/** 更新服务站地址信息*/
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateStationAddress(Long taobaoUserId, StationDto updateStation, boolean isSendMail)
 			throws AugeServiceException {
 		if(updateStation != null){
@@ -2160,10 +2162,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
 			record.setTargetId(oldStation.getId());
 			record.setNodeTitle("村服务站地址信息变更");
-			record.setOperatorWorkid(String.valueOf(taobaoUserId));
-			record.setOperatorName(oldStation.getTaobaoNick());
+			record.setOperatorWorkid(newStation.getOperator());
+			record.setOperatorName(newStation.getOperatorType().getCode());
 			record.setOperateTime(new Date());
 			record.setRemarks(PartnerInstanceEventUtil.buildAddressInfo(oldStation,newStation));
+			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
 			if (updateStation.getFeature() != null) {
 				record.setOperateOpinion(updateStation.getFeature().get("st_fk_type"));
 			}
@@ -2196,6 +2199,39 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} catch (Exception e) {
 			logger.error("updateStationAddress [sendMail] address = {}, {}", String.join(",",	 mailConfiguredProperties.getAddressUpdateNotifyMailList()), e);
 			throw new AugeServiceException("updateStationAddress [sendMail] error: " + e.getMessage());
+		}
+	}
+
+	/** 更新服务站经纬度信息*/
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void updateStationLngLat(Long taobaoUserId, StationDto updateStation) throws AugeServiceException {
+		if(updateStation != null){
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(updateStation.getId());
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			StationDto oldStation = instance.getStationDto();
+			StationDto newStation = new StationDto();
+			newStation.setId(oldStation.getId());
+			newStation.setAddress(updateStation.getAddress());
+			if(taobaoUserId != null){
+				newStation.setOperator(String.valueOf(taobaoUserId));
+				newStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			}else{
+				newStation.setOperator(updateStation.getOperator());
+				newStation.setOperatorType(OperatorTypeEnum.BUC);
+			}
+			stationBO.updateStation(newStation);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+			// 日志
+			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
+			record.setTargetId(oldStation.getId());
+			record.setNodeTitle("村服务站经纬度信息变更");
+			record.setOperatorWorkid(newStation.getOperator());
+			record.setOperatorName(newStation.getOperatorType().getCode());
+			record.setOperateTime(new Date());
+			record.setRemarks(PartnerInstanceEventUtil.buildLngLatInfo(oldStation,newStation));
+			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
+			cuntaoFlowRecordQueryService.insertRecord(record);
 		}
 	}
 	
