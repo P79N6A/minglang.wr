@@ -877,20 +877,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
 		}
 		//判断装修是否未付款
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
-		if (decorate != null
-				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-						decorate.getPaymentType())
-				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-						decorate.getStatus())) {
-			throw new AugeServiceException(
-					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
-		}
-        //装修改成不作为强制节点
-//		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-//			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+//		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+//		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+//		if (decorate != null
+//				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+//						decorate.getPaymentType())
+//				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+//						decorate.getStatus())) {
+//			throw new AugeServiceException(
+//					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 //		}
+		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+		}
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
