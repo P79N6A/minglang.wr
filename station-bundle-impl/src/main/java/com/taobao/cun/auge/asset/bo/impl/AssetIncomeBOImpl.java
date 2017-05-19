@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
@@ -17,6 +18,9 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 	
 	@Autowired
 	private AssetIncomeMapper assetIncomeMapper;
+	
+	@Autowired
+	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
 	
 	@Override
 	public Page<AssetIncome> getIncomeList(

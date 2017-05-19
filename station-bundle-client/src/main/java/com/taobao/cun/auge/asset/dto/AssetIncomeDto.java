@@ -3,7 +3,7 @@ package com.taobao.cun.auge.asset.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaType;
+import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 
@@ -30,7 +30,7 @@ public class AssetIncomeDto implements Serializable{
     /**
      * 提交人区域类型：采购，县服务中心，服务站
      */
-    private AssetIncomeApplierAreaType applierAreaType;
+    private AssetIncomeApplierAreaTypeEnum applierAreaType;
 
     /**
      * 提交人区域名称
@@ -116,11 +116,11 @@ public class AssetIncomeDto implements Serializable{
 		this.applierId = applierId;
 	}
 
-	public AssetIncomeApplierAreaType getApplierAreaType() {
+	public AssetIncomeApplierAreaTypeEnum getApplierAreaType() {
 		return applierAreaType;
 	}
 
-	public void setApplierAreaType(AssetIncomeApplierAreaType applierAreaType) {
+	public void setApplierAreaType(AssetIncomeApplierAreaTypeEnum applierAreaType) {
 		this.applierAreaType = applierAreaType;
 	}
 

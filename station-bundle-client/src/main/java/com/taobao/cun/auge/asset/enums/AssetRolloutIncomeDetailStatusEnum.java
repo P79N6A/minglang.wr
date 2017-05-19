@@ -4,32 +4,38 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AssetIncomeApplierAreaType implements Serializable{
-	private static final Map<String, AssetIncomeApplierAreaType> mappings = new HashMap<String, AssetIncomeApplierAreaType>();
+/**
+ * 出入库详情 签收状态枚举
+ * @author quanzhu.wangqz
+ *
+ */
+public class AssetRolloutIncomeDetailStatusEnum implements Serializable{
+
+	private static final Map<String, AssetRolloutIncomeDetailStatusEnum> mappings = new HashMap<String, AssetRolloutIncomeDetailStatusEnum>();
 
 
-    private static final long serialVersionUID = -2325045809951918493L;
+    private static final long serialVersionUID = -2325045809951928493L;
 
     private String code;
     private String desc;
     
-    public static final AssetIncomeApplierAreaType CAIGOU  = new AssetIncomeApplierAreaType("CAIGOU", "采购");
-    public static final AssetIncomeApplierAreaType COUNTY = new AssetIncomeApplierAreaType("COUNTY", "县服务中心");
-    public static final AssetIncomeApplierAreaType STATION = new AssetIncomeApplierAreaType("STATION", "服务站");
+    public static final AssetRolloutIncomeDetailStatusEnum WAIT_SIGN  = new AssetRolloutIncomeDetailStatusEnum("WAIT_SIGN", "待签收");
+    public static final AssetRolloutIncomeDetailStatusEnum HAS_SIGN = new AssetRolloutIncomeDetailStatusEnum("HAS_SIGN", "已签收");
+    public static final AssetRolloutIncomeDetailStatusEnum CANCEL = new AssetRolloutIncomeDetailStatusEnum("CANCEL", "已取消");
 
 
     static {
-    	mappings.put("CAIGOU", CAIGOU);
-        mappings.put("COUNTY", COUNTY);
-        mappings.put("STATION", STATION);
+    	mappings.put("WAIT_SIGN", WAIT_SIGN);
+        mappings.put("HAS_SIGN", HAS_SIGN);
+        mappings.put("CANCEL", CANCEL);
     }
 
-    public AssetIncomeApplierAreaType(String code, String desc) {
+    public AssetRolloutIncomeDetailStatusEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public AssetIncomeApplierAreaType() {
+    public AssetRolloutIncomeDetailStatusEnum() {
 
     }
 
@@ -49,7 +55,7 @@ public class AssetIncomeApplierAreaType implements Serializable{
         this.desc = desc;
     }
 
-    public static AssetIncomeApplierAreaType valueof(String code) {
+    public static AssetRolloutIncomeDetailStatusEnum valueof(String code) {
         if (code == null)
             return null;
         return mappings.get(code);
@@ -71,7 +77,7 @@ public class AssetIncomeApplierAreaType implements Serializable{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AssetIncomeApplierAreaType other = (AssetIncomeApplierAreaType) obj;
+        AssetRolloutIncomeDetailStatusEnum other = (AssetRolloutIncomeDetailStatusEnum) obj;
         if (code == null) {
             if (other.code != null)
                 return false;
