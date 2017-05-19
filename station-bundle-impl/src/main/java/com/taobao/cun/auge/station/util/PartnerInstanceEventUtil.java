@@ -67,7 +67,6 @@ public final class PartnerInstanceEventUtil {
 	
 	public static String buildLngLatInfo(StationDto oldStation,StationDto newStation){
 		StringBuffer sb = new StringBuffer();
-		sb.append(oldStation.getAddress().getProvinceDetail());
 		sb.append(" Lng: ");
 		sb.append(oldStation.getAddress().getLng());
 		sb.append(" Lat: ");
