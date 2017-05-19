@@ -5,15 +5,15 @@ import com.taobao.cun.auge.common.PageQuery;
 
 
 /**
- * 入库单查询条件Dto
+ * 出单查询条件Dto
  * @author quanzhu.wangqz
  *
  */
-public class AssetIncomeQueryCondition extends PageQuery {
+public class AssetRolloutQueryCondition extends PageQuery {
 
 	private static final long serialVersionUID = -4929497832157431915L;
 	/**
-	 * 接收人工号
+	 * 责任人工号
 	 */
 	private String workNo;
 	
