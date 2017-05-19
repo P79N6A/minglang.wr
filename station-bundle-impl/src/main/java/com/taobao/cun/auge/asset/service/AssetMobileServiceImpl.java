@@ -74,9 +74,9 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Override
     @Transactional
-    public Boolean signAsset(AssetDto signDto) {
+    public Boolean signAssetByCounty(AssetDto signDto) {
         try {
-            return assetBO.signAsset(signDto);
+            return assetBO.signAssetByCounty(signDto);
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
@@ -86,6 +86,20 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
+    @Transactional
+    public Boolean signAssetByStation(AssetDto signDto) {
+        try {
+            return assetBO.signAssetByStation(signDto);
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto));
+            throw new AugeBusinessException("系统异常，签收失败");
+        }
+    }
+
+    @Override
+    @Transactional
     public Boolean recycleAsset(AssetDto recycleDto) {
         try {
             return assetBO.recycleAsset(recycleDto);

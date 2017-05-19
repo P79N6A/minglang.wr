@@ -560,12 +560,12 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public Boolean signAsset(AssetDto signDto) {
+	public Boolean signAssetByCounty(AssetDto signDto) {
 		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
 		Objects.requireNonNull(signDto.getOperator(), "用户不能为空");
 		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanSignStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanCountySignStatusList());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
 			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
@@ -577,6 +577,38 @@ public class AssetBOImpl implements AssetBO {
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
 		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 		updateAsset.setId(asset.getId());
+		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+		updateAsset.setUserId(signDto.getOperator());
+		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+		updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
+		updateAsset.setOwnerName(emp360Adapter.getName(signDto.getOperator()));
+		updateAsset.setOwnerOrgId(signDto.getOperatorOrgId());
+		updateAsset.setOwnerWorkno(signDto.getOperator());
+		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
+	}
+
+	@Override
+	public Boolean signAssetByStation(AssetDto signDto) {
+		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
+		Objects.requireNonNull(signDto.getOperator(), "用户不能为空");
+		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.DISTRIBUTE.getCode());
+		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
+		if (asset == null) {
+			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
+			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		Asset updateAsset = new Asset();
+		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
+		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+		updateAsset.setId(asset.getId());
+		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.STATION.getCode());
+		updateAsset.setUserId(signDto.getOperator());
+		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+		updateAsset.setUserName(uicReadAdapter.getFullName(Long.valueOf(signDto.getOperator())));
 		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 	}
 
@@ -591,13 +623,17 @@ public class AssetBOImpl implements AssetBO {
 		if (asset == null) {
 			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
-		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
+		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
 		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 		updateAsset.setId(asset.getId());
+		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+		updateAsset.setUserId(signDto.getOperator());
+		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+		updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
 		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 	}
 
