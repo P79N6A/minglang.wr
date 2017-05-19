@@ -79,11 +79,10 @@ public class AssetStatusEnum implements Serializable{
         return list;
     }
 
-    public static List<String> getCanSignStatusList() {
+    public static List<String> getCanCountySignStatusList() {
         List<String> list = new ArrayList<String>();
         list.add(SIGN.getCode());
         list.add(TRANSFER.getCode());
-        list.add(DISTRIBUTE.getCode());
         return list;
     }
 }

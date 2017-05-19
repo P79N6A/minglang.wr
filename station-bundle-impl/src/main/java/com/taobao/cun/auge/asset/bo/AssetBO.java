@@ -71,7 +71,9 @@ public interface AssetBO {
 
     public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
 
-    public Boolean signAsset(AssetDto signDto);
+    public Boolean signAssetByCounty(AssetDto signDto);
+
+    public Boolean signAssetByStation(AssetDto signDto);
 
     public Boolean recycleAsset(AssetDto signDto);
 }

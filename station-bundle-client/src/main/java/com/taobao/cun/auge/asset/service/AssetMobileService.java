@@ -53,11 +53,18 @@ public interface AssetMobileService {
      */
     public PageDto<AssetIncomeDto> getIncomeLsit(AssetIncomeQueryCondition condition); 
     /**
-     * 资产签收
+     * 资产签收(操作人县小二)
      * @param signDto
      * @return
      */
-    public Boolean signAsset(AssetDto signDto);
+    public Boolean signAssetByCounty(AssetDto signDto);
+
+    /**
+     * 资产签收(操作人村小二)
+     * @param signDto
+     * @return
+     */
+    public Boolean signAssetByStation(AssetDto signDto);
 
     /**
      * 资产回收
