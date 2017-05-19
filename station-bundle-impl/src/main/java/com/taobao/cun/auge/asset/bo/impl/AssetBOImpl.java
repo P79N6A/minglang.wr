@@ -19,11 +19,12 @@ import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
-import com.taobao.cun.auge.asset.dto.AssetSignDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
@@ -559,9 +560,9 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public Boolean signAsset(AssetSignDto signDto) {
+	public Boolean signAsset(AssetDto signDto) {
 		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
-		Objects.requireNonNull(signDto.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(signDto.getOperator(), "用户不能为空");
 		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanSignStatusList());
@@ -569,10 +570,32 @@ public class AssetBOImpl implements AssetBO {
 		if (asset == null) {
 			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
-		if (!asset.getOwnerWorkno().equals(signDto.getWorkNo()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
+		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		Asset updateAsset = new Asset();
+		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
+		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+		updateAsset.setId(asset.getId());
+		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
+	}
+
+	@Override
+	public Boolean recycleAsset(AssetDto signDto) {
+		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
+		Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
+		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.RECYCLE.getCode());
+		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
+		if (asset == null) {
+			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
+			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		Asset updateAsset = new Asset();
+		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
 		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 		updateAsset.setId(asset.getId());
 		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;

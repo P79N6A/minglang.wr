@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
@@ -31,6 +32,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andReceiverWorknoEqualTo(queryParam.getWorkNo());
+		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
 		return (Page<AssetIncome>)assetIncomeMapper.selectByExample(example); 
 	}
 

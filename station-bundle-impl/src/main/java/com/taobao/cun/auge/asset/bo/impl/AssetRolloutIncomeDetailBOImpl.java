@@ -29,11 +29,14 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, AssetRolloutIncomeDetailStatusEnum status) {
 		ValidateUtils.notNull(incomeId);
-		ValidateUtils.notNull(status);
+		//ValidateUtils.notNull(status);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andIncomeIdEqualTo(incomeId).andStatusEqualTo(status.getCode());
+		criteria.andIncomeIdEqualTo(incomeId);
+		if (status != null) {
+			criteria.andStatusEqualTo(status.getCode());
+		}
 		return assetRolloutIncomeDetailExtMapper.queryCountGroupByCategory(example);
 	}
 

@@ -5,12 +5,13 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
-import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.common.PageDto;
 
 /**
  * Created by xiao on 17/5/17.
@@ -45,19 +46,24 @@ public interface AssetMobileService {
      */
     public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
 
-    
-    /**
-     * 资产签收
-     * @param signDto
-     * @return
-     */
-    public Boolean signAsset(AssetSignDto signDto);
-    
     /**
      * 入库单列表查询
      * @param condition
      * @return
      */
-    public List<AssetIncomeDto> getIncomeLsit(AssetIncomeQueryCondition condition); 
+    public PageDto<AssetIncomeDto> getIncomeLsit(AssetIncomeQueryCondition condition); 
+    /**
+     * 资产签收
+     * @param signDto
+     * @return
+     */
+    public Boolean signAsset(AssetDto signDto);
+
+    /**
+     * 资产回收
+     * @param recycleDto
+     * @return
+     */
+    public Boolean recycleAsset(AssetDto recycleDto);
 
 }

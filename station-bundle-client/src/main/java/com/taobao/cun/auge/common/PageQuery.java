@@ -7,10 +7,10 @@ public class PageQuery extends OperatorDto {
 	private static final long serialVersionUID = 6995476690515605998L;
 
 	@NotNull(message="pageNum is null")
-	private int pageNum;
+	private int pageNum = 1;
 	
 	@NotNull(message="pageSize is null")
-	private int pageSize;
+	private int pageSize = 10;
 
 	public int getPageNum() {
 		return pageNum;
