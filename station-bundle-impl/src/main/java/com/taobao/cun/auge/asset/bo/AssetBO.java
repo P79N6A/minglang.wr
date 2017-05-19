@@ -6,7 +6,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
-import com.taobao.cun.auge.asset.dto.AssetSignDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
@@ -71,5 +71,7 @@ public interface AssetBO {
 
     public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
 
-    public Boolean signAsset(AssetSignDto signDto);
+    public Boolean signAsset(AssetDto signDto);
+
+    public Boolean recycleAsset(AssetDto signDto);
 }

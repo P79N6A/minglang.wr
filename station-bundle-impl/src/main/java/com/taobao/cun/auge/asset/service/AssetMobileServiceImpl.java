@@ -9,7 +9,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
-import com.taobao.cun.auge.asset.dto.AssetSignDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -74,13 +74,25 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Override
     @Transactional
-    public Boolean signAsset(AssetSignDto signDto) {
+    public Boolean signAsset(AssetDto signDto) {
         try {
             return assetBO.signAsset(signDto);
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
             logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto));
+            throw new AugeBusinessException("系统异常，签收失败");
+        }
+    }
+
+    @Override
+    public Boolean recycleAsset(AssetDto recycleDto) {
+        try {
+            return assetBO.recycleAsset(recycleDto);
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(recycleDto));
             throw new AugeBusinessException("系统异常，签收失败");
         }
     }

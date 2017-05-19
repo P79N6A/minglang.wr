@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by xiao on 17/5/19.
  */
-public class AssetSignDto extends AssetOperatorDto implements Serializable{
+public class AssetDto extends AssetOperatorDto implements Serializable{
 
     private static final long serialVersionUID = -757424770912097035L;
 
