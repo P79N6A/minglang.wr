@@ -19,10 +19,12 @@ import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
@@ -430,7 +432,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto) {
-		Objects.requireNonNull(operatorDto.getWorkNo(), "workNo is null");
+		Objects.requireNonNull(operatorDto.getWorkNo(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
@@ -456,7 +458,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<AreaAssetListDto> getAreaAssetList(AssetOperatorDto operatorDto) {
-		Objects.requireNonNull(operatorDto.getWorkNo(), "workNo is null");
+		Objects.requireNonNull(operatorDto.getWorkNo(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
@@ -487,9 +489,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition) {
-		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
-		Objects.requireNonNull(condition.getCategory(), "category is null");
-		Objects.requireNonNull(condition.getUseAreaType(), "use area type is null");
+		Objects.requireNonNull(condition.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(condition.getCategory(), "资产种类不能为空");
+		Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).
@@ -524,9 +526,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition) {
-		Objects.requireNonNull(condition.getWorkNo(), "workNo is null");
-		Objects.requireNonNull(condition.getUseAreaId(), "useAreaId is null");
-		Objects.requireNonNull(condition.getUseAreaType(), "useAreaTypeId is null");
+		Objects.requireNonNull(condition.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(condition.getUseAreaId(), "区域不能为空");
+		Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId());
@@ -554,6 +556,26 @@ public class AssetBOImpl implements AssetBO {
 		Page<Asset> assetPage = (Page<Asset>) assets;
 		assetDetailDto.setDetailList(PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assets)));
 		return assetDetailDto;
+	}
+
+	@Override
+	public Boolean signAsset(AssetSignDto signDto) {
+		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
+		Objects.requireNonNull(signDto.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanSignStatusList());
+		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
+		if (asset == null) {
+			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		if (!asset.getOwnerWorkno().equals(signDto.getWorkNo()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
+			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		Asset updateAsset = new Asset();
+		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+		updateAsset.setId(asset.getId());
+		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 	}
 
 	/**

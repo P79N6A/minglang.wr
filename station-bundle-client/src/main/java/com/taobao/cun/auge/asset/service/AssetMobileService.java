@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 
@@ -41,5 +42,8 @@ public interface AssetMobileService {
      * @return
      */
     public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
+
+
+    public Boolean signAsset(AssetSignDto signDto);
 
 }

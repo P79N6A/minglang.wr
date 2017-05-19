@@ -15,6 +15,8 @@ public class AssetStatusEnum implements Serializable{
 
     private static final long serialVersionUID = -4134780817945719435L;
 
+    public static final AssetStatusEnum SIGN = new AssetStatusEnum("SIGN", "待签收");
+
     public static final AssetStatusEnum USE = new AssetStatusEnum("USE", "使用中");
 
     public static final AssetStatusEnum RECYCLE = new AssetStatusEnum("RECYCLE", "待回收");
@@ -28,6 +30,7 @@ public class AssetStatusEnum implements Serializable{
     private static final Map<String, AssetStatusEnum> mappings = new HashMap<String, AssetStatusEnum>();
 
     static {
+        mappings.put("SIGN", SIGN);
         mappings.put("USE", USE);
         mappings.put("RECYCLE", RECYCLE);
         mappings.put("TRANSFER", TRANSFER);
@@ -71,6 +74,14 @@ public class AssetStatusEnum implements Serializable{
         List<String> list = new ArrayList<String>();
         list.add(USE.getCode());
         list.add(RECYCLE.getCode());
+        list.add(TRANSFER.getCode());
+        list.add(DISTRIBUTE.getCode());
+        return list;
+    }
+
+    public static List<String> getCanSignStatusList() {
+        List<String> list = new ArrayList<String>();
+        list.add(SIGN.getCode());
         list.add(TRANSFER.getCode());
         list.add(DISTRIBUTE.getCode());
         return list;

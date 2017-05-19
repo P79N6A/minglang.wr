@@ -9,6 +9,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by xiao on 17/5/17.
@@ -67,6 +69,19 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         } catch (Exception e) {
             logger.error("AssetMobileService getAreaAssetDetail error " + JSON.toJSONString(condition));
             throw new AugeBusinessException("系统异常");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Boolean signAsset(AssetSignDto signDto) {
+        try {
+            return assetBO.signAsset(signDto);
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto));
+            throw new AugeBusinessException("系统异常，签收失败");
         }
     }
 }
