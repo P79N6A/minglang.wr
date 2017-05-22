@@ -80,4 +80,31 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 				}
 	}
 
+	@Override
+	public void handleExamFinish(JSONObject ob) {
+		try{
+		Long userId=ob.getLong("userId");
+		Long paperId =ob.getLong("paperId");
+		String status=ob.getString("status");
+		Integer point=ob.getInteger("point");
+		Assert.notNull(userId);
+		Assert.notNull(status);
+		Assert.notNull(point);
+		ResultModel<UserDispatchDto> disResult=examUserDispatchService.queryExamUserDispatch(paperId, userId);
+		if(!disResult.isSuccess()){
+			throw new AugeServiceException("query userExamDispatch error:"+disResult.getException().getMessage());
+		}
+		UserDispatchDto dis=disResult.getResult();
+		if(!dis.getExamPaper().getBizType().equals("partner_apply")){
+			//非招募考试，暂不处理
+			return;
+		}
+		handleExamResultToApply(userId,status,point);
+		}catch(Exception e){
+			logger.error("handleExamFinish error",e);
+		}
+	
+		
+	}
+
 }

@@ -6,4 +6,7 @@ import com.taobao.notify.message.StringMessage;
 public interface PartnerExamBO {
 
 	public void handleExamFinish(StringMessage strMessage, JSONObject ob);
+	
+	
+	public void handleExamFinish(JSONObject ob);
 }
