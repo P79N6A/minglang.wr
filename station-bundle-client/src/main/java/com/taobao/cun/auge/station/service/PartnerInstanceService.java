@@ -318,4 +318,11 @@ public interface PartnerInstanceService {
 	 */
 	public void updateStationAddress(Long taobaoUserId,StationDto station,boolean isSendMail) throws AugeServiceException;
 	
+	/**
+	 * 更新服务站经纬度
+	 * @param taobaoUserId
+	 * @throws AugeServiceException
+	 */
+	public void updateStationLngLat(Long taobaoUserId,StationDto station) throws AugeServiceException;
+	
 }
