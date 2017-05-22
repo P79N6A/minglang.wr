@@ -1674,6 +1674,76 @@ public class AssetExample {
             addCriterion("check_time not between", value1, value2, "checkTime");
             return (Criteria) this;
         }
+
+        public Criteria andRecycleIsNull() {
+            addCriterion("recycle is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleIsNotNull() {
+            addCriterion("recycle is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleEqualTo(String value) {
+            addCriterion("recycle =", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleNotEqualTo(String value) {
+            addCriterion("recycle <>", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleGreaterThan(String value) {
+            addCriterion("recycle >", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleGreaterThanOrEqualTo(String value) {
+            addCriterion("recycle >=", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleLessThan(String value) {
+            addCriterion("recycle <", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleLessThanOrEqualTo(String value) {
+            addCriterion("recycle <=", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleLike(String value) {
+            addCriterion("recycle like", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleNotLike(String value) {
+            addCriterion("recycle not like", value, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleIn(List<String> values) {
+            addCriterion("recycle in", values, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleNotIn(List<String> values) {
+            addCriterion("recycle not in", values, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleBetween(String value1, String value2) {
+            addCriterion("recycle between", value1, value2, "recycle");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecycleNotBetween(String value1, String value2) {
+            addCriterion("recycle not between", value1, value2, "recycle");
+            return (Criteria) this;
+        }
     }
 
     /**

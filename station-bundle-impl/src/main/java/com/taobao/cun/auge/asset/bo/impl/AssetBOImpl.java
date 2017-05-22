@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,6 +23,7 @@ import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
@@ -450,7 +450,8 @@ public class AssetBOImpl implements AssetBO {
 			listDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
 			listDto.setOwner(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
-			listDto.setStatusMap(buildStatusMap(list));
+			listDto.setPutAway(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
 			categoryAssetList.add(listDto);
 		}
 		categoryAssetList.sort(Comparator.comparing(CategoryAssetListDto::getCategory));
@@ -481,7 +482,8 @@ public class AssetBOImpl implements AssetBO {
             }
 			dto.setUseAreaType(asset.getUseAreaType());
 			dto.setUseAreaId(asset.getUseAreaId());
-			dto.setStatusMap(buildStatusMap(list));
+			dto.setPutAway(String.valueOf(
+				list.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
 			dto.setCountList(buildAssetCountDtoList(list));
 			dtoList.add(dto);
 		}
@@ -505,7 +507,8 @@ public class AssetBOImpl implements AssetBO {
 		CategoryAssetDetailDto assetDetailDto = new CategoryAssetDetailDto();
 		assetDetailDto.setCategory(condition.getCategory());
 		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
-		assetDetailDto.setStatusMap(buildStatusMap(preAssets));
+		assetDetailDto.setPutAway(String.valueOf(
+			preAssets.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
 		assetDetailDto.setOwnerArea(countyStationBO.getCountyStationById(preAssets.get(0).getOwnerOrgId()).getName());
 		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
 		//组织尾巴
@@ -618,7 +621,8 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
 		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.RECYCLE.getCode());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andRecycleEqualTo(
+			RecycleStatusEnum.Y.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
 			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
@@ -637,6 +641,14 @@ public class AssetBOImpl implements AssetBO {
 		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 	}
 
+	@Override
+	public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator) {
+		Objects.requireNonNull(operator.getWorkNo(), "工号不能为空");
+		AssetExample assetExample = new AssetExample();
+		//assetExample.createCriteria().andIsDeletedEqualTo("n").andStatusIn()
+		return null;
+	}
+
 	/**
 	 * 计算出不同类型的资产数量 电脑->20 显示器->10
 	 * @param list
@@ -652,7 +664,8 @@ public class AssetBOImpl implements AssetBO {
 			AssetCategoryCountDto assetCountDto = new AssetCategoryCountDto();
 			assetCountDto.setCategory(countEntry.getKey());
 			assetCountDto.setTotal(String.valueOf(countEntry.getValue().size()));
-			assetCountDto.setStatusMap(buildStatusMap(countEntry.getValue()));
+			assetCountDto.setPutAway(String.valueOf(
+				countEntry.getValue().stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
 			countList.add(assetCountDto);
 		}
 		return countList;
@@ -667,21 +680,8 @@ public class AssetBOImpl implements AssetBO {
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
                 detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
             }
-            detailDto.setStatus(AssetStatusEnum.valueof(asset.getStatus()));
+            detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
             return detailDto;
         }).collect(Collectors.toList());
-	}
-
-	private Map<AssetStatusEnum, String> buildStatusMap(List<Asset> assetList) {
-		Map<AssetStatusEnum, String> statusMap = new LinkedHashMap<>();
-		if (CollectionUtils.isNotEmpty(assetList)) {
-			statusMap.put(AssetStatusEnum.RECYCLE, String.valueOf(
-				assetList.stream().filter(i -> AssetStatusEnum.RECYCLE.getCode().equals(i.getStatus())).count()));
-			statusMap.put(AssetStatusEnum.DISTRIBUTE, String.valueOf(
-				assetList.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus())).count()));
-			statusMap.put(AssetStatusEnum.TRANSFER, String.valueOf(
-				assetList.stream().filter(i -> AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
-		}
-		return statusMap;
 	}
 }

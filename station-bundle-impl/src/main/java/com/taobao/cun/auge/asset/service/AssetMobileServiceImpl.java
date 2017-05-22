@@ -4,6 +4,7 @@ package com.taobao.cun.auge.asset.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         try {
             return assetBO.getCategoryAssetList(operatorDto);
         } catch (Exception e) {
-            logger.error("AssetMobileService getCategoryAssetList error " + JSON.toJSONString(operatorDto));
+            logger.error("AssetMobileService getCategoryAssetList error " + JSON.toJSONString(operatorDto), e);
             throw new AugeBusinessException("系统异常");
         }
     }
@@ -64,7 +65,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         try {
             return assetBO.getAreaAssetList(operatorDto);
         } catch (Exception e) {
-            logger.error("AssetMobileService getAreaAssetList error " + JSON.toJSONString(operatorDto));
+            logger.error("AssetMobileService getAreaAssetList error " + JSON.toJSONString(operatorDto), e);
             throw new AugeBusinessException("系统异常");
         }
     }
@@ -74,7 +75,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         try {
             return assetBO.getCategoryAssetDetail(condition);
         } catch (Exception e) {
-            logger.error("AssetMobileService getCategoryAssetDetail error " + JSON.toJSONString(condition));
+            logger.error("AssetMobileService getCategoryAssetDetail error " + JSON.toJSONString(condition), e);
             throw new AugeBusinessException("系统异常");
         }
     }
@@ -84,7 +85,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         try {
             return assetBO.getAreaAssetDetail(condition);
         } catch (Exception e) {
-            logger.error("AssetMobileService getAreaAssetDetail error " + JSON.toJSONString(condition));
+            logger.error("AssetMobileService getAreaAssetDetail error " + JSON.toJSONString(condition), e);
             throw new AugeBusinessException("系统异常");
         }
     }
@@ -97,7 +98,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
-            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto));
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto), e);
             throw new AugeBusinessException("系统异常，签收失败");
         }
     }
@@ -110,7 +111,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
-            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto));
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto), e);
             throw new AugeBusinessException("系统异常，签收失败");
         }
     }
@@ -123,12 +124,22 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
-            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(recycleDto));
+            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(recycleDto), e);
             throw new AugeBusinessException("系统异常，签收失败");
         }
     }
 
-	@Override
+    @Override
+    public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator) {
+        try {
+            return assetBO.getTransferAssetList(operator);
+        } catch (Exception e) {
+            logger.error("AssetMobileService getTransferAssetList error " + JSON.toJSONString(operator), e);
+            throw new AugeBusinessException("系统异常，获取列表失败");
+        }
+    }
+
+    @Override
 	public PageDto<AssetIncomeDto> getIncomeLsit(
 			AssetIncomeQueryCondition condition) {
 		try {
@@ -145,7 +156,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 			logger.error("AssetMobileService getIncomeLsit error " + JSON.toJSONString(condition),e);
             throw new AugeBusinessException("系统异常，查询入库单失败");
 		}
-		
-		
 	}
+
+
 }

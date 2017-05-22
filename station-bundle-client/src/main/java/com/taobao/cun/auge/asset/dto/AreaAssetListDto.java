@@ -25,7 +25,7 @@ public class AreaAssetListDto implements Serializable{
 
     private List<AssetCategoryCountDto> countList;
 
-    private Map<AssetStatusEnum, String> statusMap;
+    private String putAway;
 
     public String getOwnerArea() {
         return ownerArea;
@@ -75,11 +75,11 @@ public class AreaAssetListDto implements Serializable{
         this.countList = countList;
     }
 
-    public Map<AssetStatusEnum, String> getStatusMap() {
-        return statusMap;
+    public String getPutAway() {
+        return putAway;
     }
 
-    public void setStatusMap(Map<AssetStatusEnum, String> statusMap) {
-        this.statusMap = statusMap;
+    public void setPutAway(String putAway) {
+        this.putAway = putAway;
     }
 }

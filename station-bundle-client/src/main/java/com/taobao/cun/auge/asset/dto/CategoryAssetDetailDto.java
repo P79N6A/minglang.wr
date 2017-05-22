@@ -16,7 +16,7 @@ public class CategoryAssetDetailDto implements Serializable{
 
     private String category;
 
-    private Map<AssetStatusEnum, String> statusMap;
+    private String putAway;
 
     private String ownerArea;
 
@@ -34,12 +34,12 @@ public class CategoryAssetDetailDto implements Serializable{
         this.category = category;
     }
 
-    public Map<AssetStatusEnum, String> getStatusMap() {
-        return statusMap;
+    public String getPutAway() {
+        return putAway;
     }
 
-    public void setStatusMap(Map<AssetStatusEnum, String> statusMap) {
-        this.statusMap = statusMap;
+    public void setPutAway(String putAway) {
+        this.putAway = putAway;
     }
 
     public String getOwnerArea() {

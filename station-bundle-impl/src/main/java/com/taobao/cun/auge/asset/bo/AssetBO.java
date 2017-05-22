@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
@@ -76,4 +77,6 @@ public interface AssetBO {
     public Boolean signAssetByStation(AssetDto signDto);
 
     public Boolean recycleAsset(AssetDto signDto);
+
+    public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
 }

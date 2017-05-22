@@ -19,8 +19,6 @@ public class AssetStatusEnum implements Serializable{
 
     public static final AssetStatusEnum USE = new AssetStatusEnum("USE", "使用中");
 
-    public static final AssetStatusEnum RECYCLE = new AssetStatusEnum("RECYCLE", "待回收");
-
     public static final AssetStatusEnum TRANSFER = new AssetStatusEnum("TRANSFER", "转移中");
 
     public static final AssetStatusEnum DISTRIBUTE = new AssetStatusEnum("DISTRIBUTE", "分发中");
@@ -32,7 +30,6 @@ public class AssetStatusEnum implements Serializable{
     static {
         mappings.put("SIGN", SIGN);
         mappings.put("USE", USE);
-        mappings.put("RECYCLE", RECYCLE);
         mappings.put("TRANSFER", TRANSFER);
         mappings.put("DISTRIBUTE", DISTRIBUTE);
         mappings.put("SCRAP", SCRAP);
@@ -42,7 +39,7 @@ public class AssetStatusEnum implements Serializable{
 
     private String desc;
 
-    public static AssetStatusEnum valueof(String code) {
+    public static AssetStatusEnum valueOf(String code) {
         if (StringUtils.isBlank(code)) {
             return null;
         }
@@ -73,7 +70,6 @@ public class AssetStatusEnum implements Serializable{
     public static List<String> getValidStatusList() {
         List<String> list = new ArrayList<String>();
         list.add(USE.getCode());
-        list.add(RECYCLE.getCode());
         list.add(TRANSFER.getCode());
         list.add(DISTRIBUTE.getCode());
         return list;

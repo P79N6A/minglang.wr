@@ -16,7 +16,7 @@ public class AssetCategoryCountDto implements Serializable{
 
     private String total;
 
-    private Map<AssetStatusEnum, String> statusMap;
+    private String putAway;
 
     public String getCategory() {
         return category;
@@ -34,11 +34,11 @@ public class AssetCategoryCountDto implements Serializable{
         this.total = total;
     }
 
-    public Map<AssetStatusEnum, String> getStatusMap() {
-        return statusMap;
+    public String getPutAway() {
+        return putAway;
     }
 
-    public void setStatusMap(Map<AssetStatusEnum, String> statusMap) {
-        this.statusMap = statusMap;
+    public void setPutAway(String putAway) {
+        this.putAway = putAway;
     }
 }

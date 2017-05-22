@@ -29,6 +29,8 @@ public class AssetDetailDto implements Serializable{
 
     private String checkStatus;
 
+    private String recycle;
+
     public Long getId() {
         return id;
     }
@@ -99,5 +101,13 @@ public class AssetDetailDto implements Serializable{
 
     public void setCheckStatus(String checkStatus) {
         this.checkStatus = checkStatus;
+    }
+
+    public String getRecycle() {
+        return recycle;
+    }
+
+    public void setRecycle(String recycle) {
+        this.recycle = recycle;
     }
 }
