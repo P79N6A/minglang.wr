@@ -20,7 +20,6 @@ import com.taobao.cun.auge.dal.mapper.CuntaoFlowRecordMapper;
 import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordPageCondition;
 import com.taobao.cun.auge.flowRecord.convert.CuntaoFlowRecordEventConverter;
 import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
-import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -69,7 +68,7 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			record.setOperateTime(recordDto.getOperateTime());
 			record.setNodeTitle(recordDto.getNodeTitle());
 			record.setTargetId(recordDto.getTargetId());
-			record.setTargetType("santong-dzwl");
+			record.setTargetType(recordDto.getTargetType().getCode());
 			record.setOperateOpinion(recordDto.getOperateOpinion());
 			record.setRemarks(recordDto.getRemarks());
 			cuntaoFlowRecordMapper.insertSelective(record);
