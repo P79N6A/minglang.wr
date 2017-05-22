@@ -81,4 +81,6 @@ public class AssetStatusEnum implements Serializable{
         list.add(TRANSFER.getCode());
         return list;
     }
+
+
 }

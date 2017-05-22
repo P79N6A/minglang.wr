@@ -19,6 +19,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
@@ -645,7 +646,26 @@ public class AssetBOImpl implements AssetBO {
 	public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator) {
 		Objects.requireNonNull(operator.getWorkNo(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
-		//assetExample.createCriteria().andIsDeletedEqualTo("n").andStatusIn()
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operator.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		PageHelper.startPage(operator.getPageNum(), operator.getPageSize());
+		PageHelper.orderBy("status asc");
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		Page<Asset> assetPage = (Page<Asset>) assetList;
+		return PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assetList));
+	}
+
+	@Override
+	public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList()).andIdNotIn(transferDto.getUnTransferAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (assetList.stream().anyMatch(asset -> AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
+		}
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
 		return null;
 	}
 

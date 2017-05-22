@@ -8,6 +8,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
@@ -79,4 +80,6 @@ public interface AssetBO {
     public Boolean recycleAsset(AssetDto signDto);
 
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
+
+    public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 }

@@ -10,6 +10,7 @@ import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -59,14 +60,6 @@ public interface AssetMobileService {
      * @return
      */
     public Boolean signAssetByCounty(AssetDto signDto);
-
-    /**
-     * 资产签收(操作人村小二)
-     * @param signDto
-     * @return
-     */
-    public Boolean signAssetByStation(AssetDto signDto);
-
     /**
      * 资产回收
      * @param recycleDto
@@ -74,5 +67,16 @@ public interface AssetMobileService {
      */
     public Boolean recycleAsset(AssetDto recycleDto);
 
+    /**
+     * 获得能够转移的资产列表
+     * @param operator
+     * @return
+     */
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
+
+    /**
+     * 转移资产给本县
+     * @return
+     */
+    public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 }

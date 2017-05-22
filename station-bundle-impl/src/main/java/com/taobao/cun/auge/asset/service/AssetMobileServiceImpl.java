@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,19 +106,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Override
     @Transactional
-    public Boolean signAssetByStation(AssetDto signDto) {
-        try {
-            return assetBO.signAssetByStation(signDto);
-        } catch (NullPointerException | AugeBusinessException e) {
-            throw new AugeBusinessException(e.getMessage());
-        } catch (Exception e) {
-            logger.error("AssetMobileService signAsset error " + JSON.toJSONString(signDto), e);
-            throw new AugeBusinessException("系统异常，签收失败");
-        }
-    }
-
-    @Override
-    @Transactional
     public Boolean recycleAsset(AssetDto recycleDto) {
         try {
             return assetBO.recycleAsset(recycleDto);
@@ -136,6 +124,18 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         } catch (Exception e) {
             logger.error("AssetMobileService getTransferAssetList error " + JSON.toJSONString(operator), e);
             throw new AugeBusinessException("系统异常，获取列表失败");
+        }
+    }
+
+    @Override
+    public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
+        try {
+            return assetBO.transferAssetSelfCounty(transferDto);
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService transferAssetSelfCounty error " + JSON.toJSONString(transferDto), e);
+            throw new AugeBusinessException("系统异常，签收失败");
         }
     }
 
