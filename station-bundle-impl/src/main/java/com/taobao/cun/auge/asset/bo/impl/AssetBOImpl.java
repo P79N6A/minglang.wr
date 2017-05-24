@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,16 +13,21 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetNotifyDto;
+import com.taobao.cun.auge.asset.dto.AssetNotifyDto.Content;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.enums.AssetNotifyEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -32,6 +38,8 @@ import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.notify.message.StringMessage;
+import com.taobao.notify.remotingclient.NotifyManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -101,6 +109,10 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private UicReadAdapter uicReadAdapter;
+
+	@Autowired
+	private NotifyManager notifyManager;
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -585,7 +597,32 @@ public class AssetBOImpl implements AssetBO {
 		updateAsset.setOwnerName(emp360Adapter.getName(signDto.getOperator()));
 		updateAsset.setOwnerOrgId(signDto.getOperatorOrgId());
 		updateAsset.setOwnerWorkno(signDto.getOperator());
-		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
+		boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
+		if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
+			sendNotifyMessage(asset.getOwnerWorkno(), updateAsset);
+		}
+		return res;
+	}
+
+	private void sendNotifyMessage(String receiver, Asset asset) {
+		StringMessage msg = new StringMessage();
+		AssetNotifyDto assetNotifyDto = new AssetNotifyDto();
+		assetNotifyDto.setAppId("cuntaoCRM");
+		assetNotifyDto.setReceivers(Collections.singletonList(Long.valueOf(receiver)));
+		assetNotifyDto.setReceiverType("EMPIDS");
+		assetNotifyDto.setMsgType("ASSET");
+		assetNotifyDto.setMsgTypeDetail("SIGN");
+		assetNotifyDto.setAction("all");
+		Content content = assetNotifyDto.new Content();
+		content.setBizId(asset.getId());
+		content.setPublishTime(new Date());
+		content.setTitle("您转移的资产已被对方签收，请关注！");
+		content.setContent("您转移至" + countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName()+" " + emp360Adapter.getName(asset.getOwnerWorkno())+"的资产已被对方签收，查看详情");
+		content.setRouteUrl("url");
+		msg.setBody(JSON.toJSONString(msg));
+		msg.setTopic("cuntaoCRMAsset");
+		msg.setMessageType(AssetNotifyEnum.SIGN.getCode());
+		notifyManager.sendMessage(msg);
 	}
 
 	@Override
@@ -672,7 +709,7 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public Boolean judgementTransfer(AssetDto assetDto) {
+	public Boolean judgeTransfer(AssetDto assetDto) {
 		Objects.requireNonNull(assetDto.getAliNo(), "编号不能为空");
 		Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");
 		AssetExample assetExample = new AssetExample();

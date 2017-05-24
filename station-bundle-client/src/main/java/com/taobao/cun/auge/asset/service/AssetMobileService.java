@@ -84,6 +84,6 @@ public interface AssetMobileService {
      * 判断资产是否能转移,不能的话会抛出异常
      * @param assetDto
      */
-    public Boolean judgementTransfer(AssetDto assetDto);
+    public Boolean judgeTransfer(AssetDto assetDto);
 
 }

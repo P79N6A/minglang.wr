@@ -140,9 +140,9 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-    public Boolean judgementTransfer(AssetDto assetDto) {
+    public Boolean judgeTransfer(AssetDto assetDto) {
         try {
-            return assetBO.judgementTransfer(assetDto);
+            return assetBO.judgeTransfer(assetDto);
         } catch (NullPointerException | AugeBusinessException e) {
             throw new AugeBusinessException(e.getMessage());
         } catch (Exception e) {
