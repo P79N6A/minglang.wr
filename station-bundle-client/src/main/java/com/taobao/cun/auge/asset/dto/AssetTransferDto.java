@@ -18,7 +18,17 @@ public class AssetTransferDto extends OperatorDto implements Serializable{
 
     private String receiverAreaId;
 
+    //物流费用
+    private String payment;
+
+    //物流距离
+    private String distance;
+
+    //不转移的资产id列表 转移到他县使用
     private List<Long> unTransferAssetIdList;
+
+    //要转移的资产id列表 转移到他县使用
+    private List<Long> transferAssetIdList;
 
     public String getReceiverWorkNo() {
         return receiverWorkNo;
@@ -44,11 +54,35 @@ public class AssetTransferDto extends OperatorDto implements Serializable{
         this.receiverAreaId = receiverAreaId;
     }
 
+    public String getPayment() {
+        return payment;
+    }
+
+    public void setPayment(String payment) {
+        this.payment = payment;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
     public List<Long> getUnTransferAssetIdList() {
         return unTransferAssetIdList;
     }
 
     public void setUnTransferAssetIdList(List<Long> unTransferAssetIdList) {
         this.unTransferAssetIdList = unTransferAssetIdList;
+    }
+
+    public List<Long> getTransferAssetIdList() {
+        return transferAssetIdList;
+    }
+
+    public void setTransferAssetIdList(List<Long> transferAssetIdList) {
+        this.transferAssetIdList = transferAssetIdList;
     }
 }

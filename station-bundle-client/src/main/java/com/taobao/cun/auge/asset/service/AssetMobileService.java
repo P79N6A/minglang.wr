@@ -68,7 +68,7 @@ public interface AssetMobileService {
     public Boolean recycleAsset(AssetDto recycleDto);
 
     /**
-     * 获得能够转移的资产列表
+     * 资产转移时获得资产列表
      * @param operator
      * @return
      */
@@ -79,4 +79,11 @@ public interface AssetMobileService {
      * @return
      */
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
+
+    /**
+     * 判断资产是否能转移,不能的话会抛出异常
+     * @param assetDto
+     */
+    public Boolean judgementTransfer(AssetDto assetDto);
+
 }

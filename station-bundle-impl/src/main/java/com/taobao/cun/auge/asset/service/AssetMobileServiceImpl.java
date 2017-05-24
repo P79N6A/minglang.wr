@@ -140,6 +140,18 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
+    public Boolean judgementTransfer(AssetDto assetDto) {
+        try {
+            return assetBO.judgementTransfer(assetDto);
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService judgementTransfer error " + JSON.toJSONString(assetDto), e);
+            throw new AugeBusinessException("系统异常，验证失败");
+        }
+    }
+
+    @Override
 	public PageDto<AssetIncomeDto> getIncomeLsit(
 			AssetIncomeQueryCondition condition) {
 		try {

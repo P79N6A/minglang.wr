@@ -82,4 +82,6 @@ public interface AssetBO {
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
 
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
+
+    public Boolean judgementTransfer(AssetDto assetDto);
 }
