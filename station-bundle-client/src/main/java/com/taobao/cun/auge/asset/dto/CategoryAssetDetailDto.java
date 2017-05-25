@@ -16,6 +16,8 @@ public class CategoryAssetDetailDto implements Serializable{
 
     private String category;
 
+    private String categoryName;
+
     private String putAway;
 
     private String ownerArea;
@@ -32,6 +34,14 @@ public class CategoryAssetDetailDto implements Serializable{
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getPutAway() {

@@ -42,6 +42,10 @@ public class DiamondConfiguredProperties {
     
     @Value("${asset.acceptanceStandard}")
     private String acceptanceStandard;
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.category}')}")
+    private Map<String, String> categoryMap;
+
     public String getApply() {
         return apply;
     }
@@ -78,4 +82,7 @@ public class DiamondConfiguredProperties {
 		return acceptanceStandard;
 	}
 
+    public Map<String, String> getCategoryMap() {
+        return categoryMap;
+    }
 }

@@ -33,6 +33,7 @@ import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
@@ -97,6 +98,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Autowired
     private StationBO stationBO;
+
+	@Autowired
+	private DiamondConfiguredProperties configuredProperties;
 
 	private static final String ASSET_SIGN = "assetSign";
 	
@@ -456,6 +460,7 @@ public class AssetBOImpl implements AssetBO {
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
+			listDto.setCategoryName(configuredProperties.getCategoryMap().get(entry.getKey()));
 			listDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
 			listDto.setOwner(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
@@ -515,6 +520,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		CategoryAssetDetailDto assetDetailDto = new CategoryAssetDetailDto();
 		assetDetailDto.setCategory(condition.getCategory());
+		assetDetailDto.setCategoryName(configuredProperties.getCategoryMap().get(condition.getCategory()));
 		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
 		assetDetailDto.setPutAway(String.valueOf(
 			preAssets.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
@@ -582,9 +588,6 @@ public class AssetBOImpl implements AssetBO {
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
 			throw new AugeBusinessException("入库失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
-		}
-		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
-			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
@@ -741,6 +744,7 @@ public class AssetBOImpl implements AssetBO {
 		for (Entry<String, List<Asset>> countEntry : countListMap.entrySet()) {
 			AssetCategoryCountDto assetCountDto = new AssetCategoryCountDto();
 			assetCountDto.setCategory(countEntry.getKey());
+			assetCountDto.setCategoryName(configuredProperties.getCategoryMap().get(countEntry.getKey()));
 			assetCountDto.setTotal(String.valueOf(countEntry.getValue().size()));
 			assetCountDto.setPutAway(String.valueOf(
 				countEntry.getValue().stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
@@ -758,7 +762,11 @@ public class AssetBOImpl implements AssetBO {
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
                 detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
             }
+            if (asset.getAliNo().length() > 4) {
+            	detailDto.setAliNo(asset.getAliNo().substring(0, asset.getAliNo().length() - 4) + "****");
+			}
             detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
+            detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
             return detailDto;
         }).collect(Collectors.toList());
 	}

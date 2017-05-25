@@ -14,6 +14,8 @@ public class AssetCategoryCountDto implements Serializable{
 
     private String category;
 
+    private String categoryName;
+
     private String total;
 
     private String putAway;
@@ -24,6 +26,14 @@ public class AssetCategoryCountDto implements Serializable{
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTotal() {
