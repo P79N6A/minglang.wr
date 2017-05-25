@@ -73,15 +73,15 @@ public interface AssetBO {
 
     public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition);
 
-    public Boolean signAssetByCounty(AssetDto signDto);
+    public AssetDetailDto signAssetByCounty(AssetDto signDto);
 
     public Boolean signAssetByStation(AssetDto signDto);
 
-    public Boolean recycleAsset(AssetDto signDto);
+    public AssetDetailDto recycleAsset(AssetDto signDto);
 
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
 
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 
-    public Boolean judgeTransfer(AssetDto assetDto);
+    public AssetDetailDto judgeTransfer(AssetDto assetDto);
 }

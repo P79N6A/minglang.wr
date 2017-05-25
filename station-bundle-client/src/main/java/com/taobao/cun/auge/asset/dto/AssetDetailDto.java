@@ -27,6 +27,10 @@ public class AssetDetailDto implements Serializable{
 
     private String userName;
 
+    private String ownerArea;
+
+    private String owner;
+
     private AssetStatusEnum status;
 
     private String checkStatus;
@@ -95,6 +99,22 @@ public class AssetDetailDto implements Serializable{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getOwnerArea() {
+        return ownerArea;
+    }
+
+    public void setOwnerArea(String ownerArea) {
+        this.ownerArea = ownerArea;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public AssetStatusEnum getStatus() {

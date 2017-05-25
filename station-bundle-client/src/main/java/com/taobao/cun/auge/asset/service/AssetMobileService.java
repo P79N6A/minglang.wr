@@ -10,6 +10,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
@@ -21,8 +22,12 @@ import com.taobao.cun.auge.common.PageDto;
  */
 public interface AssetMobileService {
 
-
-    public Map<String, String> getCategoryMap(AssetOperatorDto operatorDto);
+    /**
+     * 获得资产筛选条件
+     * @param operatorDto
+     * @return
+     */
+    public Map<String, List<AssetMobileConditionDto>> getConditionMap(AssetOperatorDto operatorDto);
 
     /**
      * 我的资产列表(按类目聚合)查询
@@ -63,13 +68,13 @@ public interface AssetMobileService {
      * @param signDto
      * @return
      */
-    public Boolean signAssetByCounty(AssetDto signDto);
+    public AssetDetailDto signAssetByCounty(AssetDto signDto);
     /**
      * 资产回收
      * @param recycleDto
      * @return
      */
-    public Boolean recycleAsset(AssetDto recycleDto);
+    public AssetDetailDto recycleAsset(AssetDto recycleDto);
 
     /**
      * 资产转移时获得资产列表
@@ -88,6 +93,6 @@ public interface AssetMobileService {
      * 判断资产是否能转移,不能的话会抛出异常
      * @param assetDto
      */
-    public Boolean judgeTransfer(AssetDto assetDto);
+    public AssetDetailDto judgeTransfer(AssetDto assetDto);
 
 }

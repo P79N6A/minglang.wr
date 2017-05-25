@@ -2,11 +2,16 @@ package com.taobao.cun.auge.asset.service;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +63,23 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     private DiamondConfiguredProperties configuredProperties;
 
     @Override
-    public Map<String, String> getCategoryMap(AssetOperatorDto operatorDto) {
-        return configuredProperties.getCategoryMap();
+    public Map<String, List<AssetMobileConditionDto>> getConditionMap(AssetOperatorDto operatorDto) {
+        Map<String, List<AssetMobileConditionDto>> map = new HashMap<>();
+        List<AssetMobileConditionDto> categoryList = configuredProperties.getCategoryMap().entrySet().stream().map(entry -> {
+            AssetMobileConditionDto dto = new AssetMobileConditionDto();
+            dto.setCode(entry.getKey());
+            dto.setName(entry.getValue());
+            return dto;
+        }).collect(Collectors.toList());
+        map.put("category", categoryList);
+        List<AssetMobileConditionDto> statusList = new ArrayList<>();
+        statusList.add(new AssetMobileConditionDto(AssetStatusEnum.DISTRIBUTE.getCode(), AssetStatusEnum.DISTRIBUTE.getDesc()));
+        statusList.add(new AssetMobileConditionDto(AssetStatusEnum.USE.getCode(), AssetStatusEnum.USE.getDesc()));
+        statusList.add(new AssetMobileConditionDto(AssetStatusEnum.TRANSFER.getCode(), AssetStatusEnum.TRANSFER.getDesc()));
+        statusList.add(new AssetMobileConditionDto("UNCHECKED", "待盘点"));
+        statusList.add(new AssetMobileConditionDto("Y", "待回收"));
+        map.put("status", statusList);
+        return map;
     }
 
     @Override
@@ -104,7 +124,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Override
     @Transactional
-    public Boolean signAssetByCounty(AssetDto signDto) {
+    public AssetDetailDto signAssetByCounty(AssetDto signDto) {
         try {
             return assetBO.signAssetByCounty(signDto);
         } catch (NullPointerException | AugeBusinessException e) {
@@ -117,7 +137,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Override
     @Transactional
-    public Boolean recycleAsset(AssetDto recycleDto) {
+    public AssetDetailDto recycleAsset(AssetDto recycleDto) {
         try {
             return assetBO.recycleAsset(recycleDto);
         } catch (NullPointerException | AugeBusinessException e) {
@@ -151,7 +171,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-    public Boolean judgeTransfer(AssetDto assetDto) {
+    public AssetDetailDto judgeTransfer(AssetDto assetDto) {
         try {
             return assetBO.judgeTransfer(assetDto);
         } catch (NullPointerException | AugeBusinessException e) {
