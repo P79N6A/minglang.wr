@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
@@ -19,6 +20,9 @@ import com.taobao.cun.auge.common.PageDto;
  * Created by xiao on 17/5/17.
  */
 public interface AssetMobileService {
+
+
+    public Map<String, String> getCategoryMap(AssetOperatorDto operatorDto);
 
     /**
      * 我的资产列表(按类目聚合)查询

@@ -3,9 +3,11 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +50,17 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     
     @Autowired
     private AssetIncomeBO assetIncomeBO;
+
     @Autowired
     private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
+
+    @Autowired
+    private DiamondConfiguredProperties configuredProperties;
+
+    @Override
+    public Map<String, String> getCategoryMap(AssetOperatorDto operatorDto) {
+        return configuredProperties.getCategoryMap();
+    }
 
     @Override
     public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto) {
