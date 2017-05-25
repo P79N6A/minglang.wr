@@ -83,5 +83,7 @@ public interface AssetBO {
 
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 
+    public Boolean transferAssetOtherCounty(AssetTransferDto transferDto);
+
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
 }

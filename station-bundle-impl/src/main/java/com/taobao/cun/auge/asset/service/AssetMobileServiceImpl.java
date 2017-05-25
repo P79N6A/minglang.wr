@@ -11,8 +11,10 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
-import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,9 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Autowired
     private DiamondConfiguredProperties configuredProperties;
+
+    @Autowired
+    private AssetFlowService assetFlowService;
 
     @Override
     public Map<String, List<AssetMobileConditionDto>> getConditionMap(AssetOperatorDto operatorDto) {
@@ -171,6 +176,20 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
+    public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
+        try {
+            assetBO.transferAssetOtherCounty(transferDto);
+            assetFlowService.createTransferFlow(1L, transferDto.getOperator());
+            return Boolean.TRUE;
+        } catch (NullPointerException | AugeBusinessException e) {
+            throw new AugeBusinessException(e.getMessage());
+        } catch (Exception e) {
+            logger.error("AssetMobileService transferAssetSelfCounty error " + JSON.toJSONString(transferDto), e);
+            throw new AugeBusinessException("系统异常，签收失败");
+        }
+    }
+
+    @Override
     public AssetDetailDto judgeTransfer(AssetDto assetDto) {
         try {
             return assetBO.judgeTransfer(assetDto);
@@ -200,6 +219,5 @@ public class AssetMobileServiceImpl implements AssetMobileService{
             throw new AugeBusinessException("系统异常，查询入库单失败");
 		}
 	}
-
 
 }

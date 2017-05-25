@@ -90,6 +90,12 @@ public interface AssetMobileService {
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 
     /**
+     * 转移资产给本县
+     * @return
+     */
+    public Boolean transferAssetOtherCounty(AssetTransferDto transferDto);
+
+    /**
      * 判断资产是否能转移,不能的话会抛出异常
      * @param assetDto
      */

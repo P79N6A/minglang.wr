@@ -703,19 +703,32 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator());
 		if (CollectionUtils.isNotEmpty(transferDto.getUnTransferAssetIdList())) {
 			criteria.andIdNotIn(transferDto.getUnTransferAssetIdList());
 		}
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
-		if (assetList.stream().anyMatch(asset -> AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) || AssetStatusEnum.DISTRIBUTE.getCode().equals(asset.getStatus()))) {
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
 			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
 		}
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
 		assetMapper.updateByExampleSelective(asset, assetExample);
-		return null;
+		return Boolean.TRUE;
+	}
+
+	@Override
+	public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
+		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
+		AssetExample assetExample = new AssetExample();
+		AssetExample.Criteria criteria = assetExample.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andIdIn(transferDto.getTransferAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
+		}
+		return Boolean.TRUE;
 	}
 
 	@Override
@@ -775,17 +788,13 @@ public class AssetBOImpl implements AssetBO {
 		detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
 		detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
 		detailDto.setOwner(emp360Adapter.getName(asset.getOwnerWorkno()));
-		detailDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getId()).getName());
+		detailDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
 		return detailDto;
 	}
 
 	private String buildErrorMessage(String str, Asset asset) {
-		String no = asset.getAliNo();
-		if (no.length() > 4) {
-			no = no.substring(0, no.length() - 4);
-		}
 		String area = countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName();
 		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
-		return  str + "资产编号:"+no+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
+		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
 	}
 }
