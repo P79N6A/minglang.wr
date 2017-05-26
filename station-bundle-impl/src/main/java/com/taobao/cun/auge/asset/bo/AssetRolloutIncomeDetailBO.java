@@ -21,5 +21,5 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @param status
 	 * @return
 	 */
-	public List<AssetCategoryCountDto> queryCountByRolloutId(Long AssetRolloutIncomeDetailStatusEnum, AssetRolloutIncomeDetailStatusEnum status);
+	public List<AssetCategoryCountDto> queryCountByRolloutId(Long rolloutId, AssetRolloutIncomeDetailStatusEnum status);
 }

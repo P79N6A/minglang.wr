@@ -1,13 +1,13 @@
 package com.taobao.cun.auge.asset.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
+import com.taobao.cun.auge.common.OperatorDto;
 
-public class AssetIncomeDto implements Serializable{
+public class AssetIncomeDto extends OperatorDto{
 
 	private static final long serialVersionUID = -4939163358121761029L;
 

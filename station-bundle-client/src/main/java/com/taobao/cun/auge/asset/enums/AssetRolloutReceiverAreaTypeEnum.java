@@ -4,39 +4,29 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * 资产入库单类型枚举
- * @author quanzhu.wangqz
- *
- */
-public class AssetIncomeTypeEnum implements Serializable{
+public class AssetRolloutReceiverAreaTypeEnum implements Serializable{
+	private static final Map<String, AssetRolloutReceiverAreaTypeEnum> mappings = new HashMap<String, AssetRolloutReceiverAreaTypeEnum>();
 
 
-    private static final Map<String, AssetIncomeTypeEnum> mappings = new HashMap<String, AssetIncomeTypeEnum>();
-
-
-    private static final long serialVersionUID = -2325045809951928493L;
+    private static final long serialVersionUID = -2325045809951918493L;
 
     private String code;
     private String desc;
     
-    public static final AssetIncomeTypeEnum PURCHASE  = new AssetIncomeTypeEnum("PURCHASE", "采购");
-    public static final AssetIncomeTypeEnum TRANSFER = new AssetIncomeTypeEnum("TRANSFER", "转移");
-    public static final AssetIncomeTypeEnum RECOVER = new AssetIncomeTypeEnum("RECOVER", "回收");
-
+    public static final AssetRolloutReceiverAreaTypeEnum COUNTY = new AssetRolloutReceiverAreaTypeEnum("COUNTY", "县服务中心");
+    public static final AssetRolloutReceiverAreaTypeEnum STATION = new AssetRolloutReceiverAreaTypeEnum("STATION", "服务站");
 
     static {
-    	mappings.put("PURCHASE", PURCHASE);
-        mappings.put("TRANSFER", TRANSFER);
-        mappings.put("RECOVER", RECOVER);
+        mappings.put("COUNTY", COUNTY);
+        mappings.put("STATION", STATION);
     }
 
-    public AssetIncomeTypeEnum(String code, String desc) {
+    public AssetRolloutReceiverAreaTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public AssetIncomeTypeEnum() {
+    public AssetRolloutReceiverAreaTypeEnum() {
 
     }
 
@@ -56,7 +46,7 @@ public class AssetIncomeTypeEnum implements Serializable{
         this.desc = desc;
     }
 
-    public static AssetIncomeTypeEnum valueof(String code) {
+    public static AssetRolloutReceiverAreaTypeEnum valueof(String code) {
         if (code == null)
             return null;
         return mappings.get(code);
@@ -78,7 +68,7 @@ public class AssetIncomeTypeEnum implements Serializable{
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AssetIncomeTypeEnum other = (AssetIncomeTypeEnum) obj;
+        AssetRolloutReceiverAreaTypeEnum other = (AssetRolloutReceiverAreaTypeEnum) obj;
         if (code == null) {
             if (other.code != null)
                 return false;

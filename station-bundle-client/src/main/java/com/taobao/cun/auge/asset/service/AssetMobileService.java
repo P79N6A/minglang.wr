@@ -12,6 +12,8 @@ import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -62,7 +64,14 @@ public interface AssetMobileService {
      * @param condition
      * @return
      */
-    public PageDto<AssetIncomeDto> getIncomeLsit(AssetIncomeQueryCondition condition); 
+    public PageDto<AssetIncomeDto> getIncomeList(AssetIncomeQueryCondition condition); 
+    
+    /**
+     * 出库单列表查询
+     * @param condition
+     * @return
+     */
+    public PageDto<AssetRolloutDto> getRolloutList(AssetRolloutQueryCondition condition); 
     /**
      * 资产签收(操作人县小二)
      * @param signDto

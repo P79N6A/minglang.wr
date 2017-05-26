@@ -7,12 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.taobao.cun.auge.asset.dto.AssetDetailDto;
-import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
-import com.taobao.cun.auge.asset.dto.AssetTransferDto;
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
-import com.taobao.cun.auge.cache.TairCache;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,21 +14,32 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
+import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
+import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -49,6 +54,8 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     
     @Autowired
     private AssetIncomeBO assetIncomeBO;
+    @Autowired
+    private AssetRolloutBO assetRolloutBO;
 
     @Autowired
     private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
@@ -141,7 +148,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-	public PageDto<AssetIncomeDto> getIncomeLsit(
+	public PageDto<AssetIncomeDto> getIncomeList(
 			AssetIncomeQueryCondition condition) {
         Page<AssetIncome> incomeList = assetIncomeBO.getIncomeList(condition);
         List<AssetIncomeDto> dtoList = new ArrayList<AssetIncomeDto>();
@@ -152,6 +159,20 @@ public class AssetMobileServiceImpl implements AssetMobileService{
             dtoList.add(aiDto);
         }
         return PageDtoUtil.success(incomeList, dtoList);
+	}
+
+	@Override
+	public PageDto<AssetRolloutDto> getRolloutList(
+			AssetRolloutQueryCondition condition) {
+		 Page<AssetRollout> rolloutList = assetRolloutBO.getRolloutList(condition);
+	        List<AssetRolloutDto> dtoList = new ArrayList<AssetRolloutDto>();
+	        for (AssetRollout ai : rolloutList) {
+	        	AssetRolloutDto aiDto = AssetRolloutConverter.toAssetRolloutDto(ai);
+	            aiDto.setCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(ai.getId(), null));
+	            aiDto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(ai.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN));
+	            dtoList.add(aiDto);
+	        }
+	        return PageDtoUtil.success(rolloutList, dtoList);
 	}
 
 }
