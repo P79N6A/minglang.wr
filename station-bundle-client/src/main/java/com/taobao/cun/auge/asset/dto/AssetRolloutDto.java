@@ -103,6 +103,11 @@ public class AssetRolloutDto extends OperatorDto{
     private String totalPayment;
     
     /**
+     * 附件id 英文逗号分隔
+     */
+    private String attachId;
+    
+    /**
      * 资产总数
      */
     private List<AssetCategoryCountDto>  countList;
@@ -111,6 +116,14 @@ public class AssetRolloutDto extends OperatorDto{
      *待入库资产总数
      */
 	private List<AssetCategoryCountDto> waitSignCountList;
+
+	public String getAttachId() {
+		return attachId;
+	}
+
+	public void setAttachId(String attachId) {
+		this.attachId = attachId;
+	}
 
 	public Long getId() {
 		return id;

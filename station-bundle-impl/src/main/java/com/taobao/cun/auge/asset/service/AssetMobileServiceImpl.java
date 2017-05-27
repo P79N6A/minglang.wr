@@ -138,6 +138,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Override
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
         assetBO.transferAssetOtherCounty(transferDto);
+        //
         assetFlowService.createTransferFlow(1L, transferDto.getOperator());
         return Boolean.TRUE;
     }

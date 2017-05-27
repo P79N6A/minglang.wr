@@ -24,7 +24,7 @@ public class AssetTransferDto extends OperatorDto implements Serializable{
     //物流距离
     private String distance;
 
-    //不转移的资产id列表 转移到他县使用
+    //不转移的资产id列表 转移到本县使用
     private List<Long> unTransferAssetIdList;
 
     //要转移的资产id列表 转移到他县使用

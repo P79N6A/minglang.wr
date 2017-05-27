@@ -41,6 +41,7 @@ public class AssetRolloutConverter {
 		assetRolloutDto.setTotalPayment(assetRollout.getTotalPayment());
 		assetRolloutDto.setType(AssetRolloutTypeEnum.valueof(assetRollout.getType()));
 		assetRolloutDto.setStatus(AssetRolloutStatusEnum.valueof(assetRollout.getStatus()));
+		assetRolloutDto.setAttachId(assetRollout.getAttachId());
 		return assetRolloutDto;
 	}
 
@@ -68,7 +69,7 @@ public class AssetRolloutConverter {
 		assetRollout.setTotalPayment(assetRolloutDto.getTotalPayment());
 		assetRollout.setType(assetRolloutDto.getType()== null? null:assetRolloutDto.getType().getCode());
 		assetRollout.setStatus(assetRolloutDto.getStatus()== null? null:assetRolloutDto.getStatus().getCode());
-		
+		assetRollout.setAttachId(assetRolloutDto.getAttachId());
 		return assetRollout;
 	}
 

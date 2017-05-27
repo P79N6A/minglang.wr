@@ -1744,6 +1744,76 @@ public class AssetRolloutExample {
             addCriterion("total_payment not between", value1, value2, "totalPayment");
             return (Criteria) this;
         }
+
+        public Criteria andAttachIdIsNull() {
+            addCriterion("attach_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdIsNotNull() {
+            addCriterion("attach_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdEqualTo(String value) {
+            addCriterion("attach_id =", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdNotEqualTo(String value) {
+            addCriterion("attach_id <>", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdGreaterThan(String value) {
+            addCriterion("attach_id >", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdGreaterThanOrEqualTo(String value) {
+            addCriterion("attach_id >=", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdLessThan(String value) {
+            addCriterion("attach_id <", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdLessThanOrEqualTo(String value) {
+            addCriterion("attach_id <=", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdLike(String value) {
+            addCriterion("attach_id like", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdNotLike(String value) {
+            addCriterion("attach_id not like", value, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdIn(List<String> values) {
+            addCriterion("attach_id in", values, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdNotIn(List<String> values) {
+            addCriterion("attach_id not in", values, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdBetween(String value1, String value2) {
+            addCriterion("attach_id between", value1, value2, "attachId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAttachIdNotBetween(String value1, String value2) {
+            addCriterion("attach_id not between", value1, value2, "attachId");
+            return (Criteria) this;
+        }
     }
 
     /**
