@@ -6,25 +6,43 @@ import org.springframework.stereotype.Component;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
-import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutReceiverAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 
 @Component
 public class AssetRolloutBOImpl implements AssetRolloutBO {
 	
 	@Autowired
 	private AssetRolloutMapper assetRolloutMapper;
+	
+	@Autowired
+	private Emp360Adapter emp360Adapter;
+	
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+	
+	@Autowired
+	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
+	
 	
 	@Override
 	public Page<AssetRollout> getRolloutList(
@@ -78,6 +96,48 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		record.setStatus(statusEnum.getCode());
 		DomainUtils.beforeUpdate(record, operator);
 		assetRolloutMapper.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public Long transferAssetOtherCounty(AssetTransferDto transferDto) {
+		ValidateUtils.notNull(transferDto);
+		String operator = transferDto.getOperator();
+		Long operatorOrgId = transferDto.getOperatorOrgId();
+		String operatorName = emp360Adapter.getName(operator);
+		String receiverName =  emp360Adapter.getName(transferDto.getReceiverWorkNo());
+		
+		AssetRolloutDto roDto = new AssetRolloutDto();
+		roDto.setApplierWorkno(operator);
+		roDto.setApplierName(operatorName);
+		
+		CuntaoOrgDto applyOrg = cuntaoOrgServiceClient.getCuntaoOrg(operatorOrgId);
+		CuntaoOrgDto receiverOrg = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(transferDto.getReceiverAreaId()));
+		roDto.setApplierOrgId(operatorOrgId);
+		roDto.setApplierOrgName(applyOrg.getName());
+		roDto.setReceiverId(transferDto.getReceiverWorkNo());
+		roDto.setReceiverName(receiverName);
+		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.COUNTY);
+		roDto.setReceiverAreaName(receiverOrg.getName());
+		roDto.setReceiverAreaId(Long.parseLong(transferDto.getReceiverAreaId()));
+		roDto.setReason(transferDto.getReason());
+		String remark = "转移至 "+receiverOrg.getName() +"-" +receiverName;
+		roDto.setRemark(remark);
+		roDto.setStatus(AssetRolloutStatusEnum.WAIT_AUDIT);
+		roDto.setType(AssetRolloutTypeEnum.TRANSFER);
+		roDto.setLogisticsCost(transferDto.getPayment());
+		roDto.setLogisticsDistance(transferDto.getDistance());
+		Long rolloutId = addRollout(roDto);
+		
+		for (Long assetId : transferDto.getTransferAssetIdList()) {
+			AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+			detail.setAssetId(assetId);
+			//detail.setCategory(category);
+			detail.setRolloutId(rolloutId);
+			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_AUDIT);
+			detail.setType(AssetRolloutIncomeDetailTypeEnum.TRANSFER);
+			assetRolloutIncomeDetailBO.addDetail(detail);
+		}
+		return null;
 	}
 
 

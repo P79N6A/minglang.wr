@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.bo;
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
@@ -51,4 +52,11 @@ public interface AssetRolloutBO {
 	 * @param statusEnum
 	 */
 	public void updateStatus(Long rolloutId,AssetRolloutStatusEnum statusEnum,String operator);
+	
+	/**
+	 * 转移至他县
+	 * @param transferDto
+	 * @return
+	 */
+	public Long  transferAssetOtherCounty(AssetTransferDto transferDto);
 }

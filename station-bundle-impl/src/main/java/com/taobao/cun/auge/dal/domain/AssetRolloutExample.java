@@ -1345,52 +1345,62 @@ public class AssetRolloutExample {
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceEqualTo(Long value) {
+        public Criteria andLogisticsDistanceEqualTo(String value) {
             addCriterion("logistics_distance =", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceNotEqualTo(Long value) {
+        public Criteria andLogisticsDistanceNotEqualTo(String value) {
             addCriterion("logistics_distance <>", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceGreaterThan(Long value) {
+        public Criteria andLogisticsDistanceGreaterThan(String value) {
             addCriterion("logistics_distance >", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceGreaterThanOrEqualTo(Long value) {
+        public Criteria andLogisticsDistanceGreaterThanOrEqualTo(String value) {
             addCriterion("logistics_distance >=", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceLessThan(Long value) {
+        public Criteria andLogisticsDistanceLessThan(String value) {
             addCriterion("logistics_distance <", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceLessThanOrEqualTo(Long value) {
+        public Criteria andLogisticsDistanceLessThanOrEqualTo(String value) {
             addCriterion("logistics_distance <=", value, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceIn(List<Long> values) {
+        public Criteria andLogisticsDistanceLike(String value) {
+            addCriterion("logistics_distance like", value, "logisticsDistance");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogisticsDistanceNotLike(String value) {
+            addCriterion("logistics_distance not like", value, "logisticsDistance");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogisticsDistanceIn(List<String> values) {
             addCriterion("logistics_distance in", values, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceNotIn(List<Long> values) {
+        public Criteria andLogisticsDistanceNotIn(List<String> values) {
             addCriterion("logistics_distance not in", values, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceBetween(Long value1, Long value2) {
+        public Criteria andLogisticsDistanceBetween(String value1, String value2) {
             addCriterion("logistics_distance between", value1, value2, "logisticsDistance");
             return (Criteria) this;
         }
 
-        public Criteria andLogisticsDistanceNotBetween(Long value1, Long value2) {
+        public Criteria andLogisticsDistanceNotBetween(String value1, String value2) {
             addCriterion("logistics_distance not between", value1, value2, "logisticsDistance");
             return (Criteria) this;
         }

@@ -74,7 +74,7 @@ public class AssetRolloutDto extends OperatorDto{
     /**
      * 物流距离，单位千米
      */
-    private Long logisticsDistance;
+    private String logisticsDistance;
 
     /**
      *出库类型
@@ -222,14 +222,6 @@ public class AssetRolloutDto extends OperatorDto{
 		this.logisticsCost = logisticsCost;
 	}
 
-	public Long getLogisticsDistance() {
-		return logisticsDistance;
-	}
-
-	public void setLogisticsDistance(Long logisticsDistance) {
-		this.logisticsDistance = logisticsDistance;
-	}
-
 	public AssetRolloutTypeEnum getType() {
 		return type;
 	}
@@ -284,5 +276,13 @@ public class AssetRolloutDto extends OperatorDto{
 
 	public void setWaitSignCountList(List<AssetCategoryCountDto> waitSignCountList) {
 		this.waitSignCountList = waitSignCountList;
+	}
+
+	public String getLogisticsDistance() {
+		return logisticsDistance;
+	}
+
+	public void setLogisticsDistance(String logisticsDistance) {
+		this.logisticsDistance = logisticsDistance;
 	}
 }

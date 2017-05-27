@@ -99,7 +99,7 @@ public interface AssetMobileService {
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
 
     /**
-     * 转移资产给本县
+     * 转移资产给他县
      * @return
      */
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto);

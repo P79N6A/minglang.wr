@@ -23,7 +23,7 @@
     <result column="receiver_area_id" jdbcType="BIGINT" property="receiverAreaId" />
     <result column="reason" jdbcType="VARCHAR" property="reason" />
     <result column="logistics_cost" jdbcType="VARCHAR" property="logisticsCost" />
-    <result column="logistics_distance" jdbcType="BIGINT" property="logisticsDistance" />
+    <result column="logistics_distance" jdbcType="VARCHAR" property="logisticsDistance" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -175,7 +175,7 @@
       #{applierWorkno,jdbcType=VARCHAR}, #{applierOrgName,jdbcType=VARCHAR}, #{applierOrgId,jdbcType=BIGINT}, 
       #{receiverName,jdbcType=VARCHAR}, #{receiverId,jdbcType=VARCHAR}, #{receiverAreaType,jdbcType=VARCHAR}, 
       #{receiverAreaName,jdbcType=VARCHAR}, #{receiverAreaId,jdbcType=BIGINT}, #{reason,jdbcType=VARCHAR}, 
-      #{logisticsCost,jdbcType=VARCHAR}, #{logisticsDistance,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, 
+      #{logisticsCost,jdbcType=VARCHAR}, #{logisticsDistance,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
       #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{isDeductible,jdbcType=CHAR}, 
       #{totalPayment,jdbcType=VARCHAR}, #{attachId,jdbcType=VARCHAR})
   </insert>
@@ -309,7 +309,7 @@
         #{logisticsCost,jdbcType=VARCHAR},
       </if>
       <if test="logisticsDistance != null">
-        #{logisticsDistance,jdbcType=BIGINT},
+        #{logisticsDistance,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         #{type,jdbcType=VARCHAR},
@@ -400,7 +400,7 @@
         logistics_cost = #{record.logisticsCost,jdbcType=VARCHAR},
       </if>
       <if test="record.logisticsDistance != null">
-        logistics_distance = #{record.logisticsDistance,jdbcType=BIGINT},
+        logistics_distance = #{record.logisticsDistance,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=VARCHAR},
@@ -448,7 +448,7 @@
       receiver_area_id = #{record.receiverAreaId,jdbcType=BIGINT},
       reason = #{record.reason,jdbcType=VARCHAR},
       logistics_cost = #{record.logisticsCost,jdbcType=VARCHAR},
-      logistics_distance = #{record.logisticsDistance,jdbcType=BIGINT},
+      logistics_distance = #{record.logisticsDistance,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
@@ -515,7 +515,7 @@
         logistics_cost = #{logisticsCost,jdbcType=VARCHAR},
       </if>
       <if test="logisticsDistance != null">
-        logistics_distance = #{logisticsDistance,jdbcType=BIGINT},
+        logistics_distance = #{logisticsDistance,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=VARCHAR},
@@ -560,7 +560,7 @@
       receiver_area_id = #{receiverAreaId,jdbcType=BIGINT},
       reason = #{reason,jdbcType=VARCHAR},
       logistics_cost = #{logisticsCost,jdbcType=VARCHAR},
-      logistics_distance = #{logisticsDistance,jdbcType=BIGINT},
+      logistics_distance = #{logisticsDistance,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},

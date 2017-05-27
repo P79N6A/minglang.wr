@@ -11,11 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
+import com.taobao.cun.auge.asset.convert.AssetRolloutIncomeDetailConverter;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
@@ -138,5 +141,15 @@ public class AssetRolloutIncomeDetailBOImpl implements
 			return true;
 		}
 		return false;
+	}
+
+
+	@Override
+	public Long addDetail(AssetRolloutIncomeDetailDto param) {
+		ValidateUtils.notNull(param);
+		AssetRolloutIncomeDetail record = AssetRolloutIncomeDetailConverter.toAssetRolloutIncomeDetail(param);
+		DomainUtils.beforeInsert(record, param.getOperator());
+		assetRolloutIncomeDetailMapper.insert(record);
+		return record.getId();
 	}
 }

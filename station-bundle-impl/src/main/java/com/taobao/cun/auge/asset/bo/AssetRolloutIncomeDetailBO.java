@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.bo;
 import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 
@@ -44,4 +45,11 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public Boolean isAllSignByIncomeId(Long incomeId);
+	
+	/**
+	 * 新增出入库单详情
+	 * @param param
+	 * @return
+	 */
+	public Long addDetail(AssetRolloutIncomeDetailDto param);
 }
