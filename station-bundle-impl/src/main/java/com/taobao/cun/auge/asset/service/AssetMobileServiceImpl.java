@@ -84,6 +84,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
             statusList.add(new AssetMobileConditionDto(AssetStatusEnum.DISTRIBUTE.getCode(), AssetStatusEnum.DISTRIBUTE.getDesc()));
             statusList.add(new AssetMobileConditionDto(AssetStatusEnum.USE.getCode(), AssetStatusEnum.USE.getDesc()));
             statusList.add(new AssetMobileConditionDto(AssetStatusEnum.TRANSFER.getCode(), AssetStatusEnum.TRANSFER.getDesc()));
+            statusList.add(new AssetMobileConditionDto(AssetStatusEnum.PEND.getCode(), AssetStatusEnum.PEND.getDesc()));
             statusList.add(new AssetMobileConditionDto("UNCHECKED", "待盘点"));
             statusList.add(new AssetMobileConditionDto("Y", "待回收"));
             map.put("status", statusList);
@@ -143,7 +144,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
         //Todo 生成出库单,根据出库单的主键来创建工作流
         assetBO.transferAssetOtherCounty(transferDto);
-        assetFlowService.createTransferFlow(1L, transferDto.getOperator());
+        assetFlowService.createTransferFlow(2L, transferDto.getOperator());
         return Boolean.TRUE;
     }
 

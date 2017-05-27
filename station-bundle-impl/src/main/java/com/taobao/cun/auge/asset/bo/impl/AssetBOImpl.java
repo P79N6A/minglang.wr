@@ -750,6 +750,9 @@ public class AssetBOImpl implements AssetBO {
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
 			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
 		}
+		if (!assetList.stream().allMatch(asset -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType()))) {
+			throw new AugeBusinessException("您转移的资产中包含已下发至村点的资产");
+		}
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		asset.setStatus(AssetStatusEnum.PEND.getCode());
@@ -774,6 +777,18 @@ public class AssetBOImpl implements AssetBO {
 			throw new AugeBusinessException(buildErrorMessage("录入失败，该资产正处于分发、转移中！", asset));
 		}
 		return buildAssetDetail(asset);
+	}
+
+	@Override
+	public void cancelTransferAssetOtherCounty(AssetTransferDto transferDto) {
+		Objects.requireNonNull(transferDto.getTransferAssetIdList(), "资产列表不能为空");
+		Objects.requireNonNull(transferDto.getOperator(), "操作人不能为空");
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList());
+		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
 	/**

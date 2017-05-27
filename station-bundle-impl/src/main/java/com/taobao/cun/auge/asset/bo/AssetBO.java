@@ -86,4 +86,6 @@ public interface AssetBO {
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto);
 
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
+
+    public void cancelTransferAssetOtherCounty(AssetTransferDto transferDto);
 }
