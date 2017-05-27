@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
 import com.taobao.cun.auge.station.dto.ChangeTPDto;
@@ -324,5 +325,12 @@ public interface PartnerInstanceService {
 	 * @throws AugeServiceException
 	 */
 	public void updateStationLngLat(Long taobaoUserId,StationDto station) throws AugeServiceException;
+	
+	/**
+	 * 淘帮手关闭独立物流站
+	 * 
+	 * @throws AugeServiceException
+	 */
+	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto) throws AugeServiceException;
 	
 }
