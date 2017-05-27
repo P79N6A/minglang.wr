@@ -116,11 +116,12 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Override
     @Transactional
     public AssetDetailDto signAssetByCounty(AssetDto signDto) {
+        //Todo 签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
+        //Todo 无线消息推送方案待确定
         return assetBO.signAssetByCounty(signDto);
     }
 
     @Override
-    @Transactional
     public AssetDetailDto recycleAsset(AssetDto recycleDto) {
         return assetBO.recycleAsset(recycleDto);
     }
@@ -131,12 +132,16 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
+    @Transactional
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
+        //Todo 生成出库单
         return assetBO.transferAssetSelfCounty(transferDto);
     }
 
     @Override
+    @Transactional
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
+        //Todo 生成出库单,根据出库单的主键来创建工作流
         assetBO.transferAssetOtherCounty(transferDto);
         assetFlowService.createTransferFlow(1L, transferDto.getOperator());
         return Boolean.TRUE;

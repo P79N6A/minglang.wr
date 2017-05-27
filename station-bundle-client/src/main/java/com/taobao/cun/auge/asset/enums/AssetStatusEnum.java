@@ -15,11 +15,16 @@ public class AssetStatusEnum implements Serializable{
 
     private static final long serialVersionUID = -4134780817945719435L;
 
+    /**
+     * 注意不要取U序号之后的枚举类，有问题联系87872
+     */
     public static final AssetStatusEnum SIGN = new AssetStatusEnum("SIGN", "待签收");
 
     public static final AssetStatusEnum USE = new AssetStatusEnum("USE", "使用中");
 
     public static final AssetStatusEnum TRANSFER = new AssetStatusEnum("TRANSFER", "转移中");
+
+    public static final AssetStatusEnum PEND = new AssetStatusEnum("PEND", "待转移");
 
     public static final AssetStatusEnum DISTRIBUTE = new AssetStatusEnum("DISTRIBUTE", "分发中");
 
@@ -33,6 +38,7 @@ public class AssetStatusEnum implements Serializable{
         mappings.put("TRANSFER", TRANSFER);
         mappings.put("DISTRIBUTE", DISTRIBUTE);
         mappings.put("SCRAP", SCRAP);
+        mappings.put("PEND", PEND);
     }
 
     private String code;
@@ -72,6 +78,7 @@ public class AssetStatusEnum implements Serializable{
         list.add(USE.getCode());
         list.add(TRANSFER.getCode());
         list.add(DISTRIBUTE.getCode());
+        list.add(PEND.getCode());
         return list;
     }
 
