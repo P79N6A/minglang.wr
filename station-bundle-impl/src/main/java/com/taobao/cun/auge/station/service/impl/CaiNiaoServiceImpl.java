@@ -608,10 +608,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 			
 			//绑定村小二物流站
-			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
-			syncAddCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
-			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
-			addCainiaoStation(syncAddCainiaoStationDto);
+//			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+//			syncAddCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
+//			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
+//			addCainiaoStation(syncAddCainiaoStationDto);
 		}
 	}
 	
