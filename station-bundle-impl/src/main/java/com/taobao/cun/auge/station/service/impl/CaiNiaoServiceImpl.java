@@ -625,7 +625,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 
-			example.createCriteria().andIsDeletedEqualTo("y").andLogisticsStationIdEqualTo(logisticsStationId);
+			example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
 
 			logisticsStationApplyMapper.updateByExampleSelective(record, example);
 		} catch (Exception e) {
