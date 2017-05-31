@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -17,8 +18,11 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.domain.LogisticsStationApply;
+import com.taobao.cun.auge.dal.domain.LogisticsStationApplyExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -60,6 +64,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	PartnerBO partnerBO;
     @Autowired
     LogisticsStationBO logisticsStationBO;
+    @Autowired
+    LogisticsStationApplyMapper logisticsStationApplyMapper;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -595,7 +601,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			//删除logistics_station
 			Long logisId = rel.getLogisticsStationId();
 			if (logisId != null) {
-				logisticsStationBO.changeState(logisId, operatorDto.getOperator(), "QUIT");
+				logisticsStationBO.delete(logisId, operatorDto.getOperator());
+				deleteLogisticsStationApply(logisId, operatorDto.getOperator());
 			}
 			// 删除本地数据菜鸟驿站对应关系
 			cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
@@ -606,5 +613,19 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
 			addCainiaoStation(syncAddCainiaoStationDto);
 		}
+	}
+	
+	private void deleteLogisticsStationApply(Long logisticsStationId, String operator) {
+		LogisticsStationApply record = new LogisticsStationApply();
+		
+		record.setModifer(operator);
+		record.setGmtModified(new Date());
+		record.setIsDeleted("y");
+
+		LogisticsStationApplyExample example = new LogisticsStationApplyExample();
+
+		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
+
+		logisticsStationApplyMapper.updateByExampleSelective(record, example);
 	}
 }
