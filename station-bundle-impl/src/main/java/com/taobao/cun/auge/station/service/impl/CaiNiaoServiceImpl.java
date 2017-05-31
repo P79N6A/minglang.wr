@@ -608,28 +608,24 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
 			
 			//绑定村小二物流站
-//			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
-//			syncAddCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
-//			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
-//			addCainiaoStation(syncAddCainiaoStationDto);
+			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+			syncAddCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
+			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
+			addCainiaoStation(syncAddCainiaoStationDto);
 		}
 	}
 	
 	private void deleteLogisticsStationApply(Long logisticsStationId, String operator) {
-		try {
-			LogisticsStationApply record = new LogisticsStationApply();
-			
-			record.setModifer(operator);
-			record.setGmtModified(new Date());
-			record.setIsDeleted("y");
+		LogisticsStationApply record = new LogisticsStationApply();
+		
+		record.setModifer(operator);
+		record.setGmtModified(new Date());
+		record.setIsDeleted("y");
 
-			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
+		LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 
-			example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
+		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
 
-			logisticsStationApplyMapper.updateByExampleSelective(record, example);
-		} catch (Exception e) {
-			throw new AugeServiceException("删除物流申请单失败");
-		}
+		logisticsStationApplyMapper.updateByExampleSelective(record, example);
 	}
 }
