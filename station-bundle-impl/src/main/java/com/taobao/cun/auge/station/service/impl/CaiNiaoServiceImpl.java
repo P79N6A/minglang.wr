@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -617,7 +618,10 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	private void deleteLogisticsStationApply(Long logisticsStationId, String operator) {
 		try {
 			LogisticsStationApply record = new LogisticsStationApply();
-			DomainUtils.beforeDelete(record, operator);
+			
+			record.setModifer(operator);
+			record.setGmtModified(new Date());
+			record.setIsDeleted("y");
 
 			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 
