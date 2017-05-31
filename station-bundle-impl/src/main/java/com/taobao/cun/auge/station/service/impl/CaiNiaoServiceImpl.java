@@ -614,14 +614,18 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 	}
 	
-	private void deleteLogisticsStationApply(Long logisticsStationId,String operator){
-		LogisticsStationApply record = new LogisticsStationApply();
-		DomainUtils.beforeDelete(record, operator);
-		
-		LogisticsStationApplyExample example = new LogisticsStationApplyExample();
-		
-		example.createCriteria().andIsDeletedEqualTo("y").andLogisticsStationIdEqualTo(logisticsStationId);
-		
-		logisticsStationApplyMapper.updateByExampleSelective(record, example);
+	private void deleteLogisticsStationApply(Long logisticsStationId, String operator) {
+		try {
+			LogisticsStationApply record = new LogisticsStationApply();
+			DomainUtils.beforeDelete(record, operator);
+
+			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
+
+			example.createCriteria().andIsDeletedEqualTo("y").andLogisticsStationIdEqualTo(logisticsStationId);
+
+			logisticsStationApplyMapper.updateByExampleSelective(record, example);
+		} catch (Exception e) {
+			throw new AugeServiceException("删除物流申请单失败");
+		}
 	}
 }
