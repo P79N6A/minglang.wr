@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
@@ -79,4 +80,11 @@ public interface CaiNiaoService {
 	 *@throws AugeServiceException
 	 */
 	public void upgradeToTPForTpa(SyncUpgradeToTPForTpaDto syncUpgradeToTPForTpaDto) throws AugeServiceException;
+	
+	/**
+	 * 淘帮手关闭独立物流站
+	 * 
+	 * @throws AugeServiceException
+	 */
+	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto)throws AugeServiceException;
 }

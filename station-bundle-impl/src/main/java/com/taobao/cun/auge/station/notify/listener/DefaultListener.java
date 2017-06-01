@@ -45,11 +45,13 @@ public class DefaultListener implements MessageListener {
 		}
 		
 		try {
+			logger.info("DefaultListener notify body:" + strMessage.getBody());
 			JSONObject ob = (JSONObject) JSONObject.parse(strMessage.getBody());
 			logger.info("DefaultListener notify:" + ob.toJSONString());
 			handleMsg(strMessage, ob);
 		} catch (Exception e) {
 			logger.error("DefaultListener, " + (StringMessage)message, e);
+			logger.error("DefaultListener, body=" + strMessage.getBody(), e);
 			throw new RuntimeException("DefaultListener, " + (StringMessage)message, e);
 		}
 	}

@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -131,7 +130,9 @@ public class PartnerServiceImpl implements PartnerService {
 			throw new AugeServiceException("当前状态无法修改");
 		}
 		//验证手机号是否被使用
-		validateMobileUsed(taobaoUserId,mobile);
+		if(!partnerInstanceBO.judgeMobileUseble(taobaoUserId, null, mobile)){
+			throw new AugeServiceException("该手机号已被使用");
+		}
         PartnerDto dto=new PartnerDto();
         dto.setTaobaoUserId(taobaoUserId);
         dto.setMobile(mobile);
@@ -152,14 +153,6 @@ public class PartnerServiceImpl implements PartnerService {
 				|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state);
 	}
 	
-	private void  validateMobileUsed(Long taobaoUserId, String mobile){
-		List<Partner> partners=partnerBO.getPartnerByMobile(mobile);
-        for(Partner p:partners){
-        	if(p.getTaobaoUserId().compareTo(taobaoUserId)!=0){
-    			throw new AugeServiceException("该手机号已被使用");
-        	}
-        }
-	}
 
 	@Override
 	public void applyFlowName(PartnerFlowerNameApplyDto dto) {

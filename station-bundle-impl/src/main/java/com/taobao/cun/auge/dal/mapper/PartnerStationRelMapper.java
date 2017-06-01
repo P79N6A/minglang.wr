@@ -99,4 +99,7 @@ public interface PartnerStationRelMapper {
     int updateByPrimaryKey(PartnerStationRel record);
     
     List<UserProfile> queryUserProfileForAlilangMeeting(Map<String,Object> param);
+    
+	List<PartnerStationRel> getInstanceForMobileJudge(Map<String, Object> param);
+    
 }
