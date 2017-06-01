@@ -161,6 +161,8 @@ public class ProcessProcessor {
 				String financeRemarks = ob.getString("financeRemarks");
 				String processInstanceId = ob.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
 				incentiveAuditFlowService.processFinishAuditMessage(processInstanceId, businessId, ProcessApproveResultEnum.valueof(resultCode), financeRemarks);
+			}else if (ProcessBusinessEnum.assetTransfer.getCode().equals(businessCode)) {
+				//TODO 审批通过 与 不通过
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
