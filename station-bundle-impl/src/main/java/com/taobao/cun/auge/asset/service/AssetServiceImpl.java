@@ -2,6 +2,8 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class AssetServiceImpl implements AssetService{
 	
 	@Autowired
 	private AssetBO assetBO;
+
+	@Autowired
+	private AssetRolloutBO assetRolloutBO;
 	
 	@Override
 	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -140,6 +145,16 @@ public class AssetServiceImpl implements AssetService{
 			throw new AugeBusinessException("queryAssetBySerialNo error");
 		}
 		
+	}
+
+	@Override
+	public AssetRolloutDto getRolloutById(Long id) {
+		try {
+			return assetRolloutBO.getRolloutDtoById(id);
+		} catch (Exception e) {
+			logger.error("getRolloutById error，id："+id,e);
+			throw new AugeBusinessException("getRolloutById error");
+		}
 	}
 
 }

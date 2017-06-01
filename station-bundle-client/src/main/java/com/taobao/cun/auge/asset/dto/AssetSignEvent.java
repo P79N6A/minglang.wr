@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by xiao on 17/5/24.
  */
-public class AssetNotifyDto implements Serializable{
+public class AssetSignEvent implements Serializable{
 
     private static final long serialVersionUID = -7835446498198910715L;
 

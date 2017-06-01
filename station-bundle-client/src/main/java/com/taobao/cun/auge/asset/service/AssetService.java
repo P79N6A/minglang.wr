@@ -5,6 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.common.PageDto;
@@ -56,5 +57,7 @@ public interface AssetService {
 	    public CuntaoAssetDto queryAssetByUserAndCategory(Long userid);
 	    
 	    public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
+
+	    public AssetRolloutDto getRolloutById(Long id);
 	  
 }
