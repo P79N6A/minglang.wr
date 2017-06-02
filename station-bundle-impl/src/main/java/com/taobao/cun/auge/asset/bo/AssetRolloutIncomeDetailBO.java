@@ -5,7 +5,6 @@ import java.util.List;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 
 public interface AssetRolloutIncomeDetailBO {
@@ -67,4 +66,10 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId);
+	
+	/**
+	 * 撤销
+	 * @param rolloutId
+	 */
+	public void  cancel(Long rolloutId, String operator);
 }

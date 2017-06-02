@@ -86,8 +86,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		return (Page<AssetRollout>)assetRolloutMapper.selectByExample(example); 
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addRollout(AssetRolloutDto param) {
 		ValidateUtils.notNull(param);
 		AssetRollout record = AssetRolloutConverter.toAssetRollout(param);
@@ -97,6 +98,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public List<Long> cancelRolleout(AssetRolloutCancelDto cancelDto) {
 		ValidateUtils.notNull(cancelDto);
 		Long rolloutId = cancelDto.getRolloutId();
@@ -110,7 +112,14 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			throw new AugeBusinessException("部分资产已经签收，不能撤销");
 		}
 		List<Long> assetIdList =dList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
-	    
+		//撤销详情
+		assetRolloutIncomeDetailBO.cancel(rolloutId, cancelDto.getOperator());
+	    //撤销出库单
+		AssetRollout record = new AssetRollout();
+		record.setId(rolloutId);
+		record.setStatus(AssetRolloutStatusEnum.CANCEL.getCode());
+		DomainUtils.beforeUpdate(record, cancelDto.getOperator());
+		assetRolloutMapper.updateByPrimaryKeySelective(record);
 		return assetIdList;
 		
 		

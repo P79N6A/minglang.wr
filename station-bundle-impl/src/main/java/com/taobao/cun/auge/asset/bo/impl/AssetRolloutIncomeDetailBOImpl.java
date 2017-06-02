@@ -152,4 +152,20 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		}
 	    return resList.get(0);
 	}
+
+
+	@Override
+	public void cancel(Long rolloutId, String operator) {
+		ValidateUtils.notNull(rolloutId);
+		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+		DomainUtils.beforeUpdate(record, operator);
+		
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andRolloutIdEqualTo(rolloutId);
+		assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
+		
+	}
 }
