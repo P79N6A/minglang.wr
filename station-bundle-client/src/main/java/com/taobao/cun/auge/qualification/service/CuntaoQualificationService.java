@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.qualification.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 
@@ -19,5 +21,7 @@ public interface CuntaoQualificationService {
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	
 	C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId);
+	
+	List<String>  querySubmitedQualifications();
 
 }
