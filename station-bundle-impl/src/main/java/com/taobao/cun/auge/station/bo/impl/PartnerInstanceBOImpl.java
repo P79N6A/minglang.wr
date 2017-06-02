@@ -844,4 +844,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return true;
 	}
+
+	@Override
+	public Partner getPartnerByStationId(Long stationId) {
+		PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
+		if (rel == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		return partnerBO.getPartnerById(rel.getPartnerId());
+	}
 }

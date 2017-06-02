@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
@@ -22,6 +23,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
@@ -139,7 +141,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
         //1.资产状态变更
     	List<Asset> assetList =  assetBO.transferAssetSelfCounty(transferDto);
@@ -198,6 +200,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Boolean cancelAssetRollout(AssetRolloutCancelDto cancelDto) {
 		//1.撤销出库单
 		List<Long> assetIdList = assetRolloutBO.cancelRolleout(cancelDto);
@@ -208,6 +211,16 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
 			assetFlowService.cancelTransferFlow(cancelDto.getRolloutId(), cancelDto.getOperator());
 		}
+		return Boolean.TRUE;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Boolean distributeAsset(AssetDistributeDto distributeDto) {
+	   //1.检验资产为县使用，操作人 和资产责任人一致 更新资产状态为分发中
+		List<Asset> assetList = assetBO.distributeAsset(distributeDto);
+		//2.创建出库单
+		assetRolloutBO.distributeAsset(distributeDto, assetList);
 		return Boolean.TRUE;
 	}
 

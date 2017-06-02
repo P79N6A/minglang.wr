@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.taobao.cun.auge.alilang.UserProfile;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
@@ -328,4 +329,6 @@ public interface PartnerInstanceBO {
 	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,String name);
 	
 	public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile); 
+	
+	public Partner getPartnerByStationId(Long stationId);
 }

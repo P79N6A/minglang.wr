@@ -13,32 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
-import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
-import com.taobao.cun.auge.asset.dto.AssetDetailDto;
-import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
-import com.taobao.cun.auge.asset.dto.AssetSignEvent;
-import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
-import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
-import com.taobao.cun.auge.asset.dto.AssetDto;
-import com.taobao.cun.auge.asset.dto.AssetTransferDto;
-import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
-import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
-import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
-import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.common.utils.ResultUtils;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.Asset;
-import com.taobao.cun.auge.dal.domain.AssetExample;
-import com.taobao.cun.auge.dal.mapper.AssetMapper;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
-import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.notify.remotingclient.NotifyManager;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -48,18 +22,42 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
+import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.common.utils.ResultUtils;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
+import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
@@ -69,9 +67,12 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.CountyStationBO;
+import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
+import com.taobao.notify.remotingclient.NotifyManager;
 
 @Component
 public class AssetBOImpl implements AssetBO {
@@ -830,6 +831,7 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void cancelAsset(List<Long> assetIds,String operator) {
 		Objects.requireNonNull(assetIds, "资产列表不能为空");
 		Objects.requireNonNull(operator, "操作人不能为空");
@@ -840,5 +842,29 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetIds);
 		assetMapper.updateByExampleSelective(asset, assetExample);
 		
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public List<Asset> distributeAsset(AssetDistributeDto distributeDto) {
+		ValidateUtils.validateParam(distributeDto);
+		Objects.requireNonNull(distributeDto.getStationId(), "服务站id不能为空");
+		Objects.requireNonNull(distributeDto.getAssetIdList(), "待分发资产不能为空");
+		
+		AssetExample assetExample = new AssetExample();
+		AssetExample.Criteria criteria = assetExample.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(distributeDto.getOperator()).andIdIn(distributeDto.getAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您分发的资产中包含待对方入库的资产");
+		}
+		if (!assetList.stream().allMatch(asset -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType()))) {
+			throw new AugeBusinessException("您分发的资产中包含已下发至村点的资产");
+		}
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, distributeDto.getOperator());
+		asset.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		return assetList;
 	}
 }

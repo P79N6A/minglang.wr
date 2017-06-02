@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.bo;
 import java.util.List;
 
 import com.github.pagehelper.Page;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
@@ -70,4 +71,12 @@ public interface AssetRolloutBO {
 	 * @return
 	 */
 	public Long  transferAssetSelfCounty(AssetTransferDto transferDto,List<Asset> assetList);
+	
+	/**
+	 * 分发资产到村点
+	 * @param distributeDto
+	 * @param assetList
+	 * @return
+	 */
+	public Long  distributeAsset(AssetDistributeDto distributeDto,List<Asset> assetList);
 }

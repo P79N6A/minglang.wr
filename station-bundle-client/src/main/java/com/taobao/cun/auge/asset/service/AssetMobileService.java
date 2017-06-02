@@ -7,6 +7,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
@@ -111,11 +112,18 @@ public interface AssetMobileService {
      */
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
     
-   /**
-    * 资产出库单撤销 
-    * @param cancelDto
-    * @return
-    */
+    /**
+     * 资产出库单撤销
+     * @param cancelDto
+     * @return
+     */
     public Boolean cancelAssetRollout(AssetRolloutCancelDto cancelDto);
+    
+    /**
+     * 资产分发
+     * @param distributeDto
+     * @return
+     */
+    public Boolean distributeAsset(AssetDistributeDto distributeDto);
 
 }

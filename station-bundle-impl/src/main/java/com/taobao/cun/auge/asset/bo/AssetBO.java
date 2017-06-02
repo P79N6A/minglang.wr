@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
@@ -91,4 +92,6 @@ public interface AssetBO {
     public  Asset getAssetById(Long assetId);
     
     public  void cancelAsset(List<Long> assetIds,String operator);
+    
+    public List<Asset> distributeAsset(AssetDistributeDto distributeDto);
 }
