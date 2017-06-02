@@ -19,14 +19,13 @@ import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
-import com.taobao.cun.auge.asset.dto.AssetNotifyDto;
-import com.taobao.cun.auge.asset.dto.AssetNotifyDto.Content;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
-import com.taobao.cun.auge.asset.enums.AssetNotifyEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -38,7 +37,6 @@ import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManager;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -622,30 +620,26 @@ public class AssetBOImpl implements AssetBO {
 		updateAsset.setOwnerWorkno(signDto.getOperator());
 		boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 		if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
-			sendNotifyMessage(asset.getOwnerWorkno(), updateAsset);
+			sendSignMessage(asset.getOwnerWorkno(), updateAsset);
 		}
 		return buildAssetDetail(updateAsset);
 	}
 
-	private void sendNotifyMessage(String receiver, Asset asset) {
-		StringMessage msg = new StringMessage();
-		AssetNotifyDto assetNotifyDto = new AssetNotifyDto();
-		assetNotifyDto.setAppId("cuntaoCRM");
-		assetNotifyDto.setReceivers(Collections.singletonList(Long.valueOf(receiver)));
-		assetNotifyDto.setReceiverType("EMPIDS");
-		assetNotifyDto.setMsgType("ASSET");
-		assetNotifyDto.setMsgTypeDetail("SIGN");
-		assetNotifyDto.setAction("all");
-		Content content = assetNotifyDto.new Content();
+	private void sendSignMessage(String receiver, Asset asset) {
+		AssetSignEvent signEvent = new AssetSignEvent();
+		signEvent.setAppId("cuntaoCRM");
+		signEvent.setReceivers(Collections.singletonList(Long.valueOf(receiver)));
+		signEvent.setReceiverType("EMPIDS");
+		signEvent.setMsgType("ASSET");
+		signEvent.setMsgTypeDetail("SIGN");
+		signEvent.setAction("all");
+		Content content = signEvent.new Content();
 		content.setBizId(asset.getId());
 		content.setPublishTime(new Date());
 		content.setTitle("您转移的资产已被对方签收，请关注！");
 		content.setContent("您转移至" + countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName()+" " + emp360Adapter.getName(asset.getOwnerWorkno())+"的资产已被对方签收，查看详情");
 		content.setRouteUrl("url");
-		msg.setBody(JSON.toJSONString(msg));
-		msg.setTopic("cuntaoCRMAsset");
-		msg.setMessageType(AssetNotifyEnum.SIGN.getCode());
-		notifyManager.sendMessage(msg);
+		EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", JSON.toJSONString(signEvent));
 	}
 
 	@Override

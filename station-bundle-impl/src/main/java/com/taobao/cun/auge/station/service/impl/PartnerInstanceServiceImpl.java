@@ -36,7 +36,6 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
@@ -47,6 +46,7 @@ import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
+import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -138,7 +138,6 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -381,12 +380,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_TAOBAOUSERID_HAS_USED);
 		}
 		//判断手机号是否已经被使用
-		List<Partner> partners=partnerBO.getPartnerByMobile(partnerDto.getMobile());
-        for(Partner p:partners){
-        	if(p.getTaobaoUserId().compareTo(partnerDto.getTaobaoUserId())!=0){
-    			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
-        	}
-        }
+		//逻辑变更只判断入驻中、装修中、服务中，退出中用户
+		if(!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null,partnerDto.getMobile())){
+			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
+		}
 		// 入驻老村点，村点状态为已停业
 		Long stationId = stationDto.getId();
 		if (stationId != null) {
@@ -536,11 +533,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	private void updatePartnerForServicing(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto, Long partnerId) {
 		PartnerUpdateServicingDto pDto = partnerInstanceUpdateServicingDto.getPartnerDto();
 		//验证手机号唯一性
-		List<Partner> ps=partnerBO.getPartnerByMobile(pDto.getMobile());
-		for(Partner p:ps){
-			if(p.getId().compareTo(partnerId)!=0){
-    			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
-			}
+		if(!partnerInstanceBO.judgeMobileUseble(null,partnerId, pDto.getMobile())){
+			throw new AugeServiceException(PartnerExceptionEnum.MOBILE_HAS_USED);
 		}
 		PartnerDto partnerDto = new PartnerDto();
 		partnerDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
@@ -882,20 +876,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
 		}
 		//判断装修是否未付款
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
-		if (decorate != null
-				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-						decorate.getPaymentType())
-				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-						decorate.getStatus())) {
-			throw new AugeServiceException(
-					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
-		}
-        //装修改成不作为强制节点
-//		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-//			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+//		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+//		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+//		if (decorate != null
+//				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+//						decorate.getPaymentType())
+//				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+//						decorate.getStatus())) {
+//			throw new AugeServiceException(
+//					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 //		}
+		if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+		}
 
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
@@ -2142,6 +2135,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	}
 
 	/** 更新服务站地址信息*/
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateStationAddress(Long taobaoUserId, StationDto updateStation, boolean isSendMail)
 			throws AugeServiceException {
 		if(updateStation != null){
@@ -2165,10 +2159,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
 			record.setTargetId(oldStation.getId());
 			record.setNodeTitle("村服务站地址信息变更");
-			record.setOperatorWorkid(String.valueOf(taobaoUserId));
-			record.setOperatorName(oldStation.getTaobaoNick());
+			record.setOperatorWorkid(newStation.getOperator());
+			record.setOperatorName(newStation.getOperatorType().getCode());
 			record.setOperateTime(new Date());
 			record.setRemarks(PartnerInstanceEventUtil.buildAddressInfo(oldStation,newStation));
+			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
 			if (updateStation.getFeature() != null) {
 				record.setOperateOpinion(updateStation.getFeature().get("st_fk_type"));
 			}
@@ -2204,4 +2199,41 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 	}
 	
+	/** 更新服务站经纬度信息*/
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void updateStationLngLat(Long taobaoUserId, StationDto updateStation) throws AugeServiceException {
+		if(updateStation != null){
+			Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(updateStation.getId());
+			PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(instanceId);
+			StationDto oldStation = instance.getStationDto();
+			StationDto newStation = new StationDto();
+			newStation.setId(oldStation.getId());
+			newStation.setAddress(updateStation.getAddress());
+			if(taobaoUserId != null){
+				newStation.setOperator(String.valueOf(taobaoUserId));
+				newStation.setOperatorType(OperatorTypeEnum.HAVANA);
+			}else{
+				newStation.setOperator(updateStation.getOperator());
+				newStation.setOperatorType(OperatorTypeEnum.BUC);
+			}
+			stationBO.updateStation(newStation);
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+			// 日志
+			CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
+			record.setTargetId(oldStation.getId());
+			record.setNodeTitle("村服务站经纬度信息变更");
+			record.setOperatorWorkid(newStation.getOperator());
+			record.setOperatorName(newStation.getOperatorType().getCode());
+			record.setOperateTime(new Date());
+			record.setRemarks(PartnerInstanceEventUtil.buildLngLatInfo(oldStation,newStation));
+			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
+			cuntaoFlowRecordQueryService.insertRecord(record);
+		}
+	}
+
+	@Override
+	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto) throws AugeServiceException {
+		caiNiaoService.closeCainiaoStationForTpa(partnerInstanceId, operatorDto);
+	}
 }

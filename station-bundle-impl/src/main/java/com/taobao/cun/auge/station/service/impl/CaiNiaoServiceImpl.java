@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -17,8 +18,11 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.domain.LogisticsStationApply;
+import com.taobao.cun.auge.dal.domain.LogisticsStationApplyExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -39,6 +43,7 @@ import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 
@@ -59,6 +64,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	PartnerBO partnerBO;
     @Autowired
     LogisticsStationBO logisticsStationBO;
+    @Autowired
+    LogisticsStationApplyMapper logisticsStationApplyMapper;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -570,5 +577,55 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			logger.error(error, e);
 			throw new RuntimeException(error, e);
 		}
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto)throws AugeServiceException {
+		if (partnerInstanceId == null) {
+			throw new AugeSystemException(CommonExceptionEnum.PARAM_IS_NULL);
+		}
+		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+		Long stationId = instanceDto.getStationId();
+		// 查询菜鸟物流站关系表
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		
+		if (rel == null || "n".equals(rel.getIsOwn())) {// 没有物流站,删除关系
+			String error = getErrorMessage("closeCainiaoStationForTpa", String.valueOf(stationId), "CuntaoCainiaoStationRel is null");
+			logger.error(error);
+			throw new AugeServiceException(error);
+		}else {// 有物流站,新删除物流站，再绑定村小二物流站
+			caiNiaoAdapter.removeStationById(rel.getCainiaoStationId(), instanceDto.getPartnerDto().getTaobaoUserId());
+			
+			//删除logistics_station
+			Long logisId = rel.getLogisticsStationId();
+			if (logisId != null) {
+				logisticsStationBO.delete(logisId, operatorDto.getOperator());
+				deleteLogisticsStationApply(logisId, operatorDto.getOperator());
+			}
+			// 删除本地数据菜鸟驿站对应关系
+			cuntaoCainiaoStationRelBO.deleteCuntaoCainiaoStationRel(stationId, CuntaoCainiaoStationRelTypeEnum.STATION);
+			
+			//绑定村小二物流站
+			SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+			syncAddCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
+			syncAddCainiaoStationDto.copyOperatorDto(operatorDto);
+			addCainiaoStation(syncAddCainiaoStationDto);
+		}
+	}
+	
+	private void deleteLogisticsStationApply(Long logisticsStationId, String operator) {
+		LogisticsStationApply record = new LogisticsStationApply();
+		
+		record.setModifer(operator);
+		record.setGmtModified(new Date());
+		record.setIsDeleted("y");
+
+		LogisticsStationApplyExample example = new LogisticsStationApplyExample();
+
+		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
+
+		logisticsStationApplyMapper.updateByExampleSelective(record, example);
 	}
 }
