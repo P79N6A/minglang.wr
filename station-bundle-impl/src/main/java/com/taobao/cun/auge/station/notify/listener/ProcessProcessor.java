@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
 
+import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +112,9 @@ public class ProcessProcessor {
 
 	@Autowired
 	IncentiveAuditFlowService incentiveAuditFlowService;
+
+	@Autowired
+	AssetService assetService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -162,7 +166,7 @@ public class ProcessProcessor {
 				String processInstanceId = ob.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
 				incentiveAuditFlowService.processFinishAuditMessage(processInstanceId, businessId, ProcessApproveResultEnum.valueof(resultCode), financeRemarks);
 			}else if (ProcessBusinessEnum.assetTransfer.getCode().equals(businessCode)) {
-				//TODO 审批通过 与 不通过
+				assetService.processAuditAssetTransfer(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

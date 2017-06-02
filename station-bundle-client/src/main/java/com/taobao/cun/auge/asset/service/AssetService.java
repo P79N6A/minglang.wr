@@ -2,13 +2,9 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
-import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
-import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
-import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
-import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 
 /**
  * 资产服务，从cuntaocenter中迁移到auge中
@@ -59,5 +55,6 @@ public interface AssetService {
 	    public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
 
 	    public AssetRolloutDto getRolloutById(Long id);
-	  
+
+	    public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum);
 }

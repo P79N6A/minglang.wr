@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,15 @@ public class AssetServiceImpl implements AssetService{
 		} catch (Exception e) {
 			logger.error("getRolloutById error，id："+id,e);
 			throw new AugeBusinessException("getRolloutById error");
+		}
+	}
+
+	@Override
+	public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum) {
+		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
+
+		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {
+
 		}
 	}
 
