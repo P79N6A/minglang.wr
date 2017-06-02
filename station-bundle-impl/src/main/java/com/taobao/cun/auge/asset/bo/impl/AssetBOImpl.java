@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
-
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
@@ -41,6 +40,7 @@ import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManager;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -713,7 +713,7 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
+	public List<Asset> transferAssetSelfCounty(AssetTransferDto transferDto) {
 		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
@@ -732,11 +732,12 @@ public class AssetBOImpl implements AssetBO {
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
 		assetMapper.updateByExampleSelective(asset, assetExample);
-		return Boolean.TRUE;
+		return assetList;
 	}
+	
 
 	@Override
-	public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
+	public List<Asset> transferAssetOtherCounty(AssetTransferDto transferDto) {
 		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
@@ -757,7 +758,7 @@ public class AssetBOImpl implements AssetBO {
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		asset.setStatus(AssetStatusEnum.PEND.getCode());
 		assetMapper.updateByExampleSelective(asset, assetExample);
-		return Boolean.TRUE;
+		return assetList;
 	}
 
 	@Override
@@ -777,18 +778,6 @@ public class AssetBOImpl implements AssetBO {
 			throw new AugeBusinessException(buildErrorMessage("录入失败，该资产正处于分发、转移中！", asset));
 		}
 		return buildAssetDetail(asset);
-	}
-
-	@Override
-	public void cancelTransferAssetOtherCounty(AssetTransferDto transferDto) {
-		Objects.requireNonNull(transferDto.getTransferAssetIdList(), "资产列表不能为空");
-		Objects.requireNonNull(transferDto.getOperator(), "操作人不能为空");
-		Asset asset = new Asset();
-		asset.setStatus(AssetStatusEnum.USE.getCode());
-		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
-		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList());
-		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
 	/**
@@ -830,6 +819,7 @@ public class AssetBOImpl implements AssetBO {
 		detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
 		detailDto.setOwner(emp360Adapter.getName(asset.getOwnerWorkno()));
 		detailDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+		detailDto.setId(asset.getId());
 		return detailDto;
 	}
 
@@ -837,5 +827,24 @@ public class AssetBOImpl implements AssetBO {
 		String area = countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName();
 		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
 		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
+	}
+
+	@Override
+	public Asset getAssetById(Long assetId) {
+		Objects.requireNonNull(assetId, "资产id不能为空");
+		return assetMapper.selectByPrimaryKey(assetId);
+	}
+
+	@Override
+	public void cancelAsset(List<Long> assetIds,String operator) {
+		Objects.requireNonNull(assetIds, "资产列表不能为空");
+		Objects.requireNonNull(operator, "操作人不能为空");
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		DomainUtils.beforeUpdate(asset, operator);
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetIds);
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		
 	}
 }

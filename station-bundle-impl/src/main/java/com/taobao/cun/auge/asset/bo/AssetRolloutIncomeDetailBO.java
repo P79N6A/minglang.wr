@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 
 public interface AssetRolloutIncomeDetailBO {
 
@@ -27,10 +28,10 @@ public interface AssetRolloutIncomeDetailBO {
 	
 	/**
 	 * 签收确认资产
-	 * @param assetId
+	 * @param id
 	 * @param typeEnum
 	 */
-	public void signAsset(Long assetId,AssetRolloutIncomeDetailTypeEnum typeEnum,String operator);
+	public void signAsset(Long id, String operator);
 	
 	/**
 	 * 根据出库单id 查询 对应资产是否都被签收
@@ -52,4 +53,18 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public Long addDetail(AssetRolloutIncomeDetailDto param);
+	
+	/**
+	 * 根据出库单id 查询
+	 * @param rolloutId
+	 * @return
+	 */
+	public List<AssetRolloutIncomeDetail> queryListByRolloutId(Long rolloutId);
+	
+	/**
+	 * 查询待签收资产
+	 * @param assetId
+	 * @return
+	 */
+	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId);
 }

@@ -6,8 +6,8 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
-import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -15,6 +15,7 @@ import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.dal.domain.Asset;
 
 public interface AssetBO {
 
@@ -81,11 +82,13 @@ public interface AssetBO {
 
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
 
-    public Boolean transferAssetSelfCounty(AssetTransferDto transferDto);
+    public List<Asset> transferAssetSelfCounty(AssetTransferDto transferDto);
 
-    public Boolean transferAssetOtherCounty(AssetTransferDto transferDto);
+    public List<Asset> transferAssetOtherCounty(AssetTransferDto transferDto);
 
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
 
-    public void cancelTransferAssetOtherCounty(AssetTransferDto transferDto);
+    public  Asset getAssetById(Long assetId);
+    
+    public  void cancelAsset(List<Long> assetIds,String operator);
 }

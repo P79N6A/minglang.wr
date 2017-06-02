@@ -21,9 +21,7 @@ public class AssetRolloutIncomeDetailStatusEnum implements Serializable{
     
     public static final AssetRolloutIncomeDetailStatusEnum WAIT_SIGN  = new AssetRolloutIncomeDetailStatusEnum("WAIT_SIGN", "待签收");
     public static final AssetRolloutIncomeDetailStatusEnum HAS_SIGN = new AssetRolloutIncomeDetailStatusEnum("HAS_SIGN", "已签收");
-    public static final AssetRolloutIncomeDetailStatusEnum CANCEL = new AssetRolloutIncomeDetailStatusEnum("CANCEL", "已取消");
-    public static final AssetRolloutIncomeDetailStatusEnum WAIT_AUDIT = new AssetRolloutIncomeDetailStatusEnum("WAIT_AUDIT", "待审批");
-    public static final AssetRolloutIncomeDetailStatusEnum AUDIT_NOT_PASS = new AssetRolloutIncomeDetailStatusEnum("AUDIT_NOT_PASS", "审批不通过");
+    public static final AssetRolloutIncomeDetailStatusEnum CANCEL = new AssetRolloutIncomeDetailStatusEnum("CANCEL", "已撤销");
 
 
 
@@ -31,8 +29,6 @@ public class AssetRolloutIncomeDetailStatusEnum implements Serializable{
     	mappings.put("WAIT_SIGN", WAIT_SIGN);
         mappings.put("HAS_SIGN", HAS_SIGN);
         mappings.put("CANCEL", CANCEL);
-        mappings.put("WAIT_AUDIT", WAIT_AUDIT);
-        mappings.put("AUDIT_NOT_PASS", AUDIT_NOT_PASS);
     }
 
     public AssetRolloutIncomeDetailStatusEnum(String code, String desc) {
