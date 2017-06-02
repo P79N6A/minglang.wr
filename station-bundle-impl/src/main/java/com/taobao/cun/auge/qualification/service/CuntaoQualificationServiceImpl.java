@@ -233,6 +233,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			UserQualiRecord record = sellerQualiServiceAdapter.lastAuditQualiStatus(cuntaoQualification.getTaobaoUserId());
 			if(UserQualiRecordStatus.TO_BE_AUDITED != record.getStatus()){
 				list.add(cuntaoQualification.getTaobaoUserId()+":"+record.getStatus());
+				logger.info("querySubmitedQualifications:"+cuntaoQualification.getTaobaoUserId()+":"+record.getStatus());
 			}
 		}
 		return list;
