@@ -656,7 +656,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 
 	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException {
 		try {
-			Result<Boolean> res = stationWriteService.closeStationById(cainiaoStationId, Modifier.newSystem());
+			Result<Boolean> res = stationWriteService.pauseStationById(cainiaoStationId, Modifier.newSystem());
 			if (!res.isSuccess()) {
 				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
