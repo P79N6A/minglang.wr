@@ -167,4 +167,13 @@ public interface CaiNiaoAdapter {
 	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException; 
 	
 	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException ;
+	
+	/**
+	 * 停业通知菜鸟服务站停业
+	 * 
+	 * @param cainiaoStationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException;
 }
