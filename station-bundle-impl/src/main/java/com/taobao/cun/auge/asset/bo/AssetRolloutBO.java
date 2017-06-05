@@ -8,6 +8,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
@@ -29,11 +30,11 @@ public interface AssetRolloutBO {
 	public Long addRollout(AssetRolloutDto param);
 	
 	/**
-	 * 撤销出库单
+	 * 撤销出库 资产
 	 * 返回撤销的资产id
 	 * @param rolloutId
 	 */
-	public List<Long> cancelRolleout(AssetRolloutCancelDto cancelDto);
+	public void cancelRolleoutAsset(AssetRolloutCancelDto cancelDto);
 	
 	
 	/**
@@ -70,7 +71,7 @@ public interface AssetRolloutBO {
 	 * @param transferDto
 	 * @return
 	 */
-	public Long  transferAssetSelfCounty(AssetTransferDto transferDto,List<Asset> assetList);
+	public Long  transferAssetSelfCounty(AssetTransferDto transferDto,List<Asset> assetList,AssetIncomeSignTypeEnum signType);
 	
 	/**
 	 * 分发资产到村点

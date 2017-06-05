@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.dto;
 import java.util.List;
 
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -81,6 +82,11 @@ public class AssetIncomeDto extends OperatorDto{
      *备注
      */
     private String remark;
+    
+    /**
+     * 签收类型
+     */
+    private AssetIncomeSignTypeEnum signType;
     
     /**
      * 资产总数
@@ -218,5 +224,13 @@ public class AssetIncomeDto extends OperatorDto{
 
 	public void setWaitSignCountList(List<AssetCategoryCountDto> waitSignCountList) {
 		this.waitSignCountList = waitSignCountList;
+	}
+
+	public AssetIncomeSignTypeEnum getSignType() {
+		return signType;
+	}
+
+	public void setSignType(AssetIncomeSignTypeEnum signType) {
+		this.signType = signType;
 	}
 }

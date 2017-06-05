@@ -53,6 +53,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andIncomeIdEqualTo(incomeId);
+		criteria.andStatusNotEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
 		if (status != null) {
 			criteria.andStatusEqualTo(status.getCode());
 		}
@@ -69,6 +70,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andRolloutIdEqualTo(rolloutId).andStatusEqualTo(status.getCode());
+		criteria.andStatusNotEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
 		return assetRolloutIncomeDetailExtMapper.queryCountGroupByCategory(example);
 	}
 
@@ -152,11 +154,15 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		}
 	    return resList.get(0);
 	}
-
+	
+	
+	
 
 	@Override
-	public void cancel(Long rolloutId, String operator) {
-		ValidateUtils.notNull(rolloutId);
+	public Long cancel(Long assetId, String operator) {
+		ValidateUtils.notNull(assetId);
+		AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);
+		
 		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
 		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
 		DomainUtils.beforeUpdate(record, operator);
@@ -164,8 +170,10 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andRolloutIdEqualTo(rolloutId);
+		criteria.andAssetIdEqualTo(assetId);
+		
 		assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
+		return detail.getRolloutId();
 		
 	}
 }

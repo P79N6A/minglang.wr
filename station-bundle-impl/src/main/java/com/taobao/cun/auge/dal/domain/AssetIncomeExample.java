@@ -1474,6 +1474,76 @@ public class AssetIncomeExample {
             addCriterion("remark not between", value1, value2, "remark");
             return (Criteria) this;
         }
+
+        public Criteria andSignTypeIsNull() {
+            addCriterion("sign_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeIsNotNull() {
+            addCriterion("sign_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeEqualTo(String value) {
+            addCriterion("sign_type =", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeNotEqualTo(String value) {
+            addCriterion("sign_type <>", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeGreaterThan(String value) {
+            addCriterion("sign_type >", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("sign_type >=", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeLessThan(String value) {
+            addCriterion("sign_type <", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeLessThanOrEqualTo(String value) {
+            addCriterion("sign_type <=", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeLike(String value) {
+            addCriterion("sign_type like", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeNotLike(String value) {
+            addCriterion("sign_type not like", value, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeIn(List<String> values) {
+            addCriterion("sign_type in", values, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeNotIn(List<String> values) {
+            addCriterion("sign_type not in", values, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeBetween(String value1, String value2) {
+            addCriterion("sign_type between", value1, value2, "signType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSignTypeNotBetween(String value1, String value2) {
+            addCriterion("sign_type not between", value1, value2, "signType");
+            return (Criteria) this;
+        }
     }
 
     /**
