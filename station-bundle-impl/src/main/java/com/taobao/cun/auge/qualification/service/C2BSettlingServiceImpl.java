@@ -5,21 +5,24 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -28,6 +31,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("settlingService")
 @HSFProvider(serviceInterface= C2BSettlingService.class)
+@EnableConfigurationProperties({SettlingStepsProperties.class})
 public class C2BSettlingServiceImpl implements C2BSettlingService {
 
 	private static final Logger logger = LoggerFactory.getLogger(C2BSettlingServiceImpl.class);
@@ -49,6 +53,11 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	@Autowired
 	private CuntaoQualificationBO cuntaoQulificationBO;
 	
+	@Autowired
+	private SettlingStepsProperties settlingStepsProperties;
+	
+	@Autowired
+	PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -56,21 +65,27 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		try {
 			Assert.notNull(settlingStepRequest);
 			Assert.notNull(settlingStepRequest.getTaobaoUserId());
-			
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(settlingStepRequest.getTaobaoUserId());
 			boolean testUser = isTestUser(parnterInstance.getTaobaoUserId());
-			response.setTestUser(testUser);
-			
 			boolean isSignProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
 			
 			boolean isFrozenMoney = this.hasFrozenMoney(parnterInstance.getId());
 			
 			//没有冻结保证金就是要走新流程的用户
 			response.setNewSettleUser(!isFrozenMoney);
+			response.setTestUser(testUser);
+			if(settlingStepRequest.getVersion() == null){
+				setStep(settlingStepRequest.getTaobaoUserId(),isSignProcotol,isFrozenMoney,response);
+				response.setSuccessful(true);
+				return response;
+			}else{
+				String stepNames = settlingStepsProperties.getVersion().get(settlingStepRequest.getVersion());
+				Assert.notNull(stepNames);
+				response.setStepNames(stepNames.split(","));
+				setStepName(settlingStepRequest.getTaobaoUserId(),parnterInstance.getId(),isSignProcotol,isFrozenMoney,response);
+				return response;
+			}
 			
-			setStep(settlingStepRequest.getTaobaoUserId(),isSignProcotol,isFrozenMoney,response);
-			response.setSuccessful(true);
-			return response;
 		} catch (Exception e) {
 			logger.error("settlingStep error!",e);
 			response.setErrorMessage("系统异常");
@@ -115,6 +130,40 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		response.setStep(C2BSettlingService.ALL_DONE);
 	}
 	
+	private void  setStepName(Long taobaoUserId,Long parnterInstanceId,boolean isSignProtocol,boolean isFrozenMoeny,C2BSettlingResponse response){
+		
+		CuntaoQualification  qualification = cuntaoQulificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if(qualification == null){
+			response.setStepName("SUBMIT_AUTH_METERAIL");
+			return;
+		}
+		if(qualification != null){
+			response.setQualificationStatus(qualification.getStatus());
+			response.setErrorCode(qualification.getErrorCode());
+			if(qualification.getStatus() == QualificationStatus.AUDIT_FAIL){
+				response.setErrorMessage(qualification.getErrorMessage());
+			}
+		}
+		
+		if(!isSignProtocol){
+			response.setStepName("SIGN_PROTOCOL");
+			return;
+		}
+		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(parnterInstanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
+		if(items.getConfirmPosition() ==null ||"N".equals(items.getConfirmPosition())){
+			response.setStepName("CONFIRM_POSITION");
+			return;
+		}
+		
+		if(!isFrozenMoeny){
+			response.setStepName("FRZONE_MONEY");
+			return;
+		}
+		response.setStepName("ALL_DONE");
+	}
+
+
+
 	/**
 	 * 是否签约新入住协议
 	 * @param parnterInstanceId
@@ -165,6 +214,14 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			response.setSuccessful(false);
 		}
 			return response;
+	}
+
+	public SettlingStepsProperties getSettlingStepsProperties() {
+		return settlingStepsProperties;
+	}
+
+	public void setSettlingStepsProperties(SettlingStepsProperties settlingStepsProperties) {
+		this.settlingStepsProperties = settlingStepsProperties;
 	}
 
 }

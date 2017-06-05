@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -71,6 +72,10 @@ public class PartnerLifecycleConverter {
 		if (partnerLifecycleDto.getCourseStatus() != null) {
 			items.setCourseStatus(partnerLifecycleDto.getCourseStatus().getCode());
 		}
+		if(partnerLifecycleDto.getPositionConfirm() != null){
+			items.setConfirmPosition(partnerLifecycleDto.getPositionConfirm().getCode());
+		}
+		
 		return items;
 	}
 	
@@ -95,7 +100,7 @@ public class PartnerLifecycleConverter {
 		lifecleDto.setSystem(PartnerLifecycleSystemEnum.valueof(items.getSystem()));
 		lifecleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.valueof(items.getDecorateStatus()));
 		lifecleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.valueof(items.getCourseStatus()));
-		
+		lifecleDto.setPosittionConfirm(PartnerLifecyclePositionConfirmEnum.valueof(items.getConfirmPosition()));
 		return lifecleDto;
 	}
 }

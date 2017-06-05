@@ -126,6 +126,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -2229,6 +2230,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			record.setRemarks(PartnerInstanceEventUtil.buildLngLatInfo(oldStation,newStation));
 			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
 			cuntaoFlowRecordQueryService.insertRecord(record);
+			partnerLifecycleBO.updateConfirmPosition(instanceId, PartnerLifecyclePositionConfirmEnum.Y);
 		}
 	}
 

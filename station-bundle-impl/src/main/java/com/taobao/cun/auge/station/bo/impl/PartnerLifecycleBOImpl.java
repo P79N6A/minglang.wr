@@ -21,6 +21,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -178,5 +179,18 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	
 	public PartnerLifecycleItems getLifecycleItems(long id){
 		return partnerLifecycleItemsMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public void updateConfirmPosition(Long instanceId,
+			PartnerLifecyclePositionConfirmEnum positionConfirm) {
+		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
+		if (items == null) {
+			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+		}
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setPosittionConfirm(positionConfirm);
+		param.setLifecycleId(items.getId());
+		this.updateLifecycle(param);
 	}
 }
