@@ -75,42 +75,13 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signAsset(Long assetId,
-			AssetRolloutIncomeDetailTypeEnum typeEnum,String operator) {
-		ValidateUtils.notNull(assetId);
-		ValidateUtils.notNull(typeEnum);
-		
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
-		criteria.andTypeEqualTo(typeEnum.getCode());
-		List<AssetRolloutIncomeDetail>  resList = assetRolloutIncomeDetailMapper.selectByExample(example);
-		if (CollectionUtils.isEmpty(resList)) {
-			 throw new AugeBusinessException("操作失败，无法查询到待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
-		}
-		if (resList.size()>1) {
-			 throw new AugeBusinessException("操作失败，当前资产多条数据，请核对资产信息！如有疑问，请联系资产管理员。");
-		}
-		AssetRolloutIncomeDetail detail = resList.get(0);
-		
-		//更新出入库单状态
-		Long incomeId = detail.getIncomeId();
-		Long rolloutId =detail.getRolloutId();
-		if (incomeId != null) {
-			if (isAllSignByIncomeId(incomeId)) {
-				assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, operator);
-			}else {
-				assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, operator);
-			}
-		}
-		if (rolloutId != null) {
-			if (isAllSignByRolloutId(rolloutId)) {
-				assetRolloutBO.updateStatus(incomeId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
-			}else {
-				assetRolloutBO.updateStatus(incomeId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
-			}
-		}
+	public void signAsset(Long id,String operator) {
+		ValidateUtils.notNull(id);
+		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+		record.setId(id);
+		record.setStatus(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
+		DomainUtils.beforeUpdate(record, operator);
+		assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(record);
 	}
 
 
@@ -151,5 +122,50 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		DomainUtils.beforeInsert(record, param.getOperator());
 		assetRolloutIncomeDetailMapper.insert(record);
 		return record.getId();
+	}
+
+
+	@Override
+	public List<AssetRolloutIncomeDetail> queryListByRolloutId(Long rolloutId) {
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andRolloutIdEqualTo(rolloutId);
+		return assetRolloutIncomeDetailMapper.selectByExample(example);
+	}
+
+
+	@Override
+	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId) {
+		ValidateUtils.notNull(assetId);
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+		criteria.andAssetIdEqualTo(assetId);
+		List<AssetRolloutIncomeDetail>  resList = assetRolloutIncomeDetailMapper.selectByExample(example);
+		if (CollectionUtils.isEmpty(resList)) {
+			 throw new AugeBusinessException("操作失败，无法查询到待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		if (resList.size()>1) {
+			 throw new AugeBusinessException("操作失败，当前资产多条数据，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+	    return resList.get(0);
+	}
+
+
+	@Override
+	public void cancel(Long rolloutId, String operator) {
+		ValidateUtils.notNull(rolloutId);
+		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+		DomainUtils.beforeUpdate(record, operator);
+		
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andRolloutIdEqualTo(rolloutId);
+		assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
+		
 	}
 }

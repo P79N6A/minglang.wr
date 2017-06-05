@@ -42,4 +42,12 @@ public interface AssetIncomeBO {
 	 * @return
 	 */
 	public AssetIncomeDto getIncomeDtoById(Long incomeId);
+	
+	/**
+	 * 签收资产
+	 * @param assetId
+	 * @param typeEnum
+	 * @param operator
+	 */
+	public void signAsset(Long assetId,String operator);
 }

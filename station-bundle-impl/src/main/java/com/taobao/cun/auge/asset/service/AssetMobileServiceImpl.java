@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
@@ -22,22 +23,27 @@ import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -117,9 +123,11 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Override
     @Transactional
     public AssetDetailDto signAssetByCounty(AssetDto signDto) {
-        //Todo 签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
-        //Todo 无线消息推送方案待确定
-        return assetBO.signAssetByCounty(signDto);
+    	AssetDetailDto adDto = assetBO.signAssetByCounty(signDto);
+    	//1.签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
+    	assetIncomeBO.signAsset(adDto.getId(), signDto.getOperator());
+        //TODO:无线消息推送方案待确定
+        return adDto;
     }
 
     @Override
@@ -133,19 +141,28 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
-        //Todo 生成出库单
-        return assetBO.transferAssetSelfCounty(transferDto);
+        //1.资产状态变更
+    	List<Asset> assetList =  assetBO.transferAssetSelfCounty(transferDto);
+    	//2  生成出入库单  
+        List<Asset> countyUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
+        List<Asset> StationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
+        assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList);
+        assetRolloutBO.transferAssetSelfCounty(transferDto,StationUseList);
+        return Boolean.TRUE;
+    	
     }
 
     @Override
     @Transactional
     public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
-        //Todo 生成出库单,根据出库单的主键来创建工作流
-        assetBO.transferAssetOtherCounty(transferDto);
-        //
-        assetFlowService.createTransferFlow(2L, transferDto.getOperator());
+    	//1 资产状态变更
+    	List<Asset> assetList = assetBO.transferAssetOtherCounty(transferDto);
+        //2. 生成出库单,根据出库单的主键来创建工作流
+    	Long rolloutId = assetRolloutBO.transferAssetOtherCounty(transferDto,assetList);
+        //3 生成工作流 审批
+        assetFlowService.createTransferFlow(rolloutId, transferDto.getOperator());
         return Boolean.TRUE;
     }
 
@@ -180,6 +197,31 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	            dtoList.add(aiDto);
 	        }
 	        return PageDtoUtil.success(rolloutList, dtoList);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Boolean cancelAssetRollout(AssetRolloutCancelDto cancelDto) {
+		//1.撤销出库单
+		List<Long> assetIdList = assetRolloutBO.cancelRolleout(cancelDto);
+		//2.更新资产状态为使用中
+		assetBO.cancelAsset(assetIdList, cancelDto.getOperator());
+		//3.取消流程
+		AssetRollout ar = assetRolloutBO.getRolloutById(cancelDto.getRolloutId());
+		if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
+			assetFlowService.cancelTransferFlow(cancelDto.getRolloutId(), cancelDto.getOperator());
+		}
+		return Boolean.TRUE;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Boolean distributeAsset(AssetDistributeDto distributeDto) {
+	   //1.检验资产为县使用，操作人 和资产责任人一致 更新资产状态为分发中
+		List<Asset> assetList = assetBO.distributeAsset(distributeDto);
+		//2.创建出库单
+		assetRolloutBO.distributeAsset(distributeDto, assetList);
+		return Boolean.TRUE;
 	}
 
 }

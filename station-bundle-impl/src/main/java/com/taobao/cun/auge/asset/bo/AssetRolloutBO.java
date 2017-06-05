@@ -1,11 +1,15 @@
 package com.taobao.cun.auge.asset.bo;
 
+import java.util.List;
+
 import com.github.pagehelper.Page;
+import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
-import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 
 public interface AssetRolloutBO {
@@ -25,10 +29,11 @@ public interface AssetRolloutBO {
 	public Long addRollout(AssetRolloutDto param);
 	
 	/**
-	 * 
+	 * 撤销出库单
+	 * 返回撤销的资产id
 	 * @param rolloutId
 	 */
-	public void cancelRolleout(Long rolloutId,OperatorDto operatorDto);
+	public List<Long> cancelRolleout(AssetRolloutCancelDto cancelDto);
 	
 	
 	/**
@@ -58,5 +63,20 @@ public interface AssetRolloutBO {
 	 * @param transferDto
 	 * @return
 	 */
-	public Long  transferAssetOtherCounty(AssetTransferDto transferDto);
+	public Long  transferAssetOtherCounty(AssetTransferDto transferDto,List<Asset> assetList);
+	
+	/**
+	 * 转移至本县
+	 * @param transferDto
+	 * @return
+	 */
+	public Long  transferAssetSelfCounty(AssetTransferDto transferDto,List<Asset> assetList);
+	
+	/**
+	 * 分发资产到村点
+	 * @param distributeDto
+	 * @param assetList
+	 * @return
+	 */
+	public Long  distributeAsset(AssetDistributeDto distributeDto,List<Asset> assetList);
 }
