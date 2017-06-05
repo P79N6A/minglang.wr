@@ -628,4 +628,20 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 		logisticsStationApplyMapper.updateByExampleSelective(record, example);
 	}
+
+	/** 停业通知菜鸟 */
+	public void closeCainiaoStation(SyncModifyCainiaoStationDto syncModifyCainiaoStationDto)
+			throws AugeServiceException {
+		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyCainiaoStationDto.getPartnerInstanceId());
+		Long stationId = instanceDto.getStationId();
+		// 查询菜鸟物流站关系表
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel == null) {// 没有物流站
+			String error = getErrorMessage("closeCainiaoStation", String.valueOf(stationId), "CuntaoCainiaoStationRel is null");
+			logger.error(error);
+			throw new AugeServiceException(error);
+		}
+		caiNiaoAdapter.closeToCainiaoStation(rel.getCainiaoStationId());
+	}
 }

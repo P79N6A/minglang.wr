@@ -87,4 +87,11 @@ public interface CaiNiaoService {
 	 * @throws AugeServiceException
 	 */
 	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto)throws AugeServiceException;
+	
+	/**
+	 * 停业同步菜鸟
+	 * @param syncModifyCainiaoStationDto
+	 * @throws AugeServiceException
+	 */
+	public void closeCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto) throws AugeServiceException;
 }

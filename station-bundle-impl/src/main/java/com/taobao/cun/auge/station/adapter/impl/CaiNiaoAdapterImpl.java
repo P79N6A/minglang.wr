@@ -653,4 +653,18 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		Result<List<WarehouseDTO>> result = warehouseReadService.queryWareHouses(listParam, option);
 		return result.getData();
 	}
+
+	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException {
+		try {
+			Result<Boolean> res = stationWriteService.closeStationById(cainiaoStationId, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("closeToCainiaoStation", cainiaoStationId.toString() ,e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
 }
