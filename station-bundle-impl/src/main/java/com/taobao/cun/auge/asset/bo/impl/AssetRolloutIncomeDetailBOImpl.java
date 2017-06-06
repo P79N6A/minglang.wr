@@ -66,7 +66,10 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
-		criteria.andRolloutIdEqualTo(rolloutId).andStatusEqualTo(status.getCode());
+		criteria.andRolloutIdEqualTo(rolloutId);
+		if (status != null) {
+			criteria.andStatusEqualTo(status.getCode());
+		}
 		criteria.andStatusNotEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
 		return assetRolloutIncomeDetailExtMapper.queryCountGroupByCategory(example);
 	}
