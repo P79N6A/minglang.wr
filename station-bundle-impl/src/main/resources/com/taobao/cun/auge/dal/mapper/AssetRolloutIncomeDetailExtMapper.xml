@@ -4,7 +4,7 @@
 	
   <select id="queryCountGroupByCategory" resultType="com.taobao.cun.auge.asset.dto.AssetCategoryCountDto"
 			parameterType="com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExtExample">
-		select count(1) as number,category from asset_rollout_income_detail 
+		select count(1) as total,category from asset_rollout_income_detail 
 		<if test="_parameter != null">
 			<include refid="Example_Where_Clause" />
 		</if>
