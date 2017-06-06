@@ -19,6 +19,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
@@ -135,7 +136,7 @@ public interface AssetMobileService {
      * @param incomeId
      * @return
      */
-    public PageDto<AssetDetailDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con);
+    public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con);
     
     /**
      * 查询入库单详情 基础信息
@@ -150,7 +151,7 @@ public interface AssetMobileService {
      * @param incomeId
      * @return
      */
-    public PageDto<AssetDetailDto> queryPageForRolloutDetail(AssetRolloutDetailQueryCondition con);
+    public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForRolloutDetail(AssetRolloutDetailQueryCondition con);
     
     /**
      * 查询出库单详情 基础信息

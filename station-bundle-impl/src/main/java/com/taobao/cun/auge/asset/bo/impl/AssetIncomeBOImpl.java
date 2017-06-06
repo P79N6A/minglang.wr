@@ -150,4 +150,15 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 			}
 		}
 	}
+
+	@Override
+	public void cancelAssetIncome(Long incomeId, String operator) {
+		ValidateUtils.notNull(incomeId);
+		AssetIncome record = new AssetIncome();
+		record.setId(incomeId);
+		record.setStatus(AssetIncomeStatusEnum.CANCEL.getCode());
+		DomainUtils.beforeUpdate(record, operator);
+		assetIncomeMapper.updateByPrimaryKeySelective(record);
+		
+	}
 }
