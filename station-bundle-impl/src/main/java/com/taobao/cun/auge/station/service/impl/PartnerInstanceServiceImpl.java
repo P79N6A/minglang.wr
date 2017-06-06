@@ -2230,7 +2230,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			record.setRemarks(PartnerInstanceEventUtil.buildLngLatInfo(oldStation,newStation));
 			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
 			cuntaoFlowRecordQueryService.insertRecord(record);
-			partnerLifecycleBO.updateConfirmPosition(instanceId, PartnerLifecyclePositionConfirmEnum.Y);
+			if(taobaoUserId != null){
+				partnerLifecycleBO.updateConfirmPosition(instanceId, PartnerLifecyclePositionConfirmEnum.Y);
+			}
 		}
 	}
 
