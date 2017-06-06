@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.asset.dto;
 
+import java.util.Date;
+
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -47,6 +49,8 @@ public class AssetRolloutIncomeDetailDto  extends OperatorDto {
      * 类型
      */
     private AssetRolloutIncomeDetailTypeEnum type;
+    
+    private Date operatorTime;
 
 	public Long getId() {
 		return id;
@@ -111,5 +115,12 @@ public class AssetRolloutIncomeDetailDto  extends OperatorDto {
 	public void setType(AssetRolloutIncomeDetailTypeEnum type) {
 		this.type = type;
 	}
-    
+
+	public Date getOperatorTime() {
+		return operatorTime;
+	}
+
+	public void setOperatorTime(Date operatorTime) {
+		this.operatorTime = operatorTime;
+	}
 }

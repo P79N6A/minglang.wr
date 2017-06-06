@@ -2,9 +2,11 @@ package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
 
+import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 
 public interface AssetRolloutIncomeDetailBO {
@@ -15,7 +17,7 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @param status
 	 * @return
 	 */
-	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, AssetRolloutIncomeDetailStatusEnum status);
+	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, List<String> statusList);
 	
 	/**
 	 * 出库单id  和状态查资产总数
@@ -60,6 +62,13 @@ public interface AssetRolloutIncomeDetailBO {
 	 */
 	public List<AssetRolloutIncomeDetail> queryListByRolloutId(Long rolloutId);
 	
+	
+	/**
+	 * 根据入库单id 查询
+	 * @param rolloutId
+	 * @return
+	 */
+	public List<AssetRolloutIncomeDetail> queryListByIncomeId(Long incomeId);
 	/**
 	 * 查询待签收资产
 	 * @param assetId
@@ -72,4 +81,20 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return 出库单id
 	 */
 	public Long  cancel(Long assetId, String operator);
+	/**
+	 * 查询入库单资产详情列表
+	 * @param incomeId
+	 * @param status
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	public Page<Asset> queryPageByIncomeId(Long incomeId,AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize);
+	
+	/**
+	 * 是否有撤销的资产
+	 * @param incomeId
+	 * @return
+	 */
+	public Boolean hasCancelAssetByIncomeId(Long incomeId);
 }

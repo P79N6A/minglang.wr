@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,7 +15,6 @@ import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -46,6 +46,13 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andReceiverWorknoEqualTo(queryParam.getWorkNo());
+		if (StringUtils.isNotEmpty(queryParam.getStatus())) {
+			criteria.andStatusEqualTo(queryParam.getStatus());
+		}
+		if (StringUtils.isNotEmpty(queryParam.getType())) {
+			criteria.andTypeEqualTo(queryParam.getType());
+		}
+		example.setOrderByClause("GMT_CREATE DESC");
 		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
 		return (Page<AssetIncome>)assetIncomeMapper.selectByExample(example); 
 	}

@@ -1044,6 +1044,66 @@ public class AssetRolloutIncomeDetailExample {
             addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
+
+        public Criteria andOperatorTimeIsNull() {
+            addCriterion("operator_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeIsNotNull() {
+            addCriterion("operator_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeEqualTo(Date value) {
+            addCriterion("operator_time =", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeNotEqualTo(Date value) {
+            addCriterion("operator_time <>", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeGreaterThan(Date value) {
+            addCriterion("operator_time >", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("operator_time >=", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeLessThan(Date value) {
+            addCriterion("operator_time <", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeLessThanOrEqualTo(Date value) {
+            addCriterion("operator_time <=", value, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeIn(List<Date> values) {
+            addCriterion("operator_time in", values, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeNotIn(List<Date> values) {
+            addCriterion("operator_time not in", values, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeBetween(Date value1, Date value2) {
+            addCriterion("operator_time between", value1, value2, "operatorTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOperatorTimeNotBetween(Date value1, Date value2) {
+            addCriterion("operator_time not between", value1, value2, "operatorTime");
+            return (Criteria) this;
+        }
     }
 
     /**

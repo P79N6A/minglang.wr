@@ -30,6 +30,7 @@ public class AssetRolloutIncomeDetailConverter {
 		assetRolloutIncomeDetailDto.setRolloutId(assetRolloutIncomeDetail.getRolloutId());
 		assetRolloutIncomeDetailDto.setStatus(AssetRolloutIncomeDetailStatusEnum.valueof(assetRolloutIncomeDetail.getStatus()));
 		assetRolloutIncomeDetailDto.setType(AssetRolloutIncomeDetailTypeEnum.valueof(assetRolloutIncomeDetail.getType()));
+		assetRolloutIncomeDetailDto.setOperatorTime(assetRolloutIncomeDetail.getOperatorTime());
 		return assetRolloutIncomeDetailDto;
 	}
 
@@ -47,7 +48,7 @@ public class AssetRolloutIncomeDetailConverter {
 		assetRolloutIncomeDetail.setRolloutId(assetRolloutIncomeDetailDto.getRolloutId());
 		assetRolloutIncomeDetail.setStatus(assetRolloutIncomeDetailDto.getStatus()== null?null:assetRolloutIncomeDetailDto.getStatus().getCode());
 		assetRolloutIncomeDetail.setType(assetRolloutIncomeDetailDto.getType()==null?null:assetRolloutIncomeDetailDto.getType().getCode());
-		
+		assetRolloutIncomeDetail.setOperatorTime(assetRolloutIncomeDetailDto.getOperatorTime());
 		return assetRolloutIncomeDetail;
 	}
 

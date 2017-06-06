@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -8,19 +9,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetRolloutIncomeDetailConverter;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
-import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExtExample;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
@@ -46,17 +48,13 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	private AssetIncomeBO assetIncomeBO;
 	
 
-	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, AssetRolloutIncomeDetailStatusEnum status) {
+	public List<AssetCategoryCountDto> queryCountByIncomeId(Long incomeId, List<String> statusList) {
 		ValidateUtils.notNull(incomeId);
-		//ValidateUtils.notNull(status);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andIncomeIdEqualTo(incomeId);
-		criteria.andStatusNotEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
-		if (status != null) {
-			criteria.andStatusEqualTo(status.getCode());
-		}
+		criteria.andStatusIn(statusList);
 		return assetRolloutIncomeDetailExtMapper.queryCountGroupByCategory(example);
 	}
 
@@ -82,6 +80,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
 		record.setId(id);
 		record.setStatus(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
+		record.setOperatorTime(new Date());
 		DomainUtils.beforeUpdate(record, operator);
 		assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(record);
 	}
@@ -89,7 +88,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 	@Override
 	public Boolean isAllSignByRolloutId(Long rolloutId) {
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
@@ -104,7 +103,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 	@Override
 	public Boolean isAllSignByIncomeId(Long incomeId) {
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
@@ -129,7 +128,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 	@Override
 	public List<AssetRolloutIncomeDetail> queryListByRolloutId(Long rolloutId) {
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andRolloutIdEqualTo(rolloutId);
@@ -140,7 +139,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	@Override
 	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId) {
 		ValidateUtils.notNull(assetId);
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
@@ -165,9 +164,10 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		
 		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
 		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+		record.setOperatorTime(new Date());
 		DomainUtils.beforeUpdate(record, operator);
 		
-		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
 		criteria.andAssetIdEqualTo(assetId);
@@ -175,5 +175,43 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
 		return detail.getRolloutId();
 		
+	}
+
+
+	@Override
+	public List<AssetRolloutIncomeDetail> queryListByIncomeId(Long incomeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Page<Asset> queryPageByIncomeId(Long incomeId,
+			AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize) {
+		ValidateUtils.notNull(incomeId);
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIncomeIdEqualTo(incomeId);
+		if (status != null) {
+			criteria.andStatusEqualTo(status.getCode());
+		}
+		PageHelper.startPage(pageNum, pageSize);
+		return assetRolloutIncomeDetailExtMapper.queryFullDetailInfo(example);
+	}
+
+
+	@Override
+	public Boolean hasCancelAssetByIncomeId(Long incomeId) {
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIncomeIdEqualTo(incomeId);
+		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+		int i = assetRolloutIncomeDetailMapper.countByExample(example);
+		if (i>0) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
 }

@@ -1,8 +1,6 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +81,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		AssetRolloutExample example = new AssetRolloutExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andApplierWorknoEqualTo(queryParam.getWorkNo());
+		example.setOrderByClause("GMT_CREATE DESC");
 		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
 		return (Page<AssetRollout>)assetRolloutMapper.selectByExample(example); 
 	}
@@ -115,16 +114,6 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			assetRolloutMapper.updateByPrimaryKeySelective(record);
 		}
 	}
-	private Boolean canCancelStatus(String  status) {
-		List<String> l = new  ArrayList<String>();
-		l.add(AssetRolloutStatusEnum.WAIT_AUDIT.getCode());
-		l.add(AssetRolloutStatusEnum.WAIT_ROLLOUT.getCode());
-		l.add(AssetRolloutStatusEnum.WAIT_COMPENSATE.getCode());
-		if (l.contains(status)) {
-			return Boolean.TRUE;
-		}
-		return Boolean.FALSE;
-	}
 
 	@Override
 	public AssetRollout getRolloutById(Long rolloutId) {
@@ -134,7 +123,10 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 
 	@Override
 	public AssetRolloutDto getRolloutDtoById(Long rolloutId) {
-		return AssetRolloutConverter.toAssetRolloutDto(getRolloutById(rolloutId));
+		AssetRolloutDto dto = AssetRolloutConverter.toAssetRolloutDto(getRolloutById(rolloutId));
+		dto.setCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(), null));
+		dto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN));
+		return dto;
 	}
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateStatus(Long rolloutId, AssetRolloutStatusEnum statusEnum,String operator) {

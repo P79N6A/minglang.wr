@@ -94,4 +94,6 @@ public interface AssetBO {
     public  void cancelAsset(List<Long> assetIds,String operator);
     
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto);
+    
+    public AssetDetailDto buildAssetDetail(Asset asset);
 }

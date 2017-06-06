@@ -801,8 +801,8 @@ public class AssetBOImpl implements AssetBO {
 	private List<AssetDetailDto> buildAssetDetailDtoList(List<Asset> assetList) {
         return assetList.stream().map(this::buildAssetDetail).collect(Collectors.toList());
 	}
-
-	private AssetDetailDto buildAssetDetail(Asset asset) {
+	@Override
+	public AssetDetailDto buildAssetDetail(Asset asset) {
 		AssetDetailDto detailDto = new AssetDetailDto();
 		BeanUtils.copyProperties(asset, detailDto);
 		if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {

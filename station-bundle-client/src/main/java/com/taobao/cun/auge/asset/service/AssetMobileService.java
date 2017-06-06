@@ -9,11 +9,15 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetIncomeDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetIncomeDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetMobileConditionDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
@@ -125,5 +129,37 @@ public interface AssetMobileService {
      * @return
      */
     public Boolean distributeAsset(AssetDistributeDto distributeDto);
+    
+    /**
+     * 获得入库单详情列表    查询  待入库，已入库，已撤销的资产时，使用
+     * @param incomeId
+     * @return
+     */
+    public PageDto<AssetDetailDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con);
+    
+    /**
+     * 查询入库单详情 基础信息
+     * @param incomeId
+     * @return
+     */
+    public AssetIncomeDetailDto getIncomeDetailDto(Long incomeId);
+    
+    
+    /**
+     * 获得出库单详情列表    查询  待对方入库，对方部分入库，对方全部入库，已撤回的资产时，使用
+     * @param incomeId
+     * @return
+     */
+    public PageDto<AssetDetailDto> queryPageForRolloutDetail(AssetRolloutDetailQueryCondition con);
+    
+    /**
+     * 查询出库单详情 基础信息
+     * @param incomeId
+     * @return
+     */
+    public AssetRolloutDetailDto getRolloutDetailDto(Long rolloutId);
+    
+    
+    
 
 }

@@ -16,6 +16,15 @@ public class AssetIncomeQueryCondition extends PageQuery {
 	 * 接收人工号
 	 */
 	private String workNo;
+	/**
+	 * 入库状态
+	 */
+	private String status;
+	/**
+	 * 入库类型
+	 */
+	private String type;
+	
 	
 	public String getWorkNo() {
 		return workNo;
@@ -23,5 +32,16 @@ public class AssetIncomeQueryCondition extends PageQuery {
 	public void setWorkNo(String workNo) {
 		this.workNo = workNo;
 	}
-	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 }
