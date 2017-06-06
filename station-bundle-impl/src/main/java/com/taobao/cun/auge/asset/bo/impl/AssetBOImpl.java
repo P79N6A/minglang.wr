@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.crius.event.ExtEvent;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -640,7 +641,8 @@ public class AssetBOImpl implements AssetBO {
 		content.setTitle("您转移的资产已被对方签收，请关注！");
 		content.setContent("您转移至" + countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName()+" " + emp360Adapter.getName(asset.getOwnerWorkno())+"的资产已被对方签收，查看详情");
 		content.setRouteUrl("url");
-		EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", JSON.toJSONString(signEvent));
+		signEvent.setContent(content);
+		EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
 	}
 
 	@Override
@@ -754,6 +756,35 @@ public class AssetBOImpl implements AssetBO {
 		asset.setStatus(AssetStatusEnum.PEND.getCode());
 		assetMapper.updateByExampleSelective(asset, assetExample);
 		return assetList;
+	}
+
+	@Override
+	public void agreeTransferAsset(AssetTransferDto transferDto) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
+			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
+		String name = emp360Adapter.getName(transferDto.getOperator());
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		asset.setOwnerWorkno(transferDto.getOperator());
+		asset.setOwnerOrgId(transferDto.getOperatorOrgId());
+		asset.setOwnerName(name);
+		asset.setUserName(name);
+		asset.setUseAreaId(transferDto.getOperatorOrgId());
+		asset.setUserId(transferDto.getOperator());
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
+	@Override
+	public void disagreeTransferAsset(AssetTransferDto transferDto) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
+			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
 	@Override
