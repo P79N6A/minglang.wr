@@ -15,6 +15,7 @@ import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
@@ -33,6 +34,7 @@ import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
@@ -72,6 +74,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	private PartnerInstanceBO partnerInstanceBO;
 	@Autowired
 	private StationBO stationBO;
+	
+	@Autowired
+	private DiamondConfiguredProperties configuredProperties;
 	
 	@Override
 	public Page<AssetRollout> getRolloutList(
@@ -124,8 +129,12 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	@Override
 	public AssetRolloutDto getRolloutDtoById(Long rolloutId) {
 		AssetRolloutDto dto = AssetRolloutConverter.toAssetRolloutDto(getRolloutById(rolloutId));
-		dto.setCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(), null));
-		dto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN));
+		List<AssetCategoryCountDto> res = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(), null);
+		res.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+		dto.setCountList(res);
+		List<AssetCategoryCountDto> res1 = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+		res1.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+		dto.setWaitSignCountList(res1);
 		return dto;
 	}
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
