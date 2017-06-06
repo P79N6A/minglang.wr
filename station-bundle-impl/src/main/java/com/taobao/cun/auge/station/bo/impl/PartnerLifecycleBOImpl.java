@@ -186,7 +186,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 			PartnerLifecyclePositionConfirmEnum positionConfirm) {
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
 		if (items == null) {
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			return;
 		}
 		PartnerLifecycleDto param = new PartnerLifecycleDto();
 		param.setPosittionConfirm(positionConfirm);
