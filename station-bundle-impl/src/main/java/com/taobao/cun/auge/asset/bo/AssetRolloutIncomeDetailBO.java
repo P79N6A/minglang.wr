@@ -92,9 +92,26 @@ public interface AssetRolloutIncomeDetailBO {
 	public Page<Asset> queryPageByIncomeId(Long incomeId,AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize);
 	
 	/**
+	 * 查询出库单资产详情列表
+	 * @param incomeId
+	 * @param status
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	public Page<Asset> queryPageByRolloutId(Long rolloutId,AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize);
+	
+	/**
 	 * 是否有撤销的资产
 	 * @param incomeId
 	 * @return
 	 */
 	public Boolean hasCancelAssetByIncomeId(Long incomeId);
+	
+	/**
+	 * 是否有撤销的资产
+	 * @param incomeId
+	 * @return
+	 */
+	public Boolean hasCancelAssetByRolloutId(Long rolloutId);
 }

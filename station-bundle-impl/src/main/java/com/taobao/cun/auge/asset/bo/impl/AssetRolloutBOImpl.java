@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,7 +33,9 @@ import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutReceiverAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
@@ -79,16 +82,32 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	private DiamondConfiguredProperties configuredProperties;
 	
 	@Override
-	public Page<AssetRollout> getRolloutList(
-			AssetRolloutQueryCondition queryParam) {
-		ValidateUtils.notNull(queryParam);
-		ValidateUtils.notNull(queryParam.getWorkNo());
+	public PageDto<AssetRolloutDto> getRolloutList(AssetRolloutQueryCondition condition) {
+		ValidateUtils.notNull(condition);
+		ValidateUtils.notNull(condition.getWorkNo());
 		AssetRolloutExample example = new AssetRolloutExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andApplierWorknoEqualTo(queryParam.getWorkNo());
+		criteria.andIsDeletedEqualTo("n").andApplierWorknoEqualTo(condition.getWorkNo());
 		example.setOrderByClause("GMT_CREATE DESC");
-		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
-		return (Page<AssetRollout>)assetRolloutMapper.selectByExample(example); 
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+		Page<AssetRollout>   roList = (Page<AssetRollout>)assetRolloutMapper.selectByExample(example);
+		List<AssetRolloutDto> dtoList = new ArrayList<AssetRolloutDto>();
+		
+        for (AssetRollout ai : roList) {
+        	AssetRolloutDto dto = AssetRolloutConverter.toAssetRolloutDto(ai);
+        	bulidCount(dto);
+            dtoList.add(dto);
+        }
+        return PageDtoUtil.success(roList, dtoList);
+	}
+	
+	private void bulidCount(AssetRolloutDto dto){
+		List<AssetCategoryCountDto> res = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(), null);
+		res.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+		dto.setCountList(res);
+		List<AssetCategoryCountDto> res1 = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+		res1.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+		dto.setWaitSignCountList(res1);
 	}
 
 	
@@ -129,12 +148,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	@Override
 	public AssetRolloutDto getRolloutDtoById(Long rolloutId) {
 		AssetRolloutDto dto = AssetRolloutConverter.toAssetRolloutDto(getRolloutById(rolloutId));
-		List<AssetCategoryCountDto> res = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(), null);
-		res.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
-		dto.setCountList(res);
-		List<AssetCategoryCountDto> res1 = assetRolloutIncomeDetailBO.queryCountByRolloutId(dto.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
-		res1.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
-		dto.setWaitSignCountList(res1);
+		bulidCount(dto);
 		return dto;
 	}
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

@@ -5,7 +5,7 @@ import com.taobao.cun.auge.common.PageQuery;
 
 
 /**
- * 出单查询条件Dto
+ * 出库单查询条件Dto
  * @author quanzhu.wangqz
  *
  */

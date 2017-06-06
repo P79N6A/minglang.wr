@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,12 +15,17 @@ import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
+import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
@@ -30,16 +38,15 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 	
 	@Autowired
 	private AssetIncomeMapper assetIncomeMapper;
-	
 	@Autowired
 	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
 	@Autowired
 	private AssetRolloutBO assetRolloutBO;
-	
+	@Autowired
+	private DiamondConfiguredProperties configuredProperties;
 	
 	@Override
-	public Page<AssetIncome> getIncomeList(
-			AssetIncomeQueryCondition queryParam) {
+	public PageDto<AssetIncomeDto> getIncomeList(AssetIncomeQueryCondition queryParam) {
 		ValidateUtils.notNull(queryParam);
 		ValidateUtils.notNull(queryParam.getWorkNo());
 		AssetIncomeExample example = new AssetIncomeExample();
@@ -54,7 +61,28 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		}
 		example.setOrderByClause("GMT_CREATE DESC");
 		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
-		return (Page<AssetIncome>)assetIncomeMapper.selectByExample(example); 
+		Page<AssetIncome> incomeList = (Page<AssetIncome>)assetIncomeMapper.selectByExample(example);
+		
+		List<AssetIncomeDto> dtoList = new ArrayList<AssetIncomeDto>();
+        for (AssetIncome ai : incomeList) {
+            AssetIncomeDto aiDto = AssetIncomeConverter.toAssetIncomeDto(ai);
+            bulidCount(aiDto);
+        }
+        return PageDtoUtil.success(incomeList, dtoList);
+	}
+	
+	private void bulidCount(AssetIncomeDto aiDto) {
+		List<String> count = new ArrayList<String>();
+	    count.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+	    count.add(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
+	    List<AssetCategoryCountDto> res = assetRolloutIncomeDetailBO.queryCountByIncomeId(aiDto.getId(), count);
+	    res.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+	    aiDto.setCountList(res);
+	    List<String> waitsign = new ArrayList<String>();
+	    waitsign.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+	    List<AssetCategoryCountDto> res1 = assetRolloutIncomeDetailBO.queryCountByIncomeId(aiDto.getId(),waitsign);
+		res1.forEach(n -> n.setCategoryName(configuredProperties.getCategoryMap().get(n.getCategory())));
+		aiDto.setWaitSignCountList(res1);
 	}
 
 	@Override
@@ -86,7 +114,9 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 
 	@Override
 	public AssetIncomeDto getIncomeDtoById(Long incomeId) {
-		return AssetIncomeConverter.toAssetIncomeDto(getIncomeById(incomeId));
+		AssetIncomeDto dto = AssetIncomeConverter.toAssetIncomeDto(getIncomeById(incomeId));
+		bulidCount(dto);
+		return dto;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

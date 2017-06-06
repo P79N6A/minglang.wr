@@ -216,4 +216,35 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		}
 		return Boolean.FALSE;
 	}
+
+
+	@Override
+	public Page<Asset> queryPageByRolloutId(Long rolloutId,
+			AssetRolloutIncomeDetailStatusEnum status, int pageNum, int pageSize) {
+		ValidateUtils.notNull(rolloutId);
+		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andRolloutIdEqualTo(rolloutId);
+		if (status != null) {
+			criteria.andStatusEqualTo(status.getCode());
+		}
+		PageHelper.startPage(pageNum, pageSize);
+		return assetRolloutIncomeDetailExtMapper.queryFullDetailInfo(example);
+	}
+
+
+	@Override
+	public Boolean hasCancelAssetByRolloutId(Long rolloutId) {
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andRolloutIdEqualTo(rolloutId);
+		criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+		int i = assetRolloutIncomeDetailMapper.countByExample(example);
+		if (i>0) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
 }

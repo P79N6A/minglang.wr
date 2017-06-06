@@ -181,36 +181,13 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     }
 
     @Override
-	public PageDto<AssetIncomeDto> getIncomeList(
-			AssetIncomeQueryCondition condition) {
-        Page<AssetIncome> incomeList = assetIncomeBO.getIncomeList(condition);
-        List<AssetIncomeDto> dtoList = new ArrayList<AssetIncomeDto>();
-        for (AssetIncome ai : incomeList) {
-            AssetIncomeDto aiDto = AssetIncomeConverter.toAssetIncomeDto(ai);
-            List<String> count = new ArrayList<String>();
-            count.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
-            count.add(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
-            aiDto.setCountList(assetRolloutIncomeDetailBO.queryCountByIncomeId(ai.getId(), count));
-            List<String> waitsign = new ArrayList<String>();
-            waitsign.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
-            aiDto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByIncomeId(ai.getId(),waitsign));
-            dtoList.add(aiDto);
-        }
-        return PageDtoUtil.success(incomeList, dtoList);
+	public PageDto<AssetIncomeDto> getIncomeList(AssetIncomeQueryCondition condition) {
+       return assetIncomeBO.getIncomeList(condition);
 	}
-
+    
 	@Override
-	public PageDto<AssetRolloutDto> getRolloutList(
-			AssetRolloutQueryCondition condition) {
-		 Page<AssetRollout> rolloutList = assetRolloutBO.getRolloutList(condition);
-	        List<AssetRolloutDto> dtoList = new ArrayList<AssetRolloutDto>();
-	        for (AssetRollout ai : rolloutList) {
-	        	AssetRolloutDto aiDto = AssetRolloutConverter.toAssetRolloutDto(ai);
-	            aiDto.setCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(ai.getId(), null));
-	            aiDto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByRolloutId(ai.getId(),AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN));
-	            dtoList.add(aiDto);
-	        }
-	        return PageDtoUtil.success(rolloutList, dtoList);
+	public PageDto<AssetRolloutDto> getRolloutList(AssetRolloutQueryCondition condition) {
+	        return assetRolloutBO.getRolloutList(condition);
 	}
 
 	@Override
@@ -267,15 +244,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		Objects.requireNonNull(incomeId, "入库单id不能为空");
 		AssetIncomeDetailDto deDto = new AssetIncomeDetailDto();
 		AssetIncomeDto iDto = assetIncomeBO.getIncomeDtoById(incomeId);
-		
-		List<String> count = new ArrayList<String>();
-	    count.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
-	    count.add(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
-	    iDto.setCountList(assetRolloutIncomeDetailBO.queryCountByIncomeId(incomeId, count));
-	    List<String> waitsign = new ArrayList<String>();
-	    waitsign.add(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
-	    iDto.setWaitSignCountList(assetRolloutIncomeDetailBO.queryCountByIncomeId(incomeId,waitsign));
-	    
 		deDto.setAssetIncomeDto(iDto);
 		if(assetRolloutIncomeDetailBO.hasCancelAssetByIncomeId(incomeId)){
 			deDto.setHasCanceldata(Boolean.TRUE);
@@ -286,12 +254,23 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	@Override
 	public PageDto<AssetDetailDto> queryPageForRolloutDetail(
 			AssetRolloutDetailQueryCondition con) {
-		// TODO Auto-generated method stub
-		return null;
+		Objects.requireNonNull(con, "参数不能为空");
+		Objects.requireNonNull(con.getRolloutId(), "出库单id不能为空");
+		Long rolloutId = con.getRolloutId();
+		Page<Asset> assetList= assetRolloutIncomeDetailBO.queryPageByRolloutId(rolloutId, con.getStatusEnum(), con.getPageNum(), con.getPageSize());
+		PageDto<AssetDetailDto> res = PageDtoUtil.success(assetList, bulidAssetDetailDtoList(assetList));
+		return res;
 	}
 
 	@Override
 	public AssetRolloutDetailDto getRolloutDetailDto(Long rolloutId) {
-		return null;
+		Objects.requireNonNull(rolloutId, "出库单id不能为空");
+		AssetRolloutDetailDto deDto = new AssetRolloutDetailDto();
+		AssetRolloutDto iDto = assetRolloutBO.getRolloutDtoById(rolloutId);
+		deDto.setAssetRolloutDto(iDto);
+		if(assetRolloutIncomeDetailBO.hasCancelAssetByRolloutId(rolloutId)){
+			deDto.setHasCanceldata(Boolean.TRUE);
+		}
+		return deDto;
 	}
 }

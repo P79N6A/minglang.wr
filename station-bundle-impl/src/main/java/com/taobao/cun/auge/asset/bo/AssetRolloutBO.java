@@ -2,7 +2,6 @@ package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
 
-import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
@@ -10,6 +9,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 
@@ -20,7 +20,7 @@ public interface AssetRolloutBO {
 	 * @param queryParam
 	 * @return
 	 */
-	public Page<AssetRollout> getRolloutList(AssetRolloutQueryCondition queryParam);
+	public PageDto<AssetRolloutDto> getRolloutList(AssetRolloutQueryCondition condition);
 	
 	/**
 	 * 增加出库单
