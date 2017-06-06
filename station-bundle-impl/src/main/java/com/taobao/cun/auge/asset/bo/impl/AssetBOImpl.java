@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
 import com.taobao.cun.crius.event.ExtEvent;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,12 +65,10 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
-import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
-import com.taobao.notify.remotingclient.NotifyManager;
 
 @Component
 public class AssetBOImpl implements AssetBO {
@@ -90,11 +85,8 @@ public class AssetBOImpl implements AssetBO {
 	@Autowired
 	private PartnerInstanceQueryService partnerInstanceQueryService;
 
-	@Resource
-	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
-
 	@Autowired
-	private CountyStationBO countyStationBO;
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
 	@Autowired
     private StationBO stationBO;
@@ -113,9 +105,6 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private UicReadAdapter uicReadAdapter;
-
-	@Autowired
-	private NotifyManager notifyManager;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -461,7 +450,7 @@ public class AssetBOImpl implements AssetBO {
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
 			listDto.setCategoryName(configuredProperties.getCategoryMap().get(entry.getKey()));
-			listDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+			listDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 			listDto.setOwner(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
 			listDto.setPutAway(String.valueOf(
@@ -487,10 +476,10 @@ public class AssetBOImpl implements AssetBO {
 			AreaAssetListDto dto = new AreaAssetListDto();
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
-            dto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+            dto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 			dto.setOwner(asset.getOwnerName());
             if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
-                dto.setUseArea(countyStationBO.getCountyStationById(asset.getUseAreaId()).getName());
+                dto.setUseArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getUseAreaId()).getName());
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
                 dto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
             }
@@ -523,7 +512,7 @@ public class AssetBOImpl implements AssetBO {
 		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
 		assetDetailDto.setPutAway(String.valueOf(
 			preAssets.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
-		assetDetailDto.setOwnerArea(countyStationBO.getCountyStationById(preAssets.get(0).getOwnerOrgId()).getName());
+		assetDetailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(preAssets.get(0).getOwnerOrgId()).getName());
 		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
 		AssetExample conditionExample = new AssetExample();
 		AssetExample.Criteria criteria = conditionExample.createCriteria();
@@ -567,7 +556,7 @@ public class AssetBOImpl implements AssetBO {
 			return null;
 		}
 		AreaAssetDetailDto assetDetailDto = new AreaAssetDetailDto();
-		assetDetailDto.setOwnerArea(countyStationBO.getCountyStationById(preAssets.get(0).getOwnerOrgId()).getName());
+		assetDetailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(preAssets.get(0).getOwnerOrgId()).getName());
 		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
 		assetDetailDto.setCategoryCountDtoList(buildAssetCountDtoList(preAssets));
 		AssetExample conditionExample = new AssetExample();
@@ -627,10 +616,10 @@ public class AssetBOImpl implements AssetBO {
 		return buildAssetDetail(updateAsset);
 	}
 
-	private void sendSignMessage(String receiver, Asset asset) {
+	private void sendSignMessage(String owner, Asset asset) {
 		AssetSignEvent signEvent = new AssetSignEvent();
 		signEvent.setAppId("cuntaoCRM");
-		signEvent.setReceivers(Collections.singletonList(Long.valueOf(receiver)));
+		signEvent.setReceivers(Collections.singletonList(Long.valueOf(owner)));
 		signEvent.setReceiverType("EMPIDS");
 		signEvent.setMsgType("ASSET");
 		signEvent.setMsgTypeDetail("SIGN");
@@ -639,7 +628,7 @@ public class AssetBOImpl implements AssetBO {
 		content.setBizId(asset.getId());
 		content.setPublishTime(new Date());
 		content.setTitle("您转移的资产已被对方签收，请关注！");
-		content.setContent("您转移至" + countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName()+" " + emp360Adapter.getName(asset.getOwnerWorkno())+"的资产已被对方签收，查看详情");
+		content.setContent("您转移至" + cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName()+" " + emp360Adapter.getName(asset.getOwnerWorkno())+"的资产已被对方签收，查看详情");
 		content.setRouteUrl("url");
 		signEvent.setContent(content);
 		EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
@@ -837,20 +826,20 @@ public class AssetBOImpl implements AssetBO {
 		AssetDetailDto detailDto = new AssetDetailDto();
 		BeanUtils.copyProperties(asset, detailDto);
 		if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
-			detailDto.setUseArea(countyStationBO.getCountyStationById(asset.getUseAreaId()).getName());
+			detailDto.setUseArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getUseAreaId()).getName());
 		} else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
 			detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
 		}
 		detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
 		detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
 		detailDto.setOwner(emp360Adapter.getName(asset.getOwnerWorkno()));
-		detailDto.setOwnerArea(countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName());
+		detailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 		detailDto.setId(asset.getId());
 		return detailDto;
 	}
 
 	private String buildErrorMessage(String str, Asset asset) {
-		String area = countyStationBO.getCountyStationById(asset.getOwnerOrgId()).getName();
+		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
 		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
 		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
 	}

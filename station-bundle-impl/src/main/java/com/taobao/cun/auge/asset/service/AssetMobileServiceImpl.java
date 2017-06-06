@@ -134,8 +134,8 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Transactional
     public AssetDetailDto signAssetByCounty(AssetDto signDto) {
     	AssetDetailDto adDto = assetBO.signAssetByCounty(signDto);
-    	//1.签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
-    	//assetIncomeBO.signAsset(adDto.getId(), signDto.getOperator());
+    	//签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
+    	assetIncomeBO.signAsset(adDto.getId(), signDto.getOperator());
         return adDto;
     }
 
