@@ -136,6 +136,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			record.setStatus(AssetRolloutStatusEnum.CANCEL.getCode());
 			DomainUtils.beforeUpdate(record, cancelDto.getOperator());
 			assetRolloutMapper.updateByPrimaryKeySelective(record);
+		/*	if () {
+				
+			}*/
 		}
 	}
 
@@ -223,7 +226,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	}
 	private String getWorkName(String workNo){
 		try {
-			return getWorkName(workNo);
+			return emp360Adapter.getName(workNo);
 		} catch (Exception e) {
 			logger.error("assetRolloutBO.getWorkName error param:"+workNo,e);
 			throw e;
