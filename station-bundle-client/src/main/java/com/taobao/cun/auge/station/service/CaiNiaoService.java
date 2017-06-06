@@ -5,6 +5,7 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
@@ -94,4 +95,11 @@ public interface CaiNiaoService {
 	 * @throws AugeServiceException
 	 */
 	public void closeCainiaoStation(SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto) throws AugeServiceException;
+	
+	/**
+	 * 经纬度修改同步
+	 * @param SyncModifyLngLatDto
+	 * @throws AugeServiceException
+	 */
+	public void modifyLngLatToCainiao(SyncModifyLngLatDto  syncModifyLngLatDto) throws AugeServiceException;
 }

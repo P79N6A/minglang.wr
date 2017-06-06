@@ -667,4 +667,9 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeServiceException(error);
 	    }
 	}
+
+	public boolean modifyLngLatToCainiao(CaiNiaoStationDto dto) throws AugeServiceException {
+		//TODO next version implement , do not use this method body
+		return false;
+	}
 }

@@ -38,6 +38,7 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
@@ -643,5 +644,21 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			throw new AugeServiceException(error);
 		}
 		caiNiaoAdapter.closeToCainiaoStation(rel.getCainiaoStationId());
+	}
+
+	/** 经纬度修改同步菜鸟 */
+	public void modifyLngLatToCainiao(SyncModifyLngLatDto syncModifyLngLatDto) throws AugeServiceException {
+		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyLngLatDto.getPartnerInstanceId());
+		Long stationId = instanceDto.getStationId();
+		// 查询菜鸟物流站关系表
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel == null) {// 没有物流站
+			String error = getErrorMessage("modifyLngLatToCainiao", String.valueOf(stationId), "CuntaoCainiaoStationRel is null");
+			logger.error(error);
+			throw new AugeServiceException(error);
+		}
+		syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
+		caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
 	}
 }
