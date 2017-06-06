@@ -17,10 +17,10 @@ import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetRolloutIncomeDetailConverter;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
-import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
@@ -160,7 +160,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	
 
 	@Override
-	public Long cancel(Long assetId, String operator) {
+	public AssetRolloutIncomeDetail cancel(Long assetId, String operator) {
 		ValidateUtils.notNull(assetId);
 		AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);
 		
@@ -175,7 +175,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		criteria.andAssetIdEqualTo(assetId);
 		
 		assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
-		return detail.getRolloutId();
+		return detail;
 		
 	}
 
@@ -188,7 +188,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 
 	@Override
-	public Page<Asset> queryPageByIncomeId(Long incomeId,
+	public Page<AssetRolloutIncomeDetailExtDto> queryPageByIncomeId(Long incomeId,
 			AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize) {
 		ValidateUtils.notNull(incomeId);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
@@ -219,7 +219,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 
 	@Override
-	public Page<Asset> queryPageByRolloutId(Long rolloutId,
+	public Page<AssetRolloutIncomeDetailExtDto> queryPageByRolloutId(Long rolloutId,
 			AssetRolloutIncomeDetailStatusEnum status, int pageNum, int pageSize) {
 		ValidateUtils.notNull(rolloutId);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();

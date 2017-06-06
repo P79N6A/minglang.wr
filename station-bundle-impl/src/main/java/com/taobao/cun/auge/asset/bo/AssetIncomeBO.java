@@ -51,4 +51,11 @@ public interface AssetIncomeBO {
 	 */
 	public void signAsset(Long assetId,String operator);
 	
+	/**
+	 * 撤销入库单
+	 * @param incomeId
+	 * @param operator
+	 */
+	public void cancelAssetIncome(Long incomeId,String operator);
+	
 }

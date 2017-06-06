@@ -19,8 +19,6 @@ import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
-import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
-import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
@@ -37,12 +35,12 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.cache.TairCache;
@@ -50,8 +48,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
-import com.taobao.cun.auge.dal.domain.AssetIncome;
-import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -82,8 +78,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Autowired
     private TairCache tairCache;
     
-    @Autowired
-    private AssetRolloutIncomeDetailExtMapper assetRolloutIncomeDetailExtMapper;
 
     @Override
     public Map<String, List<AssetMobileConditionDto>> getConditionMap(AssetOperatorDto operatorDto) {
@@ -218,20 +212,21 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	}
 
 	@Override
-	public PageDto<AssetDetailDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con){
+	public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con){
 		Objects.requireNonNull(con, "参数不能为空");
 		Objects.requireNonNull(con.getIncomeId(), "入库单id不能为空");
 		Long incomeId = con.getIncomeId();
-		Page<Asset> assetList= assetRolloutIncomeDetailBO.queryPageByIncomeId(incomeId, con.getStatusEnum(), con.getPageNum(), con.getPageSize());
-		PageDto<AssetDetailDto> res = PageDtoUtil.success(assetList, bulidAssetDetailDtoList(assetList));
+		Page<AssetRolloutIncomeDetailExtDto> assetList= assetRolloutIncomeDetailBO.queryPageByIncomeId(incomeId, con.getStatusEnum(), con.getPageNum(), con.getPageSize());
+		PageDto<AssetRolloutIncomeDetailExtDto> res = PageDtoUtil.success(assetList, bulidAssetDetailDtoList(assetList));
 		return res;
 	}
 	
-	private List<AssetDetailDto> bulidAssetDetailDtoList(List<Asset> assetList) {
-		List<AssetDetailDto> res = new ArrayList<AssetDetailDto>();
+	private List<AssetRolloutIncomeDetailExtDto> bulidAssetDetailDtoList(List<AssetRolloutIncomeDetailExtDto> assetList) {
+		List<AssetRolloutIncomeDetailExtDto> res = new ArrayList<AssetRolloutIncomeDetailExtDto>();
 		if (CollectionUtils.isEmpty(assetList)) {
-			for (Asset a : assetList) {
-				res.add(assetBO.buildAssetDetail(a));
+			for (AssetRolloutIncomeDetailExtDto a : assetList) {
+				a.setCategoryName(configuredProperties.getCategoryMap().get(a.getCategory()));
+				res.add(a);
 			}
 		}
 		return res;
@@ -252,13 +247,13 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	}
 
 	@Override
-	public PageDto<AssetDetailDto> queryPageForRolloutDetail(
+	public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForRolloutDetail(
 			AssetRolloutDetailQueryCondition con) {
 		Objects.requireNonNull(con, "参数不能为空");
 		Objects.requireNonNull(con.getRolloutId(), "出库单id不能为空");
 		Long rolloutId = con.getRolloutId();
-		Page<Asset> assetList= assetRolloutIncomeDetailBO.queryPageByRolloutId(rolloutId, con.getStatusEnum(), con.getPageNum(), con.getPageSize());
-		PageDto<AssetDetailDto> res = PageDtoUtil.success(assetList, bulidAssetDetailDtoList(assetList));
+		Page<AssetRolloutIncomeDetailExtDto> assetList= assetRolloutIncomeDetailBO.queryPageByRolloutId(rolloutId, con.getStatusEnum(), con.getPageNum(), con.getPageSize());
+		PageDto<AssetRolloutIncomeDetailExtDto> res = PageDtoUtil.success(assetList, bulidAssetDetailDtoList(assetList));
 		return res;
 	}
 

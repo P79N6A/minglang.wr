@@ -127,18 +127,18 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		ValidateUtils.notNull(cancelDto);
 		Long assetId = cancelDto.getAssetId();
 		//撤销详情
-		Long rolloutId = assetRolloutIncomeDetailBO.cancel(assetId, cancelDto.getOperator());
+		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.cancel(assetId, cancelDto.getOperator());
 	    //撤销出库单
-		List<AssetRolloutIncomeDetail> detailList = assetRolloutIncomeDetailBO.queryListByRolloutId(rolloutId);
+		List<AssetRolloutIncomeDetail> detailList = assetRolloutIncomeDetailBO.queryListByRolloutId(detail.getRolloutId());
 		if (detailList.stream().allMatch(asset -> AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode().equals(asset.getStatus()))) {
 			AssetRollout record = new AssetRollout();
-			record.setId(rolloutId);
+			record.setId(detail.getRolloutId());
 			record.setStatus(AssetRolloutStatusEnum.CANCEL.getCode());
 			DomainUtils.beforeUpdate(record, cancelDto.getOperator());
 			assetRolloutMapper.updateByPrimaryKeySelective(record);
-		/*	if () {
-				
-			}*/
+			if (detail.getIncomeId() != null) {
+				assetIncomeBO.cancelAssetIncome(detail.getIncomeId(), cancelDto.getOperator());
+			}
 		}
 	}
 
