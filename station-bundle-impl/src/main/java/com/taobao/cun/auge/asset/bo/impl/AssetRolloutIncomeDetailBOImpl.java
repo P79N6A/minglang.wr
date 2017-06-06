@@ -63,7 +63,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	public List<AssetCategoryCountDto> queryCountByRolloutId(Long rolloutId,
 			AssetRolloutIncomeDetailStatusEnum status) {
 		ValidateUtils.notNull(rolloutId);
-		ValidateUtils.notNull(status);
+		//ValidateUtils.notNull(status);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n");
