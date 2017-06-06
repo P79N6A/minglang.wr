@@ -35,6 +35,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
@@ -147,8 +148,8 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     	//2  生成出入库单  
         List<Asset> countyUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
         List<Asset> StationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
-        assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList);
-        assetRolloutBO.transferAssetSelfCounty(transferDto,StationUseList);
+        assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList,AssetIncomeSignTypeEnum.SCAN);
+        assetRolloutBO.transferAssetSelfCounty(transferDto,StationUseList,AssetIncomeSignTypeEnum.CONFIRM);
         return Boolean.TRUE;
     	
     }
@@ -201,15 +202,17 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Boolean cancelAssetRollout(AssetRolloutCancelDto cancelDto) {
-		//1.撤销出库单
-		List<Long> assetIdList = assetRolloutBO.cancelRolleout(cancelDto);
+		//1.撤销出库资产
+		assetRolloutBO.cancelRolleoutAsset(cancelDto);
 		//2.更新资产状态为使用中
-		assetBO.cancelAsset(assetIdList, cancelDto.getOperator());
-		//3.取消流程
+		List<Long> assetIds = new ArrayList<Long>();
+		assetIds.add(cancelDto.getAssetId());
+		assetBO.cancelAsset(assetIds, cancelDto.getOperator());
+/*		//3.取消流程
 		AssetRollout ar = assetRolloutBO.getRolloutById(cancelDto.getRolloutId());
 		if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
 			assetFlowService.cancelTransferFlow(cancelDto.getRolloutId(), cancelDto.getOperator());
-		}
+		}*/
 		return Boolean.TRUE;
 	}
 

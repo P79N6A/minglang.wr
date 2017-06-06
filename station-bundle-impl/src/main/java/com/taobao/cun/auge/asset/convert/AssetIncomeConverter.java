@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
@@ -37,6 +38,7 @@ public class AssetIncomeConverter {
 		assetIncomeDto.setReceiverWorkno(assetIncome.getReceiverWorkno());
 		assetIncomeDto.setRemark(assetIncome.getRemark());
 		assetIncomeDto.setStatus(AssetIncomeStatusEnum.valueof(assetIncome.getStatus()));
+		assetIncomeDto.setSignType(AssetIncomeSignTypeEnum.valueof(assetIncome.getSignType()));
 		return assetIncomeDto;
 	}
 
@@ -60,6 +62,7 @@ public class AssetIncomeConverter {
 		assetIncome.setReceiverWorkno(assetIncomeDto.getReceiverWorkno());
 		assetIncome.setRemark(assetIncomeDto.getRemark());
 		assetIncome.setStatus(assetIncomeDto.getStatus()==null?null:assetIncomeDto.getStatus().getCode());
+		assetIncome.setSignType(assetIncome.getSignType()==null?null:assetIncomeDto.getSignType().getCode());
 		
 		return assetIncome;
 	}

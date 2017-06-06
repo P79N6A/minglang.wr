@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.taobao.cun.auge.common.OperatorDto;
 /**
- * 资产出库单撤销参数
+ * 资产出库撤销参数
  * @author quanzhu.wangqz
  *
  */
@@ -12,16 +12,15 @@ public class AssetRolloutCancelDto extends OperatorDto implements Serializable{
 
     private static final long serialVersionUID = 8306426246791798460L;
     /**
-     * 出库单id
+     * 资产id
      */
-    private Long rolloutId;
-
-	public Long getRolloutId() {
-		return rolloutId;
-	}
-
-	public void setRolloutId(Long rolloutId) {
-		this.rolloutId = rolloutId;
-	}
+    private Long assetId;
     
+	public Long getAssetId() {
+		return assetId;
+	}
+
+	public void setAssetId(Long assetId) {
+		this.assetId = assetId;
+	}
 }

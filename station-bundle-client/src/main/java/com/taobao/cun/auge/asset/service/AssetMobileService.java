@@ -113,7 +113,7 @@ public interface AssetMobileService {
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
     
     /**
-     * 资产出库单撤销
+     * 资产出库撤销（针对转移，分发的 单个资产）
      * @param cancelDto
      * @return
      */

@@ -25,6 +25,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
@@ -99,30 +100,20 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public List<Long> cancelRolleout(AssetRolloutCancelDto cancelDto) {
+	public void cancelRolleoutAsset(AssetRolloutCancelDto cancelDto) {
 		ValidateUtils.notNull(cancelDto);
-		Long rolloutId = cancelDto.getRolloutId();
-		ValidateUtils.notNull(cancelDto.getRolloutId());
-		AssetRollout ar = getRolloutById(rolloutId);
-		if (!canCancelStatus(ar.getStatus())) {
-			throw new AugeBusinessException("当前出库状态["+AssetRolloutStatusEnum.valueof(ar.getStatus()).getDesc()+"]不能撤销");
-		}
-		List<AssetRolloutIncomeDetail> dList = assetRolloutIncomeDetailBO.queryListByRolloutId(rolloutId);
-		if (!dList.stream().allMatch(asset -> AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("部分资产已经签收，不能撤销");
-		}
-		List<Long> assetIdList =dList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
+		Long assetId = cancelDto.getAssetId();
 		//撤销详情
-		assetRolloutIncomeDetailBO.cancel(rolloutId, cancelDto.getOperator());
+		Long rolloutId = assetRolloutIncomeDetailBO.cancel(assetId, cancelDto.getOperator());
 	    //撤销出库单
-		AssetRollout record = new AssetRollout();
-		record.setId(rolloutId);
-		record.setStatus(AssetRolloutStatusEnum.CANCEL.getCode());
-		DomainUtils.beforeUpdate(record, cancelDto.getOperator());
-		assetRolloutMapper.updateByPrimaryKeySelective(record);
-		return assetIdList;
-		
-		
+		List<AssetRolloutIncomeDetail> detailList = assetRolloutIncomeDetailBO.queryListByRolloutId(rolloutId);
+		if (detailList.stream().allMatch(asset -> AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode().equals(asset.getStatus()))) {
+			AssetRollout record = new AssetRollout();
+			record.setId(rolloutId);
+			record.setStatus(AssetRolloutStatusEnum.CANCEL.getCode());
+			DomainUtils.beforeUpdate(record, cancelDto.getOperator());
+			assetRolloutMapper.updateByPrimaryKeySelective(record);
+		}
 	}
 	private Boolean canCancelStatus(String  status) {
 		List<String> l = new  ArrayList<String>();
@@ -226,7 +217,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public Long transferAssetSelfCounty(AssetTransferDto transferDto, List<Asset> assetList) {
+	public Long transferAssetSelfCounty(AssetTransferDto transferDto, List<Asset> assetList,AssetIncomeSignTypeEnum signType) {
 		ValidateUtils.notNull(transferDto);
 		String operator = transferDto.getOperator();
 		Long operatorOrgId = transferDto.getOperatorOrgId();
@@ -266,6 +257,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		icDto.setRemark(applyOrgName+"-"+operatorName+" 申请转移");
 		icDto.setStatus(AssetIncomeStatusEnum.TODO);
 		icDto.setType(AssetIncomeTypeEnum.TRANSFER);
+		icDto.setSignType(signType);
 		icDto.copyOperatorDto(transferDto);
 		Long incomeId = assetIncomeBO.addIncome(icDto);
 		

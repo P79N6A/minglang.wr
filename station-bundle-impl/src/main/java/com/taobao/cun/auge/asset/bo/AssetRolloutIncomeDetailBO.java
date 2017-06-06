@@ -68,8 +68,8 @@ public interface AssetRolloutIncomeDetailBO {
 	public AssetRolloutIncomeDetail queryWaitSignByAssetId(Long assetId);
 	
 	/**
-	 * 撤销
-	 * @param rolloutId
+	 * 撤销  
+	 * @return 出库单id
 	 */
-	public void  cancel(Long rolloutId, String operator);
+	public Long  cancel(Long assetId, String operator);
 }
