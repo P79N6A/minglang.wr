@@ -1,9 +1,14 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +19,7 @@ import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("assetService")
 @HSFProvider(serviceInterface = AssetService.class)
@@ -26,6 +32,9 @@ public class AssetServiceImpl implements AssetService{
 
 	@Autowired
 	private AssetRolloutBO assetRolloutBO;
+
+	@Autowired
+	private AssetRolloutIncomeDetailBO detailBO;
 	
 	@Override
 	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -159,11 +168,24 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
+	@Transactional
 	public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum) {
+		List<Long> assetIdList = detailBO.queryListByRolloutId(rolloutId).stream().map
+			(AssetRolloutIncomeDetail::getAssetId)
+			.collect(Collectors.toList());
+		AssetTransferDto transferDto = new AssetTransferDto();
+		AssetRolloutDto rolloutDto = assetRolloutBO.getRolloutDtoById(rolloutId);
+		transferDto.setTransferAssetIdList(assetIdList);
 		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
-
+			transferDto.setOperator(rolloutDto.getApplierWorkno());
+			transferDto.setOperatorOrgId(rolloutDto.getApplierOrgId());
+			transferDto.setOperatorType(OperatorTypeEnum.BUC);
+			assetBO.disagreeTransferAsset(transferDto);
 		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {
-
+			transferDto.setOperator(rolloutDto.getReceiverId());
+			transferDto.setOperatorOrgId(rolloutDto.getReceiverAreaId());
+			transferDto.setOperatorType(OperatorTypeEnum.BUC);
+			assetBO.disagreeTransferAsset(transferDto);
 		}
 	}
 

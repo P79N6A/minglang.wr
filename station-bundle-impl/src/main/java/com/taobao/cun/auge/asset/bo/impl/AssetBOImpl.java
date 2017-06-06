@@ -759,6 +759,35 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
+	public void agreeTransferAsset(AssetTransferDto transferDto) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
+			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
+		String name = emp360Adapter.getName(transferDto.getOperator());
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		asset.setOwnerWorkno(transferDto.getOperator());
+		asset.setOwnerOrgId(transferDto.getOperatorOrgId());
+		asset.setOwnerName(name);
+		asset.setUserName(name);
+		asset.setUseAreaId(transferDto.getOperatorOrgId());
+		asset.setUserId(transferDto.getOperator());
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
+	@Override
+	public void disagreeTransferAsset(AssetTransferDto transferDto) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
+			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
+	@Override
 	public AssetDetailDto judgeTransfer(AssetDto assetDto) {
 		Objects.requireNonNull(assetDto.getAliNo(), "编号不能为空");
 		Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");

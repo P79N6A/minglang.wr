@@ -87,6 +87,10 @@ public interface AssetBO {
 
     public List<Asset> transferAssetOtherCounty(AssetTransferDto transferDto);
 
+    public void agreeTransferAsset(AssetTransferDto transferDto);
+
+    public void disagreeTransferAsset(AssetTransferDto transferDto);
+
     public AssetDetailDto judgeTransfer(AssetDto assetDto);
 
     public  Asset getAssetById(Long assetId);
