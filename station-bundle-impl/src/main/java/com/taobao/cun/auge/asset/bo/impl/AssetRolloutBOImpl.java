@@ -154,6 +154,8 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		bulidCount(dto);
 		return dto;
 	}
+
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateStatus(Long rolloutId, AssetRolloutStatusEnum statusEnum,String operator) {
 		ValidateUtils.notNull(rolloutId);
@@ -176,7 +178,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		String receiverName =  getWorkName(transferDto.getReceiverWorkNo());
 		
 		String applyOrgName = getOrgName(operatorOrgId);
-		String receiverOrgName = getOrgName(Long.parseLong(transferDto.getReceiverAreaId()));
+		String receiverOrgName = getOrgName(transferDto.getReceiverAreaId());
 		//创建出库单
 		AssetRolloutDto roDto = new AssetRolloutDto();
 		roDto.setApplierWorkno(operator);
@@ -188,7 +190,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		roDto.setReceiverName(receiverName);
 		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.COUNTY);
 		roDto.setReceiverAreaName(receiverOrgName);
-		roDto.setReceiverAreaId(Long.parseLong(transferDto.getReceiverAreaId()));
+		roDto.setReceiverAreaId(transferDto.getReceiverAreaId());
 		roDto.setReason(transferDto.getReason());
 		roDto.setRemark("转移至 "+receiverOrgName +"-" +receiverName);
 		roDto.setType(AssetRolloutTypeEnum.TRANSFER);
@@ -242,7 +244,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		String operatorName = getWorkName(operator);
 		String receiverName =  getWorkName(transferDto.getReceiverWorkNo());
 		String applyOrgName = getOrgName(operatorOrgId);
-		String receiverOrgName = getOrgName(Long.parseLong(transferDto.getReceiverAreaId()));
+		String receiverOrgName = getOrgName(transferDto.getReceiverAreaId());
 		//创建出库单
 		AssetRolloutDto roDto = new AssetRolloutDto();
 		roDto.setApplierWorkno(operator);
@@ -254,7 +256,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		roDto.setReceiverName(receiverName);
 		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.COUNTY);
 		roDto.setReceiverAreaName(receiverOrgName);
-		roDto.setReceiverAreaId(Long.parseLong(transferDto.getReceiverAreaId()));
+		roDto.setReceiverAreaId(transferDto.getReceiverAreaId());
 		roDto.setReason(transferDto.getReason());
 		roDto.setRemark("转移至 "+receiverOrgName +"-" +receiverName);
 		roDto.setType(AssetRolloutTypeEnum.TRANSFER);
@@ -269,7 +271,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		icDto.setApplierId(operator);
 		icDto.setApplierName(operatorName);
 		icDto.setReceiverName(receiverName);
-		icDto.setReceiverOrgId(Long.parseLong(transferDto.getReceiverAreaId()));
+		icDto.setReceiverOrgId(transferDto.getReceiverAreaId());
 		icDto.setReceiverOrgName(receiverOrgName);
 		icDto.setReceiverWorkno(transferDto.getReceiverWorkNo());
 		icDto.setRemark(applyOrgName+"-"+operatorName+" 申请转移");

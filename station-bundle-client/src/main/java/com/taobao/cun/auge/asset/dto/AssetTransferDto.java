@@ -16,7 +16,7 @@ public class AssetTransferDto extends OperatorDto implements Serializable{
 
     private String reason;
 
-    private String receiverAreaId;
+    private Long receiverAreaId;
 
     //物流费用
     private String payment;
@@ -46,11 +46,11 @@ public class AssetTransferDto extends OperatorDto implements Serializable{
         this.reason = reason;
     }
 
-    public String getReceiverAreaId() {
+    public Long getReceiverAreaId() {
         return receiverAreaId;
     }
 
-    public void setReceiverAreaId(String receiverAreaId) {
+    public void setReceiverAreaId(Long receiverAreaId) {
         this.receiverAreaId = receiverAreaId;
     }
 

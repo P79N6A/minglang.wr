@@ -1,15 +1,26 @@
 package com.taobao.cun.auge.asset.service;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent;
+import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
+import com.taobao.cun.crius.event.ExtEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +46,12 @@ public class AssetServiceImpl implements AssetService{
 
 	@Autowired
 	private AssetRolloutIncomeDetailBO detailBO;
+
+	@Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
+
+	@Autowired
+	private Emp360Adapter emp360Adapter;
 	
 	@Override
 	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -176,17 +193,35 @@ public class AssetServiceImpl implements AssetService{
 		AssetTransferDto transferDto = new AssetTransferDto();
 		AssetRolloutDto rolloutDto = assetRolloutBO.getRolloutDtoById(rolloutId);
 		transferDto.setTransferAssetIdList(assetIdList);
+		transferDto.setOperator(rolloutDto.getApplierWorkno());
+		transferDto.setOperatorOrgId(rolloutDto.getApplierOrgId());
+		transferDto.setOperatorType(OperatorTypeEnum.BUC);
+		transferDto.setReceiverAreaId(rolloutDto.getReceiverAreaId());
+		transferDto.setReceiverWorkNo(rolloutDto.getReceiverId());
 		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
-			transferDto.setOperator(rolloutDto.getApplierWorkno());
-			transferDto.setOperatorOrgId(rolloutDto.getApplierOrgId());
-			transferDto.setOperatorType(OperatorTypeEnum.BUC);
 			assetBO.disagreeTransferAsset(transferDto);
 		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {
-			transferDto.setOperator(rolloutDto.getReceiverId());
-			transferDto.setOperatorOrgId(rolloutDto.getReceiverAreaId());
-			transferDto.setOperatorType(OperatorTypeEnum.BUC);
-			assetBO.disagreeTransferAsset(transferDto);
+			assetBO.agreeTransferAsset(transferDto);
+			sendTransferMessage(rolloutId, transferDto);
 		}
+	}
+
+	private void sendTransferMessage(Long rolloutId, AssetTransferDto transferDto) {
+		AssetSignEvent signEvent = new AssetSignEvent();
+		signEvent.setAppId("cuntaoCRM");
+		signEvent.setReceivers(Collections.singletonList(Long.valueOf(transferDto.getReceiverWorkNo())));
+		signEvent.setReceiverType("EMPIDS");
+		signEvent.setMsgType("ASSET");
+		signEvent.setMsgTypeDetail("SIGN");
+		signEvent.setAction("all");
+		Content content = signEvent.new Content();
+		content.setBizId(rolloutId);
+		content.setPublishTime(new Date());
+		content.setTitle("资产正在转移中，请您注意签收！");
+		content.setContent("自" + cuntaoOrgServiceClient.getCuntaoOrg(transferDto.getOperatorOrgId()) + emp360Adapter.getName(transferDto.getOperator()) + "(" +transferDto.getOperator() + ")申请转移的资产已发出，请您注意签收，查看详情");
+		content.setRouteUrl("url");
+		signEvent.setContent(content);
+		EventDispatcherUtil.dispatch("CRM_ASSET_TRANSFER", new ExtEvent(JSON.toJSONString(signEvent)));
 	}
 
 }
