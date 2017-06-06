@@ -43,6 +43,7 @@ import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.exception.ServiceException;
 
@@ -668,7 +669,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	    }
 	}
 
-	public boolean modifyLngLatToCainiao(CaiNiaoStationDto dto) throws AugeServiceException {
+	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException {
 		//TODO next version implement , do not use this method body
 		return false;
 	}
