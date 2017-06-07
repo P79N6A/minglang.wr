@@ -227,9 +227,6 @@ public class AssetBOImpl implements AssetBO {
 		return result;
 	}
 
-
-
-	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void signAsset(Long assetId, String operator) {
@@ -756,15 +753,15 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
 			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
-		String name = emp360Adapter.getName(transferDto.getOperator());
+		String name = emp360Adapter.getName(transferDto.getReceiverWorkNo());
 		Asset asset = new Asset();
 		asset.setStatus(AssetStatusEnum.USE.getCode());
-		asset.setOwnerWorkno(transferDto.getOperator());
-		asset.setOwnerOrgId(transferDto.getOperatorOrgId());
+		asset.setOwnerWorkno(transferDto.getReceiverWorkNo());
+		asset.setOwnerOrgId(transferDto.getReceiverAreaId());
 		asset.setOwnerName(name);
 		asset.setUserName(name);
-		asset.setUseAreaId(transferDto.getOperatorOrgId());
-		asset.setUserId(transferDto.getOperator());
+		asset.setUseAreaId(transferDto.getReceiverAreaId());
+		asset.setUserId(transferDto.getReceiverWorkNo());
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
