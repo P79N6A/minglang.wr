@@ -7,6 +7,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
@@ -91,4 +92,11 @@ public interface PartnerLifecycleBO {
 	 * @return
 	 */
 	public PartnerLifecycleItems getLifecycleItems(long id); 
+	
+	/**
+	 * 确认经纬度位置
+	 * @param instanceId
+	 * @param partnerLifecyclePositionConfrimEnum
+	 */
+	public void updateConfirmPosition(Long instanceId, PartnerLifecyclePositionConfirmEnum partnerLifecyclePositionConfrimEnum);
 }

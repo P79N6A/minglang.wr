@@ -43,6 +43,7 @@ import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.exception.ServiceException;
 
@@ -652,5 +653,24 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		listParam.setOrgId(id);
 		Result<List<WarehouseDTO>> result = warehouseReadService.queryWareHouses(listParam, option);
 		return result.getData();
+	}
+
+	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException {
+		try {
+			Result<Boolean> res = stationWriteService.pauseStationById(cainiaoStationId, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("closeToCainiaoStation", cainiaoStationId.toString() ,e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
+
+	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException {
+		//TODO next version implement , do not use this method body
+		return false;
 	}
 }
