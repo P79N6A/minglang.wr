@@ -657,13 +657,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationForcedClosure);
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(instance.getStationApplyId());
+		processTask.setBusinessId(instanceId);
 		processTask.setBusinessName(stationName);
 		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
 		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
@@ -677,13 +677,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		
 		ApproveProcessTask processTask = new ApproveProcessTask();
 		processTask.setBusiness(ProcessBusinessEnum.stationQuitRecord);
-		// FIXME FHH 流程暂时为迁移，还是使用stationapplyId关联流程实例
-		processTask.setBusinessId(instance.getStationApplyId());
+		processTask.setBusinessId(instanceId);
 		processTask.setBusinessName(stationName);
 		processTask.setBusinessOrgId(station.getApplyOrg());
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
+		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
 		
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
