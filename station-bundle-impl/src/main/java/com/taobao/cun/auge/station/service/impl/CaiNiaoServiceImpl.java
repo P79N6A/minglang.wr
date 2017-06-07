@@ -650,12 +650,9 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		// 查询菜鸟物流站关系表
 		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
 				CuntaoCainiaoStationRelTypeEnum.STATION);
-		if (rel == null) {// 没有物流站
-			String error = getErrorMessage("modifyLngLatToCainiao", String.valueOf(stationId), "CuntaoCainiaoStationRel is null");
-			logger.error(error);
-			throw new AugeServiceException(error);
+		if (rel != null) {// 没有物流站
+			syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
+			caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
 		}
-		syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
-		caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
 	}
 }
