@@ -21,6 +21,7 @@ import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
@@ -48,7 +49,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
-import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -267,5 +267,10 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 			deDto.setHasCanceldata(Boolean.TRUE);
 		}
 		return deDto;
+	}
+
+	@Override
+	public Boolean checkAsset(AssetCheckDto checkDto) {
+		return null;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
@@ -160,7 +161,11 @@ public interface AssetMobileService {
      */
     public AssetRolloutDetailDto getRolloutDetailDto(Long rolloutId);
     
-    
-    
+    /**
+     * 资产盘点
+     * @param checkDto
+     * @return
+     */
+    public Boolean checkAsset(AssetCheckDto checkDto);
 
 }
