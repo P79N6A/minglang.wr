@@ -150,7 +150,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			return;
 		}
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(parnterInstanceId, PartnerLifecycleBusinessTypeEnum.SETTLING);
-		if(items.getConfirmPosition() ==null ||"N".equals(items.getConfirmPosition())){
+		if(items != null && items.getConfirmPosition() ==null ||"N".equals(items.getConfirmPosition())){
 			response.setStepName("CONFIRM_POSITION");
 			return;
 		}
