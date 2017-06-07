@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -95,7 +96,10 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
      */
     private PartnerLifecycleCourseStatusEnum courseStatus;
     
-
+    /**
+     * 确认经纬度位置 
+     */
+    private PartnerLifecyclePositionConfirmEnum positionConfirm;
 	public PartnerInstanceTypeEnum getPartnerType() {
 		return partnerType;
 	}
@@ -208,6 +212,14 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
 
 	public void setCourseStatus(PartnerLifecycleCourseStatusEnum courseStatus) {
 		this.courseStatus = courseStatus;
+	}
+
+	public PartnerLifecyclePositionConfirmEnum getPositionConfirm() {
+		return positionConfirm;
+	}
+
+	public void setPosittionConfirm(PartnerLifecyclePositionConfirmEnum positionConfirm) {
+		this.positionConfirm = positionConfirm;
 	}
 
 }

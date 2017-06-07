@@ -333,4 +333,5 @@ public interface PartnerInstanceService {
 	 */
 	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto) throws AugeServiceException;
 	
+	
 }

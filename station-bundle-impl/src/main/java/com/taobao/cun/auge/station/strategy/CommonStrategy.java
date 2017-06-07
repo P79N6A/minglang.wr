@@ -57,5 +57,6 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	@Override
 	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException {
 		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(),instanceId);
+		generalTaskSubmitService.submitClosedCainiaoStation(instanceId, operatorDto.getOperator());
 	}
 }
