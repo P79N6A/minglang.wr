@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutCancelDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
@@ -80,4 +81,6 @@ public interface AssetRolloutBO {
 	 * @return
 	 */
 	public Long  distributeAsset(AssetDistributeDto distributeDto,List<Asset> assetList);
+
+	public Long scrapAsset(AssetScrapDto scrapDto);
 }

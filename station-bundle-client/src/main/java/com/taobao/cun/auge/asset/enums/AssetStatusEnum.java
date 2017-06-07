@@ -28,6 +28,8 @@ public class AssetStatusEnum implements Serializable{
 
     public static final AssetStatusEnum DISTRIBUTE = new AssetStatusEnum("DISTRIBUTE", "分发中");
 
+    public static final AssetStatusEnum SCRAPING = new AssetStatusEnum("SCRAPING", "报废中");
+
     public static final AssetStatusEnum SCRAP = new AssetStatusEnum("SCRAP", "已报废");
 
     private static final Map<String, AssetStatusEnum> mappings = new HashMap<String, AssetStatusEnum>();
@@ -39,6 +41,7 @@ public class AssetStatusEnum implements Serializable{
         mappings.put("DISTRIBUTE", DISTRIBUTE);
         mappings.put("SCRAP", SCRAP);
         mappings.put("PEND", PEND);
+        mappings.put("SCRAPING", SCRAPING);
     }
 
     private String code;
@@ -74,6 +77,15 @@ public class AssetStatusEnum implements Serializable{
     }
 
     public static List<String> getValidStatusList() {
+        List<String> list = new ArrayList<String>();
+        list.add(USE.getCode());
+        list.add(TRANSFER.getCode());
+        list.add(DISTRIBUTE.getCode());
+        list.add(PEND.getCode());
+        return list;
+    }
+
+    public static List<String> getScrapShowList() {
         List<String> list = new ArrayList<String>();
         list.add(USE.getCode());
         list.add(TRANSFER.getCode());

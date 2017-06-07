@@ -27,7 +27,7 @@ public class AssetRolloutStatusEnum implements Serializable{
     public static final AssetRolloutStatusEnum WAIT_AUDIT = new AssetRolloutStatusEnum("WAIT_AUDIT", "待审批");
     public static final AssetRolloutStatusEnum AUDIT_NOT_PASS = new AssetRolloutStatusEnum("AUDIT_NOT_PASS", "审批不通过");
     public static final AssetRolloutStatusEnum WAIT_COMPENSATE = new AssetRolloutStatusEnum("WAIT_COMPENSATE", "待赔付");
-    public static final AssetRolloutStatusEnum COMPENSATE_ING = new AssetRolloutStatusEnum("COMPENSATE_ING", "赔付中");
+    //public static final AssetRolloutStatusEnum COMPENSATE_ING = new AssetRolloutStatusEnum("COMPENSATE_ING", "赔付中");
     public static final AssetRolloutStatusEnum COMPENSATE_DONE = new AssetRolloutStatusEnum("COMPENSATE_DONE", "已赔付");
 
 
@@ -41,7 +41,6 @@ public class AssetRolloutStatusEnum implements Serializable{
         mappings.put("WAIT_AUDIT", WAIT_AUDIT);
         mappings.put("AUDIT_NOT_PASS", AUDIT_NOT_PASS);
         mappings.put("WAIT_COMPENSATE", WAIT_COMPENSATE);
-        mappings.put("COMPENSATE_ING", COMPENSATE_ING);
         mappings.put("COMPENSATE_DONE", COMPENSATE_DONE);
     }
 

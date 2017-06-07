@@ -2,16 +2,12 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 
-import com.taobao.cun.auge.client.page.DefaultPageQuery;
-
 /**
  * Created by xiao on 17/5/17.
  */
-public class AssetDetailQueryCondition extends DefaultPageQuery implements Serializable{
+public class AssetDetailQueryCondition extends AssetOperatorDto implements Serializable{
 
     private static final long serialVersionUID = 2282592861027828317L;
-
-    private String workNo;
 
     /**
      * county || station
@@ -27,14 +23,6 @@ public class AssetDetailQueryCondition extends DefaultPageQuery implements Seria
     private String status;
 
     private String aliNo;
-
-    public String getWorkNo() {
-        return workNo;
-    }
-
-    public void setWorkNo(String workNo) {
-        this.workNo = workNo;
-    }
 
     public String getUseAreaType() {
         return useAreaType;
