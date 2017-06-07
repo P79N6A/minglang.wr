@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.taobao.cun.auge.station.dto.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -256,6 +257,13 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return true;
 	}
 
+	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
+		Assert.notNull(taobaoUserId);
+		Assert.notNull(refundReason);
+		Assert.notNull(operator);
+		Assert.notNull(applyOrg);
+		return partnerPeixunBO.commitRefund(taobaoUserId,refundReason,operator,applyOrg);
+	}
 
 
 }

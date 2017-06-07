@@ -505,6 +505,16 @@
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
 				<version>2.1.4</version>
+			</dependency>		
+			<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+			<version>1.0.18-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.infop.shared</groupId>
+				<artifactId>tax.api</artifactId>
+				<version>1.0.27</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

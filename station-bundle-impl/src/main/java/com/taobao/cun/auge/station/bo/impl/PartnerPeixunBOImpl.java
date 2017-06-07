@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.alibaba.crm.pacific.facade.dto.operator.Operator;
+import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyAddParam;
+import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyOrderItemList;
+import com.alibaba.crm.pacific.facade.parameter.refund.add.RefundApplyOrderItemDetailAddParam;
+import com.alibaba.crm.pacific.facade.refund.ApplyRefundService;
+import com.alibaba.crm.pacific.facade.refund.RefundBaseCommonService;
+import com.alibaba.crypt.base.ListWrapperDto;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
@@ -27,10 +35,14 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
+import com.alibaba.tax.api.dto.OrderItemInvoiceStatusDto;
+import com.alibaba.tax.api.dto.request.QueryInvoiceByBillReqDto;
+import com.alibaba.tax.api.service.ArInvoiceService;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
@@ -49,7 +61,12 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunRefundStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
+import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
+import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
@@ -82,6 +99,14 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	PartnerQueryService partnerQueryService;
 	@Autowired
 	FuwuOrderService fuwuOrderService;
+	@Autowired
+	ApplyRefundService applyRefundService;
+	@Autowired
+	RefundBaseCommonService refundBaseCommonService;
+	@Autowired
+	ArInvoiceService arInvoiceService;
+	@Autowired
+    CuntaoWorkFlowService  cuntaoWorkFlowService;
 	
 	@Value("${partner.peixun.client.code}")
 	private String peixunClientCode;
@@ -89,6 +114,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
 	
+	public static String FLOW_BUSINESS_CODE="peixun_refund";
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunFinishSucess(StringMessage strMessage, JSONObject ob) {
@@ -498,6 +524,159 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					}
 				}
 			}
+		}
+	}
+	
+	
+	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
+		String applyCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
+				"APPLY_IN");
+		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
+				"UPGRADE");
+		PartnerCourseRecord qihangRecord= queryOfflinePeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.APPLY_IN, applyCode);
+		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
+		//判断是否可退款
+		BigDecimal refundAmount=validateRefundable(qihangRecord,chengZhangRecord);
+		//发起退款流程
+		creatFlow(qihangRecord.getId(),operator,applyOrg);
+		//通知crm,返回退款编号
+		String refundNo=refundCallCrm(refundAmount,qihangRecord,chengZhangRecord,operator,refundReason);
+		//变更退款状态
+		changePeixunStatus(qihangRecord,chengZhangRecord,refundReason,operator);
+		return refundNo;
+	}
+	
+	private String refundCallCrm(BigDecimal refundAmount,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String operator,String refundReason){
+		try{
+			BaseRefundApplyOrderItemList list=new BaseRefundApplyOrderItemList();
+			BaseRefundApplyAddParam param=new BaseRefundApplyAddParam();
+			Operator op=new Operator();
+			op.setCrmLoginId(operator);
+			op.setDisplayName(operator);
+			param.setApplier(op);
+			param.setRefundReason(refundReason);
+			list.setBaseRefundApplyAddParam(param);
+			List<RefundApplyOrderItemDetailAddParam> relatedOrderItemList=new ArrayList<RefundApplyOrderItemDetailAddParam>();
+			RefundApplyOrderItemDetailAddParam param1=new RefundApplyOrderItemDetailAddParam();
+			param1.setRefundKey(qihangRecord.getOrderNum());
+			param1.setRefundAmount(refundAmount);
+			RefundApplyOrderItemDetailAddParam param2=new RefundApplyOrderItemDetailAddParam();
+			param2.setRefundKey(chengZhangRecord.getOrderNum());
+			param2.setRefundAmount(new BigDecimal(0));
+			relatedOrderItemList.add(param1);
+			relatedOrderItemList.add(param2);
+			list.setRelatedOrderItemList(relatedOrderItemList);
+			com.alibaba.crm.pacific.facade.dto.base.ResultDTO<String>  result=applyRefundService.applyOrderItemListRefund(list);
+			if(result.isSuccess()){
+				return result.getObject();
+			}else{
+				throw new AugeBusinessException(result.getErrorMsg());
+			}
+		}catch(Exception e){
+			logger.error("refundCallCrm error ",e);
+			throw new AugeBusinessException(e);
+		}
+		
+	}
+	
+	private void creatFlow(Long applyId, String loginId, Long orgId) {
+	    Map<String, String> initData = new HashMap<String, String>();
+	    initData.put("orgId", String.valueOf(orgId));
+		try {
+			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
+			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
+			startDto.setBusinessId(String.valueOf(applyId));
+			startDto.setApplierId(loginId);
+			startDto.setApplierUserType(UserTypeEnum.BUC);
+			startDto.setInitData(initData);
+			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
+			if (!rm.isSuccess()) {
+				throw new AugeServiceException(rm.getException());
+			}
+		} catch (Exception e) {
+			throw new AugeServiceException("流程启动失败", e);
+		}
+	}
+	
+	private void changePeixunStatus(PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String refundReason,String operator){
+		qihangRecord.setRefundReason(refundReason);
+		qihangRecord.setModifier(operator);
+		qihangRecord.setGmtModified(new Date());
+		qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		chengZhangRecord.setRefundReason(refundReason);
+		chengZhangRecord.setModifier(operator);
+		chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		chengZhangRecord.setGmtModified(new Date());
+		partnerCourseRecordMapper.updateByPrimaryKey(qihangRecord);
+		partnerCourseRecordMapper.updateByPrimaryKey(chengZhangRecord);
+	}
+	
+	private BigDecimal validateRefundable(PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord){
+		//验证是否可退款状态
+		if(qihangRecord==null||chengZhangRecord==null){
+			throw new AugeBusinessException("未找到培训记录");
+		}
+		if(PartnerPeixunStatusEnum.DONE.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.DONE.getCode().equals(chengZhangRecord.getStatus())){
+			throw new AugeBusinessException("有课程已经签到,无法退款");
+		}
+		if(PartnerPeixunStatusEnum.NEW.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.NEW.getCode().equals(chengZhangRecord.getStatus())){
+			throw new AugeBusinessException("课程未付款,无法退款");
+		}
+		if(!PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode().equals(qihangRecord.getStatus())){
+			throw new AugeBusinessException("已经在退款流程中");
+		}
+		//验证crm可退金额是否正确
+		BigDecimal refundAmount=validateRefundAmount(qihangRecord);
+		//验证是否已经开过票 
+		validateVoince(qihangRecord);
+		return refundAmount;
+	}
+	
+	private BigDecimal validateRefundAmount(PartnerCourseRecord qihangRecord) {
+		try {
+			com.alibaba.crm.pacific.facade.dto.base.ResultDTO<BigDecimal> crmRefundResult = refundBaseCommonService
+					.queryRefundAbleAmount(qihangRecord.getOrderNum(),
+							qihangRecord.getCourseCode());
+			if(!crmRefundResult.isSuccess()){
+				throw new AugeBusinessException(crmRefundResult.getErrorMsg());
+			}else if(crmRefundResult.getObject().compareTo(new BigDecimal(0)) <= 0){
+				throw new AugeBusinessException("订单可退款金额不正确");
+			}else{
+				return crmRefundResult.getObject();
+			}
+		} catch (Exception e) {
+			logger.error("validateRefundAmount error ", e);
+			throw new AugeBusinessException(e);
+		}
+	}
+	
+	private void validateVoince(PartnerCourseRecord qihangRecord) {
+		QueryInvoiceByBillReqDto reqDto = new QueryInvoiceByBillReqDto();
+		reqDto.setRelatedSystem("cuntao");
+		reqDto.setBillNo(qihangRecord.getOrderNum());
+		reqDto.signAndEncrypt("123");
+		try {
+			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
+					.queryEffectiveInvoiceListByBillNos(reqDto);
+			if (finResult.isSuccess()) {
+				finResult.getReturnValue().decryptAndVerifySign("123");
+				ListWrapperDto<OrderItemInvoiceStatusDto> invs = finResult
+						.getReturnValue();
+				for (OrderItemInvoiceStatusDto inv : invs.getList()) {
+					if (!("unintentioned".equals(inv.getInvoiceStatus()) || "intentioned"
+							.equals(inv.getInvoiceStatus()))) {
+						throw new AugeBusinessException(
+								"该村小二开过培训发票，请联系村小二原路退回发票给村淘。建议退票完成后再发起退款。");
+					}
+				}
+			}else{
+				throw new AugeBusinessException(finResult.getErrorMessage());
+			}
+		} catch (Exception e) {
+			logger.error("validateVoince error ", e);
+			throw new AugeBusinessException(e);
 		}
 	}
 }

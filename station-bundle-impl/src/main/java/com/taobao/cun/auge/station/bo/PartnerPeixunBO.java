@@ -79,4 +79,6 @@ public interface PartnerPeixunBO {
 			PartnerPeixunQueryCondition condition);
     
     public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
+    
+    public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg);
 }

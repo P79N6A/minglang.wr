@@ -11,6 +11,8 @@ public class PartnerPeixunStatusEnum implements Serializable{
 	public static final PartnerPeixunStatusEnum PAY = new PartnerPeixunStatusEnum("PAY", "待签到");
 	public static final PartnerPeixunStatusEnum DONE = new PartnerPeixunStatusEnum("DONE", "已签到");
 	public static final PartnerPeixunStatusEnum WAIT_PAY = new PartnerPeixunStatusEnum("WAIT_PAY", "待付款");
+	public static final PartnerPeixunStatusEnum REFUND = new PartnerPeixunStatusEnum("REFUND", "已退款");
+
 
 	private static final Map<String, PartnerPeixunStatusEnum> mappings = new HashMap<String, PartnerPeixunStatusEnum>();
 
@@ -19,6 +21,7 @@ public class PartnerPeixunStatusEnum implements Serializable{
 		mappings.put("PAY", PAY);
 		mappings.put("DONE", DONE);
 		mappings.put("WAIT_PAY", WAIT_PAY);
+		mappings.put("REFUND", REFUND);
 	}
 
 	private String code;

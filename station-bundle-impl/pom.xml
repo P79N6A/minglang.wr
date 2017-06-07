@@ -326,6 +326,14 @@
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
 			</dependency>
+		<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>com.alibaba.infop.shared</groupId>
+				<artifactId>tax.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

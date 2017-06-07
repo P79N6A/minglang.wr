@@ -52,5 +52,9 @@ public interface PartnerPeixunService {
 	public Boolean checkCourseViewPermission(Long taobaoUserId,String courseCode);
 
 
+	/**
+	 * 提交退款申请
+	 */
+	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg);
 	
 }
