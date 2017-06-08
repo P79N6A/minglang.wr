@@ -68,6 +68,8 @@ public class DefaultListener implements MessageListener {
 			alilangUserRegister.register(ob.getString("mobile"), ob.getString("alilangUid"));
 		}else if(NotifyContents.EXAM_FINISH.equals(strMessage.getTopic())){
 			partnerExamBO.handleExamFinish(strMessage, ob);
+		}else if(NotifyContents.PEIXUN_REFUND_FINISH.equals(strMessage.getTopic())){
+			partnerPeixunBO.handleRefundFinishSucess(strMessage, ob);
 		}else{
 			logger.warn("unknow msgTopic:"+strMessage.getTopic());
 		}

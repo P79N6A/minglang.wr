@@ -25,6 +25,22 @@ public class PartnerPeixunListDetailDto extends OperatorDto implements Serializa
 	private String gmtQiHangDoneDesc;
 	private String gmtChengZhangDoneDesc;
 	private Long userId;
+	private String refundStatus;
+	private String refundStatusDesc;
+	
+	
+	public String getRefundStatus() {
+		return refundStatus;
+	}
+	public void setRefundStatus(String refundStatus) {
+		this.refundStatus = refundStatus;
+	}
+	public String getRefundStatusDesc() {
+		return refundStatusDesc;
+	}
+	public void setRefundStatusDesc(String refundStatusDesc) {
+		this.refundStatusDesc = refundStatusDesc;
+	}
 	public String getPartnerName() {
 		return partnerName;
 	}

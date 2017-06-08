@@ -131,6 +131,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setLogo(product.getIcon());
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
+		result.setRefundStatus(record.getRefundStatus());
+		result.setRefundNo(record.getRefundNo());
+		result.setRefundReason(record.getRefundReason());
 		if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
 			List<FuwuOrderDto> orders = getCourseOrders(userId, courseCode,
 					null);

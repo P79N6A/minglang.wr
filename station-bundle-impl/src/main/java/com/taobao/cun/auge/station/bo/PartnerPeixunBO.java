@@ -81,4 +81,13 @@ public interface PartnerPeixunBO {
     public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
     
     public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg);
+    
+    public void refundAuditExecute(Long id,boolean auditResult);
+    
+    /**
+	 * 处理退款完成消息
+	 * @param strMessage
+	 * @param ob
+	 */
+	public void handleRefundFinishSucess(StringMessage strMessage, JSONObject ob);
 }
