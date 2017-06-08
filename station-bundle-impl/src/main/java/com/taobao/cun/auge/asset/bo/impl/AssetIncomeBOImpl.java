@@ -141,12 +141,12 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
 			updateStatus(incomeId, AssetIncomeStatusEnum.DONE, operator);
 			if (rolloutId != null) {
-				assetRolloutBO.updateStatus(incomeId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
+				assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
 			}
 		}else {
 			updateStatus(incomeId, AssetIncomeStatusEnum.DOING, operator);
 			if (rolloutId != null) {
-				assetRolloutBO.updateStatus(incomeId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
+				assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
 			}
 		}
 	}

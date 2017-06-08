@@ -911,7 +911,7 @@ public class AssetBOImpl implements AssetBO {
 	
 	private Asset validateUserIdForAssetCheck(String userId,String useAreaType,String aliNo) {
 		Asset asset = getAssetByAliNo(aliNo);
-		if (asset== null) {
+		if (asset== null || StringUtils.equals(AssetCheckStatusEnum.CHECKING.getCode(), asset.getCheckStatus())) {
 			throw new AugeBusinessException("盘点失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
 		}
 		if (!asset.getUseAreaType().equals(useAreaType) && !asset.getUserId().equals(userId)) {
