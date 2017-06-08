@@ -700,10 +700,14 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<Asset> transferAssetSelfCounty(AssetTransferDto transferDto) {
-		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(transferDto.getOperator(), "操作人工号不能为空");
+		Objects.requireNonNull(transferDto.getOperatorOrgId(), "操作人组织不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
 		Objects.requireNonNull(transferDto.getReceiverWorkNo(), "接受人工号不能为空");
+		if (!transferDto.getReceiverAreaId().equals(transferDto.getOperatorOrgId())) {
+			throw new AugeBusinessException("您转移的目标非本县");
+		}
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator());
@@ -725,11 +729,13 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public List<Asset> transferAssetOtherCounty(AssetTransferDto transferDto) {
 		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(transferDto.getOperatorOrgId(), "操作人组织不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
 		Objects.requireNonNull(transferDto.getReceiverWorkNo(), "接受人工号不能为空");
 		Objects.requireNonNull(transferDto.getPayment(), "物流费用不能为空");
 		Objects.requireNonNull(transferDto.getDistance(), "运输距离不能为空");
+		Objects.requireNonNull(transferDto.getTransferAssetIdList(), "转移资产不能为空");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andIdIn(transferDto.getTransferAssetIdList());
@@ -786,7 +792,7 @@ public class AssetBOImpl implements AssetBO {
 		if (asset == null) {
 			throw new AugeBusinessException("录入失败，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
-		if (!assetDto.getOperator().equals(assetDto.getOperator())) {
+		if (!assetDto.getOperator().equals(asset.getOwnerWorkno())) {
 			throw new AugeBusinessException(buildErrorMessage("录入失败，该资产不属于您，请核对资产信息！", asset));
 		}
 		if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
@@ -841,8 +847,8 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition) {
 		Objects.requireNonNull(condition.getOperator(), "工号不能为空");
-		Objects.requireNonNull(condition.getUseAreaType(), "转移区域类型不能为空");
-		Objects.requireNonNull(condition.getUseAreaId(), "转移地点不能为空");
+		Objects.requireNonNull(condition.getUseAreaType(), "赔付区域类型不能为空");
+		Objects.requireNonNull(condition.getUseAreaId(), "赔付地点不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).andUseAreaTypeEqualTo(condition.getUseAreaType()).andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getScrapShowList());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
@@ -871,11 +877,14 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public void scrapAsset(AssetScrapDto scrapDto) {
+		Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(scrapDto.getOperatorOrgId(), "操作人组织不能为空");
 		Objects.requireNonNull(scrapDto.getScrapAssetIdList(), "赔付资产不能为空");
 		Objects.requireNonNull(scrapDto.getScrapAreaId(), "赔付地点不能为空");
 		Objects.requireNonNull(scrapDto.getScrapAreaType(), "赔付区域不能为空");
 		Objects.requireNonNull(scrapDto.getFree(), "请申请是否免赔");
 		Objects.requireNonNull(scrapDto.getReason(), "赔付原因不能为空");
+		Objects.requireNonNull(scrapDto.getPayment(), "赔付金额不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);

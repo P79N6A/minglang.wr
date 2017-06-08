@@ -18,8 +18,6 @@ public class AssetDetailQueryCondition extends AssetOperatorDto implements Seria
 
     private Long useAreaId;
 
-    private String checkStatus;
-
     private String status;
 
     private String aliNo;
@@ -46,14 +44,6 @@ public class AssetDetailQueryCondition extends AssetOperatorDto implements Seria
 
     public void setUseAreaId(Long useAreaId) {
         this.useAreaId = useAreaId;
-    }
-
-    public String getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(String checkStatus) {
-        this.checkStatus = checkStatus;
     }
 
     public String getStatus() {

@@ -162,7 +162,7 @@ public interface AssetMobileService {
     public AssetRolloutDetailDto getRolloutDetailDto(Long rolloutId);
 
     /**
-     * 资产回收时获得资产列表
+     * 资产赔偿时获得资产列表
      * @param condition
      * @return
      */

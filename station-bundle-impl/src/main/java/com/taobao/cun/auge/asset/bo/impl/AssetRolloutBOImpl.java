@@ -3,6 +3,8 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
@@ -366,6 +368,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		roDto.setApplierOrgId(scrapDto.getOperatorOrgId());
 		roDto.setApplierOrgName(applyOrgName);
 		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.valueof(scrapDto.getScrapAreaType()));
+		roDto.setAttachId(JSON.toJSONString(scrapDto.getAttachmentList()));
 		if (AssetRolloutReceiverAreaTypeEnum.STATION.getCode().equals(scrapDto.getScrapAreaType())) {
 			Long stationId = scrapDto.getScrapAreaId();
 			Station s = stationBO.getStationById(stationId);
