@@ -10,8 +10,8 @@ import com.taobao.cun.auge.common.OperatorDto;
  * @author quanzhu.wangqz
  *
  */
-public class AssetDistributeDto extends OperatorDto implements Serializable{
 
+public class AssetDistributeDto extends OperatorDto implements Serializable{
     /**
 	 * 
 	 */

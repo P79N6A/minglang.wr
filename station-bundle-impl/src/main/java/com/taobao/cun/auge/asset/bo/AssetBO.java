@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
@@ -22,7 +23,8 @@ import com.taobao.cun.auge.dal.domain.Asset;
 
 public interface AssetBO {
 
-
+	public static final String NO_EXIT_ASSET = "，该资产不在系统中，请核对资产信息！如有疑问，请联系资产管理员。";
+	public static final String NOT_OPERATOR = "，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。";
     public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator);
    
     public CuntaoAssetDto getCuntaoAssetById(Long cuntaoAssetId);
@@ -108,4 +110,6 @@ public interface AssetBO {
     public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
 
     public void scrapAsset(AssetScrapDto scrapDto);
+
+    public Boolean checkAsset(AssetCheckDto checkDto);
 }

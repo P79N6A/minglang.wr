@@ -38,6 +38,7 @@ import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutReceiverAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
+import com.taobao.cun.auge.asset.service.AssetFlowService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -89,6 +90,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	
 	@Autowired
 	private DiamondConfiguredProperties configuredProperties;
+	
+    @Autowired
+    private AssetFlowService assetFlowService;
 	
 	@Override
 	public PageDto<AssetRolloutDto> getRolloutList(AssetRolloutQueryCondition condition) {
@@ -147,6 +151,14 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			assetRolloutMapper.updateByPrimaryKeySelective(record);
 			if (detail.getIncomeId() != null) {
 				assetIncomeBO.cancelAssetIncome(detail.getIncomeId(), cancelDto.getOperator());
+			}
+			
+			//取消流程
+			AssetRollout ar = getRolloutById(detail.getRolloutId());
+			if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
+				if (ar.getApplierOrgId() != ar.getReceiverAreaId()) {
+					assetFlowService.cancelTransferFlow(detail.getRolloutId(), cancelDto.getOperator());
+				}
 			}
 		}
 	}

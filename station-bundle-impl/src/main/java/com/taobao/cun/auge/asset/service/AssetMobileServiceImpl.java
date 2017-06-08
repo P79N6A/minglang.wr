@@ -22,6 +22,7 @@ import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
@@ -49,7 +50,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
-import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
@@ -150,9 +150,13 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     	List<Asset> assetList =  assetBO.transferAssetSelfCounty(transferDto);
     	//2  生成出入库单  
         List<Asset> countyUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
-        List<Asset> StationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
-        assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList,AssetIncomeSignTypeEnum.SCAN);
-        assetRolloutBO.transferAssetSelfCounty(transferDto,StationUseList,AssetIncomeSignTypeEnum.CONFIRM);
+        List<Asset> stationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(countyUseList)) {
+        	 assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList,AssetIncomeSignTypeEnum.SCAN);
+        }
+        if (CollectionUtils.isNotEmpty(stationUseList)) {
+        	assetRolloutBO.transferAssetSelfCounty(transferDto,stationUseList,AssetIncomeSignTypeEnum.CONFIRM);
+        }
         return Boolean.TRUE;
     	
     }
@@ -193,11 +197,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		List<Long> assetIds = new ArrayList<Long>();
 		assetIds.add(cancelDto.getAssetId());
 		assetBO.cancelAsset(assetIds, cancelDto.getOperator());
-/*		//3.取消流程
-		AssetRollout ar = assetRolloutBO.getRolloutById(cancelDto.getRolloutId());
-		if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
-			assetFlowService.cancelTransferFlow(cancelDto.getRolloutId(), cancelDto.getOperator());
-		}*/
 		return Boolean.TRUE;
 	}
 
@@ -285,4 +284,9 @@ public class AssetMobileServiceImpl implements AssetMobileService{
         assetBO.scrapAsset(scrapDto);
         assetRolloutBO.scrapAsset(scrapDto);
     }
+
+	@Override
+	public Boolean checkAsset(AssetCheckDto checkDto) {
+		return null;
+	}
 }
