@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
+import com.alibaba.cainiao.cuntaonetwork.constants.station.FromCuntaoGpsStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
@@ -24,6 +25,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
+import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateLngLatInfoParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
@@ -670,7 +672,21 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	}
 
 	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException {
-		//TODO next version implement , do not use this method body
-		return false;
+		try {
+			UpdateLngLatInfoParam param = new UpdateLngLatInfoParam();
+			param.setId(dto.getCainiaoStationId());
+			param.setLng(dto.getLng());
+			param.setLat(dto.getLat());
+			param.setFromCuntao(FromCuntaoGpsStatus.CUNTAO);
+			Result<Boolean> res = stationWriteService.updateLngLatInfo(param, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("modifyLngLatToCainiao", dto.getCainiaoStationId().toString() ,e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+		}
 	}
 }
