@@ -32,7 +32,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
 
 @Service("partnerInstanceLevelDataQueryService")
-@HSFProvider(serviceInterface = PartnerInstanceLevelDataQueryService.class)
+@HSFProvider(serviceInterface = PartnerInstanceLevelDataQueryService.class, clientTimeout = 7000)
 public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstanceLevelDataQueryService {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceLevelDataQueryServiceImpl.class);
