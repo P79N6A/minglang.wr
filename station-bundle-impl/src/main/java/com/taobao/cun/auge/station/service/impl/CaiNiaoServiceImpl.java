@@ -645,14 +645,19 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 	/** 经纬度修改同步菜鸟 */
 	public void modifyLngLatToCainiao(SyncModifyLngLatDto syncModifyLngLatDto) throws AugeServiceException {
-		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyLngLatDto.getPartnerInstanceId());
-		Long stationId = instanceDto.getStationId();
-		// 查询菜鸟物流站关系表
-		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
-				CuntaoCainiaoStationRelTypeEnum.STATION);
-		if (rel != null) {// 没有物流站
-			syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
-			caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
+		try {
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyLngLatDto.getPartnerInstanceId());
+			Long stationId = instanceDto.getStationId();
+			// 查询菜鸟物流站关系表
+			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+					CuntaoCainiaoStationRelTypeEnum.STATION);
+			if (rel != null) {// 没有物流站
+				syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
+				caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("modifyLngLatToCainiao", syncModifyLngLatDto.getPartnerInstanceId().toString(), "modifyLngLatToCainiao getError");
+			logger.error(error);
 		}
 	}
 }
