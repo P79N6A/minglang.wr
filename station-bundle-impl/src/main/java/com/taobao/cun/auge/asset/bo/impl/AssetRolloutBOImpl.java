@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
 
@@ -161,7 +162,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			//取消流程
 			AssetRollout ar = getRolloutById(detail.getRolloutId());
 			if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
-				if (ar.getApplierOrgId() != ar.getReceiverAreaId()) {
+				if (!Objects.equals(ar.getApplierOrgId(), ar.getReceiverAreaId())) {
 					assetFlowService.cancelTransferFlow(detail.getRolloutId(), cancelDto.getOperator());
 				}
 			}
@@ -423,6 +424,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			detail.setCategory(dto.getCategory());
 			detail.setRolloutId(rolloutId);
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.SCRAP);
+			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setPrice(dto.getPayment());
 			detail.copyOperatorDto(scrapDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
