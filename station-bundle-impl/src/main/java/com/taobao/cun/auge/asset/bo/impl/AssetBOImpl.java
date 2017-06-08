@@ -871,9 +871,6 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
-		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
-		}
 		if (!assetList.stream().allMatch(asset -> assetOperatorDto.getOperator().equals(asset.getOwnerWorkno()))) {
 			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
 		}
