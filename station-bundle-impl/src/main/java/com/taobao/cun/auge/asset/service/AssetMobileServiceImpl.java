@@ -150,9 +150,13 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     	List<Asset> assetList =  assetBO.transferAssetSelfCounty(transferDto);
     	//2  生成出入库单  
         List<Asset> countyUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
-        List<Asset> StationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
-        assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList,AssetIncomeSignTypeEnum.SCAN);
-        assetRolloutBO.transferAssetSelfCounty(transferDto,StationUseList,AssetIncomeSignTypeEnum.CONFIRM);
+        List<Asset> stationUseList = assetList.stream().filter(i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(countyUseList)) {
+        	 assetRolloutBO.transferAssetSelfCounty(transferDto,countyUseList,AssetIncomeSignTypeEnum.SCAN);
+        }
+        if (CollectionUtils.isNotEmpty(stationUseList)) {
+        	assetRolloutBO.transferAssetSelfCounty(transferDto,stationUseList,AssetIncomeSignTypeEnum.CONFIRM);
+        }
         return Boolean.TRUE;
     	
     }
@@ -193,11 +197,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		List<Long> assetIds = new ArrayList<Long>();
 		assetIds.add(cancelDto.getAssetId());
 		assetBO.cancelAsset(assetIds, cancelDto.getOperator());
-/*		//3.取消流程
-		AssetRollout ar = assetRolloutBO.getRolloutById(cancelDto.getRolloutId());
-		if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
-			assetFlowService.cancelTransferFlow(cancelDto.getRolloutId(), cancelDto.getOperator());
-		}*/
 		return Boolean.TRUE;
 	}
 
