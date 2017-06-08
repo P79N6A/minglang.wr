@@ -24,13 +24,14 @@ public class AssetServiceExceptionAspect {
 
     private static final String MSG = "ASSET_ERROR";
 
-    @AfterThrowing(pointcut = "within(com.taobao.cun.auge.asset..*)", throwing = "ex")
+    @AfterThrowing(pointcut = "within(com.taobao.cun.auge.asset.service.*)", throwing = "ex")
     public void handleException(JoinPoint joinPoint, Exception ex) throws Exception {
         String clazz = joinPoint.getSignature().getDeclaringType().getCanonicalName();
         String name = joinPoint.getSignature().getName();
         String busiKeyword = clazz + "|" + name;
         String parameters = getParameters(joinPoint);
-        logger.error(MSG + "|" + busiKeyword + "|Exception|" + parameters, ex);
+        logger.error("{bizCode},clazz:{keyword},parameter:{parameter}", MSG, busiKeyword, parameters, ex);
+        //logger.error(MSG + "|" + busiKeyword + "|Exception|" + parameters, ex);
         if (ex instanceof NullPointerException || ex instanceof AugeBusinessException) {
             throw new DefaultServiceException(ex.getMessage());
         }
