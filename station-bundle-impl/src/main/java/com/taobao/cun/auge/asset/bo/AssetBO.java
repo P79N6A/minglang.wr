@@ -10,10 +10,12 @@ import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
+import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
@@ -102,6 +104,12 @@ public interface AssetBO {
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto);
     
     public AssetDetailDto buildAssetDetail(Asset asset);
-    
+
+    public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition);
+
+    public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
+
+    public void scrapAsset(AssetScrapDto scrapDto);
+
     public Boolean checkAsset(AssetCheckDto checkDto);
 }

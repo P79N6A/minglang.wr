@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
 import com.taobao.cun.crius.event.ExtEvent;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -436,9 +438,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<CategoryAssetListDto> getCategoryAssetList(AssetOperatorDto operatorDto) {
-		Objects.requireNonNull(operatorDto.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(operatorDto.getOperator(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		Map<String, List<Asset>> listMap = new HashMap<>();
 		for (Asset asset : assetList) {
@@ -464,9 +466,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<AreaAssetListDto> getAreaAssetList(AssetOperatorDto operatorDto) {
-		Objects.requireNonNull(operatorDto.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(operatorDto.getOperator(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		Map<Long, List<Asset>> listMap = new HashMap<>();
 		for (Asset asset : assetList) {
@@ -496,11 +498,11 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public CategoryAssetDetailDto getCategoryAssetDetail(AssetDetailQueryCondition condition) {
-		Objects.requireNonNull(condition.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(condition.getOperator(), "工号不能为空");
 		Objects.requireNonNull(condition.getCategory(), "资产种类不能为空");
 		Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).
 			andCategoryEqualTo(condition.getCategory()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		//组织头部
 		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
@@ -517,7 +519,7 @@ public class AssetBOImpl implements AssetBO {
 		assetDetailDto.setOwner(preAssets.get(0).getOwnerName());
 		AssetExample conditionExample = new AssetExample();
 		AssetExample.Criteria criteria = conditionExample.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getWorkNo()).
+		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).
 			andCategoryEqualTo(condition.getCategory());
 		//组织尾巴
 		if (StringUtils.isNotEmpty(condition.getStatus())) {
@@ -546,11 +548,11 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public AreaAssetDetailDto getAreaAssetDetail(AssetDetailQueryCondition condition) {
-		Objects.requireNonNull(condition.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(condition.getOperator(), "工号不能为空");
 		Objects.requireNonNull(condition.getUseAreaId(), "区域不能为空");
 		Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getOperator()).andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		//组织头部
 		List<Asset> preAssets = assetMapper.selectByExample(assetExample);
 		if (CollectionUtils.isEmpty(preAssets)) {
@@ -562,7 +564,7 @@ public class AssetBOImpl implements AssetBO {
 		assetDetailDto.setCategoryCountDtoList(buildAssetCountDtoList(preAssets));
 		AssetExample conditionExample = new AssetExample();
 		AssetExample.Criteria criteria = conditionExample.createCriteria();
-		criteria.andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getWorkNo()).andUseAreaIdEqualTo(condition.getUseAreaId());
+		criteria.andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(condition.getOperator()).andUseAreaIdEqualTo(condition.getUseAreaId());
 		//组织尾巴
 		if (StringUtils.isNotEmpty(condition.getStatus())) {
 			if ("Y".equals(condition.getStatus())) {
@@ -689,9 +691,9 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator) {
-		Objects.requireNonNull(operator.getWorkNo(), "工号不能为空");
+		Objects.requireNonNull(operator.getOperator(), "工号不能为空");
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operator.getWorkNo()).andStatusIn(AssetStatusEnum.getValidStatusList());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operator.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
 		PageHelper.startPage(operator.getPageNum(), operator.getPageSize());
 		PageHelper.orderBy("status asc");
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
@@ -701,10 +703,14 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public List<Asset> transferAssetSelfCounty(AssetTransferDto transferDto) {
-		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(transferDto.getOperator(), "操作人工号不能为空");
+		Objects.requireNonNull(transferDto.getOperatorOrgId(), "操作人组织不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
 		Objects.requireNonNull(transferDto.getReceiverWorkNo(), "接受人工号不能为空");
+		if (!transferDto.getReceiverAreaId().equals(transferDto.getOperatorOrgId())) {
+			throw new AugeBusinessException("您转移的目标非本县");
+		}
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator());
@@ -726,11 +732,13 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public List<Asset> transferAssetOtherCounty(AssetTransferDto transferDto) {
 		Objects.requireNonNull(transferDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(transferDto.getOperatorOrgId(), "操作人组织不能为空");
 		Objects.requireNonNull(transferDto.getReason(), "转移原因不能为空");
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
 		Objects.requireNonNull(transferDto.getReceiverWorkNo(), "接受人工号不能为空");
 		Objects.requireNonNull(transferDto.getPayment(), "物流费用不能为空");
 		Objects.requireNonNull(transferDto.getDistance(), "运输距离不能为空");
+		Objects.requireNonNull(transferDto.getTransferAssetIdList(), "转移资产不能为空");
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andIdIn(transferDto.getTransferAssetIdList());
@@ -841,6 +849,68 @@ public class AssetBOImpl implements AssetBO {
 		detailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 		detailDto.setId(asset.getId());
 		return detailDto;
+	}
+
+	@Override
+	public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition) {
+		Objects.requireNonNull(condition.getOperator(), "工号不能为空");
+		Objects.requireNonNull(condition.getUseAreaType(), "赔付区域类型不能为空");
+		Objects.requireNonNull(condition.getUseAreaId(), "赔付地点不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).andUseAreaTypeEqualTo(condition.getUseAreaType()).andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getScrapShowList());
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		Page<Asset> assetPage = (Page<Asset>) assetList;
+		return PageDtoUtil.success(assetPage, buildAssetDetailDtoList(assetList));
+	}
+
+	@Override
+	public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto) {
+		Objects.requireNonNull(assetOperatorDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(idList, "赔付资产不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+		}
+		if (!assetList.stream().allMatch(asset -> assetOperatorDto.getOperator().equals(asset.getOwnerWorkno()))) {
+			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+		}
+		List<AssetDetailDto> detailDtoList = buildAssetDetailDtoList(assetList);
+		//查询单个资产价钱
+		return detailDtoList;
+	}
+
+	@Override
+	public void scrapAsset(AssetScrapDto scrapDto) {
+		Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
+		Objects.requireNonNull(scrapDto.getOperatorOrgId(), "操作人组织不能为空");
+		Objects.requireNonNull(scrapDto.getScrapAssetIdList(), "赔付资产不能为空");
+		Objects.requireNonNull(scrapDto.getScrapAreaId(), "赔付地点不能为空");
+		Objects.requireNonNull(scrapDto.getScrapAreaType(), "赔付区域不能为空");
+		Objects.requireNonNull(scrapDto.getFree(), "请申请是否免赔");
+		Objects.requireNonNull(scrapDto.getReason(), "赔付原因不能为空");
+		Objects.requireNonNull(scrapDto.getPayment(), "赔付金额不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+		}
+		if (!assetList.stream().allMatch(asset -> scrapDto.getOperator().equals(asset.getOwnerWorkno()))) {
+			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+		}
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.SCRAPING.getCode());
+		DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
+	private String buildErrorMessage(String str, Asset asset) {
+		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
+		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
+		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
 	}
 
 	@Override

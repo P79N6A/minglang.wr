@@ -12,13 +12,4 @@ public class AssetOperatorDto extends PageQuery implements Serializable{
 
     private static final long serialVersionUID = 5303374647072334439L;
 
-    private String workNo;
-
-    public String getWorkNo() {
-        return workNo;
-    }
-
-    public void setWorkNo(String workNo) {
-        this.workNo = workNo;
-    }
 }

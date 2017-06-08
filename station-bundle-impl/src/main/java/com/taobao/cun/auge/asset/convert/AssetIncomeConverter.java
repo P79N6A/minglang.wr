@@ -62,7 +62,7 @@ public class AssetIncomeConverter {
 		assetIncome.setReceiverWorkno(assetIncomeDto.getReceiverWorkno());
 		assetIncome.setRemark(assetIncomeDto.getRemark());
 		assetIncome.setStatus(assetIncomeDto.getStatus()==null?null:assetIncomeDto.getStatus().getCode());
-		assetIncome.setSignType(assetIncome.getSignType()==null?null:assetIncomeDto.getSignType().getCode());
+		assetIncome.setSignType(assetIncomeDto.getSignType()==null?null:assetIncomeDto.getSignType().getCode());
 		
 		return assetIncome;
 	}

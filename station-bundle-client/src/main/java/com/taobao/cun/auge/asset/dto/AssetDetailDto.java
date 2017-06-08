@@ -37,6 +37,9 @@ public class AssetDetailDto implements Serializable{
 
     private String recycle;
 
+    //赔付时使用
+    private String payment;
+
     public Long getId() {
         return id;
     }
@@ -139,5 +142,13 @@ public class AssetDetailDto implements Serializable{
 
     public void setRecycle(String recycle) {
         this.recycle = recycle;
+    }
+
+    public String getPayment() {
+        return payment;
+    }
+
+    public void setPayment(String payment) {
+        this.payment = payment;
     }
 }

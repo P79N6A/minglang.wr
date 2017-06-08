@@ -22,6 +22,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -134,7 +135,7 @@ public interface AssetMobileService {
     
     /**
      * 获得入库单详情列表    查询  待入库，已入库，已撤销的资产时，使用
-     * @param incomeId
+     * @param con
      * @return
      */
     public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForIncomeDetail(AssetIncomeDetailQueryCondition con);
@@ -149,18 +150,18 @@ public interface AssetMobileService {
     
     /**
      * 获得出库单详情列表    查询  待对方入库，对方部分入库，对方全部入库，已撤回的资产时，使用
-     * @param incomeId
+     * @param con
      * @return
      */
     public PageDto<AssetRolloutIncomeDetailExtDto> queryPageForRolloutDetail(AssetRolloutDetailQueryCondition con);
     
     /**
      * 查询出库单详情 基础信息
-     * @param incomeId
+     * @param rolloutId
      * @return
      */
     public AssetRolloutDetailDto getRolloutDetailDto(Long rolloutId);
-    
+
     /**
      * 资产盘点
      * @param checkDto
@@ -168,4 +169,24 @@ public interface AssetMobileService {
      */
     public Boolean checkAsset(AssetCheckDto checkDto);
 
+    /**
+     * 资产赔偿时获得资产列表
+     * @param condition
+     * @return
+     */
+    public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition);
+
+    /**
+     * 根据资产id列表获得赔付资产详情
+     * @param idList
+     * @param assetOperatorDto
+     * @return
+     */
+    public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
+
+    /**
+     * 赔付资产
+     * @param scrapDto
+     */
+    public void scrapAsset(AssetScrapDto scrapDto);
 }

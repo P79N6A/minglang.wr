@@ -3,6 +3,11 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +81,12 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 	
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
+
 	@Autowired
 	private StationBO stationBO;
+
+	@Autowired
+	private AssetBO assetBO;
 	
 	@Autowired
 	private DiamondConfiguredProperties configuredProperties;
@@ -358,7 +367,56 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		}
 		return rolloutId;
 	}
-	
 
+	@Override
+	public Long scrapAsset(AssetScrapDto scrapDto) {
+		String operatorName = getWorkName(scrapDto.getOperator());
+		String applyOrgName = getOrgName(scrapDto.getOperatorOrgId());
+		//创建出库单
+		AssetRolloutDto roDto = new AssetRolloutDto();
+		roDto.setApplierWorkno(scrapDto.getOperator());
+		roDto.setApplierName(operatorName);
+		roDto.setStatus(AssetRolloutStatusEnum.WAIT_COMPENSATE);
+		roDto.setApplierOrgId(scrapDto.getOperatorOrgId());
+		roDto.setApplierOrgName(applyOrgName);
+		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.valueof(scrapDto.getScrapAreaType()));
+		roDto.setAttachId(JSON.toJSONString(scrapDto.getAttachmentList()));
+		if (AssetRolloutReceiverAreaTypeEnum.STATION.getCode().equals(scrapDto.getScrapAreaType())) {
+			Long stationId = scrapDto.getScrapAreaId();
+			Station s = stationBO.getStationById(stationId);
+			if (s == null) {
+				throw new AugeBusinessException("分发失败，服务站信息异常");
+			}
+			String sName = s.getName();
+
+			Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
+			if (p == null) {
+				throw new AugeBusinessException("分发失败，合伙人信息异常");
+			}
+			roDto.setReceiverAreaName(sName);
+			roDto.setReceiverId(String.valueOf(p.getTaobaoUserId()));
+		} else {
+			roDto.setReceiverAreaName(applyOrgName);
+			roDto.setReceiverId(operatorName);
+		}
+		roDto.setRemark(applyOrgName+"的资产由"+operatorName+"提出赔偿申请");
+		roDto.setType(AssetRolloutTypeEnum.SCRAP);
+		roDto.copyOperatorDto(scrapDto);
+		Long rolloutId = addRollout(roDto);
+		List<AssetDetailDto> detailDtoList = assetBO.getScarpDetailListByIdList(
+			scrapDto.getScrapAssetIdList(), scrapDto);
+		detailDtoList.forEach(dto -> {
+			AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+			detail.setAssetId(dto.getId());
+			detail.setCategory(dto.getCategory());
+			detail.setRolloutId(rolloutId);
+			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+			detail.setType(AssetRolloutIncomeDetailTypeEnum.SCRAP);
+			detail.setPrice(dto.getPayment());
+			detail.copyOperatorDto(scrapDto);
+			assetRolloutIncomeDetailBO.addDetail(detail);
+		});
+		return rolloutId;
+	}
 
 }

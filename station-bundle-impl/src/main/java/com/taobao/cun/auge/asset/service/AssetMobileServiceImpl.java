@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,7 +78,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
     @Autowired
     private TairCache tairCache;
-    
 
     @Override
     public Map<String, List<AssetMobileConditionDto>> getConditionMap(AssetOperatorDto operatorDto) {
@@ -267,6 +267,23 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		}
 		return deDto;
 	}
+
+    @Override
+    public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition) {
+        return assetBO.getScrapAssetList(condition);
+    }
+
+    @Override
+    public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto) {
+        return assetBO.getScarpDetailListByIdList(idList, assetOperatorDto);
+    }
+
+    @Override
+    @Transactional
+    public void scrapAsset(AssetScrapDto scrapDto) {
+        assetBO.scrapAsset(scrapDto);
+        assetRolloutBO.scrapAsset(scrapDto);
+    }
 
 	@Override
 	public Boolean checkAsset(AssetCheckDto checkDto) {
