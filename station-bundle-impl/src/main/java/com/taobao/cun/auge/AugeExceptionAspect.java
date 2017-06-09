@@ -39,10 +39,10 @@ public class AugeExceptionAspect {
         String action = clazz + "|" + name;
         String parameters = getParameters(joinPoint);
         if (ex instanceof NullPointerException || ex instanceof AugeBusinessException) {
-            logger.warn("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters);
+            logger.warn("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters, ex);
             throw new DefaultServiceException(ex.getMessage());
         }
-        logger.error("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters);
+        logger.error("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters, ex);
         throw new DefaultServiceException(ex.getMessage(), ex.getCause());
     }
 
