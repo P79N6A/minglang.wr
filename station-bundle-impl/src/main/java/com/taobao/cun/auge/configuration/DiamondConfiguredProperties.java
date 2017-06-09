@@ -46,6 +46,12 @@ public class DiamondConfiguredProperties {
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.category}')}")
     private Map<String, String> categoryMap;
 
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${exception.full}')}")
+    private Map<String, String> exceptionFullMap;
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${exception.regular}')}")
+    private Map<String, String> exceptionRegularMap;
+
     public String getApply() {
         return apply;
     }
@@ -84,5 +90,13 @@ public class DiamondConfiguredProperties {
 
     public Map<String, String> getCategoryMap() {
         return categoryMap;
+    }
+
+    public Map<String, String> getExceptionFullMap() {
+        return exceptionFullMap;
+    }
+
+    public Map<String, String> getExceptionRegularMap() {
+        return exceptionRegularMap;
     }
 }
