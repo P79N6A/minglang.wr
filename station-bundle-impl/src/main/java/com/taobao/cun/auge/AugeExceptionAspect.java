@@ -38,12 +38,8 @@ public class AugeExceptionAspect {
         String simpleName = declaringType.getSimpleName();
         String action = clazz + "|" + name;
         String parameters = getParameters(joinPoint);
-        if (ex instanceof NullPointerException || ex instanceof AugeBusinessException) {
-            logger.warn("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters, ex);
-            throw new DefaultServiceException(ex.getMessage());
-        }
         logger.error("{bizType},{action},{parameter}", buildErrorOwner(simpleName), action, parameters, ex);
-        throw new DefaultServiceException(ex.getMessage(), ex.getCause());
+        throw ex;
     }
 
     private String getParameters(JoinPoint joinPoint) {
@@ -60,6 +56,7 @@ public class AugeExceptionAspect {
         for (Entry<String, String> entry : configuredProperties.getExceptionRegularMap().entrySet()) {
             if (find(entry.getKey(), simpleName)) {
                 msg = entry.getValue();
+                break;
             }
         }
         if (configuredProperties.getExceptionFullMap().containsKey(simpleName)) {
