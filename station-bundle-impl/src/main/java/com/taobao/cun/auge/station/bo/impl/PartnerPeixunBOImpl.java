@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.crm.pacific.facade.dto.operator.Operator;
+import com.alibaba.crm.pacific.facade.dto.refund.RefundMethodEnum;
 import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyAddParam;
 import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyOrderItemList;
 import com.alibaba.crm.pacific.facade.parameter.refund.add.RefundApplyOrderItemDetailAddParam;
@@ -559,6 +560,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			op.setDisplayName(operator);
 			param.setApplier(op);
 			param.setRefundReason(refundReason);
+			param.setRefundMethod(RefundMethodEnum.UNSUBSCRIBE);
 			list.setBaseRefundApplyAddParam(param);
 			List<RefundApplyOrderItemDetailAddParam> relatedOrderItemList=new ArrayList<RefundApplyOrderItemDetailAddParam>();
 			RefundApplyOrderItemDetailAddParam param1=new RefundApplyOrderItemDetailAddParam();
