@@ -660,7 +660,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		QueryInvoiceByBillReqDto reqDto = new QueryInvoiceByBillReqDto();
 		reqDto.setRelatedSystem("cuntao");
 		reqDto.setBillNo(qihangRecord.getOrderNum());
-		reqDto.signAndEncrypt("123");
+		reqDto.signAndEncrypt("1234567890");
 		try {
 			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
 					.queryEffectiveInvoiceListByBillNos(reqDto);
