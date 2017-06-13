@@ -62,7 +62,7 @@ public interface AssetService {
 	     * @param pageNum
 	     * @param pageSize
 	     */
-	    public List<Long> getCheckedAssetId(Integer pageNum,Integer pageSize);
+	    public PageDto<Long> getCheckedAssetId(Integer pageNum,Integer pageSize);
 	    /**
 	     * 启动盘点，定时任务使用
 	     * @param assetId

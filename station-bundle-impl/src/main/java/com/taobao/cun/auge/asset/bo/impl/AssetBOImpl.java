@@ -11,10 +11,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.taobao.cun.auge.asset.dto.AssetScrapDto;
-import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
-import com.taobao.cun.crius.event.ExtEvent;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +33,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
@@ -47,6 +44,7 @@ import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
+import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
@@ -75,6 +73,7 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.crius.event.ExtEvent;
 import com.taobao.hsf.util.RequestCtxUtil;
 
 @Component
@@ -1028,10 +1027,10 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public List<Asset> getCheckedAsset(Integer pageNum, Integer pageSize) {
+	public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize) {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andCheckStatusEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
 		PageHelper.startPage(pageNum, pageSize);
-		return assetMapper.selectByExample(assetExample);
+		return (Page<Asset>)assetMapper.selectByExample(assetExample);
 	}
 }

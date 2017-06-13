@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
@@ -20,6 +21,7 @@ import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -224,10 +226,10 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public List<Long> getCheckedAssetId(Integer pageNum, Integer pageSize) {
-		List<Asset> aList = assetBO.getCheckedAsset(pageNum, pageSize);
+	public PageDto<Long> getCheckedAssetId(Integer pageNum, Integer pageSize) {
+        Page<Asset> aList = assetBO.getCheckedAsset(pageNum, pageSize);
 		List<Long> assetIdList =aList.stream().map(Asset::getId).collect(Collectors.toList());
-		return assetIdList;
+		return PageDtoUtil.success(aList, assetIdList);
 	}
 
 	@Override
