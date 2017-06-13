@@ -1021,15 +1021,9 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public Boolean createCheckingAssetTask(String operator) {
-//		generalTaskSubmitService.submitCheckingAsset(operator);
-		return Boolean.TRUE;
-	}
-
-	@Override
 	public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize) {
 		AssetExample assetExample = new AssetExample();
-		assetExample.createCriteria().andIsDeletedEqualTo("n").andCheckStatusEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andCheckStatusEqualTo(AssetCheckStatusEnum.CHECKED.getCode()).andStatusEqualTo(AssetStatusEnum.SCRAP.getCode());
 		PageHelper.startPage(pageNum, pageSize);
 		return (Page<Asset>)assetMapper.selectByExample(assetExample);
 	}

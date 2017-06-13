@@ -237,5 +237,4 @@ public class AssetServiceImpl implements AssetService{
 		return assetBO.checkingAsset(assetId, operator);
 		
 	}
-
 }

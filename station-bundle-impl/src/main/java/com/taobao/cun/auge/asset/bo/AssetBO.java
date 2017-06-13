@@ -116,7 +116,5 @@ public interface AssetBO {
     
     public Boolean checkingAsset(Long assetId,String operator);
     
-    public Boolean createCheckingAssetTask(String operator);
-    
     public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
 }
