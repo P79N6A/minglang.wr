@@ -295,7 +295,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean
-	public ArInvoiceService arInvoiceService(HsfConsumerContext context, @Value("${crm.order.service.version}") String version) {
+	public ArInvoiceService arInvoiceService(HsfConsumerContext context, @Value("${finance.invoice.service.version}") String version) {
 		return context.hsfConsumerBuilder(ArInvoiceService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
