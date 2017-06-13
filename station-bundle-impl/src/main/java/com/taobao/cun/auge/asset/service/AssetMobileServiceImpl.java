@@ -287,6 +287,6 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 
 	@Override
 	public Boolean checkAsset(AssetCheckDto checkDto) {
-		return null;
+		return assetBO.checkAsset(checkDto);
 	}
 }

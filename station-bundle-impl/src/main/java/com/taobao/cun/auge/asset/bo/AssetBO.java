@@ -112,4 +112,10 @@ public interface AssetBO {
     public void scrapAsset(AssetScrapDto scrapDto);
 
     public Boolean checkAsset(AssetCheckDto checkDto);
+    
+    public Boolean checkingAsset(Long assetId,String operator);
+    
+    public Boolean createCheckingAssetTask(String operator);
+    
+    public List<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
 }

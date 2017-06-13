@@ -5,14 +5,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -20,17 +27,9 @@ import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.crius.event.ExtEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.taobao.cun.auge.asset.bo.AssetBO;
-import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.crius.event.ExtEvent;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("assetService")
 @HSFProvider(serviceInterface = AssetService.class)
@@ -222,6 +221,19 @@ public class AssetServiceImpl implements AssetService{
 		content.setRouteUrl("url");
 		signEvent.setContent(content);
 		EventDispatcherUtil.dispatch("CRM_ASSET_TRANSFER", new ExtEvent(JSON.toJSONString(signEvent)));
+	}
+
+	@Override
+	public List<Long> getCheckedAssetId(Integer pageNum, Integer pageSize) {
+		List<Asset> aList = assetBO.getCheckedAsset(pageNum, pageSize);
+		List<Long> assetIdList =aList.stream().map(Asset::getId).collect(Collectors.toList());
+		return assetIdList;
+	}
+
+	@Override
+	public Boolean checkingAsset(Long assetId, String operator) {
+		return assetBO.checkingAsset(assetId, operator);
+		
 	}
 
 }

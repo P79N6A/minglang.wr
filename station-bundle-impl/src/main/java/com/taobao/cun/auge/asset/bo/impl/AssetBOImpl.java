@@ -73,12 +73,13 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
 
 @Component
 public class AssetBOImpl implements AssetBO {
-
+	
 	@Autowired
 	private AssetMapper assetMapper;
 
@@ -111,7 +112,10 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private UicReadAdapter uicReadAdapter;
-
+	
+	@Autowired
+	private GeneralTaskSubmitService generalTaskSubmitService;
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -1006,5 +1010,31 @@ public class AssetBOImpl implements AssetBO {
 		return sb.toString();
 		
 
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = Exception.class)
+	public Boolean checkingAsset(Long assetId,String operator) {
+		Asset record = new Asset();
+		DomainUtils.beforeUpdate(record, operator);
+		record.setCheckStatus(AssetCheckStatusEnum.CHECKING.getCode());
+		record.setCheckTime(new Date());
+		record.setId(assetId);
+		assetMapper.updateByPrimaryKeySelective(record);
+		return  Boolean.TRUE;
+	}
+
+	@Override
+	public Boolean createCheckingAssetTask(String operator) {
+//		generalTaskSubmitService.submitCheckingAsset(operator);
+		return Boolean.TRUE;
+	}
+
+	@Override
+	public List<Asset> getCheckedAsset(Integer pageNum, Integer pageSize) {
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andCheckStatusEqualTo(AssetCheckStatusEnum.CHECKED.getCode());
+		PageHelper.startPage(pageNum, pageSize);
+		return assetMapper.selectByExample(assetExample);
 	}
 }
