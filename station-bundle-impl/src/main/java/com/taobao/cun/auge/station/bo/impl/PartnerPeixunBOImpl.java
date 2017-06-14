@@ -547,12 +547,13 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(taobaoUserId,
 				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
 		//判断是否可退款
-		BigDecimal refundAmount=validateRefundable(qihangRecord,chengZhangRecord);
+//		BigDecimal refundAmount=validateRefundable(qihangRecord,chengZhangRecord);
 		//发起退款流程
 		creatFlow(qihangRecord.getId(),operator,applyOrg);
 		//通知crm,返回退款编号
-		String refundNo=refundCallCrm(refundAmount,qihangRecord,chengZhangRecord,operator,refundReason);
+//		String refundNo=refundCallCrm(refundAmount,qihangRecord,chengZhangRecord,operator,refundReason);
 		//变更退款状态
+		String refundNo="aaa";
 		changePeixunStatus(qihangRecord,chengZhangRecord,refundReason,operator);
 		return refundNo;
 	}
