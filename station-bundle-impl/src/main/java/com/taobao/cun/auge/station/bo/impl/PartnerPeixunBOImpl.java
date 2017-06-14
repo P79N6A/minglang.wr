@@ -225,6 +225,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			throw new RuntimeException("not find peixunRecord "+userId.toString());
 		}
 		PartnerCourseRecord record=records.get(0);
+		if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
+			throw new RuntimeException("培训状态异常，无法签到 "+userId.toString());
+		}
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
         record.setGmtDone(new Date());
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
@@ -612,9 +615,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		qihangRecord.setModifier(operator);
 		qihangRecord.setGmtModified(new Date());
 		qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		qihangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
 		chengZhangRecord.setRefundReason(refundReason);
 		chengZhangRecord.setModifier(operator);
 		chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		chengZhangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
 		chengZhangRecord.setGmtModified(new Date());
 		partnerCourseRecordMapper.updateByPrimaryKey(qihangRecord);
 		partnerCourseRecordMapper.updateByPrimaryKey(chengZhangRecord);
@@ -710,6 +715,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     			//审核拒绝
     			qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode());
     			chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode());
+    			qihangRecord.setStatus(PartnerPeixunStatusEnum.PAY.getCode());
+    			chengZhangRecord.setStatus(PartnerPeixunStatusEnum.PAY.getCode());
     		}
     		qihangRecord.setGmtModified(new Date());
     		chengZhangRecord.setGmtModified(new Date());
