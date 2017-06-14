@@ -496,6 +496,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}
 			List<PartnerCourseRecord> newRecords = partnerCourseRecordMapper.selectByExample(example);
 			for(PartnerPeixunListDetailDto dto:records){
+				if(StringUtils.isNotEmpty(dto.getRefundStatus())){
+					dto.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(dto.getRefundStatus()).getDesc());
+				}
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				if(dto.getCourseType().equals(PartnerPeixunCourseTypeEnum.APPLY_IN.getCode())){
 					dto.setQiHangStatus(dto.getCourseStatus());

@@ -12,7 +12,7 @@ public class PartnerPeixunRefundStatusEnum implements Serializable{
 	public static final PartnerPeixunRefundStatusEnum REFOND_WAIT_AUDIT = new PartnerPeixunRefundStatusEnum("REFOND_WAIT_AUDIT", "退款待审核");
 	public static final PartnerPeixunRefundStatusEnum REFOUNDING = new PartnerPeixunRefundStatusEnum("REFOUNDING", "退款中");
 	public static final PartnerPeixunRefundStatusEnum REFOUND_DONE = new PartnerPeixunRefundStatusEnum("REFOUND_DONE", "已退款至通用账户");
-	public static final PartnerPeixunRefundStatusEnum REFOUND_AUDIT_NOT_PASS = new PartnerPeixunRefundStatusEnum("REFOUND_AUDIT_NOT_PASS", "已退款至通用账户");
+	public static final PartnerPeixunRefundStatusEnum REFOUND_AUDIT_NOT_PASS = new PartnerPeixunRefundStatusEnum("REFOUND_AUDIT_NOT_PASS", "退款审核未通过");
 
 
 	private static final Map<String, PartnerPeixunRefundStatusEnum> mappings = new HashMap<String, PartnerPeixunRefundStatusEnum>();

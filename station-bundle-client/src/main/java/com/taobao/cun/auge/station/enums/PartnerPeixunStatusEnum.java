@@ -12,6 +12,7 @@ public class PartnerPeixunStatusEnum implements Serializable{
 	public static final PartnerPeixunStatusEnum DONE = new PartnerPeixunStatusEnum("DONE", "已签到");
 	public static final PartnerPeixunStatusEnum WAIT_PAY = new PartnerPeixunStatusEnum("WAIT_PAY", "待付款");
 	public static final PartnerPeixunStatusEnum REFUND = new PartnerPeixunStatusEnum("REFUND", "已退款");
+	public static final PartnerPeixunStatusEnum REFUNDING = new PartnerPeixunStatusEnum("REFUND", "退款进行中");
 
 
 	private static final Map<String, PartnerPeixunStatusEnum> mappings = new HashMap<String, PartnerPeixunStatusEnum>();
@@ -22,6 +23,8 @@ public class PartnerPeixunStatusEnum implements Serializable{
 		mappings.put("DONE", DONE);
 		mappings.put("WAIT_PAY", WAIT_PAY);
 		mappings.put("REFUND", REFUND);
+		mappings.put("REFUNDING", REFUNDING);
+
 	}
 
 	private String code;
