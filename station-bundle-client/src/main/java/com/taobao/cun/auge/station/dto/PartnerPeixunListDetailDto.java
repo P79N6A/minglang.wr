@@ -27,8 +27,16 @@ public class PartnerPeixunListDetailDto extends OperatorDto implements Serializa
 	private Long userId;
 	private String refundStatus;
 	private String refundStatusDesc;
+	private Long orgId;
 	
 	
+	
+	public Long getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
 	public String getRefundStatus() {
 		return refundStatus;
 	}

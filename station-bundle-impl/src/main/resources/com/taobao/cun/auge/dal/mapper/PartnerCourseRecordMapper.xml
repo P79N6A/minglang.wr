@@ -512,6 +512,8 @@
     <result column="gmt_done" property="gmtDone" jdbcType="TIMESTAMP" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    
   </resultMap>
   
   <select id="queryPeixunList" resultMap="peixunQueryListResult" parameterType="map" >
@@ -524,7 +526,8 @@
    ,b.status as course_status
    ,b.gmt_done as gmt_done
    ,b.partner_user_id as user_id,
-   b.refund_status as refund_status
+   b.refund_status as refund_status,
+   e.id as org_id
    from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
    where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
    and a.taobao_user_id=b.partner_user_id
