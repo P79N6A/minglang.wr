@@ -703,7 +703,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     				"UPGRADE");
     		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(),
     				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
-    		if(!PartnerPeixunStatusEnum.PAY.getCode().equals(qihangRecord.getStatus())||!PartnerPeixunStatusEnum.PAY.getCode().equals(chengZhangRecord.getStatus())){
+    		if(!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())||!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(chengZhangRecord.getStatus())){
     			throw new AugeBusinessException("培训订单状态不正确，无法处理退款审核消息");
     		}
     		if(!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(qihangRecord.getRefundStatus())||!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(chengZhangRecord.getRefundStatus())){
