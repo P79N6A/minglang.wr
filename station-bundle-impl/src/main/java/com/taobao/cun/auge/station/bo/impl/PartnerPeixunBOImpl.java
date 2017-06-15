@@ -554,7 +554,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 //		String refundNo=refundCallCrm(refundAmount,qihangRecord,chengZhangRecord,operator,refundReason);
 		//变更退款状态
 		String refundNo="aaa";
-		changePeixunStatus(qihangRecord,chengZhangRecord,refundReason,operator);
+		changePeixunStatus(refundNo,qihangRecord,chengZhangRecord,refundReason,operator);
 		return refundNo;
 	}
 	
@@ -611,17 +611,19 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 	
-	private void changePeixunStatus(PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String refundReason,String operator){
+	private void changePeixunStatus(String refundNo,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String refundReason,String operator){
 		qihangRecord.setRefundReason(refundReason);
 		qihangRecord.setModifier(operator);
 		qihangRecord.setGmtModified(new Date());
 		qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
 		qihangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
+		qihangRecord.setRefundNo(refundNo);
 		chengZhangRecord.setRefundReason(refundReason);
 		chengZhangRecord.setModifier(operator);
 		chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
 		chengZhangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
 		chengZhangRecord.setGmtModified(new Date());
+		chengZhangRecord.setRefundNo(refundNo);
 		partnerCourseRecordMapper.updateByPrimaryKey(qihangRecord);
 		partnerCourseRecordMapper.updateByPrimaryKey(chengZhangRecord);
 	}
