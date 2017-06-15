@@ -22,12 +22,25 @@ public class C2BSettlingRequest implements Serializable{
 	@NotNull
 	private Long taobaoUserId;
 
+	/**
+	 * 流程版本
+	 */
+	private String version;
+	
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 	

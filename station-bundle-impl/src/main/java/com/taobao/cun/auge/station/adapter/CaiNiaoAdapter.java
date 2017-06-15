@@ -6,10 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
-import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseListParam;
-import com.alibaba.cainiao.cuntaonetwork.param.warehouse.QueryWarehouseOption;
-import com.alibaba.cainiao.cuntaonetwork.result.Result;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.exception.ServiceException;
 
@@ -167,4 +165,22 @@ public interface CaiNiaoAdapter {
 	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException; 
 	
 	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException ;
+	
+	/**
+	 * 停业通知菜鸟服务站停业
+	 * 
+	 * @param cainiaoStationId
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException;
+	
+	/**
+	 * 经纬度同步菜鸟
+	 * 
+	 * @param syncModifyLngLatDto
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException;
 }

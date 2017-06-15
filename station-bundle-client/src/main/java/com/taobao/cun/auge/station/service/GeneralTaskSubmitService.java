@@ -141,5 +141,14 @@ public interface GeneralTaskSubmitService {
 	 * 启动激励方案审批流程
 	 */
 	public void submitIncentiveProgramAuditTask(ApproveProcessTask processTask);
+	
+	/**
+	 * 停业同步菜鸟
+	 * 
+	 * @param instanceId
+	 * @param operatorId
+	 * @throws AugeServiceException
+	 */
+	public void submitClosedCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException;
 
 }

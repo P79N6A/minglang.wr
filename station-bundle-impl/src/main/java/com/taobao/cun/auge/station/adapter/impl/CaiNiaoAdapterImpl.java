@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
+import com.alibaba.cainiao.cuntaonetwork.constants.station.FromCuntaoGpsStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
@@ -24,6 +25,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
+import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateLngLatInfoParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
@@ -43,6 +45,7 @@ import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.exception.ServiceException;
 
@@ -652,5 +655,38 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		listParam.setOrgId(id);
 		Result<List<WarehouseDTO>> result = warehouseReadService.queryWareHouses(listParam, option);
 		return result.getData();
+	}
+
+	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException {
+		try {
+			Result<Boolean> res = stationWriteService.pauseStationById(cainiaoStationId, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("closeToCainiaoStation", cainiaoStationId.toString() ,e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+	    }
+	}
+
+	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException {
+		try {
+			UpdateLngLatInfoParam param = new UpdateLngLatInfoParam();
+			param.setId(dto.getCainiaoStationId());
+			param.setLng(dto.getLng());
+			param.setLat(dto.getLat());
+			param.setFromCuntao(FromCuntaoGpsStatus.CUNTAO);
+			Result<Boolean> res = stationWriteService.updateLngLatInfo(param, Modifier.newSystem());
+			if (!res.isSuccess()) {
+				throw new AugeServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+			} 
+			return res.getData();
+		} catch (Exception e) {
+			String error = getErrorMessage("modifyLngLatToCainiao", dto.getCainiaoStationId().toString() ,e.getMessage());
+			logger.error(error,e);
+			throw new AugeServiceException(error);
+		}
 	}
 }

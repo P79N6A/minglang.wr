@@ -109,6 +109,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
@@ -126,6 +127,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
@@ -2229,6 +2231,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			record.setRemarks(PartnerInstanceEventUtil.buildLngLatInfo(oldStation,newStation));
 			record.setTargetType(CuntaoFlowRecordTargetTypeEnum.SANTONG_DZWL);
 			cuntaoFlowRecordQueryService.insertRecord(record);
+			if(taobaoUserId != null){
+				partnerLifecycleBO.updateConfirmPosition(instanceId, PartnerLifecyclePositionConfirmEnum.Y);
+			}
+			// 同步菜鸟地址更新
+		    if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
+		    	SyncModifyLngLatDto lngDto = new SyncModifyLngLatDto();
+		    	lngDto.setPartnerInstanceId(instanceId);
+		    	lngDto.setLng(updateStation.getAddress().getLng());
+		    	lngDto.setLat(updateStation.getAddress().getLat());
+		    	caiNiaoService.modifyLngLatToCainiao(lngDto);
+			}
 		}
 	}
 
