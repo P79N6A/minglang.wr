@@ -572,9 +572,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			RefundApplyOrderItemDetailAddParam param1=new RefundApplyOrderItemDetailAddParam();
 			param1.setRefundKey(qihangRecord.getOrderNum());
 			param1.setRefundAmount(refundAmount);
+			param1.setCurrency("CNY");
 			RefundApplyOrderItemDetailAddParam param2=new RefundApplyOrderItemDetailAddParam();
 			param2.setRefundKey(chengZhangRecord.getOrderNum());
 			param2.setRefundAmount(new BigDecimal(0));
+			param2.setCurrency("CNY");
 			relatedOrderItemList.add(param1);
 			relatedOrderItemList.add(param2);
 			list.setRelatedOrderItemList(relatedOrderItemList);
@@ -614,12 +616,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		qihangRecord.setRefundReason(refundReason);
 		qihangRecord.setModifier(operator);
 		qihangRecord.setGmtModified(new Date());
-		qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		qihangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode());
 		qihangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
 		qihangRecord.setRefundNo(refundNo);
 		chengZhangRecord.setRefundReason(refundReason);
 		chengZhangRecord.setModifier(operator);
-		chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_COMMIT.getCode());
+		chengZhangRecord.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode());
 		chengZhangRecord.setStatus(PartnerPeixunStatusEnum.REFUNDING.getCode());
 		chengZhangRecord.setGmtModified(new Date());
 		chengZhangRecord.setRefundNo(refundNo);
@@ -669,13 +671,14 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private void validateVoince(PartnerCourseRecord qihangRecord) {
 		QueryInvoiceByBillReqDto reqDto = new QueryInvoiceByBillReqDto();
 		reqDto.setRelatedSystem("cuntao");
+		reqDto.setAppCode("cuntao");
 		reqDto.setBillNo(qihangRecord.getOrderNum());
 		reqDto.signAndEncrypt("1234567890");
 		try {
 			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
 					.queryEffectiveInvoiceListByBillNos(reqDto);
 			if (finResult.isSuccess()) {
-				finResult.getReturnValue().decryptAndVerifySign("123");
+				finResult.getReturnValue().decryptAndVerifySign("1234567890");
 				ListWrapperDto<OrderItemInvoiceStatusDto> invs = finResult
 						.getReturnValue();
 				for (OrderItemInvoiceStatusDto inv : invs.getList()) {
