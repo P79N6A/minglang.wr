@@ -599,7 +599,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanCountySignStatusList());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
