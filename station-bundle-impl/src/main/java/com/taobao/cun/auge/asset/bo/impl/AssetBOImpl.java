@@ -675,21 +675,20 @@ public class AssetBOImpl implements AssetBO {
 			RecycleStatusEnum.Y.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
 		}
-		Asset updateAsset = new Asset();
-		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
-		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
-		updateAsset.setId(asset.getId());
-		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		updateAsset.setUserId(signDto.getOperator());
-		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
-		updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
-		assetMapper.updateByPrimaryKeySelective(updateAsset);
-		return buildAssetDetail(updateAsset);
+		DomainUtils.beforeUpdate(asset, signDto.getOperator());
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		asset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+		asset.setUserId(signDto.getOperator());
+		asset.setUseAreaId(signDto.getOperatorOrgId());
+		asset.setUserName(emp360Adapter.getName(signDto.getOperator()));
+		asset.setRecycle(RecycleStatusEnum.N.getCode());
+		assetMapper.updateByPrimaryKeySelective(asset);
+		return buildAssetDetail(asset);
 	}
 
 	@Override
@@ -764,15 +763,8 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
 			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
-		String name = emp360Adapter.getName(transferDto.getReceiverWorkNo());
 		Asset asset = new Asset();
-		asset.setStatus(AssetStatusEnum.USE.getCode());
-		asset.setOwnerWorkno(transferDto.getReceiverWorkNo());
-		asset.setOwnerOrgId(transferDto.getReceiverAreaId());
-		asset.setOwnerName(name);
-		asset.setUserName(name);
-		asset.setUseAreaId(transferDto.getReceiverAreaId());
-		asset.setUserId(transferDto.getReceiverWorkNo());
+		asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
