@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
 
+import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
@@ -112,4 +113,8 @@ public interface AssetBO {
     public void scrapAsset(AssetScrapDto scrapDto);
 
     public Boolean checkAsset(AssetCheckDto checkDto);
+    
+    public Boolean checkingAsset(Long assetId,String operator);
+    
+    public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
 }

@@ -57,4 +57,16 @@ public interface AssetService {
 	    public AssetRolloutDto getRolloutById(Long id);
 
 	    public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum);
+	    /**
+	     * 启动盘点 ，定时任务使用，分页查询已盘点资产
+	     * @param pageNum
+	     * @param pageSize
+	     */
+	    public PageDto<Long> getCheckedAssetId(Integer pageNum,Integer pageSize);
+	    /**
+	     * 启动盘点，定时任务使用
+	     * @param assetId
+	     * @param operator
+	     */
+	    public Boolean checkingAsset(Long assetId,String operator);
 }
