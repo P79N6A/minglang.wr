@@ -913,7 +913,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void cancelAsset(List<Long> assetIds,String operator) {
+	public void cancelTransferAsset(List<Long> assetIds, String operator) {
 		Objects.requireNonNull(assetIds, "资产列表不能为空");
 		Objects.requireNonNull(operator, "操作人不能为空");
 		Asset asset = new Asset();
