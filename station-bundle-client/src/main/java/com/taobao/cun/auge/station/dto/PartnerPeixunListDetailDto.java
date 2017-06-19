@@ -2,8 +2,10 @@ package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.permission.operation.Operation;
 
 public class PartnerPeixunListDetailDto extends OperatorDto implements Serializable{
 
@@ -28,9 +30,17 @@ public class PartnerPeixunListDetailDto extends OperatorDto implements Serializa
 	private String refundStatus;
 	private String refundStatusDesc;
 	private Long orgId;
+	private List<Operation> operations;
 	
 	
 	
+	
+	public List<Operation> getOperations() {
+		return operations;
+	}
+	public void setOperations(List<Operation> operations) {
+		this.operations = operations;
+	}
 	public Long getOrgId() {
 		return orgId;
 	}
