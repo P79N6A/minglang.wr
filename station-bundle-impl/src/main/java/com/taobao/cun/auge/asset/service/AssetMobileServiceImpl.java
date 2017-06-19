@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.enums.ScrapFreeStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -281,7 +282,12 @@ public class AssetMobileServiceImpl implements AssetMobileService{
     @Override
     @Transactional
     public void scrapAsset(AssetScrapDto scrapDto) {
-        assetBO.scrapAsset(scrapDto);
+	    if (ScrapFreeStatusEnum.N.getCode().equals(scrapDto.getFree()) && AssetUseAreaTypeEnum.STATION.getCode().equals(scrapDto.getScrapAreaType())) {
+	        //Todo 此时直接根据赔偿金额调合伙人保证金扣除接口
+            assetBO.scrapAssetSuccess(scrapDto);
+        } else {
+            assetBO.scrapAsset(scrapDto);
+        }
         assetRolloutBO.scrapAsset(scrapDto);
     }
 

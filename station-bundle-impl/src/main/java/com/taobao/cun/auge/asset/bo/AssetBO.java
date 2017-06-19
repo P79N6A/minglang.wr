@@ -112,6 +112,9 @@ public interface AssetBO {
 
     public void scrapAsset(AssetScrapDto scrapDto);
 
+    //资产赔付成功
+    public void scrapAssetSuccess(AssetScrapDto scrapDto);
+
     public Boolean checkAsset(AssetCheckDto checkDto);
     
     public Boolean checkingAsset(Long assetId,String operator);

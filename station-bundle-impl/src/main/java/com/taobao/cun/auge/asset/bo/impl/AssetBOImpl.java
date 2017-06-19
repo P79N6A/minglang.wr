@@ -899,6 +899,24 @@ public class AssetBOImpl implements AssetBO {
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
+	@Override
+	public void scrapAssetSuccess(AssetScrapDto scrapDto) {
+		Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+		}
+		if (!assetList.stream().allMatch(asset -> scrapDto.getOperator().equals(asset.getOwnerWorkno()))) {
+			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+		}
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.SCRAP.getCode());
+		DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
 	private String buildErrorMessage(String str, Asset asset) {
 		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
 		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
