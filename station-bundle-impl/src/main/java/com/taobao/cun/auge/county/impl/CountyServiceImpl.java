@@ -61,7 +61,17 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 
-
+	public List<Long> getCountyIdsByOrgId(List<Long> orgIds){
+		List<CountyDto> countyDtos = countyBO.getCountyStationByOrgIds(orgIds);
+		List<Long> countyIds = new ArrayList<Long>(countyDtos.size());
+		for(CountyDto countyDto:countyDtos){
+			if(null == countyDto){
+				continue;
+			}
+			countyIds.add(countyDto.getId());
+		}
+		return countyIds;
+	}
 
 	public CountyDto getCountyStationByOrgId(Long id){
 		return countyBO.getCountyStationByOrgId(id);
