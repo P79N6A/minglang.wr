@@ -196,7 +196,7 @@ public class AssetMobileServiceImpl implements AssetMobileService{
 		//2.更新资产状态为使用中
 		List<Long> assetIds = new ArrayList<Long>();
 		assetIds.add(cancelDto.getAssetId());
-		assetBO.cancelAsset(assetIds, cancelDto.getOperator());
+		assetBO.cancelTransferAsset(assetIds, cancelDto.getOperator());
 		return Boolean.TRUE;
 	}
 

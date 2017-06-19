@@ -100,7 +100,7 @@ public interface AssetBO {
 
     public  Asset getAssetById(Long assetId);
     
-    public  void cancelAsset(List<Long> assetIds,String operator);
+    public  void cancelTransferAsset(List<Long> assetIds, String operator);
     
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto);
     
