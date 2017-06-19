@@ -641,7 +641,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		if(PartnerPeixunStatusEnum.NEW.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.NEW.getCode().equals(chengZhangRecord.getStatus())){
 			throw new AugeBusinessException("课程未付款,无法退款");
 		}
-		if(StringUtils.isNotEmpty(qihangRecord.getRefundStatus())&&!PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode().equals(qihangRecord.getStatus())){
+		if(StringUtils.isNotEmpty(qihangRecord.getRefundStatus())&&!PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode().equals(qihangRecord.getRefundStatus())){
 			throw new AugeBusinessException("已经在退款流程中");
 		}
 		//验证crm可退金额是否正确
