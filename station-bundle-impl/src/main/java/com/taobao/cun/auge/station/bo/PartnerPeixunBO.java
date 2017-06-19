@@ -90,4 +90,6 @@ public interface PartnerPeixunBO {
 	 * @param ob
 	 */
 	public void handleRefundFinishSucess(StringMessage strMessage, JSONObject ob);
+	
+	public PartnerPeixunDto queryPeixunRecordById(Long id);
 }

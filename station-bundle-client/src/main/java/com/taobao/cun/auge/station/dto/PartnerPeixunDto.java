@@ -31,10 +31,18 @@ public class PartnerPeixunDto implements Serializable{
 	private String refundStatus;
 	private String refundReason;
 	private String refundStatusDesc;
+	private Long id;
 	
 	
 	
 	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getRefundStatusDesc() {
 		return refundStatusDesc;
 	}

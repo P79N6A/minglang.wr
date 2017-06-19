@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -776,4 +777,19 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 		
     }
+	
+	public PartnerPeixunDto queryPeixunRecordById(Long id){
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdEqualTo(id);
+		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
+		if(records.size()>0){
+			PartnerPeixunDto dto=new PartnerPeixunDto();
+			BeanUtils.copyProperties(records.get(0), dto);
+			return dto;
+		}else{
+			return null;
+		}
+	}
 }

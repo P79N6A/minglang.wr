@@ -134,6 +134,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setRefundStatus(record.getRefundStatus());
 		result.setRefundNo(record.getRefundNo());
 		result.setRefundReason(record.getRefundReason());
+		result.setId(record.getId());
 		if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
 			List<FuwuOrderDto> orders = getCourseOrders(userId, courseCode,
 					null);
@@ -268,5 +269,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return partnerPeixunBO.commitRefund(taobaoUserId,refundReason,operator,applyOrg);
 	}
 
+	public PartnerPeixunDto queryPeixunRecordById(Long id){
+		Assert.notNull(id);
+		return partnerPeixunBO.queryPeixunRecordById(id);
+	}
 
 }

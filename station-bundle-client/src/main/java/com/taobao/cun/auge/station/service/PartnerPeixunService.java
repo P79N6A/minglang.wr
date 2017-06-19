@@ -57,4 +57,6 @@ public interface PartnerPeixunService {
 	 */
 	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg);
 	
+	public PartnerPeixunDto queryPeixunRecordById(Long id);
+	
 }
