@@ -25,5 +25,17 @@ public interface OperationService {
 	 * @throws AugeServiceException
 	 */
 	List<Operation> getOperations(Integer bucUserId,List<String> operationsCode,List<OperationData> operationDatas) throws AugeServiceException;
+	
+	/**
+	 * 获取普通操作列表
+	 * @param empId			工号
+	 * @param roleName		角色名
+	 * @param operationsCodes
+	 * @param operationDatas
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes,
+			List<OperationData> operationDatas) throws AugeServiceException;
 
 }
