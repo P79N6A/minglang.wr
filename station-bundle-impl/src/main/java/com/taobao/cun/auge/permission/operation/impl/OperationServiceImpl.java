@@ -84,6 +84,18 @@ public class OperationServiceImpl implements OperationService {
 	}
 	
 	@Override
+	public Map<String,List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
+		try {
+			List<Operation> operations = getOperations(operationsCodes);
+			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
+			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
+		} catch (BucException e) {
+			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
+			throw new  AugeServiceException(e);
+		}
+	}
+	
+	@Override
 	public Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCodes,List<PagedOperationData> operationDatas){
 		try {
 			List<Operation> operations = getOperations(operationsCodes);

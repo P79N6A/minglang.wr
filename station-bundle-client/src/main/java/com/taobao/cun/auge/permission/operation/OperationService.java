@@ -38,4 +38,15 @@ public interface OperationService {
 	List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes,
 			List<OperationData> operationDatas) throws AugeServiceException;
 
+	/**
+	 * 获取分页列表上的操作列表
+	 * @param bucUserId 
+	 * @param operationsCode
+	 * @param operationDatas
+	 * @return
+	 * @throws AugeServiceException
+	 */
+	Map<String, List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,
+			List<PagedOperationData> operationDatas);
+
 }
