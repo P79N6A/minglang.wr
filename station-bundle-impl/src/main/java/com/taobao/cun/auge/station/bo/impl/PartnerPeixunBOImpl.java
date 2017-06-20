@@ -118,6 +118,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
 	
+	@Value("${invoice.client.id}")
+	private String invoiceClientId;
+	
+	@Value("${invoice.client.key}")
+	private String invoiceClientKey;
+	
 	public static String FLOW_BUSINESS_CODE="peixun_refund";
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -671,15 +677,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	private void validateVoince(PartnerCourseRecord qihangRecord) {
 		QueryInvoiceByBillReqDto reqDto = new QueryInvoiceByBillReqDto();
-		reqDto.setRelatedSystem("cuntao");
-		reqDto.setAppCode("cuntao");
+		reqDto.setRelatedSystem(invoiceClientId);
+		reqDto.setAppCode(invoiceClientId);
 		reqDto.setBillNo(qihangRecord.getOrderNum());
-		reqDto.signAndEncrypt("1234567890");
+		reqDto.signAndEncrypt(invoiceClientKey);
 		try {
 			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
 					.queryEffectiveInvoiceListByBillNos(reqDto);
 			if (finResult.isSuccess()) {
-				finResult.getReturnValue().decryptAndVerifySign("1234567890");
+				finResult.getReturnValue().decryptAndVerifySign(invoiceClientKey);
 				ListWrapperDto<OrderItemInvoiceStatusDto> invs = finResult
 						.getReturnValue();
 				for (OrderItemInvoiceStatusDto inv : invs.getList()) {

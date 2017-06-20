@@ -32,11 +32,18 @@ public class PartnerPeixunDto implements Serializable{
 	private String refundReason;
 	private String refundStatusDesc;
 	private Long id;
+	private String refundUrl;
 	
 	
 	
 	
 	
+	public String getRefundUrl() {
+		return refundUrl;
+	}
+	public void setRefundUrl(String refundUrl) {
+		this.refundUrl = refundUrl;
+	}
 	public Long getId() {
 		return id;
 	}
