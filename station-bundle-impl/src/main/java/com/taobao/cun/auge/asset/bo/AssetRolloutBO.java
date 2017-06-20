@@ -83,4 +83,6 @@ public interface AssetRolloutBO {
 	public Long  distributeAsset(AssetDistributeDto distributeDto,List<Asset> assetList);
 
 	public Long scrapAsset(AssetScrapDto scrapDto);
+	
+	public List<AssetRollout> getDistributeAsset(Long stationId,Long taobaoUserId);
 }

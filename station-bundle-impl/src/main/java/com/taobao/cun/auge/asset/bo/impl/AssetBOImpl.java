@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
@@ -56,6 +57,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
+import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
@@ -115,6 +117,9 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	private AssetRolloutBO assetRolloutBO;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1043,13 +1048,7 @@ public class AssetBOImpl implements AssetBO {
 	public void setAssetRecycleIsY(Long stationId, Long taobaoUserId) {
 		Objects.requireNonNull(stationId, "村点id不能为空");
 		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
-		AssetExample assetExample = new AssetExample();
-		List<String> sList = new ArrayList<String>();
-		sList.add(AssetStatusEnum.SCRAPING.getCode());
-		sList.add(AssetStatusEnum.SCRAP.getCode());
- 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
- 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
- 		.andStatusNotIn(sList);
+		AssetExample assetExample = bulidStationAssetParam(stationId,taobaoUserId);
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
 		asset.setRecycle(RecycleStatusEnum.Y.getCode());
@@ -1061,6 +1060,14 @@ public class AssetBOImpl implements AssetBO {
 	public void cancelAssetRecycleIsY(Long stationId, Long taobaoUserId) {
 		Objects.requireNonNull(stationId, "村点id不能为空");
 		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = bulidStationAssetParam(stationId,taobaoUserId);
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		asset.setRecycle(RecycleStatusEnum.N.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		
+	}
+	private  AssetExample bulidStationAssetParam(Long stationId, Long taobaoUserId){
 		AssetExample assetExample = new AssetExample();
 		List<String> sList = new ArrayList<String>();
 		sList.add(AssetStatusEnum.SCRAPING.getCode());
@@ -1068,16 +1075,21 @@ public class AssetBOImpl implements AssetBO {
  		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
  		.andUserIdEqualTo(String.valueOf(taobaoUserId))
  		.andStatusNotIn(sList);
-		Asset asset = new Asset();
-		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
-		asset.setRecycle(RecycleStatusEnum.N.getCode());
-		assetMapper.updateByExampleSelective(asset, assetExample);
-		
+ 		return assetExample;
 	}
 
 	@Override
-	public String validateAssetForQuiting(Long stationId, Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+	public void validateAssetForQuiting(Long stationId, Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "村点id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = bulidStationAssetParam(stationId,taobaoUserId);
+		int count = assetMapper.countByExample(assetExample);
+		if (count>0) {
+			throw new AugeBusinessException("退出失败，有资产未回收，请用小二APP回收资产。");
+		}
+		List<AssetRollout> arList = assetRolloutBO.getDistributeAsset(stationId, taobaoUserId);
+		if(CollectionUtils.isNotEmpty(arList)){
+			throw new AugeBusinessException("退出失败，有资产待村小二签收，请先回收资产。");
+		}
 	}
 }

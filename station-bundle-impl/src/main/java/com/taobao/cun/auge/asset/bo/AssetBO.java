@@ -125,5 +125,5 @@ public interface AssetBO {
     
     public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
     
-    public String validateAssetForQuiting(Long stationId,Long taobaoUserId);
+    public void validateAssetForQuiting(Long stationId,Long taobaoUserId);
 }

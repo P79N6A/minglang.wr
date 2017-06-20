@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
-
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -430,6 +430,21 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		});
 		return rolloutId;
+	}
+
+	@Override
+	public List<AssetRollout> getDistributeAsset(Long stationId,
+			Long taobaoUserId) {
+		ValidateUtils.notNull(stationId);
+		ValidateUtils.notNull(taobaoUserId);
+		AssetRolloutExample example = new AssetRolloutExample();
+		Criteria criteria = example.createCriteria();
+        List<String> doList = new ArrayList<String>();
+        doList.add(AssetRolloutStatusEnum.WAIT_ROLLOUT.getCode());
+        doList.add(AssetRolloutStatusEnum.ROLLOUT_ING.getCode());
+		criteria.andIsDeletedEqualTo("n").andReceiverAreaIdEqualTo(stationId).andReceiverIdEqualTo(String.valueOf(taobaoUserId)).andStatusIn(doList)
+	  .andReceiverAreaTypeEqualTo(AssetRolloutReceiverAreaTypeEnum.STATION.getCode()).andTypeEqualTo(AssetRolloutTypeEnum.DISTRIBUTION.getCode());
+		return assetRolloutMapper.selectByExample(example);
 	}
 
 }
