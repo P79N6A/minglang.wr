@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunRefundStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -132,6 +133,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
 		result.setRefundStatus(record.getRefundStatus());
+		result.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(record.getRefundStatus()).getDesc());
 		result.setRefundNo(record.getRefundNo());
 		result.setRefundReason(record.getRefundReason());
 		result.setId(record.getId());
