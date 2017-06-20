@@ -92,4 +92,6 @@ public interface PartnerPeixunBO {
 	public void handleRefundFinishSucess(StringMessage strMessage, JSONObject ob);
 	
 	public PartnerPeixunDto queryPeixunRecordById(Long id);
+	
+	public void validateQuitable(Long taobaoUserId);
 }

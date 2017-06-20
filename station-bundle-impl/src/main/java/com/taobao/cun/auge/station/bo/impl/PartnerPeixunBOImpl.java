@@ -798,4 +798,29 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			return null;
 		}
 	}
+	
+	public void validateQuitable(Long taobaoUserId){
+		String applyCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
+				"APPLY_IN");
+		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
+				"UPGRADE");
+		PartnerCourseRecord qihangRecord= queryOfflinePeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.APPLY_IN, applyCode);
+		PartnerCourseRecord chengzhangRecord= queryOfflinePeixunRecord(taobaoUserId,
+				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
+		if(PartnerPeixunStatusEnum.NEW.getCode().equals(qihangRecord.getStatus())){
+			//未付款允许退款
+			return;
+		}else if(PartnerPeixunStatusEnum.DONE.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.DONE.getCode().equals(chengzhangRecord.getStatus())){
+			//有一门课签到，允许退款
+			return;
+		}else if(PartnerPeixunStatusEnum.PAY.getCode().equals(qihangRecord.getStatus())){
+			//未签到 不允许退款
+			throw new AugeBusinessException("请先申请培训课程退款");
+		}else if(PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())){
+			//退款流程中，不允许退款
+			throw new AugeBusinessException("申请失败：培训课程退款审批中");
+		}
+		
+	}
 }
