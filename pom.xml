@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.3.7-SNAPSHOT</ague.station.client.version>
+		<ague.station.client.version>2.3.7</ague.station.client.version>
 	</properties>
 
 	<dependencyManagement>
