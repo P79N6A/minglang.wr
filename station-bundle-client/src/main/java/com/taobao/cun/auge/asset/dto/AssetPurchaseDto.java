@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
 
@@ -12,39 +13,25 @@ import com.taobao.cun.auge.common.OperatorDto;
 public class AssetPurchaseDto extends OperatorDto implements Serializable {
 
 	private static final long serialVersionUID = 7100435184292730173L;
-
-    private String aliNo;
-    
-    private String serialNo;
-    
+	
     private String poNo;
-
-    private String brand;
-
-    private String model;
-
-    private String category;
     
     private Long  ownerOrgId;
+    
+    private String ownerOrgName;
     
     private String ownerName;
     
     private String ownerWorkno;
+    
+    private List<AssetPurchaseDetailDto> detailDto;
 
-	public String getAliNo() {
-		return aliNo;
+	public List<AssetPurchaseDetailDto> getDetailDto() {
+		return detailDto;
 	}
 
-	public void setAliNo(String aliNo) {
-		this.aliNo = aliNo;
-	}
-
-	public String getSerialNo() {
-		return serialNo;
-	}
-
-	public void setSerialNo(String serialNo) {
-		this.serialNo = serialNo;
+	public void setDetailDto(List<AssetPurchaseDetailDto> detailDto) {
+		this.detailDto = detailDto;
 	}
 
 	public String getPoNo() {
@@ -55,36 +42,20 @@ public class AssetPurchaseDto extends OperatorDto implements Serializable {
 		this.poNo = poNo;
 	}
 
-	public String getBrand() {
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	public String getModel() {
-		return model;
-	}
-
-	public void setModel(String model) {
-		this.model = model;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
 	public Long getOwnerOrgId() {
 		return ownerOrgId;
 	}
 
 	public void setOwnerOrgId(Long ownerOrgId) {
 		this.ownerOrgId = ownerOrgId;
+	}
+
+	public String getOwnerOrgName() {
+		return ownerOrgName;
+	}
+
+	public void setOwnerOrgName(String ownerOrgName) {
+		this.ownerOrgName = ownerOrgName;
 	}
 
 	public String getOwnerName() {

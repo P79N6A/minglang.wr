@@ -11,6 +11,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
@@ -126,4 +127,10 @@ public interface AssetBO {
     public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
     
     public void validateAssetForQuiting(Long stationId,Long taobaoUserId);
+    /**
+     * 资产采购
+     * @param assetPurchaseDto
+     * @return
+     */
+    public Long  purchase(AssetPurchaseDto pList);
 }

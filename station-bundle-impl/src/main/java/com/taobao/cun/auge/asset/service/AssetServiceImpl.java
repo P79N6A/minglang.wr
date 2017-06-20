@@ -241,7 +241,7 @@ public class AssetServiceImpl implements AssetService{
 
 	@Override
 	public Long purchase(AssetPurchaseDto assetPurchaseDto) {
-		// TODO Auto-generated method stub
-		return null;
+		return assetBO.purchase(assetPurchaseDto);
+		
 	}
 }

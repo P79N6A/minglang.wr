@@ -24,7 +24,9 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
+import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
@@ -33,7 +35,11 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
+import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
+import com.taobao.cun.auge.asset.dto.AssetPurchaseDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
@@ -41,6 +47,12 @@ import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -120,6 +132,12 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private AssetRolloutBO assetRolloutBO;
+	
+	@Autowired
+	private AssetIncomeBO assetIncomeBO;
+	
+	@Autowired
+	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1091,5 +1109,68 @@ public class AssetBOImpl implements AssetBO {
 		if(CollectionUtils.isNotEmpty(arList)){
 			throw new AugeBusinessException("退出失败，有资产待村小二签收，请先回收资产。");
 		}
+	}
+	
+
+	@Override
+	public Long purchase(AssetPurchaseDto purDto) {
+		Objects.requireNonNull(purDto, "采购数据不能为空");
+		Objects.requireNonNull(purDto.getDetailDto(), "采购详情数据不能为空");
+		
+		//创建入库单
+		AssetIncomeDto icDto = new AssetIncomeDto();
+		icDto.setApplierAreaId(0L);
+		icDto.setApplierAreaName("采购系统");
+		icDto.setApplierAreaType(AssetIncomeApplierAreaTypeEnum.CAIGOU);
+		icDto.setApplierId(purDto.getOperator());
+		icDto.setApplierName(emp360Adapter.getName(purDto.getOperator()));
+		icDto.setReceiverName(purDto.getOwnerName());
+		icDto.setReceiverOrgId(purDto.getOwnerOrgId());
+		icDto.setReceiverOrgName(purDto.getOwnerOrgName());
+		icDto.setReceiverWorkno(purDto.getOwnerWorkno());
+		icDto.setRemark("采购");
+		icDto.setStatus(AssetIncomeStatusEnum.TODO);
+		icDto.setType(AssetIncomeTypeEnum.PURCHASE);
+		icDto.setSignType(AssetIncomeSignTypeEnum.SCAN);
+		icDto.setPoNo(purDto.getPoNo());
+		icDto.copyOperatorDto(purDto);
+		Long incomeId = assetIncomeBO.addIncome(icDto);
+		
+		for (AssetPurchaseDetailDto pDto : purDto.getDetailDto()) {
+			Asset a = bulidPurAsset(purDto,pDto);
+			DomainUtils.beforeInsert(a,purDto.getOperator());
+			assetMapper.insert(a);
+			Long assetId= a.getId();
+			
+			AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+			detail.setAssetId(assetId);
+			detail.setCategory(a.getCategory());
+			detail.setIncomeId(incomeId);
+			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+			detail.setType(AssetRolloutIncomeDetailTypeEnum.PURCHASE);
+			detail.copyOperatorDto(purDto);
+			assetRolloutIncomeDetailBO.addDetail(detail);
+		}
+		
+		return incomeId;
+	}
+	
+	private Asset bulidPurAsset(AssetPurchaseDto purDto,AssetPurchaseDetailDto pdDto){
+		Asset a = new Asset();
+		a.setAliNo(pdDto.getAliNo());
+		a.setBrand(pdDto.getBrand());
+		a.setCategory(pdDto.getCategory());
+		a.setModel(pdDto.getModel());
+		a.setOwnerName(purDto.getOwnerName());
+		a.setOwnerOrgId(purDto.getOwnerOrgId());
+		a.setOwnerWorkno(purDto.getOwnerWorkno());
+		a.setPoNo(purDto.getPoNo());
+		a.setSerialNo(pdDto.getSerialNo());
+		a.setStatus(AssetStatusEnum.SIGN.getCode());
+		a.setUseAreaId(purDto.getOwnerOrgId());
+		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+		a.setUserId(purDto.getOwnerWorkno());
+		a.setUserName(purDto.getOwnerName());
+		return a;
 	}
 }
