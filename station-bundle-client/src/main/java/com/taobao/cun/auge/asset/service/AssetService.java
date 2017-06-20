@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -69,4 +70,10 @@ public interface AssetService {
 	     * @param operator
 	     */
 	    public Boolean checkingAsset(Long assetId,String operator);
+	    /**
+	     * 采购资产
+	     * @param assetPurchaseDto
+	     * @return
+	     */
+	    public Long purchase(AssetPurchaseDto assetPurchaseDto);
 }

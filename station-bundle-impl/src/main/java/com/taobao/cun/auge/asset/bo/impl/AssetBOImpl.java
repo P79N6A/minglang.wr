@@ -47,6 +47,7 @@ import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -688,8 +689,44 @@ public class AssetBOImpl implements AssetBO {
 		updateAsset.setUserId(signDto.getOperator());
 		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
 		updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
+		updateAsset.setRecycle(RecycleStatusEnum.N.getCode());
 		assetMapper.updateByPrimaryKeySelective(updateAsset);
 		return buildAssetDetail(updateAsset);
+	}
+	
+	@Override
+	public void setAssetRecycleIsY(Long stationId,Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "村点id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = new AssetExample();
+		List<String> sList = new ArrayList<String>();
+		sList.add(AssetStatusEnum.SCRAPING.getCode());
+		sList.add(AssetStatusEnum.SCRAP.getCode());
+ 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+ 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
+ 		.andStatusNotIn(sList);
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		asset.setRecycle(RecycleStatusEnum.Y.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+	
+	@Override
+	public void cancelAssetRecycleIsY(Long stationId, Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "村点id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = new AssetExample();
+		List<String> sList = new ArrayList<String>();
+		sList.add(AssetStatusEnum.SCRAPING.getCode());
+		sList.add(AssetStatusEnum.SCRAP.getCode());
+ 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+ 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
+ 		.andStatusNotIn(sList);
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		asset.setRecycle(RecycleStatusEnum.N.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		
 	}
 
 	@Override
@@ -907,12 +944,6 @@ public class AssetBOImpl implements AssetBO {
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
-	private String buildErrorMessage(String str, Asset asset) {
-		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
-		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
-		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
-	}
-
 	@Override
 	public Asset getAssetById(Long assetId) {
 		Objects.requireNonNull(assetId, "资产id不能为空");
@@ -1027,4 +1058,11 @@ public class AssetBOImpl implements AssetBO {
 		PageHelper.startPage(pageNum, pageSize);
 		return (Page<Asset>)assetMapper.selectByExample(assetExample);
 	}
+
+	@Override
+	public String validateAssetForQuiting(Long stationId,Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -85,6 +85,10 @@ public interface AssetBO {
     public Boolean signAssetByStation(AssetDto signDto);
 
     public AssetDetailDto recycleAsset(AssetDto signDto);
+    
+    public void setAssetRecycleIsY(Long stationId,Long taobaoUserId);
+    
+    public void cancelAssetRecycleIsY(Long stationId,Long taobaoUserId);
 
     public PageDto<AssetDetailDto> getTransferAssetList(AssetOperatorDto operator);
 
@@ -117,4 +121,6 @@ public interface AssetBO {
     public Boolean checkingAsset(Long assetId,String operator);
     
     public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
+    
+    public String validateAssetForQuiting(Long stationId,Long taobaoUserId);
 }

@@ -16,6 +16,7 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
+import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
@@ -236,5 +237,11 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean checkingAsset(Long assetId, String operator) {
 		return assetBO.checkingAsset(assetId, operator);
 		
+	}
+
+	@Override
+	public Long purchase(AssetPurchaseDto assetPurchaseDto) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
