@@ -603,7 +603,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanCountySignStatusList());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
@@ -676,57 +676,20 @@ public class AssetBOImpl implements AssetBO {
 			RecycleStatusEnum.Y.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
 		}
-		Asset updateAsset = new Asset();
-		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
-		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
-		updateAsset.setId(asset.getId());
-		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		updateAsset.setUserId(signDto.getOperator());
-		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
-		updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
-		updateAsset.setRecycle(RecycleStatusEnum.N.getCode());
-		assetMapper.updateByPrimaryKeySelective(updateAsset);
-		return buildAssetDetail(updateAsset);
-	}
-	
-	@Override
-	public void setAssetRecycleIsY(Long stationId,Long taobaoUserId) {
-		Objects.requireNonNull(stationId, "村点id不能为空");
-		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
-		AssetExample assetExample = new AssetExample();
-		List<String> sList = new ArrayList<String>();
-		sList.add(AssetStatusEnum.SCRAPING.getCode());
-		sList.add(AssetStatusEnum.SCRAP.getCode());
- 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
- 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
- 		.andStatusNotIn(sList);
-		Asset asset = new Asset();
-		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
-		asset.setRecycle(RecycleStatusEnum.Y.getCode());
-		assetMapper.updateByExampleSelective(asset, assetExample);
-	}
-	
-	@Override
-	public void cancelAssetRecycleIsY(Long stationId, Long taobaoUserId) {
-		Objects.requireNonNull(stationId, "村点id不能为空");
-		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
-		AssetExample assetExample = new AssetExample();
-		List<String> sList = new ArrayList<String>();
-		sList.add(AssetStatusEnum.SCRAPING.getCode());
-		sList.add(AssetStatusEnum.SCRAP.getCode());
- 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
- 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
- 		.andStatusNotIn(sList);
-		Asset asset = new Asset();
-		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		DomainUtils.beforeUpdate(asset, signDto.getOperator());
+		asset.setStatus(AssetStatusEnum.USE.getCode());
+		asset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+		asset.setUserId(signDto.getOperator());
+		asset.setUseAreaId(signDto.getOperatorOrgId());
+		asset.setUserName(emp360Adapter.getName(signDto.getOperator()));
 		asset.setRecycle(RecycleStatusEnum.N.getCode());
-		assetMapper.updateByExampleSelective(asset, assetExample);
-		
+		assetMapper.updateByPrimaryKeySelective(asset);
+		return buildAssetDetail(asset);
 	}
 
 	@Override
@@ -801,15 +764,8 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(transferDto.getTransferAssetIdList())
 			.andStatusEqualTo(AssetStatusEnum.PEND.getCode());
-		String name = emp360Adapter.getName(transferDto.getReceiverWorkNo());
 		Asset asset = new Asset();
-		asset.setStatus(AssetStatusEnum.USE.getCode());
-		asset.setOwnerWorkno(transferDto.getReceiverWorkNo());
-		asset.setOwnerOrgId(transferDto.getReceiverAreaId());
-		asset.setOwnerName(name);
-		asset.setUserName(name);
-		asset.setUseAreaId(transferDto.getReceiverAreaId());
-		asset.setUserId(transferDto.getReceiverWorkNo());
+		asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
@@ -945,6 +901,30 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
+	public void scrapAssetSuccess(AssetScrapDto scrapDto) {
+		Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
+			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+		}
+		if (!assetList.stream().allMatch(asset -> scrapDto.getOperator().equals(asset.getOwnerWorkno()))) {
+			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+		}
+		Asset asset = new Asset();
+		asset.setStatus(AssetStatusEnum.SCRAP.getCode());
+		DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+	}
+
+	private String buildErrorMessage(String str, Asset asset) {
+		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
+		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
+		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
+	}
+
+	@Override
 	public Asset getAssetById(Long assetId) {
 		Objects.requireNonNull(assetId, "资产id不能为空");
 		return assetMapper.selectByPrimaryKey(assetId);
@@ -952,7 +932,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void cancelAsset(List<Long> assetIds,String operator) {
+	public void cancelTransferAsset(List<Long> assetIds, String operator) {
 		Objects.requireNonNull(assetIds, "资产列表不能为空");
 		Objects.requireNonNull(operator, "操作人不能为空");
 		Asset asset = new Asset();
@@ -1060,9 +1040,44 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public String validateAssetForQuiting(Long stationId,Long taobaoUserId) {
+	public void setAssetRecycleIsY(Long stationId, Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "村点id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = new AssetExample();
+		List<String> sList = new ArrayList<String>();
+		sList.add(AssetStatusEnum.SCRAPING.getCode());
+		sList.add(AssetStatusEnum.SCRAP.getCode());
+ 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+ 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
+ 		.andStatusNotIn(sList);
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		asset.setRecycle(RecycleStatusEnum.Y.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		
+	}
+
+	@Override
+	public void cancelAssetRecycleIsY(Long stationId, Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "村点id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		AssetExample assetExample = new AssetExample();
+		List<String> sList = new ArrayList<String>();
+		sList.add(AssetStatusEnum.SCRAPING.getCode());
+		sList.add(AssetStatusEnum.SCRAP.getCode());
+ 		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+ 		.andUserIdEqualTo(String.valueOf(taobaoUserId))
+ 		.andStatusNotIn(sList);
+		Asset asset = new Asset();
+		DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
+		asset.setRecycle(RecycleStatusEnum.N.getCode());
+		assetMapper.updateByExampleSelective(asset, assetExample);
+		
+	}
+
+	@Override
+	public String validateAssetForQuiting(Long stationId, Long taobaoUserId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

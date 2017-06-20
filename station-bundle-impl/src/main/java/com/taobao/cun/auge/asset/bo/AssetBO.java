@@ -104,7 +104,7 @@ public interface AssetBO {
 
     public  Asset getAssetById(Long assetId);
     
-    public  void cancelAsset(List<Long> assetIds,String operator);
+    public  void cancelTransferAsset(List<Long> assetIds, String operator);
     
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto);
     
@@ -115,6 +115,9 @@ public interface AssetBO {
     public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
 
     public void scrapAsset(AssetScrapDto scrapDto);
+
+    //资产赔付成功
+    public void scrapAssetSuccess(AssetScrapDto scrapDto);
 
     public Boolean checkAsset(AssetCheckDto checkDto);
     
