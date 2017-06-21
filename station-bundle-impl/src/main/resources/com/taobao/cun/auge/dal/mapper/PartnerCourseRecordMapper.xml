@@ -483,6 +483,7 @@
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
+   and c.is_current='y'
    and d.apply_org=e.id
    and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
     <if test="nickName != null and nickName != ''"  >
@@ -533,6 +534,7 @@
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
+   and c.is_current='y'
    and d.apply_org=e.id
    and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
    and b.course_type=#{courseType}
@@ -558,6 +560,7 @@
    and a.id=c.partner_id
    and c.station_id=d.id
    and d.apply_org=e.id
+   and c.is_current='y'
    and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
    and b.course_type=#{courseType}
    <if test="nickName != null and nickName != ''"  >
