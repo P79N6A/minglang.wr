@@ -793,6 +793,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		if(records.size()>0){
 			PartnerPeixunDto dto=new PartnerPeixunDto();
 			BeanUtils.copyProperties(records.get(0), dto);
+			dto.setUserId(records.get(0).getPartnerUserId());
 			return dto;
 		}else{
 			return null;
