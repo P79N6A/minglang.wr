@@ -1171,6 +1171,7 @@ public class AssetBOImpl implements AssetBO {
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
 		a.setUserId(purDto.getOwnerWorkno());
 		a.setUserName(purDto.getOwnerName());
+		a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
 		return a;
 	}
 }

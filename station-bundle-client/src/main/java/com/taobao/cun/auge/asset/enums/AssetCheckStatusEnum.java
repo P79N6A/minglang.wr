@@ -20,11 +20,13 @@ public class AssetCheckStatusEnum implements Serializable{
     private String code;
     private String desc;
     
+    public static final AssetCheckStatusEnum UNCHECKED  = new AssetCheckStatusEnum("UNCHECKED", "未启动");
     public static final AssetCheckStatusEnum CHECKING  = new AssetCheckStatusEnum("CHECKING", "待盘点");
     public static final AssetCheckStatusEnum CHECKED = new AssetCheckStatusEnum("CHECKED", "已盘点");
 
 
     static {
+    	mappings.put("UNCHECKED", UNCHECKED);
     	mappings.put("CHECKING", CHECKING);
         mappings.put("CHECKED", CHECKED);
     }
