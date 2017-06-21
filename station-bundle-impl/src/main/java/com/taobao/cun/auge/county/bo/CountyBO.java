@@ -21,6 +21,8 @@ public interface CountyBO {
 
 	public CountyDto getCountyStationByOrgId(Long id);
 	
+	public List<CountyDto> getCountyStationByOrgIds(List<Long> ids);
+	
 	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition);
 	
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
