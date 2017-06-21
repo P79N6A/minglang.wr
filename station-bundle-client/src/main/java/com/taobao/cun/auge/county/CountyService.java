@@ -68,8 +68,12 @@ public interface CountyService {
 	 */
 	public CountyDto getCountyStationByOrgId(Long id);
 	
-	
-	public List<Long> getCountyIdsByOrgId(List<Long> orgIds);
+	/**
+	 * 根据组织id，查询行政地址county code
+	 * @param orgIds
+	 * @return
+	 */
+	public List<Long> getCountiesByOrgId(List<Long> orgIds);
 	
 	/**
 	 * 查询大区下的县运营中心列表
