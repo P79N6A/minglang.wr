@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.alibaba.crm.pacific.facade.dto.operator.Operator;
+import com.alibaba.crm.pacific.facade.dto.refund.RefundForItemNotifyMsgDto;
 import com.alibaba.crm.pacific.facade.dto.refund.RefundMethodEnum;
 import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyAddParam;
 import com.alibaba.crm.pacific.facade.parameter.refund.add.BaseRefundApplyOrderItemList;
@@ -753,9 +754,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}
 			String code = appResourceService.queryAppResourceValue(
 					"PARTNER_PEIXUN_CODE", "APPLY_IN");
-			String refundNo = objMessage.getStringProperty("applyNo");
-			String productCode = objMessage.getStringProperty("productCode");
-			String refundStatus = objMessage.getStringProperty("refundStatus");
+			RefundForItemNotifyMsgDto dto=(RefundForItemNotifyMsgDto)objMessage.getObject();
+			String refundNo = dto.getApplyNo();
+			String productCode =dto.getProductCode();
+			String refundStatus = dto.getRefundStatus();
 			if (!"finish".equals(refundStatus)) {
 				// 非退款完成状态，不处理
 				return;
@@ -774,12 +776,12 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				logger.error("not find peixunRecord refundNo:" + refundNo);
 			}
 			for (PartnerCourseRecord record : records) {
-				if (!PartnerPeixunStatusEnum.PAY.getCode().equals(
+				if (!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(
 						record.getStatus())) {
 					throw new AugeBusinessException("培训订单状态不正确，无法处理退款成功消息");
 				}
 				if (!PartnerPeixunRefundStatusEnum.REFOUNDING.getCode().equals(
-						record.getStatus())) {
+						record.getRefundStatus())) {
 					throw new AugeBusinessException("退款状态不正确，无法处理退款成功消息");
 				}
 				record.setGmtModified(new Date());
