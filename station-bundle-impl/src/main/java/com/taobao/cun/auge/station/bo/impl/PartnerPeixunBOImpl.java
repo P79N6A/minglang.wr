@@ -74,6 +74,7 @@ import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
+import com.taobao.notify.message.ObjectMessage;
 import com.taobao.notify.message.StringMessage;
 @Component("partnerPeixunBO")
 public class PartnerPeixunBOImpl implements PartnerPeixunBO{
@@ -742,44 +743,53 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     }
     
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void handleRefundFinishSucess(StringMessage strMessage, JSONObject ob){
-    	String messageType=strMessage.getMessageType();
-		if(!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE.equals(messageType)){
-			//不需要处理的消息类型
-            return;
-		}
-		String code=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-				"APPLY_IN");
-		String refundNo=ob.getString("applyNo");
-		String productCode=ob.getString("productCode");
-		String refundStatus=ob.getString("refundStatus");
-        if(!"finish".equals(refundStatus)){
-        	//非退款完成状态，不处理
-        	return;
-        }
-        if(!code.equals(productCode)){
-        	//非村淘订单 不处理
-        	return;
-        }
-        PartnerCourseRecordExample example = new PartnerCourseRecordExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andRefundNoEqualTo(refundNo);
-		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
-		if(records.size()==0){
-			logger.error("not find peixunRecord refundNo:"+refundNo);
-		}
-		for(PartnerCourseRecord record:records){
-			if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
-    			throw new AugeBusinessException("培训订单状态不正确，无法处理退款成功消息");
+    public void handleRefundFinishSucess(ObjectMessage objMessage){
+		try {
+			String messageType = objMessage.getMessageType();
+			if (!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE
+					.equals(messageType)) {
+				// 不需要处理的消息类型
+				return;
 			}
-			if(!PartnerPeixunRefundStatusEnum.REFOUNDING.getCode().equals(record.getStatus())){
-    			throw new AugeBusinessException("退款状态不正确，无法处理退款成功消息");
+			String code = appResourceService.queryAppResourceValue(
+					"PARTNER_PEIXUN_CODE", "APPLY_IN");
+			String refundNo = objMessage.getStringProperty("applyNo");
+			String productCode = objMessage.getStringProperty("productCode");
+			String refundStatus = objMessage.getStringProperty("refundStatus");
+			if (!"finish".equals(refundStatus)) {
+				// 非退款完成状态，不处理
+				return;
 			}
-			record.setGmtModified(new Date());
-			record.setStatus(PartnerPeixunStatusEnum.REFUND.getCode());
-			record.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOUND_DONE.getCode());
-			partnerCourseRecordMapper.updateByPrimaryKey(record);
+			if (!code.equals(productCode)) {
+				// 非村淘订单 不处理
+				return;
+			}
+			PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andIsDeletedEqualTo("n");
+			criteria.andRefundNoEqualTo(refundNo);
+			List<PartnerCourseRecord> records = partnerCourseRecordMapper
+					.selectByExample(example);
+			if (records.size() == 0) {
+				logger.error("not find peixunRecord refundNo:" + refundNo);
+			}
+			for (PartnerCourseRecord record : records) {
+				if (!PartnerPeixunStatusEnum.PAY.getCode().equals(
+						record.getStatus())) {
+					throw new AugeBusinessException("培训订单状态不正确，无法处理退款成功消息");
+				}
+				if (!PartnerPeixunRefundStatusEnum.REFOUNDING.getCode().equals(
+						record.getStatus())) {
+					throw new AugeBusinessException("退款状态不正确，无法处理退款成功消息");
+				}
+				record.setGmtModified(new Date());
+				record.setStatus(PartnerPeixunStatusEnum.REFUND.getCode());
+				record.setRefundStatus(PartnerPeixunRefundStatusEnum.REFOUND_DONE
+						.getCode());
+				partnerCourseRecordMapper.updateByPrimaryKey(record);
+			}
+		} catch (Exception e) {
+			logger.error("handleRefundFinishSucess error:", e);
 		}
 		
     }

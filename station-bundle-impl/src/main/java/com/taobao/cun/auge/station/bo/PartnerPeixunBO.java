@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.notify.message.ObjectMessage;
 import com.taobao.notify.message.StringMessage;
 
 /**
@@ -89,7 +90,7 @@ public interface PartnerPeixunBO {
 	 * @param strMessage
 	 * @param ob
 	 */
-	public void handleRefundFinishSucess(StringMessage strMessage, JSONObject ob);
+	public void handleRefundFinishSucess(ObjectMessage objMessage);
 	
 	public PartnerPeixunDto queryPeixunRecordById(Long id);
 	
