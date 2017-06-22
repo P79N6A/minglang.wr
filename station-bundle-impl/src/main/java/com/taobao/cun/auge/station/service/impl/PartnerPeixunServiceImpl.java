@@ -133,7 +133,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
 		result.setRefundStatus(record.getRefundStatus());
-		result.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(record.getRefundStatus()).getDesc());
+		if(StringUtils.isNotEmpty(record.getRefundStatus())){
+		 result.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(record.getRefundStatus()).getDesc());
+		}
 		result.setRefundNo(record.getRefundNo());
 		result.setRefundReason(record.getRefundReason());
 		result.setId(record.getId());
