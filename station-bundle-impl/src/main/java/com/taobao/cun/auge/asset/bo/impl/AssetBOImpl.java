@@ -873,6 +873,9 @@ public class AssetBOImpl implements AssetBO {
 		detailDto.setOwner(asset.getOwnerName());
 		detailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 		detailDto.setId(asset.getId());
+		detailDto.setCheckStatus(AssetCheckStatusEnum.valueof(asset.getCheckStatus()));
+		detailDto.setAreaType(AssetUseAreaTypeEnum.valueOf(asset.getUseAreaType()));
+		
 		return detailDto;
 	}
 

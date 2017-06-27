@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 
@@ -68,7 +69,7 @@ public class AssetDetailDto implements Serializable{
     /**
      * 盘点状态
      */
-    private String checkStatus;
+    private AssetCheckStatusEnum checkStatus;
     /**
      *  回收标示
      */
@@ -207,15 +208,16 @@ public class AssetDetailDto implements Serializable{
         this.status = status;
     }
 
-    public String getCheckStatus() {
-        return checkStatus;
-    }
+    
+    public AssetCheckStatusEnum getCheckStatus() {
+		return checkStatus;
+	}
 
-    public void setCheckStatus(String checkStatus) {
-        this.checkStatus = checkStatus;
-    }
+	public void setCheckStatus(AssetCheckStatusEnum checkStatus) {
+		this.checkStatus = checkStatus;
+	}
 
-    public String getRecycle() {
+	public String getRecycle() {
         return recycle;
     }
 
