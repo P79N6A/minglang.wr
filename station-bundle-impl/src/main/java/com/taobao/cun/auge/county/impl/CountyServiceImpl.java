@@ -223,7 +223,7 @@ public class CountyServiceImpl implements CountyService{
 			county.setLng(PositionUtil.converUp(lng));
 			countyStation.setLat(PositionUtil.converUp(lat));
 			countyStation.setLng(PositionUtil.converUp(lng));
-			countyStationMapper.updateByPrimaryKey(county);
+			countyStationMapper.updateByPrimaryKeySelective(county);
 		}
 	}
 	
