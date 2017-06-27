@@ -205,7 +205,7 @@ public class CountyServiceImpl implements CountyService{
 	private void fixPOI(CountyStation countyStation) {
 		if(StringUtils.isEmpty(countyStation.getLat())||StringUtils.isEmpty(countyStation.getLng())){
 			String lastDivisionId = "";
-			if (StringUtils.isNotBlank(countyStation.getTown())&& "0".equals(countyStation.getTown())) {
+			if (StringUtils.isNotBlank(countyStation.getTown())&& !"0".equals(countyStation.getTown())) {
 				lastDivisionId = countyStation.getTown();
 			} else if (StringUtils.isNotBlank(countyStation.getCounty())) {
 				lastDivisionId = countyStation.getCounty();
