@@ -38,6 +38,7 @@ import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
 import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
+import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
@@ -627,5 +628,36 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
 
 		logisticsStationApplyMapper.updateByExampleSelective(record, example);
+	}
+
+	/** 停业通知菜鸟 */
+	public void closeCainiaoStation(SyncModifyCainiaoStationDto syncModifyCainiaoStationDto)
+			throws AugeServiceException {
+		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyCainiaoStationDto.getPartnerInstanceId());
+		Long stationId = instanceDto.getStationId();
+		// 查询菜鸟物流站关系表
+		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+				CuntaoCainiaoStationRelTypeEnum.STATION);
+		if (rel != null) {// 没有物流站
+			caiNiaoAdapter.closeToCainiaoStation(rel.getCainiaoStationId());
+		}
+	}
+
+	/** 经纬度修改同步菜鸟 */
+	public void modifyLngLatToCainiao(SyncModifyLngLatDto syncModifyLngLatDto) throws AugeServiceException {
+		try {
+			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyLngLatDto.getPartnerInstanceId());
+			Long stationId = instanceDto.getStationId();
+			// 查询菜鸟物流站关系表
+			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
+					CuntaoCainiaoStationRelTypeEnum.STATION);
+			if (rel != null) {// 没有物流站
+				syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
+				caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
+			}
+		} catch (Exception e) {
+			String error = getErrorMessage("modifyLngLatToCainiao", syncModifyLngLatDto.getPartnerInstanceId().toString(), "modifyLngLatToCainiao getError");
+			logger.error(error);
+		}
 	}
 }

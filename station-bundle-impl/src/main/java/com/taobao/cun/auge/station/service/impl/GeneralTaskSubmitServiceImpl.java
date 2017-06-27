@@ -900,4 +900,39 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		startProcessTask.setParameter(JSON.toJSONString(startProcessDto));
 		return startProcessTask;
 	}
+
+	/**
+	 * 停业同步菜鸟
+	 * 
+	 * @param instanceId
+	 * @param operatorId
+	 * @throws AugeServiceException
+	 */
+	public void submitClosedCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException {
+		try {
+			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
+			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
+			cainiaoTaskVo.setBeanName("caiNiaoService");
+			cainiaoTaskVo.setMethodName("closeCainiaoStation");
+			cainiaoTaskVo.setBusinessStepNo(1l);
+			cainiaoTaskVo.setBusinessType(TaskBusinessTypeEnum.CLOSED_TO_CAINIAO.getCode());
+			cainiaoTaskVo.setBusinessStepDesc("停业同步菜鸟");
+			cainiaoTaskVo.setOperator(operatorId);
+
+			SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+			syncModifyCainiaoStationDto.setPartnerInstanceId(Long.valueOf(instanceId));
+			syncModifyCainiaoStationDto.setOperator(operatorId);
+			syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.BUC);
+			cainiaoTaskVo.setParameterType(SyncModifyCainiaoStationDto.class.getName());
+			cainiaoTaskVo.setParameter(JSON.toJSONString(syncModifyCainiaoStationDto));
+
+			// 提交任务
+			taskSubmitService.submitTask(cainiaoTaskVo);
+			logger.info("submitClosedCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
+		} catch (Exception e) {
+			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitClosedCainiaoStation] instanceId = {}, {}", instanceId, e);
+			throw new AugeServiceException("submitClosedCainiaoStation error: " + e.getMessage());
+		}
+		
+	}
 }
