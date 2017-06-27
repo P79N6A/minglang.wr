@@ -11,11 +11,19 @@ import org.springframework.stereotype.Service;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyPOI;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.dal.domain.CountyStationExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
+import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
@@ -26,6 +34,12 @@ public class CountyServiceImpl implements CountyService{
 
 	@Autowired
 	CountyBO countyBO;
+	
+	@Autowired
+	CountyStationMapper countyStationMapper;
+	
+	@Autowired
+	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	
 	@Override
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
@@ -162,5 +176,18 @@ public class CountyServiceImpl implements CountyService{
 			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
 			throw new AugeBusinessException("保存县点失败："+e);
 		}
+	}
+
+	@Override
+	public CountyPOI queryCountyPOI(Long countyAreaId) {
+		CountyPOI poi = new CountyPOI();
+		CountyStationExample example= new CountyStationExample();
+		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
+		CountyStation countyStation = countyStationMapper.selectByExample(example).iterator().next();
+		CuntaoCainiaoStationRel rel =	cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStation.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+		poi.setLat(PositionUtil.div(countyStation.getLat(), 100000, 5).toString());
+		poi.setLng(PositionUtil.div(countyStation.getLng(), 100000, 5).toString());
+		poi.setCainaoStationId(rel.getCainiaoStationId());
+		return poi;
 	}
 }
