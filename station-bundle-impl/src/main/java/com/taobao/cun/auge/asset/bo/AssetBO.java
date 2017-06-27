@@ -12,6 +12,7 @@ import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
+import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
@@ -117,15 +118,36 @@ public interface AssetBO {
 
     public void scrapAsset(AssetScrapDto scrapDto);
 
-    //资产赔付成功
+    /**
+     * 资产赔付成功
+     * @param scrapDto
+     */
     public void scrapAssetSuccess(AssetScrapDto scrapDto);
-
+    /**
+     * 设置资产已盘点
+     * @param checkDto
+     * @return
+     */
     public Boolean checkAsset(AssetCheckDto checkDto);
-    
+    /**
+     * 设置资产待盘点
+     * @param assetId
+     * @param operator
+     * @return
+     */
     public Boolean checkingAsset(Long assetId,String operator);
-    
+    /**
+     * 获得已盘点资产
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     public Page<Asset> getCheckedAsset(Integer pageNum, Integer pageSize);
-    
+    /**
+     * 检验退出逻辑
+     * @param stationId
+     * @param taobaoUserId
+     */
     public void validateAssetForQuiting(Long stationId,Long taobaoUserId);
     /**
      * 资产采购
@@ -133,4 +155,24 @@ public interface AssetBO {
      * @return
      */
     public Long  purchase(AssetPurchaseDto pList);
+    
+    /**
+     * 新模型  列表查询
+     * @param query
+     * @return
+     */
+    public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query);
+    /**
+     * 新模型 删除资产
+     * @param assetId
+     * @param operator
+     */
+    public void delete(Long assetId, String operator);
+    
+    /**
+     * 获得资产详情
+     * @param assetid
+     * @return
+     */
+    public AssetDetailDto getDetail(Long assetid);
 }

@@ -39,6 +39,7 @@ import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
+import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
@@ -69,11 +70,13 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
+import com.taobao.cun.auge.dal.domain.AssetExtExample;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
+import com.taobao.cun.auge.dal.mapper.AssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
@@ -138,6 +141,9 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
+	
+	@Autowired
+	private AssetExtMapper assetExtMapper;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -673,7 +679,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.DISTRIBUTE.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
@@ -810,7 +816,7 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");
 		Asset asset = getAssetByAliNo(assetDto.getAliNo());
 		if (asset == null) {
-			throw new AugeBusinessException("录入失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("录入失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!assetDto.getOperator().equals(assetDto.getOperator())) {
 			throw new AugeBusinessException("录入失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
@@ -864,7 +870,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
 		detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
-		detailDto.setOwner(emp360Adapter.getName(asset.getOwnerWorkno()));
+		detailDto.setOwner(asset.getOwnerName());
 		detailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 		detailDto.setId(asset.getId());
 		return detailDto;
@@ -1016,7 +1022,7 @@ public class AssetBOImpl implements AssetBO {
 	private Asset validateUserIdForAssetCheck(String userId,String useAreaType,String aliNo) {
 		Asset asset = getAssetByAliNo(aliNo);
 		if (asset== null || StringUtils.equals(AssetCheckStatusEnum.CHECKING.getCode(), asset.getCheckStatus())) {
-			throw new AugeBusinessException("盘点失败"+AssetBO.NO_EXIT_ASSET+getPromptInfo(asset));
+			throw new AugeBusinessException("盘点失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getUseAreaType().equals(useAreaType) && !asset.getUserId().equals(userId)) {
 			throw new AugeBusinessException("盘点失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
@@ -1174,4 +1180,65 @@ public class AssetBOImpl implements AssetBO {
 		a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
 		return a;
 	}
+
+	@Override
+	public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query) {
+		AssetExtExample example = new AssetExtExample();
+		AssetExtExample.Criteria cri = example.createCriteria();
+		cri.andIsDeletedEqualTo("n");
+		if(CollectionUtils.isNotEmpty(query.getStatusList())){
+			cri.andStatusIn(query.getStatusList());
+		}
+		if(StringUtils.isNotEmpty(query.getAliNo())){
+			cri.andAliNoEqualTo(query.getAliNo());
+		}
+		
+		if(StringUtils.isNotEmpty(query.getPoNo())){
+			cri.andPoNoEqualTo(query.getPoNo());
+		}
+		
+		if(StringUtils.isNotEmpty(query.getCheckStatus())){
+			cri.andCheckStatusEqualTo(query.getCheckStatus());
+		}
+		
+		if(query.getStationId() != null){
+			cri.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+			cri.andUseAreaIdEqualTo(query.getStationId());
+		}
+		
+		if(StringUtils.isNotEmpty(query.getFullIdPath())){
+				example.setFullIdPath(query.getFullIdPath());
+		}
+		example.setOrderByClause("a.id desc");
+		PageHelper.startPage(query.getPageNum(), query.getPageSize());
+		Page<Asset> page =  assetExtMapper.queryByPage(example);
+		List<AssetDetailDto> targetList =buildAssetDetailDtoList(page);
+		return PageDtoUtil.success(page, targetList);
+	}
+
+	@Override
+	public void delete(Long assetId, String operator) {
+		Asset a = getAssetById(assetId);
+		if (a == null) {
+			throw new AugeBusinessException("删除失败"+AssetBO.NO_EXIT_ASSET);
+		}
+		if (!StringUtils.equals(AssetStatusEnum.SIGN.getCode(),a.getStatus())) {
+			throw new AugeBusinessException("删除失败,只能删除待签收的资产");
+		}
+		
+		Asset record = new Asset();
+		DomainUtils.beforeDelete(record, operator);
+		record.setId(a.getId());
+		assetMapper.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public AssetDetailDto getDetail(Long assetId) {
+		Asset a = getAssetById(assetId);
+		if (a == null) {
+			throw new AugeBusinessException("查询失败"+AssetBO.NO_EXIT_ASSET);
+		}
+		return buildAssetDetail(a);
+	}
+	
 }

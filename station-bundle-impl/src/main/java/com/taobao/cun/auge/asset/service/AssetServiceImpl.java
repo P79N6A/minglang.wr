@@ -16,7 +16,9 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
+import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
@@ -242,6 +244,17 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public Long purchase(AssetPurchaseDto assetPurchaseDto) {
 		return assetBO.purchase(assetPurchaseDto);
+		
+	}
+
+	@Override
+	public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query) {
+		return assetBO.queryByPage(query);
+	}
+
+	@Override
+	public void delete(Long assetId, String operator) {
+		assetBO.delete(assetId, operator);
 		
 	}
 }

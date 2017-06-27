@@ -2,7 +2,9 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
+import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -76,4 +78,18 @@ public interface AssetService {
 	     * @return
 	     */
 	    public Long purchase(AssetPurchaseDto assetPurchaseDto);
+	    
+	    /**
+	     * 新模型  列表查询
+	     * @param query
+	     * @return
+	     */
+	    public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query);
+	    
+	    /**
+	     * 新模型  删除资产
+	     * @param assetId
+	     * @param operator
+	     */
+	    public void delete(Long assetId,String operator);
 }
