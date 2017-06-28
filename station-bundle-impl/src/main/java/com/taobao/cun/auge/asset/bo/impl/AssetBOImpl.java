@@ -54,7 +54,6 @@ import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -72,7 +71,6 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.AssetExtExample;
-import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
@@ -365,12 +363,20 @@ public class AssetBOImpl implements AssetBO {
 	public void checkingAssetBatch(List<Long> assetIds,String operator) {
 		Assert.notNull(assetIds);
 		Assert.notNull(operator);
-		CuntaoAsset record = new CuntaoAsset();
+/*		CuntaoAsset record = new CuntaoAsset();
 		record.setCheckStatus(CuntaoAssetEnum.CHECKING.getCode());
 		record.setOperator(operator);
 		CuntaoAssetExample example = new CuntaoAssetExample();
 		example.createCriteria().andIdIn(assetIds);
-		this.cuntaoAssetMapper.updateByExampleSelective(record, example);
+		this.cuntaoAssetMapper.updateByExampleSelective(record, example);*/
+		Asset record = new Asset();
+		DomainUtils.beforeUpdate(record, operator);
+		record.setCheckStatus(AssetCheckStatusEnum.CHECKING.getCode());
+		
+		AssetExample assetExample = new AssetExample();
+		AssetExample.Criteria criteria = assetExample.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andIdIn(assetIds);
+		assetMapper.updateByExampleSelective(record, assetExample);
 	}
 
 	@Override
