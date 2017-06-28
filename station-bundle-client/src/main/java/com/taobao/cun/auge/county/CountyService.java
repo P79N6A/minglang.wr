@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.county.dto.CountyPOI;
 /**
  * 从center迁移至auge
  * 供org、motion、无线端调用
@@ -69,6 +70,13 @@ public interface CountyService {
 	public CountyDto getCountyStationByOrgId(Long id);
 	
 	/**
+	 * 根据组织id，查询行政地址county code
+	 * @param orgIds
+	 * @return
+	 */
+	public List<Long> getCountiesByOrgId(List<Long> orgIds);
+	
+	/**
 	 * 查询大区下的县运营中心列表
 	 * 
 	 * @param context
@@ -90,4 +98,11 @@ public interface CountyService {
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
 	
 	public CountyDto startOperate(String operator,CountyDto countyDto);
+	
+	/**
+	 * 
+	 * @param countyAreaId 县点淘标ID
+	 * @return
+	 */
+	public CountyPOI queryCountyPOI(Long countyAreaId);
 }

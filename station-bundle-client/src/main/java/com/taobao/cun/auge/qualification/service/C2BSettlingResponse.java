@@ -49,6 +49,9 @@ public class C2BSettlingResponse implements Serializable{
 	 */
 	private String errorCode;
 	
+	private String[] stepNames;
+	
+	private String stepName;
 	
 	public boolean isSuccessful() {
 		return successful;
@@ -116,6 +119,26 @@ public class C2BSettlingResponse implements Serializable{
 
 	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
+	}
+
+
+	public String[] getStepNames() {
+		return stepNames;
+	}
+
+
+	public void setStepNames(String[] stepNames) {
+		this.stepNames = stepNames;
+	}
+
+
+	public String getStepName() {
+		return stepName;
+	}
+
+
+	public void setStepName(String stepName) {
+		this.stepName = stepName;
 	}
 
 

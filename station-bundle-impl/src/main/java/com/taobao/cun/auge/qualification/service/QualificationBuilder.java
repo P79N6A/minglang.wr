@@ -115,6 +115,11 @@ public class QualificationBuilder {
 				qualification.setStatus(QualificationStatus.AUDIT_FAIL);
 				qualification.setErrorMessage(userQualiRecord.get().getReason());
 			}
+			if(UserQualiRecordStatus.TO_BE_AUDITED ==  auditStatus){
+				qualification.setStatus(QualificationStatus.SUBMIT_SUCESS);
+				qualification.setErrorCode("");
+				qualification.setErrorMessage("");
+			}
 			if(UserQualiRecordStatus.AUDIT_PASS ==  auditStatus){
 				qualification.setSubmitTime(userQualiRecord.get().getSubmitTime());
 				qualification.setAuditTime(userQualiRecord.get().getAuditTime());

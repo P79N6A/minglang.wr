@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.qualification.service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.github.pagehelper.Page;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -215,6 +217,26 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			c2bSettleInfo.setSettleIdentity(QualificationBuilder.PERSONAL_BUSINESS);
 		}
 		return c2bSettleInfo;
+	}
+
+
+	@Override
+	public List<String> querySubmitedQualifications() {
+		CuntaoQualificationPageCondition condition = new CuntaoQualificationPageCondition();
+		condition.setPageSize(10000);
+		condition.setPageNum(1);
+		condition.setStatusList(Lists.newArrayList(0));
+		List<String> list = Lists.newArrayList();
+		Page<CuntaoQualification> qualis = cuntaoQualificationBO.queryQualificationsByCondition(condition);
+		for (Iterator iterator = qualis.iterator(); iterator.hasNext();) {
+			CuntaoQualification cuntaoQualification = (CuntaoQualification) iterator.next();
+			UserQualiRecord record = sellerQualiServiceAdapter.lastAuditQualiStatus(cuntaoQualification.getTaobaoUserId());
+			if(UserQualiRecordStatus.TO_BE_AUDITED != record.getStatus()){
+				list.add(cuntaoQualification.getTaobaoUserId()+":"+record.getStatus());
+				logger.info("querySubmitedQualifications:"+cuntaoQualification.getTaobaoUserId()+":"+record.getStatus());
+			}
+		}
+		return list;
 	}
 
 

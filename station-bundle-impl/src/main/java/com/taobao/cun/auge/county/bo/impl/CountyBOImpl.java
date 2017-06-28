@@ -204,6 +204,27 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
+	public List<CountyDto> getCountyStationByOrgIds(List<Long> ids) {
+		Validate.notNull(ids, "ids is null");
+		if (CollectionUtils.isEmpty(ids)) {
+			return Collections.<CountyDto> emptyList();
+		}
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andOrgIdIn(ids);
+		List<CountyStation> stations = countyStationMapper.selectByExample(example);
+		if (CollectionUtils.isNotEmpty(stations)) {
+			List<CountyDto> rst = new ArrayList<CountyDto>();
+			for (CountyStation cs : stations) {
+				CountyDto dto = toCountyDto(cs);
+				rst.add(dto);
+			}
+			return rst;
+		} else {
+			return Collections.<CountyDto> emptyList();
+		}
+	}
+	
 	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
         Validate.notNull(queryCondition, "queryCondition is null");
         Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
