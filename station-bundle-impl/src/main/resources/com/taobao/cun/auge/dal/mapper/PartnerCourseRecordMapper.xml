@@ -529,14 +529,22 @@
    ,b.partner_user_id as user_id,
    b.refund_status as refund_status,
    e.id as org_id
-   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
-   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+   from  partner a,partner_course_record b,partner_station_rel c,station d
+   <if test="orgIdPath != '/1'"  >
+       ,cuntao_org e
+   </if>
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' 
+   <if test="orgIdPath != '/1'"  >
+      and e.is_deleted='n'
+   </if>
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
    and c.is_current='y'
    and d.apply_org=e.id
-   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   <if test="orgIdPath != '/1'"  >
+      and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   </if>
    and b.course_type=#{courseType}
    <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}
@@ -554,14 +562,22 @@
   </select>
    <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
    select count(*)
-   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
-   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+ 	from  partner a,partner_course_record b,partner_station_rel c,station d
+   <if test="orgIdPath != '/1'"  >
+       ,cuntao_org e
+   </if>
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' 
+   <if test="orgIdPath != '/1'"  >
+      and e.is_deleted='n'
+   </if>
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
-   and d.apply_org=e.id
    and c.is_current='y'
-   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   and d.apply_org=e.id
+   <if test="orgIdPath != '/1'"  >
+      and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   </if>
    and b.course_type=#{courseType}
    <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}
