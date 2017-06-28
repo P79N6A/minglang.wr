@@ -528,7 +528,7 @@
    ,b.gmt_done as gmt_done
    ,b.partner_user_id as user_id,
    b.refund_status as refund_status,
-   e.id as org_id
+   d.apply_org as org_id
    from  partner a,partner_course_record b,partner_station_rel c,station d
    <if test="orgIdPath != '/1'"  >
        ,cuntao_org e
@@ -541,8 +541,8 @@
    and a.id=c.partner_id
    and c.station_id=d.id
    and c.is_current='y'
-   and d.apply_org=e.id
    <if test="orgIdPath != '/1'"  >
+      and d.apply_org=e.id
       and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
    </if>
    and b.course_type=#{courseType}
@@ -574,8 +574,8 @@
    and a.id=c.partner_id
    and c.station_id=d.id
    and c.is_current='y'
-   and d.apply_org=e.id
    <if test="orgIdPath != '/1'"  >
+   	  and d.apply_org=e.id
       and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
    </if>
    and b.course_type=#{courseType}
