@@ -6,6 +6,6 @@ import com.taobao.cun.auge.dal.domain.AssetExtExample;
 
 public interface AssetExtMapper {
     
-	public Page<Asset> queryByPage(AssetExtExample extExample);
+	public Page<Asset> selectByExample(AssetExtExample extExample);
 
 }

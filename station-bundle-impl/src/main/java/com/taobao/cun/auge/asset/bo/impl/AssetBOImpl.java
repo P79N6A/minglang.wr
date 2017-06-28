@@ -950,12 +950,6 @@ public class AssetBOImpl implements AssetBO {
 		assetMapper.updateByExampleSelective(asset, assetExample);
 	}
 
-	private String buildErrorMessage(String str, Asset asset) {
-		String area = cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName();
-		String owner = emp360Adapter.getName(asset.getOwnerWorkno());
-		return  str + "资产编号:"+asset.getAliNo()+",资产类型:"+asset.getBrand() + asset.getModel() +",责任地点:" +area+",责任人员:"+owner+";";
-	}
-
 	@Override
 	public Asset getAssetById(Long assetId) {
 		Objects.requireNonNull(assetId, "资产id不能为空");
@@ -1214,7 +1208,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		example.setOrderByClause("a.id desc");
 		PageHelper.startPage(query.getPageNum(), query.getPageSize());
-		Page<Asset> page =  assetExtMapper.queryByPage(example);
+		Page<Asset> page =  assetExtMapper.selectByExample(example);
 		List<AssetDetailDto> targetList =buildAssetDetailDtoList(page);
 		return PageDtoUtil.success(page, targetList);
 	}
