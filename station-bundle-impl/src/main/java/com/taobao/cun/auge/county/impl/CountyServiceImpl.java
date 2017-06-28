@@ -1,8 +1,17 @@
 package com.taobao.cun.auge.county.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +20,19 @@ import org.springframework.stereotype.Service;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyPOI;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
+import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.dal.domain.CountyStationExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
+import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
+import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("CountyService")
@@ -26,6 +43,12 @@ public class CountyServiceImpl implements CountyService{
 
 	@Autowired
 	CountyBO countyBO;
+	
+	@Autowired
+	CountyStationMapper countyStationMapper;
+	
+	@Autowired
+	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	
 	@Override
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
@@ -161,6 +184,66 @@ public class CountyServiceImpl implements CountyService{
 		} catch (Exception e){
 			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
 			throw new AugeBusinessException("保存县点失败："+e);
+		}
+	}
+
+	@Override
+	public CountyPOI queryCountyPOI(Long countyAreaId) {
+		CountyPOI poi = new CountyPOI();
+		CountyStationExample example= new CountyStationExample();
+		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
+		CountyStation countyStation = countyStationMapper.selectByExample(example).iterator().next();
+		fixPOI(countyStation);
+		CuntaoCainiaoStationRel rel =	cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStation.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
+		poi.setLat(PositionUtil.div(countyStation.getLat(), 100000, 5).toString());
+		poi.setLng(PositionUtil.div(countyStation.getLng(), 100000, 5).toString());
+		poi.setCainaoStationId(rel.getCainiaoStationId());
+		return poi;
+	}
+	
+	
+	private void fixPOI(CountyStation countyStation) {
+		if(StringUtils.isEmpty(countyStation.getLat())||StringUtils.isEmpty(countyStation.getLng())){
+			String lastDivisionId = "";
+			if (StringUtils.isNotBlank(countyStation.getTown())&& !"0".equals(countyStation.getTown())) {
+				lastDivisionId = countyStation.getTown();
+			} else if (StringUtils.isNotBlank(countyStation.getCounty())) {
+				lastDivisionId = countyStation.getCounty();
+			} else if (StringUtils.isNotBlank(countyStation.getCity())) {
+				lastDivisionId = countyStation.getCity();
+			} else if (StringUtils.isNotBlank(countyStation.getProvince())) {
+				lastDivisionId = countyStation.getProvince();
+			}
+			Map<String, String> map = findLatitude(lastDivisionId, StringUtils.trim(countyStation.getAddressDetail()));
+			String lng = map.get("lng");
+			String lat = map.get("lat");
+			CountyStation county = new CountyStation();
+			county.setId(countyStation.getId());
+			county.setLat(PositionUtil.converUp(lat));
+			county.setLng(PositionUtil.converUp(lng));
+			countyStation.setLat(PositionUtil.converUp(lat));
+			countyStation.setLng(PositionUtil.converUp(lng));
+			countyStationMapper.updateByPrimaryKeySelective(county);
+		}
+	}
+	
+	public static Map<String, String> findLatitude(String lastDivisionId, String addressDetail) {
+		if (StringUtil.isEmpty(lastDivisionId)) {
+			return Collections.<String, String> emptyMap();
+		}
+		try {
+			StringBuilder url = new StringBuilder("http://lsp.wuliu.taobao.com/locationservice/addr/geo_coding.do?");
+			url.append("lastDivisionId=").append(lastDivisionId).append("&addr=").append(addressDetail);
+			HttpClient httpCLient = new DefaultHttpClient();
+			HttpGet httpget = new HttpGet(url.toString());
+			HttpResponse response = httpCLient.execute(httpget);
+			HttpEntity entity = response.getEntity();
+			String answer = EntityUtils.toString(entity);
+			String json = answer.split("=")[1];
+			return (Map<String, String>) JSON.parse(json.split("}")[0] + "}");
+		} catch (Exception e) {
+			logger.error("lastDivisionId = " + lastDivisionId + " ,addressDetail = " + addressDetail, e);
+			return Collections.<String, String> emptyMap();
 		}
 	}
 }
