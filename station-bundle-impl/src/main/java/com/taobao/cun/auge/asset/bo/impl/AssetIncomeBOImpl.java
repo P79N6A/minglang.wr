@@ -161,4 +161,14 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		assetIncomeMapper.updateByPrimaryKeySelective(record);
 		
 	}
+
+	@Override
+	public void deleteAssetIncome(Long incomeId, String operator) {
+		ValidateUtils.notNull(incomeId);
+		AssetIncome record = new AssetIncome();
+		record.setId(incomeId);
+		DomainUtils.beforeDelete(record, operator);
+		assetIncomeMapper.updateByPrimaryKeySelective(record);
+		
+	}
 }

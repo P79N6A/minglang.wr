@@ -114,4 +114,5 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public Boolean hasCancelAssetByRolloutId(Long rolloutId);
+	
 }

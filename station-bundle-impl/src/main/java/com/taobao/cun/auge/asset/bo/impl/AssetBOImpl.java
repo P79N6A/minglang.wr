@@ -54,6 +54,7 @@ import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -71,7 +72,9 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.AssetExtExample;
+import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
@@ -1227,6 +1230,19 @@ public class AssetBOImpl implements AssetBO {
 		DomainUtils.beforeDelete(record, operator);
 		record.setId(a.getId());
 		assetMapper.updateByPrimaryKeySelective(record);
+		
+		//如果有入库单   检查 是否删除入库单
+		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+		if (detail != null) {
+			Long incomeId = detail.getIncomeId();
+			if (incomeId== null) {
+				throw new AugeBusinessException("删除失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+			}
+			//更新出入库单状态
+			if (CollectionUtils.isEmpty(assetRolloutIncomeDetailBO.queryListByIncomeId(incomeId))) {
+				assetIncomeBO.deleteAssetIncome(incomeId, operator);
+			}
+		}
 	}
 
 	@Override
