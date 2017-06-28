@@ -231,7 +231,12 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
 			PartnerPeixunQueryCondition condition) {
-		return partnerPeixunBO.queryPeixunList(condition);
+		try{
+			return partnerPeixunBO.queryPeixunList(condition);
+		}catch(Exception e){
+			return null;
+		}
+		
 	}
 
 	@Override
