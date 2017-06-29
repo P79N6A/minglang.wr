@@ -195,6 +195,7 @@ public class CountyServiceImpl implements CountyService{
 		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
 		List<CountyStation> countyStations = countyStationMapper.selectByExample(example);
 		CountyStation countyStation  = null;
+		//海南等地区，直接省管理县所以没有county编码，所以按市来查询
 		if(CollectionUtils.isEmpty(countyStations)){
 			example.clear();
 			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
