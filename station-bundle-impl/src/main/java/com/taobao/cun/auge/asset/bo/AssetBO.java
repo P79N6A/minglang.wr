@@ -174,5 +174,5 @@ public interface AssetBO {
      * @param assetid
      * @return
      */
-    public AssetDetailDto getDetail(Long assetid);
+    public AssetDetailDto getDetail(Long assetId);
 }

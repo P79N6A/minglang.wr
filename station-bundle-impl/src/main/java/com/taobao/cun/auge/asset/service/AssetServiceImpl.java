@@ -257,4 +257,9 @@ public class AssetServiceImpl implements AssetService{
 		assetBO.delete(assetId, operator);
 		
 	}
+
+	@Override
+	public AssetDetailDto getDetail(Long assetId) {
+		return assetBO.getDetail(assetId);
+	}
 }

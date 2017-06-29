@@ -92,4 +92,11 @@ public interface AssetService {
 	     * @param operator
 	     */
 	    public void delete(Long assetId,String operator);
+	    
+	    /**
+	     * 获得资产详情
+	     * @param assetid
+	     * @return
+	     */
+	    public AssetDetailDto getDetail(Long assetId);
 }
