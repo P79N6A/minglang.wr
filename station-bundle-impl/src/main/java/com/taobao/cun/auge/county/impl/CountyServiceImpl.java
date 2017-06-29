@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -192,13 +193,17 @@ public class CountyServiceImpl implements CountyService{
 		CountyPOI poi = new CountyPOI();
 		CountyStationExample example= new CountyStationExample();
 		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
-		CountyStation countyStation = countyStationMapper.selectByExample(example).iterator().next();
-		if(countyStation == null){
+		List<CountyStation> countyStations = countyStationMapper.selectByExample(example);
+		CountyStation countyStation  = null;
+		if(CollectionUtils.isEmpty(countyStations)){
 			example.clear();
-			//海南特殊区域根据City查询
 			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
-			countyStation = countyStationMapper.selectByExample(example).iterator().next();
+			countyStations = countyStationMapper.selectByExample(example);
+			if(CollectionUtils.isEmpty(countyStations)){
+				throw new AugeBusinessException("can not find county by areaId["+countyAreaId+"]");
+			}
 		}
+		countyStation = countyStations.iterator().next();
 		fixPOI(countyStation);
 		CuntaoCainiaoStationRel rel =	cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStation.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
 		poi.setLat(countyStation.getLat());
