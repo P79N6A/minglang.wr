@@ -193,10 +193,16 @@ public class CountyServiceImpl implements CountyService{
 		CountyStationExample example= new CountyStationExample();
 		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
 		CountyStation countyStation = countyStationMapper.selectByExample(example).iterator().next();
+		if(countyStation == null){
+			example.clear();
+			//海南特殊区域根据City查询
+			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
+			countyStation = countyStationMapper.selectByExample(example).iterator().next();
+		}
 		fixPOI(countyStation);
 		CuntaoCainiaoStationRel rel =	cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStation.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
-		poi.setLat(PositionUtil.div(countyStation.getLat(), 100000, 5).toString());
-		poi.setLng(PositionUtil.div(countyStation.getLng(), 100000, 5).toString());
+		poi.setLat(countyStation.getLat());
+		poi.setLng(countyStation.getLng());
 		poi.setCainaoStationId(rel.getCainiaoStationId());
 		return poi;
 	}
