@@ -126,6 +126,9 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		ValidateUtils.notNull(operator);
 		
 		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+		if (detail == null) {
+			throw new AugeBusinessException("入库失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
 		Long incomeId = detail.getIncomeId();
 		if (incomeId== null) {
 			throw new AugeBusinessException("入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");

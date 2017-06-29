@@ -1223,7 +1223,8 @@ public class AssetBOImpl implements AssetBO {
 		List<AssetDetailDto> targetList =buildAssetDetailDtoList(page);
 		return PageDtoUtil.success(page, targetList);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(Long assetId, String operator) {
 		Asset a = getAssetById(assetId);

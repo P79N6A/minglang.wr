@@ -148,7 +148,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		criteria.andAssetIdEqualTo(assetId);
 		List<AssetRolloutIncomeDetail>  resList = assetRolloutIncomeDetailMapper.selectByExample(example);
 		if (CollectionUtils.isEmpty(resList)) {
-			 throw new AugeBusinessException("操作失败，无法查询到待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+			 return null;
 		}
 		if (resList.size()>1) {
 			 throw new AugeBusinessException("操作失败，当前资产多条数据，请核对资产信息！如有疑问，请联系资产管理员。");
@@ -163,7 +163,9 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	public AssetRolloutIncomeDetail cancel(Long assetId, String operator) {
 		ValidateUtils.notNull(assetId);
 		AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);
-		
+		if (detail == null) {
+			throw new AugeBusinessException("操作失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
 		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
 		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
 		record.setOperatorTime(new Date());
