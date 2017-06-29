@@ -1186,6 +1186,7 @@ public class AssetBOImpl implements AssetBO {
 		a.setUserId(purDto.getOwnerWorkno());
 		a.setUserName(purDto.getOwnerName());
 		a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
+		a.setRecycle(RecycleStatusEnum.N.getCode());
 		return a;
 	}
 
