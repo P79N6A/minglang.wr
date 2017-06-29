@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -192,11 +193,22 @@ public class CountyServiceImpl implements CountyService{
 		CountyPOI poi = new CountyPOI();
 		CountyStationExample example= new CountyStationExample();
 		example.createCriteria().andCountyEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
-		CountyStation countyStation = countyStationMapper.selectByExample(example).iterator().next();
+		List<CountyStation> countyStations = countyStationMapper.selectByExample(example);
+		CountyStation countyStation  = null;
+		//海南等地区，直接省管理县所以没有county编码，所以按市来查询
+		if(CollectionUtils.isEmpty(countyStations)){
+			example.clear();
+			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
+			countyStations = countyStationMapper.selectByExample(example);
+			if(CollectionUtils.isEmpty(countyStations)){
+				throw new AugeBusinessException("can not find county by areaId["+countyAreaId+"]");
+			}
+		}
+		countyStation = countyStations.iterator().next();
 		fixPOI(countyStation);
 		CuntaoCainiaoStationRel rel =	cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStation.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
-		poi.setLat(PositionUtil.div(countyStation.getLat(), 100000, 5).toString());
-		poi.setLng(PositionUtil.div(countyStation.getLng(), 100000, 5).toString());
+		poi.setLat(countyStation.getLat());
+		poi.setLng(countyStation.getLng());
 		poi.setCainaoStationId(rel.getCainiaoStationId());
 		return poi;
 	}
