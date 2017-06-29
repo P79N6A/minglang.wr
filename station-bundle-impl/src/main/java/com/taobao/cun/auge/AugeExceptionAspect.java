@@ -59,9 +59,9 @@ public class AugeExceptionAspect {
                 break;
             }
         }
-        if (configuredProperties.getExceptionFullMap().containsKey(simpleName)) {
+ /*       if (configuredProperties.getExceptionFullMap().containsKey(simpleName)) {
             msg = configuredProperties.getExceptionFullMap().get(simpleName);
-        }
+        }*/
         return msg;
     }
 
