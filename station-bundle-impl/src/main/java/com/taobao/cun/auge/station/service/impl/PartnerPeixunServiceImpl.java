@@ -178,7 +178,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		//组装下单地址
 		result.setCourseDetailUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
 		//组装退款地址
-		result.setRefundUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ACCOUNT_REFUND_URL"));
+		result.setRefundUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ACCOUNT_REFUND_URL")+"?ali_id="+record.getPartnerUserId()+"&site_id=CN&system=CUNTAO");
 		return result;
 	}
 	
