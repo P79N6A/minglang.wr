@@ -7,6 +7,7 @@ import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 
 public interface AssetRolloutIncomeDetailBO {
@@ -114,5 +115,14 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public Boolean hasCancelAssetByRolloutId(Long rolloutId);
+	
+	/**
+	 * 查询资产出入库单详情
+	 * @param assetId
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 */
+	public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId, int pageNum, int pageSize);
 	
 }

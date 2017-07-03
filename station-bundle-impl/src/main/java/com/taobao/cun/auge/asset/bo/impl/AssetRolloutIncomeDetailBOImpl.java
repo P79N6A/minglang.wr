@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample;
@@ -248,5 +251,21 @@ public class AssetRolloutIncomeDetailBOImpl implements
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
+	}
+
+
+	@Override
+	public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(
+			Long assetId, int pageNum, int pageSize) {
+		ValidateUtils.notNull(assetId);
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andAssetIdEqualTo(assetId);
+		example.setOrderByClause("id desc");
+		PageHelper.startPage(pageNum, pageSize);
+		Page<AssetRolloutIncomeDetail> page = (Page<AssetRolloutIncomeDetail>)assetRolloutIncomeDetailMapper.selectByExample(example);
+		List<AssetRolloutIncomeDetailDto> targetList = page.getResult().stream().map(source -> AssetRolloutIncomeDetailConverter.toAssetRolloutIncomeDetailDto(source)).collect(Collectors.toList());
+		return PageDtoUtil.success(page, targetList);
 	}
 }

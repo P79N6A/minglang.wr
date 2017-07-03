@@ -6,6 +6,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 
@@ -99,4 +100,7 @@ public interface AssetService {
 	     * @return
 	     */
 	    public AssetDetailDto getDetail(Long assetId);
+	    
+	    
+	    public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId,int pageNum,int pageSize);
 }

@@ -20,6 +20,7 @@ import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
+import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
@@ -49,7 +50,7 @@ public class AssetServiceImpl implements AssetService{
 	private AssetRolloutBO assetRolloutBO;
 
 	@Autowired
-	private AssetRolloutIncomeDetailBO detailBO;
+	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
 
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
@@ -191,7 +192,7 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	@Transactional
 	public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum) {
-		List<Long> assetIdList = detailBO.queryListByRolloutId(rolloutId).stream().map
+		List<Long> assetIdList = assetRolloutIncomeDetailBO.queryListByRolloutId(rolloutId).stream().map
 			(AssetRolloutIncomeDetail::getAssetId)
 			.collect(Collectors.toList());
 		AssetTransferDto transferDto = new AssetTransferDto();
@@ -261,5 +262,11 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public AssetDetailDto getDetail(Long assetId) {
 		return assetBO.getDetail(assetId);
+	}
+
+	@Override
+	public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(
+			Long assetId, int pageNum, int pageSize) {
+		return assetRolloutIncomeDetailBO.queryAssetRiDetailByPage(assetId, pageNum, pageSize);
 	}
 }
