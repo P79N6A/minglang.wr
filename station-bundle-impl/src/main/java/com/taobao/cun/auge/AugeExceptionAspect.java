@@ -1,40 +1,63 @@
 package com.taobao.cun.auge;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
-//@Aspect
-//@Order
-//@Component
+@Aspect
+@Order
+@Component
 public class AugeExceptionAspect {
 
-	
-	@AfterThrowing(
-			pointcut="execution(* com.taobao.cun.auge..*.*(..))",
-	        throwing="ex")
-	public void handleAugeException(Exception ex) throws Exception{
-		if(ex instanceof ConstraintViolationException){
-			ConstraintViolationException constraintViolationException = (ConstraintViolationException)ex;
-			Set<ConstraintViolation<?>> result = constraintViolationException.getConstraintViolations();
-			if (!result.isEmpty()) {
-				for (Iterator<ConstraintViolation<?>> it = result.iterator(); it.hasNext();) {
-					ConstraintViolation<?> violation = it.next();
-					throw new AugeServiceException(violation.getPropertyPath().toString(),violation.getMessage());
-				}
-			}
-		}
-		if(ex instanceof AugeServiceException){
-			throw (AugeServiceException)ex;
+	private static final Logger logger = LoggerFactory.getLogger(AugeExceptionAspect.class);
+
+	//@Autowired
+	//private DiamondConfiguredProperties configuredProperties;
+
+	@AfterThrowing(pointcut = "within(com.taobao.cun.auge..*ServiceImpl)", throwing = "ex")
+	public void handleAugeException(JoinPoint joinPoint, Exception ex) throws Exception {
+		String clazz = joinPoint.getSignature().getDeclaringType().getCanonicalName();
+		String name = joinPoint.getSignature().getName();
+		String action = clazz + "|" + name;
+		String parameters = getParameters(joinPoint);
+	 	logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
+	}
+
+	private String getParameters(JoinPoint joinPoint) {
+		try {
+			Object[] args = joinPoint.getArgs();
+			return JSON.toJSONString(args);
+		} catch (Exception e) {
+			return "parse parameter error";
 		}
 	}
+
+	//private String buildErrorOwner(String name) {
+	//	String msg = "other";
+	//	for (Map.Entry<String, String> entry : configuredProperties.getExceptionRegularMap().entrySet()) {
+	//		if (find(entry.getKey(), name)) {
+	//			msg = entry.getValue();
+	//			break;
+	//		}
+	//	}
+	//	return msg;
+	//}
+    //
+	//private boolean find(String p, String str) {
+	//	Pattern r = Pattern.compile(p);
+	//	return r.matcher(str).find();
+	//}
+
 }

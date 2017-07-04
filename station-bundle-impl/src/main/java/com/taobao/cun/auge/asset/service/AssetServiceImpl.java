@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
 		try {
+			if (StringUtils.isEmpty(operator)) {
+				throw new IllegalArgumentException("test");
+			}
 			assetBO.saveCuntaoAsset(cuntaoAssetDto,operator);
 		} catch (Exception e) {
 			logger.error("saveAsset error",e);
