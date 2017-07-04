@@ -1026,7 +1026,7 @@ public class AssetBOImpl implements AssetBO {
 		record.setId(asset.getId());
 		assetMapper.updateByPrimaryKeySelective(record);
 		
-		AssetChangeEvent event = buildAssetChangeEvent(asset.getId(),CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(),checkDto.getOperator(),AssetCheckStatusEnum.CHECKED.getCode());
+		AssetChangeEvent event = buildAssetChangeEvent(asset.getId(),CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(),checkDto.getOperator(),AssetCheckStatusEnum.CHECKED.getDesc());
 		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 		return Boolean.TRUE;
 	}
