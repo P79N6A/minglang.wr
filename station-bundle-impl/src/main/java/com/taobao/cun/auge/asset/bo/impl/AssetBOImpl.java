@@ -86,6 +86,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -1024,6 +1025,9 @@ public class AssetBOImpl implements AssetBO {
 		record.setCheckTime(new Date());
 		record.setId(asset.getId());
 		assetMapper.updateByPrimaryKeySelective(record);
+		
+		AssetChangeEvent event = buildAssetChangeEvent(asset.getId(),CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(),checkDto.getOperator(),AssetCheckStatusEnum.CHECKED.getCode());
+		EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
 		return Boolean.TRUE;
 	}
 	

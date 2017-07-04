@@ -31,6 +31,9 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 	public static final CuntaoFlowRecordTargetTypeEnum WISDOM_COUNTY_APPLY = new CuntaoFlowRecordTargetTypeEnum("WISDOM_COUNTY_APPLY","智慧县域报名");
 	
 	public static final CuntaoFlowRecordTargetTypeEnum SANTONG_DZWL = new CuntaoFlowRecordTargetTypeEnum("SANTONG_DZWL","三通电子围栏");
+	
+	public static final CuntaoFlowRecordTargetTypeEnum NEW_ASSET_CHECK = new CuntaoFlowRecordTargetTypeEnum("NEW_ASSET_CHECK","资产盘点");
+ 
 
 	public static final Map<String, CuntaoFlowRecordTargetTypeEnum> mappings = new HashMap<String, CuntaoFlowRecordTargetTypeEnum>();
 	
@@ -47,6 +50,7 @@ public class CuntaoFlowRecordTargetTypeEnum implements Serializable {
 		mappings.put("PARTNER_INSTANCE", PARTNER_INSTANCE);		
 		mappings.put("WISDOM_COUNTY_APPLY", WISDOM_COUNTY_APPLY);
 		mappings.put("SANTONG_DZWL", SANTONG_DZWL);
+		mappings.put("NEW_ASSET_CHECK", NEW_ASSET_CHECK);
 	}
 
 	private CuntaoFlowRecordTargetTypeEnum() {}
