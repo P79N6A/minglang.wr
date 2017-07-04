@@ -125,6 +125,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 	public Long addDetail(AssetRolloutIncomeDetailDto param) {
 		ValidateUtils.notNull(param);
 		AssetRolloutIncomeDetail record = AssetRolloutIncomeDetailConverter.toAssetRolloutIncomeDetail(param);
+		record.setOperatorTime(new Date());
 		DomainUtils.beforeInsert(record, param.getOperator());
 		assetRolloutIncomeDetailMapper.insert(record);
 		return record.getId();

@@ -1162,6 +1162,7 @@ public class AssetBOImpl implements AssetBO {
 			detail.setIncomeId(incomeId);
 			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.PURCHASE);
+			detail.setOperatorTime(new Date());
 			detail.copyOperatorDto(purDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		}

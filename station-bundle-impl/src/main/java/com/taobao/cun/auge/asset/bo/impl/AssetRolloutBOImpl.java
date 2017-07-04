@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -234,6 +235,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			detail.setRolloutId(rolloutId);
 			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.TRANSFER);
+			detail.setOperatorTime(new Date());
 			detail.copyOperatorDto(transferDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		}
@@ -317,6 +319,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			detail.setIncomeId(incomeId);
 			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.TRANSFER);
+			detail.setOperatorTime(new Date());
 			detail.copyOperatorDto(transferDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		}
@@ -368,6 +371,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			detail.setRolloutId(rolloutId);
 			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.DISTRIBUTION);
+			detail.setOperatorTime(new Date());
 			detail.copyOperatorDto(distributeDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		}
@@ -426,6 +430,7 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			detail.setType(AssetRolloutIncomeDetailTypeEnum.SCRAP);
 			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
 			detail.setPrice(dto.getPayment());
+			detail.setOperatorTime(new Date());
 			detail.copyOperatorDto(scrapDto);
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		});
