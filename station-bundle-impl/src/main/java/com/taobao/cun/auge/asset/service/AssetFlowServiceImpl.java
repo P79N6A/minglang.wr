@@ -278,8 +278,9 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 					this.cuntaoAssetFlowDetailMapper.insertSelective(detailDo);
 				}
 			}
-			CuntaoOrgDto org = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(cuntaoAssetFlowDto.getApplyOrg()));
-			createTask(flowId,String.valueOf(org.getParentId()),operator);
+			/*CuntaoOrgDto org = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(cuntaoAssetFlowDto.getApplyOrg()));
+			createTask(flowId,String.valueOf(org.getParentId()),operator);*/
+			createTask(flowId,cuntaoAssetFlowDto.getApplyOrg(),operator);
 		} catch (Exception e) {
 			logger.error("saveFlow error!",e);
 			throw new AugeBusinessException("saveFlow error");
