@@ -746,6 +746,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleRefundFinishSucess(ObjectMessage objMessage){
 		try {
+			logger.info("handleRefundFinishSucess start:"+objMessage.getObject());
 			String messageType = objMessage.getMessageType();
 			if (!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE
 					.equals(messageType)) {
