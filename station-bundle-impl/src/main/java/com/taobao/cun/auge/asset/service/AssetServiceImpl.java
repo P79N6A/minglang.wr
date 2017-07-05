@@ -16,7 +16,9 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
@@ -268,5 +270,29 @@ public class AssetServiceImpl implements AssetService{
 	public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(
 			Long assetId, int pageNum, int pageSize) {
 		return assetRolloutIncomeDetailBO.queryAssetRiDetailByPage(assetId, pageNum, pageSize);
+	}
+
+	@Override
+	public List<AssetDetailDto> getDistributeAssetListByStation(Long stationId,
+			Long taobaoUserId) {
+		return assetBO.getDistributeAssetListByStationId(stationId, taobaoUserId);
+	}
+
+	@Override
+	public List<AssetDetailDto> getUseAssetListByStation(Long stationId,
+			Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean checkAsset(AssetCheckDto checkDto) {
+		return assetBO.checkAsset(checkDto);
+	}
+
+	@Override
+	public AssetDetailDto signAssetByStation(AssetDto signDto) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

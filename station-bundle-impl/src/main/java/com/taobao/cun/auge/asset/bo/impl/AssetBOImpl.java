@@ -54,7 +54,6 @@ import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailTypeEnum;
-import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.RecycleStatusEnum;
@@ -72,7 +71,6 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.AssetExtExample;
-import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
@@ -691,7 +689,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.DISTRIBUTE.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException("签收失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
 			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
@@ -1267,6 +1265,32 @@ public class AssetBOImpl implements AssetBO {
 			throw new AugeBusinessException("查询失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		return buildAssetDetail(a);
+	}
+
+	@Override
+	public List<AssetDetailDto> getDistributeAssetListByStationId (
+			Long stationId, Long taobaoUserId) {
+		
+		List<AssetRollout> arList = assetRolloutBO.getDistributeAsset(stationId, taobaoUserId);
+		List<Long> assetIdList = new ArrayList<Long>();
+		if (CollectionUtils.isNotEmpty(arList)) {
+			for (AssetRollout ar : arList) {
+				List<AssetRolloutIncomeDetail> deList = assetRolloutIncomeDetailBO.queryListByRolloutId(ar.getId());
+				List<AssetRolloutIncomeDetail> waitSignList = deList.stream().filter(i -> AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode().equals(i.getStatus())).collect(Collectors.toList());
+				assetIdList.addAll(waitSignList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList()));
+			}
+		}
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetIdList);
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		return buildAssetDetailDtoList(assetList);
+	}
+
+	@Override
+	public List<AssetDetailDto> getUseAssetListByStation(Long stationId,
+			Long taobaoUserId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

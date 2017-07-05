@@ -2,7 +2,9 @@ package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
@@ -101,6 +103,41 @@ public interface AssetService {
 	     */
 	    public AssetDetailDto getDetail(Long assetId);
 	    
-	    
+	    /**
+	     *  获得出库单详情列表
+	     * @param assetId
+	     * @param pageNum
+	     * @param pageSize
+	     * @return
+	     */
 	    public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId,int pageNum,int pageSize);
+	    
+	    /**
+	     * 获得 分发中的资产  待村小二签收的资产，admin使用
+	     * @param stationId
+	     * @param taobaoUserId
+	     * @return
+	     */
+	    public List<AssetDetailDto> getDistributeAssetListByStation (Long stationId, Long taobaoUserId);
+	    /**
+	     * 获得村小二使用的资产 admin使用
+	     * @param stationId
+	     * @param taobaoUserId
+	     * @return
+	     */
+	    public List<AssetDetailDto> getUseAssetListByStation (Long stationId, Long taobaoUserId);
+	    
+	    /**
+	     * 设置资产已盘点  admin使用
+	     * @param checkDto
+	     * @return
+	     */
+	    public Boolean checkAsset(AssetCheckDto checkDto);
+	    
+	    /**
+	     * 村小二 签收资产    admin使用
+	     * @param signDto
+	     * @return
+	     */
+	    public AssetDetailDto signAssetByStation(AssetDto signDto);
 }

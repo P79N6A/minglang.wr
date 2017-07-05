@@ -175,4 +175,20 @@ public interface AssetBO {
      * @return
      */
     public AssetDetailDto getDetail(Long assetId);
+    
+    /**
+     * 获得分发中 村小二的资产列表
+     * @param stationId
+     * @param taobaoUserId
+     * @return
+     */
+    public List<AssetDetailDto> getDistributeAssetListByStationId(Long stationId,Long taobaoUserId);
+    
+    /**
+     * 获得村小二使用的资产 
+     * @param stationId
+     * @param taobaoUserId
+     * @return
+     */
+    public List<AssetDetailDto> getUseAssetListByStation (Long stationId, Long taobaoUserId);
 }
