@@ -751,6 +751,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			if (!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE
 					.equals(messageType)) {
 				// 不需要处理的消息类型
+				logger.info("handleRefundFinishSucess : unhandle messageType "+messageType);
 				return;
 			}
 			String code = appResourceService.queryAppResourceValue(
@@ -759,6 +760,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			String refundNo = dto.getApplyNo();
 			String productCode =dto.getProductCode();
 			String refundStatus = dto.getRefundStatus();
+			logger.info("handleRefundFinishSucess : param: "+refundNo+","+productCode+","+refundStatus);
 			if (!"finish".equals(refundStatus)) {
 				// 非退款完成状态，不处理
 				return;
