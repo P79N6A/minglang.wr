@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.notify.message.ObjectMessage;
 import com.taobao.notify.message.StringMessage;
 
 /**
@@ -79,4 +80,19 @@ public interface PartnerPeixunBO {
 			PartnerPeixunQueryCondition condition);
     
     public PageDto<PartnerPeixunListDetailDto> queryPeixunList(PartnerPeixunQueryCondition condition);
+    
+    public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg);
+    
+    public void refundAuditExecute(Long id,boolean auditResult);
+    
+    /**
+	 * 处理退款完成消息
+	 * @param strMessage
+	 * @param ob
+	 */
+	public void handleRefundFinishSucess(ObjectMessage objMessage);
+	
+	public PartnerPeixunDto queryPeixunRecordById(Long id);
+	
+	public void validateQuitable(Long taobaoUserId);
 }

@@ -271,6 +271,8 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				throw new AugeBusinessException("村点装修状态不允许退出，请先审核装修反馈记录");
 			}
 		}
+		//判断培训课程否是已经退款或签到
+		partnerPeixunBO.validateQuitable(partnerStationRel.getTaobaoUserId());
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
