@@ -171,7 +171,7 @@ public interface AssetBO {
     
     /**
      * 获得资产详情
-     * @param assetid
+     * @param assetId
      * @return
      */
     public AssetDetailDto getDetail(Long assetId);
@@ -191,4 +191,9 @@ public interface AssetBO {
      * @return
      */
     public List<AssetDetailDto> getUseAssetListByStation (Long stationId, Long taobaoUserId);
+
+    /**
+     * 同步cuntao_asset表
+     */
+    public void syncCuntaoAsset();
 }

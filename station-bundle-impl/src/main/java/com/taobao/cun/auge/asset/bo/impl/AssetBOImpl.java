@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1292,5 +1293,49 @@ public class AssetBOImpl implements AssetBO {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	@Override
+	public void syncCuntaoAsset() {
+		CuntaoAssetExample cuntaoAssetExample = new CuntaoAssetExample();
+		cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n");
+		List<String> vaildStatus = Arrays.asList("COUNTY_SIGN", "STATION_SIGN", "UNSIGN", "WAIT_STATION_SIGN");
+		int count = cuntaoAssetMapper.countByExample(cuntaoAssetExample);
+		int pageSize = 200;
+		int current = 1;
+		int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
+		while (current <= total) {
+			PageHelper.startPage(current++, pageSize);
+			List<CuntaoAsset> assetList = cuntaoAssetMapper.selectByExample(cuntaoAssetExample).stream().filter(cuntaoAsset -> vaildStatus.contains(cuntaoAsset.getStatus())).collect(Collectors.toList());
+			assetList.parallelStream().map(this::buildAssetByCuntaoAsset).forEach(record -> assetMapper.insert(record));
+		}
+	}
+
+	private Asset buildAssetByCuntaoAsset(CuntaoAsset cuntaoAsset) {
+		Map<String, String> map = new HashMap<>();
+		map.put("COUNTY_SIGN", "USE");
+		map.put("STATION_SIGN", "USE");
+		map.put("UNSIGN", "SIGN");
+		map.put("WAIT_STATION_SIGN", "DISTRIBUTE");
+		Asset asset = new Asset();
+		BeanUtils.copyProperties(cuntaoAsset, asset);
+		asset.setPoNo(cuntaoAsset.getBoNo());
+		asset.setStatus(map.get(cuntaoAsset.getStatus()));
+		asset.setOwnerOrgId(Long.valueOf(cuntaoAsset.getOrgId()));
+		asset.setOwnerName(cuntaoAsset.getAssetOwner());
+		asset.setCheckStatus(AssetCheckStatusEnum.valueof(cuntaoAsset.getCheckStatus()).getCode());
+		//asset.setOwnerWorkno();
+		if ("STATION_SIGN".equals(cuntaoAsset.getStatus())) {
+			//asset.setUserId();
+			asset.setUseAreaType(AssetUseAreaTypeEnum.STATION.getCode());
+			asset.setUseAreaId(Long.valueOf(cuntaoAsset.getStationId()));
+			asset.setUserName(cuntaoAsset.getReceiver());
+		} else {
+			//asset.setUserId();
+			asset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+			asset.setUseAreaId(Long.valueOf(cuntaoAsset.getOrgId()));
+			asset.setUserName(cuntaoAsset.getAssetOwner());
+		}
+		return asset;
+	}
+
 }
