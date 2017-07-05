@@ -692,16 +692,15 @@ public class AssetBOImpl implements AssetBO {
 		if (asset == null) {
 			throw new AugeBusinessException("签收失败"+AssetBO.NO_EXIT_ASSET);
 		}
-		if (!asset.getUserId().equals(signDto.getOperator()) || !asset.getUseAreaId().equals(signDto.getOperatorOrgId())) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
-		}
+		assetIncomeBO.signAssetByStation(asset.getId(), signDto.getOperator());
+		
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
 		updateAsset.setStatus(AssetStatusEnum.USE.getCode());
 		updateAsset.setId(asset.getId());
 		updateAsset.setUseAreaType(AssetUseAreaTypeEnum.STATION.getCode());
 		updateAsset.setUserId(signDto.getOperator());
-		updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+		updateAsset.setUseAreaId(partnerInstanceQueryService.getCurStationIdByTaobaoUserId(Long.parseLong(signDto.getOperator())));
 		updateAsset.setUserName(uicReadAdapter.getFullName(Long.valueOf(signDto.getOperator())));
 		return assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
 	}
@@ -1269,9 +1268,10 @@ public class AssetBOImpl implements AssetBO {
 	}
 
 	@Override
-	public List<AssetDetailDto> getDistributeAssetListByStationId (
+	public List<AssetDetailDto> getDistributeAssetListByStation (
 			Long stationId, Long taobaoUserId) {
-		
+		Objects.requireNonNull(stationId, "服务站id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaouserId不能为空");
 		List<AssetRollout> arList = assetRolloutBO.getDistributeAsset(stationId, taobaoUserId);
 		List<Long> assetIdList = new ArrayList<Long>();
 		if (CollectionUtils.isNotEmpty(arList)) {
@@ -1290,8 +1290,12 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	public List<AssetDetailDto> getUseAssetListByStation(Long stationId,
 			Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		Objects.requireNonNull(stationId, "服务站id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaouserId不能为空");
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUserIdEqualTo(String.valueOf(taobaoUserId)).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+		List<Asset> assetList = assetMapper.selectByExample(assetExample);
+		return buildAssetDetailDtoList(assetList);
 	}
 
 	@Override

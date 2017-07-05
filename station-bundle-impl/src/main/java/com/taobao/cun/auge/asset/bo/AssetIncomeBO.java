@@ -44,12 +44,20 @@ public interface AssetIncomeBO {
 	public AssetIncomeDto getIncomeDtoById(Long incomeId);
 	
 	/**
-	 * 签收资产
+	 * 县点签收资产
 	 * @param assetId
 	 * @param typeEnum
 	 * @param operator
 	 */
-	public void signAsset(Long assetId,String operator);
+	public void signAssetByCounty(Long assetId,String operator);
+	
+	/**
+	 * 村点签收资产
+	 * @param assetId
+	 * @param typeEnum
+	 * @param operator
+	 */
+	public void signAssetByStation(Long assetId,String operator);
 	
 	/**
 	 * 撤销入库单

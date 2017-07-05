@@ -182,7 +182,7 @@ public interface AssetBO {
      * @param taobaoUserId
      * @return
      */
-    public List<AssetDetailDto> getDistributeAssetListByStationId(Long stationId,Long taobaoUserId);
+    public List<AssetDetailDto> getDistributeAssetListByStation(Long stationId,Long taobaoUserId);
     
     /**
      * 获得村小二使用的资产 

@@ -29,6 +29,7 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
+import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -121,7 +122,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signAsset(Long assetId,String operator) {
+	public void signAssetByCounty(Long assetId,String operator) {
 		ValidateUtils.notNull(assetId);
 		ValidateUtils.notNull(operator);
 		
@@ -153,6 +154,33 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 			}
 		}
 	}
+	
+	@Override
+	public void signAssetByStation(Long assetId, String operator) {
+		ValidateUtils.notNull(assetId);
+		ValidateUtils.notNull(operator);
+		
+		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+		if (detail == null) {
+			throw new AugeBusinessException("签收失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		Long rolloutId = detail.getRolloutId();
+		if (rolloutId== null) {
+			throw new AugeBusinessException("签收失败，待签收资产没有对应的出库单，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		AssetRollout ar = assetRolloutBO.getRolloutById(rolloutId);
+		if (!ar.getReceiverId().equals(operator)) {
+			throw new AugeBusinessException("签收失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		//签收资产
+		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);
+		//更新出入库单状态
+		if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(rolloutId)) {
+			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
+		}else {
+			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
+		}
+	}
 
 	@Override
 	public void cancelAssetIncome(Long incomeId, String operator) {
@@ -174,4 +202,6 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		assetIncomeMapper.updateByPrimaryKeySelective(record);
 		
 	}
+
+	
 }

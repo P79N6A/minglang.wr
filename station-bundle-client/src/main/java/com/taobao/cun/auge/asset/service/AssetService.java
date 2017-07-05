@@ -139,5 +139,5 @@ public interface AssetService {
 	     * @param signDto
 	     * @return
 	     */
-	    public AssetDetailDto signAssetByStation(AssetDto signDto);
+	    public Boolean signAssetByStation(AssetDto signDto);
 }

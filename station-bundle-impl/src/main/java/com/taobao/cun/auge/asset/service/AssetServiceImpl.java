@@ -279,14 +279,13 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public List<AssetDetailDto> getDistributeAssetListByStation(Long stationId,
 			Long taobaoUserId) {
-		return assetBO.getDistributeAssetListByStationId(stationId, taobaoUserId);
+		return assetBO.getDistributeAssetListByStation(stationId, taobaoUserId);
 	}
 
 	@Override
 	public List<AssetDetailDto> getUseAssetListByStation(Long stationId,
 			Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		return assetBO.getUseAssetListByStation(stationId, taobaoUserId);
 	}
 
 	@Override
@@ -295,8 +294,7 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public AssetDetailDto signAssetByStation(AssetDto signDto) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean signAssetByStation(AssetDto signDto) {
+		return assetBO.signAssetByStation(signDto);
 	}
 }
