@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.convert;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -13,7 +15,8 @@ public final class QuitStationApplyConverter {
 
 	public static QuitStationApply convert(QuitStationApplyDto quitDto, PartnerStationRel instance,	String operatorName) {
 		QuitStationApply quitStationApply = new QuitStationApply();
-
+		quitStationApply.setRemoveBrandFileName(quitDto.getRemoveBrandFileName());
+		quitStationApply.setIsRemoveBrand(StringUtils.isNotEmpty(quitDto.getRemoveBrandFileName())?"y":"n");
 		quitStationApply.setPartnerInstanceId(instance.getId());
 		quitStationApply.setStationApplyId(instance.getStationApplyId());
 
@@ -36,7 +39,7 @@ public final class QuitStationApplyConverter {
 		}
 
 		QuitStationApplyDto quitStationApplyDto = new QuitStationApplyDto();
-
+		quitStationApplyDto.setRemoveBrandFileName(quitStationApply.getRemoveBrandFileName());
 		quitStationApplyDto.setId(quitStationApply.getId());
 		quitStationApplyDto.setApprovalFileName(quitStationApply.getApprovalFileName());
 		quitStationApplyDto.setAssertUseState(AssertUseStateEnum.valueof(quitStationApply.getAssetType()));

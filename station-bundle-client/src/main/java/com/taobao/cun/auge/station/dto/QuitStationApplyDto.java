@@ -40,6 +40,17 @@ public class QuitStationApplyDto extends OperatorDto {
 	//提交人
 	private String submittedPeopleName;
 	
+	//拆除门面
+	private String removeBrandFileName;
+	
+	public String getRemoveBrandFileName() {
+		return removeBrandFileName;
+	}
+
+	public void setRemoveBrandFileName(String removeBrandFileName) {
+		this.removeBrandFileName = removeBrandFileName;
+	}
+
 	public Long getId() {
 		return id;
 	}
