@@ -40,6 +40,7 @@ public final class QuitStationApplyConverter {
 
 		QuitStationApplyDto quitStationApplyDto = new QuitStationApplyDto();
 		quitStationApplyDto.setRemoveBrandFileName(quitStationApply.getRemoveBrandFileName());
+		quitStationApplyDto.setIsRemoveBrand("y".equals(quitStationApply.getIsRemoveBrand()));
 		quitStationApplyDto.setId(quitStationApply.getId());
 		quitStationApplyDto.setApprovalFileName(quitStationApply.getApprovalFileName());
 		quitStationApplyDto.setAssertUseState(AssertUseStateEnum.valueof(quitStationApply.getAssetType()));

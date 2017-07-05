@@ -43,6 +43,16 @@ public class QuitStationApplyDto extends OperatorDto {
 	//拆除门面
 	private String removeBrandFileName;
 	
+	private Boolean isRemoveBrand;
+	
+	public Boolean getIsRemoveBrand() {
+		return isRemoveBrand;
+	}
+
+	public void setIsRemoveBrand(Boolean isRemoveBrand) {
+		this.isRemoveBrand = isRemoveBrand;
+	}
+
 	public String getRemoveBrandFileName() {
 		return removeBrandFileName;
 	}
