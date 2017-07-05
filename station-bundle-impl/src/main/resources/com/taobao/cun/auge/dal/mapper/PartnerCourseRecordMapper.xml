@@ -19,6 +19,10 @@
     <result column="order_num" property="orderNum" jdbcType="VARCHAR" />
     <result column="gmt_done" property="gmtDone" jdbcType="TIMESTAMP" />
     <result column="partner_user_id" property="partnerUserId" jdbcType="BIGINT" />
+    <result column="refund_no" property="refundNo" jdbcType="VARCHAR" />
+    <result column="refund_reason" property="refundReason" jdbcType="VARCHAR" />
+    <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+    
   </resultMap>
   <sql id="Example_Where_Clause" >
     <!--
@@ -95,7 +99,7 @@
       This element was generated on Tue Jul 12 20:13:50 CST 2016.
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, course_type, course_code, 
-    status, order_num, gmt_done, partner_user_id
+    status, order_num, gmt_done, partner_user_id,refund_no,refund_reason,refund_status
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample" >
     <!--
@@ -160,11 +164,11 @@
     insert into partner_course_record (gmt_create, gmt_modified, creator, 
       modifier, is_deleted, course_type, 
       course_code, status, order_num, 
-      gmt_done, partner_user_id)
+      gmt_done, partner_user_id,refund_no,refund_reason)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{courseType,jdbcType=VARCHAR}, 
       #{courseCode,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR}, 
-      #{gmtDone,jdbcType=TIMESTAMP}, #{partnerUserId,jdbcType=BIGINT})
+      #{gmtDone,jdbcType=TIMESTAMP}, #{partnerUserId,jdbcType=BIGINT},#{refundNo,jdbcType=VARCHAR},#{refundReason,jdbcType=VARCHAR},#{refundStatus,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerCourseRecord" >
     <!--
@@ -210,6 +214,15 @@
       <if test="partnerUserId != null" >
         partner_user_id,
       </if>
+      <if test="refundNo != null" >
+        refund_no,
+      </if>
+      <if test="refundReason != null" >
+        refund_reason,
+      </if>
+       <if test="refundStatus != null" >
+        refund_status,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -244,6 +257,15 @@
       </if>
       <if test="partnerUserId != null" >
         #{partnerUserId,jdbcType=BIGINT},
+      </if>
+       <if test="refundNo != null" >
+        #{refundNo,jdbcType=VARCHAR},
+      </if>
+       <if test="refundReason != null" >
+        #{refundReason,jdbcType=VARCHAR},
+      </if>
+       <if test="refundStatus != null" >
+        #{refundStatus,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -302,6 +324,15 @@
       <if test="record.partnerUserId != null" >
         partner_user_id = #{record.partnerUserId,jdbcType=BIGINT},
       </if>
+      <if test="record.refundNo != null" >
+        refund_no = #{record.refundNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundReason != null" >
+        refund_reason = #{record.refundReason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.refundStatus != null" >
+        refund_status = #{record.refundStatus,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -325,7 +356,10 @@
       status = #{record.status,jdbcType=VARCHAR},
       order_num = #{record.orderNum,jdbcType=VARCHAR},
       gmt_done = #{record.gmtDone,jdbcType=TIMESTAMP},
-      partner_user_id = #{record.partnerUserId,jdbcType=BIGINT}
+      partner_user_id = #{record.partnerUserId,jdbcType=BIGINT},
+      refund_no = #{record.refundNo,jdbcType=VARCHAR},
+      refund_reason = #{record.refundReason,jdbcType=VARCHAR},
+      refund_status = #{record.refundStatus,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -371,6 +405,15 @@
       <if test="partnerUserId != null" >
         partner_user_id = #{partnerUserId,jdbcType=BIGINT},
       </if>
+      <if test="refundNo != null" >
+        refund_no = #{refundNo,jdbcType=BIGINT},
+      </if>
+      <if test="refundReason != null" >
+        refund_reason = #{refundReason,jdbcType=BIGINT},
+      </if>
+      <if test="refundStatus != null" >
+        refund_status = #{refundStatus,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -391,7 +434,10 @@
       status = #{status,jdbcType=VARCHAR},
       order_num = #{orderNum,jdbcType=VARCHAR},
       gmt_done = #{gmtDone,jdbcType=TIMESTAMP},
-      partner_user_id = #{partnerUserId,jdbcType=BIGINT}
+      partner_user_id = #{partnerUserId,jdbcType=BIGINT},
+      refund_no = #{refundNo,jdbcType=VARCHAR},
+      refund_reason = #{refundReason,jdbcType=VARCHAR},
+      refund_status = #{refundStatus,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
    <resultMap id="dataTransferResultMap" type="com.taobao.cun.crius.exam.dto.ExamInstanceDto" >
@@ -437,9 +483,8 @@
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
-   and d.apply_org=e.id
    and c.is_current='y'
-   and d.state='NORMAL'
+   and d.apply_org=e.id
    and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
     <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}
@@ -467,6 +512,9 @@
     <result column="course_status" property="courseStatus" jdbcType="VARCHAR" />
     <result column="gmt_done" property="gmtDone" jdbcType="TIMESTAMP" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="BIGINT" />
+    
   </resultMap>
   
   <select id="queryPeixunList" resultMap="peixunQueryListResult" parameterType="map" >
@@ -478,15 +526,25 @@
    ,b.course_type as course_type
    ,b.status as course_status
    ,b.gmt_done as gmt_done
-   ,b.partner_user_id as user_id
-   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
-   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+   ,b.partner_user_id as user_id,
+   b.refund_status as refund_status,
+   d.apply_org as org_id
+   from  partner a,partner_course_record b,partner_station_rel c,station d
+   <if test="orgIdPath != '/1'"  >
+       ,cuntao_org e
+   </if>
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' 
+   <if test="orgIdPath != '/1'"  >
+      and e.is_deleted='n'
+   </if>
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
-   and d.apply_org=e.id
    and c.is_current='y'
-   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   <if test="orgIdPath != '/1'"  >
+      and d.apply_org=e.id
+      and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   </if>
    and b.course_type=#{courseType}
    <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}
@@ -504,14 +562,22 @@
   </select>
    <select id="queryPeixunListCount" parameterType="map" resultType="java.lang.Integer">
    select count(*)
-   from  partner a,partner_course_record b,partner_station_rel c,station d,cuntao_org e
-   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' and e.is_deleted='n'
+ 	from  partner a,partner_course_record b,partner_station_rel c,station d
+   <if test="orgIdPath != '/1'"  >
+       ,cuntao_org e
+   </if>
+   where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and d.is_deleted='n' 
+   <if test="orgIdPath != '/1'"  >
+      and e.is_deleted='n'
+   </if>
    and a.taobao_user_id=b.partner_user_id
    and a.id=c.partner_id
    and c.station_id=d.id
-   and d.apply_org=e.id
    and c.is_current='y'
-   and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   <if test="orgIdPath != '/1'"  >
+   	  and d.apply_org=e.id
+      and (e.temp_full_id_path like concat(#{orgIdPath}, '/%') or e.temp_full_id_path=#{orgIdPath})
+   </if>
    and b.course_type=#{courseType}
    <if test="nickName != null and nickName != ''"  >
        and  a.taobao_nick=#{nickName}

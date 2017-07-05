@@ -95,6 +95,7 @@
 		<property name="recuit.service.version" defaultValue="1.0.0.daily" description="招募服务" />
 		<property name="messageService.version" defaultValue="1.0.0.daily" description="邮件服务" />
 		<property name="cuntao.millau.config" defaultValue="millau.daily" description="地区" />
+		<property name="finance.invoice.service.version" defaultValue="1.0.0.daily" description="发票服务版本" />
 	
 	
 	</group>
