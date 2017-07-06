@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
 
-import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
+import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
@@ -32,6 +32,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -112,6 +113,9 @@ public class ProcessProcessor {
 	@Autowired
 	IncentiveAuditFlowService incentiveAuditFlowService;
 	
+	@Autowired
+	PartnerPeixunBO partnerPeixunBO;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -157,6 +161,8 @@ public class ProcessProcessor {
 		        }
 			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
 				handleFlowerNameApply(objectId,resultCode);
+			}else if(ProcessBusinessEnum.peixunRefund.getCode().equals(businessCode)){
+				handlePeixunRefund(objectId,resultCode);
 			}else if (ProcessBusinessEnum.incentiveProgramAudit.getCode().equals(businessCode)) {
 				String financeRemarks = ob.getString("financeRemarks");
 				String processInstanceId = ob.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
@@ -471,4 +477,8 @@ public class ProcessProcessor {
 	private void handleFlowerNameApply(String id,String result){
 		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
 	}
+	private void handlePeixunRefund(String id,String result){
+		partnerPeixunBO.refundAuditExecute(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
+	}
+	
 }

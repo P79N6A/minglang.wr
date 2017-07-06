@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.taobao.cun.auge.station.dto.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunRefundStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -130,6 +132,13 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setLogo(product.getIcon());
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
+		result.setRefundStatus(record.getRefundStatus());
+		if(StringUtils.isNotEmpty(record.getRefundStatus())){
+		 result.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(record.getRefundStatus()).getDesc());
+		}
+		result.setRefundNo(record.getRefundNo());
+		result.setRefundReason(record.getRefundReason());
+		result.setId(record.getId());
 		if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
 			List<FuwuOrderDto> orders = getCourseOrders(userId, courseCode,
 					null);
@@ -168,6 +177,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		}
 		//组装下单地址
 		result.setCourseDetailUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
+		//组装退款地址
+		result.setRefundUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ACCOUNT_REFUND_URL")+"?ali_id="+record.getPartnerUserId()+"&site_id=CN&system=CUNTAO");
 		return result;
 	}
 	
@@ -220,7 +231,12 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
 			PartnerPeixunQueryCondition condition) {
-		return partnerPeixunBO.queryPeixunList(condition);
+		try{
+			return partnerPeixunBO.queryPeixunList(condition);
+		}catch(Exception e){
+			return null;
+		}
+		
 	}
 
 	@Override
@@ -256,6 +272,17 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return true;
 	}
 
+	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
+		Assert.notNull(taobaoUserId);
+		Assert.notNull(refundReason);
+		Assert.notNull(operator);
+		Assert.notNull(applyOrg);
+		return partnerPeixunBO.commitRefund(taobaoUserId,refundReason,operator,applyOrg);
+	}
 
+	public PartnerPeixunDto queryPeixunRecordById(Long id){
+		Assert.notNull(id);
+		return partnerPeixunBO.queryPeixunRecordById(id);
+	}
 
 }

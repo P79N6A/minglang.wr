@@ -29,7 +29,8 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.3.9</ague.station.client.version>
+		<ague.station.client.version>2.4.4</ague.station.client.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -132,10 +133,15 @@
 				<version>2.4.5</version>
 			</dependency>
 			<dependency>
-		      <groupId>ch.qos.logback</groupId>
-		      <artifactId>logback-core</artifactId>
-		    <version>1.1.7</version>
-    		</dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>1.1.7.5-struct</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>1.1.7.5-struct</version>
+			</dependency>
 			<dependency>
 				<groupId>com.cuntao.boot</groupId>
 				<artifactId>spring-boot-starter-mybatis</artifactId>
@@ -505,6 +511,26 @@
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
 				<version>2.1.4</version>
+			</dependency>		
+			<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+			<version>1.0.18-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.infop.shared</groupId>
+				<artifactId>tax.api</artifactId>
+				<version>1.0.27</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>1.8.9</version>
+			</dependency>
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>2.2.2</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
