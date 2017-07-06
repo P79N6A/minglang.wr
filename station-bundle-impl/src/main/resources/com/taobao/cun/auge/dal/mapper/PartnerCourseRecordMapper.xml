@@ -164,7 +164,7 @@
     insert into partner_course_record (gmt_create, gmt_modified, creator, 
       modifier, is_deleted, course_type, 
       course_code, status, order_num, 
-      gmt_done, partner_user_id,refund_no,refund_reason)
+      gmt_done, partner_user_id,refund_no,refund_reason,refund_status)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{courseType,jdbcType=VARCHAR}, 
       #{courseCode,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR}, 
