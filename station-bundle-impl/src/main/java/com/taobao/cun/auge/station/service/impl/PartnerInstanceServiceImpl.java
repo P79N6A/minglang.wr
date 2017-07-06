@@ -952,7 +952,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
 
 			// FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
-
+			partnerInstanceChecker.checkCloseApply(instanceId);
 			// 更新合伙人实例状态为停业中
 			closingPartnerInstance(partnerInstance, PartnerInstanceCloseTypeEnum.PARTNER_QUIT, operatorDto);
 

@@ -107,7 +107,38 @@ public class PartnerCourseRecord {
      *
      * @mbggenerated Tue Jul 12 20:13:50 CST 2016
      */
-    public Long getId() {
+    
+    private String refundNo;
+    private String refundReason;
+    private String refundStatus;
+    
+    
+    
+    public String getRefundStatus() {
+		return refundStatus;
+	}
+
+	public void setRefundStatus(String refundStatus) {
+		this.refundStatus = refundStatus;
+	}
+
+	public String getRefundNo() {
+		return refundNo;
+	}
+
+	public void setRefundNo(String refundNo) {
+		this.refundNo = refundNo;
+	}
+
+	public String getRefundReason() {
+		return refundReason;
+	}
+
+	public void setRefundReason(String refundReason) {
+		this.refundReason = refundReason;
+	}
+
+	public Long getId() {
         return id;
     }
 
