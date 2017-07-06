@@ -824,6 +824,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				PartnerPeixunCourseTypeEnum.APPLY_IN, applyCode);
 		PartnerCourseRecord chengzhangRecord= queryOfflinePeixunRecord(taobaoUserId,
 				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
+		if(qihangRecord==null){
+			return;
+		}
 		if(PartnerPeixunStatusEnum.NEW.getCode().equals(qihangRecord.getStatus())){
 			//未付款允许退款
 			return;
