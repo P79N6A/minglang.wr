@@ -1219,8 +1219,13 @@ public class AssetBOImpl implements AssetBO {
 		}
 		
 		if(StringUtils.isNotEmpty(query.getFullIdPath())){
-				example.setFullIdPath(query.getFullIdPath());
+			example.setFullIdPath(query.getFullIdPath());
 		}
+
+		if (query.getUserId() != null) {
+			cri.andUserIdEqualTo(query.getUserId());
+		}
+
 		example.setOrderByClause("a.id desc");
 		PageHelper.startPage(query.getPageNum(), query.getPageSize());
 		Page<Asset> page =  assetExtMapper.selectByExample(example);

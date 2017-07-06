@@ -20,6 +20,9 @@ public class AssetQueryPageCondition extends PageQuery {
 	
 	private String fullIdPath;
 
+	//使用人id
+	private String userId;
+
 	public String getAliNo() {
 		return aliNo;
 	}
@@ -66,5 +69,13 @@ public class AssetQueryPageCondition extends PageQuery {
 
 	public void setFullIdPath(String fullIdPath) {
 		this.fullIdPath = fullIdPath;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 }
