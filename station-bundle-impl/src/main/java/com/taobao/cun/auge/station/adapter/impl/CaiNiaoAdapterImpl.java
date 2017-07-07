@@ -605,8 +605,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		//bindParam.setReceiverZipcode(receiverZipcode);
 		FeatureDTO relFeature = new FeatureDTO();
 		//现在只有合伙人能解绑，所以这里设置的是合伙人的淘宝userid
-        relFeature.put(CaiNiaoAdapter.PARTNER_ID, dto.getTpTaobaoUserId() == null
-                ? String.valueOf(dto.getTaobaoUserId()) : String.valueOf(dto.getTpTaobaoUserId()));
+        relFeature.put(CaiNiaoAdapter.PARTNER_ID, String.valueOf(dto.getTaobaoUserId()));
 		return bindParam;
 	}
 

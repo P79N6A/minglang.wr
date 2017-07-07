@@ -805,8 +805,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
-			GeneralTaskDto cainiaoTaskDto = buildReServiceTask(instanceId, operator);
-			taskDtos.add(cainiaoTaskDto);
+			if (PartnerInstanceTypeEnum.TP.getCode().equals(partnerType.getCode())){
+			    GeneralTaskDto cainiaoTaskDto = buildReServiceTask(instanceId, operator);
+			    taskDtos.add(cainiaoTaskDto);
+			}
 			
 			String businessNo = String.valueOf(instanceId);
 			UserTagDto userTagDto = new UserTagDto();
