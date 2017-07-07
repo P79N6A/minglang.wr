@@ -185,6 +185,12 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		param.setParentId(getCountyCainiaoStationId(stationDto.getApplyOrg()));
 		param.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null:stationDto.getPartnerInstanceIsOnTown().getCode());
 		// param.setStationType(StationStationTypeConstants.COUNTRY_DSH);
+        if (PartnerInstanceTypeEnum.TPA.equals(instanceDto.getType())) {
+            // 设置合伙人的uid给淘帮手
+            PartnerStationRel parentPartnerRel = partnerInstanceBO.findPartnerInstanceByStationId(instanceDto.getParentStationId());
+            Partner parentParner = partnerBO.getPartnerById(parentPartnerRel.getPartnerId());
+            param.setTpTaobaoUserId(parentParner.getTaobaoUserId());
+        }
 		return param;
 	}
 

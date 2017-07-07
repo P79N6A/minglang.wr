@@ -190,6 +190,26 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
 		return cainiaoTaskDto;
 	}
+	
+	private GeneralTaskDto buildReServiceTask(Long instanceId, String operator) {
+        String businessNo = String.valueOf(instanceId);
+        
+        GeneralTaskDto cainiaoTaskDto = new GeneralTaskDto();
+        cainiaoTaskDto.setBusinessNo(businessNo);
+        cainiaoTaskDto.setBeanName("caiNiaoService");
+        cainiaoTaskDto.setMethodName("updateAdmin");
+    
+        cainiaoTaskDto.setBusinessType(TaskBusinessTypeEnum.CLOSE_TO_SERVICE.getCode());
+        cainiaoTaskDto.setBusinessStepDesc("updateAdmin");
+        cainiaoTaskDto.setOperator(operator);
+        cainiaoTaskDto.setPriority(TaskPriority.HIGH);
+
+        SyncAddCainiaoStationDto syncAddCainiaoStationDto = new SyncAddCainiaoStationDto();
+        syncAddCainiaoStationDto.setPartnerInstanceId(instanceId);
+        cainiaoTaskDto.setParameterType(SyncAddCainiaoStationDto.class.getName());
+        cainiaoTaskDto.setParameter(JSON.toJSONString(syncAddCainiaoStationDto));
+        return cainiaoTaskDto;
+    }
 
 	private GeneralTaskDto buildAddUicTagTask(PartnerInstanceDto instance, String operator) {
 		String businessNo = String.valueOf(instance.getId());
@@ -785,6 +805,9 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
+			GeneralTaskDto cainiaoTaskDto = buildReServiceTask(instanceId, operator);
+			taskDtos.add(cainiaoTaskDto);
+			
 			String businessNo = String.valueOf(instanceId);
 			UserTagDto userTagDto = new UserTagDto();
 			userTagDto.setPartnerType(partnerType);
