@@ -685,7 +685,6 @@ public class AssetBOImpl implements AssetBO {
 	public Boolean signAssetByStation(AssetDto signDto) {
 		Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
 		Objects.requireNonNull(signDto.getOperator(), "用户不能为空");
-		Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.DISTRIBUTE.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
