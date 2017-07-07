@@ -1277,13 +1277,14 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(stationId, "服务站id不能为空");
 		Objects.requireNonNull(taobaoUserId, "taobaouserId不能为空");
 		List<AssetRollout> arList = assetRolloutBO.getDistributeAsset(stationId, taobaoUserId);
+		if (CollectionUtils.isEmpty(arList)) {
+			return new ArrayList<AssetDetailDto>();
+		}
 		List<Long> assetIdList = new ArrayList<Long>();
-		if (CollectionUtils.isNotEmpty(arList)) {
-			for (AssetRollout ar : arList) {
-				List<AssetRolloutIncomeDetail> deList = assetRolloutIncomeDetailBO.queryListByRolloutId(ar.getId());
-				List<AssetRolloutIncomeDetail> waitSignList = deList.stream().filter(i -> AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode().equals(i.getStatus())).collect(Collectors.toList());
-				assetIdList.addAll(waitSignList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList()));
-			}
+		for (AssetRollout ar : arList) {
+			List<AssetRolloutIncomeDetail> deList = assetRolloutIncomeDetailBO.queryListByRolloutId(ar.getId());
+			List<AssetRolloutIncomeDetail> waitSignList = deList.stream().filter(i -> AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode().equals(i.getStatus())).collect(Collectors.toList());
+			assetIdList.addAll(waitSignList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList()));
 		}
 		AssetExample assetExample = new AssetExample();
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetIdList);
