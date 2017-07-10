@@ -19,7 +19,7 @@ public class AlipayTagAdapterImpl implements AlipayTagAdapter {
 
 	private static final Logger logger = LoggerFactory.getLogger(AlipayTagAdapterImpl.class);
 	public static final String ALIPAY_TAG_ERROR_MSG = "ALIPAY_TAG_ERROR";
-
+    //服务已下线
 	@Autowired
 	private AlipayAccountTagService alipayAccountTagService;
 
