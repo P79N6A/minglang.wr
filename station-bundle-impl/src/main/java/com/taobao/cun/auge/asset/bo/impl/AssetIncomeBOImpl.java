@@ -175,7 +175,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		//签收资产
 		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);
 		//更新出入库单状态
-		if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(rolloutId)) {
+		if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
 		}else {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
