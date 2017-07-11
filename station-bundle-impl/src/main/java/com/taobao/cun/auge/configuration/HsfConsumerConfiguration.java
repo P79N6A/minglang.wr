@@ -9,6 +9,7 @@ import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.service.CuntaoOrgService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -21,14 +22,11 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
-import com.taobao.cun.service.alipay.AlipayAccountTagService;
-import com.taobao.cun.service.alipay.AlipayStandardBailService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
-import com.taobao.cun.attachment.service.AttachmentService;
 
 @Configuration
 public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
@@ -88,19 +86,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 			@Value("${hsf.consumer.version.cuntaocenter.paymentAccountQueryService}") String version) {
 		return getConsumerBean(PaymentAccountQueryService.class, HSFGroup.HSF, version, 3000);
 	}
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean alipayStandardBailService(
-			@Value("${hsf.consumer.version.cuntaocenter.alipayStandardBailService}") String version) {
-		return getConsumerBean(AlipayStandardBailService.class, HSFGroup.HSF, version, 3000);
-	}
 	
-	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean alipayAccountTagService(
-			@Value("${hsf.consumer.version.cuntaocenter.alipayAccountTagService}") String version) {
-		return getConsumerBean(AlipayAccountTagService.class, HSFGroup.HSF, version, 3000);
-	}
-
 	//admin服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean partnerLifecycleCallbackService(
