@@ -10,7 +10,7 @@ import com.taobao.cun.auge.station.service.AlipayTagService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("alipayTagService")
-@HSFProvider(serviceInterface= AlipayTagService.class)
+//@HSFProvider(serviceInterface= AlipayTagService.class)
 public class AlipayTagServiceImpl implements AlipayTagService{
 
 	@Autowired
