@@ -1,11 +1,14 @@
 package com.taobao.cun.auge.flowRecord.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
@@ -75,5 +78,20 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 		} catch (Exception e) {
 			logger.error("insertRecord error recordDto = "+JSONObject.toJSONString(recordDto), e);
 		}
+	}
+	
+	public List<CuntaoFlowRecordDto> queryByIds(List<Long> ids){
+		Assert.notEmpty(ids);
+		CuntaoFlowRecordExample example = new CuntaoFlowRecordExample();
+		example.setOrderByClause("id");
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n").andIdIn(ids);
+		List<CuntaoFlowRecord> list=cuntaoFlowRecordMapper.selectByExample(example);
+		List<CuntaoFlowRecordDto> result=new ArrayList<CuntaoFlowRecordDto>();
+		for(CuntaoFlowRecord l:list){
+			result.add(CuntaoFlowRecordEventConverter.toCuntaoFlowRecordDto(l));
+		}
+		return result;
+		
 	}
 }
