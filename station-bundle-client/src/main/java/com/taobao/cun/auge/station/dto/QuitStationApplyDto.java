@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
+import com.taobao.cun.auge.station.enums.RemoveBrandUserTypeEnum;
 
 public class QuitStationApplyDto extends OperatorDto {
 
@@ -45,6 +46,16 @@ public class QuitStationApplyDto extends OperatorDto {
 	
 	private Boolean isRemoveBrand;
 	
+	private RemoveBrandUserTypeEnum removeBrandUserType;
+	
+	public RemoveBrandUserTypeEnum getRemoveBrandUserType() {
+		return removeBrandUserType;
+	}
+
+	public void setRemoveBrandUserType(RemoveBrandUserTypeEnum removeBrandUserType) {
+		this.removeBrandUserType = removeBrandUserType;
+	}
+
 	public Boolean getIsRemoveBrand() {
 		return isRemoveBrand;
 	}

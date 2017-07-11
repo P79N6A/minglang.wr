@@ -1474,6 +1474,76 @@ public class QuitStationApplyExample {
             addCriterion("remove_brand_file_name not between", value1, value2, "removeBrandFileName");
             return (Criteria) this;
         }
+
+        public Criteria andRemoveBrandUserTypeIsNull() {
+            addCriterion("remove_brand_user_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeIsNotNull() {
+            addCriterion("remove_brand_user_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeEqualTo(String value) {
+            addCriterion("remove_brand_user_type =", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeNotEqualTo(String value) {
+            addCriterion("remove_brand_user_type <>", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeGreaterThan(String value) {
+            addCriterion("remove_brand_user_type >", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("remove_brand_user_type >=", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeLessThan(String value) {
+            addCriterion("remove_brand_user_type <", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeLessThanOrEqualTo(String value) {
+            addCriterion("remove_brand_user_type <=", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeLike(String value) {
+            addCriterion("remove_brand_user_type like", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeNotLike(String value) {
+            addCriterion("remove_brand_user_type not like", value, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeIn(List<String> values) {
+            addCriterion("remove_brand_user_type in", values, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeNotIn(List<String> values) {
+            addCriterion("remove_brand_user_type not in", values, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeBetween(String value1, String value2) {
+            addCriterion("remove_brand_user_type between", value1, value2, "removeBrandUserType");
+            return (Criteria) this;
+        }
+
+        public Criteria andRemoveBrandUserTypeNotBetween(String value1, String value2) {
+            addCriterion("remove_brand_user_type not between", value1, value2, "removeBrandUserType");
+            return (Criteria) this;
+        }
     }
 
     /**
