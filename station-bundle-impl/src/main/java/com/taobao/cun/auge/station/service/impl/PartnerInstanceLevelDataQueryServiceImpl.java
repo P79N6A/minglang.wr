@@ -105,7 +105,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                 return dto;
             }
             if (PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
-                logger.error("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
+                logger.warn("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
             }
             return null;
         } catch (AugeServiceException e) {

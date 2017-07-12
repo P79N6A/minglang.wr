@@ -59,7 +59,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
-			logger.error("getDecorateOrderById error bizOrderId[{}]",bizOrderId,e);
+			logger.warn("getDecorateOrderById error bizOrderId[{}]",bizOrderId,e);
 		}
 		return Optional.empty();
 	}
@@ -117,7 +117,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 				return Optional.ofNullable(getStationDecorateOrder(close.get()));
 			}
 		} catch (Exception e) {
-			logger.error("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);
+			logger.warn("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);
 		}
 		return Optional.empty();
 	}
