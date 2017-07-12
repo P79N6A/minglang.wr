@@ -146,4 +146,14 @@ public class AssetServiceImpl implements AssetService{
 		}
 		
 	}
+
+	@Override
+	public Boolean judgeCanBuyAsset(Long stationId) {
+		return assetBO.judgeCanBuyAsset(stationId);
+	}
+
+	@Override
+	public Boolean buyAsset(CuntaoAssetDto assetDto) {
+		return assetBO.buyAsset(assetDto);
+	}
 }
