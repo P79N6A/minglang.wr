@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,7 +34,9 @@ public class AugeExceptionAspect {
 		String name = joinPoint.getSignature().getName();
 		String action = clazz + "|" + name;
 		String parameters = getParameters(joinPoint);
-	 	logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
+		if(!(ex instanceof AugeBusinessException)){
+		 	logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
+		}
 	}
 
 	private String getParameters(JoinPoint joinPoint) {

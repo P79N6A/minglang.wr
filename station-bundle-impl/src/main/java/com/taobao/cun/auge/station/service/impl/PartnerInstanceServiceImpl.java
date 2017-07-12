@@ -1269,7 +1269,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} catch (AugeBusinessException e) {
 			String error = getAugeExceptionErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto),
 					e.toString());
-			logger.error(error, e);
+			logger.warn(error, e);
 			throw e;
 		} catch (Exception e) {
 			String error = getErrorMessage("applyQuitByManager", "QuitStationApplyDto =" + JSON.toJSONString(quitDto), e.getMessage());
