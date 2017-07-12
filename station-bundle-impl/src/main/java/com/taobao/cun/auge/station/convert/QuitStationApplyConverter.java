@@ -18,7 +18,7 @@ public final class QuitStationApplyConverter {
 		QuitStationApply quitStationApply = new QuitStationApply();
 		quitStationApply.setRemoveBrandFileName(quitDto.getRemoveBrandFileName());
 		quitStationApply.setIsRemoveBrand(StringUtils.isNotEmpty(quitDto.getRemoveBrandFileName())?"y":"n");
-		quitStationApply.setRemoveBrandUserType(quitDto.getRemoveBrandUserType().getCode());
+		quitStationApply.setRemoveBrandUserType(quitDto.getRemoveBrandUserType()!=null?quitDto.getRemoveBrandUserType().getCode():"");
 		quitStationApply.setPartnerInstanceId(instance.getId());
 		quitStationApply.setStationApplyId(instance.getStationApplyId());
 
