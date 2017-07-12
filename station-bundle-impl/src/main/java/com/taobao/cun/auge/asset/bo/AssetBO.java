@@ -55,4 +55,8 @@ public interface AssetBO {
     public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
     
     public CuntaoAssetDto queryAssetByAliNoOrSerialNo(String serialNoOrAliNo);
+
+    public Boolean judgeCanBuyAsset(Long stationId);
+
+    public Boolean buyAsset(CuntaoAssetDto assetDto);
 }
