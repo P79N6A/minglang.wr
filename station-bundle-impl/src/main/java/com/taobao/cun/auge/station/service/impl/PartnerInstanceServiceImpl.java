@@ -431,7 +431,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
@@ -464,7 +464,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("update", JSONObject.toJSONString(partnerInstanceUpdateServicingDto), e.getMessage());
@@ -567,7 +567,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("delete", JSONObject.toJSONString(partnerInstanceDeleteDto), e.getMessage());
@@ -619,7 +619,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId), augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("signSettledProtocol", String.valueOf(taobaoUserId), e.getMessage());
@@ -708,7 +708,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerStationRel.getId());
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("signManageProtocol", String.valueOf(taobaoUserId), augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("signManageProtocol", String.valueOf(taobaoUserId), e.getMessage());
@@ -781,7 +781,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             return true;
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("freezeBond", String.valueOf(taobaoUserId), augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("freezeBond", String.valueOf(taobaoUserId), e.getMessage());
@@ -832,7 +832,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             }
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("openStation", JSONObject.toJSONString(openStationDto), augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("openStation", JSONObject.toJSONString(openStationDto), e.getMessage());
@@ -987,7 +987,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
         } catch (AugeServiceException | AugeBusinessException e) {
             String error = getAugeExceptionErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.toString());
-            logger.error(error, e);
+            logger.warn(error, e);
             throw e;
         } catch (Exception e) {
             String error = getErrorMessage("applyCloseByPartner", String.valueOf(taobaoUserId), e.getMessage());
@@ -1135,7 +1135,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             }
         } catch (AugeBusinessException e) {
             String error = getAugeExceptionErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.toString());
-            logger.error(error, e);
+            logger.warn(error, e);
             throw e;
         } catch (Exception e) {
             String error = getErrorMessage("confirmClose", JSONObject.toJSONString(confirmCloseDto), e.getMessage());
@@ -1343,7 +1343,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("applySettle", JSON.toJSONString(partnerInstanceDto), e.getMessage());
@@ -1447,7 +1447,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), e.getMessage());
@@ -1522,7 +1522,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("degradePartnerInstance", JSON.toJSONString(degradeDto), e.getMessage());
-            logger.error(error, e);
+            logger.warn(error, e);
             throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
         }
     }
@@ -1643,7 +1643,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("auditSettleByManager", JSONObject.toJSONString(auditSettleDto), e.getMessage());
@@ -1783,7 +1783,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } catch (AugeServiceException | AugeBusinessException augeException) {
             String error = getAugeExceptionErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto),
                     augeException.toString());
-            logger.error(error, augeException);
+            logger.warn(error, augeException);
             throw augeException;
         } catch (Exception e) {
             String error = getErrorMessage("changeTP", JSONObject.toJSONString(changeTPDto), e.getMessage());
