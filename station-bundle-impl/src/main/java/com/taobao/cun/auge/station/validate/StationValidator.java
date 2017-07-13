@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 public final class StationValidator {
@@ -30,7 +30,7 @@ public final class StationValidator {
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
 		}
 	}
 	
@@ -39,11 +39,11 @@ public final class StationValidator {
 			return;
 		}
 		if (StringUtils.isEmpty(stationDto.getName())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
 		}
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
@@ -52,7 +52,7 @@ public final class StationValidator {
 		stationName += stationDto.getName();
 		try {
 			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeServiceException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
+				throw new AugeBusinessException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
 			}
 		} catch (UnsupportedEncodingException e) {
 			logger.error("validate:", e);
@@ -61,25 +61,25 @@ public final class StationValidator {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_IS_NULL);
 		}
 		stationNum = stationNum.toUpperCase();
 		if (stationNum.length() > 16) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
 		}
 
 		if (isSpecialStr(stationNum)) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_ILLEGAL);
 		}
 	}
 	
 	public static void validateStationInfo(StationDto stationDto) {
 		if (StringUtils.isBlank(stationDto.getName())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NAME_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NAME_IS_NULL);
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
 		}
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
@@ -88,7 +88,7 @@ public final class StationValidator {
 		stationName += stationDto.getName();
 		try {
 			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeServiceException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
+				throw new AugeBusinessException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
 			}
 		} catch (UnsupportedEncodingException e) {
 			logger.error("validate:", e);
@@ -97,15 +97,15 @@ public final class StationValidator {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_IS_NULL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_IS_NULL);
 		}
 		stationNum = stationNum.toUpperCase();
 		if (stationNum.length() > 16) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
 		}
 
 		if (isSpecialStr(stationNum)) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NUM_ILLEGAL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_ILLEGAL);
 		}
 	}
 	

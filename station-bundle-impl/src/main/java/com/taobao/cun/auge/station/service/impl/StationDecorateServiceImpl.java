@@ -32,7 +32,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -87,33 +88,25 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private String stationDecorateReflectUrl;
 	
 	@Override
-	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
+	public void audit(StationDecorateAuditDto stationDecorateAuditDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateAuditDto);
 		if (!stationDecorateAuditDto.getIsAgree()) {
 			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
 			logger.error(error);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeBusinessException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
-		try {
 			Long sdId = stationDecorateAuditDto.getId();
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(sdId);
 			if (sd == null) {
 				String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "StationDecorate is null");
 				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 			}
 			//审批服务站装修记录
 			auditStationDecorate(stationDecorateAuditDto);
 			//更新生命周期表为已完成
 			setLifecycleDecorate(stationDecorateAuditDto, sd);
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("audit", JSONObject.toJSONString(stationDecorateAuditDto), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	private void setLifecycleDecorate(
@@ -122,7 +115,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		if (rel == null) {
 			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "PartnerStationRel is null");
 			logger.error(error);
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
@@ -157,23 +150,15 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 
 	@Override
-	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId) throws AugeServiceException {
+	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId){
 		ValidateUtils.notNull(taobaoUserId);
-		try {
 			PartnerStationRel  rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			if (rel == null) {
 				String error = getErrorMessage("getInfoByTaobaoUserId",String.valueOf(taobaoUserId), "rel is null");
 				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 			}
 			return getInfoByStationId(rel.getStationId());
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("getInfoByTaobaoUserId", JSONObject.toJSONString(taobaoUserId), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 	
 	/**
@@ -181,29 +166,25 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	 * @param sdDto
 	 */
 	private void setShopItemInfo(StationDecorateDto sdDto) {
-		try {
 			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
 				AppResourceDto resource = appResourceService.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
 				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 					sdDto.setTaobaoItemUrl(taobaoItemUrl+resource.getValue());
 				}
 			}
-		} catch (Exception e) {
-			logger.error("setShopInfo error: key"+sdDto.getSellerTaobaoUserId());
-		}
 	}
+	
 	@Override
-	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) throws AugeServiceException {
+	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateReflectDto);
-		try {
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(stationDecorateReflectDto.getId());
 			if (sd == null) {
-				throw new AugeServiceException("查询不到当前装修记录");
+				throw new AugeBusinessException("查询不到当前装修记录");
 			}
 			if (StationDecorateStatusEnum.UNDECORATE.getCode().equals(sd.getStatus())||
 					StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
-				throw new AugeServiceException("当前状态不能提交反馈");
+				throw new AugeBusinessException("当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
 //			Station station=stationBO.getStationById(sd.getStationId());
@@ -212,13 +193,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 //			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("reflectStationDecorate", JSONObject.toJSONString(stationDecorateReflectDto), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	private StationDecorateDto buildStationDecorateDtoForReflect(
@@ -257,16 +231,15 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 
 	@Override
 	public void syncStationDecorateFromTaobao(
-			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+			StationDecorateDto stationDecorateDto){
 		stationDecorateBO.syncStationDecorateFromTaobao(stationDecorateDto);
 		
 	}
 
 	@Override
 	public StationDecorateDto getInfoByStationId(Long stationId)
-			throws AugeServiceException {
+			{
 		ValidateUtils.notNull(stationId);
-		try {
 			StationDecorateDto sdDto =  null;
 			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 			if (sdDto == null) {
@@ -303,23 +276,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			}
 			setShopItemInfo(sdDto);
 			return sdDto;
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("getInfoByStationId", String.valueOf(stationId), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	@Override
 	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
-			List<Long> stationIds) throws AugeServiceException {
+			List<Long> stationIds){
 		return stationDecorateBO.getStatusByStationId(stationIds);
 	}
 
 	@Override
-	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException {
+	public String getReflectUrl(Long taobaoUserId){
 		StationDecorateDto dto = this.getInfoByTaobaoUserId(taobaoUserId);
 		if (dto != null) {
 			if (StationDecorateStatusEnum.DECORATING.equals(dto.getStatus())

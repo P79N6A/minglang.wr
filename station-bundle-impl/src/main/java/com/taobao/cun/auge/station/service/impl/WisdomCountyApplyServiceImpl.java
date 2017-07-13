@@ -16,7 +16,6 @@ import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.WisdomCountyApplyService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -34,7 +33,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     AttachmentService criusAttachmentService;
 
     @Override
-    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException {
+    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId){
         ValidateUtils.notNull(countyId);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyByCountyId(countyId);
         if (dto != null){
@@ -45,7 +44,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
 
     @Transactional
     @Override
-    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto){
         ValidateUtils.notNull(wisdomCountyApplyDto);
         ValidateUtils.notEmpty(wisdomCountyApplyDto.getAttachmentDtos());
         Long applyId = wisdomCountyApplyBO.addWisdomCountyApply(wisdomCountyApplyDto);
@@ -54,7 +53,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     }
 
     @Override
-    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException {
+    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id){
         ValidateUtils.notNull(id);
         WisdomCountyApplyDto dto = wisdomCountyApplyBO.getWisdomCountyApplyById(id);
         if (dto != null){
@@ -64,32 +63,32 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
     }
 
     @Override
-    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException {
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition){
         ValidateUtils.notNull(condition);
         return wisdomCountyApplyBO.queryByPage(condition);
     }
 
     @Override
-    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException {
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids){
         ValidateUtils.notEmpty(ids);
         return wisdomCountyApplyBO.getWisdomCountyApplyByCountyIds(ids);
     }
 
     @Override
-    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto){
         ValidateUtils.notNull(wisdomCountyApplyDto.getId());
         wisdomCountyApplyBO.updateWisdomCountyApply(wisdomCountyApplyDto);
     }
 
     @Override
-    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException {
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator){
         ValidateUtils.notNull(countyId);
         ValidateUtils.notNull(operator);
         wisdomCountyApplyBO.deleteWisdomCountyApplyByCountyId(countyId, operator);
     }
 
     @Override
-    public boolean audit(WisdomCountyApplyAuditDto dto) throws AugeServiceException {
+    public boolean audit(WisdomCountyApplyAuditDto dto){
         ValidateUtils.notNull(dto.getId());
         ValidateUtils.notNull(dto.getState());
         return wisdomCountyApplyBO.audit(dto);
@@ -97,7 +96,7 @@ public class WisdomCountyApplyServiceImpl implements WisdomCountyApplyService{
 
     @Transactional
     @Override
-    public void apply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+    public void apply(WisdomCountyApplyDto wisdomCountyApplyDto){
         ValidateUtils.notNull(wisdomCountyApplyDto);
         deleteWisdomCountyApplyByCountyId(wisdomCountyApplyDto.getCountyId(), wisdomCountyApplyDto.getOperator());
         addWisdomCountyApply(wisdomCountyApplyDto);

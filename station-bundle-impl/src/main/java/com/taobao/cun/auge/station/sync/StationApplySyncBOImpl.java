@@ -59,7 +59,9 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
@@ -95,8 +97,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 	AttachementMapper attachementMapper;
 
 	@Override
-	public StationApply addStationApply(Long partnerInstanceId) throws AugeServiceException {
-		try {
+	public StationApply addStationApply(Long partnerInstanceId){
 			StationApply stationApply = buildStationApply(partnerInstanceId, SyncStationApplyEnum.ADD);
 			DomainUtils.beforeInsert(stationApply, DomainUtils.DEFAULT_OPERATOR);
 			stationApply.setVersion(0l);
@@ -122,15 +123,10 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 
 			logger.info("sync add success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
 			return stationApply;
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + ": addStationApply," + partnerInstanceId, e);
-			throw new AugeServiceException(e.getMessage());
-		}
 	}
 
 	@Override
-	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType) throws AugeServiceException {
-		try {
+	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType){
 			if (null == updateType || SyncStationApplyEnum.ADD == updateType) {
 				throw new IllegalArgumentException("invalid param");
 			}
@@ -150,10 +146,6 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			invalidCache(stationApply);
 
 			logger.info("sync update success, partnerInstanceId = {}, station_apply_id = {}", partnerInstanceId, stationApply.getId());
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + ": updateStationApply," + partnerInstanceId, e);
-			throw new AugeServiceException(e.getMessage());
-		}
 	}
 
 	/**
@@ -185,7 +177,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			Assert.notNull(existStationApply, "[update]station_apply not exists, instance_id = " + partnerInstanceId);
 		} else if (null != instance.getStationApplyId()) {
 			// 防止多次同步add
-			throw new AugeServiceException("[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
+			throw new AugeBusinessException("[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
 		}
 
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
@@ -270,7 +262,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				}
 			}
 			if (protocol == null) {
-				throw new AugeServiceException("protocol not exists : " + p.getCode());
+				throw new AugeBusinessException("protocol not exists : " + p.getCode());
 			}
 			PartnerProtocolRelExample relExample = new PartnerProtocolRelExample();
 			relExample.createCriteria().andIsDeletedEqualTo("n")
@@ -332,7 +324,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				}
 			}
 			if (protocol == null) {
-				throw new AugeServiceException("protocol not exists : " + p.getCode());
+				throw new AugeBusinessException("protocol not exists : " + p.getCode());
 			}
 			// 新模型固点协议查询条件
 			PartnerProtocolRelExample newRelExample = new PartnerProtocolRelExample();

@@ -15,7 +15,6 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCainiaoStationRelMapper;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("cuntaoCainiaoStationRelBO")
 public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO {
@@ -25,7 +24,7 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 	
 	@Override
 	public CuntaoCainiaoStationRel queryCuntaoCainiaoStationRel(
-			Long objectId, CuntaoCainiaoStationRelTypeEnum type) throws AugeServiceException {
+			Long objectId, CuntaoCainiaoStationRelTypeEnum type)  {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(type);
 		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
@@ -39,7 +38,7 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Integer deleteCuntaoCainiaoStationRel(Long objectId, CuntaoCainiaoStationRelTypeEnum type)
-			throws AugeServiceException {
+			 {
 		CuntaoCainiaoStationRel  param = new CuntaoCainiaoStationRel();
 		DomainUtils.beforeDelete(param, DomainUtils.DEFAULT_OPERATOR);
 		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
@@ -55,7 +54,7 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto)
-			throws AugeServiceException {
+			 {
 		CuntaoCainiaoStationRel relDO = convertToDomain(relDto);
 		DomainUtils.beforeInsert(relDO, relDto.getOperator());
 		cuntaoCainiaoStationRelMapper.insert(relDO);
@@ -73,7 +72,7 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 
 	@Override
 	public Long getCainiaoStationId(Long stationId)
-			throws AugeServiceException {
+			 {
 		CuntaoCainiaoStationRel rel = queryCuntaoCainiaoStationRel(stationId,CuntaoCainiaoStationRelTypeEnum.STATION);
 		if (rel ==null) {
 			return null;

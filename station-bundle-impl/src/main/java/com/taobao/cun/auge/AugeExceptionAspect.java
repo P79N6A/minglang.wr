@@ -1,22 +1,15 @@
 package com.taobao.cun.auge;
 
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import com.alibaba.fastjson.JSON;
-
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 
 @Aspect
@@ -35,7 +28,7 @@ public class AugeExceptionAspect {
         String name = joinPoint.getSignature().getName();
         String action = clazz + "|" + name;
         String parameters = getParameters(joinPoint);
-        if (!((ex instanceof AugeBusinessException) || ex instanceof AugeServiceException)) {
+        if (!((ex instanceof AugeBusinessException))) {
             logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
         }
     }

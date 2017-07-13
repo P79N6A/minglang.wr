@@ -110,39 +110,24 @@ public class AssetCategoryServiceImpl implements AssetCategoryService{
 	
 	@Override
 	public List<CuntaoAssetCategoryDto> getAllList() {
-		try {
 			CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
 			example.createCriteria().andIsDeletedEqualTo("n");
 			example.setOrderByClause("gmt_create desc");
 			List<CuntaoAssetCategory> cates = cuntaoAssetCategoryMapper.selectByExample(example);
 			return cates.stream().map(cate -> this.convertToDto(cate)).collect(Collectors.toList());
-		} catch (Exception e) {
-			logger.error("getAllList error",e);
-			throw new AugeBusinessException("getAllList error");
-		}
-		
 	}
 
 	@Override
 	public void updateCategory(CuntaoAssetCategoryDto cuntaoAssetCategoryDto,String operator) {
-		try {
 			Assert.notNull(cuntaoAssetCategoryDto);
 			CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
 			cuntaoAssetCategory.setGmtModified(new Date());
 			cuntaoAssetCategory.setModifier(operator==null?"system":operator);
 			cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
-		} catch (Exception e) {
-			logger.error("updateCategory error",e);
-			throw new AugeBusinessException("updateCategory error");
-		}
-		
-		
-		
 	}
 
 	@Override
 	public void addCategory(CuntaoAssetCategoryDto cuntaoAssetCategoryDto,String operator) {
-		try {
 			Assert.notNull(cuntaoAssetCategoryDto);
 			CuntaoAssetCategory cuntaoAssetCategory = this.convertToDO(cuntaoAssetCategoryDto);
 			cuntaoAssetCategory.setCreator(operator==null?"system":operator);
@@ -151,40 +136,23 @@ public class AssetCategoryServiceImpl implements AssetCategoryService{
 			cuntaoAssetCategory.setGmtModified(new Date());
 			cuntaoAssetCategory.setIsDeleted("n");
 			cuntaoAssetCategoryMapper.insertSelective(cuntaoAssetCategory);
-		} catch (Exception e) {
-			logger.error("addCategory error",e);
-			throw new AugeBusinessException("addCategory error");
-		}
-		
 	}
 
 	@Override
 	public void deleteCategory(Long categoryId,String operator) {
-		try {
 			CuntaoAssetCategory cuntaoAssetCategory  = new CuntaoAssetCategory();
 			cuntaoAssetCategory.setId(categoryId);
 			cuntaoAssetCategory.setIsDeleted("y");
 			cuntaoAssetCategory.setGmtModified(new Date());
 			cuntaoAssetCategory.setModifier(operator==null?"system":operator);
 			cuntaoAssetCategoryMapper.updateByPrimaryKeySelective(cuntaoAssetCategory);
-		} catch (Exception e) {
-			logger.error("deleteCategory error",e);
-			throw new AugeBusinessException("deleteCategory error");
-		}
-		
 	}
 
 	@Override
 	public Integer getCountByName(String name) {
-		try {
 			CuntaoAssetCategoryExample example = new CuntaoAssetCategoryExample();
 			example.createCriteria().andNameEqualTo(name).andIsDeletedEqualTo("n");
 			return cuntaoAssetCategoryMapper.countByExample(example);
-		} catch (Exception e) {
-			logger.error("getCountByName error",e);
-			throw new AugeBusinessException("getCountByName error");
-		}
-		
 	}
 
 }

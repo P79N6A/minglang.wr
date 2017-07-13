@@ -18,7 +18,6 @@ import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Service("protocolBO")
 public class ProtocolBOImpl implements ProtocolBO {
@@ -27,7 +26,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 	ProtocolMapper protocolMapper;
 
 	@Override
-	public ProtocolDto getValidProtocol(ProtocolTypeEnum type) throws AugeServiceException {
+	public ProtocolDto getValidProtocol(ProtocolTypeEnum type) {
 		ValidateUtils.notNull(type);
 		ProtocolExample example = new ProtocolExample();
 		
@@ -50,7 +49,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 
 	@Override
 	public List<Long> getAllProtocolId(List<ProtocolTypeEnum> types)
-			throws AugeServiceException {
+			{
 		ValidateUtils.notEmpty(types);
 		
 		ProtocolExample example = new ProtocolExample();
@@ -84,7 +83,7 @@ public class ProtocolBOImpl implements ProtocolBO {
 
 	@Override
 	public List<ProtocolTypeEnum> getProtocolTypeByGroupType(
-			ProtocolGroupTypeEnum groupTypeEnum) throws AugeServiceException {
+			ProtocolGroupTypeEnum groupTypeEnum) {
 		// TODO Auto-generated method stub
 		return null;
 	}

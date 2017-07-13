@@ -106,7 +106,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	private void createFlow(Long applyId, String loginId, Long orgId) {
 	    Map<String, String> initData = new HashMap<String, String>();
 	    initData.put("orgId", String.valueOf(orgId));
-		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
@@ -120,9 +119,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException("流程启动失败", e);
-		}
 	}
 	
 	private void validateForCreate(PeixunPurchaseDto dto){

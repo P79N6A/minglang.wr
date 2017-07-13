@@ -54,7 +54,7 @@ import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.exam.dto.ExamInstanceItemDto;
@@ -164,7 +164,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	public Boolean transferMoney(PartnerCourseRecordDto dto) {
 		PartnerCourseRecord record=partnerCourseRecordMapper.selectByPrimaryKey(dto.getId());
 		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())&&!record.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
-			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
+			throw new AugeBusinessException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新订单是否已经创建
 		String courseCodeNew=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN");
@@ -175,7 +175,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		orderStatus.add(OrderItemBizStatus.Before.getValue());
 		List<FuwuOrderDto> orders=fuwuOrderService.queryOrdersByUserIdAndCode(userId, courseCodes, orderStatus);
 		if(orders.size()==0){
-			throw new AugeServiceException("新订单未创建"+String.valueOf(record.getPartnerUserId()));
+			throw new AugeBusinessException("新订单未创建"+String.valueOf(record.getPartnerUserId()));
 		}
 		FuwuOrderDto order=orders.get(0);
 		transfer(dto.getOrderNum()+"_1",order.getOrderItemNo(),dto.getPartnerUserId());
@@ -218,7 +218,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		EsbResultModel result = esbFinanceAuditAdapter.addAuditAndMaterial(
 				auditDto, "cuntao" + userId+System.currentTimeMillis());
 		if(!result.isSuccessed()){
-			throw new AugeServiceException("transfer error "+result.getExceptionDesc());
+			throw new AugeBusinessException("transfer error "+result.getExceptionDesc());
 		}
 		//关闭财务订单
 		ContractDto closeDto=new ContractDto();
@@ -231,12 +231,12 @@ public class DataTransferServiceImpl implements DataTransferService{
 		contractDtos[0]=closeDto;
 		EsbResultModel  closeResult= esbFinanceContractAdapter.modifyFinContractStatusAndServiceDate(contractDtos);
 		if(!closeResult.isSuccessed()){
-			throw new AugeServiceException("close Order error "+result.getExceptionDesc());
+			throw new AugeBusinessException("close Order error "+result.getExceptionDesc());
 		}
 		//更新财务订单执行金额
 		EsbResultModel  exeResult= esbFinanceContractAdapter.modifyFinContractExecAmount(contractDtos);
 		if(!exeResult.isSuccessed()){
-			throw new AugeServiceException("update ExecuteAmont error "+result.getExceptionDesc());
+			throw new AugeBusinessException("update ExecuteAmont error "+result.getExceptionDesc());
 		}
 	}
 
@@ -244,7 +244,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	public Boolean sign(PartnerCourseRecordDto dto) {
 		PartnerCourseRecord record=partnerCourseRecordMapper.selectByPrimaryKey(dto.getId());
 		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())){
-			throw new AugeServiceException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
+			throw new AugeBusinessException("培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新的培训记录是不是已付款状态,若是，则获取签到码
 		PartnerPeixunDto peixun=partnerPeixunService.queryOfflinePeixunProcess(dto.getPartnerUserId(), appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN"), PartnerPeixunCourseTypeEnum.APPLY_IN);
@@ -263,7 +263,6 @@ public class DataTransferServiceImpl implements DataTransferService{
 	      query.addCourseCode(code);
 	      query.addTrainee(String.valueOf(userId));
 //	      query.addStatus(TrainStatus.NotEffect.value());
-	      try {
 	         ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
 	               .find(auth, query, 100, 1);
 	         if (result.isSuccess()) {
@@ -272,9 +271,6 @@ public class DataTransferServiceImpl implements DataTransferService{
 	            throw new RuntimeException("query record error,"
 	                  + result.getMsg());
 	         }
-	      } catch (Exception e) {
-	         throw new RuntimeException(e);
-	      }
 	   }
 	
 	private void sign(String ticketNo){

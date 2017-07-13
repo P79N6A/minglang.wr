@@ -68,8 +68,7 @@ public class C2BQualificationConsumer {
 	
 
     public void receiveMessage(MessageExt ext) {
-		 try {
-			 logger.info("recevieQualiMessage:["+ext.toString()+"]");
+			logger.info("recevieQualiMessage:["+ext.toString()+"]");
 			QualiLifeCycleMessage qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
 			EntityQuali quali = sellerQualiServiceAdapter.queryQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
 			Assert.notNull(quali);
@@ -82,10 +81,6 @@ public class C2BQualificationConsumer {
 			if(CollectionUtils.isNotEmpty(listHidByEidAndEidTypeResponse.getQualiBindHids())){
 				listHidByEidAndEidTypeResponse.getQualiBindHids().stream().forEach(taobaoUserId -> cuntaoQualificationService.syncCuntaoQulificationFromMetaq(taobaoUserId,qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()));
 			}
-		} catch (Exception e) {
-			logger.error("receiveMessage quali error!messageId["+ext.getMsgId()+"]",e);
-			throw e;
-		}
      }
     
 }

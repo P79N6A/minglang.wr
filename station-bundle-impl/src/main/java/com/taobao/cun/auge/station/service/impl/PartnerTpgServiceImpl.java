@@ -50,7 +50,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 	private CuntaoCainiaoStationRelBO cainiaoStationRelBO;
 	@Override
 	public boolean upgradeTpg(Long partnerInstanceId) {
-		try {
 				if(partnerInstanceId == null){
 					throw new AugeSystemException("参数为空");
 				}
@@ -111,11 +110,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 					}
 				}
 			return true;
-		} catch (Exception e) {
-			logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 系统异常",e);
-			throw new AugeSystemException("系统异常");
-		}
-		
 	}
 
 	private PartnerTpg addPartnerTpg(PartnerInstanceDto partnerInstance) {
@@ -139,7 +133,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 
 	@Override
 	public boolean degradeTpg(Long partnerInstanceId) {
-		try {
 			Optional<PartnerTpg> tpgResult = partnerTpgBO.queryByParnterInstanceId(partnerInstanceId);
 			if (tpgResult.isPresent()) {
 				PartnerInstanceDto partnerInstance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
@@ -181,11 +174,6 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				partnerTpgBO.deletePartnerTpg(partnerTpg.getId());
 			}
 			return true;
-		} catch (Exception e) {
-			logger.error("degradeTpg error!partnerInstanceId["+partnerInstanceId+"] 系统异常",e);
-			throw new AugeSystemException("系统异常");
-		}
-	
 	}
 
 	@Override

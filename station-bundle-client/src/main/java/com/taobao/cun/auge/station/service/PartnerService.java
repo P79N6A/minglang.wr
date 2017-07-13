@@ -21,7 +21,7 @@ public interface PartnerService {
 	 */
 	public PartnerDto getPartnerByAlilangUserId(String aliLangUserId);
 	
-	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId);
 	
 	/**
 	 * 提供给icuntao展现合伙人详情信息

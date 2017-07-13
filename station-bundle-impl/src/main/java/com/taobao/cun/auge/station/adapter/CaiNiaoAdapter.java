@@ -8,7 +8,6 @@ import java.util.Set;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.common.exception.ServiceException;
 
 public interface CaiNiaoAdapter {
@@ -40,52 +39,52 @@ public interface CaiNiaoAdapter {
 	 * 
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addCounty(CaiNiaoStationDto station) throws AugeServiceException;
+	public Long addCounty(CaiNiaoStationDto station);
 
 	/**
 	 * 在某县域下新增村站
 	 * 
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addStation(CaiNiaoStationDto station) throws AugeServiceException;
+	public Long addStation(CaiNiaoStationDto station) ;
 
 	/**
 	 * 在某村站下新增买家
 	 * 
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean addStationUserRel(CaiNiaoStationDto station, String userType) throws AugeServiceException;
+	public boolean addStationUserRel(CaiNiaoStationDto station, String userType) ;
 
 	/**
 	 * 更新村站基本信息
 	 * 
 	 * @param dto
 	 */
-	public boolean modifyStation(CaiNiaoStationDto station) throws AugeServiceException;
+	public boolean modifyStation(CaiNiaoStationDto station) ;
 
 	/**
 	 * 更新买家基本信息
 	 * 
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean updateStationUserRel(CaiNiaoStationDto station) throws AugeServiceException;
+	public boolean updateStationUserRel(CaiNiaoStationDto station) ;
 
 	/**
 	 * 删除村站(先删用户站点关系，再删站点)
 	 * 
 	 * @param cainiaoStationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean removeStationById(Long cainiaoStationId, Long userId) throws AugeServiceException;
+	public boolean removeStationById(Long cainiaoStationId, Long userId) ;
 	
 	
 	/**
@@ -93,9 +92,9 @@ public interface CaiNiaoAdapter {
 	 * 
 	 * @param cainiaoStationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean removeNotUserdStationById(Long cainiaoStationId) throws AugeServiceException;
+	public boolean removeNotUserdStationById(Long cainiaoStationId) ;
 	
 
 	/**
@@ -103,9 +102,9 @@ public interface CaiNiaoAdapter {
 	 * 
 	 * @param userId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean removeStationUserRel(Long userId) throws AugeServiceException;
+	public boolean removeStationUserRel(Long userId) ;
 
 	/**
 	 * 给村站打标
@@ -113,10 +112,10 @@ public interface CaiNiaoAdapter {
 	 * @param stationId
 	 * @param featureMap
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
 	public boolean updateStationFeatures(Long stationId, LinkedHashMap<String, String> features)
-			throws AugeServiceException;
+			;
 
 	/**
 	 * 给村站和用户关系表打标
@@ -124,45 +123,45 @@ public interface CaiNiaoAdapter {
 	 * @param userId
 	 * @param featureMap
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) throws AugeServiceException;
+	public boolean updateStationUserRelFeature(Long userId, Map<String, String> featureMap) ;
 	
 	/**
 	 * 村站解绑合伙人  目前仅支持合伙人使用
 	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_unbind_admin
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean unBindAdmin(Long cainiaoStationId) throws AugeServiceException;
+	public boolean unBindAdmin(Long cainiaoStationId) ;
 	
 	/**
 	 * 村站绑定合伙人 目前仅支持合伙人使用 
 	 * 文档：http://gitlab.alibaba-inc.com/cainiao-cuntao/cuntaonetwork/wikis/station_bind_admin
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean bindAdmin(CaiNiaoStationDto station) throws AugeServiceException;
+	public boolean bindAdmin(CaiNiaoStationDto station) ;
 	
 	/**
 	 * 村站修改合伙人
 	 * @param station
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean updateAdmin(CaiNiaoStationDto station) throws AugeServiceException;
+	public boolean updateAdmin(CaiNiaoStationDto station) ;
 	
 	/**
 	 * 删除 村站feature字段的值
 	 * @param stationId
 	 * @param keys
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean removeStationFeatures(Long stationId,Set<String> keys) throws AugeServiceException;
+	public boolean removeStationFeatures(Long stationId,Set<String> keys) ;
 	
-	public List<WarehouseDTO> queryWarehouseById(Long id) throws AugeServiceException; 
+	public List<WarehouseDTO> queryWarehouseById(Long id) ; 
 	
 	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException ;
 	
@@ -171,16 +170,16 @@ public interface CaiNiaoAdapter {
 	 * 
 	 * @param cainiaoStationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean closeToCainiaoStation(Long cainiaoStationId) throws AugeServiceException;
+	public boolean closeToCainiaoStation(Long cainiaoStationId) ;
 	
 	/**
 	 * 经纬度同步菜鸟
 	 * 
 	 * @param syncModifyLngLatDto
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) throws AugeServiceException;
+	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto) ;
 }

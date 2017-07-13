@@ -27,7 +27,6 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
@@ -87,7 +86,7 @@ public class StationServiceImpl implements StationService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto) throws AugeBusinessException,AugeSystemException{
+	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto){
 		BeanValidator.validateWithThrowable(shutDownDto);
 
 		Long stationId = shutDownDto.getStationId();
@@ -95,7 +94,7 @@ public class StationServiceImpl implements StationService {
 		Station station = stationBO.getStationById(stationId);
 		if (null == station) {
 			logger.warn("村点不存在。stationId=" + stationId);
-			throw new AugeServiceException("村点不存在");
+			throw new AugeBusinessException("村点不存在");
 		}
 	    
 		// 校验村点撤点的前提提交

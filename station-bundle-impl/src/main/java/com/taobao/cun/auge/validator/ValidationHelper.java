@@ -23,7 +23,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.Validator;
 
 import com.google.common.collect.Maps;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 
 public class ValidationHelper {
@@ -93,7 +93,7 @@ public class ValidationHelper {
 		}
 		
 		if (exceptionIfInvalid) {
-			AugeServiceException exception =  new AugeServiceException(error.getCode(), errorMessage);
+			AugeBusinessException exception =  new AugeBusinessException(error.getCode(), errorMessage);
 			throw exception;
 		}
 	}

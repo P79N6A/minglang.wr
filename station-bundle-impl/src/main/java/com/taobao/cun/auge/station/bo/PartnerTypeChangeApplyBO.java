@@ -5,7 +5,6 @@ import java.util.Map;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 public interface PartnerTypeChangeApplyBO {
@@ -14,38 +13,38 @@ public interface PartnerTypeChangeApplyBO {
 	 *
 	 * @param nextInstanceId 升级后的实例id
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 * @throws AugeSystemException
 	 */
-	public Boolean isUpgradePartnerInstance(Long nextInstanceId,PartnerInstanceTypeChangeEnum typeChangeEnum) throws AugeServiceException, AugeSystemException ;
+	public Boolean isUpgradePartnerInstance(Long nextInstanceId,PartnerInstanceTypeChangeEnum typeChangeEnum)  ;
 	
 	/**
 	 * 根据升级后的实例id，查询升级申请单信息
 	 *
 	 * @param instanceId 升级后的实例id
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 * @throws AugeSystemException
 	 */
-	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId) throws AugeServiceException, AugeSystemException;
+	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId) ;
 	
 	/**
 	 * 新增类型变更申请单
 	 * 
 	 * @param applyDto
-	 * @throws AugeServiceException
+	 * @
 	 * @throws AugeSystemException
 	 */
-	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto) throws AugeServiceException, AugeSystemException;
+	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto) ;
 	
 	/**
 	 * 删除升级申请单
 	 * 
 	 * @param applyId
-	 * @throws AugeServiceException
+	 * @
 	 * @throws AugeSystemException
 	 */
-	public void deletePartnerTypeChangeApply(Long applyId,String operator) throws AugeServiceException, AugeSystemException;
+	public void deletePartnerTypeChangeApply(Long applyId,String operator) ;
 	
 	/**
 	 * 获取备份的村点信息
@@ -61,5 +60,5 @@ public interface PartnerTypeChangeApplyBO {
 	 * @param applyDto
 	 * @return
 	 */
-	public StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto) throws AugeServiceException, AugeSystemException;
+	public StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto) ;
 }

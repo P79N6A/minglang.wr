@@ -2,16 +2,16 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.dto.PaymentAccountDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.common.resultmodel.ResultModel;
 import com.taobao.cun.dto.ContextDto;
 import com.taobao.cun.dto.SystemTypeEnum;
@@ -27,16 +27,11 @@ public class PaymentAccountQueryAdapterImpl implements PaymentAccountQueryAdapte
 
 	@Override
 	public PaymentAccountDto queryPaymentAccountByNick(String taobaoNick, OperatorDto operator) {
-		try {
 			ContextDto context = buildContext(operator);
 			ResultModel<com.taobao.cun.dto.uic.PaymentAccountDto> resultModel = paymentAccountQueryService
 					.queryStationMemberPaymentAccountByNick(taobaoNick, context);
 			checkResult(resultModel, "paymentAccountQueryService.queryStationMemberPaymentAccountByNick error");
 			return adaptResult(resultModel.getResult());
-		} catch (Exception e) {
-			logger.error("queryPaymentAccountByNick error", e);
-			throw new AugeServiceException("PaymentAccountQueryAdapter.queryPaymentAccountByNick error" + e.getMessage());
-		}
 	}
 
 	@Override
@@ -49,12 +44,11 @@ public class PaymentAccountQueryAdapterImpl implements PaymentAccountQueryAdapte
 			return adaptResult(resultModel.getResult());
 		} catch (Exception e) {
 			logger.error("queryPaymentAccountByTaobaoUserId error", e);
-			throw new AugeServiceException("PaymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId error" + e.getMessage());
+			throw new AugeSystemException("PaymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId error" + e.getMessage());
 		}
 	}
 
-	private PaymentAccountDto adaptResult(com.taobao.cun.dto.uic.PaymentAccountDto result)
-			throws IllegalAccessException, InvocationTargetException {
+	private PaymentAccountDto adaptResult(com.taobao.cun.dto.uic.PaymentAccountDto result){
 		if (null == result) {
 			return null;
 		}

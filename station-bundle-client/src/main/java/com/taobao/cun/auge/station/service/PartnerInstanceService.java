@@ -21,7 +21,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 
@@ -38,7 +37,7 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long addTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long addTemp(PartnerInstanceDto partnerInstanceDto);
 	
 	/**
 	 * 暂存 人，服务站基础信息
@@ -46,31 +45,28 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long updateTemp(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long updateTemp(PartnerInstanceDto partnerInstanceDto);
 	
 	/**
 	 * 更改入驻中的信息    
 	 * @param partnerInstanceDto
-	 * @throws AugeServiceException
 	 */
-	public void updateSettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void updateSettle(PartnerInstanceDto partnerInstanceDto);
 	
 	
 	/**
 	 * 审批入驻 当前只有小二审批淘帮手
 	 * @param auditSettleDto
-	 * @throws AugeServiceException
 	 */
-	public void auditSettleByManager(AuditSettleDto auditSettleDto) throws AugeServiceException;
+	public void auditSettleByManager(AuditSettleDto auditSettleDto);
 	
 	/**
 	 * 合伙人修改，人、服务站基础信息，只包含服务中
 	 * 
 	 * 目前只有合伙人修改淘帮手信息，调用
 	 * 
-	 * @throws AugeServiceException
 	 */
-	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
+	public void updateByPartner(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto);
 
 	/**
 	 * 修改， 人，服务站基础信息 主要包含（装修中，服务中，停业申请中等）有效合伙人状态下
@@ -78,7 +74,7 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto) throws AugeServiceException;
+	public void update(PartnerInstanceUpdateServicingDto partnerInstanceUpdateServicingDto);
 
 	/**
 	 * 删除合伙人实例
@@ -86,7 +82,7 @@ public interface PartnerInstanceService {
 	 * @param instanceId
 	 * @return
 	 */
-	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto) throws AugeServiceException;
+	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto);
 
 	/**
 	 * 签署入驻协议
@@ -94,9 +90,8 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @param waitFrozenMoney
 	 * @param version 乐观锁
-	 * @throws AugeServiceException
 	 */
-	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version) throws AugeServiceException;
+	public void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version);
 
 	/**
 	 * 签署管理协议
@@ -104,7 +99,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public void signManageProtocol(Long taobaoUserId, Long version) throws AugeServiceException;
+	public void signManageProtocol(Long taobaoUserId, Long version);
 
 	/**
 	 * 冻结保证金（新接口）
@@ -112,16 +107,16 @@ public interface PartnerInstanceService {
 	 * @param freezeBondDto
 	 * @return boolean
 	 */
-	public boolean freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	public boolean freezeBond(FreezeBondDto freezeBondDto);
 	
 	/**
 	 * 冻结保证金(老接口，防止发布时报错,未来不在使用)
-	 * 使用新接口freezeBond(FreezeBondDto freezeBondDto) throws AugeServiceException;
+	 * 使用新接口freezeBond(FreezeBondDto freezeBondDto);
 	 * 
 	 * @param freezeBondDto
 	 * @return boolean
 	 */
-	public boolean freezeBond(Long taobaoUserId, Double frozenMoney) throws AugeServiceException;
+	public boolean freezeBond(Long taobaoUserId, Double frozenMoney);
 
 	/**
 	 * 开业
@@ -136,7 +131,7 @@ public interface PartnerInstanceService {
 	 *            小二工号
 	 * @return
 	 */
-	public boolean openStation(OpenStationDto openStationDto) throws AugeServiceException;
+	public boolean openStation(OpenStationDto openStationDto);
 
 	/**
 	 * 合伙人主动申请停业，目前给接口只有合伙人会调用，淘帮手，村拍档不能调用
@@ -144,7 +139,7 @@ public interface PartnerInstanceService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public void applyCloseByPartner(Long taobaoUserId) throws AugeServiceException;
+	public void applyCloseByPartner(Long taobaoUserId);
 
 	/**
 	 * 小二确认合伙人申请停业
@@ -187,7 +182,7 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long applySettle(PartnerInstanceDto partnerInstanceDto);
 
 	/**
 	 * 针对入驻失败的 申请入驻
@@ -195,143 +190,122 @@ public interface PartnerInstanceService {
 	 * @param condition
 	 * @return
 	 */
-	public Long applyResettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long applyResettle(PartnerInstanceDto partnerInstanceDto);
 
 	/**
 	 * 检查有没有开业包，要调用外部接口 到时候要写适配器封装外部接口 先定义在这里
 	 * 
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public boolean checkKyPackage() throws AugeServiceException;
+	public boolean checkKyPackage();
 
 	/**
 	 * 正式退出
 	 * 
 	 * @param partnerInstanceQuitDto
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException;
+	public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto);
 	
 	/**
 	 * 降级合伙人
 	 * @param partnerInstanceDegradeDto
-	 * @throws AugeServiceException
 	 */
-	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto) throws AugeServiceException;
+	public void degradePartnerInstance(PartnerInstanceDegradeDto degradeDto);
 	
 	
 	/**
 	 * 成功入驻
 	 * @param settleSuccessDto
-	 * @throws AugeServiceException
 	 */
-	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto) throws AugeServiceException;
+	public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto);
 	
 	/**
 	 * 降级成功
 	 * @param degradeSuccessDto
-	 * @throws AugeServiceException
 	 */
-	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradeSuccessDto) throws AugeServiceException;
+	public void degradePartnerInstanceSuccess(DegradePartnerInstanceSuccessDto degradeSuccessDto);
 	
 	/**
 	 * 评定合伙人层级(定时钟和审批流程调用)
 	 * @param partnerInstanceLevelDto
-	 * @throws AugeServiceException
 	 */
-	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException;
+	public void evaluatePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto);
 
 	/**
 	 * 更换TPA的TP
 	 * @param changeTPDto
-	 * @throws AugeServiceException
 	 */
-	public void changeTP(ChangeTPDto changeTPDto) throws AugeServiceException;
+	public void changeTP(ChangeTPDto changeTPDto);
 	
 	/**
 	 * 已停业村点恢复服务中
 	 * @param instanceDto
-	 * @throws AugeServiceException
 	 */
-	public void reService(Long instanceId, String operator) throws AugeServiceException;
+	public void reService(Long instanceId, String operator);
 	
 	public void upgradeDecorateLifeCycle(Long instanceId, String operator);
 	
 	/**
 	 * S7、S8合伙人层级晋升
 	 * @param partnerInstanceLevelDto
-	 * @throws AugeServiceException
 	 */
-	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) throws AugeServiceException ;
+	public void promotePartnerInstanceLevel(PartnerInstanceLevelDto partnerInstanceLevelDto) ;
 	
 	
 	/**
 	 * 升级淘帮手
 	 *
 	 * @param upgradeDto
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
 	 */
-	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto) throws AugeServiceException, AugeSystemException;
+	public void upgradePartnerInstance(PartnerInstanceUpgradeDto upgradeDto);
 	
 	/**
 	 * 取消升级
 	 * 
 	 * @param cancelDto
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
 	 */
-	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto) throws AugeServiceException, AugeSystemException;
+	public void cancelUpgradePartnerInstance(CancelUpgradePartnerInstance cancelDto);
 	/**
 	 * 解冻保证金
 	 * 
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
 	 */
-	public Boolean thawMoney(Long instanceId) throws AugeServiceException, AugeSystemException;
+	public Boolean thawMoney(Long instanceId);
 	
 	/**
 	 * 成功解冻保证金
 	 * 
 	 * @param partnerInstanceThrawSuccessDto
-	 * @throws AugeServiceException
-	 * @throws AugeSystemException
 	 */
-	public void thawMoneySuccess(PartnerInstanceThrawSuccessDto partnerInstanceThrawSuccessDto) throws AugeServiceException, AugeSystemException;
+	public void thawMoneySuccess(PartnerInstanceThrawSuccessDto partnerInstanceThrawSuccessDto);
 	
 	/**
 	 * C2B升级签订入住协议
 	 * @param taobaoUserId
 	 * @param signedNewProtocol
 	 * @param isFrozenMoney
-	 * @throws AugeServiceException
 	 */
-	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney) throws AugeServiceException;
+	public void signC2BSettledProtocol(Long taobaoUserId,boolean signedC2BProtocol,boolean isFrozenMoney);
 	
 	/**
 	 * 更新服务站地址
 	 * @param taobaoUserId
-	 * @throws AugeServiceException
 	 */
-	public void updateStationAddress(Long taobaoUserId,StationDto station,boolean isSendMail) throws AugeServiceException;
+	public void updateStationAddress(Long taobaoUserId,StationDto station,boolean isSendMail);
 	
 	/**
 	 * 更新服务站经纬度
 	 * @param taobaoUserId
-	 * @throws AugeServiceException
 	 */
-	public void updateStationLngLat(Long taobaoUserId,StationDto station) throws AugeServiceException;
+	public void updateStationLngLat(Long taobaoUserId,StationDto station);
 	
 	/**
 	 * 淘帮手关闭独立物流站
 	 * 
-	 * @throws AugeServiceException
 	 */
-	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto) throws AugeServiceException;
+	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto);
 	
 	
 }

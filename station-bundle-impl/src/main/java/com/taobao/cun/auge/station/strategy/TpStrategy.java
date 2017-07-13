@@ -86,7 +86,6 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -157,7 +156,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void applySettle(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public void applySettle(PartnerInstanceDto partnerInstanceDto) {
 		validateDecorateAndPaymentType(partnerInstanceDto);
 
 		// 构建入驻生命周期
@@ -214,7 +213,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
-			throw new AugeServiceException("illegal decorate_type & payment_type combination");
+			throw new AugeBusinessException("illegal decorate_type & payment_type combination");
 		}
 	}
 
@@ -277,19 +276,19 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto, PartnerStationRel rel) throws AugeServiceException {
+	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto, PartnerStationRel rel) {
 		String operator = partnerInstanceDeleteDto.getOperator();
 		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(rel.getIsCurrent())) {//历史数据不能删除
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 		}
 		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
 		}
 		//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
 		Long stationId = rel.getStationId();
@@ -297,7 +296,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
 				&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
 				&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_DELETE_FAIL);
+			throw new AugeBusinessException(StationExceptionEnum.STATION_DELETE_FAIL);
 		}
 		
 		List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
@@ -382,7 +381,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void quit(PartnerInstanceQuitDto partnerInstanceQuitDto) throws AugeServiceException {
+	public void quit(PartnerInstanceQuitDto partnerInstanceQuitDto) {
 		ValidateUtils.validateParam(partnerInstanceQuitDto);
 		ValidateUtils.notNull(partnerInstanceQuitDto.getInstanceId());
 		Long instanceId = partnerInstanceQuitDto.getInstanceId();
@@ -418,13 +417,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	}
 
 	@Override
-	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto) {
 		// TODO Auto-generated method stub
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
+	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) {
 		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
 		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
 		itemsDO.setPartnerType(typeEnum);
@@ -438,7 +437,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void handleDifferQuitAuditPass(Long partnerInstanceId) throws AugeServiceException {
+	public void handleDifferQuitAuditPass(Long partnerInstanceId) {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceId, PartnerLifecycleBusinessTypeEnum.QUITING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 
@@ -451,21 +450,16 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
 
 		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
-		try{
-			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
-			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
-			partnerApplyDto.setOperator("system");
-			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
-		} catch(Exception e){
-			logger.error("handler quit error " + partnerInstanceId,e);
-		}
-
+		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+		partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
+		partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+		partnerApplyDto.setOperator("system");
+		partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto, PartnerStationRel rel) throws AugeServiceException {
+	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto, PartnerStationRel rel) {
 		Long instanceId = settleSuccessDto.getInstanceId();
 
 		Long partnerId = rel.getPartnerId();
@@ -628,7 +622,6 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	 * @param state
 	 */
 	private void dispacthEvent(PartnerStationRel rel, String state) {
-		try {
 			if (rel != null) {
 				Station stationDto = stationBO.getStationById(rel.getStationId());
 				PartnerStationStateChangeEvent pisc = new PartnerStationStateChangeEvent();
@@ -638,13 +631,10 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 				pisc.setTaobaoUserId(rel.getTaobaoUserId());
 				EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_STATION_STATE_CHANGE_EVENT, pisc);
 			}
-		} catch (Exception e) {
-			logger.error("dispatchEvent error param: instanceId" + rel.getId(), e);
-		}
 	}
 
 	@Override
-	public Boolean validateUpdateSettle(Long instanceId) throws AugeServiceException {
+	public Boolean validateUpdateSettle(Long instanceId) {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
@@ -654,7 +644,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findCloseApplyId(instanceId);
@@ -674,7 +664,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findQuitApplyId(instanceId);

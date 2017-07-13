@@ -7,7 +7,6 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 
@@ -50,12 +49,12 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	}
 	
 	@Override
-	public void autoClosing(Long instanceId, OperatorDto operatorDto) throws AugeServiceException {
+	public void autoClosing(Long instanceId, OperatorDto operatorDto){
 		
 	}
 	
 	@Override
-	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto) throws AugeServiceException {
+	public void closed(Long instanceId, Long taobaoUserId,String taobaoNick, PartnerInstanceTypeEnum typeEnum,OperatorDto operatorDto){
 		generalTaskSubmitService.submitRemoveUserTagTasks(taobaoUserId, taobaoNick, typeEnum, operatorDto.getOperator(),instanceId);
 		generalTaskSubmitService.submitClosedCainiaoStation(instanceId, operatorDto.getOperator());
 	}

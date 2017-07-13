@@ -309,7 +309,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
 		query.setCourseCodes(codes);
 		query.addTrainee(String.valueOf(userId));
-		try {
 			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
 					.find(auth, query, 100, 1);
 			if (result.isSuccess()) {
@@ -318,10 +317,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				throw new RuntimeException("query record error,"
 						+ result.getMsg());
 			}
-		} catch (Exception e) {
-			logger.error("queryPeixunRecordList error", e);
-			throw new RuntimeException(e);
-		}
 	}
 
 
@@ -567,7 +562,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private String refundCallCrm(BigDecimal refundAmount,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String operator,String refundReason){
-		try{
 			BaseRefundApplyOrderItemList list=new BaseRefundApplyOrderItemList();
 			BaseRefundApplyAddParam param=new BaseRefundApplyAddParam();
 			Operator op=new Operator();
@@ -595,17 +589,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}else{
 				throw new AugeBusinessException(result.getErrorMsg());
 			}
-		}catch(Exception e){
-			logger.error("refundCallCrm error ",e);
-			throw new AugeBusinessException(e);
-		}
-		
 	}
 	
 	private void creatFlow(Long applyId, String loginId, Long orgId) {
 	    Map<String, String> initData = new HashMap<String, String>();
 	    initData.put("orgId", String.valueOf(orgId));
-		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
 			startDto.setBusinessId(String.valueOf(applyId));
@@ -616,9 +604,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException("流程启动失败", e);
-		}
 	}
 	
 	private void changePeixunStatus(String refundNo,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String refundReason,String operator){
@@ -660,7 +645,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private BigDecimal validateRefundAmount(PartnerCourseRecord qihangRecord) {
-		try {
 			com.alibaba.crm.pacific.facade.dto.base.ResultDTO<BigDecimal> crmRefundResult = refundBaseCommonService
 					.queryRefundAbleAmount(qihangRecord.getOrderNum(),
 							qihangRecord.getCourseCode());
@@ -671,10 +655,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}else{
 				return crmRefundResult.getObject();
 			}
-		} catch (Exception e) {
-			logger.error("validateRefundAmount error ", e);
-			throw new AugeBusinessException(e);
-		}
 	}
 	
 	private void validateVoince(PartnerCourseRecord qihangRecord) {
@@ -683,7 +663,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		reqDto.setAppCode(invoiceClientId);
 		reqDto.setBillNo(qihangRecord.getOrderNum());
 		reqDto.signAndEncrypt(invoiceClientKey);
-		try {
 			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
 					.queryEffectiveInvoiceListByBillNos(reqDto);
 			if (finResult.isSuccess()) {
@@ -700,14 +679,9 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}else{
 				throw new AugeBusinessException(finResult.getErrorMessage());
 			}
-		} catch (Exception e) {
-			logger.error("validateVoince error ", e);
-			throw new AugeBusinessException(e);
-		}
 	}
 	
     public void refundAuditExecute(Long id,boolean auditResult){
-    	try{
     		Assert.notNull(id);
     		PartnerCourseRecord qihangRecord=partnerCourseRecordMapper.selectByPrimaryKey(id);
     		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
@@ -738,14 +712,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     		partnerCourseRecordMapper.updateByPrimaryKey(chengZhangRecord);
     		//通知售中审核结果
     		refundForBizAuditService.noticeRefundAuditResult(qihangRecord.getRefundNo(), auditResult);
-    	}catch(Exception e){
-			logger.error("refundAuditExecute error id:"+id, e);
-    	}
     }
     
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleRefundFinishSucess(ObjectMessage objMessage){
-		try {
 			logger.info("handleRefundFinishSucess start:"+objMessage.getObject());
 			String messageType = objMessage.getMessageType();
 			if (!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE
@@ -793,10 +763,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 						.getCode());
 				partnerCourseRecordMapper.updateByPrimaryKey(record);
 			}
-		} catch (Exception e) {
-			logger.error("handleRefundFinishSucess error:", e);
-		}
-		
     }
 	
 	public PartnerPeixunDto queryPeixunRecordById(Long id){

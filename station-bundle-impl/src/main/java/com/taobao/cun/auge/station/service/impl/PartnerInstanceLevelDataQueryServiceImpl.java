@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,8 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -86,7 +88,6 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
     }
     
     private <T, S> T getGrowthData(Long taobaoUserId, Class<T> clazz, DataFetcher<S> df) {
-        try {
             PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
                 return null;
@@ -99,7 +100,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                 if (null == result.getResult()) {
                     continue;
                 }
-                T dto = clazz.newInstance();
+                T dto = BeanUtils.instantiate(clazz);
                 BeanCopyUtils.copyNotNullProperties(result.getResult(), dto);
                 BeanCopyUtils.copyNotNullProperties(statDate, dto);
                 return dto;
@@ -108,19 +109,9 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                 logger.warn("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
             }
             return null;
-        } catch (AugeServiceException e) {
-            String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
-            logger.error(error, e);
-            throw e;
-        } catch (Exception e) {
-            String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
-            logger.error(error, e);
-            throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
     }
 
     private <T,S> List<T> getTrendData(Long taobaoUserId, String statDate, Class<T> clazz, DataListFetcher<S> dataFetcher) {
-        try {
             PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
                 return null;
@@ -152,17 +143,6 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                     });
 
             return list;
-        } catch (AugeServiceException e) {
-            String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthTrendData",
-                    String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
-            logger.error(error, e);
-            throw e;
-        } catch (Exception e) {
-            String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
-                    e.getMessage());
-            logger.error(error, e);
-            throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
     }
     
     /**
@@ -204,19 +184,13 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
         return sb.toString();
     }
 
-    private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
-                .append(error);
-        return sb.toString();
-    }
     
     private <T> void checkResult(ResultModel<T> rm, String msg) {
         if (!rm.isSuccess()) {
             if (rm.getException() != null) {
                 throw rm.getException();
             } else {
-                throw new RuntimeException("get ResultModel failed: " + msg);
+                throw new AugeBusinessException("get ResultModel failed: " + msg);
             }
         }
     }

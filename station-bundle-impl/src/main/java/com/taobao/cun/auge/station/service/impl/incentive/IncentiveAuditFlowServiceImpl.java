@@ -28,7 +28,7 @@ import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.impl.incentive.audit.IncentiveAuditServiceFactory;
 import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
@@ -97,7 +97,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {
             logger.error("启动审批流程失败。param=" + startProcessDto.getBusinessId(), rm.getException());
-            throw new AugeServiceException("启动流程失败。param = " + startProcessDto.getBusinessId(), rm.getException());
+            throw new AugeBusinessException("启动流程失败。param = " + startProcessDto.getBusinessId(), rm.getException());
         }
     }
 
@@ -153,7 +153,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Override
     public void processFinishAuditMessage(String processInstanceId, Long businessId, ProcessApproveResultEnum result, String financeRemarks) {
         if (businessId == null || result == null) {
-            throw new RuntimeException("激励审批非法消息");
+            throw new AugeBusinessException("激励审批非法消息");
         }
         IncentiveProgramAuditDto auditDto = new IncentiveProgramAuditDto();
         auditDto.setOperatorType(OperatorTypeEnum.BUC);

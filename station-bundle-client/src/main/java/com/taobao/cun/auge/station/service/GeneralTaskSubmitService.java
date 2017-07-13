@@ -14,28 +14,24 @@ public interface GeneralTaskSubmitService {
 	 * 保证金冻结完成后，入驻流程最后的系统处理环节
 	 * 
 	 * @param instance
-	 * @throws AugeServiceException
 	 */
-	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operatorId) throws AugeServiceException;
+	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operatorId);
 
 	/**
 	 * 更新菜鸟站点
 	 * 
 	 * @param instanceId
 	 * @param operatorId
-	 * @throws AugeServiceException
 	 */
-	public void submitUpdateCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException;
+	public void submitUpdateCainiaoStation(Long instanceId, String operatorId);
 
 	/**
 	 * 合伙人降级
 	 * 
 	 * @param instanceDto
 	 * @param operatorId
-	 * @throws AugeServiceException
 	 */
-	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, OperatorDto operatorDto)
-			throws AugeServiceException;
+	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, OperatorDto operatorDto);
 
 	/**
 	 * 提交流程
@@ -147,8 +143,7 @@ public interface GeneralTaskSubmitService {
 	 * 
 	 * @param instanceId
 	 * @param operatorId
-	 * @throws AugeServiceException
 	 */
-	public void submitClosedCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException;
+	public void submitClosedCainiaoStation(Long instanceId, String operatorId);
 
 }

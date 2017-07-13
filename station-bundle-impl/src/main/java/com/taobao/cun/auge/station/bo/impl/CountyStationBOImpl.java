@@ -22,7 +22,7 @@ public class CountyStationBOImpl implements CountyStationBO {
 	
 	@Override
 	public CountyStation getCountyStationByOrgId(Long orgId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(orgId);
 		CountyStationExample example = new CountyStationExample();
 		Criteria criteria = example.createCriteria();

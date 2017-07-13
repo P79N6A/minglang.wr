@@ -4,7 +4,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.PageQuery;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaDDto;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 定时任务调用服务
@@ -17,9 +16,8 @@ public interface TpaGmvScheduleService {
 	 * 
 	 * @param page
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery page) throws AugeServiceException;
+	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery page);
 
 	/**
 	 * 合伙人连续两个月GMV排名，所在县前20%，其淘帮手名额添加2个
@@ -34,9 +32,8 @@ public interface TpaGmvScheduleService {
 	 * 
 	 * @param page
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PageDto<DwiCtStationTpaDDto> getWaitClosingTpaList(PageQuery page) throws AugeServiceException;
+	public PageDto<DwiCtStationTpaDDto> getWaitClosingTpaList(PageQuery page);
 	
 	/**
 	 * 淘帮手前两个自然月（满两个自然月），每月含佣父订单<10笔且含佣GMV<1000元

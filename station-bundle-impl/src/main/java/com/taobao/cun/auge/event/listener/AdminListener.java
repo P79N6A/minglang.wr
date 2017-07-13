@@ -171,7 +171,6 @@ public class AdminListener implements EventListener {
 
     private void addOpenRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
                                  Long instanceId) {
-        try {
             // 这里增加合伙人关系写入
             logger.info("addOpenRelation start,instanceId=" + instanceId);
             // 村点服务关系建立
@@ -182,9 +181,6 @@ public class AdminListener implements EventListener {
                     instanceId);
             partnerLifecycleCallbackService.onEnter(onEnterParam);
             logger.info("addOpenRelation start,instanceId=" + instanceId);
-        } catch (Throwable e) {
-            logger.error("addOpenRelation exception,instanceId=" + instanceId, e);
-        }
     }
 
     /**
@@ -247,7 +243,6 @@ public class AdminListener implements EventListener {
      */
     private void addQuitRelation(PartnerInstanceTypeEnum partnerType, Long taobaoUserId, Long stationId,
                                  Long instanceId) {
-        try {
             logger.info("addQuitRelation start,stationId=" + stationId);
             Date gmtEnd = DateUtil.getCurrentDate();
 
@@ -267,16 +262,12 @@ public class AdminListener implements EventListener {
             partnerLifecycleCallbackService.onQuit(onquitCallbackParam);
             stationLifecycleCallbackService.onStop(stationId, gmtEnd);
             logger.info("addQuitRelation end,stationId=" + stationId);
-        } catch (Throwable e) {
-            logger.error("addRelation exception,stationId=" + stationId, e);
-        }
     }
 
     /**
      * 解除旧合伙人关系,绑定新合伙人关系
      */
     private void quitTPARelation(Long taobaoUserId, Long stationId, Long parentTaobaoUserId) {
-        try {
             logger.info("quitTPARelation start,stationId=" + stationId);
             Date gmtEnd = DateUtil.getCurrentDate();
 
@@ -289,9 +280,6 @@ public class AdminListener implements EventListener {
             partnerLifecycleCallbackService.onQuit(onquitCallbackParam);
             stationLifecycleCallbackService.onStop(stationId, gmtEnd);
             logger.info("quitTPARelation end,stationId=" + stationId);
-        } catch (Throwable e) {
-            logger.error("quitTPARelation exception,stationId=" + stationId, e);
-        }
     }
 
     /**

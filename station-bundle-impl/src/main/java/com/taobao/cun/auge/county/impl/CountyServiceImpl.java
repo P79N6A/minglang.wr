@@ -54,13 +54,8 @@ public class CountyServiceImpl implements CountyService{
 	@Override
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
 		logger.info("saveCountyStation"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.saveCountyStation(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("保存县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override
@@ -179,13 +174,8 @@ public class CountyServiceImpl implements CountyService{
 	
 	public CountyDto startOperate(String operator,CountyDto countyDto){
 		logger.info("startOperate"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.startOperate(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override

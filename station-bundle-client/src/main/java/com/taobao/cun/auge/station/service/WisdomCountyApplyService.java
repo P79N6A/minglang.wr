@@ -1,35 +1,34 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by xiao on 16/10/17.
  */
 public interface WisdomCountyApplyService {
 
-    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException;
+    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId);
 
-    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
+    public Long addWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto);
 
-    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException;
+    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id);
 
-    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException;
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition);
 
-    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException;
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids);
 
-    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto);
 
-    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException;
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator);
 
-    public boolean audit(WisdomCountyApplyAuditDto dto) throws AugeServiceException;
+    public boolean audit(WisdomCountyApplyAuditDto dto);
 
-    public void apply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
+    public void apply(WisdomCountyApplyDto wisdomCountyApplyDto);
 
 }

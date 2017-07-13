@@ -21,7 +21,6 @@ public class CuntaoFlowRecordBOImpl implements CuntaoFlowRecordBO{
 	public void addRecord(CuntaoFlowRecord record) {
 		DomainUtils.beforeInsert(record, record.getOperatorWorkid());
 		cuntaoFlowRecordMapper.insertSelective(record);
-		
 	}
 
 }

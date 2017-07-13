@@ -25,7 +25,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 /**
@@ -171,7 +171,7 @@ public class PartnerLifecycleRuleParser {
 				return rule;
 			}
 		}
-		throw new AugeServiceException("getMappingRuleByPartnerInstanceType error");
+		throw new AugeSystemException("getMappingRuleByPartnerInstanceType error");
 	}
 
 	private static boolean isMatchPartnerLifecycleRule(PartnerLifecycleRule partnerLifecycleRule, String instatnceState,
@@ -363,7 +363,7 @@ public class PartnerLifecycleRuleParser {
 							field.set(partnerLifecycleRule, ruleItem);
 						} catch (IllegalArgumentException | IllegalAccessException e) {
 							logger.error("adpatStateMappingRules error", e);
-							throw new AugeServiceException("padpatStateMappingRules error");
+							throw new AugeSystemException("padpatStateMappingRules error");
 						}
 					}
 				}

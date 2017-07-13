@@ -22,7 +22,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 @Component("partnerLifecycleBO")
@@ -33,7 +33,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException {
+	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto)  {
 		ValidateUtils.notNull(partnerLifecycleDto);
 		ValidateUtils.notNull(partnerLifecycleDto.getPartnerInstanceId());
 		ValidateUtils.notNull(partnerLifecycleDto.getBusinessType());
@@ -54,7 +54,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto) throws AugeServiceException {
+	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto)  {
 		ValidateUtils.notNull(partnerLifecycleDto);
 		ValidateUtils.notNull(partnerLifecycleDto.getLifecycleId() );
 	
@@ -68,7 +68,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	}
 
 	public Long getLifecycleItemsId(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,
-			PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException {
+			PartnerLifecycleCurrentStepEnum stepEnum)  {
 		PartnerLifecycleItems items = getLifecycleItems(instanceId, businessTypeEnum, stepEnum);
 		if (items != null) {
 			return items.getId();
@@ -77,7 +77,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	}
 
 	public PartnerLifecycleItems getLifecycleItems(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,
-			PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException {
+			PartnerLifecycleCurrentStepEnum stepEnum)  {
 		ValidateUtils.notNull(businessTypeEnum);
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(stepEnum);
@@ -95,7 +95,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 
 	@Override
 	public PartnerLifecycleItems getLifecycleItems(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(businessTypeEnum);
 		ValidateUtils.notNull(instanceId);
 
@@ -111,7 +111,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteLifecycleItems(Long instanceId, String operator)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(operator);
 		PartnerLifecycleItems record = new PartnerLifecycleItems();
@@ -128,7 +128,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	@Override
 	public void updateDecorateState(Long instanceId,
 			PartnerLifecycleDecorateStatusEnum decorateStateEnum,
-			OperatorDto operatorDto) throws AugeServiceException {
+			OperatorDto operatorDto)  {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(operatorDto);
 		ValidateUtils.notNull(decorateStateEnum);
@@ -136,7 +136,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 		}
 		
 		PartnerLifecycleDto param = new PartnerLifecycleDto();
@@ -154,7 +154,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 	@Override
 	public void updateCourseState(Long instanceId,
 			PartnerLifecycleCourseStatusEnum courseStatusEnum, OperatorDto operatorDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(operatorDto);
 		ValidateUtils.notNull(courseStatusEnum);
@@ -162,7 +162,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
 		}
 		
 		PartnerLifecycleDto param = new PartnerLifecycleDto();

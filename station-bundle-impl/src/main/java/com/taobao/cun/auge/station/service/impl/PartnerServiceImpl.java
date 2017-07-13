@@ -22,7 +22,7 @@ import com.taobao.cun.auge.station.dto.PartnerDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
@@ -60,7 +60,7 @@ public class PartnerServiceImpl implements PartnerService {
 	}
 
 	@Override
-	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException {
+	public PartnerDto getNormalPartnerByTaobaoUserId(Long taobaoUserId){
 		return PartnerConverter.toPartnerDto(partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId));
 	}
 
@@ -75,7 +75,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//组装合伙人数据
 		Partner partner=partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if(partner==null){
-			throw new AugeServiceException("无法找到合伙人信息");
+			throw new AugeBusinessException("无法找到合伙人信息");
 		}
 		result.setAliPay(partner.getAlipayAccount());
 		result.setEmail(partner.getEmail());
@@ -91,7 +91,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//组装村点信息
 		Station station=stationBO.getStationById(rel.getStationId());
 		if(station==null){
-			throw new AugeServiceException("无法找到村点信息");
+			throw new AugeBusinessException("无法找到村点信息");
 		}
 		result.setAddressDetail(station.getAddress());
 		result.setCity(station.getCityDetail());
@@ -112,7 +112,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//县信息
 		CountyStation county=countyStationBO.getCountyStationByOrgId(station.getApplyOrg());
 		if(county==null){
-			throw new AugeServiceException("无法找到县点信息");
+			throw new AugeBusinessException("无法找到县点信息");
 		}
 		result.setCountyName(county.getName());
 		return result;
@@ -127,11 +127,11 @@ public class PartnerServiceImpl implements PartnerService {
         Assert.notNull(birthday);
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null == rel) {
-			throw new AugeServiceException("当前状态无法修改");
+			throw new AugeBusinessException("当前状态无法修改");
 		}
 		//验证手机号是否被使用
 		if(!partnerInstanceBO.judgeMobileUseble(taobaoUserId, null, mobile)){
-			throw new AugeServiceException("该手机号已被使用");
+			throw new AugeBusinessException("该手机号已被使用");
 		}
         PartnerDto dto=new PartnerDto();
         dto.setTaobaoUserId(taobaoUserId);

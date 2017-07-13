@@ -19,7 +19,8 @@ import com.ali.dowjones.service.result.ResultModel;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductPackageDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("fuwuProductService")
@@ -39,17 +40,12 @@ public class FuwuProductServiceImpl implements FuwuProductService{
 		Set<Integer> policyIds=new HashSet<Integer>();
 		policyIds.add(policyId);
 		param.setPromotionPackageKeys(policyIds);
-		try{
 			ResultModel<ProductDto> result=productService.getProduct(param);
 			if(result.isSuccessed()){
 				return convertToProductPackageDto(result.getReturnValue());
 			}else{
-				throw new AugeServiceException(result.getExceptionDesc());
+				throw new AugeBusinessException(result.getExceptionDesc());
 			}
-		}catch(Exception e){
-			logger.error("queryProduct From dowjones error,",e);
-			throw new AugeServiceException(e);
-		}
 	}
 
 	@Override
@@ -59,17 +55,12 @@ public class FuwuProductServiceImpl implements FuwuProductService{
 		Set<String> productCodes=new HashSet<String>();
 		productCodes.add(productCode);
 		param.setProductKeys(productCodes);
-		try{
 			ResultModel<ProductDto> result=productService.getProduct(param);
 			if(result.isSuccessed()){
 				return convertToProductDto(result.getReturnValue());
 			}else{
-				throw new AugeServiceException(result.getExceptionDesc());
+				throw new AugeBusinessException(result.getExceptionDesc());
 			}
-		}catch(Exception e){
-			logger.error("queryProduct From dowjones error,",e);
-			throw new AugeServiceException(e);
-		}
 	}
 
 	

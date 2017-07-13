@@ -16,7 +16,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
@@ -73,7 +73,7 @@ public class ProcessServiceImpl implements ProcessService {
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto), rm.getException());
-			throw new AugeServiceException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
+			throw new AugeBusinessException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
 					rm.getException());
 		}
 	}

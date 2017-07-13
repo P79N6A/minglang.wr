@@ -38,7 +38,6 @@ import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.TpaGmvScheduleService;
@@ -74,8 +73,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
 
 	@Override
-	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery pageQuery) throws AugeServiceException {
-		try {
+	public PageDto<DwiCtStationTpaIncomeMDto> getWaitAddChildNumStationList(PageQuery pageQuery){
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageQuery);
 
@@ -88,10 +86,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 			Page<DwiCtStationTpaIncomeM> page = dwiCtStationTpaIncomeMExtMapper.selectStationsByExample(example);
 			return PageDtoUtil.success(page, DwiCtStationTpaIncomeMConverter.convert(page));
-		} catch (Exception e) {
-			logger.error("查询合伙人淘帮手连续n个月绩效失败", e);
-			return PageDtoUtil.unSuccess(pageQuery.getPageNum(), pageQuery.getPageSize());
-		}
 	}
 
 	@Override
@@ -178,8 +172,7 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 	}
 
 	@Override
-	public PageDto<DwiCtStationTpaDDto> getWaitClosingTpaList(PageQuery pageQuery) throws AugeServiceException {
-		try {
+	public PageDto<DwiCtStationTpaDDto> getWaitClosingTpaList(PageQuery pageQuery){
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageQuery);
 
@@ -193,10 +186,6 @@ public class TpaGmvScheduleServiceImpl implements TpaGmvScheduleService {
 			PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
 			Page<DwiCtStationTpaD> page = dwiCtStationTpaDExtMapper.selectStationsByExample(example);
 			return PageDtoUtil.success(page, DwiCtStationTpaDConverter.convert(page));
-		} catch (Exception e) {
-			logger.error("查询淘帮手连续n个月绩效失败", e);
-			return PageDtoUtil.unSuccess(pageQuery.getPageNum(), pageQuery.getPageSize());
-		}
 	}
 
 	@Override

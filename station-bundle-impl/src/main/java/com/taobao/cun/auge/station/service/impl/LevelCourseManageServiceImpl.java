@@ -26,7 +26,7 @@ import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.ResourceValueUp
 import com.taobao.cun.auge.station.convert.LevelCourseConvertor;
 import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -54,7 +54,7 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
         LevelCourseExample example = new LevelCourseExample();
         example.createCriteria().andCourseCodeEqualTo(course.getCourseCode());
         if(!CollectionUtils.isEmpty(courseBo.queryLevelCourse(example))){
-            throw new AugeServiceException(COURSE_HAD_EXIST, "duplilcate course code,course code had exsit:" + course.getCourseCode());
+            throw new AugeBusinessException(COURSE_HAD_EXIST, "duplilcate course code,course code had exsit:" + course.getCourseCode());
         }
         LevelCourse levelCourse = LevelCourseConvertor.toLevelCourse(course);
         levelCourse.setGmtCreate(new Date());
