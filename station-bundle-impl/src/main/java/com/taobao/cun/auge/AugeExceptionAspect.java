@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 
@@ -30,6 +31,7 @@ public class AugeExceptionAspect {
         String parameters = getParameters(joinPoint);
         if (!((ex instanceof AugeBusinessException))) {
             logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
+            throw new AugeSystemException(action+" error!",ex);
         }
     }
 
