@@ -75,10 +75,12 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 		PartnerMessage partnerMessage = new PartnerMessage();
 		partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
 		partnerMessage.setMobile(partnerDto.getMobile());
-		partnerMessage.setAction("new");
-		partnerMessage.setAlilangOrgId(alilangOrgId);
+		partnerMessage.setOmobile(partnerDto.getMobile());
+		partnerMessage.setAction("update");
 		partnerMessage.setEmail(partnerDto.getEmail());
 		partnerMessage.setName(partnerDto.getName());
+		//partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
+		partnerMessage.setAlilangOrgId(alilangOrgId);
 		String str = JSONObject.toJSONString(partnerMessage);
 		
 		logger.info("init alilang user:{}", str);
