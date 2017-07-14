@@ -30,6 +30,7 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationService")
@@ -119,6 +120,9 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	@Override
 	public Qualification queryC2BQualification(Long taobaoUserId) {
+		//throw new AugeBusinessException("test");
+		throw new RuntimeException("test");
+		/*
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
@@ -128,7 +132,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				return qualification;
 			}
 		return null;
-	}
+	*/}
 
 
 	@Override
