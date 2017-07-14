@@ -75,6 +75,13 @@ public interface CountyService {
 	 * @return
 	 */
 	public List<Long> getCountiesByOrgId(List<Long> orgIds);
+
+	/**
+	 * 根据orgId获取县列表
+	 * @param orgIds
+	 * @return
+	 */
+	public List<CountyDto> getCountyListByOrgIds(List<Long> orgIds);
 	
 	/**
 	 * 查询大区下的县运营中心列表
