@@ -28,5 +28,6 @@ public interface CountyBO {
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
 	
 	public CountyDto startOperate(String operator,CountyDto countyDto);
-	
+
+	List<CountyDto> getCountyStationByCity(String cityCode);
 }
