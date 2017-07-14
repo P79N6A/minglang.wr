@@ -574,7 +574,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			op.setCrmLoginId(operator);
 			op.setDisplayName(operator);
 			param.setApplier(op);
-			param.setRefundReason(refundReason);
+			param.setRefundReason("cuntaoRefund");
 			param.setRefundMethod(RefundMethodEnum.UNSUBSCRIBE);
 			list.setBaseRefundApplyAddParam(param);
 			List<RefundApplyOrderItemDetailAddParam> relatedOrderItemList=new ArrayList<RefundApplyOrderItemDetailAddParam>();
