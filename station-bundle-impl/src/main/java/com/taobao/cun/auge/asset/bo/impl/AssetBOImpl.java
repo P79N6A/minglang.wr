@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -413,11 +415,11 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean judgeCanBuyAsset(Long stationId) {
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            return false;
-        }
-        return getBuyAssetRecord(stationId) == null;
+    public Map<String, String> getStationAssetState(Long stationId) {
+        Map<String, String> result = new HashMap<>();
+        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
+        return result;
     }
 
     private CuntaoFlowRecord getBuyAssetRecord(Long stationId) {
@@ -467,7 +469,7 @@ public class AssetBOImpl implements AssetBO {
         record.setNodeTitle(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getDesc());
         record.setOperateTime(new Date());
         record.setOperatorWorkid(assetDto.getOperator());
-        record.setOperatorName(emp360Adapter.getName(assetDto.getOperator()));
+        record.setOperatorName(assetDto.getOperator());
         cuntaoFlowRecordBO.addRecord(record);
     }
 }

@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -148,8 +149,8 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public Boolean judgeCanBuyAsset(Long stationId) {
-		return assetBO.judgeCanBuyAsset(stationId);
+	public Map<String, String> getStationAssetState(Long stationId) {
+		return assetBO.getStationAssetState(stationId);
 	}
 
 	@Override
