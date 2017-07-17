@@ -16,6 +16,7 @@ import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
 import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
 import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
 import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
@@ -136,7 +137,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {
             logger.error("启动审批流程失败。param=" + JSON.toJSONString(levelProcessDto) , rm.getException());
-            throw new AugeBusinessException("启动流程失败。param = " + JSON.toJSONString(levelProcessDto),
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"启动流程失败。param = " + JSON.toJSONString(levelProcessDto),
                     rm.getException());
         }
     }

@@ -18,6 +18,7 @@ import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.LevelCourse;
 import com.taobao.cun.auge.dal.domain.LevelCourseExample;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.LevelCourseBO;
 import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil;
@@ -54,7 +55,7 @@ public class LevelCourseManageServiceImpl implements LevelCourseManageService {
         LevelCourseExample example = new LevelCourseExample();
         example.createCriteria().andCourseCodeEqualTo(course.getCourseCode());
         if(!CollectionUtils.isEmpty(courseBo.queryLevelCourse(example))){
-            throw new AugeBusinessException(COURSE_HAD_EXIST, "duplilcate course code,course code had exsit:" + course.getCourseCode());
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "duplilcate course code,course code had exsit:" + course.getCourseCode());
         }
         LevelCourse levelCourse = LevelCourseConvertor.toLevelCourse(course);
         levelCourse.setGmtCreate(new Date());

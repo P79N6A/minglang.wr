@@ -23,6 +23,7 @@ import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.PayParam;
 import com.taobao.cun.auge.common.utils.PayUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -61,7 +62,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			if(result.isSuccessed()){
 				return convertOrderDtoToFuwuDto(result.getReturnValue(),userId);
 			}else{
-				throw new AugeBusinessException(result.getExceptionDesc());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,result.getExceptionDesc());
 			}
 	}
 	

@@ -22,6 +22,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
@@ -296,7 +297,7 @@ public class ProcessProcessor {
 				} else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
 					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.DECORATING, operator);
 				} else {
-					throw new AugeBusinessException("partner state is not decorating or servicing.");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
 				}
 
 				// 删除停业申请表

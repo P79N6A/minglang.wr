@@ -30,7 +30,7 @@ public final class StationValidator {
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new IllegalArgumentException("服务站地址不能为空");
 		}
 	}
 	
@@ -39,11 +39,11 @@ public final class StationValidator {
 			return;
 		}
 		if (StringUtils.isEmpty(stationDto.getName())) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NAME_IS_NULL);
+			throw new IllegalArgumentException("服务点名称不能为空");
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new IllegalArgumentException("服务站地址不能为空");
 		}
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
@@ -52,7 +52,7 @@ public final class StationValidator {
 		stationName += stationDto.getName();
 		try {
 			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeBusinessException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
+				throw new IllegalArgumentException("村服务点名称超过了菜鸟驿站要求的长度");
 			}
 		} catch (UnsupportedEncodingException e) {
 			logger.error("validate:", e);
@@ -61,25 +61,25 @@ public final class StationValidator {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_IS_NULL);
+			throw new IllegalArgumentException("服务站编号不能为空");
 		}
 		stationNum = stationNum.toUpperCase();
 		if (stationNum.length() > 16) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+			throw new IllegalArgumentException("村服务站编号长度0-16位");
 		}
 
 		if (isSpecialStr(stationNum)) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_ILLEGAL);
+			throw new IllegalArgumentException("村服务站编号不能含有特殊字符");
 		}
 	}
 	
 	public static void validateStationInfo(StationDto stationDto) {
 		if (StringUtils.isBlank(stationDto.getName())) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NAME_IS_NULL);
+			throw new IllegalArgumentException("服务点名称不能为空");
 		}
 		Address address = stationDto.getAddress();
 		if (address == null) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_ADDRESS_IS_NULL);
+			throw new IllegalArgumentException("服务站地址不能为空");
 		}
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
@@ -88,7 +88,7 @@ public final class StationValidator {
 		stationName += stationDto.getName();
 		try {
 			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeBusinessException(StationExceptionEnum.CAINIAO_STATION_NAME_TOO_LENGTH);
+				throw new IllegalArgumentException("村服务点名称超过了菜鸟驿站要求的长度");
 			}
 		} catch (UnsupportedEncodingException e) {
 			logger.error("validate:", e);
@@ -97,15 +97,15 @@ public final class StationValidator {
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_IS_NULL);
+			throw new IllegalArgumentException("服务站编号不能为空");
 		}
 		stationNum = stationNum.toUpperCase();
 		if (stationNum.length() > 16) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_TOO_LENGTH);
+			throw new IllegalArgumentException("村服务站编号长度0-16位");
 		}
 
 		if (isSpecialStr(stationNum)) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_ILLEGAL);
+			throw new AugeBusinessException("村服务站编号不能含有特殊字符");
 		}
 	}
 	

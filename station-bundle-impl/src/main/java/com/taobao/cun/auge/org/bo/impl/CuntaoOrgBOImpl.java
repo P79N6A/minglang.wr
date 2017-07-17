@@ -12,6 +12,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 @Component("cuntaoOrgBO")
@@ -27,7 +28,7 @@ public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 		c.andIsDeletedEqualTo("n").andIdEqualTo(org.getParentId());
 		List<CuntaoOrg> list = cuntaoOrgMapper.selectByExample(example);
 		if (list.size() == 0) {
-			throw new AugeBusinessException("can not find org "
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find org "
 					+ org.getParentId());
 		}
 		CuntaoOrg parentOrg = list.get(0);

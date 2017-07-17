@@ -21,6 +21,7 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
@@ -194,7 +195,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	private FuwuProductDto getCourseDetail(String productCode){
 		FuwuProductDto product=fuwuProductService.queryProductByCode(productCode);
 		if(product==null){
-			throw new AugeBusinessException("course not find :"+productCode);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"course not find :"+productCode);
 		}
 		return product;
 	}

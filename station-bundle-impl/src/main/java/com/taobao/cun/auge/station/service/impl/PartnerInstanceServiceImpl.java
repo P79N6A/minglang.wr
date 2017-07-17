@@ -45,6 +45,7 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.PartnerInstanceTypeChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
@@ -259,7 +260,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
-        throw new AugeBusinessException("deprecated method, call applySettle() instead");
+        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"deprecated method, call applySettle() instead");
         /*
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
@@ -286,7 +287,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long updateTemp(PartnerInstanceDto partnerInstanceDto){
-        throw new AugeBusinessException("deprecated method, call updateSettle() instead");
+        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"deprecated method, call updateSettle() instead");
 		/*
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
@@ -369,28 +370,28 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         operator.copyOperatorDto(partnerInstanceDto);
         PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(), operator);
         if (!partnerDto.getAlipayAccount().equals(paDto.getAlipayId())) {
-            throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_ALIPAYACCOUNT_NOTEQUAL);
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_ALIPAYACCOUNT_NOTEQUAL_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对");
         }
         if (!partnerDto.getName().equals(paDto.getFullName()) || !partnerDto.getIdenNum().equals(paDto.getIdCardNumber())) {
-            throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_PERSION_INFO_NOTEQUAL);
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_PERSION_INFO_NOTEQUAL_ERROR_CODE,"目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
         }
 
         // 判断淘宝账号是否使用中
         PartnerStationRel existPartnerInstance = partnerInstanceBO.getActivePartnerInstance(paDto.getTaobaoUserId());
         if (null != existPartnerInstance) {
-            throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_TAOBAOUSERID_HAS_USED);
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该账号已经入驻农村淘宝，请核实！");
         }
         //判断手机号是否已经被使用
         //逻辑变更只判断入驻中、装修中、服务中，退出中用户
         if (!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null, partnerDto.getMobile())) {
-            throw new AugeBusinessException(PartnerExceptionEnum.MOBILE_HAS_USED);
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该手机号已被使用");
         }
         // 入驻老村点，村点状态为已停业
         Long stationId = stationDto.getId();
         if (stationId != null) {
             Station station = stationBO.getStationById(stationId);
             if (station != null && !StationStatusEnum.CLOSED.getCode().equals(station.getStatus())) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_MUST_BE_CLOSED_ERROR_CODE,"被入驻的村点状态必须为已停业");
             }
 			/*PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 			if (currentRel != null && !PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
@@ -409,7 +410,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if (!StringUtils.equals(oldStationNum, newStationNum)) {
             int count = stationBO.getStationCountByStationNum(newStationNum);
             if (count > 0) {
-                throw new AugeBusinessException(StationExceptionEnum.STATION_NUM_IS_DUPLICATE);
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"服务站编号重复");
             }
         }
     }
@@ -513,7 +514,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         PartnerUpdateServicingDto pDto = partnerInstanceUpdateServicingDto.getPartnerDto();
         //验证手机号唯一性
         if (!partnerInstanceBO.judgeMobileUseble(null, partnerId, pDto.getMobile())) {
-            throw new AugeBusinessException(PartnerExceptionEnum.MOBILE_HAS_USED);
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该手机号已被使用");
         }
         PartnerDto partnerDto = new PartnerDto();
         partnerDto.copyOperatorDto(partnerInstanceUpdateServicingDto);
@@ -556,7 +557,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             if (PartnerLifecycleItemCheckResultEnum.EXECUTED == checkSettled) {
                 return;
             } else if (PartnerLifecycleItemCheckResultEnum.NONEXCUTABLE == checkSettled) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE);
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_LIFECYCLE_CHECK_ERROR_CODE,"当前操作不满足执行条件");
             }
 
 
@@ -688,7 +689,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
             if (!PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState()) || null == settleItems || null == bondMoney
                     || !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
-                throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_STATE_NOT_APPLICABLE);
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_LIFECYCLE_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
             }
             String operator = String.valueOf(taobaoUserId);
 
@@ -738,7 +739,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             if (openStationDto.isImme()) {// 立即开业
                 PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
                 if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
-                    throw new AugeBusinessException(PartnerExceptionEnum.NO_RECORD);
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"合伙人信息不存在");
                 }
                 // 更新合伙人实例状态为服务中
                 partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,
@@ -805,7 +806,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             return;
         }
         if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
-            throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_NOT_FINISH_COURSE);
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_NOT_FINISH_COURSE_ERROR_CODE,"当前合伙人没有完成培训");
         }
         //判断装修是否未付款
 //		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
@@ -819,7 +820,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 //					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
 //		}
         if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-            throw new AugeBusinessException(StationExceptionEnum.STATION_NOT_FINISH_DECORATE);
+            throw new AugeBusinessException(AugeErrorCodes.STATION_NOT_FINISH_DECORATE_ERROR_CODE,"当前服务站没有完成装修");
         }
 
         PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
@@ -957,13 +958,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         } else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(instanceStateChange)) {
             stationBO.changeState(stationId, StationStatusEnum.SERVICING, StationStatusEnum.CLOSING, operatorDto.getOperator());
         } else {
-            throw new AugeBusinessException("partner state is not decorating or servicing.");
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeBusinessException, AugeSystemException {
+    public void confirmClose(ConfirmCloseDto confirmCloseDto)  {
             // 参数校验
             BeanValidator.validateWithThrowable(confirmCloseDto);
 
@@ -975,7 +976,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     PartnerLifecycleBusinessTypeEnum.CLOSING);
 
             if (!PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstance.getState()) || null == partnerLifecycleItem) {
-                throw new RuntimeException("没有停业申请中的合伙人。ConfirmCloseDto = " + JSON.toJSONString(confirmCloseDto));
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"没有停业申请中的合伙人。ConfirmCloseDto = " + JSON.toJSONString(confirmCloseDto));
             }
 
             Long stationId = partnerInstance.getStationId();
@@ -984,7 +985,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     PartnerInstanceTypeEnum.valueof(partnerInstance.getType()), PartnerLifecycleItemCheckEnum.confirm,
                     partnerLifecycleItem);
             if (!PartnerLifecycleItemCheckResultEnum.EXECUTABLE.equals(confirmExecutable)) {
-                throw new RuntimeException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE.getDesc());
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_LIFECYCLE_CHECK_ERROR_CODE,PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE.getDesc());
             }
             PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
             partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
@@ -1117,7 +1118,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeBusinessException, AugeSystemException {
+    public void applyQuitByManager(QuitStationApplyDto quitDto)  {
             // 参数校验
             BeanValidator.validateWithThrowable(quitDto);
 
@@ -1333,47 +1334,47 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             PartnerInstanceDto rel = partnerInstanceBO.getPartnerInstanceById(instanceId);
             Assert.notNull(rel, "partner instance is null");
             if (!StringUtils.equals(PartnerInstanceTypeEnum.TP.getCode(), rel.getType().getCode())) {
-                throw new RuntimeException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TYPE_FAIL.getDesc());
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TYPE_FAIL.getDesc());
             }
 
             if (!PartnerInstanceStateEnum.canDegradeStateCodeList().contains(rel.getState().getCode())) {
-                throw new RuntimeException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_STATE_FAIL.getDesc());
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_STATE_FAIL.getDesc());
             }
             int tpaCount = partnerInstanceBO.getActiveTpaByParentStationId(rel.getParentStationId());
 
             if (tpaCount > 0) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_HAS_TPA);
+                throw new AugeBusinessException(AugeErrorCodes.DEGRADE_PARTNER_HAS_TPA_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_HAS_TPA.getDesc());
             }
 
             PartnerStationRel parentRel = partnerInstanceBO.getActivePartnerInstance(parentTaobaoUserId);
             if (parentRel == null) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TAOBAOUSERID_ERROR);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TAOBAOUSERID_ERROR.getDesc());
             }
             // 归属合伙人是否属于服务中状态
             if (!StringUtils.equals(PartnerInstanceStateEnum.SERVICING.getCode(), parentRel.getState())) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_NOT_SERVICING);
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_NOT_SERVICING.getDesc());
             }
 
             if (!StringUtils.equals(PartnerInstanceTypeEnum.TP.getCode(), parentRel.getType())) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_TYPE_NOT_TP);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_TYPE_NOT_TP.getDesc());
             }
 
             if (parentTaobaoUserId.longValue() == rel.getTaobaoUserId().longValue()) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TAOBAOUSERID_SAME);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_TAOBAOUSERID_SAME.getDesc());
             }
 
             // 所归属的合伙人的淘帮手不能大于等于5个
             int parentTpaCount = partnerInstanceBO.getActiveTpaByParentStationId(parentRel.getParentStationId());
             Integer maxChildNum = partnerInstanceExtBO.findPartnerMaxChildNum(parentRel.getId());
             if (parentTpaCount >= maxChildNum) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_HAS_TPA_MAX);
+                throw new AugeBusinessException(AugeErrorCodes.DEGRADE_TARGET_PARTNER_HAS_TPA_MAX_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_TARGET_PARTNER_HAS_TPA_MAX.getDesc());
             }
 
             // 判断是不是归属同一个县
             Station parentStation = stationBO.getStationById(parentRel.getStationId());
             Station station = stationBO.getStationById(rel.getStationId());
             if (parentStation.getApplyOrg().longValue() != station.getApplyOrg().longValue()) {
-                throw new AugeBusinessException(PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME);
+                throw new AugeBusinessException(AugeErrorCodes.DEGRADE_PARTNER_ORG_NOT_SAME_ERROR_CODE,PartnerInstanceExceptionEnum.DEGRADE_PARTNER_ORG_NOT_SAME.getDesc());
             }
             generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
     }
@@ -1407,7 +1408,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
                     PartnerInstanceTypeEnum.valueof(rel.getType()));
             if (!canUpdate) {
-                throw new AugeBusinessException(CommonExceptionEnum.RECORD_CAN_NOT_UPDATE);
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_LIFECYCLE_CHECK_ERROR_CODE,"当前数据不能编辑");
             }
             updateStation(rel.getStationId(), partnerInstanceDto);
 
@@ -1575,10 +1576,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
             PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(changeTPDto.getPartnerInstanceId());
             if (!PartnerInstanceTypeEnum.TPA.equals(partnerInstanceDto.getType())) {
-                throw new AugeBusinessException("type is not tpa");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"type is not tpa");
             }
             if (partnerInstanceExtService.validateChildNum(newParentStationId)) {
-                throw new AugeBusinessException("the partner's tpa number is upper limit");
+                throw new AugeBusinessException(AugeErrorCodes.EXCEED_TPA_LIMIT_ERROR_CODE,"the partner's tpa number is upper limit");
             }
             Long oldParentStationId = partnerInstanceDto.getParentStationId();
             Long stationId = partnerInstanceDto.getStationId();
@@ -1613,7 +1614,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         ValidateUtils.notNull(operator);
         PartnerStationRel psl = partnerInstanceBO.findPartnerInstanceById(instanceId);
         if (psl.getIsCurrent().equals("n")) {
-            throw new AugeBusinessException("the partner is not current");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"the partner is not current");
         }
         partnerInstanceBO.reService(instanceId, PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, operator);
         stationBO.changeState(psl.getStationId(), StationStatusEnum.CLOSED, StationStatusEnum.SERVICING, operator);
@@ -1849,7 +1850,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     .queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
             if (accountDto == null) {
                 logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:" + instanceId);
-                throw new AugeBusinessException("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:" + instanceId);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:" + instanceId);
             }
             accountNo = accountDto.getAccountNo();
         }
@@ -1883,7 +1884,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             Long instanceId = cancelDto.getInstanceId();
             PartnerLifecycleItems lifeItem = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
             if (PartnerLifecycleBondEnum.HAS_FROZEN.getCode().equals(lifeItem.getBond())) {
-                throw new AugeBusinessException("保证金已经冻结，不可以撤销。");
+                throw new AugeBusinessException(AugeErrorCodes.BOND_HAS_FROZEN_ERROR_CODE,"保证金已经冻结，不可以撤销。");
             }
             //查询升级申请单
             PartnerTypeChangeApplyDto applyDto = partnerTypeChangeApplyBO.getPartnerTypeChangeApply(instanceId);

@@ -16,6 +16,7 @@ import com.ali.dowjones.service.dto.ProductDto;
 import com.ali.dowjones.service.dto.ProductQueryDto;
 import com.ali.dowjones.service.portal.ProductService;
 import com.ali.dowjones.service.result.ResultModel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductPackageDto;
@@ -44,7 +45,7 @@ public class FuwuProductServiceImpl implements FuwuProductService{
 			if(result.isSuccessed()){
 				return convertToProductPackageDto(result.getReturnValue());
 			}else{
-				throw new AugeBusinessException(result.getExceptionDesc());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,result.getExceptionDesc());
 			}
 	}
 
@@ -59,7 +60,7 @@ public class FuwuProductServiceImpl implements FuwuProductService{
 			if(result.isSuccessed()){
 				return convertToProductDto(result.getReturnValue());
 			}else{
-				throw new AugeBusinessException(result.getExceptionDesc());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,result.getExceptionDesc());
 			}
 	}
 

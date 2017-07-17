@@ -163,7 +163,7 @@ public interface CaiNiaoAdapter {
 	
 	public List<WarehouseDTO> queryWarehouseById(Long id) ; 
 	
-	public Long addCountyByOrg(CaiNiaoStationDto stationDto) throws ServiceException ;
+	public Long addCountyByOrg(CaiNiaoStationDto stationDto);
 	
 	/**
 	 * 停业通知菜鸟服务站停业

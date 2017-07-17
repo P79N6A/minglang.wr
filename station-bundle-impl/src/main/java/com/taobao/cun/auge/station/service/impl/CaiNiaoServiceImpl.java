@@ -23,6 +23,7 @@ import com.taobao.cun.auge.dal.domain.LogisticsStationApplyExample;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -72,7 +73,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void addCainiaoStation(SyncAddCainiaoStationDto syncAddCainiaoStationDto){
 		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
 			logger.info("CaiNiaoServiceImpl addCainiaoStation partnerInstanceId : {" + partnerInstanceId + "}");
@@ -80,7 +81,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			if (instanceDto == null) {
 				String error = getErrorMessage("addCainiaoStation", String.valueOf(partnerInstanceId), "PartnerInstance is null");
 				logger.error(error);
-				throw new AugeBusinessException(error);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			// 同步菜鸟
 			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
@@ -187,7 +188,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		if (countyStation == null) {
 			String error = getErrorMessage("getCountyCainiaoStationId", String.valueOf(orgId), "getCountyStationByOrgId is null");
 			logger.error(error);
-			throw new AugeBusinessException(error);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}
 		Long countyStationId = countyStation.getId();
 		CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(countyStationId,
@@ -196,7 +197,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			String error = getErrorMessage("getCountyCainiaoStationId", String.valueOf(countyStationId),
 					"queryCuntaoCainiaoStationRel is null");
 			logger.error(error);
-			throw new AugeBusinessException(error);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}
 		return rel.getCainiaoStationId();
 	}
@@ -212,7 +213,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void updateCainiaoStation(SyncModifyCainiaoStationDto syncModifyCainiaoStationDto){
 		if (syncModifyCainiaoStationDto == null || syncModifyCainiaoStationDto.getPartnerInstanceId() == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncModifyCainiaoStationDto.getPartnerInstanceId();
 			logger.info("CaiNiaoServiceImpl updateCainiaoStation partnerInstanceId : {" + partnerInstanceId + "}");
@@ -262,7 +263,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void deleteCainiaoStation(SyncDeleteCainiaoStationDto syncCainiaoStationDto){
 		if (syncCainiaoStationDto == null || syncCainiaoStationDto.getPartnerInstanceId() == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncCainiaoStationDto.getPartnerInstanceId();
 			logger.info("CaiNiaoServiceImpl deleteCainiaoStation start,partnerInstanceId:{" + partnerInstanceId + "}");
@@ -301,14 +302,14 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void deleteNotUsedCainiaoStation(Long stationId){
 		if (stationId == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 			logger.info("CaiNiaoServiceImpl deleteNotUserdCainiaoStation start,stationId:{" + stationId + "}");
 			// 查询菜鸟物流站关系表
 			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
 					CuntaoCainiaoStationRelTypeEnum.STATION);
 			if (rel == null || "n".equals(rel.getIsOwn())) {// 没有物流站,删除关系
-				throw new AugeBusinessException(CommonExceptionEnum.RECORD_EXISTS);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"cainiaoStationRel is not exist");
 			} else {// 有物流站，删除物流站
 				caiNiaoAdapter.removeNotUserdStationById(rel.getCainiaoStationId());
 				
@@ -353,7 +354,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void unBindAdmin(Long stationId){
 		if (stationId == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long cnStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
 		if (cnStationId == null) {
@@ -371,7 +372,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void bindAdmin(SyncAddCainiaoStationDto syncAddCainiaoStationDto){
 		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
 			logger.info("CaiNiaoServiceImpl bindAdmin partnerInstanceId : {" + partnerInstanceId + "}");
@@ -390,16 +391,16 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Override
 	public void updateAdmin(
 			SyncAddCainiaoStationDto syncAddCainiaoStationDto)
-			throws AugeBusinessException {
+			{
 		if (syncAddCainiaoStationDto == null || syncAddCainiaoStationDto.getPartnerInstanceId() ==null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncAddCainiaoStationDto.getPartnerInstanceId();
 		
 			logger.info("CaiNiaoServiceImpl updateAdmin partnerInstanceId : {" + partnerInstanceId + "}");
 			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 			if (instanceDto == null) {
-				throw new AugeBusinessException( "partnerInstance is null");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "partnerInstance is null");
 			}
 			Long stationId = instanceDto.getStationDto().getId();
 			Long cainiaoStationId = getCainiaoStationId(stationId);
@@ -414,7 +415,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			{
 		if (syncModifyBelongTPForTpaDto == null || syncModifyBelongTPForTpaDto.getPartnerInstanceId() ==null
 				|| syncModifyBelongTPForTpaDto.getParentPartnerInstanceId() == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long partnerInstanceId = syncModifyBelongTPForTpaDto.getPartnerInstanceId();
 		Long parentPartnerInstanceId = syncModifyBelongTPForTpaDto.getParentPartnerInstanceId();
@@ -464,7 +465,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		if (syncUpgradeToTPForTpaDto == null || 
 				syncUpgradeToTPForTpaDto.getPartnerInstanceId() == null ||
 				syncUpgradeToTPForTpaDto.getOldPartnerInstanceId()== null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		Long piId = syncUpgradeToTPForTpaDto.getPartnerInstanceId();//新的实例id
 		Long oldPiId = syncUpgradeToTPForTpaDto.getOldPartnerInstanceId();//老的淘帮手实例id
@@ -523,7 +524,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto){
 		if (partnerInstanceId == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.PARAM_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check error");
 		}
 		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 		Long stationId = instanceDto.getStationId();

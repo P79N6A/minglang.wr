@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.AccountMoneyExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
@@ -119,7 +120,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 					.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
 			if (accountDto == null){
 				logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
-				throw new  AugeBusinessException("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
+				throw new  AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
 			}
 			accountNo = accountDto.getAccountNo();
 		}
@@ -162,7 +163,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		
 		if (rel == null || rel.getTaobaoUserId() == null) {
 			logger.error("PartnerInstanceScheduleService.initAccountNo rel is null param:"+accountMoneyDto.getObjectId());
-			throw new  AugeBusinessException("PartnerInstanceScheduleService.initAccountNo rel is null param:"+accountMoneyDto.getObjectId());
+			throw new  AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService.initAccountNo rel is null param:"+accountMoneyDto.getObjectId());
 		}
 
 		PaymentAccountDto accountDto;
@@ -171,7 +172,7 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 					.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
 			if (accountDto == null){
 				logger.error("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
-				throw new  AugeBusinessException("PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
+				throw new  AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService.initAccountNo accountDto is null param:"+accountMoneyDto.getObjectId());
 			}
 		} catch (Exception e) {
 			logger.error("PartnerInstanceScheduleService.initAccountNo service erro param:"+accountMoneyDto.getObjectId());

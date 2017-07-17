@@ -18,6 +18,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -479,7 +480,7 @@ public final class PartnerInstanceConverter {
 			return PartnerInstanceStateChangeEnum.START_CLOSING;
 		} else {
 			// 状态校验,只有装修中，或者服务中可以停业
-			throw new AugeBusinessException("只有服务中、装修中服务站才可以申请停业");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"只有服务中、装修中服务站才可以申请停业");
 		}
 	}
 }

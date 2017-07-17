@@ -14,6 +14,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerLifecycleItemsMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -136,7 +137,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
 		}
 		
 		PartnerLifecycleDto param = new PartnerLifecycleDto();
@@ -162,7 +163,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
 		}
 		
 		PartnerLifecycleDto param = new PartnerLifecycleDto();

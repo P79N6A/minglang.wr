@@ -19,6 +19,7 @@ import com.alibaba.masterdata.client.model.dataobj.Emp360Info;
 import com.alibaba.masterdata.client.model.query.EmpQuery;
 import com.alibaba.masterdata.client.model.result.ResultSupport;
 import com.alibaba.masterdata.client.service.Employee360Service;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -40,7 +41,7 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 	public Map<String, EmpInfoDto> getEmpInfoByWorkNos(List<String> workNos){
 		Map<String, EmpInfoDto> empInfoMap = new HashMap<String, EmpInfoDto>();
 		if (CollectionUtil.isEmpty(workNos)) {
-			throw new AugeBusinessException("workNos is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"workNos is null!");
 		}
 		Map<String, String> workMap = new HashMap<String, String>();
 		for (String workNo : workNos) {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramAuditDto;
@@ -97,7 +98,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {
             logger.error("启动审批流程失败。param=" + startProcessDto.getBusinessId(), rm.getException());
-            throw new AugeBusinessException("启动流程失败。param = " + startProcessDto.getBusinessId(), rm.getException());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"启动流程失败。param = " + startProcessDto.getBusinessId(), rm.getException());
         }
     }
 
@@ -153,7 +154,7 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
     @Override
     public void processFinishAuditMessage(String processInstanceId, Long businessId, ProcessApproveResultEnum result, String financeRemarks) {
         if (businessId == null || result == null) {
-            throw new AugeBusinessException("激励审批非法消息");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"激励审批非法消息");
         }
         IncentiveProgramAuditDto auditDto = new IncentiveProgramAuditDto();
         auditDto.setOperatorType(OperatorTypeEnum.BUC);

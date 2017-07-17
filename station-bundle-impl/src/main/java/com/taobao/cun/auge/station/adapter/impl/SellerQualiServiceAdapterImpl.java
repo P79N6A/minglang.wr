@@ -24,6 +24,7 @@ import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.pm.sc.portal.api.quali.dto.QualiAddRequest;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
@@ -95,7 +96,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId,QualiStatus.VALID,QualiStatus.INVALID);
 		if(!result.isSuccessful()){
 			logger.error("listEntityQualiByHid error["+taobaoUserId+"]:"+result.toString());
-			throw new AugeBusinessException("查询企业资质异常");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询企业资质异常");
 		}
 		if(!CollectionUtils.isEmpty(result.getData())){
 			return Optional.ofNullable(result.getData().iterator().next());
@@ -125,7 +126,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		Result<List<UserQualiRecord>> auditRecord	= sellerQualiService.listUserQualiRecord(taobaoUserId,qualiInfoId);
 		if(!auditRecord.isSuccessful()){
 			logger.error("listUserQualiRecord  auditRecord error["+taobaoUserId+"]:"+auditRecord.toString());
-			throw new AugeBusinessException("查询企业资质异常");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询企业资质异常");
 		}
 		return Optional.ofNullable(auditRecord.getData());
 	}
@@ -136,7 +137,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		Result<EntityQuali> result = sellerQualiService.getEntityQualiByQid(qualiId,eidType);
 		if(!result.isSuccessful()){
 			logger.error("getEntityQualiByQid error qualiId["+qualiId+"]:"+result.toString());
-			throw new AugeBusinessException("查询企业资质异常");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询企业资质异常");
 		}
 		return Optional.ofNullable(result.getData());
 	}
@@ -145,7 +146,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		Result<ListHidByEidAndEidTypeResponse> result = sellerQualiService.listHidByEidAndEidType(eid, eidType);
 		if(!result.isSuccessful()){
 			logger.error("listHidByEidAndEidType error eid["+eid+"] eidType["+eidType+"]:"+result.toString());
-			throw new AugeBusinessException("查询havana信息异常");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询havana信息异常");
 		}
 		return Optional.ofNullable(result.getData());
 	}

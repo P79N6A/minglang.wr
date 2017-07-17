@@ -25,6 +25,7 @@ import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
@@ -125,7 +126,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
         ValidateUtils.notNull(auditDto.getState());
         WisdomCountyApply wisdomCountyApply = wisdomCountyApplyMapper.selectByPrimaryKey(auditDto.getId());
         if (!"APPLY".equals(wisdomCountyApply.getState())){
-            throw new AugeBusinessException("该县点不处于报名状态中");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"该县点不处于报名状态中");
         }
         wisdomCountyApply.setState(auditDto.getState().getCode());
         DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());

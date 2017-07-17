@@ -201,14 +201,9 @@ public class SmsListener implements EventListener {
 	 * @return
 	 */
 	private String findPartnerMobile(Long instanceId) {
-		try {
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
 			return partner.getMobile();
-		} catch (AugeBusinessException e) {
-			logger.error("查询合伙人手机号码失败。instanceId=" + instanceId);
-			return "";
-		}
 	}
 	
 	/**

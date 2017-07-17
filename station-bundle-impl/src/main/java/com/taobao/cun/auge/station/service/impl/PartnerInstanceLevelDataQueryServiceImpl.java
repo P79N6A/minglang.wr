@@ -16,6 +16,7 @@ import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.BeanCopyUtils;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthDtoV2;
@@ -190,7 +191,7 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
             if (rm.getException() != null) {
                 throw rm.getException();
             } else {
-                throw new AugeBusinessException("get ResultModel failed: " + msg);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"get ResultModel failed: " + msg);
             }
         }
     }

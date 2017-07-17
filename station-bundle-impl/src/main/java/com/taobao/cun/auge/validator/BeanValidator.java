@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 采用JSR-303规范对Bean校验
@@ -61,7 +61,7 @@ public class BeanValidator {
 
 		if (validateResult.hasError()) {
 			BeanValidateException validateException =  new BeanValidateException(validateResult.getClassName(), validateResult.getErrors());
-			throw new AugeBusinessException("param error",validateException.getMessage());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,validateException.getMessage());
 		}
 	}
 

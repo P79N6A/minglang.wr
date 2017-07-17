@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -47,7 +48,7 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 			} else {
 				String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, null);
 				logger.error(error);
-				throw new AugeBusinessException("查询资产失败，请稍后再试！");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询资产失败，请稍后再试！");
 			}
 	}
 

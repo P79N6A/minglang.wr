@@ -51,6 +51,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoAssetFlowMapper;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.CuntaoFlowRecordEvent;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -393,7 +394,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 		Result<?> result = prService.submitPr(prDto);
 		//this.updateAssetFlow(flowDto, contextDto);
 		if(!result.isSuccess()) {
-			throw new AugeBusinessException("提交pr失败，失败原因：" + result.getMessage());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + result.getMessage());
 		}
 	}
 	
@@ -653,7 +654,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 
 	@Override
 	public void updateFlowDetails(List<CuntaoAssetFlowDetailDto> details, String operator) {
-		try {
 			Assert.notNull(details);
 			Assert.notNull(operator);
 			if(details !=null){
@@ -664,12 +664,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 					sendQuitEvent(detailDo, operator);
 				}
 			}
-		} catch (Exception e) {
-			logger.error("updateFlowDetails error!",e);
-			throw new AugeBusinessException("updateFlowDetails error");
-		}
-		
-		
 	}
 
 	private void sendQuitEvent(CuntaoAssetFlowDetail detailDo, String operator) {

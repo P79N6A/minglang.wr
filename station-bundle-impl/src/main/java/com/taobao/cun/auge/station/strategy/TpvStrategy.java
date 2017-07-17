@@ -29,6 +29,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -137,7 +138,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 			PartnerStationRel rel) {
 		
 		if (!StringUtils.equals("AUDIT_FAIL", rel.getState())) {//TODO：这个状态是老的，重构三期要改造
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态合伙人信息不能删除");
 		}
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
 			Long stationId =  rel.getStationId();

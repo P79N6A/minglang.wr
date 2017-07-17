@@ -10,11 +10,11 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.bail.dto.BaiDtoBuilder;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.settle.common.model.ResultModel;
 
 @Component("alipayStandardBailAdapter")
@@ -46,6 +46,6 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			if (resultModel != null && resultModel.isSuccess() && resultModel.getResult() != null) {
 				return resultModel.getResult();
 			}
-			throw new AugeBusinessException("alipayStandardBailService.dealStandardBail false, outOrderNo is:" + alipayStandardBailDto.getOutOrderNo());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"alipayStandardBailService.dealStandardBail false, outOrderNo is:" + alipayStandardBailDto.getOutOrderNo());
 	}
 }

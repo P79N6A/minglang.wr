@@ -18,6 +18,7 @@ import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -182,7 +183,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
 	@Override
 	public List<UserProfile> queryUserForMeeting(String name, Long taobaoUserId) {
 		if (taobaoUserId == null || taobaoUserId == 0l) {
-			throw new AugeBusinessException("taobaoUserId is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"taobaoUserId is null");
 		}
 		PartnerStationRel rel = partnerInstanceBO
 				.getActivePartnerInstance(taobaoUserId);

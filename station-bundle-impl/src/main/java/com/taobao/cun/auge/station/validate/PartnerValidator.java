@@ -8,8 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerUpdateServicingDto;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 
 public final class PartnerValidator {
 
@@ -19,23 +17,23 @@ public final class PartnerValidator {
 	
 	public static void validatePartnerInfo(PartnerDto partnerDto) {
 		if (StringUtils.isBlank(partnerDto.getTaobaoNick())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_TAOBAONICK_IS_NULL);
+			throw new IllegalArgumentException("申请人淘宝会员名不能为空");
 		}
 		if (StringUtils.isBlank(partnerDto.getAlipayAccount())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_ALIPAYACCOUNT_IS_NULL);
+			throw new IllegalArgumentException("申请人支付宝账号不能为空");
 		}
 		if (StringUtils.isBlank(partnerDto.getIdenNum())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_IDENNUM_IS_NULL);
+			throw new IllegalArgumentException("身份证号码不能为空");
 		}
 		if (StringUtils.isBlank(partnerDto.getName())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_NAME_IS_NULL);
+			throw new IllegalArgumentException("申请人姓名不能为空");
 		}
 
 		if (partnerDto.getMobile() == null) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
+			throw new IllegalArgumentException("手机号不能为空");
 		}
 		if (!isMobileNO(partnerDto.getMobile())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
+			throw new IllegalArgumentException("手机号必须是11位数字组成，且以1开头");
 		}
 	}
 	
@@ -45,7 +43,7 @@ public final class PartnerValidator {
 		}
 		if (partnerDto.getMobile() != null) {
 			if (!isMobileNO(partnerDto.getMobile())) {
-				throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
+				throw new IllegalArgumentException("手机号必须是11位数字组成，且以1开头");
 			}
 		}
 	}
@@ -55,10 +53,10 @@ public final class PartnerValidator {
 			return;
 		}
 		if (StringUtil.isBlank(partnerDto.getMobile())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_MOBILE_IS_NULL);
+			throw new IllegalArgumentException("手机号不能为空");
 		}
 		if (!isMobileNO(partnerDto.getMobile())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_MOBILE_CHECK_FAIL);
+			throw new IllegalArgumentException("手机号必须是11位数字组成，且以1开头");
 		}
 	}
 	

@@ -32,6 +32,7 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
@@ -202,7 +203,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
 				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
-			throw new AugeBusinessException("illegal decorate_type & payment_type combination");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"illegal decorate_type & payment_type combination");
 		}
 	}
 
@@ -226,16 +227,16 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto, PartnerStationRel rel){
 		String operator = partnerInstanceDeleteDto.getOperator();
 		if (PartnerInstanceIsCurrentEnum.N.getCode().equals(rel.getIsCurrent())) {//历史数据不能删除
-			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"历史数据不能删除");
 		}
 		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE, "当前状态合伙人信息不能删除");
 		}
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.BOND_HAS_FROZEN_ERROR_CODE,"保证金已经结不能删除");
 		}
 		//该村点只有当前合伙人，直接删除,如果有其他的合伙人（不管是什么状态，都置为已停业）
 		Long stationId = rel.getStationId();
@@ -243,7 +244,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
 				&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getStatus())
 				&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.STATION_STATUS_CHECK_ERROR_CODE,"当前状态的服务站信息不能删除");
 		}
 		
 		List<PartnerStationRel> sList = partnerInstanceBO.findPartnerInstances(stationId);
@@ -582,7 +583,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void validateAssetBack(Long instanceId){
 		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
 		if(!isBackAsset){
-			throw new AugeBusinessException("3件资产尚未回收，请用小二APP回收资产。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_UN_RECYCLE_ERROR_CODE,"3件资产尚未回收，请用小二APP回收资产。");
 		}
 	}
 
@@ -590,7 +591,7 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void validateOtherPartnerQuit(Long instanceId) {
 		boolean isOtherPartnerQuit = partnerInstanceQueryService.isOtherPartnerQuit(instanceId);
 		if(!isOtherPartnerQuit){
-			throw new AugeBusinessException("村点上存在未退出的合伙人，不能撤点。");
+			throw new AugeBusinessException(AugeErrorCodes.HAS_OTHER_PARTNER_QUIT_ERROR_CODE,"村点上存在未退出的合伙人，不能撤点。");
 		}
 	}
 	

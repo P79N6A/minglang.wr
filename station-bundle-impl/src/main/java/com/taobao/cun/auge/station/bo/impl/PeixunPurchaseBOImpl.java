@@ -22,12 +22,12 @@ import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
 import com.alibaba.fastjson.JSON;
-
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
@@ -82,18 +83,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
 			if(record==null){
-				throw new AugeServiceException("not find record");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 			}
 			//判断修改人和提交人是否一致
 			if(!record.getApplyWorkNo().equals(dto.getOperator())){
-				throw new AugeServiceException("与提交人不一致，无权限修改");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PRIVILEDGE_ERROR_CODE,"与提交人不一致，无权限修改");
 			}
 			//判断是否是可编辑状态
 			if (!PeixunPurchaseStatusEnum.AUDIT_NOT_PASS.getCode().equals(
 					record.getStatus())
 					&&!PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
 							record.getStatus())) {
-				throw new AugeServiceException("当前状态不可编辑");
+				throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ORDER_STATUS_ERROR_ERROR_CODE,"当前状态不可编辑");
 			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);

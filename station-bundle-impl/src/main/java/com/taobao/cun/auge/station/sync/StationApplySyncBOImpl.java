@@ -49,6 +49,7 @@ import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -177,7 +178,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 			Assert.notNull(existStationApply, "[update]station_apply not exists, instance_id = " + partnerInstanceId);
 		} else if (null != instance.getStationApplyId()) {
 			// 防止多次同步add
-			throw new AugeBusinessException("[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"[add]station_apply_id has already exists , instance_id = " + partnerInstanceId);
 		}
 
 		Station station = stationMapper.selectByPrimaryKey(instance.getStationId());
@@ -262,7 +263,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				}
 			}
 			if (protocol == null) {
-				throw new AugeBusinessException("protocol not exists : " + p.getCode());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocol not exists : " + p.getCode());
 			}
 			PartnerProtocolRelExample relExample = new PartnerProtocolRelExample();
 			relExample.createCriteria().andIsDeletedEqualTo("n")
@@ -324,7 +325,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 				}
 			}
 			if (protocol == null) {
-				throw new AugeBusinessException("protocol not exists : " + p.getCode());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocol not exists : " + p.getCode());
 			}
 			// 新模型固点协议查询条件
 			PartnerProtocolRelExample newRelExample = new PartnerProtocolRelExample();

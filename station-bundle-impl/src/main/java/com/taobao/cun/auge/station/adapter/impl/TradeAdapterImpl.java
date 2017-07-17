@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DateUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
@@ -31,7 +32,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
         if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
 			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate),taobaoNoEndTradeDtoResultModel.getException());
-			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询未完成订单失败");
         }
 
         TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoNoEndTradeDtoResultModel.getResult();
@@ -50,7 +51,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 				build.append("\n");
 			}
 			logger.warn("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
-			throw new AugeBusinessException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
+			throw new AugeBusinessException(AugeErrorCodes.NOT_END_ORDER_ERROR_CODE,"村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 		}
 	}
 }

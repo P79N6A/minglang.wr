@@ -27,6 +27,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
@@ -175,11 +176,11 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		if (!StringUtils.equals(PartnerInstanceStateEnum.TEMP.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLE_FAIL.getCode(), rel.getState())
 				&& !StringUtils.equals(PartnerInstanceStateEnum.SETTLING.getCode(), rel.getState())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"当前状态合伙人信息不能删除");
 		}
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
-			throw new AugeBusinessException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.BOND_HAS_FROZEN_ERROR_CODE,"保证金已经结不能删除");
 		}
 		
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
@@ -188,7 +189,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
 					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getState())
 					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-				throw new AugeBusinessException(StationExceptionEnum.STATION_DELETE_FAIL);
+				throw new AugeBusinessException(AugeErrorCodes.STATION_STATUS_CHECK_ERROR_CODE,"当前状态的服务站信息不能删除");
 			}
 			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
 		}
@@ -441,7 +442,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void validateAssetBack(Long instanceId){
 		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
 		if(!isBackAsset){
-			throw new AugeBusinessException("3件资产尚未回收，请用小二APP回收资产。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_UN_RECYCLE_ERROR_CODE,"3件资产尚未回收，请用小二APP回收资产。");
 		}
 	}
 

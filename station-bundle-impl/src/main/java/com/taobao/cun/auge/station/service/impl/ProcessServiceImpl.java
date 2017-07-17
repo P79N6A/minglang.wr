@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -73,7 +74,7 @@ public class ProcessServiceImpl implements ProcessService {
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 		if (!rm.isSuccess()) {
 			logger.error("启动审批流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto), rm.getException());
-			throw new AugeBusinessException("启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"启动流程失败。StartProcessDto = " + JSON.toJSONString(startProcessDto),
 					rm.getException());
 		}
 	}

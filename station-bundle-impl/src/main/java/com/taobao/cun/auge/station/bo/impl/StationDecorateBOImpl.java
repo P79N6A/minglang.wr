@@ -28,6 +28,7 @@ import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationDecorateMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
@@ -111,7 +112,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		Station station = stationBO.getStationById(stationId);
 		if (station == null) {
 			logger.error("stationBO.getStationById is null"+stationId);
-			throw new AugeBusinessException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station is null");
 		}
 		return getStationDecorateSellerInfo(station);
 	}
@@ -125,7 +126,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	 */
 	private String getStationDecorateSellerInfo(Station station) {
 		if (station == null || station.getApplyOrg() == null) {
-			throw new AugeBusinessException("非法的村点对象!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"非法的村点对象!");
 		}
 		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.PROVINCE);
 		AppResourceDto resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
@@ -134,7 +135,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		}
 		if (resource == null || StringUtils.isEmpty(resource.getValue())) {
-			throw new AugeBusinessException("找不到装修卖家信息,station org:" + station.getApplyOrg());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"找不到装修卖家信息,station org:" + station.getApplyOrg());
 		}
 		return resource.getValue();
 	}
@@ -321,7 +322,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	public void confirmAcessDecorating(Long id) {
 		StationDecorate sd = stationDecorateMapper.selectByPrimaryKey(id);
 		if (sd == null) {
-			throw new AugeBusinessException("not find record "
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record "
 					+ String.valueOf(id));
 		}
 		// 只有政府出资的装修 合伙人才能确认
@@ -333,7 +334,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			sd.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
 			stationDecorateMapper.updateByPrimaryKey(sd);
 		} else {
-			throw new AugeBusinessException("非政府出资装修，无法确认。 "
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_PAYMENT_TYPE_ERROR_CODE,"非政府出资装修，无法确认。 "
 					+ sd.getPaymentType());
 		}
 

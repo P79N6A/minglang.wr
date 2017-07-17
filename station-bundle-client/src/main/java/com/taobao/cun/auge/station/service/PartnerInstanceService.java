@@ -20,8 +20,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 
 /**
@@ -149,7 +147,7 @@ public interface PartnerInstanceService {
 	 * @param isAgree
 	 * @return
 	 */
-	public void confirmClose(ConfirmCloseDto confirmCloseDto) throws AugeBusinessException,AugeSystemException;
+	public void confirmClose(ConfirmCloseDto confirmCloseDto);
 
 	/**
 	 * 小二、TP商申请停业
@@ -158,7 +156,7 @@ public interface PartnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyCloseByManager(ForcedCloseDto forcedCloseDto) throws AugeBusinessException,AugeSystemException;
+	public void applyCloseByManager(ForcedCloseDto forcedCloseDto);
 	
 	/**
 	 * 系统自动停业
@@ -174,7 +172,7 @@ public interface PartnerInstanceService {
 	 * @param employeeId
 	 * @return
 	 */
-	public void applyQuitByManager(QuitStationApplyDto quitDto) throws AugeBusinessException,AugeSystemException;
+	public void applyQuitByManager(QuitStationApplyDto quitDto);
 
 	/**
 	 * 申请入驻

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.dal.mapper.StationApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationApplyBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
@@ -25,7 +26,7 @@ public class StationApplyBOImpl implements StationApplyBO {
 
 		if (null == stationApply) {
 			logger.error("station apply is not exist.instance id " + stationApplyId);
-			throw new AugeBusinessException(StationExceptionEnum.STATION_APPLY_NOT_EXIST);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station apply is not exist.instance id " + stationApplyId);
 		}
 		return stationApply;
 

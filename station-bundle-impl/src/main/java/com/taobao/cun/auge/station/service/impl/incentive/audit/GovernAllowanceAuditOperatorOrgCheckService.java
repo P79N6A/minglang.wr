@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
@@ -33,7 +34,7 @@ public class GovernAllowanceAuditOperatorOrgCheckService implements AuditOperato
     public Long getAuditOperatorOrgId(List<IncentiveAreaDto> incentiveAreaList) {
 
         if (CollectionUtils.isEmpty(incentiveAreaList) || incentiveAreaList.get(0).getOrgId() == null){
-            throw new AugeBusinessException("非法的激励区域!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"非法的激励区域!");
         }
         Long orgId = incentiveAreaList.get(0).getOrgId();
         return cuntaoOrgServiceClient.getAncestor(orgId, OrgRangeType.LARGE_AREA).getId();

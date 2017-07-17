@@ -19,6 +19,7 @@ import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
 import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
 import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
 import com.taobao.cun.auge.evaluate.service.ReplyMaterialService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -80,8 +81,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, null, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         PartnerLevelTaskBusinessDataDTO dto = dataDtos.get(0);
         if (!taobaoUserId.equals(dto.getAuditedPersonId()) || TaskNodeAuditStatus.isAudited(dto.getAuditStatus())) {
-            logger.error("No Priviledge To Submit Attachements!");
-            throw new AugeBusinessException("No Priviledge To Submit Attachements!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PRIVILEDGE_ERROR_CODE,"No Priviledge To Submit Attachements!");
         }
         PartnerLevelTaskBusinessDataDTO updateDto = new PartnerLevelTaskBusinessDataDTO();
         updateDto.setAuditedPersonId(taobaoUserId);

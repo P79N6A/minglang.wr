@@ -32,6 +32,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -390,7 +391,7 @@ public class AssetBOImpl implements AssetBO {
 		CuntaoAssetExample example = new CuntaoAssetExample();
 		List<CuntaoAsset>  assets = cuntaoAssetMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(assets)){
-			throw new AugeBusinessException("can not find biz by serialNoOrAliNo["+serialNoOrAliNo+"]");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find biz by serialNoOrAliNo["+serialNoOrAliNo+"]");
 		}
 		return convert2CuntaoAssetDto(assets.iterator().next());
 	}

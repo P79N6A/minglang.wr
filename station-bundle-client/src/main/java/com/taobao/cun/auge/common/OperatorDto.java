@@ -69,19 +69,19 @@ public class OperatorDto implements Serializable {
 
 	public void validateOperator() throws AugeBusinessException {
 		if (operator == null || operator.length() == 0) {
-			throw new AugeBusinessException(CommonExceptionEnum.OPERATOR_IS_NULL);
+			throw new IllegalArgumentException("OPERATOR_IS_NULL");
 		}
 	}
 
 	public void validateOperatorType() throws AugeBusinessException {
 		if (operatorType == null) {
-			throw new AugeBusinessException(CommonExceptionEnum.OPERATORTYPE_IS_NULL);
+			throw new IllegalArgumentException("OPERATORTYPE_IS_NULL");
 		}
 	}
 
 	public void validateOperatorOrgId() throws AugeBusinessException {
 		if (null == operatorOrgId || operatorOrgId <= 0L) {
-			throw new AugeBusinessException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
+			throw new IllegalArgumentException("OPERATORORGID_IS_NULL");
 		}
 	}
 

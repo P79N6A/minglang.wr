@@ -28,6 +28,7 @@ import com.taobao.cun.auge.dal.domain.StationExample.Criteria;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
@@ -90,7 +91,7 @@ public class StationBOImpl implements StationBO {
 		Station station = getStationById(stationId);
 		if (!StringUtils.equals(preStatus.getCode(), station.getStatus())) {
 			logger.warn("村点状态不正确。当前状态为" + station.getStatus());
-			throw new AugeBusinessException(StationExceptionEnum.STATION_STATUS_CHANGED);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点状态不正确。当前状态为" + station.getStatus());
 		}
 		Station record = new Station();
 		record.setId(stationId);
@@ -125,7 +126,7 @@ public class StationBOImpl implements StationBO {
 		ValidateUtils.notNull(stationDto.getId());
 		Station oldRecord = getStationById(stationDto.getId());
 		if (oldRecord == null) {
-			throw new AugeBusinessException(StationExceptionEnum.STATION_NOT_EXIST);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station is null");
 		}
 		Station record = StationConverter.toStation(stationDto);
 		

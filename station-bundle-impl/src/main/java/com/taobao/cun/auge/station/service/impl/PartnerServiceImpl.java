@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -75,7 +76,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//组装合伙人数据
 		Partner partner=partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if(partner==null){
-			throw new AugeBusinessException("无法找到合伙人信息");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"无法找到合伙人信息");
 		}
 		result.setAliPay(partner.getAlipayAccount());
 		result.setEmail(partner.getEmail());
@@ -91,7 +92,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//组装村点信息
 		Station station=stationBO.getStationById(rel.getStationId());
 		if(station==null){
-			throw new AugeBusinessException("无法找到村点信息");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"无法找到村点信息");
 		}
 		result.setAddressDetail(station.getAddress());
 		result.setCity(station.getCityDetail());
@@ -127,11 +128,11 @@ public class PartnerServiceImpl implements PartnerService {
         Assert.notNull(birthday);
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 		if (null == rel) {
-			throw new AugeBusinessException("当前状态无法修改");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态无法修改");
 		}
 		//验证手机号是否被使用
 		if(!partnerInstanceBO.judgeMobileUseble(taobaoUserId, null, mobile)){
-			throw new AugeBusinessException("该手机号已被使用");
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该手机号已被使用");
 		}
         PartnerDto dto=new PartnerDto();
         dto.setTaobaoUserId(taobaoUserId);

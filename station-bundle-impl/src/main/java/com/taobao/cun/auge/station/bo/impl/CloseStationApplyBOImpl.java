@@ -11,6 +11,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CloseStationApply;
 import com.taobao.cun.auge.dal.domain.CloseStationApplyExample;
 import com.taobao.cun.auge.dal.mapper.CloseStationApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.convert.CloseStationApplyConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -32,7 +33,7 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 		BeanValidator.validateWithThrowable(closeStationApplyDto);
 		CloseStationApplyDto applydto = getCloseStationApply(closeStationApplyDto.getPartnerInstanceId());
 		if (applydto != null) {
-			throw new AugeBusinessException(CommonExceptionEnum.RECORD_EXISTS);
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"CloseStationApply is exists");
 		}
 		CloseStationApply closeStationApply = CloseStationApplyConverter.toCloseStationApply(closeStationApplyDto);
 		DomainUtils.beforeInsert(closeStationApply, closeStationApplyDto.getOperator());
