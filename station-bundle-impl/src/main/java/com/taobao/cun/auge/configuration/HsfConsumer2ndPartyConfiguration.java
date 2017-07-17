@@ -50,6 +50,8 @@ import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 import com.taobao.uic.common.service.userinfo.TagRecordReadService;
 import com.taobao.uic.common.service.userinfo.TagRecordWriteService;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 @Configuration
@@ -308,6 +310,17 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				.build();
 	}
 	
+	@Bean
+	public UicReadServiceClient uicReadServiceClient(HsfConsumerContext context, @Value("${uic.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicReadServiceClient.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicPaymentAccountReadServiceClient.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
 	
 	
 }
