@@ -7,14 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
+import com.taobao.cun.auge.station.bo.TaobaoTradeBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.common.resultmodel.ResultModel;
-import com.taobao.cun.dto.trade.TaobaoNoEndTradeDto;
-import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
+import com.taobao.cun.auge.trade.dto.TaobaoNoEndTradeDto;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.refund.domain.RefundDO;
 
@@ -24,17 +21,11 @@ public class TradeAdapterImpl implements TradeAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(TradeAdapter.class);
 
 	@Autowired
-	TaobaoTradeOrderQueryService taobaoTradeOrderQueryService;
+	TaobaoTradeBO taobaoTradeBO;
 
 	@Override
 	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeBusinessException,AugeSystemException{
-		ResultModel<TaobaoNoEndTradeDto> taobaoNoEndTradeDtoResultModel = taobaoTradeOrderQueryService.findNoEndTradeOrders(taobaoUserId,endDate);
-        if (!taobaoNoEndTradeDtoResultModel.isSuccess()) {
-			logger.error("查询未结束订单失败。taobaoUserId= " + taobaoUserId + " endDate" + DateUtil.format(endDate),taobaoNoEndTradeDtoResultModel.getException());
-			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
-
-        TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoNoEndTradeDtoResultModel.getResult();
+		TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoTradeBO.findNoEndTradeOrders(taobaoUserId,endDate);
 
 		if (taobaoNoEndTradeDto.isExistsNoEndOrder()) {
 			StringBuilder build = new StringBuilder();
