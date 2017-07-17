@@ -82,7 +82,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 				3000);
 	}
 
-	// admin服务
+	//admin服务
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean partnerLifecycleCallbackService(
 			@Value("${hsf.consumer.version.admin.partnerLifecycleCallbackService}") String version) {
