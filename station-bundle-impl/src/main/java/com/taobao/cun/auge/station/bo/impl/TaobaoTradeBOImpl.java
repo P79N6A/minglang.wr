@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.station.bo.TaobaoTradeBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.trade.dto.TaobaoNoEndTradeDto;
 import com.taobao.refundplatform.client.read.RefundReadService;
@@ -21,7 +22,7 @@ import com.taobao.tc.refund.domain.RefundDO;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
 
 @Component("taobaoTradeBO")
-public class TaobaoTradeBOImpl {
+public class TaobaoTradeBOImpl implements TaobaoTradeBO{
 	
 	@Autowired
 	private BuyerQueryService buyerQueryService;
