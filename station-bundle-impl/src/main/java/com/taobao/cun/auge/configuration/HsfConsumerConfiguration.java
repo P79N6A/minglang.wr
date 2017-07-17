@@ -23,7 +23,6 @@ import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
-import com.taobao.cun.service.trade.TaobaoTradeOrderQueryService;
 import com.taobao.cun.service.uic.PaymentAccountQueryService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -59,12 +58,6 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(PartnerInstanceLevelDataService.class, HSFGroup.HSF, version, 7000);
 	}
 
-	// cuntaocenter服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean taobaoTradeOrderQueryService(
-			@Value("${hsf.consumer.version.cuntaocenter.taobaoTradeOrderQueryService}") String version) {
-		return getConsumerBean(TaobaoTradeOrderQueryService.class, HSFGroup.HSF, version, 3000);
-	}
 	
 	// cuntaocenter服务
 	@Bean(initMethod = "init")
