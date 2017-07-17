@@ -2,17 +2,21 @@ package com.taobao.cun.auge.payment.account.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
 import com.taobao.cun.common.exception.BusinessException;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
-
+@Service("paymentAccountQueryService")
+@HSFProvider(serviceInterface = PaymentAccountQueryService.class)
 public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryService{
 	
 	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
