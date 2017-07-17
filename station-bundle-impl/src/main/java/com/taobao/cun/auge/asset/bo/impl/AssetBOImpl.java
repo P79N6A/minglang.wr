@@ -445,7 +445,7 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeServiceException("对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
         }
         saveBuyRecord(assetDto);
-        return null;
+        return true;
     }
 
     private boolean validateStationAssetNum(Long stationId) {
