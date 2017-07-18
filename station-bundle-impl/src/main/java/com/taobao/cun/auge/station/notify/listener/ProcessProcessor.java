@@ -297,7 +297,7 @@ public class ProcessProcessor {
 				} else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
 					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.DECORATING, operator);
 				} else {
-					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
 				}
 
 				// 删除停业申请表

@@ -280,7 +280,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		int updateCount = partnerStationRelMapper.updateByExampleSelective(rel, example);
 
 		if (updateCount < 1) {
-			throw new AugeBusinessException(AugeErrorCodes.DUPLICATE_UPDATE_ERROR_CODE,"当前数据有更新，请刷新页面重试");
+			throw new AugeBusinessException(AugeErrorCodes.CONCURRENT_UPDATE_ERROR_CODE,"当前数据有更新，请刷新页面重试");
 		}
 	}
 

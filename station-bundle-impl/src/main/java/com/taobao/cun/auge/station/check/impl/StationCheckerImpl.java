@@ -24,7 +24,7 @@ public class StationCheckerImpl implements StationChecker{
 		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
 		if (!isAllPartnerQuit) {
 			logger.warn("存在非退出，或者退出待解冻的合伙人，不可以撤点");
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_QUIT_ERROR_CODE,"存在非退出，或者退出待解冻的合伙人，不可以撤点");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"存在非退出，或者退出待解冻的合伙人，不可以撤点");
 		}
 	}
 }

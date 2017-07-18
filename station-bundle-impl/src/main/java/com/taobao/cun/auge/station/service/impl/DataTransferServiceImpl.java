@@ -165,7 +165,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	public Boolean transferMoney(PartnerCourseRecordDto dto) {
 		PartnerCourseRecord record=partnerCourseRecordMapper.selectByPrimaryKey(dto.getId());
 		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())&&!record.getStatus().equals(PartnerPeixunStatusEnum.PAY.getCode())){
-			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ORDER_STATUS_ERROR_ERROR_CODE,"培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新订单是否已经创建
 		String courseCodeNew=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN");
@@ -245,7 +245,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	public Boolean sign(PartnerCourseRecordDto dto) {
 		PartnerCourseRecord record=partnerCourseRecordMapper.selectByPrimaryKey(dto.getId());
 		if(!record.getStatus().equals(PartnerPeixunStatusEnum.DONE.getCode())){
-			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ORDER_STATUS_ERROR_ERROR_CODE,"培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训记录状态不正确 "+String.valueOf(record.getPartnerUserId()));
 		}
 		//判断新的培训记录是不是已付款状态,若是，则获取签到码
 		PartnerPeixunDto peixun=partnerPeixunService.queryOfflinePeixunProcess(dto.getPartnerUserId(), appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE", "APPLY_IN"), PartnerPeixunCourseTypeEnum.APPLY_IN);

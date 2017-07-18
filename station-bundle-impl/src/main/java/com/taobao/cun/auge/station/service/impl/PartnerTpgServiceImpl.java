@@ -58,11 +58,11 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				PartnerInstanceDto partnerInstance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 				if(!PartnerInstanceTypeEnum.TPA.getCode().equals(partnerInstance.getType().getCode())){
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 菜鸟物流站点不存在");
-					throw new AugeSystemException(AugeErrorCodes.PARTNER_INSTANCE_TYPE_ERROR_CODE,"只支持淘帮手升级供赢通会员");
+					throw new AugeSystemException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"只支持淘帮手升级供赢通会员");
 				}
 				if(!PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState().getCode())){
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 淘帮手必须服务中");
-					throw new AugeSystemException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"淘帮手必须服务中");
+					throw new AugeSystemException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"淘帮手必须服务中");
 				}
 				Long cainiaoStationId = cainiaoStationRelBO.getCainiaoStationId(partnerInstance.getStationId());
 				if(cainiaoStationId == null){
@@ -77,7 +77,7 @@ public class PartnerTpgServiceImpl implements PartnerTpgService {
 				FeatureDTO feature = stationResult.getData().getFeature();
 				if(feature.get("ctpType") != null && feature.get("ctpType").equals("CTPA1_0")){
 					logger.error("upgradeTpg error!partnerInstanceId["+partnerInstanceId+"] 查询菜鸟物流站点失败");
-					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_TYPE_ERROR_CODE,"降级淘帮手无法升级成供赢通");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"降级淘帮手无法升级成供赢通");
 				}
 				
 				PartnerTpg partnerTpg = partnerTpgResult.isPresent()?partnerTpgResult.get():addPartnerTpg(partnerInstance);

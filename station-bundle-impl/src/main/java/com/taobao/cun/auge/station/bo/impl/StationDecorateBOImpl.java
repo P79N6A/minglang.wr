@@ -334,7 +334,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			sd.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
 			stationDecorateMapper.updateByPrimaryKey(sd);
 		} else {
-			throw new AugeBusinessException(AugeErrorCodes.DECORATE_PAYMENT_TYPE_ERROR_CODE,"非政府出资装修，无法确认。 "
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"非政府出资装修，无法确认。 "
 					+ sd.getPaymentType());
 		}
 

@@ -180,7 +180,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		}
 		// 保证金已经结不能删除
 		if (isBondHasFrozen(rel.getId())) {
-			throw new AugeBusinessException(AugeErrorCodes.BOND_HAS_FROZEN_ERROR_CODE,"保证金已经结不能删除");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"保证金已经结不能删除");
 		}
 		
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
@@ -189,7 +189,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 			if (!StringUtils.equals(StationStatusEnum.TEMP.getCode(), station.getStatus())
 					&& !StringUtils.equals(StationStatusEnum.INVALID.getCode(), station.getState())
 					&& !StringUtils.equals(StationStatusEnum.NEW.getCode(), station.getStatus())) {
-				throw new AugeBusinessException(AugeErrorCodes.STATION_STATUS_CHECK_ERROR_CODE,"当前状态的服务站信息不能删除");
+				throw new AugeBusinessException(AugeErrorCodes.STATION_BUSINESS_CHECK_ERROR_CODE,"当前状态的服务站信息不能删除");
 			}
 			stationBO.deleteStation(stationId, partnerInstanceDeleteDto.getOperator());
 		}
@@ -442,7 +442,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	public void validateAssetBack(Long instanceId){
 		boolean isBackAsset = partnerAssetService.isBackAsset(instanceId);
 		if(!isBackAsset){
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_UN_RECYCLE_ERROR_CODE,"3件资产尚未回收，请用小二APP回收资产。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"3件资产尚未回收，请用小二APP回收资产。");
 		}
 	}
 

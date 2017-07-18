@@ -94,7 +94,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 					record.getStatus())
 					&&!PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
 							record.getStatus())) {
-				throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ORDER_STATUS_ERROR_ERROR_CODE,"当前状态不可编辑");
+				throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"当前状态不可编辑");
 			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);

@@ -417,7 +417,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 				// 合伙人当前不状态不为入驻中，或不存在入驻生命周期record
 				if (!PartnerInstanceStateEnum.SETTLING.equals(instance.getState()) || null == lifecycleItems) {
-					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
 				}
 				PartnerLifecycleSettledProtocolEnum itemState = PartnerLifecycleSettledProtocolEnum
 						.valueof(lifecycleItems.getSettledProtocol());
@@ -428,7 +428,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
 				// 管理协议不走生命周期，随时可以签
 				if (!PartnerInstanceStateEnum.unReSettlableStatusCodeList().contains(instance.getState().getCode())) {
-					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_STATUS_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
 				}
 				PartnerProtocolRelDto dto = partnerProtocolRelBO.getPartnerProtocolRelDto(type, instance.getId(),
 						PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
