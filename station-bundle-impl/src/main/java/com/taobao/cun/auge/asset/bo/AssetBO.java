@@ -59,5 +59,5 @@ public interface AssetBO {
 
     public Map<String, String> getStationAssetState(Long stationId);
 
-    public Boolean buyAsset(CuntaoAssetDto assetDto);
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
 }

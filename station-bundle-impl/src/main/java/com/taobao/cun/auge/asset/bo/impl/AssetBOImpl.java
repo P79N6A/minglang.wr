@@ -430,22 +430,27 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean buyAsset(CuntaoAssetDto assetDto) {
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
+        Map<String, String> result = new HashMap<>();
+        result.put("success", "false");
         Long stationId = assetDto.getNewStationId();
         if (stationId == null || assetDto.getOperator() == null) {
-            throw new AugeServiceException("操作信息不能为空!");
+            result.put("message", "操作信息不能为空!");
         }
         if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            throw new AugeServiceException("该村点不允许提交资产采购意向,请联系资产管理员!");
+            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
         }
         if (getBuyAssetRecord(stationId) != null) {
-            throw new AugeServiceException("该村点已经提交过资产采购意向!");
+            result.put("message", "该村点已经提交过资产采购意向!");
         }
         if (!validateStationAssetNum(stationId)) {
-            throw new AugeServiceException("对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+            result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
         }
-        saveBuyRecord(assetDto);
-        return true;
+        if (!"false".equals(result.get("success"))) {
+            saveBuyRecord(assetDto);
+            result.put("success", "true");
+        }
+        return result;
     }
 
     private boolean validateStationAssetNum(Long stationId) {

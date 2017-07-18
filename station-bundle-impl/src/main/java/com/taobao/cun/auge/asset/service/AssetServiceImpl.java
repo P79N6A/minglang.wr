@@ -154,7 +154,7 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public Boolean buyAsset(CuntaoAssetDto assetDto) {
+	public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
 		return assetBO.buyAsset(assetDto);
 	}
 }
