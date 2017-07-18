@@ -77,4 +77,9 @@ public interface AugeErrorCodes {
 	 */
 	public static final String DECORATE_BUSINESS_CHECK_ERROR_CODE = "B-00014";
 
+	/**
+	 * 旺旺业务校验错误码，不报警
+	 */
+	public static final String WANGWANG_BUSINESS_CHECK_ERROR_CODE = "B-00015";
+
 }
