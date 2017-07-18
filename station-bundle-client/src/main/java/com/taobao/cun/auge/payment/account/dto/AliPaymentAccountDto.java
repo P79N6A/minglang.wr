@@ -1,8 +1,11 @@
-package com.taobao.cun.auge.paymentAccount.dto;
+package com.taobao.cun.auge.payment.account.dto;
 
 import java.io.Serializable;
 
 public class AliPaymentAccountDto implements Serializable{
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	/**
 	 * 全名
