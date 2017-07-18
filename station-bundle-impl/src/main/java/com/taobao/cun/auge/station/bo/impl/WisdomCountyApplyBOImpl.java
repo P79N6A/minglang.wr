@@ -1,5 +1,15 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
@@ -15,21 +25,13 @@ import com.taobao.cun.auge.dal.mapper.WisdomCountyApplyMapper;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.WisdomCountyApplyEvent;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.WisdomCountyApplyBO;
 import com.taobao.cun.auge.station.condition.WisdomCountyApplyCondition;
 import com.taobao.cun.auge.station.convert.WisdomCountyApplyConverter;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyAuditDto;
 import com.taobao.cun.auge.station.dto.WisdomCountyApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
  * Created by xiao on 16/10/17.
@@ -46,7 +48,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     WisdomCountyApplyExtMapper wisdomCountyApplyExtMapper;
 
     @Override
-    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException {
+    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId){
         ValidateUtils.notNull(countyId);
         WisdomCountyApplyExample example = new WisdomCountyApplyExample();
         WisdomCountyApplyExample.Criteria criteria = example.createCriteria();
@@ -57,7 +59,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public Long addWisdomCountyApply(WisdomCountyApplyDto dto) throws AugeServiceException {
+    public Long addWisdomCountyApply(WisdomCountyApplyDto dto){
         ValidateUtils.notNull(dto);
         WisdomCountyApply wisdomCountyApply = WisdomCountyApplyConverter.dtoTo(dto);
         DomainUtils.beforeInsert(wisdomCountyApply, dto.getOperator());
@@ -67,14 +69,14 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id) throws AugeServiceException {
+    public WisdomCountyApplyDto getWisdomCountyApplyById(Long id){
         ValidateUtils.notNull(id);
         WisdomCountyApply wisdomCountyApply = wisdomCountyApplyMapper.selectByPrimaryKey(id);
         return WisdomCountyApplyConverter.toDto(wisdomCountyApply);
     }
 
     @Override
-    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException {
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition){
         ValidateUtils.notNull(condition);
         WisdomCountyApplyExtExample extExample = WisdomCountyApplyConverter.conditionToExtExample(condition);
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
@@ -84,7 +86,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException {
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids){
         ValidateUtils.notEmpty(ids);
         WisdomCountyApplyExample example = new WisdomCountyApplyExample();
         WisdomCountyApplyExample.Criteria criteria = example.createCriteria();
@@ -98,7 +100,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException {
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto){
         ValidateUtils.notNull(wisdomCountyApplyDto.getId());
         WisdomCountyApply apply = WisdomCountyApplyConverter.dtoTo(wisdomCountyApplyDto);
         DomainUtils.beforeUpdate(apply, wisdomCountyApplyDto.getOperator());
@@ -106,7 +108,7 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException {
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator){
         ValidateUtils.notNull(countyId);
         ValidateUtils.notNull(operator);
         WisdomCountyApply apply = new WisdomCountyApply();
@@ -119,12 +121,12 @@ public class WisdomCountyApplyBOImpl implements WisdomCountyApplyBO{
     }
 
     @Override
-    public boolean audit(WisdomCountyApplyAuditDto auditDto) throws AugeServiceException {
+    public boolean audit(WisdomCountyApplyAuditDto auditDto){
         ValidateUtils.notNull(auditDto.getId());
         ValidateUtils.notNull(auditDto.getState());
         WisdomCountyApply wisdomCountyApply = wisdomCountyApplyMapper.selectByPrimaryKey(auditDto.getId());
         if (!"APPLY".equals(wisdomCountyApply.getState())){
-            throw new AugeServiceException("该县点不处于报名状态中");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"该县点不处于报名状态中");
         }
         wisdomCountyApply.setState(auditDto.getState().getCode());
         DomainUtils.beforeUpdate(wisdomCountyApply, auditDto.getOperator());

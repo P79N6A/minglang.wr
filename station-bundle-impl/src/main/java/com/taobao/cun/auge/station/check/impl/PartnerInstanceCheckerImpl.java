@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -37,7 +38,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	TradeAdapter tradeAdapter;
 
 	@Override
-	public void checkCloseApply(Long instanceId) throws AugeBusinessException, AugeSystemException {
+	public void checkCloseApply(Long instanceId) {
 		// 查询实例是否存在，不存在会抛异常
 		PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
@@ -50,14 +51,14 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	}
 
 	@Override
-	public void checkQuitApply(Long instanceId) throws AugeBusinessException, AugeSystemException {
+	public void checkQuitApply(Long instanceId) {
 		// 查询实例是否存在，不存在会抛异常
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		// 校验是否已经存在退出申请单
 		QuitStationApply quitStationApply = quitStationApplyBO.findQuitStationApply(instanceId);
 		if (quitStationApply != null) {
-			throw new AugeBusinessException(StationExceptionEnum.QUIT_STATION_APPLY_EXIST.getDesc());
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"您已经提交了退出申请");
 		}
 
 		// 校验是否存在未结束的订单

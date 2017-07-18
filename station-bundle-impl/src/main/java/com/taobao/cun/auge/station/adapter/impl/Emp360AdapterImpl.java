@@ -14,15 +14,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.masterdata.client.exception.MasterdataClientException;
 import com.alibaba.masterdata.client.model.dataobj.Emp360Info;
 import com.alibaba.masterdata.client.model.query.EmpQuery;
 import com.alibaba.masterdata.client.model.result.ResultSupport;
 import com.alibaba.masterdata.client.service.Employee360Service;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.util.CollectionUtil;
 
 @Component("emp360Adapter")
@@ -37,10 +38,10 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 	private String securityId;
 
 	@Override
-	public Map<String, EmpInfoDto> getEmpInfoByWorkNos(List<String> workNos) throws AugeServiceException {
+	public Map<String, EmpInfoDto> getEmpInfoByWorkNos(List<String> workNos){
 		Map<String, EmpInfoDto> empInfoMap = new HashMap<String, EmpInfoDto>();
 		if (CollectionUtil.isEmpty(workNos)) {
-			throw new AugeServiceException("workNos is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"workNos is null!");
 		}
 		Map<String, String> workMap = new HashMap<String, String>();
 		for (String workNo : workNos) {
@@ -53,10 +54,10 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 		try {
 			ResultSupport<List<Emp360Info>> returnResult = employee360Service.getBatchEmpInfoList(empQuery);
 			if (returnResult == null || !returnResult.isSuccess()) {
-				throw new AugeServiceException("workNos is null!");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"workNos is null!");
 			}
 			if (CollectionUtil.isEmpty(returnResult.getResult())) {
-				throw new AugeServiceException("result is null!");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"result is null!");
 			}
 			for (Emp360Info emp360Info : returnResult.getResult()) {
 				if (emp360Info != null && StringUtil.isNotBlank(emp360Info.getWorkNo())) {
@@ -72,12 +73,12 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 			}
 		} catch (MasterdataClientException e) {
 			logger.error("根据工号没有找到员工信息");
-			throw new AugeServiceException("根据工号没有找到员工信息!");
+			throw new AugeSystemException("根据工号没有找到员工信息!");
 		}
 		return empInfoMap;
 	}
 
-	public String getName(String workNo) throws AugeServiceException {
+	public String getName(String workNo){
 		String name = "";
 		if (StringUtils.isNotEmpty(workNo)) {
 			List<String> workNoList = new ArrayList<String>();

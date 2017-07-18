@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -25,7 +26,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
 
 /**
@@ -107,7 +109,7 @@ public class PartnerLifecycleRuleParser {
 		}
 		String msg = "PartnerLifecycleRule not exists: " + type.getCode() + " , " + stationApplyState;
 		logger.error(ERROR_MSG + msg);
-		throw new RuntimeException(msg);
+		throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,msg);
 	}
 
 	/**
@@ -128,7 +130,7 @@ public class PartnerLifecycleRuleParser {
 			if (isMatchPartnerLifecycleRule(mapping.getPartnerLifecycleRule(), instatnceState, partnerLifecycle)) {
 				StationApplyStateEnum stateEnum = StationApplyStateEnum.valueof(mapping.getStationApplyState());
 				if (stateEnum == null) {
-					throw new RuntimeException("parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"parseStationApplyState error: stateEnum is null " + partnerType + " , " + instatnceState
 							+ ", " + JSON.toJSONString(partnerLifecycle));
 				}
 				return stateEnum;
@@ -136,7 +138,7 @@ public class PartnerLifecycleRuleParser {
 		}
 		String msg = "parseStationApplyState error: " + partnerType + " , " + instatnceState + ", " + JSON.toJSONString(partnerLifecycle);
 		logger.error(ERROR_MSG + msg);
-		throw new RuntimeException(msg);
+		throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,msg);
 	}
 
 	private static boolean isMatchExecuteCondition(Map<String, String> ruleCondition, PartnerLifecycleItems lifecycle) {
@@ -158,7 +160,7 @@ public class PartnerLifecycleRuleParser {
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				logger.error("parse field value error", e);
-				throw new RuntimeException("parse field value error");
+				throw new AugeSystemException("parse field value error");
 			}
 		}
 		return true;
@@ -171,7 +173,7 @@ public class PartnerLifecycleRuleParser {
 				return rule;
 			}
 		}
-		throw new AugeServiceException("getMappingRuleByPartnerInstanceType error");
+		throw new AugeSystemException("getMappingRuleByPartnerInstanceType error");
 	}
 
 	private static boolean isMatchPartnerLifecycleRule(PartnerLifecycleRule partnerLifecycleRule, String instatnceState,
@@ -363,7 +365,7 @@ public class PartnerLifecycleRuleParser {
 							field.set(partnerLifecycleRule, ruleItem);
 						} catch (IllegalArgumentException | IllegalAccessException e) {
 							logger.error("adpatStateMappingRules error", e);
-							throw new AugeServiceException("padpatStateMappingRules error");
+							throw new AugeSystemException("padpatStateMappingRules error");
 						}
 					}
 				}

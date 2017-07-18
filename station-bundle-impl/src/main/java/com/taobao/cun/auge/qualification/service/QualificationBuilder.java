@@ -120,10 +120,8 @@ public class QualificationBuilder {
 				qualification.setErrorCode("");
 				qualification.setErrorMessage("");
 			}
-			if(UserQualiRecordStatus.AUDIT_PASS ==  auditStatus){
 				qualification.setSubmitTime(userQualiRecord.get().getSubmitTime());
 				qualification.setAuditTime(userQualiRecord.get().getAuditTime());
-			}
 		}
 		
 		return qualification;	

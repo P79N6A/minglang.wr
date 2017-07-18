@@ -33,7 +33,6 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 
 	@Override
 	public void handleExamFinish(StringMessage strMessage, JSONObject ob) {
-		try{
 		String messageType=strMessage.getMessageType();
 		if(!NotifyContents.EXAM_FINISH_MST.equals(messageType)){
 			//不需要处理的消息类型
@@ -56,9 +55,6 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 			return;
 		}
 		handleExamResultToApply(userId,status,point);
-		}catch(Exception e){
-			logger.error("handleExamFinish error, "+strMessage,e);
-		}
 	}
 	
 	private void handleExamResultToApply(Long userId,String status,int point){
@@ -82,7 +78,6 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 
 	@Override
 	public void handleExamFinish(JSONObject ob) {
-		try{
 		Long userId=ob.getLong("userId");
 		Long paperId =ob.getLong("paperId");
 		String status=ob.getString("status");
@@ -100,11 +95,6 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 			return;
 		}
 		handleExamResultToApply(userId,status,point);
-		}catch(Exception e){
-			logger.error("handleExamFinish error",e);
-		}
-	
-		
 	}
 
 }

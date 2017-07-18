@@ -1,15 +1,8 @@
 package com.taobao.cun.auge.station.service.impl.levelaudit;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
-import com.taobao.cun.auge.evaluate.dto.ReplyMaterialDTO;
-import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
-import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
-import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
-import com.taobao.cun.auge.evaluate.service.ReplyMaterialService;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +11,17 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.List;
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
+import com.taobao.cun.auge.evaluate.dto.ReplyMaterialDTO;
+import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
+import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
+import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
+import com.taobao.cun.auge.evaluate.service.ReplyMaterialService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
  * Created by xujianhui on 16/12/9.
@@ -34,7 +36,7 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     private PartnerLevelTaskBusinessDataService partnerLevelTaskBusinessDataService;
 
     @Override
-    public List<ReplyMaterialDTO> queryReplyMaterialDTOs(Long taobaoUserId) throws AugeServiceException {
+    public List<ReplyMaterialDTO> queryReplyMaterialDTOs(Long taobaoUserId){
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByAuditedPersonId(taobaoUserId, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         if (CollectionUtils.isEmpty(dataDtos)) {
             return Collections.emptyList();
@@ -73,14 +75,13 @@ public class ReplyMaterialServiceImpl implements ReplyMaterialService {
     }
 
     @Override
-    public boolean submitEvaluateAttachments(Long taobaoUserId, String processInstanceId, List<String> attachmentIdentifiers) throws AugeServiceException {
+    public boolean submitEvaluateAttachments(Long taobaoUserId, String processInstanceId, List<String> attachmentIdentifiers){
         Assert.notNull(taobaoUserId);
         Assert.notNull(processInstanceId);
         List<PartnerLevelTaskBusinessDataDTO> dataDtos = partnerLevelTaskBusinessDataService.queryByProcessInstanceAndTaskId(processInstanceId, null, LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
         PartnerLevelTaskBusinessDataDTO dto = dataDtos.get(0);
         if (!taobaoUserId.equals(dto.getAuditedPersonId()) || TaskNodeAuditStatus.isAudited(dto.getAuditStatus())) {
-            logger.error("No Priviledge To Submit Attachements!");
-            throw new AugeServiceException("No Priviledge To Submit Attachements!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PRIVILEDGE_ERROR_CODE,"No Priviledge To Submit Attachements!");
         }
         PartnerLevelTaskBusinessDataDTO updateDto = new PartnerLevelTaskBusinessDataDTO();
         updateDto.setAuditedPersonId(taobaoUserId);

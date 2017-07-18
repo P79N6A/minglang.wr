@@ -58,6 +58,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -102,7 +103,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
 	
 	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
-		try {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
@@ -144,10 +144,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// TODO 提交任务
 			taskSubmitService.submitTasks(taskDtos);
 			logger.info("submitSettlingSysProcessTasks : {}", JSON.toJSONString(taskDtos));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitSettlingSysProcessTasks] instanceId = {}, {}", instance.getId(), e);
-			throw new AugeServiceException("submitSettlingSysProcessTasks error: " + e.getMessage());
-		}
 	}
 	
 	private GeneralTaskDto buildUpgradeCainiaoTask(Long oldInsId,Long newInsId,String operator) {
@@ -276,8 +272,7 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	}
 
 	@Override
-	public void submitUpdateCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException {
-		try {
+	public void submitUpdateCainiaoStation(Long instanceId, String operatorId) {
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 			cainiaoTaskVo.setBeanName("caiNiaoService");
@@ -295,17 +290,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTask(cainiaoTaskVo);
 			logger.info("submitUpdateCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitUpdateCainiaoStation] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitUpdateCainiaoStation error: " + e.getMessage());
-		}
-
 	}
 
 	@Override
 	public void submitDegradePartner(PartnerInstanceDto instanceDto, PartnerInstanceDto parentInstanceDto, OperatorDto operatorDto)
-			throws AugeServiceException {
-		try {
+			{
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
@@ -379,10 +368,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			taskSubmitService.submitTasks(taskLists);
 			logger.info("submitDegradePartner : {}", JSON.toJSONString(taskLists));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitDegradePartner] instanceId = {}, {}", instanceDto.getId(), e);
-			throw new AugeServiceException("submitDegradePartner error: " + e.getMessage());
-		}
 	}
 
 	/**
@@ -392,7 +377,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 */
 	public void submitApproveProcessTask(ApproveProcessTask processTask) {
 		BeanValidator.validateWithThrowable(processTask);
-		try {
 			StartProcessDto startProcessDto = new StartProcessDto();
 
 			startProcessDto.setBusiness(processTask.getBusiness());
@@ -419,11 +403,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTask(startProcessTask, config);
 			logger.info("submitApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] ApproveProcessTask = " + JSON.toJSONString(processTask), e);
-			throw new AugeServiceException(
-					TASK_SUBMIT_ERROR_MSG + " [submitApproveProcessTask] ApproveProcessTask = " + JSON.toJSONString(processTask), e);
-		}
 	}
 
 	/**
@@ -439,7 +418,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			return;
 		}
 
-		try {
 			SmsSendDto smsDto = new SmsSendDto();
 
 			smsDto.setContent(content);
@@ -459,12 +437,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setParameter(JSON.toJSONString(smsDto));
 			taskSubmitService.submitTask(task);
 			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
-		} catch (Exception e) {
-			String msg = TASK_SUBMIT_ERROR_MSG + " [submitSmsTask] mobile=" + mobile + " taobaouserid = " + taobaoUserId + " content = "
-					+ content;
-			logger.error(msg, e);
-			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
-		}
 	}
 	
 	@Override
@@ -473,7 +445,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			logger.error("邮件地址为空");
 			return;
 		}
-		try {
 			MailSendDto mailDto = new MailSendDto();
 
 			mailDto.setContent(batchMailDto.getTemplateId());
@@ -501,17 +472,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			task.setParameter(JSON.toJSONString(mailDto));
 			taskSubmitService.submitTask(task);
 			logger.info("submitSmsTask : {}", JSON.toJSONString(task));
-		} catch (Exception e) {
-			String msg = TASK_SUBMIT_ERROR_MSG + " [submitMailTask] address=" + String.join(",", batchMailDto.getMailAddresses()) + " operator = " + batchMailDto.getOperator() + " templateId = "
-					+ batchMailDto.getTemplateId();
-			logger.error(msg, e);
-			throw new AugeServiceException("submitSmsTask error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitAddUserTagTasks(Long instanceId,String operator) {
-		try {
 			PartnerInstanceDto instance =partnerInstanceBO.getPartnerInstanceById(instanceId);
 			
 			// 异构系统交互提交后台任务
@@ -532,16 +496,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// TODO 提交任务
 			taskSubmitService.submitTasks(taskDtos);
 			logger.info("submitAddUserTagTasks : {}", JSON.toJSONString(taskDtos));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitAddUserTagTasks] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitAddUserTagTasks error: " + e.getMessage());
-		}
-		
 	}
 	
 	@Override
 	public void submitRemoveUserTagTasks(Long taobaoUserId, String taobaoNick, PartnerInstanceTypeEnum partnerType, String operatorId,Long instanceId) {
-		try {
 			UserTagDto userTagDto = new UserTagDto();
 
 			userTagDto.setTaobaoUserId(taobaoUserId);
@@ -593,16 +551,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTasks(taskLists);
 			logger.info("submitRemoveUserTagTasks : {}", JSON.toJSONString(taskLists));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitRemoveUserTagTasks] taobaoUserId=" + taobaoUserId + " operatorId = " + operatorId,
-					e);
-			throw new AugeServiceException("submitRemoveUserTagTasks error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitQuitTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto) {
-		try {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
 			// 解除保证金
@@ -629,10 +581,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			taskSubmitService.submitTasks(taskLists);
 			logger.info("submitQuitTask : {}", JSON.toJSONString(taskLists));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitQuitTask] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitQuitTask error: " + e.getMessage());
-		}
 	}
 
 	private GeneralTaskDto buildDealStanderBailTaskVo(Long instanceId, String accountNo, String frozenMoney,
@@ -660,7 +608,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	
 	@Override
 	public void submitThawMoneyTask(Long instanceId, String accountNo, String frozenMoney, OperatorDto operatorDto) {
-		try {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 
 			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
@@ -686,15 +633,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			taskSubmitService.submitTasks(taskLists);
 			logger.info("submitThawMoneyTask : {}", JSON.toJSONString(taskLists));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitThawMoneyTask] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitThawMoneyTask error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitQuitApprovedTask(Long instanceId, Long stationId, Long taobaoUserId, String isQuitStation) {
-		try {
 			List<GeneralTaskDto> taskLists = new LinkedList<GeneralTaskDto>();
 			// 取消物流站点
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
@@ -769,15 +711,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTasks(taskLists);
 			logger.info("submitQuitApprovedTask : {}", JSON.toJSONString(taskLists));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitQuitApprovedTask] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitQuitApprovedTask error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitShutdownApprovedTask(Long stationId) {
-		try {
 			// 关闭物流站点
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(stationId));
@@ -793,15 +730,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			taskSubmitService.submitTask(cainiaoTaskVo);
 			logger.info("submitShutdownApprovedTask : {}", JSON.toJSONString(cainiaoTaskVo));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitShutdownApprovedTask] stationId = {}, {}", stationId, e);
-			throw new AugeServiceException("submitShutdownApprovedTask error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitCloseToServiceTask(Long instanceId, Long taobaoUserId, PartnerInstanceTypeEnum partnerType, String operator) {
-		try {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
@@ -853,15 +785,10 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 
 			taskSubmitService.submitTasks(taskDtos);
 			logger.info("closeToServiceTasks : {}", JSON.toJSONString(taskDtos));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[closeToServiceTasks] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("closeToServiceTasks error: " + e.getMessage());
-		}
 	}
 
 	@Override
 	public void submitLevelApproveProcessTask(ProcessBusinessEnum business, PartnerInstanceLevelProcessDto levelProcessDto) {
-		try {
 			GeneralTaskDto startProcessTask = new GeneralTaskDto();
 			startProcessTask.setBusinessNo(String.valueOf(levelProcessDto.getBusinessId()));
 			startProcessTask.setBusinessStepNo(1l);
@@ -880,10 +807,6 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTask(startProcessTask, config);
 			logger.info("submitLevelApproveProcessTask : {}", JSON.toJSONString(startProcessTask));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + " [submitLevelApproveProcessTask] param = " + JSON.toJSONString(levelProcessDto), e);
-			throw new AugeServiceException("submitLevelApproveProcessTask error: " + e.getMessage());
-		}
 	}
 
 	/**
@@ -892,16 +815,11 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 */
 	@Override
 	public void submitIncentiveProgramAuditTask(ApproveProcessTask processTask) {
-		try{
-
 			GeneralTaskDto startProcessTask = buildGeneralTaskDto(processTask, "processService", "startIncentiveProgramAuditProcess");
 			GeneralTaskRetryConfigDto config = new GeneralTaskRetryConfigDto();
 			config.setIntervalTime(20000);
 			taskSubmitService.submitTask(startProcessTask, config);
 			logger.info("submitIncentiveProgramAuditTask : {}", JSON.toJSONString(startProcessTask));
-		}catch (Exception e) {
-			logger.error("submitIncentiveProgramAuditTask error: " + JSON.toJSONString(processTask), e);
-		}
 	}
 
 	private static GeneralTaskDto buildGeneralTaskDto(ApproveProcessTask processTask, String beanName, String methodName) {
@@ -931,10 +849,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * 
 	 * @param instanceId
 	 * @param operatorId
-	 * @throws AugeServiceException
 	 */
-	public void submitClosedCainiaoStation(Long instanceId, String operatorId) throws AugeServiceException {
-		try {
+	public void submitClosedCainiaoStation(Long instanceId, String operatorId) {
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 			cainiaoTaskVo.setBeanName("caiNiaoService");
@@ -954,10 +870,5 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			// 提交任务
 			taskSubmitService.submitTask(cainiaoTaskVo);
 			logger.info("submitClosedCainiaoStation : {}", JSON.toJSONString(cainiaoTaskVo));
-		} catch (Exception e) {
-			logger.error(TASK_SUBMIT_ERROR_MSG + "[submitClosedCainiaoStation] instanceId = {}, {}", instanceId, e);
-			throw new AugeServiceException("submitClosedCainiaoStation error: " + e.getMessage());
-		}
-		
 	}
 }

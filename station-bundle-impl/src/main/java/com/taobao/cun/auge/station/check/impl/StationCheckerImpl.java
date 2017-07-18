@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.check.StationChecker;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -23,7 +24,7 @@ public class StationCheckerImpl implements StationChecker{
 		boolean isAllPartnerQuit = partnerInstanceBO.isAllPartnerQuit(stationId);
 		if (!isAllPartnerQuit) {
 			logger.warn("存在非退出，或者退出待解冻的合伙人，不可以撤点");
-			throw new AugeBusinessException("存在非退出，或者退出待解冻的合伙人，不可以撤点");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"存在非退出，或者退出待解冻的合伙人，不可以撤点");
 		}
 	}
 }
