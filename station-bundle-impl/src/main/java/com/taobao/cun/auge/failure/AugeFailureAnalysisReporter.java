@@ -4,9 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 import org.springframework.boot.diagnostics.FailureAnalysisReporter;
-import org.springframework.stereotype.Component;
 
-@Component
 public class AugeFailureAnalysisReporter implements FailureAnalysisReporter{
 
 	private static final Logger logger = LoggerFactory.getLogger(AugeFailureAnalysisReporter.class);
