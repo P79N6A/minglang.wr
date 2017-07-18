@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 
 public final class StationValidator {
 	
@@ -105,7 +103,7 @@ public final class StationValidator {
 		}
 
 		if (isSpecialStr(stationNum)) {
-			throw new AugeBusinessException("村服务站编号不能含有特殊字符");
+			throw new IllegalArgumentException("村服务站编号不能含有特殊字符");
 		}
 	}
 	

@@ -54,10 +54,10 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 		try {
 			ResultSupport<List<Emp360Info>> returnResult = employee360Service.getBatchEmpInfoList(empQuery);
 			if (returnResult == null || !returnResult.isSuccess()) {
-				throw new AugeBusinessException("workNos is null!");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"workNos is null!");
 			}
 			if (CollectionUtil.isEmpty(returnResult.getResult())) {
-				throw new AugeBusinessException("result is null!");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"result is null!");
 			}
 			for (Emp360Info emp360Info : returnResult.getResult()) {
 				if (emp360Info != null && StringUtil.isNotBlank(emp360Info.getWorkNo())) {

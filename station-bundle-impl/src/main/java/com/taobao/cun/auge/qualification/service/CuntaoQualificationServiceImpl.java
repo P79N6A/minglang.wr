@@ -121,8 +121,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Override
 	public Qualification queryC2BQualification(Long taobaoUserId) {
 		//throw new AugeBusinessException("test");
-		throw new RuntimeException("test");
-		/*
+		//throw new RuntimeException("test");
+		
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
@@ -132,7 +132,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				return qualification;
 			}
 		return null;
-	*/}
+	}
 
 
 	@Override

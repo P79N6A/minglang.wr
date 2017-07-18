@@ -34,7 +34,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -307,7 +306,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
 				sdDto.getStatus().getCode())) {
 			// 装修反馈待审核，需要小二审核完毕才能退出
-			throw new RuntimeException("村点装修状态不允许退出，请先审核装修反馈记录");
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"村点装修状态不允许退出，请先审核装修反馈记录");
 		} 
 		//其他状态暂时不做判断，走线下流程
 //		if (StationDecorateStatusEnum.DONE.getCode().equals(

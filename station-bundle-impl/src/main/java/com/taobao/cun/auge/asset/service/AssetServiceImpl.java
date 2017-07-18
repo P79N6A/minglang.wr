@@ -80,4 +80,14 @@ public class AssetServiceImpl implements AssetService{
 	public CuntaoAssetDto queryAssetBySerialNo(String serialNo) {
 			return assetBO.queryAssetBySerialNo(serialNo);
 	}
+
+	@Override
+	public Boolean judgeCanBuyAsset(Long stationId) {
+		return assetBO.judgeCanBuyAsset(stationId);
+	}
+
+	@Override
+	public Boolean buyAsset(CuntaoAssetDto assetDto) {
+		return assetBO.buyAsset(assetDto);
+	}
 }

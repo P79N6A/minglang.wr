@@ -113,7 +113,7 @@ public class PartnerServiceImpl implements PartnerService {
 		//县信息
 		CountyStation county=countyStationBO.getCountyStationByOrgId(station.getApplyOrg());
 		if(county==null){
-			throw new AugeBusinessException("无法找到县点信息");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"无法找到县点信息");
 		}
 		result.setCountyName(county.getName());
 		return result;

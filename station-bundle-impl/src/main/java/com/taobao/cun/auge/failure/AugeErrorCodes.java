@@ -173,4 +173,24 @@ public interface AugeErrorCodes {
 	 */
 	public static final String HAS_OTHER_PARTNER_QUIT_ERROR_CODE = "B-00034";
 
+	/**
+	 * 资产业务校验错误码。不报警
+	 */
+	public static final String ASSET_BUSINESS_ERROR_CODE = "B-00035";
+
+	/**
+	 * 订单业务校验错误码。不报警
+	 */
+	public static final String TRADE_BUSINESS_CHECK_ERROR_CODE = "B-00036";
+
+	/**
+	 * 支付宝业务校验错误码。不报警
+	 */
+	public static final String ALIPAY_BUSINESS_CHECK_ERROR_CODE = "B-00037";
+
+	/**
+	 * 装修业务校验错误码。不报警
+	 */
+	public static final String DECORATE_BUSINESS_CHECK_ERROR_CODE = "B-00038";
+
 }

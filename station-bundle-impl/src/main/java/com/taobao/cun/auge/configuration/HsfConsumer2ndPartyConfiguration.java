@@ -37,9 +37,10 @@ import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
-import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
+import com.taobao.trade.platform.api.query.BuyerQueryService;
 import com.taobao.uic.common.cache.UICCacheService;
 import com.taobao.uic.common.service.userdata.UicDataReadService;
 import com.taobao.uic.common.service.userdata.UicDataWriteService;
@@ -49,6 +50,8 @@ import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 import com.taobao.uic.common.service.userinfo.TagRecordReadService;
 import com.taobao.uic.common.service.userinfo.TagRecordWriteService;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 @Configuration
@@ -264,11 +267,6 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				.build();
 	}
 	
-	@Bean
-	public MessageCenterService messageCenterService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
-		return context.hsfConsumerBuilder(MessageCenterService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
-				.build();
-	}
 	
 	@Bean
 	public PartnerApplyService partnerApplyService(HsfConsumerContext context, @Value("${recuit.service.version}") String version) {
@@ -299,4 +297,30 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return context.hsfConsumerBuilder(ArInvoiceService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
+	
+	@Bean
+	public BuyerQueryService buyerQueryService(HsfConsumerContext context, @Value("${buyer.query.service.version}") String version) {
+		return context.hsfConsumerBuilder(BuyerQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public RefundReadService refundReadService(HsfConsumerContext context, @Value("${refund.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(RefundReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public UicReadServiceClient uicReadServiceClient(HsfConsumerContext context, @Value("${uic.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicReadServiceClient.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicPaymentAccountReadServiceClient.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	
 }

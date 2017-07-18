@@ -87,13 +87,13 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	
 	public Long addCountyByOrg(CaiNiaoStationDto stationDto) {
 		if (stationDto == null) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.addCounty.param.error:station is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.addCounty.param.error:station is null!");
 		}
 			logger.info("addCounty.info param"+JSONObject.toJSONString(stationDto));
 			CreateWarehouseByOrgParam param = buildAddWarehouseParam(stationDto);
 			Result<WarehouseDTO> res= warehouseWriteService.createWarehouseByOrg(param);
 			if (!res.isSuccess()) {
-				throw new ServiceException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			if(res.getData()==null){
 				logger.error(res.getErrorMessage());
@@ -275,7 +275,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 					station, userType);
 			Result<Boolean> res = stationUserWriteService.addStationUserRel(relParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
 	}
@@ -381,7 +381,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			UpdateStationUserRelParam updateParam = bulidUpdateStationUserRelParam(station);
 			Result<Boolean> res = stationUserWriteService.updateStationUserRel(updateParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			return res.getData();
 	}
@@ -392,16 +392,16 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.removeStationById.param.error:cainiaoStationId is null!");
 		}
 		if (userId == null) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.removeStationById.param.error:userId is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.removeStationById.param.error:userId is null!");
 		}
 			logger.info("removeStationById.info cainiaoStationId"+cainiaoStationId+"userId"+userId);
 			boolean relResult = removeStationUserRel(userId);
 			if (!relResult) {
-				throw new AugeBusinessException("removeStationUserRel.res is false");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"removeStationUserRel.res is false");
 			}
 			Result<Boolean> res = stationWriteService.removeStationById(cainiaoStationId,Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			return res.getData();
 	}
@@ -415,7 +415,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.info("removeStationById.info cainiaoStationId"+cainiaoStationId);
 			Result<Boolean> res = stationWriteService.removeStationById(cainiaoStationId,Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			return res.getData();
 	}
@@ -436,7 +436,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.info("removeStationById.info userId"+userId);
 			Result<Boolean> res = stationUserWriteService.removeStationUserRel(userId, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
 	}
@@ -448,12 +448,12 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationFeature.param.error:stationId is null!");
 		}
 		if (features == null || features.size()==0) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.updateStationFeature.param.features is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationFeature.param.features is null!");
 		}
 			logger.info("updateStationFeatures.info stationId"+stationId+"featureMap"+features);
 			Result<Boolean> res = stationWriteService.putStationFeatures(stationId, features, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
 	}
@@ -466,12 +466,12 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationUserRelFeature.param.error:userId is null!");
 		}
 		if (featureMap == null || featureMap.size()==0) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.updateStationUserRelFeature.param.featureMap is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationUserRelFeature.param.featureMap is null!");
 		}
 			logger.info("updateStationUserRelFeature.info userId"+userId+"featureMap"+featureMap);
 			Result<Boolean> res = stationUserWriteService.putStationUserRelFeature(userId, featureMap,Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
 	}
@@ -486,7 +486,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			unBind.setStationId(cainiaoStationId);
 			Result<Boolean> res = stationWriteService.unBindAdmin(unBind, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 
 			return res.getData();
 	}
@@ -501,7 +501,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			BindAdminParam bindParam = buildBindAdminParam(station);
 			Result<Boolean> res = stationWriteService.bindAdmin(bindParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			}
 			return res.getData();
 	}
@@ -539,11 +539,11 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateAdmin.param.error:station is null!");
 		}
 		if (station.getStationId() == 0) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.updateAdmin.param.error:dto.getStationId() is null!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateAdmin.param.error:dto.getStationId() is null!");
 		}
 		boolean unBindRes = unBindAdmin(station.getStationId());
 		if (!unBindRes) {
-			throw new AugeBusinessException("CaiNiaoAdapterBO.updateAdmin.param.error:unBindAdmin error!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"CaiNiaoAdapterBO.updateAdmin.param.error:unBindAdmin error!");
 		}
 		return bindAdmin(station);
 	}

@@ -23,12 +23,7 @@ public class AugeBusinessException extends RuntimeException {
 		super(message);
 		this.exceptionCode = exceptionCode;
 	}
-	
 
-
-	public AugeBusinessException(String message) {
-		super(message);
-	}
 
 	public AugeBusinessException(Throwable cause) {
 		super(cause);

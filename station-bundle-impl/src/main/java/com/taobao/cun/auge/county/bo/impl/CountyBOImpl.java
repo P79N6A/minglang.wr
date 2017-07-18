@@ -15,7 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,7 +28,6 @@ import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.jcabi.log.Logger;
 import com.taobao.biz.common.division.ChinaDivisionManager;
 import com.taobao.biz.common.division.DivisionVO;
 import com.taobao.cun.appResource.dto.AppResourceDto;
@@ -47,7 +45,6 @@ import com.taobao.cun.auge.county.dto.CnWarehouseDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
-import com.taobao.cun.auge.county.impl.CountyServiceImpl;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CountyStationExample.Criteria;
@@ -60,6 +57,8 @@ import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgAdminAddressMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.msg.dto.MailSendDto;
+import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -73,13 +72,11 @@ import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
 import com.taobao.cun.dto.org.enums.CuntaoOrgTypeEnum;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
-import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
@@ -107,8 +104,6 @@ public class CountyBOImpl implements CountyBO {
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	@Autowired
 	CaiNiaoAdapter caiNiaoAdapter;
-	@Autowired
-    MessageCenterService messageCenterService;
     @Autowired
     AttachmentService criusAttachmentService;
     @Autowired
@@ -117,6 +112,8 @@ public class CountyBOImpl implements CountyBO {
 	AppResourceService appResourceService;
     @Autowired
     PartnerApplyService partnerApplyService;
+    @Autowired
+    MessageService messageService;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
@@ -801,7 +798,7 @@ public class CountyBOImpl implements CountyBO {
         CaiNiaoStationDto stationDto = toNewCaiNiaoStationDto(countyDto);
         Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(stationDto);
         if (caiNiaostationId == null) {
-            throw new BusinessException("同步菜鸟驿站失败");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"同步菜鸟驿站失败");
         } else {
         	CuntaoCainiaoStationRelDto relDO = new CuntaoCainiaoStationRelDto();
             relDO.setObjectId(countyDto.getId());
@@ -994,15 +991,22 @@ public class CountyBOImpl implements CountyBO {
     
     
     private void sendUpdateAddressEmail(CountyDto countyDto, CountyStation old) {
-        //最多存放8个，如果模板中参数个数变化了，注意修改
         Map<String, Object> params = new HashMap<String, Object>(8);
         params.put("originAddress", convertToStationAddressString(countyDto));
         params.put("curAddress", convertToStationAddressString(old));
         params.put("orgName", StringUtils.isEmpty(countyDto.getName()) ? old.getName() : countyDto.getName());
         params.put("orgType", "县服务中心");
         List<String> mailList = findEmailReceiverFromResource("station_address_change_receivers");
-        messageCenterService.sendMail(mailList, mailParam(TEMPLATE_ID, SOURCE_ID, MESSAGE_TYPE_ID), params);
+        MailSendDto mailSendDto =new MailSendDto();
+        mailSendDto.setMailAddress(mailList);
+        mailSendDto.setMessageType(MESSAGE_TYPE_ID);  
+        mailSendDto.setSourceId(SOURCE_ID);
+        mailSendDto.setTemplateId(TEMPLATE_ID);
+        mailSendDto.setContentMap(params);
+        messageService.sendMail(mailSendDto);
     }
+    
+    
     private  List<String> findEmailReceiverFromResource(String resourceType) {
     	 List<AppResourceDto> appResourceDOs = appResourceService.queryAppResourceList(resourceType);
         if (null == appResourceDOs || 0 == appResourceDOs.size() || null == appResourceDOs.get(0)) {

@@ -221,7 +221,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			if (instanceDto == null) {
 				String error = getErrorMessage("updateCainiaoStation", String.valueOf(partnerInstanceId), "PartnerInstance is null");
 				logger.error(error);
-				throw new AugeBusinessException(error);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			// 同步菜鸟
 			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
@@ -232,14 +232,14 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				if (instanceDto.getParentStationId() == null) {
 					String error = getErrorMessage("updateCainiaoStation", String.valueOf(partnerInstanceId), "ParentStationId is null");
 					logger.error(error);
-					throw new AugeBusinessException(error);
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 				}
 				Long cainiaoSId = getCainiaoStationId(instanceDto.getParentStationId());
 				if (cainiaoSId == null) {
 					String error = getErrorMessage("updateCainiaoStation", String.valueOf(partnerInstanceId),
 							"ParentStationId no cainiaostation");
 					logger.error(error);
-					throw new AugeBusinessException(error);
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 				}
 				caiNiaoStationDto.setStationId(cainiaoSId);
 				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
@@ -271,7 +271,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			if (instanceDto == null) {
 				String error = getErrorMessage("deleteCainiaoStation", String.valueOf(partnerInstanceId), "PartnerInstance is null");
 				logger.error(error);
-				throw new AugeBusinessException(error);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			Long stationId = instanceDto.getStationDto().getId();
 			// 查询菜鸟物流站关系表
@@ -283,7 +283,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				if (parentRel == null) {
 					String error = getErrorMessage("deleteCainiaoStation", String.valueOf(partnerInstanceId), "parentRel is null");
 					logger.error(error);
-					throw new AugeBusinessException(error);
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 				}
 				caiNiaoAdapter.removeStationUserRel(instanceDto.getPartnerDto().getTaobaoUserId());
 			} else {// 有物流站，删除物流站
@@ -360,7 +360,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		if (cnStationId == null) {
 			String error = getErrorMessage("unBindAdmin", String.valueOf(stationId), "cnStationId is null");
 			logger.error(error);
-			throw new AugeBusinessException(error);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}
 			boolean res  = caiNiaoAdapter.unBindAdmin(cnStationId);
 			if (!res) {
@@ -378,7 +378,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			logger.info("CaiNiaoServiceImpl bindAdmin partnerInstanceId : {" + partnerInstanceId + "}");
 			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 			if (instanceDto == null) {
-				throw new AugeBusinessException( "partnerInstance is null");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "partnerInstance is null");
 			}
 			// 同步菜鸟
 			CaiNiaoStationDto caiNiaoStationDto = buildCaiNiaoStationDto(instanceDto);
@@ -422,11 +422,11 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			logger.info("CaiNiaoServiceImpl updateBelongTPForTpa partnerInstanceId : {" + partnerInstanceId + "}"+"parentPartnerInstanceId:{"+parentPartnerInstanceId+"}");
 			PartnerInstanceDto tpaInstanceDto = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
 			if (tpaInstanceDto == null) {
-				throw new AugeBusinessException( "tpaInstanceDto is null");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "tpaInstanceDto is null");
 			}
 			PartnerInstanceDto parentInstanceDto = partnerInstanceBO.getPartnerInstanceById(parentPartnerInstanceId);
 			if (parentInstanceDto == null) {
-				throw new AugeBusinessException( "parentInstanceDto is null");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "parentInstanceDto is null");
 			}
 			
 			Long tpaStationId = tpaInstanceDto.getStationDto().getId();
@@ -449,7 +449,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 					String error = getErrorMessage("updateBelongTPForTpa", String.valueOf(partnerInstanceId),
 							"ParentStationId no cainiaostation");
 					logger.error(error);
-					throw new AugeBusinessException(error);
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 				}
 				caiNiaoStationDto.setStationId(cainiaoSId);
 				caiNiaoAdapter.updateStationUserRel(caiNiaoStationDto);
@@ -474,7 +474,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			if (instanceDto == null) {
 				String error = getErrorMessage("upgradeToTPForTpa", String.valueOf(oldPiId), "PartnerInstance is null");
 				logger.error(error);
-				throw new AugeBusinessException(error);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			Long stationId = instanceDto.getStationId();
 			Long taobaoUserId = instanceDto.getTaobaoUserId();
@@ -488,7 +488,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				if (parentRel == null) {
 					String error = getErrorMessage("deleteCainiaoStation", String.valueOf(oldPiId), "parentRel is null");
 					logger.error(error);
-					throw new AugeBusinessException(error);
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 				}
 				//删除老的淘帮手的物流站关系
 				caiNiaoAdapter.removeStationUserRel(taobaoUserId);
@@ -535,7 +535,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		if (rel == null || "n".equals(rel.getIsOwn())) {// 没有物流站,删除关系
 			String error = getErrorMessage("closeCainiaoStationForTpa", String.valueOf(stationId), "CuntaoCainiaoStationRel is null");
 			logger.error(error);
-			throw new AugeBusinessException(error);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}else {// 有物流站,新删除物流站，再绑定村小二物流站
 			caiNiaoAdapter.removeStationById(rel.getCainiaoStationId(), instanceDto.getPartnerDto().getTaobaoUserId());
 			
