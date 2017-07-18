@@ -21,6 +21,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -30,6 +31,7 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationService")
@@ -62,7 +64,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	@Override
 	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
-		try {
 			logger.info("syncCuntaoQulificationFromMetaq taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"]");
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification == null) {
@@ -75,13 +76,9 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 			DomainUtils.beforeUpdate(cuntaoQualification, "system");
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
-		} catch (Exception e) {
-			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"] qualiId["+qualiId+"] eidType["+eidType+"] !",e);
-		}
 	}
 	
 	public void syncCuntaoQulification(Long taobaoUserId) {
-		try {
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification == null) {
 				return;
@@ -90,18 +87,15 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			if(qualification == null) {
 				return ;
 			}
+			//最后提交时间大于我们这里的最后修改时间的话就更新
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
-		} catch (Exception e) {
-			logger.error("syncCuntaoQulificationFromMetaq error taobaoUserId["+taobaoUserId+"]!",e);
-		}
 	}
 	
 	
 	
 	public Qualification queryHavanaC2BQualificationByQualiId(Long taobaoUserId,Long qualiId,int eidType){
-		try {
 			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQualiById(qualiId, eidType);
 			if(entityQuail.isPresent()){
 				Optional<List<UserQualiRecord>> auditRecords = sellerQualiServiceAdapter.getUserQuailRecords(taobaoUserId);
@@ -114,30 +108,20 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 					return qulification;
 				}
 			}
-		} catch (Exception e) {
-			logger.error("queryHavanaC2BQualification["+taobaoUserId+"] error!",e);
-		}
-		
 		return null;
 	}
 	
 	
 	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
-		try {
 			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQuali(taobaoUserId);
 			Optional<UserQualiRecord> auditRecords = Optional.ofNullable(sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId));
 			Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,auditRecords);
 			return qulification;
-		} catch (Exception e) {
-			logger.error("queryHavanaC2BQualification["+taobaoUserId+"] error!",e);
-		}
-		return null;
 	}
 	
 	
 	@Override
 	public Qualification queryC2BQualification(Long taobaoUserId) {
-		try {
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
@@ -146,9 +130,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				qualification.setErrorMessage(errorMsg);
 				return qualification;
 			}
-		} catch (Exception e) {
-			logger.error("queryC2BQualification["+taobaoUserId+"] error!",e);
-		}
 		return null;
 	}
 

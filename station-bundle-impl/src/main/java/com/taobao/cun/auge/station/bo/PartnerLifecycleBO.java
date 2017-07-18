@@ -8,7 +8,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 生命周期扩展表 服务
@@ -20,16 +19,16 @@ public interface PartnerLifecycleBO {
 	/**
 	 * 新增生命周期扩展数据
 	 * @param partnerLifecycle
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto)throws AugeServiceException;
+	public void addLifecycle(PartnerLifecycleDto partnerLifecycleDto);
 	
 	/**
 	 * 更新生命周期扩展数据
 	 * @param lifecycle
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto)throws AugeServiceException;
+	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto);
 	
 	/**
 	 * 获得当前生命周期扩展数据 主键id
@@ -37,35 +36,35 @@ public interface PartnerLifecycleBO {
 	 * @param businessTypeEnum
 	 * @param stepEnum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long getLifecycleItemsId(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException;
+	public Long getLifecycleItemsId(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) ;
 	/**
 	 * 获得当前生命周期扩展数据
 	 * @param instanceId
 	 * @param businessTypeEnum
 	 * @param stepEnum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) throws AugeServiceException;
+	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum, PartnerLifecycleCurrentStepEnum stepEnum) ;
 	
 	/**
 	 *  获得当前生命周期扩展数据
 	 * @param instanceId
 	 * @param businessTypeEnum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum) throws AugeServiceException; 
+	public PartnerLifecycleItems getLifecycleItems(Long instanceId,PartnerLifecycleBusinessTypeEnum businessTypeEnum) ; 
 	
 	/**
 	 * 根据实例id,删除生命周期数据
 	 * @param instanceId
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void deleteLifecycleItems(Long instanceId,String operator) throws AugeServiceException; 
+	public void deleteLifecycleItems(Long instanceId,String operator) ; 
 	
 	
 	/**
@@ -73,18 +72,18 @@ public interface PartnerLifecycleBO {
 	 * @param instanceId
 	 * @param decorateStateEnum
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void updateDecorateState(Long instanceId, PartnerLifecycleDecorateStatusEnum decorateStateEnum,OperatorDto operatorDto) throws AugeServiceException; 
+	public void updateDecorateState(Long instanceId, PartnerLifecycleDecorateStatusEnum decorateStateEnum,OperatorDto operatorDto) ; 
 	
 	/**
 	 * 更新培训状态
 	 * @param instanceId
 	 * @param courseStatusEnum
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void updateCourseState(Long instanceId, PartnerLifecycleCourseStatusEnum courseStatusEnum,OperatorDto operatorDto) throws AugeServiceException;
+	public void updateCourseState(Long instanceId, PartnerLifecycleCourseStatusEnum courseStatusEnum,OperatorDto operatorDto) ;
 
 	/**
 	 * 根据ID获取PartnerLifecycleItems对象

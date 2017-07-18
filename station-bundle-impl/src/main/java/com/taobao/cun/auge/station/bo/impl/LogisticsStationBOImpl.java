@@ -10,7 +10,6 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.LogisticsStation;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationMapper;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("logisticsStationBO")
 public class LogisticsStationBOImpl implements LogisticsStationBO {
@@ -20,7 +19,7 @@ public class LogisticsStationBOImpl implements LogisticsStationBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void delete(Long id, String operator) throws AugeServiceException {
+	public void delete(Long id, String operator)  {
 		ValidateUtils.notNull(id);
 		ValidateUtils.notNull(operator);
 		LogisticsStation rel = new LogisticsStation();
@@ -30,7 +29,7 @@ public class LogisticsStationBOImpl implements LogisticsStationBO {
 	}
 
 	@Override
-	public void changeState(Long id, String operator,String targetState) throws AugeServiceException {
+	public void changeState(Long id, String operator,String targetState)  {
 		ValidateUtils.notNull(id);
 		ValidateUtils.notNull(operator);
 		ValidateUtils.notNull(targetState);

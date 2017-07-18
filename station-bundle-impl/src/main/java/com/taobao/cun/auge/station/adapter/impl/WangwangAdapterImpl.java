@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.WangwangAdapter;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component("wangwangAdapter")
 public class WangwangAdapterImpl implements WangwangAdapter {
@@ -52,14 +54,11 @@ public class WangwangAdapterImpl implements WangwangAdapter {
 		logger.info("hsf2icesrv.wwPropertyAgentId_SetUserProperty result : {}", JSON.toJSONString(res));
 
 		if (res == null || res.size() == 0) {
-			logger.error("hsf2icesrv.wwPropertyAgentId_SetUserProperty res is null !taobaoNick : {}", taobaoNick);
-			throw new RuntimeException("hsf2icesrv.wwPropertyAgentId_SetUserProperty result is null!");
+			throw new AugeBusinessException(AugeErrorCodes.WANGWANG_BUSINESS_CHECK_ERROR_CODE,"hsf2icesrv.wwPropertyAgentId_SetUserProperty result is null!");
 		}
 		Long code = (Long) res.get(0);
 		if (!code.equals(SUCCESS_CODE)) {
-			logger.error("hsf2icesrv.wwPropertyAgentId_SetUserProperty res code not succ !,taobaoNick : {} res : {}", taobaoNick,
-					JSON.toJSONString(res));
-			throw new RuntimeException("hsf2icesrv.wwPropertyAgentId_SetUserProperty result code error!");
+			throw new AugeBusinessException(AugeErrorCodes.WANGWANG_BUSINESS_CHECK_ERROR_CODE,"hsf2icesrv.wwPropertyAgentId_SetUserProperty result code error!");
 		}
 	}
 }

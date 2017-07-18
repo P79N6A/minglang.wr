@@ -23,9 +23,11 @@ import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.PayParam;
 import com.taobao.cun.auge.common.utils.PayUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 /**
  * 
@@ -54,19 +56,14 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 			List<String> productCode, Set<String> statuses) {
 		Assert.notNull(userId);
 		Assert.notEmpty(productCode, "productCode is null");
-		try {
 			ResultModel<ArrayList<OrderDto>> result = orderPortalService
 					.getOrdersFromProductCodes(userId, new ArrayList<String>(
 							productCode), statuses, customerIdentity);
 			if(result.isSuccessed()){
 				return convertOrderDtoToFuwuDto(result.getReturnValue(),userId);
 			}else{
-				throw new AugeServiceException(result.getExceptionDesc());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,result.getExceptionDesc());
 			}
-		} catch (Exception e) {
-			logger.error("orderPortalService error,userId:"+String.valueOf(userId)+",productCode:"+productCode,e);
-			throw new AugeServiceException("query dowjones error ,"+"userId:"+String.valueOf(userId),e);
-		}
 	}
 	
 	
@@ -109,7 +106,6 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 		customer.setCustomerIdentity(customerIdentity);
 		ProductDto product = new ProductDto();
 		product.setMkey(mkey);
-		try {
 			ResultModel<ArrayList<ShoppingCartDto>> result = shoppingCartPortalService
 					.addCartItemsQuick(customer, product);
 			if(result.isSuccessed()){
@@ -122,12 +118,8 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 				}
 				return returnResult;
 			}else{
-				throw new AugeServiceException(result.getExceptionDesc());
+				throw new AugeSystemException(result.getExceptionDesc());
 			}
-		} catch (Exception e) {
-			logger.error("createOrder error,userId:"+String.valueOf(userId)+",mkey:"+mkey,e);
-			throw new AugeServiceException("createOrder error,userId ,"+"userId:"+String.valueOf(userId),e);
-		}
 	}
 	
 	
@@ -164,12 +156,7 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 	@Override
 	public void closeOrder(String orderNum) {
 		Assert.notNull(orderNum);
-		try {
 			orderItemFacade.serviceWasFinished(orderNum);
-		} catch (Exception e) {
-			logger.error("crm close order error " + orderNum, e);
-			throw new AugeServiceException("crm close order error " + orderNum);
-		}
 	}
 	
 }

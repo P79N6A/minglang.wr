@@ -1,7 +1,8 @@
 package com.taobao.cun.auge.station.exception;
 
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-
+@Deprecated
+//这个异常和AugeBusinessException功能类似，未来异常统一处理只保留AugeBusinessException和AugeSystemException
 public class AugeServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = -6479393095526687858L;

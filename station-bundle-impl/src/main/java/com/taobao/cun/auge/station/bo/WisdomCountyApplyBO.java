@@ -14,19 +14,19 @@ import java.util.Map;
  */
 public interface WisdomCountyApplyBO {
 
-    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) throws AugeServiceException;
+    public WisdomCountyApplyDto getWisdomCountyApplyByCountyId(Long countyId) ;
 
-    public Long addWisdomCountyApply(WisdomCountyApplyDto dto) throws AugeServiceException;
+    public Long addWisdomCountyApply(WisdomCountyApplyDto dto) ;
 
-    public WisdomCountyApplyDto  getWisdomCountyApplyById(Long countyId) throws AugeServiceException;
+    public WisdomCountyApplyDto  getWisdomCountyApplyById(Long countyId) ;
 
-    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) throws AugeServiceException;
+    public PageDto<WisdomCountyApplyDto> queryByPage(WisdomCountyApplyCondition condition) ;
 
-    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) throws AugeServiceException;
+    public Map<Long, WisdomCountyApplyDto> getWisdomCountyApplyByCountyIds(List<Long> ids) ;
 
-    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) throws AugeServiceException;
+    public void updateWisdomCountyApply(WisdomCountyApplyDto wisdomCountyApplyDto) ;
 
-    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) throws AugeServiceException;
+    public void deleteWisdomCountyApplyByCountyId(Long countyId, String operator) ;
 
-    public boolean audit(WisdomCountyApplyAuditDto auditDto) throws AugeServiceException;
+    public boolean audit(WisdomCountyApplyAuditDto auditDto) ;
 }

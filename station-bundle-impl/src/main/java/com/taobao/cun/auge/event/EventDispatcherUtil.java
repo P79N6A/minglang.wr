@@ -7,6 +7,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.crius.event.client.EventDispatcher;
 
@@ -28,7 +29,7 @@ public class EventDispatcherUtil {
 		} catch (Exception e) {
 			String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
 			logger.error(msg, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 		}
 
 	}
@@ -48,7 +49,7 @@ public class EventDispatcherUtil {
 				} catch (Exception e) {
 					String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
 					logger.error(msg, e);
-					throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+					throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
 				}
 			}
 		});

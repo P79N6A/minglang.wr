@@ -52,6 +52,7 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.notify.DefaultNotifyPublish;
 import com.taobao.cun.auge.notify.NotifyFuwuOrderChangeVo;
@@ -231,11 +232,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		criteria.andCourseCodeEqualTo(code);
 		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
 		if(records.size()==0){
-			throw new RuntimeException("not find peixunRecord "+userId.toString());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find peixunRecord "+userId.toString());
 		}
 		PartnerCourseRecord record=records.get(0);
 		if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
-			throw new RuntimeException("培训状态异常，无法签到 "+userId.toString());
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训状态异常，无法签到 "+userId.toString());
 		}
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
         record.setGmtDone(new Date());
@@ -298,7 +299,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					}
 				}else{
 					logger.error("getByTrainingRecordId error param:"+dto.getId()+"message:"+JSONObject.toJSONString(ticketDto));
-					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"getTicketError "+ticketDto.getMsg());
 				}
 			}
 		}
@@ -309,19 +310,14 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
 		query.setCourseCodes(codes);
 		query.addTrainee(String.valueOf(userId));
-		try {
 			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
 					.find(auth, query, 100, 1);
 			if (result.isSuccess()) {
 				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ result.getMsg());
 			}
-		} catch (Exception e) {
-			logger.error("queryPeixunRecordList error", e);
-			throw new RuntimeException(e);
-		}
 	}
 
 
@@ -359,7 +355,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		dto.setTaobaoNick(taobaoNick);
 		ResultModel<Boolean> result = examUserDispatchService.dispatchExam(dto);
 		if (!result.isSuccess()) {
-			throw new RuntimeException("dispatch examPaper fail:"
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"dispatch examPaper fail:"
 					+ result.getException());
 		}
 	}
@@ -567,7 +563,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private String refundCallCrm(BigDecimal refundAmount,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String operator,String refundReason){
-		try{
 			BaseRefundApplyOrderItemList list=new BaseRefundApplyOrderItemList();
 			BaseRefundApplyAddParam param=new BaseRefundApplyAddParam();
 			Operator op=new Operator();
@@ -593,19 +588,13 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			if(result.isSuccess()){
 				return result.getObject();
 			}else{
-				throw new AugeBusinessException(result.getErrorMsg());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,result.getErrorMsg());
 			}
-		}catch(Exception e){
-			logger.error("refundCallCrm error ",e);
-			throw new AugeBusinessException(e);
-		}
-		
 	}
 	
 	private void creatFlow(Long applyId, String loginId, Long orgId) {
 	    Map<String, String> initData = new HashMap<String, String>();
 	    initData.put("orgId", String.valueOf(orgId));
-		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
 			startDto.setBusinessId(String.valueOf(applyId));
@@ -616,9 +605,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			if (!rm.isSuccess()) {
 				throw new AugeServiceException(rm.getException());
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException("流程启动失败", e);
-		}
 	}
 	
 	private void changePeixunStatus(String refundNo,PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord,String refundReason,String operator){
@@ -641,16 +627,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private BigDecimal validateRefundable(PartnerCourseRecord qihangRecord,PartnerCourseRecord chengZhangRecord){
 		//验证是否可退款状态
 		if(qihangRecord==null||chengZhangRecord==null){
-			throw new AugeBusinessException("未找到培训记录");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"未找到培训记录");
 		}
 		if(PartnerPeixunStatusEnum.DONE.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.DONE.getCode().equals(chengZhangRecord.getStatus())){
-			throw new AugeBusinessException("有课程已经签到,无法退款");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"有课程已经签到,无法退款");
 		}
 		if(PartnerPeixunStatusEnum.NEW.getCode().equals(qihangRecord.getStatus())||PartnerPeixunStatusEnum.NEW.getCode().equals(chengZhangRecord.getStatus())){
-			throw new AugeBusinessException("课程未付款,无法退款");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"课程未付款,无法退款");
 		}
 		if(StringUtils.isNotEmpty(qihangRecord.getRefundStatus())&&!PartnerPeixunRefundStatusEnum.REFOUND_AUDIT_NOT_PASS.getCode().equals(qihangRecord.getRefundStatus())){
-			throw new AugeBusinessException("已经在退款流程中");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"已经在退款流程中");
 		}
 		//验证crm可退金额是否正确
 		BigDecimal refundAmount=validateRefundAmount(qihangRecord);
@@ -660,21 +646,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	}
 	
 	private BigDecimal validateRefundAmount(PartnerCourseRecord qihangRecord) {
-		try {
 			com.alibaba.crm.pacific.facade.dto.base.ResultDTO<BigDecimal> crmRefundResult = refundBaseCommonService
 					.queryRefundAbleAmount(qihangRecord.getOrderNum(),
 							qihangRecord.getCourseCode());
 			if(!crmRefundResult.isSuccess()){
-				throw new AugeBusinessException(crmRefundResult.getErrorMsg());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,crmRefundResult.getErrorMsg());
 			}else if(crmRefundResult.getObject().compareTo(new BigDecimal(0)) <= 0){
-				throw new AugeBusinessException("订单可退款金额不正确");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"订单可退款金额不正确");
 			}else{
 				return crmRefundResult.getObject();
 			}
-		} catch (Exception e) {
-			logger.error("validateRefundAmount error ", e);
-			throw new AugeBusinessException(e);
-		}
 	}
 	
 	private void validateVoince(PartnerCourseRecord qihangRecord) {
@@ -683,7 +664,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		reqDto.setAppCode(invoiceClientId);
 		reqDto.setBillNo(qihangRecord.getOrderNum());
 		reqDto.signAndEncrypt(invoiceClientKey);
-		try {
 			com.alibaba.crypt.base.ResultModel<ListWrapperDto<OrderItemInvoiceStatusDto>> finResult = arInvoiceService
 					.queryEffectiveInvoiceListByBillNos(reqDto);
 			if (finResult.isSuccess()) {
@@ -693,21 +673,16 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 				for (OrderItemInvoiceStatusDto inv : invs.getList()) {
 					if (!("unintentioned".equals(inv.getInvoiceStatus()) || "intentioned"
 							.equals(inv.getInvoiceStatus()))) {
-						throw new AugeBusinessException(
+						throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,
 								"该村小二开过培训发票，请联系村小二原路退回发票给村淘。建议退票完成后再发起退款。");
 					}
 				}
 			}else{
-				throw new AugeBusinessException(finResult.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,finResult.getErrorMessage());
 			}
-		} catch (Exception e) {
-			logger.error("validateVoince error ", e);
-			throw new AugeBusinessException(e);
-		}
 	}
 	
     public void refundAuditExecute(Long id,boolean auditResult){
-    	try{
     		Assert.notNull(id);
     		PartnerCourseRecord qihangRecord=partnerCourseRecordMapper.selectByPrimaryKey(id);
     		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
@@ -715,10 +690,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(),
     				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
     		if(!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())||!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(chengZhangRecord.getStatus())){
-    			throw new AugeBusinessException("培训订单状态不正确，无法处理退款审核消息");
+    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款审核消息");
     		}
     		if(!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(qihangRecord.getRefundStatus())||!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(chengZhangRecord.getRefundStatus())){
-    			throw new AugeBusinessException("审核状态不正确，无法处理退款审核消息");
+    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"审核状态不正确，无法处理退款审核消息");
     		}
     		//更新退款状态
     		if(auditResult){
@@ -738,14 +713,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     		partnerCourseRecordMapper.updateByPrimaryKey(chengZhangRecord);
     		//通知售中审核结果
     		refundForBizAuditService.noticeRefundAuditResult(qihangRecord.getRefundNo(), auditResult);
-    	}catch(Exception e){
-			logger.error("refundAuditExecute error id:"+id, e);
-    	}
     }
     
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleRefundFinishSucess(ObjectMessage objMessage){
-		try {
 			logger.info("handleRefundFinishSucess start:"+objMessage.getObject());
 			String messageType = objMessage.getMessageType();
 			if (!NotifyContents.PEIXUN_REFUND_FINISH_MESSAGETYPE
@@ -781,11 +752,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			for (PartnerCourseRecord record : records) {
 				if (!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(
 						record.getStatus())) {
-					throw new AugeBusinessException("培训订单状态不正确，无法处理退款成功消息");
+					throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款成功消息");
 				}
 				if (!PartnerPeixunRefundStatusEnum.REFOUNDING.getCode().equals(
 						record.getRefundStatus())) {
-					throw new AugeBusinessException("退款状态不正确，无法处理退款成功消息");
+					throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"退款状态不正确，无法处理退款成功消息");
 				}
 				record.setGmtModified(new Date());
 				record.setStatus(PartnerPeixunStatusEnum.REFUND.getCode());
@@ -793,10 +764,6 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 						.getCode());
 				partnerCourseRecordMapper.updateByPrimaryKey(record);
 			}
-		} catch (Exception e) {
-			logger.error("handleRefundFinishSucess error:", e);
-		}
-		
     }
 	
 	public PartnerPeixunDto queryPeixunRecordById(Long id){
@@ -835,10 +802,10 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			return;
 		}else if(PartnerPeixunStatusEnum.PAY.getCode().equals(qihangRecord.getStatus())){
 			//未签到 不允许退款
-			throw new AugeBusinessException("请先申请培训课程退款");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"请先申请培训课程退款");
 		}else if(PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())){
 			//退款流程中，不允许退款
-			throw new AugeBusinessException("申请失败：培训课程退款审批中");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"申请失败：培训课程退款审批中");
 		}
 		
 	}

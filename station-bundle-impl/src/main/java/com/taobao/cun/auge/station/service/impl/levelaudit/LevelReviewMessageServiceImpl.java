@@ -29,11 +29,7 @@ public class LevelReviewMessageServiceImpl implements LevelAuditMessageService {
     
     @Override
     public void handleApprove(PartnerInstanceLevelDto partnerInstanceLevelDto, String adjustLevel) {
-        try {
             logger.error("Review Level Evaluate Pass for partnerInstanceId:{}, currentLevel:{}" + partnerInstanceLevelDto.getPartnerInstanceId(), partnerInstanceLevelDto.getCurrentLevel());
-        } catch (Exception e) {
-            logger.error("handleApprove error", e);
-        }
     }
 
     /**
