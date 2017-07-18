@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -85,10 +84,6 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -422,7 +417,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 				PartnerLifecycleSettledProtocolEnum itemState = PartnerLifecycleSettledProtocolEnum
 						.valueof(lifecycleItems.getSettledProtocol());
 				if (null == itemState) {
-					throw new RuntimeException("invalid settle protocol in lifecycle_items");
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"invalid settle protocol in lifecycle_items");
 				}
 				info.setHasSigned(PartnerLifecycleSettledProtocolEnum.SIGNED.equals(itemState) ? true : false);
 			} else if (ProtocolTypeEnum.MANAGE_PRO.equals(type)) {
@@ -460,7 +455,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 							instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 			 }
 			if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
-				throw new NullPointerException("bond money or settle protocol not exist");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"bond money or settle protocol not exist");
 			}
 			info.setPartnerInstance(instance);
 			info.setAcountMoney(bondMoney);
@@ -470,7 +465,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			} else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
 				info.setHasFrozen(true);
 			} else {
-				throw new RuntimeException("invalid account_money state");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"invalid account_money state");
 			}
 			return info;
 	}

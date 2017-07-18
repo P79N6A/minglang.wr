@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 import com.ali.com.google.common.collect.Maps;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -147,9 +146,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
@@ -1299,23 +1296,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         ValidateUtils.validateParam(partnerInstanceQuitDto);
         Long instanceId = partnerInstanceQuitDto.getInstanceId();
         ValidateUtils.notNull(instanceId);
-        try {
             PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-            if (rel == null || StringUtils.isEmpty(rel.getType())) {
+            if (rel != null) {
                 if (PartnerInstanceStateEnum.QUIT.getCode().equals(rel.getState())) {
                     return;
                 } else if (!PartnerInstanceStateEnum.QUITING.getCode().equals(rel.getState())) {
-                    throw new RuntimeException(CommonExceptionEnum.DATA_UNNORMAL.getDesc());
+                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"数据异常");
                 }
             }
             partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
             // 同步station_apply
             syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-        }catch (Exception e) {
-            String error = getErrorMessage("quitPartnerInstance", JSON.toJSONString(partnerInstanceQuitDto), e.getMessage());
-            logger.error(error, e);
-            throw new AugeSystemException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
     }
 
     @Override

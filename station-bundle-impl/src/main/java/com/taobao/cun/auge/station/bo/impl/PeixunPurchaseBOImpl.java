@@ -276,13 +276,13 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			Result<?> result = prService.submitPr(prDto);
 			
 			if (!result.isSuccess()) {
-				throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + result.getMessage());
 			}
 			String prNo=(String)result.getValue();
 			record.setPrNo(prNo);
 		} catch (Exception e) {
 			logger.error("submit pr error " + JSON.toJSONString(prDto), e);
-			throw new RuntimeException("提交pr失败，失败原因：" + e);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + e);
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);

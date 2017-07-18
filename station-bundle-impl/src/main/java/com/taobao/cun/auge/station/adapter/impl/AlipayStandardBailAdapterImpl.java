@@ -32,7 +32,7 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			logger.info("start dealStandardBail : " + JSON.toJSONString(alipayStandardBailDto));
 			String outOrderNo = alipayStandardBailDto.getOutOrderNo();
 			if (StringUtils.isEmpty(outOrderNo)) {
-				throw new RuntimeException("outOrderNo is empty!");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"outOrderNo is empty!");
 			}
 			ResultModel<Boolean> resultModel = null;
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(BaiDtoBuilder.parseInstanceIdFromOutOrderNo(outOrderNo));
@@ -41,7 +41,7 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 			}else if(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE.equals(alipayStandardBailDto.getOpType())) {
 				resultModel = bailService.unfreezeUserBail(BaiDtoBuilder.buildFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
 			}else if (AlipayStandardBailDto.ALIPAY_OP_TYPE_TRANSFER.equals(alipayStandardBailDto.getOpType())) {
-				throw new RuntimeException("Not Support Operation Exception!");
+				throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"Not Support Operation Exception!");
 			}
 			if (resultModel != null && resultModel.isSuccess() && resultModel.getResult() != null) {
 				return resultModel.getResult();

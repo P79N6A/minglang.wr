@@ -625,10 +625,10 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			if( flow != null){
 				if (!AssetFlowApplyStatusEnum.AUDITING.getCode().equals(flow.getApplyStatus())) {
 					String applyStatusDesc = AssetFlowApplyStatusEnum.valueof(flow.getApplyStatus()).getDesc();
-					throw new RuntimeException("申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
+					throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
 				}
 			}else{
-				throw new RuntimeException("查询不到当前申请单");
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"查询不到当前申请单");
 			}
 			
 			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(assetFlowId), "assetApply", operator);

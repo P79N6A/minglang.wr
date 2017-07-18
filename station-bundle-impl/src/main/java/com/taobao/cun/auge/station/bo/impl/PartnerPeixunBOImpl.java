@@ -232,11 +232,11 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		criteria.andCourseCodeEqualTo(code);
 		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
 		if(records.size()==0){
-			throw new RuntimeException("not find peixunRecord "+userId.toString());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find peixunRecord "+userId.toString());
 		}
 		PartnerCourseRecord record=records.get(0);
 		if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
-			throw new RuntimeException("培训状态异常，无法签到 "+userId.toString());
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训状态异常，无法签到 "+userId.toString());
 		}
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
         record.setGmtDone(new Date());
@@ -299,7 +299,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 					}
 				}else{
 					logger.error("getByTrainingRecordId error param:"+dto.getId()+"message:"+JSONObject.toJSONString(ticketDto));
-					throw new RuntimeException("getTicketError "+ticketDto.getMsg());
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"getTicketError "+ticketDto.getMsg());
 				}
 			}
 		}
@@ -315,7 +315,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			if (result.isSuccess()) {
 				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ result.getMsg());
 			}
 	}
@@ -355,7 +355,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		dto.setTaobaoNick(taobaoNick);
 		ResultModel<Boolean> result = examUserDispatchService.dispatchExam(dto);
 		if (!result.isSuccess()) {
-			throw new RuntimeException("dispatch examPaper fail:"
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"dispatch examPaper fail:"
 					+ result.getException());
 		}
 	}

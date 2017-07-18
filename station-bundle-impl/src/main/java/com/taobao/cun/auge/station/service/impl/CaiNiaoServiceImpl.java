@@ -45,8 +45,6 @@ import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 
 @Service("caiNiaoService")
@@ -112,7 +110,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 					if (caiNiaoStationId == null) {
 						logger.error(
 								"caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
-						throw new RuntimeException("caiNiaoStationService.saveStation is null ");
+						throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"caiNiaoStationService.saveStation is null ");
 					}
 					CuntaoCainiaoStationRelDto relDto = new CuntaoCainiaoStationRelDto();
 					relDto.setObjectId(instanceDto.getStationDto().getId());
@@ -134,7 +132,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 					if (caiNiaoStationId == null) {
 						logger.error(
 								"caiNiaoStationService.saveStation is null stationDto : {" + JSONObject.toJSONString(caiNiaoStationDto) + "}");
-						throw new RuntimeException("caiNiaoStationService.saveStation is null ");
+						throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"caiNiaoStationService.saveStation is null ");
 					}
 					
 					LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
@@ -364,7 +362,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 		}
 			boolean res  = caiNiaoAdapter.unBindAdmin(cnStationId);
 			if (!res) {
-				throw new RuntimeException("res is false");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"res is false");
 			}
 	}
 	

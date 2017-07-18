@@ -50,7 +50,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
 		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		if (null == protocolId) {
-			throw new RuntimeException("protocol not exists: " + type);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocol not exists: " + type);
 		}
 
 		PartnerProtocolRel partnerProtocolRelDO = new PartnerProtocolRel();

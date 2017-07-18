@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.UicTagAdapter;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeUicTagException;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.uic.common.domain.ExtraUserDO;
@@ -71,7 +73,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 			logger.info("uicTagWriteServiceClient.addUserTag19 , result : {}", JSON.toJSONString(result));
 			if (result == null || !result.isSuccess()) {
 				logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId, TPT_TAG);
-				throw new RuntimeException("uicTagWriteServiceClient.addUserTag error");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.addUserTag error");
 			}
 		}
 		
@@ -116,7 +118,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				} else {
 					logger.error("uicTagWriteServiceClient.removeUserTag failed, taobaoUserId: {}, resultCode:{}, erroMsg:{}",
 							new Object[] { taobaoUserId, result.getRetCode(), result.getErrMsg() });
-					throw new RuntimeException("uicTagWriteServiceClient.removeUserTag error.");
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.removeUserTag error.");
 				}
 			}
 		}
@@ -139,7 +141,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		logger.info("uicTagWriteServiceClient.addUserTag11 , result : {}", JSON.toJSON(result));
 		if (result == null || !result.isSuccess()) {
 			logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId, userTag);
-			throw new RuntimeException("uicTagWriteServiceClient.addUserTag error");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.addUserTag error");
 		}
 
 	}
@@ -155,7 +157,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 			logger.info("uicTagWriteServiceClient.addUserTag17 , result : {}", JSON.toJSON(result));
 			if (result == null || !result.isSuccess()) {
 				logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId);
-				throw new RuntimeException("uicTagWriteServiceClient.addUserTag error");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.addUserTag error");
 			}
 		}
 	}
@@ -172,7 +174,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 			logger.info("uicTagWriteServiceClient.addUserTag19 , result : {}", JSON.toJSONString(result));
 			if (result == null || !result.isSuccess()) {
 				logger.error("uicTagWriteServiceClient.addUserTag error,userId: {} tag:{}", taobaoUserId, TPV_TAG);
-				throw new RuntimeException("uicTagWriteServiceClient.addUserTag error");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.addUserTag error");
 			}
 		}
 	}
@@ -193,7 +195,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		if (result == null || !result.isSuccess()) {
 			logger.error("uicTagWriteServiceClient.removeUserTag failed, taobaoUserId: {}, resultCode:{}, erroMsg:{}",
 					new Object[] { taobaoUserId, result.getRetCode(), result.getErrMsg() });
-			throw new RuntimeException("uicTagWriteServiceClient.removeUserTag error.");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.removeUserTag error.");
 		}
 		logger.info("uicTagWriteServiceClient.removeUserTag success, taobaoUserId: {}.", taobaoUserId);
 
@@ -211,7 +213,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 			if (result != null) {
 				if (!result.isSuccess()) {
 					logger.error("uicTagWriteServiceClient.removeUserTag17 error,userId: {} tag:{}", taobaoUserId);
-					throw new RuntimeException("uicTagWriteServiceClient.removeUserTag17 error");
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.removeUserTag17 error");
 				}
 			}
 		}
@@ -233,7 +235,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 				} else {
 					logger.error("uicTagWriteServiceClient.removeUserTag failed, taobaoUserId: {}, resultCode:{}, erroMsg:{}",
 							new Object[] { taobaoUserId, result.getRetCode(), result.getErrMsg() });
-					throw new RuntimeException("uicTagWriteServiceClient.removeUserTag error.");
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicTagWriteServiceClient.removeUserTag error.");
 				}
 			}
 		}
@@ -249,7 +251,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
 		if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
 			logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
-			throw new RuntimeException("uicExtraReadServiceClient.getExtraUserByUserId result null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicExtraReadServiceClient.getExtraUserByUserId result null");
 		}
 		return extraUserDOResultDO.getModule().getUserTag11() & DEFAULT_TAG;
 	}
@@ -264,7 +266,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
 		if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
 			logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
-			throw new RuntimeException("uicExtraReadServiceClient.getExtraUserByUserId result null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicExtraReadServiceClient.getExtraUserByUserId result null");
 		}
 		return extraUserDOResultDO.getModule().getUserTag17() & TPA_TAG;
 	}
@@ -279,7 +281,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
 		if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
 			logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
-			throw new RuntimeException("uicExtraReadServiceClient.getExtraUserByUserId result null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicExtraReadServiceClient.getExtraUserByUserId result null");
 		}
 		return extraUserDOResultDO.getModule().getUserTag19() & TPV_TAG;
 	}
@@ -294,7 +296,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		ResultDO<ExtraUserDO> extraUserDOResultDO = uicExtraReadServiceClient.getExtraUserByUserId(taobaoUserId);
 		if (extraUserDOResultDO == null || !extraUserDOResultDO.isSuccess() || extraUserDOResultDO.getModule() == null) {
 			logger.error("uicExtraReadServiceClient.getExtraUserByUserId result null, param is userId: {}", taobaoUserId);
-			throw new RuntimeException("uicExtraReadServiceClient.getExtraUserByUserId result null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"uicExtraReadServiceClient.getExtraUserByUserId result null");
 		}
 		return extraUserDOResultDO.getModule().getUserTag19() & TPT_TAG;
 	}
