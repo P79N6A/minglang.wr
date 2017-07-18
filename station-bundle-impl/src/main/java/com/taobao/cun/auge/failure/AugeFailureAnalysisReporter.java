@@ -16,6 +16,8 @@ public class AugeFailureAnalysisReporter implements FailureAnalysisReporter{
          AugeFailureAnalysis augeFailureAnalysis = (AugeFailureAnalysis)analysis;
          if(augeFailureAnalysis.isFatal()){
         	 logger.error("{bizType},{action},{parameter}", augeFailureAnalysis.getBizType(), augeFailureAnalysis.getAction(), augeFailureAnalysis.getParameters(), augeFailureAnalysis.getCause());
+         }else{
+        	 logger.warn("{bizType},{action},{parameter}", augeFailureAnalysis.getBizType(), augeFailureAnalysis.getAction(), augeFailureAnalysis.getParameters(), augeFailureAnalysis.getCause());
          }
 	}
 
