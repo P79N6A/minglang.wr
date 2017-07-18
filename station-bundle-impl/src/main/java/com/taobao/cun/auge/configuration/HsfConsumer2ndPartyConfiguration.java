@@ -49,7 +49,11 @@ import com.taobao.uic.common.service.userdata.client.UicDataServiceClient;
 import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 import com.taobao.uic.common.service.userinfo.TagRecordReadService;
 import com.taobao.uic.common.service.userinfo.TagRecordWriteService;
+import com.taobao.uic.common.service.userinfo.UicPaymentAccountReadService;
+import com.taobao.uic.common.service.userinfo.UicReadService;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 @Configuration
@@ -308,6 +312,21 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				.build();
 	}
 	
-	
+	@Bean
+	public UicPaymentAccountReadService uicPaymentAccountReadService(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicPaymentAccountReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	@Bean
+	public UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient(ClientInfo clientInfo,UICCacheService uicCacheService,
+			UicPaymentAccountReadService uicPaymentAccountReadService,UicReadService uicReadService){
+		UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient = new UicPaymentAccountReadServiceClient();
+		uicPaymentAccountReadServiceClient.setClientInfo(clientInfo);
+		uicPaymentAccountReadServiceClient.setUicCacheService(uicCacheService);
+		uicPaymentAccountReadServiceClient.setUicPaymentAccountReadService(uicPaymentAccountReadService);
+		uicPaymentAccountReadServiceClient.setUicReadService(uicReadService);
+		return uicPaymentAccountReadServiceClient;
+		
+	}
 	
 }
