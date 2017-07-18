@@ -21,6 +21,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -86,6 +87,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			if(qualification == null) {
 				return ;
 			}
+			//最后提交时间大于我们这里的最后修改时间的话就更新
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
@@ -120,9 +122,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	@Override
 	public Qualification queryC2BQualification(Long taobaoUserId) {
-		//throw new AugeBusinessException("test");
-		//throw new RuntimeException("test");
-		
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification != null){
 				Qualification qualification = new Qualification();
