@@ -23,5 +23,7 @@ public interface CuntaoQualificationService {
 	C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId);
 	
 	List<String>  querySubmitedQualifications();
+	
+    Qualification queryHavanaC2BQualification(Long taobaoUserId);
 
 }

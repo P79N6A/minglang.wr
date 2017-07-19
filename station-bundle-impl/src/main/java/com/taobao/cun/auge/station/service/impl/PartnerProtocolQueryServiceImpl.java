@@ -16,7 +16,6 @@ import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolGroupTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerProtocolQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("partnerProtocolQueryService")
@@ -27,7 +26,7 @@ public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryServ
 	PartnerProtocolRelExtMapper partnerProtocolRelExtMapper;
 	
 	@Override
-	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId) throws AugeServiceException {
+	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId){
 		ValidateUtils.notNull(partnerInstanceId);
 		PartnerProtocolRelExtExample example = new PartnerProtocolRelExtExample();
 		

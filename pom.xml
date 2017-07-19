@@ -30,6 +30,7 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 		<ague.station.client.version>2.4.1-SNAPSHOT</ague.station.client.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -57,6 +58,11 @@
 				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.boot</groupId>
+				<artifactId>alimetrics-spring-boot-starter</artifactId>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.springframework.boot</groupId>
@@ -512,6 +518,17 @@
 				<artifactId>recruit-bundle-client</artifactId>
 				<version>2.1.4</version>
 			</dependency>
+				<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+			<version>1.0.18-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.infop.shared</groupId>
+				<artifactId>tax.api</artifactId>
+				<version>1.0.27</version>
+			</dependency>
+		
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>

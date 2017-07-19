@@ -19,5 +19,9 @@ public  class NotifyContents{
 	public static String ALILANG_REGISTER_TOPIC="T-ALILANG-REGISTERED";
 	public static String EXAM_FINISH="CUNTAO_EXAM_QUEUE";
 	public static String EXAM_FINISH_MST="CUNTAO_EXAM_FINISH";
+	public static String PEIXUN_REFUND_FINISH="pacific-order";
+	public static String PEIXUN_REFUND_FINISH_MESSAGETYPE="order-item-refund-status";
+
+	
 
 }

@@ -34,11 +34,13 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleReflectMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleReflectDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleShowDto;
 import com.taobao.cun.auge.station.enums.PartnerScheduleStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 @Component("partnerCourseScheduleBO")
 public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 
@@ -126,7 +128,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 			if (coursesResult.isSuccess()) {
 				return coursesResult.getData().getRows()==null?Lists.newArrayList():coursesResult.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ coursesResult.getMsg());
 			}
 		} catch (Exception e) {
@@ -146,7 +148,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 			if (result.isSuccess()) {
 				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ result.getMsg());
 			}
 		} catch (Exception e) {

@@ -27,6 +27,53 @@ public class PartnerPeixunDto implements Serializable{
 	private String myOrderUrl;
 	private String payUrl;
 	
+	private String refundNo;
+	private String refundStatus;
+	private String refundReason;
+	private String refundStatusDesc;
+	private Long id;
+	private String refundUrl;
+	
+	
+	
+	
+	
+	public String getRefundUrl() {
+		return refundUrl;
+	}
+	public void setRefundUrl(String refundUrl) {
+		this.refundUrl = refundUrl;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getRefundStatusDesc() {
+		return refundStatusDesc;
+	}
+	public void setRefundStatusDesc(String refundStatusDesc) {
+		this.refundStatusDesc = refundStatusDesc;
+	}
+	public String getRefundNo() {
+		return refundNo;
+	}
+	public void setRefundNo(String refundNo) {
+		this.refundNo = refundNo;
+	}
+	public String getRefundStatus() {
+		return refundStatus;
+	}
+	public void setRefundStatus(String refundStatus) {
+		this.refundStatus = refundStatus;
+	}
+	public String getRefundReason() {
+		return refundReason;
+	}
+	public void setRefundReason(String refundReason) {
+		this.refundReason = refundReason;
+	}
 	public Long getUserId() {
 		return userId;
 	}

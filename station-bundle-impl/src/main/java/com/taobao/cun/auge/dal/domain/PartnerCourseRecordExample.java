@@ -529,6 +529,11 @@ public class PartnerCourseRecordExample {
             addCriterion("is_deleted =", value, "isDeleted");
             return (Criteria) this;
         }
+        
+        public Criteria andRefundNoEqualTo(String value) {
+            addCriterion("refund_no =", value, "refundNo");
+            return (Criteria) this;
+        }
 
         public Criteria andIsDeletedNotEqualTo(String value) {
             addCriterion("is_deleted <>", value, "isDeleted");

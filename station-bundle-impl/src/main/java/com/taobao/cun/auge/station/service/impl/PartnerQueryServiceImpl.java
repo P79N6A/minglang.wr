@@ -17,7 +17,6 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 
@@ -38,19 +37,19 @@ public class PartnerQueryServiceImpl implements PartnerQueryService {
 	PartnerInstanceBO partnerInstanceBO;
 
 	@Override
-	public PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException {
+	public PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId){
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		return convertPartnerToDto(partner);
 	}
 
 	@Override
-	public PartnerDto queryPartner(Long partnerId) throws AugeServiceException {
+	public PartnerDto queryPartner(Long partnerId){
 		Partner partner = partnerBO.getPartnerById(partnerId);
 		return convertPartnerToDto(partner);
 	}
 
 	@Override
-	public PartnerDto queryPartnerByStationId(Long stationId) throws AugeServiceException {
+	public PartnerDto queryPartnerByStationId(Long stationId){
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 		Assert.notNull(rel, "partner instance not exists");
 		Long partnerId = rel.getPartnerId();

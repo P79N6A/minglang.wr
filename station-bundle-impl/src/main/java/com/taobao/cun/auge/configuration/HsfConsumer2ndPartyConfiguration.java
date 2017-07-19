@@ -20,12 +20,16 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
+import com.alibaba.crm.pacific.facade.refund.ApplyRefundService;
+import com.alibaba.crm.pacific.facade.refund.RefundBaseCommonService;
+import com.alibaba.crm.pacific.facade.refund.RefundForBizAuditService;
 import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
+import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
@@ -33,9 +37,10 @@ import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
-import com.taobao.cun.service.mc.MessageCenterService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
+import com.taobao.trade.platform.api.query.BuyerQueryService;
 import com.taobao.uic.common.cache.UICCacheService;
 import com.taobao.uic.common.service.userdata.UicDataReadService;
 import com.taobao.uic.common.service.userdata.UicDataWriteService;
@@ -44,7 +49,11 @@ import com.taobao.uic.common.service.userdata.client.UicDataServiceClient;
 import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
 import com.taobao.uic.common.service.userinfo.TagRecordReadService;
 import com.taobao.uic.common.service.userinfo.TagRecordWriteService;
+import com.taobao.uic.common.service.userinfo.UicPaymentAccountReadService;
+import com.taobao.uic.common.service.userinfo.UicReadService;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 @Configuration
@@ -110,7 +119,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesOrderService.service.version}") String version) {
+	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesOrderService.service.portal.version}") String version) {
 		return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
 	}
 	
@@ -260,15 +269,64 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				.build();
 	}
 	
-	@Bean
-	public MessageCenterService messageCenterService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
-		return context.hsfConsumerBuilder(MessageCenterService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
-				.build();
-	}
 	
 	@Bean
 	public PartnerApplyService partnerApplyService(HsfConsumerContext context, @Value("${recruit.service.version}") String version) {
 		return context.hsfConsumerBuilder(PartnerApplyService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
+	
+	@Bean
+	public ApplyRefundService applyRefundService(HsfConsumerContext context, @Value("${crm.order.service.version}") String version) {
+		return context.hsfConsumerBuilder(ApplyRefundService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public RefundBaseCommonService refundBaseCommonService(HsfConsumerContext context, @Value("${crm.order.service.version}") String version) {
+		return context.hsfConsumerBuilder(RefundBaseCommonService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public RefundForBizAuditService refundForBizAuditService(HsfConsumerContext context, @Value("${crm.order.service.version}") String version) {
+		return context.hsfConsumerBuilder(RefundForBizAuditService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public ArInvoiceService arInvoiceService(HsfConsumerContext context, @Value("${finance.invoice.service.version}") String version) {
+		return context.hsfConsumerBuilder(ArInvoiceService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public BuyerQueryService buyerQueryService(HsfConsumerContext context, @Value("${buyer.query.service.version}") String version) {
+		return context.hsfConsumerBuilder(BuyerQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public RefundReadService refundReadService(HsfConsumerContext context, @Value("${refund.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(RefundReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public UicPaymentAccountReadService uicPaymentAccountReadService(HsfConsumerContext context, @Value("${uic.payment.read.service.version}") String version) {
+		return context.hsfConsumerBuilder(UicPaymentAccountReadService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	@Bean
+	public UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient(ClientInfo clientInfo,UICCacheService uicCacheService,
+			UicPaymentAccountReadService uicPaymentAccountReadService,UicReadService uicReadService){
+		UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient = new UicPaymentAccountReadServiceClient();
+		uicPaymentAccountReadServiceClient.setClientInfo(clientInfo);
+		uicPaymentAccountReadServiceClient.setUicCacheService(uicCacheService);
+		uicPaymentAccountReadServiceClient.setUicPaymentAccountReadService(uicPaymentAccountReadService);
+		uicPaymentAccountReadServiceClient.setUicReadService(uicReadService);
+		return uicPaymentAccountReadServiceClient;
+		
+	}
+	
 }

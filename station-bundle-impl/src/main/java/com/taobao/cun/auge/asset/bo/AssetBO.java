@@ -196,4 +196,7 @@ public interface AssetBO {
      * 同步cuntao_asset表
      */
     public void syncCuntaoAsset();
+    public Boolean judgeCanBuyAsset(Long stationId);
+
+    public Boolean buyAsset(CuntaoAssetDto assetDto);
 }

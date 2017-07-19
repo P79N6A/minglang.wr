@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
+import com.taobao.cun.auge.station.enums.RemoveBrandUserTypeEnum;
 
 public class QuitStationApplyDto extends OperatorDto {
 
@@ -40,6 +41,37 @@ public class QuitStationApplyDto extends OperatorDto {
 	//提交人
 	private String submittedPeopleName;
 	
+	//拆除门面
+	private String removeBrandFileName;
+	
+	private Boolean isRemoveBrand;
+	
+	private RemoveBrandUserTypeEnum removeBrandUserType;
+	
+	public RemoveBrandUserTypeEnum getRemoveBrandUserType() {
+		return removeBrandUserType;
+	}
+
+	public void setRemoveBrandUserType(RemoveBrandUserTypeEnum removeBrandUserType) {
+		this.removeBrandUserType = removeBrandUserType;
+	}
+
+	public Boolean getIsRemoveBrand() {
+		return isRemoveBrand;
+	}
+
+	public void setIsRemoveBrand(Boolean isRemoveBrand) {
+		this.isRemoveBrand = isRemoveBrand;
+	}
+
+	public String getRemoveBrandFileName() {
+		return removeBrandFileName;
+	}
+
+	public void setRemoveBrandFileName(String removeBrandFileName) {
+		this.removeBrandFileName = removeBrandFileName;
+	}
+
 	public Long getId() {
 		return id;
 	}

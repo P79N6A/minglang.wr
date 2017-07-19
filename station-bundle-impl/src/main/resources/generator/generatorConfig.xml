@@ -26,7 +26,6 @@
 		<javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}"
 			type="XMLMAPPER" />
 
-<!-- 
 		<table tableName="account_money" enableCountByExample="true" enableUpdateByExample="true"
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
@@ -123,22 +122,6 @@
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
-		<table tableName="asset" enableCountByExample="true" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
-		</table>
-		-->
-		<!--<table tableName="asset_income" enableCountByExample="true" enableUpdateByExample="true"-->
-			   <!--enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
-			<!--<generatedKey column="ID" sqlStatement="mysql" identity="true" />-->
-		<!--</table>-->
-		<table tableName="asset_rollout_income_detail" enableCountByExample="true" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
-		</table>
-		<!--<table tableName="asset_rollout_income_detail" enableCountByExample="true" enableUpdateByExample="true"-->
-			   <!--enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
-			<!--<generatedKey column="ID" sqlStatement="mysql" identity="true" />-->
-		<!--</table>-->
+
 	</context>
 </generatorConfiguration>

@@ -30,6 +30,7 @@ import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExtExample;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailExtMapper;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 
@@ -155,7 +156,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 			 return null;
 		}
 		if (resList.size()>1) {
-			 throw new AugeBusinessException("操作失败，当前资产多条数据，请核对资产信息！如有疑问，请联系资产管理员。");
+			 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"操作失败，当前资产多条数据，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 	    return resList.get(0);
 	}
@@ -168,7 +169,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		ValidateUtils.notNull(assetId);
 		AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);
 		if (detail == null) {
-			throw new AugeBusinessException("操作失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"操作失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
 		record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());

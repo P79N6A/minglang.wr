@@ -83,6 +83,10 @@
 			<groupId>com.cuntao.boot</groupId>
 			<artifactId>spring-boot-starter-mybatis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>alimetrics-spring-boot-starter</artifactId>
+		</dependency>
 		<!--test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -339,6 +343,14 @@
 			<!--<groupId>ch.qos.logback</groupId>-->
 			<!--<artifactId>logback-core</artifactId>-->
 		<!--</dependency>-->
+		<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>com.alibaba.infop.shared</groupId>
+				<artifactId>tax.api</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

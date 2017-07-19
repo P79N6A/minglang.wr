@@ -12,8 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.domain.dataobject.PayOrderDO;
@@ -59,7 +62,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
-			logger.error("getDecorateOrderById error bizOrderId[{}]",bizOrderId,e);
+			logger.warn("getDecorateOrderById error bizOrderId[{}]",bizOrderId,e);
 		}
 		return Optional.empty();
 	}
@@ -117,7 +120,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 				return Optional.ofNullable(getStationDecorateOrder(close.get()));
 			}
 		} catch (Exception e) {
-			logger.error("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);
+			logger.warn("getByDecorateOrder error sellerTaobaoUserId[{}],buyerTaobaoUserId[{}]",sellerTaobaoUserId,buyerTaobaoUserId,e);
 		}
 		return Optional.empty();
 	}
@@ -142,11 +145,11 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 				if (bizOrderDO.getAuctionPrice() == orderAmount
 						&& bizOrderDO.isPaid()
 						&& bizOrderDO.getPayStatus() != PayOrderDO.STATUS_TRANSFERED) {
-					throw new RuntimeException("存在未完结的淘宝装修订单");
+					throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"存在未完结的淘宝装修订单");
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new AugeSystemException(e);
 		}
 	}
 }

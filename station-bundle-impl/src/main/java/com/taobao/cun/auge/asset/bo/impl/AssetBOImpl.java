@@ -80,11 +80,14 @@ import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
 import com.taobao.cun.auge.dal.mapper.AssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordCondition;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -93,6 +96,7 @@ import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.ExtEvent;
 import com.taobao.hsf.util.RequestCtxUtil;
@@ -119,7 +123,7 @@ public class AssetBOImpl implements AssetBO {
     private StationBO stationBO;
 
 	@Autowired
-	private DiamondConfiguredProperties configuredProperties;
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 
 	private static final String ASSET_SIGN = "assetSign";
 	
@@ -147,6 +151,9 @@ public class AssetBOImpl implements AssetBO {
 	
 	@Autowired
 	private AssetExtMapper assetExtMapper;
+
+	@Autowired
+	private CuntaoFlowRecordBO cuntaoFlowRecordBO;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -475,7 +482,7 @@ public class AssetBOImpl implements AssetBO {
 		CuntaoAssetExample example = new CuntaoAssetExample();
 		List<CuntaoAsset>  assets = cuntaoAssetMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(assets)){
-			throw new AugeBusinessException("can not find biz by serialNoOrAliNo["+serialNoOrAliNo+"]");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"can not find biz by serialNoOrAliNo["+serialNoOrAliNo+"]");
 		}
 		return convert2CuntaoAssetDto(assets.iterator().next());
 	}
@@ -496,7 +503,7 @@ public class AssetBOImpl implements AssetBO {
 			List<Asset> list = entry.getValue();
 			Asset asset = list.get(0);
 			listDto.setCategory(entry.getKey());
-			listDto.setCategoryName(configuredProperties.getCategoryMap().get(entry.getKey()));
+			listDto.setCategoryName(diamondConfiguredProperties.getCategoryMap().get(entry.getKey()));
 			listDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 			listDto.setOwner(asset.getOwnerName());
 			listDto.setTotal(String.valueOf(list.size()));
@@ -555,7 +562,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		CategoryAssetDetailDto assetDetailDto = new CategoryAssetDetailDto();
 		assetDetailDto.setCategory(condition.getCategory());
-		assetDetailDto.setCategoryName(configuredProperties.getCategoryMap().get(condition.getCategory()));
+		assetDetailDto.setCategoryName(diamondConfiguredProperties.getCategoryMap().get(condition.getCategory()));
 		assetDetailDto.setTotal(String.valueOf(preAssets.size()));
 		assetDetailDto.setPutAway(String.valueOf(
 			preAssets.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
@@ -643,7 +650,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusIn(AssetStatusEnum.getCanCountySignStatusList());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		Asset updateAsset = new Asset();
 		DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
@@ -689,7 +696,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusEqualTo(AssetStatusEnum.DISTRIBUTE.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("签收失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "签收失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		assetIncomeBO.signAssetByStation(asset.getId(), signDto.getOperator());
 		
@@ -714,10 +721,10 @@ public class AssetBOImpl implements AssetBO {
 			RecycleStatusEnum.Y.getCode());
 		Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
 		if (asset == null) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getOwnerOrgId().equals(signDto.getOperatorOrgId())) {
-			throw new AugeBusinessException("入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
 		}
 		DomainUtils.beforeUpdate(asset, signDto.getOperator());
 		asset.setStatus(AssetStatusEnum.USE.getCode());
@@ -750,7 +757,7 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(transferDto.getReceiverAreaId(), "接受区域不能为空");
 		Objects.requireNonNull(transferDto.getReceiverWorkNo(), "接受人工号不能为空");
 		if (!transferDto.getReceiverAreaId().equals(transferDto.getOperatorOrgId())) {
-			throw new AugeBusinessException("您转移的目标非本县");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您转移的目标非本县");
 		}
 		AssetExample assetExample = new AssetExample();
 		AssetExample.Criteria criteria = assetExample.createCriteria();
@@ -760,7 +767,7 @@ public class AssetBOImpl implements AssetBO {
 		}
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您转移的资产中包含待对方入库的资产");
 		}
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
@@ -785,10 +792,10 @@ public class AssetBOImpl implements AssetBO {
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andIdIn(transferDto.getTransferAssetIdList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您转移的资产中包含待对方入库的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您转移的资产中包含待对方入库的资产");
 		}
 		if (!assetList.stream().allMatch(asset -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType()))) {
-			throw new AugeBusinessException("您转移的资产中包含已下发至村点的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您转移的资产中包含已下发至村点的资产");
 		}
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, transferDto.getOperator());
@@ -825,13 +832,13 @@ public class AssetBOImpl implements AssetBO {
 		Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");
 		Asset asset = getAssetByAliNo(assetDto.getAliNo());
 		if (asset == null) {
-			throw new AugeBusinessException("录入失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"录入失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!assetDto.getOperator().equals(assetDto.getOperator())) {
-			throw new AugeBusinessException("录入失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"录入失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
 		}
 		if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
-			throw new AugeBusinessException("录入失败，该资产正处于分发、转移中！"+getPromptInfo(asset));
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"录入失败，该资产正处于分发、转移中！"+getPromptInfo(asset));
 		}
 		return buildAssetDetail(asset);
 	}
@@ -856,7 +863,7 @@ public class AssetBOImpl implements AssetBO {
 		for (Entry<String, List<Asset>> countEntry : countListMap.entrySet()) {
 			AssetCategoryCountDto assetCountDto = new AssetCategoryCountDto();
 			assetCountDto.setCategory(countEntry.getKey());
-			assetCountDto.setCategoryName(configuredProperties.getCategoryMap().get(countEntry.getKey()));
+			assetCountDto.setCategoryName(diamondConfiguredProperties.getCategoryMap().get(countEntry.getKey()));
 			assetCountDto.setTotal(String.valueOf(countEntry.getValue().size()));
 			assetCountDto.setPutAway(String.valueOf(
 				countEntry.getValue().stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
@@ -878,7 +885,7 @@ public class AssetBOImpl implements AssetBO {
 			detailDto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
 		}
 		detailDto.setStatus(AssetStatusEnum.valueOf(asset.getStatus()));
-		detailDto.setCategoryName(configuredProperties.getCategoryMap().get(asset.getCategory()));
+		detailDto.setCategoryName(diamondConfiguredProperties.getCategoryMap().get(asset.getCategory()));
 		detailDto.setOwner(asset.getOwnerName());
 		detailDto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
 		detailDto.setId(asset.getId());
@@ -909,7 +916,7 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> assetOperatorDto.getOperator().equals(asset.getOwnerWorkno()))) {
-			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您赔付的资产中存在不属于您名下的资产");
 		}
 		List<AssetDetailDto> detailDtoList = buildAssetDetailDtoList(assetList);
 		//查询单个资产价钱
@@ -930,10 +937,10 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您赔付的资产中包含待对方入库的资产");
 		}
 		if (!assetList.stream().allMatch(asset -> scrapDto.getOperator().equals(asset.getOwnerWorkno()))) {
-			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您赔付的资产中存在不属于您名下的资产");
 		}
 		Asset asset = new Asset();
 		asset.setStatus(AssetStatusEnum.SCRAPING.getCode());
@@ -948,10 +955,10 @@ public class AssetBOImpl implements AssetBO {
 		assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(scrapDto.getScrapAssetIdList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您赔付的资产中包含待对方入库的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您赔付的资产中包含待对方入库的资产");
 		}
 		if (!assetList.stream().allMatch(asset -> scrapDto.getOperator().equals(asset.getOwnerWorkno()))) {
-			throw new AugeBusinessException("您赔付的资产中存在不属于您名下的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您赔付的资产中存在不属于您名下的资产");
 		}
 		Asset asset = new Asset();
 		asset.setStatus(AssetStatusEnum.SCRAP.getCode());
@@ -991,10 +998,10 @@ public class AssetBOImpl implements AssetBO {
 		criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(distributeDto.getOperator()).andIdIn(distributeDto.getAssetIdList());
 		List<Asset> assetList = assetMapper.selectByExample(assetExample);
 		if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
-			throw new AugeBusinessException("您分发的资产中包含待对方入库的资产!");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您分发的资产中包含待对方入库的资产!");
 		}
 		if (!assetList.stream().allMatch(asset -> AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType()))) {
-			throw new AugeBusinessException("您分发的资产中包含已下发至村点的资产!");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"您分发的资产中包含已下发至村点的资产!");
 		}
 		Asset asset = new Asset();
 		DomainUtils.beforeUpdate(asset, distributeDto.getOperator());
@@ -1031,10 +1038,10 @@ public class AssetBOImpl implements AssetBO {
 	private Asset validateUserIdForAssetCheck(String userId,String useAreaType,String aliNo) {
 		Asset asset = getAssetByAliNo(aliNo);
 		if (asset== null || !StringUtils.equals(AssetCheckStatusEnum.CHECKING.getCode(), asset.getCheckStatus())) {
-			throw new AugeBusinessException("盘点失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"盘点失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!asset.getUseAreaType().equals(useAreaType) && !asset.getUserId().equals(userId)) {
-			throw new AugeBusinessException("盘点失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"盘点失败"+AssetBO.NOT_OPERATOR+getPromptInfo(asset));
 		}
 		return asset;
 	}
@@ -1043,7 +1050,7 @@ public class AssetBOImpl implements AssetBO {
 		sb.append("资产编号：");
 		sb.append(asset.getAliNo());
 		sb.append(",资产名称：[");
-		sb.append(configuredProperties.getCategoryMap().get(asset.getCategory()));
+		sb.append(diamondConfiguredProperties.getCategoryMap().get(asset.getCategory()));
 		sb.append("]");
 		sb.append(asset.getBrand());
 		sb.append(" ");
@@ -1118,11 +1125,11 @@ public class AssetBOImpl implements AssetBO {
 		AssetExample assetExample = bulidStationAssetParam(stationId,taobaoUserId);
 		int count = assetMapper.countByExample(assetExample);
 		if (count>0) {
-			throw new AugeBusinessException("退出失败，有资产未回收，请用小二APP回收资产。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"退出失败，有资产未回收，请用小二APP回收资产。");
 		}
 		List<AssetRollout> arList = assetRolloutBO.getDistributeAsset(stationId, taobaoUserId);
 		if(CollectionUtils.isNotEmpty(arList)){
-			throw new AugeBusinessException("退出失败，有资产待村小二签收，请先回收资产。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"退出失败，有资产待村小二签收，请先回收资产。");
 		}
 	}
 	
@@ -1237,10 +1244,10 @@ public class AssetBOImpl implements AssetBO {
 	public void delete(Long assetId, String operator) {
 		Asset a = getAssetById(assetId);
 		if (a == null) {
-			throw new AugeBusinessException("删除失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"删除失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		if (!StringUtils.equals(AssetStatusEnum.SIGN.getCode(),a.getStatus())) {
-			throw new AugeBusinessException("删除失败,只能删除待签收的资产");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"删除失败,只能删除待签收的资产");
 		}
 		
 		Asset record = new Asset();
@@ -1253,7 +1260,7 @@ public class AssetBOImpl implements AssetBO {
 		if (detail != null) {
 			Long incomeId = detail.getIncomeId();
 			if (incomeId== null) {
-				throw new AugeBusinessException("删除失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"删除失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
 			}
 			//更新出入库单状态
 			if (CollectionUtils.isEmpty(assetRolloutIncomeDetailBO.queryListByIncomeId(incomeId))) {
@@ -1266,7 +1273,7 @@ public class AssetBOImpl implements AssetBO {
 	public AssetDetailDto getDetail(Long assetId) {
 		Asset a = getAssetById(assetId);
 		if (a == null) {
-			throw new AugeBusinessException("查询失败"+AssetBO.NO_EXIT_ASSET);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"查询失败"+AssetBO.NO_EXIT_ASSET);
 		}
 		return buildAssetDetail(a);
 	}
@@ -1347,4 +1354,62 @@ public class AssetBOImpl implements AssetBO {
 		return asset;
 	}
 
+    @Override
+    public Boolean judgeCanBuyAsset(Long stationId) {
+        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+            return false;
+        }
+        return getBuyAssetRecord(stationId) == null;
+    }
+
+    private CuntaoFlowRecord getBuyAssetRecord(Long stationId) {
+        CuntaoFlowRecordCondition condition = new CuntaoFlowRecordCondition();
+        condition.setTargetId(stationId);
+        condition.setTargetType(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getCode());
+        return cuntaoFlowRecordBO.getRecordByTargetIdAndType(condition);
+    }
+
+    @Override
+    public Boolean buyAsset(CuntaoAssetDto assetDto) {
+        Long stationId = assetDto.getNewStationId();
+        if (stationId == null || assetDto.getOperator() == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"操作信息不能为空!");
+        }
+        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该村点不允许提交资产采购意向,请联系资产管理员!");
+        }
+        if (getBuyAssetRecord(stationId) != null) {
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该村点已经提交过资产采购意向!");
+        }
+        if (!validateStationAssetNum(stationId)) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+        }
+        saveBuyRecord(assetDto);
+        return true;
+    }
+
+    private boolean validateStationAssetNum(Long stationId) {
+        AssetQueryCondition condition = new AssetQueryCondition();
+        condition.setStationId(stationId);
+        condition.setPageNum(1);
+        condition.setPageSize(10);
+        PageDto<CuntaoAssetDto> pageDto = queryByPage(condition);
+        if (pageDto.getTotal() != 3L) {
+            return false;
+        }
+        List<String> categoryList = pageDto.getItems().stream().map(CuntaoAssetDto::getCategory).collect(
+            Collectors.toList());
+        return categoryList.contains("主机") && categoryList.contains("电视机") && categoryList.contains("显示器");
+    }
+
+    private void saveBuyRecord(CuntaoAssetDto assetDto) {
+        CuntaoFlowRecord record = new CuntaoFlowRecord();
+        record.setTargetId(assetDto.getNewStationId());
+        record.setTargetType(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getCode());
+        record.setNodeTitle(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getDesc());
+        record.setOperateTime(new Date());
+        record.setOperatorWorkid(assetDto.getOperator());
+        record.setOperatorName(emp360Adapter.getName(assetDto.getOperator()));
+        cuntaoFlowRecordBO.addRecord(record);
+    }
 }

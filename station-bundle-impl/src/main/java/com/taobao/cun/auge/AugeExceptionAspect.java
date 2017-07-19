@@ -1,17 +1,18 @@
 package com.taobao.cun.auge;
 
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import com.alibaba.fastjson.JSON;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.failure.AugeFailureAnalysis;
+import com.taobao.cun.auge.failure.AugeFailureAnalysisReporter;
+import com.taobao.cun.auge.failure.AugeFailureAnalyzer;
+import com.taobao.cun.auge.failure.AugeFailureConfiguration;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 
 
 @Aspect
@@ -19,43 +20,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class AugeExceptionAspect {
 
-	private static final Logger logger = LoggerFactory.getLogger(AugeExceptionAspect.class);
 
-	//@Autowired
-	//private DiamondConfiguredProperties configuredProperties;
+    @Autowired
+    private AugeFailureConfiguration augeFailureConfiguration;
+    
+    
+    private AugeFailureAnalysisReporter augeFailureAnalysisReporter = new AugeFailureAnalysisReporter();
+    
+    @AfterThrowing(pointcut = "within(com.taobao.cun.auge..*ServiceImpl)", throwing = "ex")
+    public void handleAugeException(JoinPoint joinPoint, Exception ex) throws Exception {
+        String parameters = getParameters(joinPoint);
+        AugeFailureAnalyzer augeFailureAnalyzer = new AugeFailureAnalyzer(augeFailureConfiguration);
+        AugeFailureAnalysis failureAnalysis = (AugeFailureAnalysis) augeFailureAnalyzer.analyze(ex,parameters,"augeError");
+        if(failureAnalysis != null){
+        	augeFailureAnalysisReporter.report(failureAnalysis);
+        	if(!failureAnalysis.isBusinessException()){
+        		 throw new AugeSystemException(failureAnalysis.getDescription(),ex);
+        	}
+        }
+    }
 
-	@AfterThrowing(pointcut = "within(com.taobao.cun.auge..*ServiceImpl)", throwing = "ex")
-	public void handleAugeException(JoinPoint joinPoint, Exception ex) throws Exception {
-		String clazz = joinPoint.getSignature().getDeclaringType().getCanonicalName();
-		String name = joinPoint.getSignature().getName();
-		String action = clazz + "|" + name;
-		String parameters = getParameters(joinPoint);
-	 	logger.error("{bizType},{action},{parameter}", "augeError", action, parameters, ex);
-	}
-
-	private String getParameters(JoinPoint joinPoint) {
-		try {
-			Object[] args = joinPoint.getArgs();
-			return JSON.toJSONString(args);
-		} catch (Exception e) {
-			return "parse parameter error";
-		}
-	}
-
-	//private String buildErrorOwner(String name) {
-	//	String msg = "other";
-	//	for (Map.Entry<String, String> entry : configuredProperties.getExceptionRegularMap().entrySet()) {
-	//		if (find(entry.getKey(), name)) {
-	//			msg = entry.getValue();
-	//			break;
-	//		}
-	//	}
-	//	return msg;
-	//}
-    //
-	//private boolean find(String p, String str) {
-	//	Pattern r = Pattern.compile(p);
-	//	return r.matcher(str).find();
-	//}
-
+    private String getParameters(JoinPoint joinPoint) {
+        try {
+            Object[] args = joinPoint.getArgs();
+            return JSON.toJSONString(args);
+        } catch (Exception e) {
+            return "parse parameter error";
+        }
+    }
+  
 }

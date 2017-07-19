@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.exception;
 
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-
 /**
  * 业务异常，异常信息，直接可以显示给用户的
  */
@@ -11,14 +9,10 @@ public class AugeBusinessException extends RuntimeException {
 
 	protected String exceptionCode;
 	
-
 	public AugeBusinessException() {
 		super();
 	}
 	
-	public AugeBusinessException(String message, Throwable cause) {
-		super(message, cause);
-	}
 
 	public AugeBusinessException(String exceptionCode, String message, Throwable cause) {
 		super(message, cause);
@@ -29,15 +23,7 @@ public class AugeBusinessException extends RuntimeException {
 		super(message);
 		this.exceptionCode = exceptionCode;
 	}
-	
-	public AugeBusinessException(CommonExceptionEnum commonExceptionEnum) {
-		this(commonExceptionEnum.getCode(),commonExceptionEnum.getDesc());
-	}
 
-
-	public AugeBusinessException(String message) {
-		super(message);
-	}
 
 	public AugeBusinessException(Throwable cause) {
 		super(cause);

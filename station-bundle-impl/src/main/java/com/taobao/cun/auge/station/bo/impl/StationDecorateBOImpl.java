@@ -28,6 +28,7 @@ import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationDecorateMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
@@ -43,7 +44,8 @@ import com.taobao.cun.auge.station.enums.StationDecorateIsValidEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
 
@@ -67,11 +69,10 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	
 	@Override
 	public StationDecorate addStationDecorate(StationDecorateDto stationDecorateDto)
-			throws AugeServiceException {
+			 {
 		Long stationId = stationDecorateDto.getStationId();
 		validateAddDecorate(stationDecorateDto);
 		StationDecorate record;
-		try {
 //			StationDecorate sd = this.getStationDecorateByStationId(stationId);
 //			if (sd != null) {
 //				return sd;
@@ -90,11 +91,6 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			DomainUtils.beforeInsert(record, stationDecorateDto.getOperator());
 			stationDecorateMapper.insert(record);
 			return record;
-		} catch (Exception e) {
-			logger.error("StationDecorateBO.addStationDecorate.error. param:"+JSONObject.toJSONString(stationDecorateDto),e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
-		
 	}
 	
 	private void validateAddDecorate(StationDecorateDto stationDecorateDto){
@@ -116,7 +112,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		Station station = stationBO.getStationById(stationId);
 		if (station == null) {
 			logger.error("stationBO.getStationById is null"+stationId);
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station is null");
 		}
 		return getStationDecorateSellerInfo(station);
 	}
@@ -130,7 +126,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	 */
 	private String getStationDecorateSellerInfo(Station station) {
 		if (station == null || station.getApplyOrg() == null) {
-			throw new AugeServiceException("非法的村点对象!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"非法的村点对象!");
 		}
 		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.PROVINCE);
 		AppResourceDto resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
@@ -139,7 +135,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		}
 		if (resource == null || StringUtils.isEmpty(resource.getValue())) {
-			throw new AugeServiceException("找不到装修卖家信息,station org:" + station.getApplyOrg());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"找不到装修卖家信息,station org:" + station.getApplyOrg());
 		}
 		return resource.getValue();
 	}
@@ -147,7 +143,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	@Override
 	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize)
-			throws AugeServiceException {
+			 {
 		if (pageNum < 0) {
 			pageNum = 1;
 		}
@@ -177,14 +173,14 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	
 	@Override
 	public int getStationDecorateListCountForSchedule()
-			throws AugeServiceException {
+			 {
 		StationDecorateExample example = buildExampleForSchedule();
 		return stationDecorateMapper.countByExample(example);
 	}
 
 	@Override
 	public void updateStationDecorate(StationDecorateDto stationDecorateDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.validateParam(stationDecorateDto);
 		ValidateUtils.notNull(stationDecorateDto.getId());
 		StationDecorate record = StationDecorateConverter.toStationDecorate(stationDecorateDto);
@@ -198,7 +194,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	@Override
 	public StationDecorateDto getStationDecorateDtoByStationId(Long stationId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationId);
 		StationDecorate sd = getStationDecorateByStationId(stationId);
 		if (sd == null) {
@@ -218,7 +214,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	@Override
 	public StationDecorate getStationDecorateByStationId(Long stationId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationId);
 		StationDecorateExample example = new StationDecorateExample();
 		Criteria criteria = example.createCriteria();
@@ -231,7 +227,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	@Override
 	public void syncStationDecorateFromTaobao(
-			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+			StationDecorateDto stationDecorateDto)  {
 		if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
 				stationDecorateDto.getPaymentType().getCode())){
 			return;
@@ -276,14 +272,14 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 
 	@Override
 	public StationDecorate getStationDecorateById(Long id)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(id);
 		return stationDecorateMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
 	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
-			List<Long> stationIds) throws AugeServiceException {
+			List<Long> stationIds)  {
 		ValidateUtils.notEmpty(stationIds);
 		StationDecorateExample example = new StationDecorateExample();
 		Criteria criteria = example.createCriteria();
@@ -326,7 +322,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	public void confirmAcessDecorating(Long id) {
 		StationDecorate sd = stationDecorateMapper.selectByPrimaryKey(id);
 		if (sd == null) {
-			throw new AugeServiceException("not find record "
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record "
 					+ String.valueOf(id));
 		}
 		// 只有政府出资的装修 合伙人才能确认
@@ -338,7 +334,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			sd.setStatus(StationDecorateStatusEnum.DECORATING.getCode());
 			stationDecorateMapper.updateByPrimaryKey(sd);
 		} else {
-			throw new AugeServiceException("非政府出资装修，无法确认。 "
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"非政府出资装修，无法确认。 "
 					+ sd.getPaymentType());
 		}
 

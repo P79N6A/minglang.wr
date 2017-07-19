@@ -62,11 +62,7 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 	  public void testInit(Long id) {
 	    PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(id);
 	    if(partnerInstanceDto != null && PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
-	      try{
 	        newAlilangUser(partnerInstanceDto);
-	      }catch(Exception e){
-	        logger.error("init alilang user error. instance_id={}", partnerInstanceDto.getId(), e);
-	      }
 	    }
 	  }
 	
@@ -75,10 +71,12 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 		PartnerMessage partnerMessage = new PartnerMessage();
 		partnerMessage.setTaobaoUserId(partnerDto.getTaobaoUserId());
 		partnerMessage.setMobile(partnerDto.getMobile());
-		partnerMessage.setAction("new");
-		partnerMessage.setAlilangOrgId(alilangOrgId);
+		partnerMessage.setOmobile(partnerDto.getMobile());
+		partnerMessage.setAction("update");
 		partnerMessage.setEmail(partnerDto.getEmail());
 		partnerMessage.setName(partnerDto.getName());
+		//partnerMessage.setAlilangUserId((String) row.get("alilang_user_id"));
+		partnerMessage.setAlilangOrgId(alilangOrgId);
 		String str = JSONObject.toJSONString(partnerMessage);
 		
 		logger.info("init alilang user:{}", str);

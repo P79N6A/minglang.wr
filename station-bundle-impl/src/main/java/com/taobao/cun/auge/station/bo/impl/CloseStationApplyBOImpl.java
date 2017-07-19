@@ -11,10 +11,11 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CloseStationApply;
 import com.taobao.cun.auge.dal.domain.CloseStationApplyExample;
 import com.taobao.cun.auge.dal.mapper.CloseStationApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.convert.CloseStationApplyConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.validator.BeanValidator;
 
@@ -27,12 +28,12 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addCloseStationApply(CloseStationApplyDto closeStationApplyDto)
-			throws AugeServiceException {
+			 {
 		// 参数校验
 		BeanValidator.validateWithThrowable(closeStationApplyDto);
 		CloseStationApplyDto applydto = getCloseStationApply(closeStationApplyDto.getPartnerInstanceId());
 		if (applydto != null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_EXISTS);
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"CloseStationApply is exists");
 		}
 		CloseStationApply closeStationApply = CloseStationApplyConverter.toCloseStationApply(closeStationApplyDto);
 		DomainUtils.beforeInsert(closeStationApply, closeStationApplyDto.getOperator());
@@ -43,7 +44,7 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteCloseStationApply(Long partnerInstanceId, String operator)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(partnerInstanceId);
 		ValidateUtils.notNull(operator);
 		CloseStationApply closeStationApply =new CloseStationApply();
@@ -56,7 +57,7 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 	}
 
 	@Override
-	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException {
+	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId)  {
 		ValidateUtils.notNull(partnerInstanceId);
 		
 		CloseStationApplyExample example = new CloseStationApplyExample();
@@ -65,7 +66,7 @@ public class CloseStationApplyBOImpl implements CloseStationApplyBO {
 	}
 
 	@Override
-	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException {
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId)  {
 		ValidateUtils.notNull(applyId);
 		return  CloseStationApplyConverter.toCloseStationApplyDto(closeStationApplyMapper.selectByPrimaryKey(applyId));
 	}

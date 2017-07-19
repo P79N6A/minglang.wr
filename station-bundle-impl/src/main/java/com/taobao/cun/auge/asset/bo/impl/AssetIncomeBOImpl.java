@@ -32,6 +32,7 @@ import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component
@@ -128,15 +129,15 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		
 		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
 		if (detail == null) {
-			throw new AugeBusinessException("入库失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		Long incomeId = detail.getIncomeId();
 		if (incomeId== null) {
-			throw new AugeBusinessException("入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		AssetIncome ai = getIncomeById(incomeId);
 		if (!ai.getReceiverWorkno().equals(operator)) {
-			throw new AugeBusinessException("入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		//签收资产
 		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);
@@ -162,15 +163,15 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		
 		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
 		if (detail == null) {
-			throw new AugeBusinessException("签收失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"签收失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		Long rolloutId = detail.getRolloutId();
 		if (rolloutId== null) {
-			throw new AugeBusinessException("签收失败，待签收资产没有对应的出库单，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"签收失败，待签收资产没有对应的出库单，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		AssetRollout ar = assetRolloutBO.getRolloutById(rolloutId);
 		if (!ar.getReceiverId().equals(operator)) {
-			throw new AugeBusinessException("签收失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"签收失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		//签收资产
 		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);

@@ -56,6 +56,7 @@ import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
@@ -338,13 +339,13 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		Long stationId = distributeDto.getStationId();
 		Station s = stationBO.getStationById(stationId);
 		if (s == null) {
-			throw new AugeBusinessException("分发失败，服务站信息异常");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，服务站信息异常");
 		}
 		String sName = s.getName();
 		
 		Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
 		if (p == null) {
-			throw new AugeBusinessException("分发失败，合伙人信息异常");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
 		}
 		//创建出库单
 		AssetRolloutDto roDto = new AssetRolloutDto();
@@ -400,13 +401,13 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			Long stationId = scrapDto.getScrapAreaId();
 			Station s = stationBO.getStationById(stationId);
 			if (s == null) {
-				throw new AugeBusinessException("赔付失败，服务站信息异常");
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"赔付失败，服务站信息异常");
 			}
 			String sName = s.getName();
 
 			Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
 			if (p == null) {
-				throw new AugeBusinessException("赔付失败，合伙人信息异常");
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"赔付失败，合伙人信息异常");
 			}
 			roDto.setReceiverAreaName(sName);
 			roDto.setReceiverId(String.valueOf(p.getTaobaoUserId()));

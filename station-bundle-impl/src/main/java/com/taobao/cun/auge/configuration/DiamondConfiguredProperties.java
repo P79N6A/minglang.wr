@@ -7,6 +7,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +52,8 @@ public class DiamondConfiguredProperties {
 
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${exception.regular}')}")
     private Map<String, String> exceptionRegularMap;
+    @Value("#{'${asset.can.buy.station}'.split(',')}")
+    private List<Long> canBuyStationList;
 
     public String getApply() {
         return apply;
@@ -98,5 +101,8 @@ public class DiamondConfiguredProperties {
 
     public Map<String, String> getExceptionRegularMap() {
         return exceptionRegularMap;
+    }
+    public List<Long> getCanBuyStationList() {
+        return canBuyStationList;
     }
 }

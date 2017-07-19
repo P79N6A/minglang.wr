@@ -20,48 +20,48 @@ public interface StationDecorateService {
 	 * 装修记录审核
 	 * @param stationDecorateAuditDto
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException;
+	public void audit(StationDecorateAuditDto stationDecorateAuditDto);
 	
 	/**
 	 * 查询装修记录
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId);
 	
 	/**
 	 * 查询装修记录
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public StationDecorateDto getInfoByStationId(Long stationId) throws AugeServiceException;
+	public StationDecorateDto getInfoByStationId(Long stationId);
 	
 	/**
 	 * 反馈装修记录
 	 * @param stationDecorateDto
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) throws AugeServiceException; 
+	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto); 
 	
 	/**
 	 * 返回装修记录
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize)throws AugeServiceException; 
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize); 
 	
 	/**
 	 * 返回装修记录总数
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
 	public int getStationDecorateListCountForSchedule();
 	
@@ -70,7 +70,7 @@ public interface StationDecorateService {
 	 * @param pageNum
 	 * @param pageSize
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
 	public void updateStationDecorate(StationDecorateDto stationDecorateDto);
 	
@@ -78,26 +78,26 @@ public interface StationDecorateService {
 	/**
 	 * 定时同步订单状态
 	 * @param stationDecorateDto
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void syncStationDecorateFromTaobao(StationDecorateDto stationDecorateDto)throws AugeServiceException;
+	public void syncStationDecorateFromTaobao(StationDecorateDto stationDecorateDto);
 	
 	/**
 	 * 根据stationId 获得装修状态
 	 * @param stationIds
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Map<Long,StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds) throws AugeServiceException;
+	public Map<Long,StationDecorateStatusEnum> getStatusByStationId(List<Long> stationIds);
 	
 	
 	/**
 	 * 只有在装修中，装修审核待反馈的时候，才返回url,否则返回null
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException;
+	public String getReflectUrl(Long taobaoUserId);
 	
 	/**
 	 * 合伙人确认进入装修中

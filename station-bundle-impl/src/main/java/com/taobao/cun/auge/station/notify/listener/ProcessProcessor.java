@@ -24,6 +24,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
@@ -34,6 +35,7 @@ import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -51,7 +53,7 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -120,6 +122,9 @@ public class ProcessProcessor {
 	@Autowired
 	AssetBO assetBO;
 	
+	@Autowired
+	PartnerPeixunBO partnerPeixunBO;
+	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
 		String msgType = strMessage.getMessageType();
@@ -165,6 +170,8 @@ public class ProcessProcessor {
 		        }
 			}else if(ProcessBusinessEnum.partnerFlowerNameApply.getCode().equals(businessCode)){
 				handleFlowerNameApply(objectId,resultCode);
+			}else if(ProcessBusinessEnum.peixunRefund.getCode().equals(businessCode)){
+				handlePeixunRefund(objectId,resultCode);
 			}else if (ProcessBusinessEnum.incentiveProgramAudit.getCode().equals(businessCode)) {
 				String financeRemarks = ob.getString("financeRemarks");
 				String processInstanceId = ob.getString(LevelAuditFlowService.PROCESS_INSTANCE_ID);
@@ -303,7 +310,7 @@ public class ProcessProcessor {
 				} else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
 					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.DECORATING, operator);
 				} else {
-					throw new AugeServiceException("partner state is not decorating or servicing.");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
 				}
 
 				// 删除停业申请表
@@ -389,7 +396,6 @@ public class ProcessProcessor {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
-		try {
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
 			String operator = operatorDto.getOperator();
 
@@ -439,10 +445,6 @@ public class ProcessProcessor {
 				// 发送合伙人实例状态变化事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
 			}
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + "monitorQuitApprove", e);
-			throw e;
-		}
 	}
 
 	/**
@@ -484,4 +486,8 @@ public class ProcessProcessor {
 	private void handleFlowerNameApply(String id,String result){
 		partnerBO.auditFlowerNameApply(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
 	}
+	private void handlePeixunRefund(String id,String result){
+		partnerPeixunBO.refundAuditExecute(new Long(id), ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(result));
+	}
+	
 }

@@ -2,9 +2,14 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.taobao.cun.auge.station.dto.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,7 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
@@ -23,10 +29,16 @@ import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
+import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunRefundStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
@@ -130,6 +142,13 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		result.setLogo(product.getIcon());
 		result.setStatus(record.getStatus());
 		result.setStatusDesc(PartnerPeixunStatusEnum.valueof(record.getStatus()).getDesc());
+		result.setRefundStatus(record.getRefundStatus());
+		if(StringUtils.isNotEmpty(record.getRefundStatus())){
+		 result.setRefundStatusDesc(PartnerPeixunRefundStatusEnum.valueof(record.getRefundStatus()).getDesc());
+		}
+		result.setRefundNo(record.getRefundNo());
+		result.setRefundReason(record.getRefundReason());
+		result.setId(record.getId());
 		if (!PartnerPeixunStatusEnum.NEW.getCode().equals(record.getStatus())) {
 			List<FuwuOrderDto> orders = getCourseOrders(userId, courseCode,
 					null);
@@ -168,13 +187,15 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		}
 		//组装下单地址
 		result.setCourseDetailUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "APPLY_COURSE_BUY_URL"));
+		//组装退款地址
+		result.setRefundUrl(appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ACCOUNT_REFUND_URL")+"?ali_id="+record.getPartnerUserId()+"&site_id=CN&system=CUNTAO");
 		return result;
 	}
 	
 	private FuwuProductDto getCourseDetail(String productCode){
 		FuwuProductDto product=fuwuProductService.queryProductByCode(productCode);
 		if(product==null){
-			throw new AugeServiceException("course not find :"+productCode);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"course not find :"+productCode);
 		}
 		return product;
 	}
@@ -220,7 +241,12 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	@Override
 	public PageDto<PartnerPeixunListDetailDto> queryPeixunList(
 			PartnerPeixunQueryCondition condition) {
-		return partnerPeixunBO.queryPeixunList(condition);
+		try{
+			return partnerPeixunBO.queryPeixunList(condition);
+		}catch(Exception e){
+			return null;
+		}
+		
 	}
 
 	@Override
@@ -256,6 +282,17 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return true;
 	}
 
+	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
+		Assert.notNull(taobaoUserId);
+		Assert.notNull(refundReason);
+		Assert.notNull(operator);
+		Assert.notNull(applyOrg);
+		return partnerPeixunBO.commitRefund(taobaoUserId,refundReason,operator,applyOrg);
+	}
 
+	public PartnerPeixunDto queryPeixunRecordById(Long id){
+		Assert.notNull(id);
+		return partnerPeixunBO.queryPeixunRecordById(id);
+	}
 
 }

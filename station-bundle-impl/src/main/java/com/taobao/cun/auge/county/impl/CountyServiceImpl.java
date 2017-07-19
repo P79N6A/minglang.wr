@@ -32,6 +32,7 @@ import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -54,13 +55,8 @@ public class CountyServiceImpl implements CountyService{
 	@Override
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
 		logger.info("saveCountyStation"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.saveCountyStation(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("保存县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override
@@ -179,13 +175,8 @@ public class CountyServiceImpl implements CountyService{
 	
 	public CountyDto startOperate(String operator,CountyDto countyDto){
 		logger.info("startOperate"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.startOperate(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override
@@ -201,7 +192,7 @@ public class CountyServiceImpl implements CountyService{
 			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
 			countyStations = countyStationMapper.selectByExample(example);
 			if(CollectionUtils.isEmpty(countyStations)){
-				throw new AugeBusinessException("can not find county by areaId["+countyAreaId+"]");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find county by areaId["+countyAreaId+"]");
 			}
 		}
 		countyStation = countyStations.iterator().next();
