@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
 
-import com.taobao.cun.auge.failure.AugeFailureAnalysisReporter;
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
@@ -487,7 +486,8 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setInAccountUserId(inAccountUserId);
         bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
         bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
-        bailDto.setAmount(1500*100L);
+        //bailDto.setAmount(1500*100L);
+        bailDto.setAmount(15L);
         bailDto.setSource("org");
         bailDto.setReason("buyAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
