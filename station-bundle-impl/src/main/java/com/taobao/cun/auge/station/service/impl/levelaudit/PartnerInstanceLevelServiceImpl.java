@@ -3,24 +3,26 @@ package com.taobao.cun.auge.station.service.impl.levelaudit;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 /**
  * Created by xujianhui on 17/4/20.
@@ -47,7 +49,7 @@ public class PartnerInstanceLevelServiceImpl implements PartnerInstanceLevelServ
         Assert.notNull(partnerInstanceId);
         PartnerStationRel instance  =partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
         if (instance == null || instance.getOpenDate() == null) {
-            throw new AugeServiceException("找不到村小二实例或开业时间为空!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"找不到村小二实例或开业时间为空!");
         }
         if (!PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
             return false;
@@ -55,7 +57,7 @@ public class PartnerInstanceLevelServiceImpl implements PartnerInstanceLevelServ
 
         PartnerInstanceLevel instanceLevel = partnerInstanceLevelBO.getPartnerInstanceLevelByPartnerInstanceId(partnerInstanceId);
         if (instanceLevel!=null) {
-            throw new AugeServiceException("该村小二层级信息已存在!");
+            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该村小二层级信息已存在!");
         }
 
         PartnerInstanceLevelDto dto = new PartnerInstanceLevelDto();

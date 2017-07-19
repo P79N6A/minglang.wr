@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.common.PageDto;
 
@@ -55,8 +56,8 @@ public interface AssetService {
 
     public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
 
-    public Boolean judgeCanBuyAsset(Long stationId);
+    public Map<String, String> getStationAssetState(Long stationId);
 
-    public Boolean buyAsset(CuntaoAssetDto assetDto);
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
 
 }

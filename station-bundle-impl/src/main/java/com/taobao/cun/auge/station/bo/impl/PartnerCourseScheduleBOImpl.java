@@ -26,7 +26,6 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflect;
@@ -81,7 +80,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 		criteria.andCourseCodeEqualTo(dto.getCourseCode());
 		List<PartnerCourseScheduleReflect> records=partnerCourseScheduleReflectMapper.selectByExample(example);
 		if(records.size()>0){
-			throw new AugeServiceException("已经反馈过，请不要重复反馈");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"已经反馈过，请不要重复反馈");
 		}
 		PartnerCourseScheduleReflect pcsr=new PartnerCourseScheduleReflect();
 		BeanUtils.copyProperties(dto, pcsr);
