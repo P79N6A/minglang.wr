@@ -91,6 +91,16 @@ public interface PartnerInstanceStrategy {
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) ;
 	
 	/**
+	 * 村小二申请停业
+	 * 
+	 * @param instanceId
+	 * @param stationName
+	 * @param operatorDto
+	 * @
+	 */
+	public void partnerClosing(Long instanceId, OperatorDto operatorDto) ;
+	
+	/**
 	 * 系统主动停业
 	 * 
 	 * @param instanceId

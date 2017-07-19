@@ -49,6 +49,10 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	}
 	
 	@Override
+	public void partnerClosing(Long instanceId, OperatorDto operatorDto) {
+	}
+	
+	@Override
 	public void autoClosing(Long instanceId, OperatorDto operatorDto){
 		
 	}
