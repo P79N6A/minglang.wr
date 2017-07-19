@@ -473,6 +473,7 @@ public class AssetBOImpl implements AssetBO {
                 result.put("success", "true");
             } else {
                 result.put("message", resultModel.getMessage());
+                result.put("success", "false");
                 logger.warn("{bizType},{parameter} buy asset fail " + resultModel.getMessage(), "assetWarn",
                     JSON.toJSONString(bailDto));
             }
