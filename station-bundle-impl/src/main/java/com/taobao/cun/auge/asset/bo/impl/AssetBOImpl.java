@@ -487,8 +487,7 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setInAccountUserId(inAccountUserId);
         bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
         bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
-        //bailDto.setAmount(1500*100L);
-        bailDto.setAmount(15L);
+        bailDto.setAmount(1500*100L);
         bailDto.setSource("org");
         bailDto.setReason("buyAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
