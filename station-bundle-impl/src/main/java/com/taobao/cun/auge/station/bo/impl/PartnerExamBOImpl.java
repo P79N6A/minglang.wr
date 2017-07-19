@@ -10,13 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerExamBO;
 import com.taobao.cun.auge.station.enums.NotifyContents;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.UserDispatchDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
@@ -47,7 +48,7 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 		Assert.notNull(point);
 		ResultModel<UserDispatchDto> disResult=examUserDispatchService.queryExamUserDispatch(paperId, userId);
 		if(!disResult.isSuccess()){
-			throw new AugeServiceException("query userExamDispatch error "+strMessage+","+disResult.getException());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query userExamDispatch error "+strMessage+","+disResult.getException());
 		}
 		UserDispatchDto dis=disResult.getResult();
 		if(!dis.getExamPaper().getBizType().equals("partner_apply")){
@@ -65,7 +66,7 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 				criteria.andIsDeletedEqualTo("n");
 				List<PartnerApply> partnerApplyList = partnerApplyMapper.selectByExample(example);
 				if(partnerApplyList.size()==0){
-					throw new AugeServiceException("query partnerApply no result ");
+					throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"query partnerApply no result ");
 				}
 				for(PartnerApply apply:partnerApplyList){
 					 apply.setGmtModified(new Date());
@@ -87,7 +88,7 @@ public class PartnerExamBOImpl implements PartnerExamBO{
 		Assert.notNull(point);
 		ResultModel<UserDispatchDto> disResult=examUserDispatchService.queryExamUserDispatch(paperId, userId);
 		if(!disResult.isSuccess()){
-			throw new AugeServiceException("query userExamDispatch error:"+disResult.getException().getMessage());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query userExamDispatch error:"+disResult.getException().getMessage());
 		}
 		UserDispatchDto dis=disResult.getResult();
 		if(!dis.getExamPaper().getBizType().equals("partner_apply")){

@@ -1,14 +1,25 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,7 +54,6 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
 
@@ -78,6 +88,13 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+
+    @Autowired
+    private CuntaoNewBailService newBailService;
+
+    private final Long inAccountUserId = 2631673100L;
+
+    private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -413,11 +430,11 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean judgeCanBuyAsset(Long stationId) {
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            return false;
-        }
-        return getBuyAssetRecord(stationId) == null;
+    public Map<String, String> getStationAssetState(Long stationId) {
+        Map<String, String> result = new HashMap<>();
+        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
+        return result;
     }
 
     private CuntaoFlowRecord getBuyAssetRecord(Long stationId) {
@@ -428,22 +445,54 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean buyAsset(CuntaoAssetDto assetDto) {
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
+        Map<String, String> result = new HashMap<>();
+        result.put("success", "true");
         Long stationId = assetDto.getNewStationId();
         if (stationId == null || assetDto.getOperator() == null) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"操作信息不能为空!");
+            result.put("message", "操作信息不能为空!");
+            result.put("success", "false");
         }
         if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该村点不允许提交资产采购意向,请联系资产管理员!");
+            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+            result.put("success", "false");
         }
         if (getBuyAssetRecord(stationId) != null) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该村点已经提交过资产采购意向!");
+            result.put("message", "该村点已经提交过资产采购意向!");
+            result.put("success", "false");
         }
         if (!validateStationAssetNum(stationId)) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+            result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+            result.put("success", "false");
         }
-        saveBuyRecord(assetDto);
-        return true;
+        if ("true".equals(result.get("success"))) {
+            CuntaoTransferBailDto bailDto = buildBailDto(assetDto);
+            ResultModel<Boolean> resultModel = newBailService.transferUserBail(bailDto);
+            if (resultModel.isSuccess() && resultModel.getResult()) {
+                saveBuyRecord(assetDto);
+                result.put("success", "true");
+            } else {
+                result.put("message", resultModel.getMessage());
+                result.put("success", "false");
+                logger.warn("{bizType},{parameter} buy asset fail " + resultModel.getMessage(), "assetWarn",
+                    JSON.toJSONString(bailDto));
+            }
+
+        }
+        return result;
+    }
+
+    private CuntaoTransferBailDto buildBailDto(CuntaoAssetDto assetDto) {
+        CuntaoTransferBailDto bailDto = new CuntaoTransferBailDto();
+        bailDto.setInAccountUserId(inAccountUserId);
+        bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
+        bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+        bailDto.setAmount(1500*100L);
+        bailDto.setSource("org");
+        bailDto.setReason("buyAsset");
+        bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
+        bailDto.setOutOrderId("buy_asset"+assetDto.getNewStationId());
+        return bailDto;
     }
 
     private boolean validateStationAssetNum(Long stationId) {
@@ -467,7 +516,7 @@ public class AssetBOImpl implements AssetBO {
         record.setNodeTitle(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getDesc());
         record.setOperateTime(new Date());
         record.setOperatorWorkid(assetDto.getOperator());
-        record.setOperatorName(emp360Adapter.getName(assetDto.getOperator()));
+        record.setOperatorName(assetDto.getOperator());
         cuntaoFlowRecordBO.addRecord(record);
     }
 }

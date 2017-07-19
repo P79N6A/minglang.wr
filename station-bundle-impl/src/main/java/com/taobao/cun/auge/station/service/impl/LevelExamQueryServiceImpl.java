@@ -16,11 +16,12 @@ import org.springframework.util.Assert;
 
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.convert.LevelExamUtil;
 import com.taobao.cun.auge.station.dto.LevelExamingResult;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum.PartnerInstanceLevel;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.LevelExamQueryService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
@@ -140,7 +141,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
     private Map<PartnerInstanceLevel, Long> getDispatchedPaperInfo (Long taobaoUserId){
         ResultModel<List<ExamDispatchDto>>result = examUserDispatchService.listExamDispatchDto(taobaoUserId, ExamDispatchSourceEnum.promotion, 0, 100);
         if(result==null || !result.isSuccess()){
-            throw new AugeServiceException("Query dispatched promotion exam fail!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"Query dispatched promotion exam fail!");
         }
         List<ExamDispatchDto> dispatchedExamList = result.getResult();
         if(CollectionUtils.isEmpty(dispatchedExamList)){

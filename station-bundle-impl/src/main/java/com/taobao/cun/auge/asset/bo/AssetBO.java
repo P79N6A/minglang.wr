@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
@@ -56,7 +57,7 @@ public interface AssetBO {
     
     public CuntaoAssetDto queryAssetByAliNoOrSerialNo(String serialNoOrAliNo);
 
-    public Boolean judgeCanBuyAsset(Long stationId);
+    public Map<String, String> getStationAssetState(Long stationId);
 
-    public Boolean buyAsset(CuntaoAssetDto assetDto);
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
 }
