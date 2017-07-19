@@ -134,6 +134,11 @@ public class PartnerInstanceHandler implements InitializingBean{
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public void partnerClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto){
+		strategy.get(typeEnum.getCode()).partnerClosing(instanceId, operatorDto);
+	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void autoClosing(Long instanceId, PartnerInstanceTypeEnum typeEnum, OperatorDto operatorDto){
 		strategy.get(typeEnum.getCode()).autoClosing(instanceId, operatorDto);
 	}

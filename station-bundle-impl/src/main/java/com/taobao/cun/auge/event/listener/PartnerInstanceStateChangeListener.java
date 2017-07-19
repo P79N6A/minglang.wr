@@ -61,11 +61,15 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
 		logger.info("partner instance." + JSON.toJSONString(instance));
-		//小二强制停业，且状态是由装修中、或者服务中，变成停业申请中
+		//县小二强制停业，且状态是由装修中、或者服务中，变成停业申请中
 		if ((PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				|| PartnerInstanceStateChangeEnum.DECORATING_CLOSING.equals(stateChangeEnum))
 				&& PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(instance.getCloseType())) {
 			partnerInstanceHandler.startClosing(instanceId, stationName, partnerType, stateChangeEvent);
+			//村小二申请停业
+		}else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
+				&& PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(instance.getCloseType())) {
+			partnerInstanceHandler.partnerClosing(instanceId, partnerType, stateChangeEvent);
 			// 系统自动停业
 		}else if (PartnerInstanceStateChangeEnum.START_CLOSING.equals(stateChangeEnum)
 				&& PartnerInstanceCloseTypeEnum.SYSTEM_QUIT.getCode().equals(instance.getCloseType())) {
@@ -75,8 +79,8 @@ public class PartnerInstanceStateChangeListener implements EventListener {
 			partnerInstanceHandler.closed(instance.getId(), taobaoUserId, taobaoNick, partnerType, stateChangeEvent);
 			// 退出
 		} else if (PartnerInstanceStateChangeEnum.START_QUITTING.equals(stateChangeEnum)) {
-			//服务中
 			partnerInstanceHandler.startQuiting(instanceId, stationName, partnerType, stateChangeEvent);
+			//服务中
 		}else if(PartnerInstanceStateChangeEnum.START_SERVICING.equals(stateChangeEnum)){
 		    partnerInstanceHandler.startService(instanceId, taobaoUserId, partnerType, stateChangeEvent);
 		}

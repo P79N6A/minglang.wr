@@ -402,6 +402,11 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
+	public void partnerClosing(Long instanceId, OperatorDto operatorDto) {
+		autoClosing( instanceId, operatorDto);
+	}
+	
+	@Override
 	public void autoClosing(Long instanceId, OperatorDto operatorDto) {
 		try {
 			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
