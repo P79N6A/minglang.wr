@@ -367,7 +367,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         operator.copyOperatorDto(partnerInstanceDto);
         PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(), operator);
         if (!partnerDto.getAlipayAccount().equals(paDto.getAlipayId())) {
-            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对");
+            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对:"+partnerDto.getAlipayAccount()+";"+paDto.getAlipayId());
         }
         if (!partnerDto.getName().equals(paDto.getFullName()) || !partnerDto.getIdenNum().equals(paDto.getIdCardNumber())) {
             throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
