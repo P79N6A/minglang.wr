@@ -6,7 +6,6 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerProtocolRelBO {
 	/**
@@ -39,16 +38,16 @@ public interface PartnerProtocolRelBO {
 	/**
 	 * 新增协议关系
 	 * @param PartnerProtocolRelDto
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addPartnerProtocolRel(PartnerProtocolRelDto PartnerProtocolRelDto) throws AugeServiceException;
+	public Long addPartnerProtocolRel(PartnerProtocolRelDto PartnerProtocolRelDto) ;
 	
 	/**
 	 * 删除协议关系
 	 * @param partnerProtocolRelDeleteDto
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void deletePartnerProtocolRel(PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto) throws AugeServiceException;
+	public void deletePartnerProtocolRel(PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto) ;
 	
 	
 	/**
@@ -57,13 +56,13 @@ public interface PartnerProtocolRelBO {
 	 * @param objectId
 	 * @param targetType
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerProtocolRelDto  getPartnerProtocolRelDto(ProtocolTypeEnum type,Long objectId,PartnerProtocolRelTargetTypeEnum targetType)  throws AugeServiceException;
+	public PartnerProtocolRelDto  getPartnerProtocolRelDto(ProtocolTypeEnum type,Long objectId,PartnerProtocolRelTargetTypeEnum targetType)  ;
 	
-	public PartnerProtocolRelDto  getPartnerProtocolRelDto(Long objectId,PartnerProtocolRelTargetTypeEnum targetType,Long protocolId)  throws AugeServiceException;
+	public PartnerProtocolRelDto  getPartnerProtocolRelDto(Long objectId,PartnerProtocolRelTargetTypeEnum targetType,Long protocolId)  ;
 	
-	public PartnerProtocolRelDto  getLastPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,ProtocolTypeEnum type,PartnerProtocolRelTargetTypeEnum targetType)  throws AugeServiceException;
+	public PartnerProtocolRelDto  getLastPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,ProtocolTypeEnum type,PartnerProtocolRelTargetTypeEnum targetType)  ;
 
 			
 	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,

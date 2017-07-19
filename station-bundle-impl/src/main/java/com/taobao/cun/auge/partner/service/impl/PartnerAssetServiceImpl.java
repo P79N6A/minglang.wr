@@ -7,9 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.common.resultmodel.PagedResultModel;
 import com.taobao.cun.dto.ContextDto;
 import com.taobao.cun.dto.SystemTypeEnum;
@@ -33,7 +35,6 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 
 	@Override
 	public boolean isBackAsset(Long instanceId) {
-		try {
 			CuntaoAssetQueryCondition queryCondition = new CuntaoAssetQueryCondition();
 
 			queryCondition.setPartnerInstanceId(instanceId);
@@ -47,13 +48,8 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 			} else {
 				String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, null);
 				logger.error(error);
-				throw new AugeServiceException("查询资产失败，请稍后再试！");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询资产失败，请稍后再试！");
 			}
-		} catch (Exception e) {
-			String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException("查询资产失败，请稍后再试！");
-		}
 	}
 
 	private ContextDto buildSystemContextDto() {

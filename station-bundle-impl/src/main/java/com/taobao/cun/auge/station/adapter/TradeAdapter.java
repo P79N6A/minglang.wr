@@ -2,9 +2,6 @@ package com.taobao.cun.auge.station.adapter;
 
 import java.util.Date;
 
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-
 public interface TradeAdapter {
 	
 	/**
@@ -13,5 +10,5 @@ public interface TradeAdapter {
 	 * @param buyerId
 	 * @param endDate
 	 */
-	public void validateNoEndTradeOrders(Long buyerId, Date endDate)throws AugeBusinessException,AugeSystemException;
+	public void validateNoEndTradeOrders(Long buyerId, Date endDate);
 }

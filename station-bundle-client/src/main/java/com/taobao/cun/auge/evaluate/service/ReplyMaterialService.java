@@ -1,9 +1,8 @@
 package com.taobao.cun.auge.evaluate.service;
 
-import com.taobao.cun.auge.evaluate.dto.ReplyMaterialDTO;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-
 import java.util.List;
+
+import com.taobao.cun.auge.evaluate.dto.ReplyMaterialDTO;
 
 /**
  * 答辩材料服务
@@ -14,13 +13,13 @@ public interface ReplyMaterialService {
     /**
      * 查询答辩材料
      */
-    List<ReplyMaterialDTO> queryReplyMaterialDTOs(Long taobaoUserId) throws AugeServiceException;
+    List<ReplyMaterialDTO> queryReplyMaterialDTOs(Long taobaoUserId);
 
     /**
      * 提交答辩材料
      * 只有审批之前可以提交材料
      */
-    boolean submitEvaluateAttachments(Long taobaoUserId, String levelTaskNodeId, List<String> attachmentIdentifiers) throws AugeServiceException;
+    boolean submitEvaluateAttachments(Long taobaoUserId, String levelTaskNodeId, List<String> attachmentIdentifiers);
 
 
     /**

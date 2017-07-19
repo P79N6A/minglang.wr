@@ -19,27 +19,27 @@ public interface StationBO {
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Station getStationById(Long stationId) throws AugeServiceException;
+	public Station getStationById(Long stationId) ;
 	
 	/**
 	 * 根据服务站id查询村点
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public List<Station> getStationById(List<Long> stationIds) throws AugeServiceException;
+	public List<Station> getStationById(List<Long> stationIds) ;
 
 	/**
 	 * 根据服务站编号查询村点
 	 * 
 	 * @param stationNum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Station getStationByStationNum(String stationNum) throws AugeServiceException;
+	public Station getStationByStationNum(String stationNum) ;
    
 	/**
      * 变更村点状态
@@ -47,57 +47,57 @@ public interface StationBO {
      * @param preStatus
      * @param postStatus
      * @param operator
-     * @throws AugeServiceException
+     * @
      */
-	public void changeState(Long stationId, StationStatusEnum preStatus, StationStatusEnum postStatus, String operator)throws AugeServiceException;
+	public void changeState(Long stationId, StationStatusEnum preStatus, StationStatusEnum postStatus, String operator);
 
 	/**
 	 * 新增服务站
 	 * @param stationDto
 	 * @return 主键
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addStation(StationDto stationDto) throws AugeServiceException;
+	public Long addStation(StationDto stationDto) ;
 	
 	/**
 	 * 修改服务站
 	 * @param stationDto
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void updateStation(StationDto stationDto) throws AugeServiceException;
+	public void updateStation(StationDto stationDto) ;
 	
 	/**
 	 * 检查服务站编号使用已经使用
 	 * 
 	 * @param stationNum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public int getStationCountByStationNum(String stationNum) throws AugeServiceException;
+	public int getStationCountByStationNum(String stationNum) ;
 	
 	/**
 	 * 删除服务站
 	 * @param stationId
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void deleteStation(Long stationId, String operator) throws AugeServiceException;
+	public void deleteStation(Long stationId, String operator) ;
 
 	/**
 	 * 根据name、orgIdPath、stationStatusEnum查询station  为搜索tp服务站使用  只返回名字，id,村点编号
 	 * @param stationCondition
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public List<Station> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException;
+	public List<Station> getTpStationsByName(StationCondition stationCondition) ;
 	
 	/**
 	 * 根据name、orgId、stationStatusEnum查询station
 	 * 
 	 * @param stationCondition
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Page<Station> getStations(StationCondition stationCondition) throws AugeServiceException;
+	public Page<Station> getStations(StationCondition stationCondition) ;
 }

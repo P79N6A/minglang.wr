@@ -29,6 +29,7 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -61,7 +62,7 @@ import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
@@ -102,7 +103,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto)
-			throws AugeServiceException {
+			{
 		///构建入驻生命周期
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPV);
@@ -134,10 +135,10 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void delete(PartnerInstanceDeleteDto partnerInstanceDeleteDto,
-			PartnerStationRel rel) throws AugeServiceException {
+			PartnerStationRel rel) {
 		
 		if (!StringUtils.equals("AUDIT_FAIL", rel.getState())) {//TODO：这个状态是老的，重构三期要改造
-			throw new AugeServiceException(PartnerExceptionEnum.PARTNER_DELETE_FAIL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态合伙人信息不能删除");
 		}
 		if (partnerInstanceDeleteDto.getIsDeleteStation()) {
 			Long stationId =  rel.getStationId();
@@ -166,7 +167,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void quit(PartnerInstanceQuitDto partnerInstanceQuitDto)
-			throws AugeServiceException {
+			{
 		ValidateUtils.validateParam(partnerInstanceQuitDto);
 		ValidateUtils.notNull(partnerInstanceQuitDto.getInstanceId());
 	    Long instanceId = partnerInstanceQuitDto.getInstanceId();
@@ -187,13 +188,13 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void applySettleNewly(PartnerInstanceDto partnerInstanceDto)
-			throws AugeServiceException {
+			{
 		// TODO Auto-generated method stub
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) throws AugeServiceException {
+	public void applyQuit(QuitStationApplyDto quitDto, PartnerInstanceTypeEnum typeEnum) {
 		PartnerLifecycleDto itemsDO = new PartnerLifecycleDto();
 		itemsDO.setPartnerInstanceId(quitDto.getInstanceId());
 		itemsDO.setPartnerType(typeEnum);
@@ -206,7 +207,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void handleDifferQuitAuditPass(Long instanceId) throws AugeServiceException {
+	public void handleDifferQuitAuditPass(Long instanceId) {
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
 				PartnerLifecycleBusinessTypeEnum.QUITING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 
@@ -235,7 +236,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,	PartnerStationRel rel) throws AugeServiceException {
+	public void settleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto,	PartnerStationRel rel) {
 		Long instanceId = settleSuccessDto.getInstanceId();
 		Long partnerId = rel.getPartnerId();
 		Long stationId = rel.getStationId();
@@ -318,7 +319,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 
 	@Override
 	public Boolean validateUpdateSettle(Long instanceId)
-			throws AugeServiceException {
+			{
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId,
 				PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 		if (items != null) {
@@ -328,7 +329,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 	
 	@Override
-	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findCloseApplyId(instanceId);
@@ -348,7 +349,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 	}
 
 	@Override
-	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) throws AugeServiceException {
+	public void startQuiting(Long instanceId, String stationName, OperatorDto operatorDto) {
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		Station station = stationBO.getStationById(instance.getStationId());
 		Long applyId = findQuitApplyId(instanceId);

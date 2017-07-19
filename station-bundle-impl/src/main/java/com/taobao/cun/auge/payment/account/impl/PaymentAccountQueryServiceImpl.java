@@ -4,9 +4,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.taobao.cun.auge.partner.service.PartnerAssetService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
@@ -72,33 +73,33 @@ public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryServic
 			baseUserDOresult = uicReadServiceClient.getBaseUserByNick(loginId);
 
 		} else {
-			throw new BusinessException("淘宝账号不能为空!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"淘宝账号不能为空!");
 		}
 
 		if (baseUserDOresult == null || !baseUserDOresult.isSuccess() || baseUserDOresult.getModule() == null) {
-			throw new BusinessException("该淘宝账号不存在或状态异常，请与申请人核实!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"该淘宝账号不存在或状态异常，请与申请人核实!");
 		}
 		BaseUserDO baseUserDO = baseUserDOresult.getModule();
 		if (baseUserDO.getUserId() == null || baseUserDO.getUserId() == 0) {
-			throw new BusinessException("该淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"该淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
 		}
 
 		ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(baseUserDO.getUserId());
 		if (basePaymentAccountDOResult == null || !basePaymentAccountDOResult.isSuccess() || basePaymentAccountDOResult.getModule() == null) {
-			throw new BusinessException("该淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"该淘宝账号尚未完成支付宝绑定操作，请联系申请人，先在淘宝->账号管理中，完成支付宝账号的绑定，并在支付宝平台完成实名认证操作!");
 		}
 		BasePaymentAccountDO basePaymentAccountDO = basePaymentAccountDOResult.getModule();
 		// 校验是不是个人买家
 		int accountType = basePaymentAccountDO.getAccountType();
 
 		if (accountType != PAYMENT_ACCOUNT_TYPE_PSERSON) {
-			throw new BusinessException("申请人的支付宝账号并非个人实名认证的支付宝账号（暂不支持企业支付宝等其他形式的账号），请联系申请人做核实!");
+			throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"申请人的支付宝账号并非个人实名认证的支付宝账号（暂不支持企业支付宝等其他形式的账号），请联系申请人做核实!");
 		}
 
 		// 校验有没有实名认证
 		int promotedType = baseUserDO.getPromotedType();
 		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE) || StringUtils.isBlank(baseUserDO.getFullname()) || StringUtils.isBlank(baseUserDO.getIdCardNumber())) {
-			throw new BusinessException("该淘宝账号绑定的支付宝账号未做个人实名认证;请联系申请人,在支付宝平台完成个人实名认证操作!");
+			throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"该淘宝账号绑定的支付宝账号未做个人实名认证;请联系申请人,在支付宝平台完成个人实名认证操作!");
 		}
 
 		AliPaymentAccountDto paymentAccountDto = new AliPaymentAccountDto();

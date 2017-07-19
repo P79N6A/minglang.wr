@@ -10,5 +10,5 @@ public interface AlipayTagAdapter {
 	 * @param alipayAccountTagDto
 	 * @return
 	 */
-	public boolean dealTag(AlipayTagDto alipayTagDto) throws AugeServiceException;
+	public boolean dealTag(AlipayTagDto alipayTagDto);
 }

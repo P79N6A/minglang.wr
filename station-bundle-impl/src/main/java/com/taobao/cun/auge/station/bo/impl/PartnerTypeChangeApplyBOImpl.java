@@ -23,8 +23,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerTypeChangeApplyDtoConverter;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.validator.BeanValidator;
 
 @Component("partnerTypeChangeApplyBO")
@@ -40,7 +38,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 	StationBO stationBO;
 
 	@Override
-	public Boolean isUpgradePartnerInstance(Long nextInstanceId,PartnerInstanceTypeChangeEnum typeChangeEnum) throws AugeServiceException, AugeSystemException {
+	public Boolean isUpgradePartnerInstance(Long nextInstanceId,PartnerInstanceTypeChangeEnum typeChangeEnum)  {
 		ValidateUtils.notNull(nextInstanceId);
 
 		PartnerTypeChangeApplyExample example = new PartnerTypeChangeApplyExample();
@@ -54,7 +52,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 	}
 
 	@Override
-	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId)	throws AugeServiceException, AugeSystemException {
+	public PartnerTypeChangeApplyDto getPartnerTypeChangeApply(Long upgradeInstanceId)	 {
 		ValidateUtils.notNull(upgradeInstanceId);
 
 		PartnerTypeChangeApplyExample example = new PartnerTypeChangeApplyExample();
@@ -68,7 +66,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 	}
 
 	@Override
-	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto)	throws AugeServiceException, AugeSystemException {
+	public Long addPartnerTypeChangeApply(PartnerTypeChangeApplyDto applyDto)	 {
 		BeanValidator.validateWithThrowable(applyDto);
 		
 		PartnerTypeChangeApply apply = PartnerTypeChangeApplyDtoConverter.convert(applyDto);
@@ -80,7 +78,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 	}
 
 	@Override
-	public void deletePartnerTypeChangeApply(Long applyId, String operator) throws AugeServiceException, AugeSystemException {
+	public void deletePartnerTypeChangeApply(Long applyId, String operator)  {
 		ValidateUtils.notNull(applyId);
 
 		PartnerTypeChangeApply apply = new PartnerTypeChangeApply();
@@ -90,7 +88,7 @@ public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {
 	}
 
 	@Override
-	public StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto)throws AugeServiceException, AugeSystemException {
+	public StationDto fillStationDto(PartnerTypeChangeApplyDto applyDto) {
 		Long stationId = partnerInstanceBO.findStationIdByInstanceId(applyDto.getPartnerInstanceId());
 		
 		Map<String, String> feature = applyDto.getFeature();

@@ -39,7 +39,6 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 	
 	@Override
 	public PageDto<CuntaoFlowRecordDto> queryByPage(CuntaoFlowRecordPageCondition pageCondition) {
-		try {
 			// 参数校验
 			BeanValidator.validateWithThrowable(pageCondition);
 
@@ -56,14 +55,9 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			PageDto<CuntaoFlowRecordDto> result = PageDtoUtil.success(page,
 					page.stream().map(CuntaoFlowRecordEventConverter::toCuntaoFlowRecordDto).collect(Collectors.toList()));
 			return result;
-		} catch (Exception e) {
-			logger.error("Failed to query cuntao flow record.CuntaoFlowRecordQueryCondition = "+JSONObject.toJSONString(pageCondition), e);
-			return PageDtoUtil.unSuccess(pageCondition.getPageNum(), pageCondition.getPageSize());
-		}
 	}
 
 	public void insertRecord(CuntaoFlowRecordDto recordDto) {
-		try {
 			CuntaoFlowRecord record = new CuntaoFlowRecord();
 			DomainUtils.beforeInsert(record, recordDto.getOperatorWorkid());
 			record.setOperatorName(recordDto.getOperatorName());
@@ -75,9 +69,6 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			record.setOperateOpinion(recordDto.getOperateOpinion());
 			record.setRemarks(recordDto.getRemarks());
 			cuntaoFlowRecordMapper.insertSelective(record);
-		} catch (Exception e) {
-			logger.error("insertRecord error recordDto = "+JSONObject.toJSONString(recordDto), e);
-		}
 	}
 	
 	public List<CuntaoFlowRecordDto> queryByIds(List<Long> ids){

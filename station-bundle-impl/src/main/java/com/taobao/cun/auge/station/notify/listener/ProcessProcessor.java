@@ -22,6 +22,7 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
@@ -50,7 +51,7 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -296,7 +297,7 @@ public class ProcessProcessor {
 				} else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
 					stationBO.changeState(stationId, StationStatusEnum.CLOSING, StationStatusEnum.DECORATING, operator);
 				} else {
-					throw new AugeServiceException("partner state is not decorating or servicing.");
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"partner state is not decorating or servicing.");
 				}
 
 				// 删除停业申请表
@@ -382,7 +383,6 @@ public class ProcessProcessor {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
-		try {
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
 			String operator = operatorDto.getOperator();
 
@@ -432,10 +432,6 @@ public class ProcessProcessor {
 				// 发送合伙人实例状态变化事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
 			}
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + "monitorQuitApprove", e);
-			throw e;
-		}
 	}
 
 	/**

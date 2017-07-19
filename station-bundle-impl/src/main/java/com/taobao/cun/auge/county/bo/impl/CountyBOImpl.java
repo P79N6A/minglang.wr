@@ -56,6 +56,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgAdminAddressMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
@@ -71,7 +72,6 @@ import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
@@ -121,7 +121,7 @@ public class CountyBOImpl implements CountyBO {
 	
 	public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
 		if(areaOrgIds==null||areaOrgIds.size()==0){
-			throw new AugeBusinessException("areaOrgIds is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"areaOrgIds is null");
 		}
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("areaOrgIds", areaOrgIds);
@@ -647,7 +647,7 @@ public class CountyBOImpl implements CountyBO {
 				}
 			}
 			if (exist) {
-				throw new AugeBusinessException("县服务中心不能重名");
+				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"县服务中心不能重名");
 			}
 		}
 	}
@@ -683,7 +683,7 @@ public class CountyBOImpl implements CountyBO {
 	private void validateParentOrg(CountyDto countyDto) {
 		CuntaoOrg org=cuntaoOrgMapper.selectByPrimaryKey(countyDto.getParentId());
 		if(org==null){
-			throw new AugeBusinessException("查询大区异常"+countyDto.getParentId());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"查询大区异常"+countyDto.getParentId());
 		}
 	}
 	
@@ -751,7 +751,7 @@ public class CountyBOImpl implements CountyBO {
         if (taobaoNick != null) {
             ResultDO<BaseUserDO> baseUserDO = uicReadServiceClient.getBaseUserByNick(taobaoNick);
             if (baseUserDO == null || baseUserDO.getModule() == null || !baseUserDO.isSuccess()) {
-                throw new AugeBusinessException("not find taobaoUserID: " + taobaoNick);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"not find taobaoUserID: " + taobaoNick);
             }
             return baseUserDO.getModule().getUserId();
         }
@@ -798,7 +798,7 @@ public class CountyBOImpl implements CountyBO {
         CaiNiaoStationDto stationDto = toNewCaiNiaoStationDto(countyDto);
         Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(stationDto);
         if (caiNiaostationId == null) {
-            throw new BusinessException("同步菜鸟驿站失败");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"同步菜鸟驿站失败");
         } else {
         	CuntaoCainiaoStationRelDto relDO = new CuntaoCainiaoStationRelDto();
             relDO.setObjectId(countyDto.getId());
@@ -954,7 +954,7 @@ public class CountyBOImpl implements CountyBO {
     private void syncModifiedCountyStationToCainiao(CountyStation old,  CountyDto countyDto) {
     	CuntaoCainiaoStationRel rel= cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(old.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
         if (rel == null) {
-            throw new AugeBusinessException("cuntaoCainiaoStationRelDao.getCuntaoCainiaoStationRelByCountyStationId is null");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"cuntaoCainiaoStationRelDao.getCuntaoCainiaoStationRelByCountyStationId is null");
         }
         //地址变更了，才发邮件,即使CountyStationDto中地址变更了
         if(needToSendAddressUpdatedEmail(old, countyDto)) {

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -66,21 +67,21 @@ public class OperatorDto implements Serializable {
 		this.operatorType = operatorType;
 	}
 
-	public void validateOperator() throws AugeServiceException {
+	public void validateOperator() throws AugeBusinessException {
 		if (operator == null || operator.length() == 0) {
-			throw new AugeServiceException(CommonExceptionEnum.OPERATOR_IS_NULL);
+			throw new IllegalArgumentException("OPERATOR_IS_NULL");
 		}
 	}
 
-	public void validateOperatorType() throws AugeServiceException {
+	public void validateOperatorType() throws AugeBusinessException {
 		if (operatorType == null) {
-			throw new AugeServiceException(CommonExceptionEnum.OPERATORTYPE_IS_NULL);
+			throw new IllegalArgumentException("OPERATORTYPE_IS_NULL");
 		}
 	}
 
-	public void validateOperatorOrgId() throws AugeServiceException {
+	public void validateOperatorOrgId() throws AugeBusinessException {
 		if (null == operatorOrgId || operatorOrgId <= 0L) {
-			throw new AugeServiceException(CommonExceptionEnum.OPERATORORGID_IS_NULL);
+			throw new IllegalArgumentException("OPERATORORGID_IS_NULL");
 		}
 	}
 

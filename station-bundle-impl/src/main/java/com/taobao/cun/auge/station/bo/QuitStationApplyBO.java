@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface QuitStationApplyBO {
 
@@ -34,7 +33,6 @@ public interface QuitStationApplyBO {
 	 * 
 	 * @param applyId
 	 * @return
-	 * @throws AugeServiceException
 	 */
 	public QuitStationApply getQuitStationApplyById(Long applyId);
 	

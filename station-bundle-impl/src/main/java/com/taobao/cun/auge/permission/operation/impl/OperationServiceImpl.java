@@ -28,7 +28,9 @@ import com.taobao.cun.auge.permission.operation.OperationData;
 import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.cun.auge.permission.operation.PagedOperationData;
 import com.taobao.cun.auge.permission.service.EndorUserPermissionService;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = OperationService.class)
@@ -55,15 +57,10 @@ public class OperationServiceImpl implements OperationService {
 	EmbeddedValueResolver valueResolver = new EmbeddedValueResolver();
 	
 	@Override
-	public List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) throws AugeServiceException {
-		try {
+	public List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (Exception e) {
-			logger.error("getOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
 	private CheckPermissionsResult getCheckPermissionResult(String empId, String roleName, List<Operation> operations) {
@@ -85,39 +82,24 @@ public class OperationServiceImpl implements OperationService {
 	
 	@Override
 	public Map<String,List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
-		try {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (BucException e) {
-			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
 	@Override
 	public Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCodes,List<PagedOperationData> operationDatas){
-		try {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (BucException e) {
-			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 
 	@Override
 	public List<Operation> getOperations(Integer bucUserId, List<String> operationsCodes,
-			List<OperationData> operationDatas) throws AugeServiceException {
-		try {
+			List<OperationData> operationDatas) {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (Exception e) {
-			logger.error("getOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
 	
@@ -132,7 +114,7 @@ public class OperationServiceImpl implements OperationService {
 		return checkPermissionsResult;
 	}
 
-	private List<Operation> getOperations(List<String> operationsCode) throws BucException {
+	private List<Operation> getOperations(List<String> operationsCode){
 		List<AppResourceDto> resources = appResourceService.queryAppResourceList(operationsCode);
 		List<Operation> operations = resources.stream().map(resource -> {
 			 return createOperation(resource);

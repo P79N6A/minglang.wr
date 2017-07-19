@@ -9,13 +9,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
-import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordCondition;
-import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
-import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +28,25 @@ import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordCondition;
+import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
@@ -80,6 +82,11 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+
+    @Autowired
+    private CuntaoNewBailService newBailService;
+
+    private final Long inAccountUserId = 2631673100L;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -249,7 +256,7 @@ public class AssetBOImpl implements AssetBO {
         Assert.notNull(operator, "operator can not be null");
         CuntaoAsset asset = cuntaoAssetMapper.selectByPrimaryKey(assetId);
         if (getBuyAssetRecord(asset.getNewStationId()) != null) {
-            throw new AugeServiceException("对不起，该资产已申请自购，无法进行回收！");
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"对不起，该资产已申请自购，无法进行回收！");
         }
         asset.setStatus(CuntaoAssetEnum.COUNTY_SIGN.getCode());
         asset.setModifier(operator);
@@ -409,7 +416,7 @@ public class AssetBOImpl implements AssetBO {
         CuntaoAssetExample example = new CuntaoAssetExample();
         List<CuntaoAsset> assets = cuntaoAssetMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(assets)) {
-            throw new AugeBusinessException("can not find biz by serialNoOrAliNo[" + serialNoOrAliNo + "]");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find biz by serialNoOrAliNo[" + serialNoOrAliNo + "]");
         }
         return convert2CuntaoAssetDto(assets.iterator().next());
     }
@@ -447,10 +454,20 @@ public class AssetBOImpl implements AssetBO {
             result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
         }
         if (!"false".equals(result.get("success"))) {
+            //transferMoney();
+            //CuntaoNewBailService
             saveBuyRecord(assetDto);
             result.put("success", "true");
         }
         return result;
+    }
+
+    private void transferMoney(CuntaoAssetDto assetDto) {
+        CuntaoTransferBailDto bailDto = new CuntaoTransferBailDto();
+        bailDto.setInAccountUserId(inAccountUserId);
+        bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
+        bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+
     }
 
     private boolean validateStationAssetNum(Long stationId) {

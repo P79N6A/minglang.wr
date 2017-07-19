@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.partner.service;
 
 import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerQueryService {
 	
@@ -10,26 +9,23 @@ public interface PartnerQueryService {
 	 * 
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId);
 	
 	/**
 	 * 根据partnerId查询合伙人信息
 	 * 
 	 * @param partnerId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartner(Long partnerId) throws AugeServiceException;
+	PartnerDto queryPartner(Long partnerId);
 
 	/**
 	 * 根据stationId查询当前站点的合伙人信息
 	 *
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartnerByStationId(Long stationId) throws AugeServiceException;
+	PartnerDto queryPartnerByStationId(Long stationId);
 	
 }

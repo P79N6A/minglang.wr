@@ -12,8 +12,7 @@ public interface PartnerProtocolQueryService {
 	 * 
 	 * @param partnerInstanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId) throws AugeServiceException;
+	public List<PartnerProtocolDto> queryPartnerSignedProtocols(Long partnerInstanceId);
 	
 }

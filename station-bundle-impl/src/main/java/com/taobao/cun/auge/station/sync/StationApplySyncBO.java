@@ -11,17 +11,15 @@ public interface StationApplySyncBO {
 	 * 
 	 * @param partnerInstanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public StationApply addStationApply(Long partnerInstanceId) throws AugeServiceException;
+	public StationApply addStationApply(Long partnerInstanceId);
 
 	/**
 	 * 将数据同步修改到老模型
 	 * 
 	 * @param partnerInstanceId
-	 * @throws AugeServiceException
 	 */
-	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType) throws AugeServiceException;
+	public void updateStationApply(Long partnerInstanceId, SyncStationApplyEnum updateType);
 
 	/**
 	 * 删除
