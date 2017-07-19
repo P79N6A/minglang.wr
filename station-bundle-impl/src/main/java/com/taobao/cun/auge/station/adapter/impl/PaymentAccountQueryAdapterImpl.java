@@ -36,7 +36,7 @@ public class PaymentAccountQueryAdapterImpl implements PaymentAccountQueryAdapte
 			return null;
 		}
 		PaymentAccountDto augeDto = new PaymentAccountDto();
-		BeanUtils.copyProperties(augeDto, result);
+		BeanUtils.copyProperties(result,augeDto);
 		return augeDto;
 	}
 
