@@ -17,7 +17,6 @@ import com.alibaba.buc.acl.api.input.check.CheckPermissionsParam;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult.CheckPermissionResultInner;
 import com.alibaba.buc.acl.api.service.AccessControlService;
-import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.dto.AppResourceDto;
@@ -28,9 +27,6 @@ import com.taobao.cun.auge.permission.operation.OperationData;
 import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.cun.auge.permission.operation.PagedOperationData;
 import com.taobao.cun.auge.permission.service.EndorUserPermissionService;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = OperationService.class)
@@ -57,16 +53,16 @@ public class OperationServiceImpl implements OperationService {
 	EmbeddedValueResolver valueResolver = new EmbeddedValueResolver();
 	
 	@Override
-	public List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) {
+	public List<Operation> getOperations(String empId, Long orgId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) {
 			List<Operation> operations = getOperations(operationsCodes);
-			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
+			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, orgId, roleName, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
 	}
 	
-	private CheckPermissionsResult getCheckPermissionResult(String empId, String roleName, List<Operation> operations) {
+	private CheckPermissionsResult getCheckPermissionResult(String empId, Long orgId, String roleName, List<Operation> operations) {
 		Set<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toSet());
 		if(CollectionUtils.isEmpty(permissionNames)) return null;
-		PermissonBatchResult permissonBatchResult = endorUserPermissionService.batchCheck(empId, permissionNames, roleName);
+		PermissonBatchResult permissonBatchResult = endorUserPermissionService.batchCheck(empId, orgId, roleName, permissionNames);
 		
 		List<CheckPermissionResultInner> checkPermissionResults = Lists.newArrayList();
 		permissionNames.forEach(permissionName->{
@@ -81,9 +77,9 @@ public class OperationServiceImpl implements OperationService {
 	}
 	
 	@Override
-	public Map<String,List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
+	public Map<String,List<Operation>> getPagedOperations(String empId, Long orgId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
 			List<Operation> operations = getOperations(operationsCodes);
-			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
+			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, orgId, roleName, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
 	}
 	
