@@ -30,8 +30,7 @@ public interface OperationService {
 	 * @param operationDatas
 	 * @return
 	 */
-	List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes,
-			List<OperationData> operationDatas);
+	List<Operation> getOperations(String empId, Long orgId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas);
 
 	/**
 	 * 获取分页列表上的操作列表
@@ -40,7 +39,6 @@ public interface OperationService {
 	 * @param operationDatas
 	 * @return
 	 */
-	Map<String, List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,
-			List<PagedOperationData> operationDatas);
+	Map<String, List<Operation>> getPagedOperations(String empId, Long orgId, String roleName, List<String> operationsCodes, List<PagedOperationData> operationDatas);
 
 }
