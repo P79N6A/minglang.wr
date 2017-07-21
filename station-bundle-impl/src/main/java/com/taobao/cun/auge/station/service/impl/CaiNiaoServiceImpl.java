@@ -587,7 +587,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			// 查询菜鸟物流站关系表
 			CuntaoCainiaoStationRel rel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(stationId,
 					CuntaoCainiaoStationRelTypeEnum.STATION);
-			if (rel != null) {// 有物流站同步
+			if (rel != null) {// 有物流站才同步
 				syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
 				caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
 			}
