@@ -2,15 +2,7 @@ package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.taobao.cun.auge.bail.BailService;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.settle.bail.dto.CuntaoBailSignDto;
 import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
@@ -21,6 +13,11 @@ import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * Created by xujianhui on 16/12/27.
@@ -40,7 +37,7 @@ public class BailServiceImpl implements BailService {
         Assert.notNull(userTypeEnum);
             ResultModel<Boolean> result = cuntaoNewBailService.isUserSignBail(taobaoUserId, alipayId, userTypeEnum);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService isUserSignBail fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
+                logger.warn("BailServiceImpl bailService isUserSignBail fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
             }
             return result;
     }
@@ -59,7 +56,7 @@ public class BailServiceImpl implements BailService {
         signDto.setBailChannelEnum(channel);
             ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
+                logger.warn("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
             }
             return result;
     }
@@ -79,7 +76,7 @@ public class BailServiceImpl implements BailService {
         signDto.setOutRequestNo(outerOrderNo);
             ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
             if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService buildSignBailUrl fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
+                logger.warn("BailServiceImpl bailService buildSignBailUrl fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
             }
             return result;
     }
