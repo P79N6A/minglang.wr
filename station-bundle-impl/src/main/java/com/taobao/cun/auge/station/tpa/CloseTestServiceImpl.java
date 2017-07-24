@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -30,18 +31,20 @@ public class CloseTestServiceImpl implements CloseTestService {
 	public void test() {
 
    	 List<Long> ids = Stream.of(stationIds.split(",")).map(Long::parseLong).collect(Collectors.toList());
-   	 
+   	 List<String> results = Lists.newArrayList();
    	for (Iterator iterator = ids.iterator(); iterator.hasNext();) {
 			Long stationId = (Long) iterator.next();
 			try {
-				queryPartnerInstance(stationId);
+				results.add(queryPartnerInstance(stationId));
 			} catch (Exception e) {
 				logger.error("queryPartnerInstance error!"+stationId,e);
 			}
 		}
+   	
+   		results.stream().forEach(logger::error);
 	}
 
-	public void queryPartnerInstance(Long stationId){
+	public String queryPartnerInstance(Long stationId){
    	 List<PartnerInstanceDto> instances = partnerInstanceQueryService.queryPartnerInstances(stationId);
    	 if(instances != null && instances.size()==1){
    		 PartnerInstanceCondition condition = new PartnerInstanceCondition();
@@ -50,7 +53,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack);
+   		 return partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack;
    	 }else{
    		 instances  = instances.stream().filter(instance -> "n".equals(instance.getIsCurrent())).collect(Collectors.toList());
    		 PartnerInstanceCondition condition = new PartnerInstanceCondition();
@@ -59,7 +62,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack);
+   		return partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack;
    	 }
    }
 	
