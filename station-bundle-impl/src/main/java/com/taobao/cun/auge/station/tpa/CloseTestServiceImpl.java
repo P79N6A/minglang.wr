@@ -52,7 +52,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
    		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack);
    	 }else{
-   		 instances  = instances.stream().filter(instance -> "y".equals(instance.getIsCurrent())).collect(Collectors.toList());
+   		 instances  = instances.stream().filter(instance -> "n".equals(instance.getIsCurrent())).collect(Collectors.toList());
    		 PartnerInstanceCondition condition = new PartnerInstanceCondition();
    		 condition.setOperator("zhenhuan.zhangzh");
    		 condition.setOperatorType(OperatorTypeEnum.BUC);
