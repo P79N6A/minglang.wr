@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -49,7 +50,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove().getCode()+","+isAsssetBack);
+   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack);
    	 }else{
    		 instances  = instances.stream().filter(instance -> "y".equals(instance.getIsCurrent())).collect(Collectors.toList());
    		 PartnerInstanceCondition condition = new PartnerInstanceCondition();
@@ -58,7 +59,21 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove().getCode()+","+isAsssetBack);
+   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+getBond(partnerInstanceDto.getPartnerLifecycleDto())+","+getRoleApprove(partnerInstanceDto.getPartnerLifecycleDto())+","+isAsssetBack);
    	 }
    }
+	
+	String getBond(PartnerLifecycleDto lifeCycle){
+		if(lifeCycle == null||lifeCycle.getBond() == null){
+			return "";
+		}
+		return lifeCycle.getBond().getCode();
+	}
+	
+	String getRoleApprove(PartnerLifecycleDto lifeCycle){
+		if(lifeCycle == null||lifeCycle.getRoleApprove() == null){
+			return "";
+		}
+		return lifeCycle.getRoleApprove().getCode();
+	}
 }
