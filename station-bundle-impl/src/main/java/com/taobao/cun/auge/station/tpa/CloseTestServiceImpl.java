@@ -35,7 +35,7 @@ public class CloseTestServiceImpl implements CloseTestService {
 			try {
 				queryPartnerInstance(stationId);
 			} catch (Exception e) {
-				logger.error("queryPartnerInstance error!"+stationId);
+				logger.error("queryPartnerInstance error!"+stationId,e);
 			}
 		}
 	}
@@ -49,7 +49,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove()+","+isAsssetBack);
+   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove().getCode()+","+isAsssetBack);
    	 }else{
    		 instances  = instances.stream().filter(instance -> "y".equals(instance.getIsCurrent())).collect(Collectors.toList());
    		 PartnerInstanceCondition condition = new PartnerInstanceCondition();
@@ -58,7 +58,7 @@ public class CloseTestServiceImpl implements CloseTestService {
    		 condition.setInstanceId(instances.get(0).getId());
    		 PartnerInstanceDto partnerInstanceDto = partnerInstanceQueryService.queryInfo(condition);
    		 boolean isAsssetBack = partnerAssetService.isBackAsset(instances.get(0).getId());
-   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove()+","+isAsssetBack);
+   		 logger.error(partnerInstanceDto.getStationId()+","+partnerInstanceDto.getState().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getBond().getCode()+","+partnerInstanceDto.getPartnerLifecycleDto().getRoleApprove().getCode()+","+isAsssetBack);
    	 }
    }
 }
