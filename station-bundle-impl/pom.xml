@@ -338,6 +338,14 @@
 				<groupId>com.alibaba.infop.shared</groupId>
 				<artifactId>tax.api</artifactId>
 		</dependency>
+		<dependency>
+			  <groupId>io.advantageous.reakt</groupId>
+			  <artifactId>reakt</artifactId>
+		</dependency>
+		<dependency>
+			  <groupId>com.alibaba.china.shared</groupId>
+			  <artifactId>xfsm.spring</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
