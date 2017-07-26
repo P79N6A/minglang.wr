@@ -36,8 +36,10 @@ import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
+import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
@@ -53,7 +55,6 @@ import com.taobao.uic.common.service.userinfo.UicPaymentAccountReadService;
 import com.taobao.uic.common.service.userinfo.UicReadService;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
-import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
 @Configuration
@@ -326,7 +327,17 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		uicPaymentAccountReadServiceClient.setUicPaymentAccountReadService(uicPaymentAccountReadService);
 		uicPaymentAccountReadServiceClient.setUicReadService(uicReadService);
 		return uicPaymentAccountReadServiceClient;
-		
 	}
 	
+	@Bean
+	public NamelistMatchService namelistMatchService(HsfConsumerContext context, @Value("${namelistMatchService.version}") String version) {
+		return context.hsfConsumerBuilder(NamelistMatchService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public AlipayRiskScanService alipayRiskScanService(HsfConsumerContext context, @Value("${alipayRiskScanService.version}") String version) {
+		return context.hsfConsumerBuilder(AlipayRiskScanService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
 }

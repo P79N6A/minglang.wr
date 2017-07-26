@@ -346,6 +346,14 @@
 			  <groupId>com.alibaba.china.shared</groupId>
 			  <artifactId>xfsm.spring</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.namelist</groupId>
+				<artifactId>namelist-common</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>user-client</artifactId>
+			</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
