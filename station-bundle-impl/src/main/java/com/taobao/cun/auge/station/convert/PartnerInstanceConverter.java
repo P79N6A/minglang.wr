@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.pandora.util.StringUtils;
 
 public final class PartnerInstanceConverter {
 

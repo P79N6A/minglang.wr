@@ -71,7 +71,7 @@
 			<dependency>
 				<groupId>com.aliexpress.boot</groupId>
 				<artifactId>spring-boot-starter-hsf</artifactId>
-				<version>1.2.3</version>
+				<version>1.2.10</version>
 			</dependency>
 			<dependency>
 				<groupId>io.spring.platform</groupId>
