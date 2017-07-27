@@ -4,14 +4,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetService")
@@ -19,8 +16,6 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 public class AssetServiceImpl implements AssetService{
 
-	private static final Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);
-	
 	@Autowired
 	private AssetBO assetBO;
 	
