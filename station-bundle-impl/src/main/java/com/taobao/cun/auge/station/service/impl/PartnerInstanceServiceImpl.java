@@ -1996,15 +1996,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     logger.error("Query user failed, user id : " + user.getUserId());
                 }
             }
-            BatchMailDto mailDto = new BatchMailDto();
-            mailDto.setMailAddresses(mailList);
-            mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
-            mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
-            mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
-            mailDto.setOperator(station.getOperator());
-            mailDto.setContentMap(contentMap);
-
-            generalTaskSubmitService.submitMailTask(mailDto);
+            if(mailList.size() > 0){
+                BatchMailDto mailDto = new BatchMailDto();
+                mailDto.setMailAddresses(mailList);
+                mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
+                mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
+                mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
+                mailDto.setOperator(station.getOperator());
+                mailDto.setContentMap(contentMap);
+                generalTaskSubmitService.submitMailTask(mailDto);
+            }
     }
 
     /**
