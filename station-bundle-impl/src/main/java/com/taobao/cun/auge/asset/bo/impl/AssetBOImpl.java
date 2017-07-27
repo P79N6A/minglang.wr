@@ -539,6 +539,7 @@ public class AssetBOImpl implements AssetBO {
         record.setOperatorWorkid(assetDto.getOperator());
         record.setOperatorName(assetDto.getOperator());
         record.setRemarks(assetDtoList.stream().map(CuntaoAssetDto::getId).map(String::valueOf).collect(Collectors.joining(",")));
+        record.setTraceId(String.valueOf(assetDto.getNewStationId()));
         cuntaoFlowRecordBO.addRecord(record);
     }
 }
