@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.request;
+package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,12 +6,12 @@ import java.util.List;
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.auge.common.Address;
 
-public class TpaApplyRequest implements Serializable {
+public class TpaApplyInfoDto implements Serializable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3552069137341046239L;
+	private static final long serialVersionUID = -6688845704757025495L;
 
 	private Long stationId;
 
@@ -54,6 +54,16 @@ public class TpaApplyRequest implements Serializable {
 	private String managementType;
 
 	private List<AttachmentDto> attachements;
+
+	private String[] categories = {"综合","农资","家电","3C数码","汽摩配","家装","服装","母婴","日百","餐饮","其他"};
+
+	public Long getStationId() {
+		return stationId;
+	}
+
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
 
 	public Long getPartnerStationId() {
 		return partnerStationId;
@@ -211,20 +221,15 @@ public class TpaApplyRequest implements Serializable {
 		return attachements;
 	}
 
-	public void setAttachements(List<AttachmentDto> attachments) {
-		this.attachements = attachments;
+	public void setAttachements(List<AttachmentDto> attachements) {
+		this.attachements = attachements;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public String[] getCategories() {
+		return categories;
 	}
 
-	public Long getStationId() {
-		return stationId;
+	public void setCategories(String[] categories) {
+		this.categories = categories;
 	}
-
-	public void setStationId(Long stationId) {
-		this.stationId = stationId;
-	}
-
 }

@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.tpa;
 
+import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
 import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
-import com.taobao.cun.auge.station.request.TpaApplyRequest;
 import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
 import com.taobao.cun.auge.station.response.TpaApplyResponse;
 /**
@@ -23,12 +23,27 @@ public interface TpaApplyService {
 	 * @param request
 	 * @return
 	 */
-	public TpaApplyResponse applyTpa(TpaApplyRequest request);
+	public TpaApplyResponse applyTpa(TpaApplyInfoDto tpaApplyInfo);
 	
 	/**
 	 * 修改淘帮手
 	 * @param request
 	 * @return
 	 */
-	public TpaApplyResponse updateTpa(TpaApplyRequest request);
+	public TpaApplyResponse updateTpa(TpaApplyInfoDto tpaApplyInfo);
+	
+	/**
+	 * 获取淘帮手信息
+	 * @param stationId
+	 * @return
+	 */
+	public TpaApplyInfoDto getTpaInfo(Long stationId);
+	
+	/**
+	 * 获取申请信息
+	 * @param tpaTaobaoNick
+	 * @param partnerStationId
+	 * @return
+	 */
+	public TpaApplyInfoDto getTpaApplyInfo(String tpaTaobaoNick, Long partnerStationId);
 }

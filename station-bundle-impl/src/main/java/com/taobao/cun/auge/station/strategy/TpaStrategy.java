@@ -153,6 +153,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
 			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
 			partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+			partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
 			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
