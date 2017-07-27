@@ -46,6 +46,12 @@ public class DiamondConfiguredProperties {
 
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
+    
+    @Value("${inSure.switch}")
+    private String inSureSwitch;
+    
+    @Value("#{'${com.taobao.cun.admin.alipay.whitelist}'.split(',')}")
+    private List<Long> InsureWhiteListConfig;
 
     public String getApply() {
         return apply;
@@ -85,5 +91,13 @@ public class DiamondConfiguredProperties {
 
     public List<Long> getCanBuyStationList() {
         return canBuyStationList;
+    }
+
+    public String getInSureSwitch() {
+        return inSureSwitch;
+    }
+
+    public List<Long> getInsureWhiteListConfig() {
+        return InsureWhiteListConfig;
     }
 }
