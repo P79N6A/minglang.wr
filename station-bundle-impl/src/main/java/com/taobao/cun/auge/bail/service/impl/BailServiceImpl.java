@@ -81,8 +81,19 @@ public class BailServiceImpl implements BailService {
             return result;
     }
 
+    /**
+     * 解冻0元 直接返回成功
+     * @param cuntaoUnFreezeBailDto 可以使用BaiDtoBuilder.generateUnfreezeBailDto构建
+     * @return
+     */
     @Override
     public ResultModel<Boolean> unfreezeUserBail(CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto) {
+        if (Long.valueOf(0L).equals(cuntaoUnFreezeBailDto.getAmount())) {
+            ResultModel<Boolean> resultModel = new ResultModel<>();
+            resultModel.setSuccess(true);
+            resultModel.setResult(Boolean.TRUE);
+            return resultModel;
+        }
         String outOrderId = cuntaoUnFreezeBailDto.getOutOrderId() + "UNFREEZE";
         cuntaoUnFreezeBailDto.setOutOrderId(outOrderId);
             ResultModel<Boolean> result = cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
