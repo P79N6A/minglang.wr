@@ -1958,6 +1958,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             }
             cuntaoFlowRecordQueryService.insertRecord(record);
             if (isSendMail) {
+                updateStation.setApplyOrg(oldStation.getApplyOrg());
+                updateStation.setStationNum(oldStation.getStationNum());
                 sendMailAndOpenPermission(updateStation,instance.getPartnerDto());
             }
         }
