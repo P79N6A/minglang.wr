@@ -1,0 +1,81 @@
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:cs="http://www.alibaba-inc.com/2015/xfsm"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.w3.org/2005/07/scxml http://www.w3.org/2011/04/SCXML/scxml.xsd"
+       version="1.0" initial="ready">
+
+    <!--村小二入驻 流程 -->
+
+    <state id="ready">
+        <onentry>
+            <log expr="'准备入驻'" />
+        </onentry>
+        <transition event="SETTLING_EVENT" target="SETTLING">
+        </transition>
+    </state>
+
+    <state id="SETTLING">
+        <onentry>
+            <log expr="'入驻中'" />
+            <cs:stateMachineComponent method="settling"/> 
+        </onentry>
+        <transition event="DECORATING_EVENT" target="DECORATING">
+            <log expr="'SETTLING-》DECORATING'" />
+        </transition>
+    </state>
+
+    <state id="DECORATING">
+        <onentry>
+            <log expr="'装修中'" />
+            <cs:stateMachineComponent method="decorating"/> 
+        </onentry>
+        <transition event="SERVICING_EVENT" target="SERVICING">
+            <log expr="'DECORATING-》SERVCIING'" />
+        </transition>
+    </state>
+
+    <state id="SERVICING">
+        <onentry>
+            <log expr="'服务中'" />
+             <cs:stateMachineComponent method="servicing"/> 
+        </onentry>
+        <transition event="CLOSING_EVENT" target="CLOSING">
+            <log expr="'SERVCIING-》CLOSING'" />
+        </transition>
+    </state>
+
+    <state id="CLOSING">
+        <onentry>
+            <log expr="'停业中'" />
+            <cs:stateMachineComponent method="closing"/> 
+        </onentry>
+        <transition event="CLOSED_EVENT" target="CLOSED"/>
+    </state>
+
+    <state id="CLOSED">
+        <onentry>
+            <log expr="'已停业'" />
+            <cs:stateMachineComponent method="closed"/> 
+        </onentry>
+        <transition event="QUITING_EVENT" target="QUITING"/>
+    </state>
+    
+   <state id="QUITING">
+        <onentry>
+            <log expr="'退出中'" />
+            <cs:stateMachineComponent method="quiting"/> 
+        </onentry>
+        <transition event="QUIT_EVENT" target="QUIT"/>
+    </state>
+     <state id="QUIT">
+        <onentry>
+            <log expr="'已退出'" />
+            <cs:stateMachineComponent method="quit"/> 
+        </onentry>
+        <transition target="end"/>
+    </state>
+    <final id="end" />
+
+</scxml>
+
+

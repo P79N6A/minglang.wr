@@ -2,6 +2,11 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.List;
 
+import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.common.model.ResultModel;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +23,6 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.AccountMoneyMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.adapter.AlipayStandardBailAdapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
@@ -59,13 +63,13 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 	PaymentAccountQueryAdapter paymentAccountQueryAdapter;
 
 	@Autowired
-	AlipayStandardBailAdapter alipayStandardBailAdapter;
-
-	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
 	
 	@Autowired
 	AccountMoneyMapper accountMoneyMapper;
+
+	@Autowired
+	BailService bailService;
 
 	@Override
 	public List<Long> getWaitOpenStationList(int fetchNum){
@@ -99,36 +103,36 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		if (rel == null) {
 			return Boolean.TRUE;
 		}
-//		Partner partner = partnerBO.getPartnerById(rel.getPartnerId());
-//		if (partner == null) {
-//			return Boolean.TRUE;
-//		}
-		
 		// 获得冻结的金额
-		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
-		String frozenMoney = accountMoney.getMoney().toString();
-		
-		String accountNo = accountMoney.getAccountNo();
-		
-		OperatorDto operatorDto = new OperatorDto();
-		operatorDto.setOperator(DomainUtils.DEFAULT_OPERATOR);
-		operatorDto.setOperatorType(OperatorTypeEnum.SYSTEM);
-		operatorDto.setOperatorOrgId(0L);
-		if (accountNo== null) {
-			PaymentAccountDto accountDto = paymentAccountQueryAdapter
-					.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
-			if (accountDto == null){
-				logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
-				throw new  AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+instanceId);
-			}
-			accountNo = accountDto.getAccountNo();
-		}
-
+		String frozenMoney = getfreezedMoneyOfCNY(rel.getTaobaoUserId());
+		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		String accountNo = getAccountNo(accountMoney.getAccountNo(), rel);
+		OperatorDto operatorDto = new OperatorDto(DomainUtils.DEFAULT_OPERATOR, OperatorTypeEnum.SYSTEM, 0L);
 		generalTaskSubmitService.submitQuitTask(instanceId, accountNo, frozenMoney, operatorDto);
-
 		return Boolean.TRUE;
 	}
+
+	private String getAccountNo(String accountNo, PartnerStationRel rel) {
+		if (accountNo!= null) {
+			return accountNo;
+		}
+		OperatorDto operatorDto = new OperatorDto(DomainUtils.DEFAULT_OPERATOR, OperatorTypeEnum.SYSTEM, 0L);
+		PaymentAccountDto accountDto = paymentAccountQueryAdapter.queryPaymentAccountByTaobaoUserId(rel.getTaobaoUserId(), operatorDto);
+		if (accountDto == null){
+			logger.error("PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+rel.getId());
+			throw new  AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceScheduleService queryPaymentAccountByTaobaoUserId accountDto is null param:"+rel.getId());
+		}
+		return accountDto.getAccountNo();
+	}
+
+	private String getfreezedMoneyOfCNY(Long taobaoUserId) {
+		ResultModel<String> resultModel = bailService.queryUserFreezeAmount(taobaoUserId, UserTypeEnum.PARTNER);
+		if (resultModel!=null && resultModel.isSuccess()) {
+			return resultModel.getResult();
+		}
+		throw new AugeSystemException("BailService|query freezed monery error");
+	}
+
 
 	@Override
 	public List<AccountMoneyDto> getWaitInitAccountNoList(int fetchNum)

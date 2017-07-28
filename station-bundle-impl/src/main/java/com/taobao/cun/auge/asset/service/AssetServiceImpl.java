@@ -4,10 +4,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +44,6 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @HSFProvider(serviceInterface = AssetService.class)
 public class AssetServiceImpl implements AssetService{
 
-	private static final Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);
-	
 	@Autowired
 	private AssetBO assetBO;
 
@@ -121,12 +118,12 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public Boolean judgeCanBuyAsset(Long stationId) {
-		return assetBO.judgeCanBuyAsset(stationId);
+	public Map<String, String> getStationAssetState(Long stationId) {
+		return assetBO.getStationAssetState(stationId);
 	}
 
 	@Override
-	public Boolean buyAsset(CuntaoAssetDto assetDto) {
+	public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
 		return assetBO.buyAsset(assetDto);
 	}
 
@@ -135,7 +132,6 @@ public class AssetServiceImpl implements AssetService{
 		try {
 			return assetRolloutBO.getRolloutDtoById(id);
 		} catch (Exception e) {
-			logger.error("getRolloutById error，id："+id,e);
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"getRolloutById error");
 		}
 	}

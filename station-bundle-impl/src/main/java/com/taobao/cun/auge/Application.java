@@ -12,7 +12,7 @@ import com.taobao.hsf.app.spring.util.annotation.EnableHSF;
 @EnableHSF
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
-@ImportResource("classpath*:application/application-context.xml")
+@ImportResource({"classpath*:application/application-context.xml","classpath*:applicationContext-statemachine.xml"})
 public class Application{
 
     public static void main(String[] args) {

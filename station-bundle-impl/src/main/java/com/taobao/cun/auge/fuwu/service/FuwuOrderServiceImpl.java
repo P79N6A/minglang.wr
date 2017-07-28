@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.taobao.cun.auge.common.exception.AugeServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,8 @@ public class FuwuOrderServiceImpl implements FuwuOrderService{
 				}
 				return returnResult;
 			}else{
-				throw new AugeSystemException(result.getExceptionDesc());
+				logger.warn("addCartItemsQuick fail, userId:{}, errorCode:{}", userId, result.getErrorCode());
+				throw new RuntimeException(result.getErrorDesc());
 			}
 	}
 	

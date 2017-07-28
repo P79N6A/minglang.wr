@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
@@ -25,94 +26,110 @@ public interface AssetService {
 
     public PageDto<CuntaoAssetDto> queryByPage(AssetQueryCondition cuntaoAssetQueryCondition);
 
-	    public PageDto<String> getBoNoByOrgId(Long orgId,Integer pageNum,Integer pageSize);
-	    
-	    public void checkingAssetBatch(List<Long> assetIds,String operator);
-	    
-	    public CuntaoAssetDto queryAssetByUserAndCategory(Long userid);
-	    
-	    public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
+    public PageDto<String> getBoNoByOrgId(Long orgId, Integer pageNum, Integer pageSize);
 
-	    public AssetRolloutDto getRolloutById(Long id);
+    public void checkingAssetBatch(List<Long> assetIds, String operator);
 
-	    public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum);
-	    /**
-	     * 启动盘点 ，定时任务使用，分页查询已盘点资产
-	     * @param pageNum
-	     * @param pageSize
-	     */
-	    public PageDto<Long> getCheckedAssetId(Integer pageNum,Integer pageSize);
-	    /**
-	     * 启动盘点，定时任务使用
-	     * @param assetId
-	     * @param operator
-	     */
-	    public Boolean checkingAsset(Long assetId,String operator);
-	    /**
-	     * 采购资产
-	     * @param assetPurchaseDto
-	     * @return
-	     */
-	    public Long purchase(AssetPurchaseDto assetPurchaseDto);
-	    
-	    /**
-	     * 新模型  列表查询
-	     * @param query
-	     * @return
-	     */
-	    public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query);
-	    
-	    /**
-	     * 新模型  删除资产
-	     * @param assetId
-	     * @param operator
-	     */
-	    public void delete(Long assetId,String operator);
-	    
-	    /**
-	     * 获得资产详情
-	     * @param assetid
-	     * @return
-	     */
-	    public AssetDetailDto getDetail(Long assetId);
-	    
-	    /**
-	     *  获得出库单详情列表
-	     * @param assetId
-	     * @param pageNum
-	     * @param pageSize
-	     * @return
-	     */
-	    public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId,int pageNum,int pageSize);
-	    
-	    /**
-	     * 获得 分发中的资产  待村小二签收的资产，admin使用
-	     * @param stationId
-	     * @param taobaoUserId
-	     * @return
-	     */
-	    public List<AssetDetailDto> getDistributeAssetListByStation (Long stationId, Long taobaoUserId);
-	    /**
-	     * 获得村小二使用的资产 admin使用
-	     * @param stationId
-	     * @param taobaoUserId
-	     * @return
-	     */
-	    public List<AssetDetailDto> getUseAssetListByStation (Long stationId, Long taobaoUserId);
-	    
-	    /**
-	     * 设置资产已盘点  admin使用
-	     * @param checkDto
-	     * @return
-	     */
-	    public Boolean checkAsset(AssetCheckDto checkDto);
-	    
-	    /**
-	     * 村小二 签收资产    admin使用
-	     * @param signDto
-	     * @return
-	     */
-	    public Boolean signAssetByStation(AssetDto signDto);
+    public CuntaoAssetDto queryAssetByUserAndCategory(Long userid);
+
+    public CuntaoAssetDto queryAssetBySerialNo(String serialNo);
+
+    public AssetRolloutDto getRolloutById(Long id);
+
+    public void processAuditAssetTransfer(Long rolloutId, ProcessApproveResultEnum resultEnum);
+
+    /**
+     * 启动盘点 ，定时任务使用，分页查询已盘点资产
+     *
+     * @param pageNum
+     * @param pageSize
+     */
+    public PageDto<Long> getCheckedAssetId(Integer pageNum, Integer pageSize);
+
+    /**
+     * 启动盘点，定时任务使用
+     *
+     * @param assetId
+     * @param operator
+     */
+    public Boolean checkingAsset(Long assetId, String operator);
+
+    /**
+     * 采购资产
+     *
+     * @param assetPurchaseDto
+     * @return
+     */
+    public Long purchase(AssetPurchaseDto assetPurchaseDto);
+
+    /**
+     * 新模型  列表查询
+     *
+     * @param query
+     * @return
+     */
+    public PageDto<AssetDetailDto> queryByPage(AssetQueryPageCondition query);
+
+    /**
+     * 新模型  删除资产
+     *
+     * @param assetId
+     * @param operator
+     */
+    public void delete(Long assetId, String operator);
+
+    /**
+     * 获得资产详情
+     *
+     * @param assetid
+     * @return
+     */
+    public AssetDetailDto getDetail(Long assetId);
+
+    /**
+     * 获得出库单详情列表
+     *
+     * @param assetId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId, int pageNum, int pageSize);
+
+    /**
+     * 获得 分发中的资产  待村小二签收的资产，admin使用
+     *
+     * @param stationId
+     * @param taobaoUserId
+     * @return
+     */
+    public List<AssetDetailDto> getDistributeAssetListByStation(Long stationId, Long taobaoUserId);
+
+    /**
+     * 获得村小二使用的资产 admin使用
+     *
+     * @param stationId
+     * @param taobaoUserId
+     * @return
+     */
+    public List<AssetDetailDto> getUseAssetListByStation(Long stationId, Long taobaoUserId);
+
+    /**
+     * 设置资产已盘点  admin使用
+     *
+     * @param checkDto
+     * @return
+     */
+    public Boolean checkAsset(AssetCheckDto checkDto);
+
+    /**
+     * 村小二 签收资产    admin使用
+     *
+     * @param signDto
+     * @return
+     */
+    public Boolean signAssetByStation(AssetDto signDto);
+
     /**
      * 资产签收
      *
@@ -143,8 +160,8 @@ public interface AssetService {
      */
     public void deleteAsset(Long assetId, String operator);
 
-    public Boolean judgeCanBuyAsset(Long stationId);
+    public Map<String, String> getStationAssetState(Long stationId);
 
-    public Boolean buyAsset(CuntaoAssetDto assetDto);
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
 
 }

@@ -15,6 +15,22 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -125,6 +141,13 @@ public class AssetBOImpl implements AssetBO {
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
 
+	@Autowired
+	private CuntaoNewBailService newBailService;
+
+	private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
+
+	private final Long inAccountUserId = 2631673100L;
+
 	private static final String ASSET_SIGN = "assetSign";
 	
 	private static final String ASSET_CHECK = "assetCheck";
@@ -158,7 +181,7 @@ public class AssetBOImpl implements AssetBO {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
-	
+
 		Assert.notNull(cuntaoAssetDto,"cuntaoAssetDto can not be null");
 		if(cuntaoAssetDto.getId() == null){
 			if(cuntaoAssetDto.getStationId() != null){
@@ -535,12 +558,14 @@ public class AssetBOImpl implements AssetBO {
             if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
                 dto.setUseArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getUseAreaId()).getName());
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
-                dto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
-            }
-			dto.setUseAreaType(asset.getUseAreaType());
-			dto.setUseAreaId(asset.getUseAreaId());
-			dto.setPutAway(String.valueOf(
-				list.stream().filter(i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER.getCode().equals(i.getStatus())).count()));
+				dto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
+				dto.setUseAreaType(asset.getUseAreaType());
+				dto.setUseAreaId(asset.getUseAreaId());
+				dto.setPutAway(String.valueOf(
+					list.stream().filter(
+						i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER
+							.getCode().equals(i.getStatus())).count()));
+			}
 			dto.setCountList(buildAssetCountDtoList(list));
 			dtoList.add(dto);
 		}
@@ -1355,11 +1380,11 @@ public class AssetBOImpl implements AssetBO {
 	}
 
     @Override
-    public Boolean judgeCanBuyAsset(Long stationId) {
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            return false;
-        }
-        return getBuyAssetRecord(stationId) == null;
+    public Map<String, String> getStationAssetState(Long stationId) {
+        Map<String, String> result = new HashMap<>();
+        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
+        return result;
     }
 
     private CuntaoFlowRecord getBuyAssetRecord(Long stationId) {
@@ -1370,30 +1395,83 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean buyAsset(CuntaoAssetDto assetDto) {
-        Long stationId = assetDto.getNewStationId();
-        if (stationId == null || assetDto.getOperator() == null) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"操作信息不能为空!");
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
+        Map<String, String> result = new HashMap<>();
+        result.put("success", "true");
+        PageDto<CuntaoAssetDto> assetPageDto = checkAssetState(assetDto, result);
+        if ("true".equals(result.get("success"))) {
+            CuntaoTransferBailDto bailDto = buildBailDto(assetDto);
+            ResultModel<Boolean> resultModel = newBailService.transferUserBail(bailDto);
+            if (resultModel.isSuccess() && resultModel.getResult()) {
+                assetPageDto.getItems().parallelStream().map(CuntaoAssetDto::getId).forEach(this::scrapAsset);
+                saveBuyRecord(assetDto, assetPageDto.getItems());
+                result.put("success", "true");
+            } else {
+                result.put("message", resultModel.getMessage());
+                result.put("success", "false");
+                logger.warn("{bizType},{parameter} buy asset fail " + resultModel.getMessage(), "assetWarn",
+                    JSON.toJSONString(bailDto));
+            }
         }
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"该村点不允许提交资产采购意向,请联系资产管理员!");
-        }
-        if (getBuyAssetRecord(stationId) != null) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该村点已经提交过资产采购意向!");
-        }
-        if (!validateStationAssetNum(stationId)) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
-        }
-        saveBuyRecord(assetDto);
-        return true;
+        return result;
     }
 
-    private boolean validateStationAssetNum(Long stationId) {
+    private void scrapAsset(Long id) {
+        CuntaoAsset cuntaoAsset = cuntaoAssetMapper.selectByPrimaryKey(id);
+        cuntaoAsset.setModifier("huigou-baofei");
+        cuntaoAsset.setGmtModified(new Date());
+        cuntaoAsset.setStationId(null);
+        cuntaoAsset.setStationName(null);
+        cuntaoAsset.setNewStationId(null);
+        cuntaoAsset.setPartnerInstanceId(null);
+        cuntaoAsset.setStatus("COUNTY_SIGN");
+        cuntaoAsset.setAssetOwner("樱橴(20502)");
+        cuntaoAssetMapper.updateByPrimaryKey(cuntaoAsset);
+    }
+
+    private PageDto<CuntaoAssetDto> checkAssetState(CuntaoAssetDto assetDto, Map<String, String> result) {
+        Long stationId = assetDto.getNewStationId();
+        if (stationId == null || assetDto.getOperator() == null) {
+            result.put("message", "操作信息不能为空!");
+            result.put("success", "false");
+            return null;
+        }
+        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+            result.put("success", "false");
+            return null;
+        }
+        if (getBuyAssetRecord(stationId) != null) {
+            result.put("message", "该村点已经提交过资产采购意向!");
+            result.put("success", "false");
+            return null;
+        }
         AssetQueryCondition condition = new AssetQueryCondition();
         condition.setStationId(stationId);
         condition.setPageNum(1);
         condition.setPageSize(10);
         PageDto<CuntaoAssetDto> pageDto = queryByPage(condition);
+        if (!validateStationAssetNum(pageDto)) {
+            result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+            result.put("success", "false");
+        }
+        return pageDto;
+    }
+
+    private CuntaoTransferBailDto buildBailDto(CuntaoAssetDto assetDto) {
+        CuntaoTransferBailDto bailDto = new CuntaoTransferBailDto();
+        bailDto.setInAccountUserId(inAccountUserId);
+        bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
+        bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+        bailDto.setAmount(1500*100L);
+        bailDto.setSource("org");
+        bailDto.setReason("buyAsset");
+        bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
+        bailDto.setOutOrderId("buy_asset"+assetDto.getNewStationId());
+        return bailDto;
+    }
+
+    private boolean validateStationAssetNum(PageDto<CuntaoAssetDto> pageDto ) {
         if (pageDto.getTotal() != 3L) {
             return false;
         }
@@ -1402,14 +1480,16 @@ public class AssetBOImpl implements AssetBO {
         return categoryList.contains("主机") && categoryList.contains("电视机") && categoryList.contains("显示器");
     }
 
-    private void saveBuyRecord(CuntaoAssetDto assetDto) {
+    private void saveBuyRecord(CuntaoAssetDto assetDto, List<CuntaoAssetDto> assetDtoList) {
         CuntaoFlowRecord record = new CuntaoFlowRecord();
         record.setTargetId(assetDto.getNewStationId());
         record.setTargetType(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getCode());
         record.setNodeTitle(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getDesc());
         record.setOperateTime(new Date());
         record.setOperatorWorkid(assetDto.getOperator());
-        record.setOperatorName(emp360Adapter.getName(assetDto.getOperator()));
+        record.setOperatorName(assetDto.getOperator());
+        record.setRemarks(assetDtoList.stream().map(CuntaoAssetDto::getId).map(String::valueOf).collect(Collectors.joining(",")));
+        record.setTraceId(String.valueOf(assetDto.getNewStationId()));
         cuntaoFlowRecordBO.addRecord(record);
     }
 }

@@ -18,12 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.ali.com.google.common.collect.Maps;
+import com.alibaba.buc.api.EnhancedUserQueryService;
+import com.alibaba.buc.api.exception.BucException;
+import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
@@ -49,6 +53,7 @@ import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
+import com.taobao.cun.auge.org.dto.CuntaoUserRole;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
@@ -144,8 +149,6 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
@@ -158,6 +161,7 @@ import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.testuser.TestUserService;
+import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -235,6 +239,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     CountyStationBO countyStationBO;
     @Autowired
     CuntaoUserService cuntaoUserService;
+    @Autowired
+    CuntaoUserRoleService cuntaoUserRoleService;
 
     @Autowired
     PartnerInstanceChecker partnerInstanceChecker;
@@ -253,6 +259,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Autowired
     private MailConfiguredProperties mailConfiguredProperties;
+    
+    @Autowired
+    private EnhancedUserQueryService enhancedUserQueryService;
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -367,7 +376,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         operator.copyOperatorDto(partnerInstanceDto);
         PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(), operator);
         if (!partnerDto.getAlipayAccount().equals(paDto.getAlipayId())) {
-            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对");
+            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对:"+partnerDto.getAlipayAccount()+";"+paDto.getAlipayId());
         }
         if (!partnerDto.getName().equals(paDto.getFullName()) || !partnerDto.getIdenNum().equals(paDto.getIdCardNumber())) {
             throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
@@ -1949,29 +1958,54 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             }
             cuntaoFlowRecordQueryService.insertRecord(record);
             if (isSendMail) {
-                sendMail(updateStation);
+                updateStation.setApplyOrg(oldStation.getApplyOrg());
+                updateStation.setStationNum(oldStation.getStationNum());
+                sendMailAndOpenPermission(updateStation,instance.getPartnerDto());
             }
         }
     }
 
-    private void sendMail(StationDto station) {
+    private void sendMailAndOpenPermission(StationDto station,PartnerDto partner) {
             Map<String, Object> contentMap = Maps.newHashMap();
             contentMap.put("station_id", station.getId() + "");
             contentMap.put("station_name", station.getName());
+            contentMap.put("station_num", station.getStationNum());
+            contentMap.put("partner_name", partner.getName());
             if (station.getFeature() != null) {
                 contentMap.put("type", station.getFeature().get("st_fk_type"));
                 contentMap.put("description", station.getFeature().get("st_fk_desc"));
             }
-
-            BatchMailDto mailDto = new BatchMailDto();
-            mailDto.setMailAddresses(mailConfiguredProperties.getAddressUpdateNotifyMailList());
-            mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
-            mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
-            mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
-            mailDto.setOperator(station.getOperator());
-            mailDto.setContentMap(contentMap);
-
-            generalTaskSubmitService.submitMailTask(mailDto);
+            
+            List<CuntaoUser> users = cuntaoUserService.getCuntaoUsers(station.getApplyOrg(), UserRole.COUNTY_LEADER);
+            List<String> mailList = new ArrayList<String>();
+            for(CuntaoUser user: users){
+            EnhancedUser enhancedUser = null;
+                try {
+                    enhancedUser = enhancedUserQueryService.getUser(user.getLoginId());
+                    mailList.add(enhancedUser.getEmailAddr());
+                    CuntaoUserRole role = new CuntaoUserRole();
+                    role.setCreator(user.getLoginId());
+                    role.setModifier(user.getLoginId());
+                    role.setOrgId(station.getApplyOrg());
+                    role.setEndTime(DateUtil.addDays(new Date(), 7));
+                    role.setRoleName("LNG_LAT_MANAGER");
+                    role.setUserId(user.getLoginId());
+                    role.setUserName(enhancedUser.getLastName());
+                    cuntaoUserRoleService.addCunUserRole(role);
+                } catch (BucException e) {
+                    logger.error("Query user failed, user id : " + user.getUserId());
+                }
+            }
+            if(mailList.size() > 0){
+                BatchMailDto mailDto = new BatchMailDto();
+                mailDto.setMailAddresses(mailList);
+                mailDto.setTemplateId(mailConfiguredProperties.getAddressUpdateNotifyMailTemplateId());
+                mailDto.setMessageTypeId(mailConfiguredProperties.getAddressUpdateNotifyMailMessageTypeId());
+                mailDto.setSourceId(mailConfiguredProperties.getAddressUpdateNotifyMailSourceId());
+                mailDto.setOperator(station.getOperator());
+                mailDto.setContentMap(contentMap);
+                generalTaskSubmitService.submitMailTask(mailDto);
+            }
     }
 
     /**
@@ -2010,13 +2044,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 partnerLifecycleBO.updateConfirmPosition(instanceId, PartnerLifecyclePositionConfirmEnum.Y);
             }
             // 同步菜鸟地址更新
-            if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
-                SyncModifyLngLatDto lngDto = new SyncModifyLngLatDto();
-                lngDto.setPartnerInstanceId(instanceId);
-                lngDto.setLng(updateStation.getAddress().getLng());
-                lngDto.setLat(updateStation.getAddress().getLat());
-                caiNiaoService.modifyLngLatToCainiao(lngDto);
-            }
+            SyncModifyLngLatDto lngDto = new SyncModifyLngLatDto();
+            lngDto.setPartnerInstanceId(instanceId);
+            lngDto.setLng(updateStation.getAddress().getLng());
+            lngDto.setLat(updateStation.getAddress().getLat());
+            caiNiaoService.modifyLngLatToCainiao(lngDto);
         }
     }
 

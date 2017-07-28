@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,6 @@ import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
-import com.taobao.pandora.util.StringUtils;
 
 @Component("tpaStrategy")
 public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrategy {
@@ -398,6 +398,11 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Override
 	public void startClosing(Long instanceId, String stationName, OperatorDto operatorDto) {
+		autoClosing( instanceId, operatorDto);
+	}
+	
+	@Override
+	public void partnerClosing(Long instanceId, OperatorDto operatorDto) {
 		autoClosing( instanceId, operatorDto);
 	}
 	

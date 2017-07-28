@@ -26,6 +26,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateLngLatInfoParam;
+import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationInfoParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.warehouse.AddCountyDomainParam;
@@ -48,7 +49,6 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.common.exception.ServiceException;
 
 @Component("caiNiaoAdapter")
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
@@ -583,12 +583,11 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	}
 
 	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto)  {
-			UpdateLngLatInfoParam param = new UpdateLngLatInfoParam();
+			UpdateStationInfoParam param = new UpdateStationInfoParam();
 			param.setId(dto.getCainiaoStationId());
 			param.setLng(dto.getLng());
 			param.setLat(dto.getLat());
-			param.setFromCuntao(FromCuntaoGpsStatus.CUNTAO);
-			Result<Boolean> res = stationWriteService.updateLngLatInfo(param, Modifier.newSystem());
+			Result<Boolean> res = stationWriteService.applyUpdateLngLat(param, Modifier.newSystem());
 			if (!res.isSuccess()) {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
 			} 

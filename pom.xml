@@ -30,7 +30,6 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 		<ague.station.client.version>2.4.1-SNAPSHOT</ague.station.client.version>
-
 	</properties>
 
 	<dependencyManagement>
@@ -186,7 +185,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-org</artifactId>
-				<version>1.0.3</version>
+				<version>1.0.8</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>
@@ -228,7 +227,7 @@
 			<dependency>
 				<groupId>com.alibaba.cainiao</groupId>
 				<artifactId>cuntaonetwork-client</artifactId>
-				<version>1.1.46</version>
+				<version>1.1.54</version>
 			</dependency>
 
 			<dependency>
@@ -258,7 +257,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaoar.shared.scene</artifactId>
-				<version>0.1.5</version>
+				<version>0.3.7</version>
 			</dependency>
 			<dependency>
 		        <groupId>com.alibaba.boot</groupId>
@@ -435,7 +434,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.0.25.jdk6</version>
+				<version>1.1.6</version>
 			</dependency>
 			<dependency>
 			  	<groupId>com.alibaba.external</groupId>
@@ -538,6 +537,49 @@
 				<groupId>cglib</groupId>
 				<artifactId>cglib-nodep</artifactId>
 				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.trade.platform</groupId>
+				<artifactId>tp-client-base</artifactId>
+				<version>1.9.91-CUNTAO</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.taobao.forest</groupId>
+						<artifactId>forest-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.taobao.itemcenter</groupId>
+						<artifactId>itemcenter-client</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>jcl-over-slf4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.zookeeper</groupId>
+						<artifactId>zookeeper</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+			  <groupId>io.advantageous.reakt</groupId>
+			  <artifactId>reakt</artifactId>
+			  <version>3.1.0</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.china.shared</groupId>
+			  <artifactId>xfsm.spring</artifactId>
+			  <version>1.0.10</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaoadmin-client</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.baoxian</groupId>
+				<artifactId>baoxian-scene-facade</artifactId>
+				<version>1.0.0.20160421</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
