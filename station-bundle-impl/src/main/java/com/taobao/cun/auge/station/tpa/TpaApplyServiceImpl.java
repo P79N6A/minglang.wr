@@ -236,8 +236,8 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		if (null != result) {
 			result.setAttachmentTypeId(AttachmentTypeIdEnum.IDCARD_IMG);
 			result.setBizType(AttachmentBizTypeEnum.PARTNER);
+			attachmentsList.add(result);
 		}
-		attachmentsList.add(result);
 		pDto.setAttachments(attachmentsList);
 		pDto.setBusinessType(PartnerBusinessTypeEnum.PARTTIME);
 		return pDto;

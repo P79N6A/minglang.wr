@@ -1,6 +1,13 @@
 package com.taobao.cun.auge.station.response;
 
-public class CheckTpaApplyResponse {
+import java.io.Serializable;
+
+public class CheckTpaApplyResponse implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7827938955304396629L;
 
 	private boolean success;
 	
