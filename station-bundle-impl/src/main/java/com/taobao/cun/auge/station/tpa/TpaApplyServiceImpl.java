@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -228,29 +229,23 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		pDto.setMobile(request.getMobile());
 
 		List<AttachmentDto> attachmentsList = new ArrayList<AttachmentDto>();
-		enhanceAttachments(request);
-		if (request.getAttachements() != null) {
-			attachmentsList.addAll(request.getAttachements());
-		}
+		
 		PartnerApplyDto partnerApplyDto = partnerApplyService.getPartnerApplyByTaobaoUserId(request.getTaobaoUserId());
 		AttachmentDto result = criusAttachmentService.getAttachment(partnerApplyDto.getId(),
 				AttachmentBizTypeEnum.PARTNER_IDCARD_JOINTIMG);
 		if (null != result) {
-			AttachmentDto attach = new AttachmentDto();
-			attach.setAttachmentTypeId(AttachmentTypeIdEnum.IDCARD_IMG);
-			attach.setFsId(result.getFsId());
-			attach.setFileType(result.getFileType());
-			attach.setTitle(result.getTitle());
-			attachmentsList.add(attach);
+			result.setAttachmentTypeId(AttachmentTypeIdEnum.IDCARD_IMG);
+			result.setBizType(AttachmentBizTypeEnum.PARTNER);
 		}
+		attachmentsList.add(result);
 		pDto.setAttachments(attachmentsList);
 		pDto.setBusinessType(PartnerBusinessTypeEnum.PARTTIME);
 		return pDto;
 	}
 
-	private void enhanceAttachments(TpaApplyInfoDto request) {
-		if (request.getAttachements() != null && !request.getAttachements().isEmpty()) {
-			for (AttachmentDto attachment : request.getAttachements()) {
+	private void initStationAttachments(List<AttachmentDto> attachements) {
+		if (attachements != null && !attachements.isEmpty()) {
+			for (AttachmentDto attachment : attachements) {
 				attachment.setAttachmentTypeId(AttachmentTypeIdEnum.CURRENT_STATUS_IMG);
 				attachment.setBizType(AttachmentBizTypeEnum.CRIUS_STATION);
 			}
@@ -344,6 +339,8 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 				? StationCategoryEnum.valueofDesc(request.getCategory()).getCode() : "");
 		featureMap.put("managementType", request.getManagementType());
 		sDto.setFeature(featureMap);
+		initStationAttachments(request.getAttachements());
+		sDto.setAttachments(request.getAttachements());
 		return sDto;
 	}
 
@@ -416,7 +413,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(request.getLogisticsState()));
 		stationDto.setAreaType(StationAreaTypeEnum.FREE);
 
-		enhanceAttachments(request);
+		initStationAttachments(request.getAttachements());
 		stationDto.setAttachments(request.getAttachements());
 
 		Map<String, String> featureMap = new HashMap<String, String>();
@@ -511,8 +508,11 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 	private static void buildAttachements(TpaApplyInfoDto tpaApplyInfoDto, PartnerInstanceDto instanceDto) {
 		StationDto stationDto = instanceDto.getStationDto();
 		List<AttachmentDto> attachements = new ArrayList<AttachmentDto>();
-		if (null != stationDto) {
-			attachements.addAll(stationDto.getAttachments());
+		if(stationDto.getAttachments() != null){
+		    List<AttachmentDto> stationAttachments= stationDto.getAttachments().stream()
+			.filter(attachment -> AttachmentTypeIdEnum.CURRENT_STATUS_IMG.getCode().equals(attachment.getAttachmentTypeId()))
+			.collect(Collectors.toList());
+		    attachements.addAll(stationAttachments);
 		}
 		tpaApplyInfoDto.setAttachements(attachements);
 	}
