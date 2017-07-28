@@ -393,7 +393,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			PartnerInstanceUpdateServicingDto instanceDto = new PartnerInstanceUpdateServicingDto();
 			instanceDto.setStationDto(convertToStationDto(request));
 			instanceDto.setPartnerDto(convertToPartnerDto(request));
-			instanceDto.setOperator(request.getTaobaoNick());
+			instanceDto.setOperator(request.getPartnerTaobaoUserId()+"");
 			instanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
 			partnerInstanceService.updateByPartner(instanceDto);
 			response.setSuccess(true);
