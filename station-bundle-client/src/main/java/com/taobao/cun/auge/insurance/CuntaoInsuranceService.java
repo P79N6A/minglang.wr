@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.insurance;
 
-public interface CutaoInsuranceService {
+public interface CuntaoInsuranceService {
 
 
 	public Boolean hasInsurance(Long taobaoUserId);

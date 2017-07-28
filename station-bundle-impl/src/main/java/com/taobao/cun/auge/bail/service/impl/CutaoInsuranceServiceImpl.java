@@ -15,12 +15,12 @@ import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.insurance.CutaoInsuranceService;
+import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
-@Service("icuntaoAlipayRelService")
-@HSFProvider(serviceInterface = CutaoInsuranceService.class)
-public class CutaoInsuranceServiceImpl implements CutaoInsuranceService{
+@Service("cuntaoInsuranceService")
+@HSFProvider(serviceInterface = CuntaoInsuranceService.class)
+public class CutaoInsuranceServiceImpl implements CuntaoInsuranceService{
     
     public static final String SP_NO = "6696";//合伙人保险编号
     
