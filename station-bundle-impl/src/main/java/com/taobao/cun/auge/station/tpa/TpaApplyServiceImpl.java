@@ -214,7 +214,11 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			PartnerInstanceDto partnerInstanceDto = buildPartnerInstanceDto(stationDto, partnerDto, tpaApplyInfo);
 			partnerInstanceService.applySettle(partnerInstanceDto);
 			response.setSuccess(true);
-		} catch (Exception e) {
+		} catch (AugeBusinessException e) {
+			response.setSuccess(false);
+			response.setErrorMessage(e.getMessage());
+			logger.error("applyTpa error!", e);
+		}catch (Exception e) {
 			response.setSuccess(false);
 			response.setErrorMessage("申请淘帮手失败");
 			logger.error("applyTpa error!", e);
