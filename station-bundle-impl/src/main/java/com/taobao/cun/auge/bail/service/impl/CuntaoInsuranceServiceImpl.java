@@ -20,7 +20,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoInsuranceService")
 @HSFProvider(serviceInterface = CuntaoInsuranceService.class)
-public class CutaoInsuranceServiceImpl implements CuntaoInsuranceService{
+public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     
     public static final String SP_NO = "6696";//合伙人保险编号
     
@@ -33,7 +33,7 @@ public class CutaoInsuranceServiceImpl implements CuntaoInsuranceService{
     private DiamondConfiguredProperties diamondConfiguredProperties;
 
     private static final Logger logger = LoggerFactory
-            .getLogger(CutaoInsuranceServiceImpl.class);
+            .getLogger(CuntaoInsuranceServiceImpl.class);
 
      public Boolean hasInsurance(Long taobaoUserId){
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
