@@ -510,7 +510,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		List<AttachmentDto> attachements = new ArrayList<AttachmentDto>();
 		if(stationDto.getAttachments() != null){
 		    List<AttachmentDto> stationAttachments= stationDto.getAttachments().stream()
-			.filter(attachment -> AttachmentTypeIdEnum.CURRENT_STATUS_IMG.getCode().equals(attachment.getAttachmentTypeId()))
+			.filter(attachment -> AttachmentTypeIdEnum.CURRENT_STATUS_IMG.getCode().equals(attachment.getAttachmentTypeId().getCode()))
 			.collect(Collectors.toList());
 		    attachements.addAll(stationAttachments);
 		}
