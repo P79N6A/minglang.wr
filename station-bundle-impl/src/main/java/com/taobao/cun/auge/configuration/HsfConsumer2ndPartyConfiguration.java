@@ -33,6 +33,8 @@ import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
+import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
+import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
@@ -340,4 +342,15 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return context.hsfConsumerBuilder(AlipayRiskScanService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
+	
+	 @Bean
+	    public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
+	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+	                .build();
+	    }
+       @Bean
+       public PolicyQueryService policyQueryService(HsfConsumerContext context, @Value("${alipay.insure.version}") String version) {
+           return context.hsfConsumerBuilder(PolicyQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+       }
 }

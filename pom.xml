@@ -240,7 +240,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaoar.shared.scene</artifactId>
-				<version>0.1.5</version>
+				<version>0.3.7</version>
 			</dependency>
 			<dependency>
 		        <groupId>com.alibaba.boot</groupId>
@@ -562,6 +562,16 @@
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>user-client</artifactId>
 				<version>1.0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>cuntaoadmin-client</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.baoxian</groupId>
+				<artifactId>baoxian-scene-facade</artifactId>
+				<version>1.0.0.20160421</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -16,6 +16,7 @@ import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.questionnaire.service.QuestionnireManageService;
+import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -156,5 +157,12 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 		return getConsumerBean(CuntaoNewBailService.class, HSFGroup.HSF,
 				version, 5000);
 	}
+	
+	@Bean(initMethod = "init")
+    public HSFSpringConsumerBean cuntaoUserRoleService(
+            @Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
+        return getConsumerBean(CuntaoUserRoleService.class, HSFGroup.HSF,
+                version, 5000);
+    }
 
 }
