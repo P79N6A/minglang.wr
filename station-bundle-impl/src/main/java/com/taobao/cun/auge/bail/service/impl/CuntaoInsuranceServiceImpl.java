@@ -8,20 +8,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alipay.baoxian.scene.facade.common.AliSceneResult;
 import com.alipay.baoxian.scene.facade.common.policy.dto.InsPolicyDTO;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
-import com.taobao.cun.admin.service.IcuntaoAlipayRelService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.common.exception.ServiceException;
-import com.taobao.cun.common.resultmodel.ResultModel;
+import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
-@Service("icuntaoAlipayRelService")
-@HSFProvider(serviceInterface = IcuntaoAlipayRelService.class)
-public class IcuntaoAlipayRelServiceImpl implements IcuntaoAlipayRelService{
+@Service("cuntaoInsuranceService")
+@HSFProvider(serviceInterface = CuntaoInsuranceService.class)
+public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     
     public static final String SP_NO = "6696";//合伙人保险编号
     
@@ -34,14 +33,11 @@ public class IcuntaoAlipayRelServiceImpl implements IcuntaoAlipayRelService{
     private DiamondConfiguredProperties diamondConfiguredProperties;
 
     private static final Logger logger = LoggerFactory
-            .getLogger(IcuntaoAlipayRelServiceImpl.class);
+            .getLogger(CuntaoInsuranceServiceImpl.class);
 
-    public ResultModel<Boolean> hasAlipayInsure(Long taobaoUserId) {
-        ResultModel<Boolean> rm = new ResultModel<Boolean>();
-        rm.setSuccess(true);
+     public Boolean hasInsurance(Long taobaoUserId){
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
-            rm.setResult(true);
-            return rm;
+           return true;
         }
         try {
             Integer identy = partnerTagService.getPartnerType(taobaoUserId);
@@ -56,32 +52,24 @@ public class IcuntaoAlipayRelServiceImpl implements IcuntaoAlipayRelService{
                     for (InsPolicyDTO policy : insure.getModel()) {
                         if (nowTime.after(policy.getEffectStartTime())
                                 && nowTime.before(policy.getEffectEndTime())) {// 投保中的保险
-                            rm.setResult(true);
-                            return rm;
+                           return true;
                         }
                     }
                 }
             } else {
-                rm.setResult(true);
-                return rm;
+            	return true;
             }
         } catch (Exception e) {
             logger.error("isInsure get error :" + e.getCause());
-            rm.setSuccess(false);
-            rm.setException(new ServiceException(e.getCause()));
-            return rm;
+            return false;
         }
-        rm.setResult(false);
-        return rm;
+        return false;
     }
     
     /*村小二保险续签*/
-    public ResultModel<Integer> hasReAlipayInsure(Long taobaoUserId) {
-        ResultModel<Integer> rm = new ResultModel<Integer>();
-        rm.setSuccess(true);
+    public  Integer hasReInsurance(Long taobaoUserId) {
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
-            rm.setResult(0);
-            return rm;
+            return 0;
         }
         try {
             Integer identy = partnerTagService.getPartnerType(taobaoUserId);
@@ -99,38 +87,31 @@ public class IcuntaoAlipayRelServiceImpl implements IcuntaoAlipayRelService{
                         if (nowTime.after(policy.getEffectStartTime())
                                 && nowTime.before(policy.getEffectEndTime())
                                 && !DateUtil.addDays(nowTime, 30).before(policy.getEffectEndTime())
-                                ){// 续保30天内提醒
-                            rm.setResult(durDate);
+                                ){
                             //已经续保了不用提醒
                             for(InsPolicyDTO py : insure.getModel()){
                                 if(py.getEffectStartTime().after(policy.getEffectEndTime())){
-                                    rm.setResult(0);
+                                   return 0;
                                 }
                             }
-                            return rm;
+                         // 续保30天内提醒
+                            return durDate;
                         }
                     }
                 }
-            } else {
-                rm.setResult(0);
-                return rm;
             }
         } catch (Exception e) {
             logger.error("isInsure get error :" + e.getCause());
-            rm.setSuccess(false);
-            rm.setException(new ServiceException(e.getCause()));
-            return rm;
+            return 0;
         }
-        rm.setResult(0);
-        return rm;
+		return 0;
     }
 
-    public ResultModel<Boolean> hasActualVerify(Long taobaoUserId) {
-        return null;
-    }
     
     //企业支付宝白名单
     private boolean isInFactoryAlipayList(Long taobaoId) {
         return diamondConfiguredProperties.getInsureWhiteListConfig().contains(taobaoId);
     }
+
+
 }
