@@ -11,6 +11,15 @@ import com.taobao.cun.auge.station.dto.StationDto;
  * 服务站查询接口
  */
 public interface StationQueryService {
+	
+	/**
+	 * 根据stationId,查询村点信息
+	 * 
+	 * @param stationId
+	 * @return
+	 */
+	public StationDto getStation(Long stationId);
+	
 	/**
 	 * 根据主键查询
 	 * 
