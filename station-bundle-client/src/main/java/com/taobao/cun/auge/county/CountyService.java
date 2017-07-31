@@ -18,8 +18,8 @@ public interface CountyService {
 	/**
 	 * 新增或更新县运营中心
 	 * 
-	 * @param context
-	 * @param countyStationDto
+	 * @param operator
+	 * @param countyDto
 	 * @return
 	 */
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto);
@@ -27,7 +27,7 @@ public interface CountyService {
 	/**
 	 * 查询大区列表下的省编码与名称列表
 	 * 
-	 * @param areaIds
+	 * @param areaOrgIds
 	 * @return
 	 */
 	public List<CountyDto> getProvinceList(List<Long> areaOrgIds);
@@ -35,7 +35,7 @@ public interface CountyService {
 	/**
 	 * 查询省下的县服务站列表
 	 * 
-	 * @param areaIds
+	 * @param provinceCode
 	 * @return
 	 */
 	public List<CountyDto> getCountyStationByProvince(String provinceCode);
@@ -43,7 +43,6 @@ public interface CountyService {
 	/**
 	 * 查询大区列表下的县运营中心列表
 	 * 
-	 * @param context
 	 * @param areaIds
 	 * @return
 	 */
@@ -52,7 +51,7 @@ public interface CountyService {
 	/**
 	 * 查询县运营中心的信息
 	 * 
-	 * @param context
+	 * @param isMobile
 	 * @param id
 	 *            县运营中心id
 	 * @return
@@ -62,7 +61,6 @@ public interface CountyService {
 	/**
 	 * 查询县运营中心的信息
 	 *
-	 * @param context
 	 * @param id
 	 *            组织id
 	 * @return
@@ -75,11 +73,24 @@ public interface CountyService {
 	 * @return
 	 */
 	public List<Long> getCountiesByOrgId(List<Long> orgIds);
+
+	/**
+	 * 根据orgId获取县列表
+	 * @param orgIds
+	 * @return
+	 */
+	public List<CountyDto> getCountyListByOrgIds(List<Long> orgIds);
+
+    /**
+     * 根据市行政code获取县列表
+     * @param cityCode
+     * @return
+     */
+    public List<CountyDto> getCountyStationByCity(String cityCode);
 	
 	/**
 	 * 查询大区下的县运营中心列表
 	 * 
-	 * @param context
 	 * @param queryCondition
 	 * @return
 	 */
@@ -92,7 +103,6 @@ public interface CountyService {
 	 * 			countyOfficial		- 县负责人
 	 * 			teamLeader			- 特战队长
 	 * 			fullIdPath			- 组织的全路径
-	 * @param in
 	 * @return
 	 */
 	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition);
