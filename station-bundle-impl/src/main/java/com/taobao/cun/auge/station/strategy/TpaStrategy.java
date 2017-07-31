@@ -73,8 +73,6 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
@@ -153,6 +151,7 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
 			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
 			partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
+			partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
 			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);

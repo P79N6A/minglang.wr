@@ -51,7 +51,7 @@ public class DiamondConfiguredProperties {
     private String inSureSwitch;
     
     @Value("#{'${com.taobao.cun.admin.alipay.whitelist}'.split(',')}")
-    private List<Long> InsureWhiteListConfig;
+    private List<Long> insureWhiteListConfig;
 
     public String getApply() {
         return apply;
@@ -98,6 +98,6 @@ public class DiamondConfiguredProperties {
     }
 
     public List<Long> getInsureWhiteListConfig() {
-        return InsureWhiteListConfig;
+        return insureWhiteListConfig;
     }
 }
