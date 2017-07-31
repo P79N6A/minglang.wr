@@ -417,8 +417,10 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		stationDto.setLogisticsState(StationlLogisticsStateEnum.valueof(request.getLogisticsState()));
 		stationDto.setAreaType(StationAreaTypeEnum.FREE);
 
-		initStationAttachments(request.getAttachements());
-		stationDto.setAttachments(request.getAttachements());
+		if(request.getAttachements()!=null&&!request.getAttachements().isEmpty()){
+			initStationAttachments(request.getAttachements());
+			stationDto.setAttachments(request.getAttachements());
+		}
 
 		Map<String, String> featureMap = new HashMap<String, String>();
 		featureMap.put("villageFlag", request.getVillageFlag());

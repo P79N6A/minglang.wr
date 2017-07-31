@@ -32,9 +32,9 @@ public class StateMachineServiceImpl implements StateMachineService {
 		 if(phaseEvent.getCurrentState()!=null){
 			ctx.setCurrentState(phaseEvent.getCurrentState());
 		  }
-		  ctx.set("event", phaseEvent.getEvent());
+		  ctx.set("event", phaseEvent.getEvent().getEvent());
 		  ctx.set("payload", phaseEvent.getPayload());
-	      ctx.events(new XFSMEvent(phaseEvent.getEvent(),phaseEvent.getPayload()));
+	      ctx.events(new XFSMEvent(phaseEvent.getEvent().getEvent(),phaseEvent.getPayload()));
 		return ctx;
 	}
 
