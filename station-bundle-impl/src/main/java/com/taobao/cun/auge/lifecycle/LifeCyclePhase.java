@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.lifecycle;
 
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
+
 /**
  * 生命周期阶段模板类，定义了每个生命周期内
  *  新增或修改村点

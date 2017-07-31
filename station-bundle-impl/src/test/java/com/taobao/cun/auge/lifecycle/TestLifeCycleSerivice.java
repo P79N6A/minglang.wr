@@ -14,7 +14,7 @@ public class TestLifeCycleSerivice {
 		LifeCycleManager lifeCycleManager = new LifeCycleManagerImpl();
 		registerPhase(lifeCycleManager);
 		LifeCyclePhaseContext context = createContext();
-		lifeCycleManager.settling(context);
+		lifeCycleManager.execute(context);
 	}
 
 	private void registerPhase(LifeCycleManager lifeCycleManager) {

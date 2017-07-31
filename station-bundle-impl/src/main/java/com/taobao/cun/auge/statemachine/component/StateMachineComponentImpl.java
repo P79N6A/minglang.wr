@@ -20,46 +20,46 @@ public class StateMachineComponentImpl {
 		context.setPartnerInstance(partnerInstanceDto);
 		context.setEvent(ctx.get("event"));;
 		context.setUserType(partnerInstanceDto.getType().getCode());
+		context.setExtensionInfos(ctx.context());
 		return context;
 	}
 	
 	public void settling(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.settling(context);
+		lifeCycleManager.execute(context);
 	}
 
 	
 	
 	public void decorating(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.decorating(context);
+		lifeCycleManager.execute(context);
 	}
 	
 	
 	public void servicing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.servicing(context);
+		lifeCycleManager.execute(context);
 	}
 	
 	
 	public void closing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.closing(context);
+		lifeCycleManager.execute(context);
 	}
-	
 	
 	public void closed(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.closed(context);
+		lifeCycleManager.execute(context);
 	}
 	
 	public void quiting(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.quiting(context);
+		lifeCycleManager.execute(context);
 	}
 	
 	public void quit(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
 		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.quit(context);
+		lifeCycleManager.execute(context);
 	}
 }
