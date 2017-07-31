@@ -36,6 +36,13 @@ public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
+	
+	@Override
+	public StationDto getStation(Long stationId){
+		ValidateUtils.notNull(stationId);
+		Station station = stationBO.getStationById(stationId);
+		return StationConverter.toStationDto(station);
+	}
 
 	@Override
 	public StationDto queryStationInfo(StationCondition stationCondition)

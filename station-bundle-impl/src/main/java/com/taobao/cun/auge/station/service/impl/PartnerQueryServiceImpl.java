@@ -76,4 +76,21 @@ public class PartnerQueryServiceImpl implements PartnerQueryService {
 		partnerDto.setAttachments(criusAttachmentService.getAttachmentList(partner.getId(), AttachmentBizTypeEnum.PARTNER));
 		return partnerDto;
 	}
+
+	@Override
+	public PartnerDto getPartnerByTaobaoUserId(Long taobaoUserId) {
+		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+		return PartnerConverter.toPartnerDto(partner);
+	}
+
+	@Override
+	public PartnerDto getPartnerByStationId(Long stationId) {
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+		Assert.notNull(rel, "partner instance not exists");
+		Long partnerId = rel.getPartnerId();
+		Assert.notNull(partnerId, "partner instance type is null");
+
+		Partner partner = partnerBO.getPartnerById(partnerId);
+		return PartnerConverter.toPartnerDto(partner);
+	}
 }
