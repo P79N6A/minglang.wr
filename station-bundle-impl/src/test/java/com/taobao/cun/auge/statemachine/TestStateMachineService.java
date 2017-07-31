@@ -25,7 +25,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPSettlingWithStateMachine");
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpStateMachine","SETTLING_EVENT",partnerInstanceDto);
+		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpStateMachine",StateMachineEvent.SETTLING_EVENT,partnerInstanceDto);
 		stateMachineService.executePhase(phaseEvent);
 		System.err.println("end testTPSettlingWithStateMachine");
 	}
@@ -36,7 +36,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPDecoratingWithStateMachine");
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TP);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpStateMachine","DECORATING_EVENT",partnerInstanceDto);
+		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpStateMachine",StateMachineEvent.DECORATING_EVENT,partnerInstanceDto);
 		phaseEvent.setCurrentState("SETTLING");
 		stateMachineService.executePhase(phaseEvent);
 		System.err.println("end testTPDecoratingWithStateMachine");
@@ -48,7 +48,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPASettlingWithStateMachine");
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TPA);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpaStateMachine","SETTLING_EVENT",partnerInstanceDto);
+		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpaStateMachine",StateMachineEvent.SETTLING_EVENT,partnerInstanceDto);
 		stateMachineService.executePhase(phaseEvent);
 		System.err.println("end testTPASettlingWithStateMachine");
 	}
@@ -58,7 +58,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPAServicingWithStateMachine");
 		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
 		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TPA);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpaStateMachine","SERVICING_EVENT",partnerInstanceDto);
+		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TpaStateMachine",StateMachineEvent.SERVICING_EVENT,partnerInstanceDto);
 		phaseEvent.setCurrentState("SETTLING");
 		stateMachineService.executePhase(phaseEvent);
 		System.err.println("end testTPAServicingWithStateMachine");

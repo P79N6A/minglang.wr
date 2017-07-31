@@ -43,7 +43,9 @@ public class LifeCyclePhaseContext {
 	}
 
 	public void setExtensionInfos(Map<String, Object> extensionInfos) {
-		this.extensionInfos = extensionInfos;
+		if(extensionInfos != null){
+			this.extensionInfos.putAll(extensionInfos);
+		}
 	}
 
 	public String getComponentyIdentity() {
