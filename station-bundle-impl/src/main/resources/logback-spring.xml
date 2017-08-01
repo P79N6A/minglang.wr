@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="com/aliexpress/boot/logging/logback/base.xml"/>
+    <logger name="com.taobao.cun" level="INFO" additivity="true"/>
     <springProfile name="production">
-        <logger name="com.taobao.cun" level="INFO" additivity="true"/>
         <root level="WARN">
             <appender-ref ref="ALIMONITOR"/>
             <appender-ref ref="APPLICATION"/>
         </root>
     </springProfile>
     <springProfile name="!production">
-        <logger name="com.taobao.cun" level="INFO" additivity="true"/>
         <root level="WARN">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="APPLICATION"/>
