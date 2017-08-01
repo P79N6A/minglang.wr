@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.data.PartnerInstanceLevelDataService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,6 @@ import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
-import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
@@ -63,7 +63,7 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean partnerInstanceLevelDataService(
-			@Value("${hsf.consumer.version.crius.partnerInstanceLevelDataService}") String version) {
+			@Value("${hsf.consumer.version.data.partnerInstanceLevelDataService}") String version) {
 		return getConsumerBean(PartnerInstanceLevelDataService.class,
 				HSFGroup.HSF, version, 7000);
 	}

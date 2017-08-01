@@ -480,6 +480,11 @@
 			  <artifactId>biz-client</artifactId>
 			  <version>1.2.7</version>
 			</dependency>
+            <dependency>
+                <groupId>com.taobao</groupId>
+                <artifactId>biz-base-data</artifactId>
+                <version>1.0.2-SNAPSHOT</version>
+            </dependency>
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>attachement-client</artifactId>
