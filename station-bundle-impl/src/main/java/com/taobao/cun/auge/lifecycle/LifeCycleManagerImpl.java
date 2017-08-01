@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.ali.com.google.common.collect.Maps;
@@ -24,6 +26,7 @@ public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 	}
 	
 	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void execute(LifeCyclePhaseContext context) {
 		LifeCyclePhase phase = getLifeCyclePhase(context.getComponentyIdentity());
 		executeDSL(phase.createPhaseDSL(context));
