@@ -7,6 +7,7 @@ import com.alibaba.shared.xfsm.core.XFSMEvent;
 import com.alibaba.shared.xfsm.core.context.RequestContext;
 import com.alibaba.shared.xfsm.support.spring.engine.XFSMEngine;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -22,7 +23,9 @@ public class StateMachineServiceImpl implements StateMachineService {
 		  RequestContext ctx = createRequestContext(phaseEvent);
 	        try {
 				xfsm.go(ctx);
-			} catch (Exception e) {
+			} catch (AugeBusinessException e){
+				throw e;
+			}catch(Exception e) {
 				throw new AugeSystemException("executeLifeCyclePhase error!",e);
 			}
 	}

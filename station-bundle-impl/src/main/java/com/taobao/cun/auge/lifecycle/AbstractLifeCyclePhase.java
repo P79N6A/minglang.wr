@@ -39,7 +39,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
-public abstract class AbstractLifeCyclePhase implements LifeCyclePhase {
+public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	@Autowired
 	private StationBO stationBO;
 

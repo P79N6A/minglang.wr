@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
@@ -26,8 +28,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
  * 合伙人入驻中阶段组件
@@ -110,6 +115,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		validateDecorateAndPaymentType(partnerInstanceDto);
 		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
 		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
 		// 生成启航班培训记录和成长营培训记录
@@ -147,6 +153,32 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());
 	}
 
+	private void validateDecorateAndPaymentType(PartnerInstanceDto partnerInstanceDto) {
+		ValidateUtils.notNull(partnerInstanceDto);
+		ValidateUtils.notNull(partnerInstanceDto.getId());
+		ValidateUtils.notNull(partnerInstanceDto.getTaobaoUserId());
+		ValidateUtils.notNull(partnerInstanceDto.getStationId());
+
+		StationDecorateTypeEnum decorate = partnerInstanceDto.getStationDecorateTypeEnum();
+		StationDecoratePaymentTypeEnum pay = partnerInstanceDto.getStationDecoratePaymentTypeEnum();
+		ValidateUtils.notNull(decorate);
+		ValidateUtils.notNull(pay);
+
+		if (decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.SELF)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_PART)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN, pay, StationDecoratePaymentTypeEnum.GOV_ALL)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.NEW, pay, StationDecoratePaymentTypeEnum.NONE)
+				|| decoratePaymentTypeEquals(decorate, StationDecorateTypeEnum.ORIGIN_UPGRADE, pay, StationDecoratePaymentTypeEnum.NONE)) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"illegal decorate_type & payment_type combination");
+		}
+	}
+	
+	private boolean decoratePaymentTypeEquals(StationDecorateTypeEnum decorate, StationDecorateTypeEnum decorateExpect,
+            StationDecoratePaymentTypeEnum pay, StationDecoratePaymentTypeEnum payExpect) {
+		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
+	}
+
+	
 	@Override
 	public String getComponentName() {
 		return USER_TYPE+"_"+getPhase()+"_EVENT";
