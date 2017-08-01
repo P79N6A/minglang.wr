@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.lifecycle.validator;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
