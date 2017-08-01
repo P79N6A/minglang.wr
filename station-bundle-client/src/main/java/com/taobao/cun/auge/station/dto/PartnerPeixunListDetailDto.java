@@ -31,7 +31,7 @@ public class PartnerPeixunListDetailDto extends OperatorDto implements Serializa
 	private String refundStatusDesc;
 	private Long orgId;
 	private List<Operation> operations;
-	
+	private String partnerStatus;
 	
 	
 	
@@ -160,6 +160,12 @@ public class PartnerPeixunListDetailDto extends OperatorDto implements Serializa
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+	public String getPartnerStatus() {
+		return partnerStatus;
+	}
+	public void setPartnerStatus(String partnerStatus) {
+		this.partnerStatus = partnerStatus;
 	}
 	
 	
