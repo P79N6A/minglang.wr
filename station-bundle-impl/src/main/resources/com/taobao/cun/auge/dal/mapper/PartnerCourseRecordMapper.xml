@@ -514,7 +514,7 @@
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
     <result column="org_id" property="orgId" jdbcType="BIGINT" />
-    
+    <result column="partner_status" property="partnerStatus" jdbcType="VARCHAR" />
   </resultMap>
   
   <select id="queryPeixunList" resultMap="peixunQueryListResult" parameterType="map" >
@@ -528,7 +528,8 @@
    ,b.gmt_done as gmt_done
    ,b.partner_user_id as user_id,
    b.refund_status as refund_status,
-   d.apply_org as org_id
+   d.apply_org as org_id,
+   c.state as partner_status
    from  partner a,partner_course_record b,partner_station_rel c,station d
    <if test="orgIdPath != '/1'"  >
        ,cuntao_org e
