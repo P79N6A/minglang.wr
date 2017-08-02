@@ -1115,6 +1115,28 @@ public class CountyBOImpl implements CountyBO {
 		}
 		return rst;
 	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		Validate.notNull(countyCode, "countyCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andCountyEqualTo(countyCode);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<CountyDto>emptyList();
+
+		}
+		List<CountyDto> rst = new ArrayList<CountyDto>();
+		for (CountyStation cs : stations) {
+			CountyDto dto = toCountyDto(cs);
+			rst.add(dto);
+		}
+		return rst;
+	}
 	
 	
 	private  void validateStartOperateParam(CountyDto countyDto) {

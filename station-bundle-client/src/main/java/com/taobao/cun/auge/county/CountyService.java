@@ -83,10 +83,17 @@ public interface CountyService {
 
     /**
      * 根据市行政code获取县列表
-     * @param cityCode
+     * @param countyCode
      * @return
      */
-    public List<CountyDto> getCountyStationByCity(String cityCode);
+    public List<CountyDto> getCountyStationByCounty(String countyCode);
+
+	/**
+	 * 根据市行政code获取县列表
+	 * @param cityCode
+	 * @return
+	 */
+	public List<CountyDto> getCountyStationByCity(String cityCode);
 	
 	/**
 	 * 查询大区下的县运营中心列表
