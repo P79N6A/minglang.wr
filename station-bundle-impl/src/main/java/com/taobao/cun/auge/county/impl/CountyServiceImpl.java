@@ -96,6 +96,21 @@ public class CountyServiceImpl implements CountyService{
 		return counties;
 	}
 
+	@Override
+	public List<CountyDto> getCountyListByOrgIds(List<Long> orgIds) {
+		return countyBO.getCountyStationByOrgIds(orgIds);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCity(String cityCode) {
+		return countyBO.getCountyStationByCity(cityCode);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		return countyBO.getCountyStationByCounty(countyCode);
+	}
+
 	public CountyDto getCountyStationByOrgId(Long id){
 		return countyBO.getCountyStationByOrgId(id);
 	}
