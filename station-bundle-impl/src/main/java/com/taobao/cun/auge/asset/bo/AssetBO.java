@@ -120,7 +120,7 @@ public interface AssetBO {
 
     public PageDto<AssetDetailDto> getScrapAssetList(AssetScrapListCondition condition);
 
-    public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
+    public AssetDetailDto getScrapDetailById(Long id, AssetOperatorDto assetOperatorDto);
 
     public void scrapAsset(AssetScrapDto scrapDto);
 
@@ -129,7 +129,7 @@ public interface AssetBO {
      *
      * @param scrapDto
      */
-    public void scrapAssetSuccess(AssetScrapDto scrapDto);
+    public void scrapAssetByStation(AssetScrapDto scrapDto);
 
     /**
      * 设置资产已盘点

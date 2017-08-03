@@ -22,7 +22,7 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
 
     private String payment;
 
-    private List<Long> scrapAssetIdList;
+    private Long scrapAssetId;
 
     private List<String> attachmentList;
 
@@ -66,12 +66,12 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
         this.payment = payment;
     }
 
-    public List<Long> getScrapAssetIdList() {
-        return scrapAssetIdList;
+    public Long getScrapAssetId() {
+        return scrapAssetId;
     }
 
-    public void setScrapAssetIdList(List<Long> scrapAssetIdList) {
-        this.scrapAssetIdList = scrapAssetIdList;
+    public void setScrapAssetId(Long scrapAssetId) {
+        this.scrapAssetId = scrapAssetId;
     }
 
     public List<String> getAttachmentList() {

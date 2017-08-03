@@ -178,11 +178,11 @@ public interface AssetMobileService {
 
     /**
      * 根据资产id列表获得赔付资产详情
-     * @param idList
+     * @param id
      * @param assetOperatorDto
      * @return
      */
-    public List<AssetDetailDto> getScarpDetailListByIdList(List<Long> idList, AssetOperatorDto assetOperatorDto);
+    public AssetDetailDto getScrapDetailById(Long id, AssetOperatorDto assetOperatorDto);
 
     /**
      * 赔付资产
