@@ -28,14 +28,14 @@ public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void execute(LifeCyclePhaseContext context) {
-		LifeCyclePhase phase = getLifeCyclePhase(context.getComponentyIdentity());
+		LifeCyclePhase phase = getLifeCyclePhase(context.getPhaseKey().getKey());
 		executeDSL(phase.createPhaseDSL(context));
 	}
 
 
 	@Override
 	public void registerLifeCyclePhase(LifeCyclePhase phase) {
-		this.lifeCycleComponents.putIfAbsent(phase.getComponentName(), phase);
+		this.lifeCycleComponents.putIfAbsent(phase.getPhaseKey().getKey(), phase);
 	}
 
 	@Override

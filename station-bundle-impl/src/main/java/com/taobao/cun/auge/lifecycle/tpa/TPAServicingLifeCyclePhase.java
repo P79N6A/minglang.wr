@@ -5,11 +5,13 @@ import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseAdapter;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseDSL;
+import com.taobao.cun.auge.lifecycle.Phase;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 
 @Component
+@Phase(type="TPA",event=StateMachineEvent.SETTLING_EVENT)
 public class TPAServicingLifeCyclePhase extends LifeCyclePhaseAdapter{
 
-	private static final String USER_TYPE = "TPA";
 	
 	@Override
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -58,14 +60,5 @@ public class TPAServicingLifeCyclePhase extends LifeCyclePhaseAdapter{
 			 return dsl;
 	}
 	 
-	@Override
-	public String getComponentName() {
-		return USER_TYPE+"_"+getPhase()+"_EVENT";
-	}
-
-	@Override
-	public String getPhase() {
-		return "SERVICING";
-	}
 
 }

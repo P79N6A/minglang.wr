@@ -2,8 +2,11 @@ package com.taobao.cun.auge.lifecycle.tp;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
+import com.taobao.cun.auge.lifecycle.Phase;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 
 /**
  * 合伙人入驻中阶段组件
@@ -11,9 +14,9 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
  *
  */
 @Component
-public class TPClosingLifeCyclePhase implements LifeCyclePhase{
+@Phase(type="TP",event=StateMachineEvent.CLOSING_EVENT)
+public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 
-	private static final String USER_TYPE = "TP";
 	@Override
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		System.err.println(context.getUserType()+":"+context.getEvent()+":"+"doCreateOrUpdateStation");
@@ -47,16 +50,6 @@ public class TPClosingLifeCyclePhase implements LifeCyclePhase{
 	@Override
 	public void syncStationApply(LifeCyclePhaseContext context) {
 		System.err.println(context.getUserType()+":"+context.getEvent()+":"+"doSyncStationApply");
-	}
-
-	@Override
-	public String getComponentName() {
-		return USER_TYPE+"_"+getPhase()+"_EVENT";
-	}
-
-	@Override
-	public String getPhase() {
-		return "CLOSING";
 	}
 
 }

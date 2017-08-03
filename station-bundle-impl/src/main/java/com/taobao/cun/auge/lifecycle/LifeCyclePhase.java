@@ -12,7 +12,7 @@ package com.taobao.cun.auge.lifecycle;
  * @author zhenhuan.zhangzh
  *
  */
-public interface LifeCyclePhase extends LifeCycleComponent{
+public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 
 	/**
 	 * 新增或修改村点

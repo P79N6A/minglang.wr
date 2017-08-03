@@ -18,8 +18,6 @@ import com.google.common.collect.Maps;
 
 @Configuration
 public class StateMachineConfiguration implements ApplicationListener<ApplicationReadyEvent>{
-    @Autowired
-	private StateMachineRegistry registry;
 	@SuppressWarnings("rawtypes")
 	private Map<String,Map<String,Class>> actionMappings = Maps.newConcurrentMap();
 

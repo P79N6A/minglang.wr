@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,8 +43,9 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  */
 @Component
 @Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT)
-public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
+	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
@@ -101,7 +102,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	private void addLifecycle(PartnerInstanceDto partnerInstanceDto) {
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPT);
 		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
 		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);

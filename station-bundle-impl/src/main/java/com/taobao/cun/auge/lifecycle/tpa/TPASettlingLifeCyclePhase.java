@@ -4,16 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseDSL;
+import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -30,9 +28,9 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 @Component
+@Phase(type="TPA",event=StateMachineEvent.SETTLING_EVENT)
 public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
-	private static final String USER_TYPE = "TPA";
 	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
@@ -119,14 +117,4 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	 
-	@Override
-	public String getComponentName() {
-		return USER_TYPE+"_"+getPhase()+"_EVENT";
-	}
-
-	@Override
-	public String getPhase() {
-		return "SETTLING";
-	}
-
 }
