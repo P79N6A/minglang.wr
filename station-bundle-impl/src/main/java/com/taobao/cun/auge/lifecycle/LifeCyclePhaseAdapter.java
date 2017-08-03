@@ -5,6 +5,17 @@ import org.springframework.util.Assert;
 
 public abstract class LifeCyclePhaseAdapter implements LifeCyclePhase {
 
+	private LifeCyclePhaseDSL dsl;
+	
+	
+	public LifeCyclePhaseDSL getDsl() {
+		return dsl;
+	}
+
+	public void setDsl(LifeCyclePhaseDSL dsl) {
+		this.dsl = dsl;
+	}
+
 	@Override
 	public PhaseKey getPhaseKey() {
 		Phase phase = AnnotationUtils.getAnnotation(this.getClass(),Phase.class);

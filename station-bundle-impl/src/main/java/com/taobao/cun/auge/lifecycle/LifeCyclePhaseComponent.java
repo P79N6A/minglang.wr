@@ -4,4 +4,7 @@ public interface LifeCyclePhaseComponent {
 	
 	public PhaseKey getPhaseKey();
 	
+	LifeCyclePhaseDSL  getDsl();
+	
+	void setDsl(LifeCyclePhaseDSL dsl);
 }

@@ -52,6 +52,7 @@ public class TestStateMachineService {
 			LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TPStateMachine",StateMachineEvent.DECORATING_EVENT,partnerInstanceDto);
 			phaseEvent.setCurrentState("SETTLING");
 			stateMachineService.executePhase(phaseEvent);
+			 System.err.println("testTPDecoratingWithStateMachine"+i);
 		}
 		 IMetricManager manager = MetricManager.getIMetricManager();
 		 MetricRegistry  metricRegistry  = manager.getMetricRegistryByGroup("stateMachine");

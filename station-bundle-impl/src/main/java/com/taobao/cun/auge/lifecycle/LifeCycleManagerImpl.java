@@ -29,7 +29,13 @@ public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void execute(LifeCyclePhaseContext context) {
 		LifeCyclePhase phase = getLifeCyclePhase(context.getPhaseKey().getKey());
-		executeDSL(phase.createPhaseDSL(context));
+		try {
+			LifeCyclePhaseContextHolder.setContext(context);
+			executeDSL(phase.createPhaseDSL());
+		} finally{
+			LifeCyclePhaseContextHolder.clean();
+		}
+	
 	}
 
 

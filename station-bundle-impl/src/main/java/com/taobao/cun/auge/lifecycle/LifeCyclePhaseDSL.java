@@ -4,6 +4,7 @@ import static io.advantageous.reakt.promise.Promises.invokablePromise;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.ali.com.google.common.collect.Lists;
 
@@ -17,13 +18,9 @@ import io.advantageous.reakt.promise.Promises;
  */
 public class LifeCyclePhaseDSL {
 
-	 private List<Promise<LifeCyclePhaseContext>> promises= Lists.newArrayList();
+	 private List<Consumer<LifeCyclePhaseContext>> consumers= Lists.newArrayList();
 	 
-	 private LifeCyclePhaseContext context;
 	 
-	 public LifeCyclePhaseDSL(LifeCyclePhaseContext context){
-		 this.context = context;
-	 }
 	 
 	 Promise<LifeCyclePhaseContext> createPromise(LifeCyclePhaseContext context) {
          return invokablePromise(promise -> {
@@ -37,11 +34,13 @@ public class LifeCyclePhaseDSL {
 	 
 	 
 	public LifeCyclePhaseDSL then(Consumer<LifeCyclePhaseContext> consumer){
-		 promises.add(createPromise(context).then(consumer).asPromise());
+		consumers.add(consumer);
 		 return this;
 	}
 	
 	public void invoke(){
+		List<Promise<LifeCyclePhaseContext>> promises = consumers.stream().map(consumer -> createPromise(LifeCyclePhaseContextHolder.getContext()).then(consumer).asPromise())
+				.collect(Collectors.toList());
 		Promises.all(promises).invoke();
 	}
 }

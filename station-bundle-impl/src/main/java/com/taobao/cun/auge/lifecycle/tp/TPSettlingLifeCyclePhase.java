@@ -179,4 +179,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
 	}
 
+	
+
+	
 }

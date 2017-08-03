@@ -48,17 +48,6 @@ public class TPAServicingLifeCyclePhase extends LifeCyclePhaseAdapter{
 		System.err.println(context.getUserType()+":"+context.getEvent()+":"+"doSyncStationApply");
 	}
 
-	@Override
-	public LifeCyclePhaseDSL createPhaseDSL(LifeCyclePhaseContext context){
-			LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL(context);
-			 dsl.then(this::createOrUpdateStation);
-			 dsl.then(this::createOrUpdatePartner);
-			 dsl.then(this::createOrUpdatePartnerInstance);
-			 dsl.then(this::createOrUpdateLifeCycleItems);
-			// dsl.then(this::createOrUpdateExtensionBusiness);
-			// dsl.then(this::syncStationApply);
-			 return dsl;
-	}
 	 
 
 }
