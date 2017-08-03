@@ -3,22 +3,27 @@ package com.taobao.cun.auge.statemachine;
 import java.util.Map;
 
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.StandardAnnotationMetadata;
 
 import com.alibaba.shared.xfsm.core.context.StateMachineCreateContext;
+import com.alibaba.shared.xfsm.core.registry.StateMachineRegistry;
 import com.google.common.collect.Maps;
 
 
 @Configuration
 public class StateMachineConfiguration implements ApplicationListener<ApplicationReadyEvent>{
-
+    @Autowired
+	private StateMachineRegistry registry;
 	@SuppressWarnings("rawtypes")
 	private Map<String,Map<String,Class>> actionMappings = Maps.newConcurrentMap();
 
+	private ApplicationContext applicationContext;
 	@SuppressWarnings("rawtypes")
 	private  void  setActionMapping(Object bean){
 		StandardAnnotationMetadata standardAnnotationMetadata = new StandardAnnotationMetadata(AopUtils.getTargetClass(bean),true);
@@ -27,6 +32,9 @@ public class StateMachineConfiguration implements ApplicationListener<Applicatio
 		String[] stateMachines = attributets.getStringArray("stateMachine");
 		for(String stateMachine : stateMachines){
 			Map<String,Class> actionMapping = actionMappings.get(stateMachine);
+			if(!applicationContext.containsBean(stateMachine)){
+				 throw new RuntimeException("can not find stateMachine By "+stateMachine);
+			}
 			if(actionMapping == null){
 				actionMapping = Maps.newConcurrentMap();
 					actionMapping.put(attributets.getString("actionKey"), AopUtils.getTargetClass(bean));
@@ -47,6 +55,7 @@ public class StateMachineConfiguration implements ApplicationListener<Applicatio
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
+		this.applicationContext = event.getApplicationContext();
 		Map<String, Object>  beansWithAnnotation= event.getApplicationContext().getBeansWithAnnotation(StateMachineComponent.class);
 		beansWithAnnotation.values().forEach(this::setActionMapping);
 		

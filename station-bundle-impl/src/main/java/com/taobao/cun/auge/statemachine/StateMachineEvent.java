@@ -1,4 +1,7 @@
 package com.taobao.cun.auge.statemachine;
+
+import java.util.stream.Stream;
+
 /**
  * 状态机事件
  * @author zhenhuan.zhangzh
@@ -37,5 +40,7 @@ public enum StateMachineEvent {
 		this.state = state;
 	}
 	
-	
+	public static StateMachineEvent valueOfState(String state){
+		return Stream.of(StateMachineEvent.values()).filter(event -> event.getState().equals(state)).findFirst().get();
+	}
 }
