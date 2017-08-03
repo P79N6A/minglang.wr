@@ -38,8 +38,10 @@ import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
+import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
@@ -327,10 +329,21 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		uicPaymentAccountReadServiceClient.setUicPaymentAccountReadService(uicPaymentAccountReadService);
 		uicPaymentAccountReadServiceClient.setUicReadService(uicReadService);
 		return uicPaymentAccountReadServiceClient;
-		
 	}
 	
-	   @Bean
+	@Bean
+	public NamelistMatchService namelistMatchService(HsfConsumerContext context, @Value("${namelistMatchService.version}") String version) {
+		return context.hsfConsumerBuilder(NamelistMatchService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public AlipayRiskScanService alipayRiskScanService(HsfConsumerContext context, @Value("${alipayRiskScanService.version}") String version) {
+		return context.hsfConsumerBuilder(AlipayRiskScanService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	 @Bean
 	    public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
 	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 	                .build();

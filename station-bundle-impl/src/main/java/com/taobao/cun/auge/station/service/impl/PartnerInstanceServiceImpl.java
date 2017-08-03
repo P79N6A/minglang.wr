@@ -529,9 +529,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerDto.setEmail(pDto.getEmail());
         partnerDto.setBusinessType(pDto.getBusinessType());
         partnerBO.updatePartner(partnerDto);
-
-        criusAttachmentService.modifyAttachementBatch(pDto.getAttachments(), partnerId, AttachmentBizTypeEnum.PARTNER,
-                OperatorConverter.convert(partnerInstanceUpdateServicingDto));
+        if(pDto.getAttachments()!=null && !pDto.getAttachments().isEmpty()){
+        	  criusAttachmentService.modifyAttachementBatch(pDto.getAttachments(), partnerId, AttachmentBizTypeEnum.PARTNER,
+                      OperatorConverter.convert(partnerInstanceUpdateServicingDto));
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

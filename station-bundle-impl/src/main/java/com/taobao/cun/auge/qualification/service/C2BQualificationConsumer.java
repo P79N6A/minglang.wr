@@ -49,7 +49,6 @@ public class C2BQualificationConsumer {
 	@PostConstruct
 	public void init() throws MQClientException {
 		 consumer = new MetaPushConsumer(qualiCID);
-		 
 	        consumer.subscribe(qualiTopic, "*");
 	 
 	        consumer.registerMessageListener(new MessageListenerConcurrently() {

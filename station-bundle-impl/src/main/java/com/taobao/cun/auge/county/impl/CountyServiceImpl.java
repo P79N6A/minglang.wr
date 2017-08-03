@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
@@ -93,6 +94,21 @@ public class CountyServiceImpl implements CountyService{
 			}
 		}
 		return counties;
+	}
+
+	@Override
+	public List<CountyDto> getCountyListByOrgIds(List<Long> orgIds) {
+		return countyBO.getCountyStationByOrgIds(orgIds);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCity(String cityCode) {
+		return countyBO.getCountyStationByCity(cityCode);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		return countyBO.getCountyStationByCounty(countyCode);
 	}
 
 	public CountyDto getCountyStationByOrgId(Long id){
@@ -217,7 +233,7 @@ public class CountyServiceImpl implements CountyService{
 			} else if (StringUtils.isNotBlank(countyStation.getProvince())) {
 				lastDivisionId = countyStation.getProvince();
 			}
-			Map<String, String> map = findLatitude(lastDivisionId, StringUtils.trim(countyStation.getAddressDetail()));
+			Map<String, String> map = LatitudeUtil.findLatitude(lastDivisionId, StringUtils.trim(countyStation.getAddressDetail()));
 			String lng = map.get("lng");
 			String lat = map.get("lat");
 			CountyStation county = new CountyStation();
@@ -230,23 +246,5 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 	
-	public static Map<String, String> findLatitude(String lastDivisionId, String addressDetail) {
-		if (StringUtil.isEmpty(lastDivisionId)) {
-			return Collections.<String, String> emptyMap();
-		}
-		try {
-			StringBuilder url = new StringBuilder("http://lsp.wuliu.taobao.com/locationservice/addr/geo_coding.do?");
-			url.append("lastDivisionId=").append(lastDivisionId).append("&addr=").append(addressDetail);
-			HttpClient httpCLient = new DefaultHttpClient();
-			HttpGet httpget = new HttpGet(url.toString());
-			HttpResponse response = httpCLient.execute(httpget);
-			HttpEntity entity = response.getEntity();
-			String answer = EntityUtils.toString(entity);
-			String json = answer.split("=")[1];
-			return (Map<String, String>) JSON.parse(json.split("}")[0] + "}");
-		} catch (Exception e) {
-			logger.error("lastDivisionId = " + lastDivisionId + " ,addressDetail = " + addressDetail, e);
-			return Collections.<String, String> emptyMap();
-		}
-	}
+
 }

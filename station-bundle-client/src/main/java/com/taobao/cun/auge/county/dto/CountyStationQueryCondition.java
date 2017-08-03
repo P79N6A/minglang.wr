@@ -12,6 +12,9 @@ public class CountyStationQueryCondition implements Serializable{
 
 	// 县服务中心名称
 	private String name;
+    private String countyCode;
+    private String cityCode;
+    private String provinceCode;
 
 	// 排序
 	private CountyStationOrderByEnum orderByEnum;
@@ -82,5 +85,27 @@ public class CountyStationQueryCondition implements Serializable{
 		this.statusArray = statusArray;
 	}
 
-	
+    public String getCountyCode() {
+        return countyCode;
+    }
+
+    public void setCountyCode(String countyCode) {
+        this.countyCode = countyCode;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
+    }
 }
