@@ -60,9 +60,6 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 	 * @return
 	 */
 	default LifeCyclePhaseDSL createPhaseDSL(){
-		if(null != getDsl()){
-			return getDsl();
-		}else{
 			LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
 			 dsl.then(this::createOrUpdateStation);
 			 dsl.then(this::createOrUpdatePartner);
@@ -71,10 +68,7 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 			 dsl.then(this::createOrUpdateExtensionBusiness);
 			 dsl.then(this::triggerStateChangeEvent);
 			 dsl.then(this::syncStationApply);
-			 this.setDsl(dsl);
 			 return dsl;
-		}
-		
 	}
 	
 	

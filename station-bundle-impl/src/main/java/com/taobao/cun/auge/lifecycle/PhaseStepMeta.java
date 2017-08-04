@@ -6,16 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
-
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Phase {
+public @interface PhaseStepMeta {
 
-	StateMachineEvent event();
+	  String descr() default "";
 	
-	String type();
 	
-	String desc();
 }

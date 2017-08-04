@@ -12,6 +12,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
+import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -42,7 +43,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT)
+@Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中节点服务")
 public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
@@ -61,6 +62,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	private LifeCycleValidator lifeCycleValidator;
 	
 	@Override
+	@PhaseStepMeta(descr="xxxx")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
@@ -82,18 +84,21 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
     
 	@Override
+	@PhaseStepMeta
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		 PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 addPartner(partnerInstanceDto);
 	}
 
 	@Override
+	@PhaseStepMeta
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
 	@Override
+	@PhaseStepMeta
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addLifecycle(partnerInstanceDto);
@@ -114,6 +119,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
+	@PhaseStepMeta
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		validateDecorateAndPaymentType(partnerInstanceDto);
@@ -143,12 +149,14 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
+	@PhaseStepMeta
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 	}
 
 	@Override
+	@PhaseStepMeta
 	public void syncStationApply(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());

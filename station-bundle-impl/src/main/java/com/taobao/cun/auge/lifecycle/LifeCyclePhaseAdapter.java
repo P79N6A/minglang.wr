@@ -27,7 +27,7 @@ public abstract class LifeCyclePhaseAdapter implements LifeCyclePhase {
 
 	@Override
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
-
+		
 	}
 
 	@Override

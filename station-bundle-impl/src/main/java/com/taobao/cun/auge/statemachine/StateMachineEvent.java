@@ -2,6 +2,8 @@ package com.taobao.cun.auge.statemachine;
 
 import java.util.stream.Stream;
 
+import org.springframework.util.Assert;
+
 /**
  * 状态机事件
  * @author zhenhuan.zhangzh
@@ -41,6 +43,16 @@ public enum StateMachineEvent {
 	}
 	
 	public static StateMachineEvent valueOfState(String state){
-		return Stream.of(StateMachineEvent.values()).filter(event -> event.getState().equals(state)).findFirst().get();
+		StateMachineEvent sme = Stream.of(StateMachineEvent.values()).filter(value -> value.getState().equals(state)).findFirst().orElse(null);
+		Assert.notNull(sme);
+		return sme;
 	}
+	
+	public static StateMachineEvent valueOfEvent(String event){
+		StateMachineEvent sme =  Stream.of(StateMachineEvent.values()).filter(value -> value.getEvent().equals(event)).findFirst().orElse(null);
+		Assert.notNull(sme);
+		return sme;
+	}
+	
+	
 }
