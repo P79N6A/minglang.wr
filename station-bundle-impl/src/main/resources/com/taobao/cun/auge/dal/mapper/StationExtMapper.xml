@@ -99,8 +99,8 @@
 		</if>
 			
 		<if test="statuses != null" >
-			and s.statuses in
-			<foreach item="item" index="index" collection="collection" open="(" separator="," close=")">
+			and s.status in
+			<foreach item="item" collection="statuses" open="(" separator="," close=")">
 				#{item}
 			</foreach>
 		</if>
