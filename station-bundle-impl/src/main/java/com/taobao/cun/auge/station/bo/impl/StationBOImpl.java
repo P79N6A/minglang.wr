@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.util.CollectionUtil;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
@@ -184,24 +185,45 @@ public class StationBOImpl implements StationBO {
 		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
 	
-	@Override
 	public Page<Station> getStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
+		StationExtExample stationExtExample = new StationExtExample();
 
-		StationExample example = new StationExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
+		if (null != stationCondition.getType()) {
+			stationExtExample.setType(stationCondition.getType().getCode());
+		}
 
-		if (StringUtil.isNotBlank(stationCondition.getName())) {
-			criteria.andNameLike(stationCondition.getName());
+		if (CollectionUtil.isNotEmpty(stationCondition.getStationStatuses())) {
+			stationExtExample.setStatuses(extractStationStatuses(stationCondition.getStationStatuses()));
 		}
-		if (null != stationCondition.getOrgId()) {
-			criteria.andApplyOrgEqualTo(stationCondition.getOrgId());
-		}
+		
 		if (null != stationCondition.getStationStatusEnum()) {
-			criteria.andStatusEqualTo(stationCondition.getStationStatusEnum().getCode());
+			stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
 		}
+		
+		if (StringUtil.isNotBlank(stationCondition.getName())) {
+			stationExtExample.setName(stationCondition.getName());
+		}
+
+		if (null != stationCondition.getOrgId()) {
+			stationExtExample.setOrgId(stationCondition.getOrgId());
+		}
+
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
-		return (Page<Station>)stationMapper.selectByExample(example);
+		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
+	}
+
+	private List<String> extractStationStatuses(List<StationStatusEnum> statusEnums) {
+		if (CollectionUtil.isEmpty(statusEnums)) {
+			return Collections.<String> emptyList();
+		}
+		List<String> statuses = new ArrayList<String>(statusEnums.size());
+		for (StationStatusEnum statusEnum : statusEnums) {
+			if (null == statusEnum) {
+				continue;
+			}
+			statuses.add(statusEnum.getCode());
+		}
+		return statuses;
 	}
 }
