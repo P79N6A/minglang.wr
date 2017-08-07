@@ -87,7 +87,17 @@
 		select
     		s.*
 			from station s, partner_station_rel p
+			
+		<if test="orgIdPath != null and orgIdPath != ''" >
+			, cuntao_org org
+		</if>
+			
 			where s.is_deleted='n' and p.is_deleted='n' and p.station_id = s.id and p.is_current='y'
+			
+		<if test="orgIdPath != null and orgIdPath != ''" >
+			and org.is_deleted='n' and s.apply_org = org.id
+		</if>
+			
 		<if test="statuses != null" >
 			and s.statuses in
 			<foreach item="item" index="index" collection="collection" open="(" separator="," close=")">
