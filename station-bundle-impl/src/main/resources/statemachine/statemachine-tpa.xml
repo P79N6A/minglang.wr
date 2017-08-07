@@ -2,11 +2,11 @@
        xmlns:cs="http://www.alibaba-inc.com/2015/xfsm"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.w3.org/2005/07/scxml http://www.w3.org/2011/04/SCXML/scxml.xsd"
-       version="1.0" initial="ready">
+       version="1.0" initial="NEW">
 
     <!--淘帮手入驻 流程 -->
 
-    <state id="ready">
+    <state id="NEW">
         <onentry>
             <log expr="'准备入驻'" />
         </onentry>

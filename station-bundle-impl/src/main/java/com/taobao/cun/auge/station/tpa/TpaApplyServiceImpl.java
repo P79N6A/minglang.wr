@@ -271,7 +271,6 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		if (isAlipayRiskUser(request.getTaobaoUserId())) {
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "该用户的支付宝账号属于支付宝风险账号");
 		}
-		;
 
 		pDto.setAlipayAccount(aliPaymentAccountDto.getAlipayId());
 		pDto.setName(aliPaymentAccountDto.getFullName());
