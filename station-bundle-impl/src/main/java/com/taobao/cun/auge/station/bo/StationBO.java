@@ -100,4 +100,6 @@ public interface StationBO {
 	 * @
 	 */
 	public Page<Station> getStations(StationCondition stationCondition) ;
+
+	public Page<Station> queryTpStations(StationCondition stationCondition);
 }

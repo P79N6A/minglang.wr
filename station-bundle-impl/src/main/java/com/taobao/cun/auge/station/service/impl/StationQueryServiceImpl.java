@@ -97,4 +97,14 @@ public class StationQueryServiceImpl implements StationQueryService {
 
 		return result;
 	}
+	
+	public PageDto<StationDto> queryTpStations(StationCondition stationCondition){
+		ValidateUtils.validateParam(stationCondition);
+		Page<Station> page = stationBO.queryTpStations(stationCondition);
+
+		PageDto<StationDto> result = PageDtoUtil.success(page,
+				page.stream().map(StationConverter::toStationDto).collect(Collectors.toList()));
+
+		return result;
+	}
 }
