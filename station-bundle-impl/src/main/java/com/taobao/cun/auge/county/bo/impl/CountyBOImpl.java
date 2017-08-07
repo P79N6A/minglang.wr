@@ -248,6 +248,15 @@ public class CountyBOImpl implements CountyBO {
         if(queryCondition.getStatusArray()!=null&&queryCondition.getStatusArray().size()>0){
         	c.andManageStatusIn(queryCondition.getStatusArray());
         }
+		if(StringUtils.isNotEmpty(queryCondition.getProvinceCode())){
+			c.andProvinceEqualTo(queryCondition.getProvinceCode());
+		}
+		if(StringUtils.isNotEmpty(queryCondition.getCityCode())){
+			c.andCityEqualTo(queryCondition.getCityCode());
+		}
+		if(StringUtils.isNotEmpty(queryCondition.getCountyCode())){
+			c.andCountyEqualTo(queryCondition.getCountyCode());
+		}
         int total=countyStationMapper.countByExample(example);
         if (null == queryCondition.getOrderByEnum()) {
         	  example.setOrderByClause("gmt_modified desc");
@@ -1083,6 +1092,50 @@ public class CountyBOImpl implements CountyBO {
 	        validateStartOperateParam(countyDto);
 	        countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
 	        return saveCountyStation(operator, countyDto);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCity(String cityCode) {
+		Validate.notNull(cityCode, "cityCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andCityEqualTo(cityCode);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<CountyDto>emptyList();
+
+		}
+		List<CountyDto> rst = new ArrayList<CountyDto>();
+		for (CountyStation cs : stations) {
+			CountyDto dto = toCountyDto(cs);
+			rst.add(dto);
+		}
+		return rst;
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		Validate.notNull(countyCode, "countyCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andCountyEqualTo(countyCode);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<CountyDto>emptyList();
+
+		}
+		List<CountyDto> rst = new ArrayList<CountyDto>();
+		for (CountyStation cs : stations) {
+			CountyDto dto = toCountyDto(cs);
+			rst.add(dto);
+		}
+		return rst;
 	}
 	
 	
