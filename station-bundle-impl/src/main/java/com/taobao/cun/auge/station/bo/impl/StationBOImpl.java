@@ -185,28 +185,7 @@ public class StationBOImpl implements StationBO {
 		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
 	
-	@Override
 	public Page<Station> getStations(StationCondition stationCondition) {
-		ValidateUtils.notNull(stationCondition);
-
-		StationExample example = new StationExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-
-		if (StringUtil.isNotBlank(stationCondition.getName())) {
-			criteria.andNameLike(stationCondition.getName());
-		}
-		if (null != stationCondition.getOrgId()) {
-			criteria.andApplyOrgEqualTo(stationCondition.getOrgId());
-		}
-		if (null != stationCondition.getStationStatusEnum()) {
-			criteria.andStatusEqualTo(stationCondition.getStationStatusEnum().getCode());
-		}
-		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
-		return (Page<Station>)stationMapper.selectByExample(example);
-	}
-	
-	public Page<Station> queryTpStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
 		StationExtExample stationExtExample = new StationExtExample();
 
@@ -216,6 +195,14 @@ public class StationBOImpl implements StationBO {
 
 		if (CollectionUtil.isNotEmpty(stationCondition.getStationStatuses())) {
 			stationExtExample.setStatuses(extractStationStatuses(stationCondition.getStationStatuses()));
+		}
+		
+		if (null != stationCondition.getStationStatusEnum()) {
+			stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
+		}
+		
+		if (StringUtil.isNotBlank(stationCondition.getName())) {
+			stationExtExample.setName(stationCondition.getName());
 		}
 
 		if (null != stationCondition.getOrgId()) {

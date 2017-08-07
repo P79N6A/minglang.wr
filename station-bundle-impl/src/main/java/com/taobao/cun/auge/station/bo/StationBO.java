@@ -99,7 +99,5 @@ public interface StationBO {
 	 * @return
 	 * @
 	 */
-	public Page<Station> getStations(StationCondition stationCondition) ;
-
-	public Page<Station> queryTpStations(StationCondition stationCondition);
+	public Page<Station> getStations(StationCondition stationCondition);
 }

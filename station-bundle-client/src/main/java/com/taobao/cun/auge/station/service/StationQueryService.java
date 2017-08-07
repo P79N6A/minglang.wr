@@ -44,8 +44,6 @@ public interface StationQueryService {
 	 */
 	public PageDto<StationDto> queryStations(StationCondition stationCondition);
 	
-	public PageDto<StationDto> queryTpStations(StationCondition stationCondition);
-
 	/**
 	 * 根据name、orgIdPath、stationStatusEnum查询TPstation
 	 * 
