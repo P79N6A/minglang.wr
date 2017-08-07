@@ -52,8 +52,11 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.dto.CuntaoFlowRecordDto;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.flowRecord.service.CuntaoFlowRecordQueryService;
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
+import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
+import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
@@ -263,6 +266,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Autowired
     private EnhancedUserQueryService enhancedUserQueryService;
 
+    @Autowired
+	private StateMachineService stateMachineService;
+    
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
@@ -1186,7 +1192,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long applySettle(PartnerInstanceDto partnerInstanceDto){
-        ValidateUtils.validateParam(partnerInstanceDto);
+       /* ValidateUtils.validateParam(partnerInstanceDto);
         ValidateUtils.notNull(partnerInstanceDto.getStationDto());
         ValidateUtils.notNull(partnerInstanceDto.getPartnerDto());
         ValidateUtils.notNull(partnerInstanceDto.getType());
@@ -1223,7 +1229,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
             // 记录村点状态变化
             sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
-            return instanceId;
+            return instanceId;*/
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto);
+		stateMachineService.executePhase(phaseEvent);
+		return partnerInstanceDto.getId();
     }
 
     private Long addPartnerInstanceRel(PartnerInstanceDto partnerInstanceDto, Long stationId, Long partnerId) {

@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.lifecycle;
 
-import com.taobao.cun.auge.statemachine.StateMachineEvent;
-
 /**
  * 生命周期阶段模板类，定义了每个生命周期内
  *  新增或修改村点
@@ -14,7 +12,7 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
  * @author zhenhuan.zhangzh
  *
  */
-public interface LifeCyclePhase extends LifeCycleComponent{
+public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 
 	/**
 	 * 新增或修改村点
@@ -51,23 +49,26 @@ public interface LifeCyclePhase extends LifeCycleComponent{
 	 */
 	void syncStationApply(LifeCyclePhaseContext context);
 	
-	
+	/**
+	 * 获取生命周期编排DSL
+	 * @return
+	 */
 	
 	/**
 	 * 创建生命周期极端DSL
 	 * @param context
 	 * @return
 	 */
-	default LifeCyclePhaseDSL createPhaseDSL(LifeCyclePhaseContext context){
-		LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL(context);
-		 dsl.then(this::createOrUpdateStation);
-		 dsl.then(this::createOrUpdatePartner);
-		 dsl.then(this::createOrUpdatePartnerInstance);
-		 dsl.then(this::createOrUpdateLifeCycleItems);
-		 dsl.then(this::createOrUpdateExtensionBusiness);
-		 dsl.then(this::triggerStateChangeEvent);
-		 dsl.then(this::syncStationApply);
-		 return dsl;
+	default LifeCyclePhaseDSL createPhaseDSL(){
+			LifeCyclePhaseDSL dsl = new LifeCyclePhaseDSL();
+			 dsl.then(this::createOrUpdateStation);
+			 dsl.then(this::createOrUpdatePartner);
+			 dsl.then(this::createOrUpdatePartnerInstance);
+			 dsl.then(this::createOrUpdateLifeCycleItems);
+			 dsl.then(this::createOrUpdateExtensionBusiness);
+			 dsl.then(this::triggerStateChangeEvent);
+			 dsl.then(this::syncStationApply);
+			 return dsl;
 	}
 	
 	

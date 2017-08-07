@@ -8,7 +8,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 public class LifeCyclePhaseContext {
 
 	/**
-	 * 当前生命周期状态
+	 * 当前生命周期事件
 	 */
 	private String event;
 	
@@ -48,8 +48,8 @@ public class LifeCyclePhaseContext {
 		}
 	}
 
-	public String getComponentyIdentity() {
-		return userType+"_"+event;
+	public PhaseKey getPhaseKey() {
+		return new PhaseKey(userType,event);
 	}
 	
 	public String getEvent() {
