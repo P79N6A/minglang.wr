@@ -8,7 +8,7 @@
     <import resource="classpath*:applicationContext-xfsm.xml"/>
 
 	<!-- 村小二状态机配置 -->
-    <bean id="TpStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+    <bean id="TPStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
         <property name="path" value="statemachine/statemachine-tp.xml"/>
         <property name="listener">
             <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
@@ -16,7 +16,7 @@
     </bean>
 
 	<!-- 淘帮手状态机配置 -->
-    <bean id="TpaStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+    <bean id="TPAStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
         <property name="path" value="statemachine/statemachine-tpa.xml"/>
         <property name="listener">
             <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
