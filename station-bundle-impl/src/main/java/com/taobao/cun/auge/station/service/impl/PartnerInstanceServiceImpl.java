@@ -56,6 +56,7 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
@@ -1230,7 +1231,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 记录村点状态变化
             sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
             return instanceId;*/
-    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto);
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.SETTLING_EVENT);
 		stateMachineService.executePhase(phaseEvent);
 		return partnerInstanceDto.getId();
     }
@@ -1389,7 +1390,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @SuppressWarnings("static-access")
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto){
        /* ValidateUtils.validateParam(settleSuccessDto);
@@ -1403,21 +1405,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);*/
     	ValidateUtils.validateParam(settleSuccessDto);
     	Long instanceId = settleSuccessDto.getInstanceId();
-    	ValidateUtils.notNull(instanceId);
     	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+    	ValidateUtils.notNull(rel);
     	PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+    	partnerInstanceDto.setType(PartnerInstanceTypeEnum.valueof(rel.getType()));
     	partnerInstanceDto.setId(settleSuccessDto.getInstanceId());
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
     	partnerInstanceDto.setStationId(rel.getStationId());
     	partnerInstanceDto.setPartnerId(rel.getPartnerId());
     	partnerInstanceDto.setTaobaoUserId(rel.getTaobaoUserId());
     	partnerInstanceDto.setVersion(rel.getVersion());
+    	partnerInstanceDto.setState(PartnerInstanceStateEnum.valueof(rel.getState()));
+    	StateMachineEvent sme = null;
     	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
-    		partnerInstanceDto.setState(PartnerInstanceStateEnum.DECORATING);
+    		sme = sme.DECORATING_EVENT;
     	}else{
-    		partnerInstanceDto.setState(PartnerInstanceStateEnum.SERVICING);
+    		sme = sme.SERVICING_EVENT;
     	}
-    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto);
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,sme);
 		stateMachineService.executePhase(phaseEvent);
     }
 
