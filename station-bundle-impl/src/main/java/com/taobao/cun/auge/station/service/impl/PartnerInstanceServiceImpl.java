@@ -1392,7 +1392,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto){
-        ValidateUtils.validateParam(settleSuccessDto);
+       /* ValidateUtils.validateParam(settleSuccessDto);
         Long instanceId = settleSuccessDto.getInstanceId();
         ValidateUtils.notNull(instanceId);
             PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
@@ -1400,7 +1400,25 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             partnerInstanceHandler.handleSettleSuccess(settleSuccessDto, rel);
 
             // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);*/
+    	ValidateUtils.validateParam(settleSuccessDto);
+    	Long instanceId = settleSuccessDto.getInstanceId();
+    	ValidateUtils.notNull(instanceId);
+    	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+    	PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+    	partnerInstanceDto.setId(settleSuccessDto.getInstanceId());
+    	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
+    	partnerInstanceDto.setStationId(rel.getStationId());
+    	partnerInstanceDto.setPartnerId(rel.getPartnerId());
+    	partnerInstanceDto.setTaobaoUserId(rel.getTaobaoUserId());
+    	partnerInstanceDto.setVersion(rel.getVersion());
+    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
+    		partnerInstanceDto.setState(PartnerInstanceStateEnum.DECORATING);
+    	}else{
+    		partnerInstanceDto.setState(PartnerInstanceStateEnum.SERVICING);
+    	}
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto);
+		stateMachineService.executePhase(phaseEvent);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
