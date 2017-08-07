@@ -371,6 +371,10 @@
 				<groupId>com.alipay.baoxian</groupId>
 				<artifactId>baoxian-scene-facade</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.it.asset</groupId>
+			<artifactId>asset-interface</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

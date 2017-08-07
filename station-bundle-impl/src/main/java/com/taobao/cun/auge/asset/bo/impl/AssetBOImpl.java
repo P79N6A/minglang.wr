@@ -16,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.it.asset.api.CuntaoApiService;
 
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
@@ -102,7 +103,6 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.ExtEvent;
@@ -110,6 +110,16 @@ import com.taobao.hsf.util.RequestCtxUtil;
 
 @Component
 public class AssetBOImpl implements AssetBO {
+
+    private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
+
+    private final Long inAccountUserId = 2631673100L;
+
+    private static final String ASSET_SIGN = "assetSign";
+
+    private static final String ASSET_CHECK = "assetCheck";
+
+    private static final String ASEET_CATEGORY_YUNOS = "云OS";
 
     @Autowired
     private AssetMapper assetMapper;
@@ -135,24 +145,14 @@ public class AssetBOImpl implements AssetBO {
     @Autowired
     private CuntaoNewBailService newBailService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
-
-    private final Long inAccountUserId = 2631673100L;
-
-    private static final String ASSET_SIGN = "assetSign";
-
-    private static final String ASSET_CHECK = "assetCheck";
-
-    private static final String ASEET_CATEGORY_YUNOS = "云OS";
+    @Autowired
+    private CuntaoApiService cuntaoApiService;
 
     @Autowired
     private Emp360Adapter emp360Adapter;
 
     @Autowired
     private UicReadAdapter uicReadAdapter;
-
-    @Autowired
-    private GeneralTaskSubmitService generalTaskSubmitService;
 
     @Autowired
     private AssetRolloutBO assetRolloutBO;
@@ -168,6 +168,8 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
