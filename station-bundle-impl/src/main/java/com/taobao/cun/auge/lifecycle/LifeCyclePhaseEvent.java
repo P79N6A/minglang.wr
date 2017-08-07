@@ -2,6 +2,8 @@ package com.taobao.cun.auge.lifecycle;
 
 import java.util.Map;
 
+import org.springframework.util.Assert;
+
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
@@ -45,19 +47,31 @@ public class LifeCyclePhaseEvent {
 	}
 
 	public void setEvent(StateMachineEvent event) {
+		Assert.notNull(event);
 		this.event = event;
 	}
 	
-	private PartnerInstanceDto partnerInstanceDto;
+	private PartnerInstanceDto payload;
+	
+	public LifeCyclePhaseEvent(){
+		
+	}
 	
 	public LifeCyclePhaseEvent(String stateMachine, StateMachineEvent event,PartnerInstanceDto partnerInstanceDto) {
+		Assert.notNull(stateMachine);
+		Assert.notNull(event);
+		Assert.notNull(partnerInstanceDto);
 		this.event = event;
 		this.stateMachine = stateMachine;
-		this.partnerInstanceDto = partnerInstanceDto;
+		this.payload = partnerInstanceDto;
 	}
 	
 	public Object getPayload() {
-		return partnerInstanceDto;
+		return payload;
+	}
+
+	public void setPayload(PartnerInstanceDto payload) {
+		this.payload = payload;
 	}
 
 }

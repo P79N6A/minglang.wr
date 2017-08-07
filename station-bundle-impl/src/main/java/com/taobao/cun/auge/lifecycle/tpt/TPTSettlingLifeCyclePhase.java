@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,9 +43,10 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中节点服务")
-public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPT",event=StateMachineEvent.SETTLING_EVENT,desc="镇小二入驻节点服务")
+public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
+	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
@@ -62,7 +63,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	private LifeCycleValidator lifeCycleValidator;
 	
 	@Override
-	@PhaseStepMeta(descr="创建村小二站点")
+	@PhaseStepMeta(descr="创建镇小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
@@ -84,21 +85,21 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
     
 	@Override
-	@PhaseStepMeta(descr="创建村小二")
+	@PhaseStepMeta(descr="创建镇小二")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		 PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 addPartner(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建人村关系")
+	@PhaseStepMeta(descr="创建镇小二站点关系")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建lifeCycleItems")
+	@PhaseStepMeta(descr="创建LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addLifecycle(partnerInstanceDto);
@@ -106,7 +107,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	private void addLifecycle(PartnerInstanceDto partnerInstanceDto) {
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPT);
 		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
 		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
@@ -187,7 +188,4 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		return decorateExpect.getCode().equals(decorate.getCode()) && payExpect.getCode().equals(pay.getCode());
 	}
 
-	
-
-	
 }

@@ -9,7 +9,7 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.statemachine.StateMachineComponent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
-@StateMachineComponent(stateMachine={"TpStateMachine","TpaStateMachine"},actionKey="stateMachineComponent")
+@StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine"},actionKey="stateMachineComponent")
 public class StateMachineComponentImpl {
 
 	@Autowired

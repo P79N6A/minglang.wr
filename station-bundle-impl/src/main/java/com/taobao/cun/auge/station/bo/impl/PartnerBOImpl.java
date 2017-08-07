@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -149,15 +150,17 @@ public class PartnerBOImpl implements PartnerBO {
 		Assert.notNull(dto.getNameSource());
 		Long id=null;
 		//验证花名是否黑名单
-		try {
-			String flowerNameBlackString = Diamond.getConfig(DIAMOND_BLACK,
-					DIAMOND_GROUP, 3000);
+			String flowerNameBlackString = null;
+			try {
+				flowerNameBlackString = Diamond.getConfig(DIAMOND_BLACK,
+						DIAMOND_GROUP, 3000);
+			} catch (IOException e) {
+				throw new AugeSystemException("get flowblackListerrror",e);
+			}
 			if (flowerNameBlackString.contains(dto.getFlowerName())) {
 				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"此花名不允许使用，请更换再试。");
 			}
-		} catch (Exception e) {
-			throw new AugeSystemException(e.getMessage());
-		}
+		
 		if(dto.getId()!=null){
 			id=dto.getId();
 			//判断是否是审核没通过
