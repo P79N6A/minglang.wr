@@ -6,14 +6,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("CuntaoUserOrgService")
-@HSFProvider(serviceInterface = CountyService.class)
+@HSFProvider(serviceInterface = CuntaoUserOrgService.class)
 public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 
 	@Autowired
