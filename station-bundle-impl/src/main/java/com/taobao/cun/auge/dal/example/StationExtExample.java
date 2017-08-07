@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.dal.example;
 
+import java.util.List;
+
 /**
  * Created by xiao on 16/8/24.
  */
@@ -8,9 +10,17 @@ public class StationExtExample {
     private String name;
 
     private String status;
+    
+    private List<String> statuses;
 
     private String orgIdPath;
-
+    
+    //县服务中心orgId
+    private Long orgId;
+    
+    //合伙人类型
+    private String type;
+    
     private Integer pageStart; // 分页参数
 
     private Integer pageSize;
@@ -54,4 +64,28 @@ public class StationExtExample {
     public void setOrgIdPath(String orgIdPath) {
         this.orgIdPath = orgIdPath;
     }
+
+	public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public List<String> getStatuses() {
+		return statuses;
+	}
+
+	public void setStatuses(List<String> statuses) {
+		this.statuses = statuses;
+	}
 }

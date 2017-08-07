@@ -43,7 +43,7 @@ public interface StationQueryService {
 	 * @return
 	 */
 	public PageDto<StationDto> queryStations(StationCondition stationCondition);
-
+	
 	/**
 	 * 根据name、orgIdPath、stationStatusEnum查询TPstation
 	 * 
