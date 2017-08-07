@@ -395,7 +395,7 @@
 			<dependency>
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>ceres.shard</artifactId>
-			  <version>1.0.0.39</version>
+			  <version>1.0.0.69-SNAPSHOT</version>
 			  <exclusions>
 			 	 <exclusion>
 			   	<groupId>com.alibaba.citrus</groupId>  
@@ -403,7 +403,18 @@
 			  	</exclusion>
 			  </exclusions>
 			 </dependency>
-			 	
+			<dependency>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>cmall.shared</artifactId>
+			<version>1.0.0.9</version>
+			  <exclusions>
+			 	 <exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+			  	</exclusion>
+			  </exclusions>
+			</dependency>
+						
             <dependency>
                 <groupId>com.taobao.cun</groupId>
                 <artifactId>cun-common-client</artifactId>
