@@ -1409,16 +1409,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     	ValidateUtils.validateParam(settleSuccessDto);
     	Long instanceId = settleSuccessDto.getInstanceId();
     	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-    	ValidateUtils.notNull(rel);
-    	PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-    	partnerInstanceDto.setType(PartnerInstanceTypeEnum.valueof(rel.getType()));
-    	partnerInstanceDto.setId(settleSuccessDto.getInstanceId());
+    	PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+    	ValidateUtils.notNull(partnerInstanceDto);
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
-    	partnerInstanceDto.setStationId(rel.getStationId());
-    	partnerInstanceDto.setPartnerId(rel.getPartnerId());
-    	partnerInstanceDto.setTaobaoUserId(rel.getTaobaoUserId());
-    	partnerInstanceDto.setVersion(rel.getVersion());
-    	partnerInstanceDto.setState(PartnerInstanceStateEnum.valueof(rel.getState()));
     	StateMachineEvent sme = null;
     	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
     		sme = sme.DECORATING_EVENT;
