@@ -711,7 +711,7 @@
 		
 		from partner_station_rel instance,partner p,station s
 		
-		where instance.partner_id = p.id and instance.station_id=s.id and p.is_current='y'
+		where instance.partner_id = p.id and instance.station_id=s.id and instance.is_current='y'
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' 
 		
 		<if test="statuses != null" >
