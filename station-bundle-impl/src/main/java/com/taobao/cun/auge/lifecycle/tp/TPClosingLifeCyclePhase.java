@@ -14,7 +14,7 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.CLOSING_EVENT,desc="村小二停业中节点服务")
+@Phase(type="TP",event=StateMachineEvent.CLOSING_EVENT,desc="村小二停业中服务节点")
 public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Override
