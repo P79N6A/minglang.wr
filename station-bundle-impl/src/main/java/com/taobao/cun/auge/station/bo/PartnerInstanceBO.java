@@ -321,4 +321,6 @@ public interface PartnerInstanceBO {
 	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,String name);
 	
 	public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile); 
+	
+	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId);
 }

@@ -43,7 +43,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中节点服务")
+@Phase(type="TP",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中服务节点")
 public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired

@@ -322,4 +322,11 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public Long getCurStationIdByTaobaoUserId(Long taobaoUserId);
+    
+    /**
+     * 根据父站点ID查询淘帮手信息
+     * @param parentStationId
+     * @return
+     */
+    public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId);
 }
