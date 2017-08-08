@@ -45,10 +45,21 @@ public class TestStateMachineService {
 	}
 	
 	@Test
+	public void testTPASettlingWithStateMachine() throws IOException{
+		System.err.println("start testTPSettlingWithStateMachine");
+		String requestJSON = IOUtils.toString(TestTpaApplyService.class.getClassLoader().getResourceAsStream("tpaSettleRequest.json"));
+		PartnerInstanceDto request = JSON.parseObject(requestJSON, PartnerInstanceDto.class);
+		LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(request,StateMachineEvent.SETTLING_EVENT);
+		stateMachineService.executePhase(phaseEvent);
+		System.err.println("end testTPSettlingWithStateMachine");
+	}
+	
+	
+	@Test
 	public void testTPDecoratingWithStateMachine() throws InterruptedException{
 		System.err.println("start testTPDecoratingWithStateMachine");
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-		settleSuccessDto.setInstanceId(3648734372l);
+		settleSuccessDto.setInstanceId(3648734373l);
 		settleSuccessDto.setOperator("3709109723");
 		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
     	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(settleSuccessDto.getInstanceId());
@@ -73,16 +84,7 @@ public class TestStateMachineService {
 	}
 	
 	
-	@Test
-	public void testTPASettlingWithStateMachine(){
-		System.err.println("start testTPASettlingWithStateMachine");
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TPA);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TPAStateMachine",StateMachineEvent.SETTLING_EVENT,partnerInstanceDto);
-		stateMachineService.executePhase(phaseEvent);
-		System.err.println("end testTPASettlingWithStateMachine");
-	}
-	
+
 	@Test
 	public void testTPAServicingWithStateMachine(){
 		System.err.println("start testTPAServicingWithStateMachine");
