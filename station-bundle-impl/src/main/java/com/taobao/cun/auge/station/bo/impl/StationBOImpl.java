@@ -33,6 +33,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -187,43 +188,9 @@ public class StationBOImpl implements StationBO {
 	
 	public Page<Station> getStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
-		StationExtExample stationExtExample = new StationExtExample();
 
-		if (null != stationCondition.getType()) {
-			stationExtExample.setType(stationCondition.getType().getCode());
-		}
-
-		if (CollectionUtil.isNotEmpty(stationCondition.getStationStatuses())) {
-			stationExtExample.setStatuses(extractStationStatuses(stationCondition.getStationStatuses()));
-		}
-		
-		if (null != stationCondition.getStationStatusEnum()) {
-			stationExtExample.setStatus(stationCondition.getStationStatusEnum().getCode());
-		}
-		
-		if (StringUtil.isNotBlank(stationCondition.getName())) {
-			stationExtExample.setName(stationCondition.getName());
-		}
-
-		if (null != stationCondition.getOrgId()) {
-			stationExtExample.setOrgId(stationCondition.getOrgId());
-		}
-
+		StationExtExample stationExtExample = StationExtExampleConverter.convert(stationCondition);
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
 		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
-	}
-
-	private List<String> extractStationStatuses(List<StationStatusEnum> statusEnums) {
-		if (CollectionUtil.isEmpty(statusEnums)) {
-			return Collections.<String> emptyList();
-		}
-		List<String> statuses = new ArrayList<String>(statusEnums.size());
-		for (StationStatusEnum statusEnum : statusEnums) {
-			if (null == statusEnum) {
-				continue;
-			}
-			statuses.add(statusEnum.getCode());
-		}
-		return statuses;
 	}
 }

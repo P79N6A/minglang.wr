@@ -7,6 +7,7 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 
 public interface PartnerStationRelExtMapper {
@@ -48,4 +49,12 @@ public interface PartnerStationRelExtMapper {
 	 * @return
 	 */
 	List<PartnerInstance> selectPartnerInstancesByTaobaoUserIds(List<Long> taobaoUserIds);
+
+	/**
+	 * 根据村点，查询实例列表
+	 * 
+	 * @param stationExtExample
+	 * @return
+	 */
+	Page<PartnerInstance> selectPartnerInstancesByStationExample(StationExtExample stationExtExample);
 }
