@@ -5,7 +5,7 @@
 		select a.* from partner a,partner_station_rel b
 		 where  a.is_deleted='n' and b.is_deleted='n'
 		 and a.id=b.partner_id and b.is_current='y'
-		 and   a.alilang_user_id=#{alilanguserId} and b.type='TP'
+		 and   a.alilang_user_id=#{alilanguserId} 
 		 and b.state in('SETTLING','SERVICING','DECORATING')
 	</select>
 </mapper>
