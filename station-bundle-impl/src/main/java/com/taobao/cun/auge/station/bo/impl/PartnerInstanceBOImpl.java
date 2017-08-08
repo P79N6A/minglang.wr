@@ -841,4 +841,11 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		}
 		return true;
 	}
+	
+	
+	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
+		return partnerStationRelMapper.selectByExample(example);
+	}
 }
