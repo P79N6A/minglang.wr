@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -655,5 +657,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		
 		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
 		return success;
+	}
+
+	@Override
+	public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId) {
+		List<PartnerInstanceDto> instances = Lists.newArrayList();
+		List<PartnerStationRel> psRels = this.partnerInstanceBO.queryTpaPartnerInstances(parentStationId);
+		for (PartnerStationRel instance : psRels) {
+			Station station = stationBO.getStationById(instance.getStationId());
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+			PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance, station, partner);
+			instances.add(partnerInstanceDto);
+		}
+		return instances;
 	}
 }
