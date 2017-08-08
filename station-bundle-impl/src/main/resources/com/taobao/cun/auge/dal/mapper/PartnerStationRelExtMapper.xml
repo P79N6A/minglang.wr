@@ -663,4 +663,75 @@
 		</foreach>
 		order by instance.gmt_modified desc
   </select>
+
+
+  <select id="selectPartnerInstancesByStationExample" resultMap="PartnerInstanceMap" parameterType="com.taobao.cun.auge.dal.example.StationExtExample" >
+		select 
+		
+		instance.*,
+		
+		p.name as partner_name,
+		p.alipay_account,
+        p.flower_name,
+		p.taobao_nick,
+		p.iden_num,
+		p.mobile,
+		p.email,
+		p.business_type,
+		p.description as partner_description,
+		p.state as partner_state,
+		
+		s.name as station_name,
+		s.description as station_description,
+		s.province,
+		s.city,
+		s.county,
+		s.town,
+		s.province_detail,
+		s.city_detail,
+		s.county_detail,
+		s.town_detail,
+		s.address,
+		s.apply_org,
+		s.station_num,
+		s.lng,
+		s.lat,
+		s.village,
+		s.village_detail,
+		s.covered,
+		s.products,
+		s.logistics_state,
+		s.format,
+		s.area_type,
+		s.manager_id,
+		s.provider_id,
+		s.feature,
+		s.status,
+		s.fixed_type
+		
+		from partner_station_rel instance,partner p,station s
+		
+		where instance.partner_id = p.id and instance.station_id=s.id and p.is_current='y'
+		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' 
+		
+		<if test="statuses != null" >
+			and s.status in
+			<foreach item="item" collection="statuses" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	    <if test="status != null and status != ''" >
+	      and s.status = #{status,jdbcType=VARCHAR}
+	    </if>
+		<if test="type != null and type != ''">
+			and instance.type = #{type,jdbcType=VARCHAR}
+		</if>
+		<if test="orgId != null">
+			and s.apply_org = #{orgId,jdbcType=BIGINT}
+		</if>
+	    <if test="name != null and name != ''" >
+	      and LOCATE(#{name,jdbcType=VARCHAR},s.name)>0
+	    </if>
+		order by instance.gmt_modified desc
+  </select>
 </mapper>
