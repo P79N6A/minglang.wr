@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.taobao.cun.auge.bail.BailService;
@@ -104,12 +105,29 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 			return Boolean.TRUE;
 		}
 		// 获得冻结的金额
-		String frozenMoney = getfreezedMoneyOfCNY(rel.getTaobaoUserId());
+		String balanceFrozenMoney = getfreezedMoneyOfCNY(rel.getTaobaoUserId());
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 		String accountNo = getAccountNo(accountMoney.getAccountNo(), rel);
+		String unfrozeMoney = getUnfrozenMoney(balanceFrozenMoney, accountMoney.getMoney());
 		OperatorDto operatorDto = new OperatorDto(DomainUtils.DEFAULT_OPERATOR, OperatorTypeEnum.SYSTEM, 0L);
-		generalTaskSubmitService.submitQuitTask(instanceId, accountNo, frozenMoney, operatorDto);
+		generalTaskSubmitService.submitQuitTask(instanceId, accountNo, unfrozeMoney, operatorDto);
 		return Boolean.TRUE;
+	}
+
+	/**
+	 * 淘帮手转村小二时存在漏洞.这个逻辑兼容这种情形:
+	 * 如果剩余冻结保证金大于初始保证金则解冻初始这笔
+	 * 否则解冻剩余保证金
+	 * @param balanceFrozedMoney 剩余冻结的保证金
+	 * @param initFrozedMoney 最初冻结的保证金
+	 * @return
+	 */
+	private String getUnfrozenMoney(String balanceFrozedMoney,  BigDecimal initFrozedMoney) {
+		if (new BigDecimal(balanceFrozedMoney).compareTo(initFrozedMoney) > 0) {
+			logger.warn("unfroze balance money:{}, great than init frozen monery:{}", balanceFrozedMoney, initFrozedMoney);
+			return initFrozedMoney.toString();
+		}
+		return balanceFrozedMoney;
 	}
 
 	private String getAccountNo(String accountNo, PartnerStationRel rel) {
