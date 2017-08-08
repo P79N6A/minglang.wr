@@ -4,6 +4,7 @@ import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
 import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
 import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
 import com.taobao.cun.auge.station.response.TpaApplyResponse;
+import com.taobao.cun.auge.station.response.TpaListQueryResponse;
 /**
  * 淘帮手申请服务
  * @author zhenhuan.zhangzh
@@ -46,4 +47,11 @@ public interface TpaApplyService {
 	 * @return
 	 */
 	public TpaApplyInfoDto getTpaApplyInfo(String tpaTaobaoNick, Long partnerStationId);
+	
+	/**
+	 * 获取合伙人的淘帮手列表
+	 * @param 合伙人stationId
+	 * @return
+	 */
+	public TpaListQueryResponse queryTpaStations(Long parentStationId);
 }

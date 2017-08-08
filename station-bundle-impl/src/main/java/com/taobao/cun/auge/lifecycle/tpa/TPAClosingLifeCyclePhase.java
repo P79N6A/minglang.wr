@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpa;
 
 import org.springframework.stereotype.Component;
 
@@ -9,13 +9,13 @@ import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 
 /**
- * 合伙人入驻中阶段组件
+ * 淘帮手停业中组件
  * @author zhenhuan.zhangzh
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.CLOSING_EVENT,desc="村小二停业中服务节点")
-public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPA",event=StateMachineEvent.CLOSING_EVENT,desc="村小二停业中节点服务")
+public class TPAClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Override
 	@PhaseStepMeta
