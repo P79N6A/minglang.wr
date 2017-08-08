@@ -595,6 +595,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 				info.setStateMessage(instance.getState().getDesc());
 				info.setCainiaoLogisticsStatus(cainiaoStationId !=null?"SERVICING":"CLOSE");
 				info.setCainiaoStationId(cainiaoStationId);
+				info.setTpaStationId(instance.getStationId());
 				stations.add(info);
 			}
 			response.setSuccess(true);
