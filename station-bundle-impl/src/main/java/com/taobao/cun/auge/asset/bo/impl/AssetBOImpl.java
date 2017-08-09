@@ -16,6 +16,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.it.asset.api.Attachment;
 import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
@@ -993,18 +994,45 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(scrapDto.getFree(), "请申请是否免赔");
         Objects.requireNonNull(scrapDto.getReason(), "赔付原因不能为空");
         Objects.requireNonNull(scrapDto.getPayment(), "赔付金额不能为空");
-        //TODO 调接口赔付资产
         Asset asset = assetMapper.selectByPrimaryKey(scrapDto.getScrapAssetId());
         validateScrapAsset(asset, scrapDto.getOperator());
+        //发起赔付流程
+        scrapingItAsset(asset, scrapDto);
         asset.setStatus(AssetStatusEnum.SCRAPING.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
+    }
+
+    private void scrapingItAsset(Asset asset, AssetScrapDto scrapDto){
+        AssetLostRequestDto requestDto = new AssetLostRequestDto();
+        requestDto.setAssetCode(asset.getAliNo());
+        requestDto.setWorkId(asset.getUserId());
+        requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
+        requestDto.setVoucher("scrapingAsset" + asset.getId());
+        requestDto.setDeductible(scrapDto.getFree());
+        requestDto.setApplicantWorkId(scrapDto.getOperator());
+        requestDto.setReason(scrapDto.getReason());
+        if (scrapDto.getAttachmentList().size() > 0) {
+            requestDto.setAttachments(scrapDto.getAttachmentList().stream().map(attachment -> {
+                Attachment itAttachment = new Attachment();
+                BeanUtils.copyProperties(attachment, itAttachment);
+                return itAttachment;
+            }).collect(Collectors.toList()));
+        }
+        requestDto.setGroupCode(GROUP_CODE);
+        AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrappingWorkflow(requestDto);
+        if (!result.isSuccess()) {
+            logger.error("{bizType},{parameter} scraping it asset fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "集团资产发起赔付失败,请联系管理员！");
+        }
     }
 
     @Override
     public void scrapAssetByStation(AssetScrapDto scrapDto) {
         Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
         Objects.requireNonNull(scrapDto.getPayment(), "赔偿金额不能为空");
+        Objects.requireNonNull(scrapDto.getReason(), "赔偿金额不能为空");
         Asset asset = assetMapper.selectByPrimaryKey(scrapDto.getScrapAssetId());
         //资产状态校验
         validateScrapAsset(asset, scrapDto.getOperator());
@@ -1030,7 +1058,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setReason(scrapDto.getReason());
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
         if (!result.isSuccess()) {
-            logger.error("{bizType},{parameter} transfer bail fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
+            logger.error("{bizType},{parameter} scrap it asset fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "集团资产赔付失败,请联系管理员！");
         }
@@ -1055,7 +1083,7 @@ public class AssetBOImpl implements AssetBO {
             logger.warn("{bizType},{parameter} transfer bail fail " + resultModel.getMessage(), "assetWarn",
                 JSON.toJSONString(bailDto));
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "资产赔付失败,请联系管理员！");
+                "资产赔付保证金转移失败,请联系管理员！");
         }
     }
 

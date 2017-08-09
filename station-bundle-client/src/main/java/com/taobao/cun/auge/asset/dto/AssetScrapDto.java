@@ -24,7 +24,7 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
 
     private Long scrapAssetId;
 
-    private List<String> attachmentList;
+    private List<Attachment> attachmentList;
 
     public String getReason() {
         return reason;
@@ -74,12 +74,45 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
         this.scrapAssetId = scrapAssetId;
     }
 
-    public List<String> getAttachmentList() {
+    public List<Attachment> getAttachmentList() {
         return attachmentList;
     }
 
-    public void setAttachmentList(List<String> attachmentList) {
+    public void setAttachmentList(List<Attachment> attachmentList) {
         this.attachmentList = attachmentList;
+    }
+
+    public static class Attachment {
+
+        private String fileName;
+
+        private String path;
+
+        private String type;
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
     }
 
 }
