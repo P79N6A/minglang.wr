@@ -745,45 +745,53 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public boolean openStation(OpenStationDto openStationDto){
-        // 参数校验
-        BeanValidator.validateWithThrowable(openStationDto);
-        Long instanceId = openStationDto.getPartnerInstanceId();
-        String operator = openStationDto.getOperator();
-            // 检查装修中的生命周期（装修，培训）完成后，才能开业
-            checkPartnerLifecycleForOpenStation(instanceId);
+	public boolean openStation(OpenStationDto openStationDto) {
+		// 参数校验
+		BeanValidator.validateWithThrowable(openStationDto);
+		Long instanceId = openStationDto.getPartnerInstanceId();
+		// 检查装修中的生命周期（装修，培训）完成后，才能开业
+		checkPartnerLifecycleForOpenStation(instanceId);
 
-            if (openStationDto.isImme()) {// 立即开业
-                PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-                if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
-                    throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"合伙人信息不存在");
-                }
-                // 更新合伙人实例状态为服务中
-                partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,
-                        operator);
-                // 更新村点状态为服务中
-                stationBO.changeState(rel.getStationId(), StationStatusEnum.DECORATING, StationStatusEnum.SERVICING, operator);
-                // 更新开业时间
-                partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
-                        openStationDto.getOperator());
-                // 同步station_apply
-                syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+		if (openStationDto.isImme()) {
+			/*
+            // 立即开业
+              PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+              if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
+                  throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"合伙人信息不存在");
+              }
+              // 更新合伙人实例状态为服务中
+              partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.DECORATING, PartnerInstanceStateEnum.SERVICING,
+                      operator);
+              // 更新村点状态为服务中
+              stationBO.changeState(rel.getStationId(), StationStatusEnum.DECORATING, StationStatusEnum.SERVICING, operator);
+              // 更新开业时间
+              partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
+                      openStationDto.getOperator());
+              // 同步station_apply
+              syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
-                // 初始化合伙人层级
-                initPartnerInstanceLevel(rel);
+              // 初始化合伙人层级
+              initPartnerInstanceLevel(rel);
 
-                // 记录村点状态变化
-                sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, openStationDto);
-                // 开业包项目事件
-                dispachToServiceEvent(openStationDto, instanceId);
-            } else {// 定时开业
-                partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
-                        openStationDto.getOperator());
-                // 同步station_apply
-                syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
-            }
-        return true;
-    }
+              // 记录村点状态变化
+              sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, openStationDto);
+              // 开业包项目事件
+              dispachToServiceEvent(openStationDto, instanceId);
+           	*/
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+			partnerInstanceDto.setOpenDate(openStationDto.getOpenDate());
+			partnerInstanceDto.copyOperatorDto(openStationDto);
+			LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+			stateMachineService.executePhase(phaseEvent);
+		} else {// 定时开业
+			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
+					openStationDto.getOperator());
+			// 同步station_apply
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
+		}
+		return true;
+	}
 
     private void initPartnerInstanceLevel(PartnerStationRel instance) {
         PartnerInstanceLevelDto dto = new PartnerInstanceLevelDto();

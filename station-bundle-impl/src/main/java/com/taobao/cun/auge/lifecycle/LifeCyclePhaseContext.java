@@ -5,6 +5,11 @@ import java.util.Map;
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
+/**
+ * 
+ * @author zhenhuan.zhangzh
+ *
+ */
 public class LifeCyclePhaseContext {
 
 	/**

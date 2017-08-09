@@ -59,7 +59,7 @@ public class TestStateMachineService {
 	public void testTPDecoratingWithStateMachine() throws InterruptedException{
 		System.err.println("start testTPDecoratingWithStateMachine");
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-		settleSuccessDto.setInstanceId(3648734373l);
+		settleSuccessDto.setInstanceId(3648734374l);
 		settleSuccessDto.setOperator("3709109723");
 		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
     	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(settleSuccessDto.getInstanceId());
