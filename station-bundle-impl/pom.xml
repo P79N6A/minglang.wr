@@ -358,6 +358,10 @@
 				<groupId>com.alipay.baoxian</groupId>
 				<artifactId>baoxian-scene-facade</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+		</dependency>		
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
