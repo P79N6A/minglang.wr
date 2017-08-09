@@ -147,7 +147,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean prService(@Value("1.0.1.liyunlong") String version) {
+	public HSFSpringConsumerBean prService(@Value("${alibaba.ceres.version}") String version) {
 		return getConsumerBean(PrService.class, HSFGroup.HSF, version, 30000);
 	}
 	
