@@ -17,6 +17,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.it.asset.api.CuntaoApiService;
+import com.alibaba.it.asset.api.dto.AssetApiResultDO;
+import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
+import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
@@ -120,6 +123,8 @@ public class AssetBOImpl implements AssetBO {
     private static final String ASSET_CHECK = "assetCheck";
 
     private static final String ASEET_CATEGORY_YUNOS = "云OS";
+
+    private static final String GROUP_CODE = "36821";
 
     @Autowired
     private AssetMapper assetMapper;
@@ -964,10 +969,17 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(id, "赔付资产不能为空");
         Asset asset = assetMapper.selectByPrimaryKey(id);
         if (!("n".equals(asset.getIsDeleted()) && assetOperatorDto.getOperator().equals(asset.getOwnerWorkno()))) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产中存在不属于您名下的资产");
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于您名下");
         }
         AssetDetailDto detailDto = buildAssetDetail(asset);
-        //查询单个资产价钱
+        AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
+            detailDto.getAliNo(), GROUP_CODE);
+        if (!queryResult.isSuccess()) {
+            logger.error("{bizType}, getScrapDetailById error,{errorMsg} ", "assetError", queryResult.getErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "查询资产净值失败,请联系管理员！");
+        }
+        detailDto.setPayment(queryResult.getResult().getNetValue());
         return detailDto;
     }
 
@@ -992,12 +1004,36 @@ public class AssetBOImpl implements AssetBO {
     @Override
     public void scrapAssetByStation(AssetScrapDto scrapDto) {
         Objects.requireNonNull(scrapDto.getOperator(), "工号不能为空");
+        Objects.requireNonNull(scrapDto.getPayment(), "赔偿金额不能为空");
         Asset asset = assetMapper.selectByPrimaryKey(scrapDto.getScrapAssetId());
+        //资产状态校验
         validateScrapAsset(asset, scrapDto.getOperator());
-        //TODO 扣除保证金
+        //保证金转移
+        transferBail(scrapDto, asset.getUserId());
+        //通知集团资产废弃
+        scrapItAsset(asset, scrapDto);
+        //村淘库资产状态变更
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
+    }
+
+    private void scrapItAsset(Asset asset, AssetScrapDto scrapDto) {
+        AssetLostRequestDto requestDto = new AssetLostRequestDto();
+        requestDto.setAssetCode(asset.getAliNo());
+        requestDto.setWorkId(asset.getUserId());
+        requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
+        requestDto.setVoucher("scrapAsset" + asset.getId());
+        requestDto.setDeductible("n");
+        requestDto.setApplicantWorkId(scrapDto.getOperator());
+        requestDto.setGroupCode(GROUP_CODE);
+        requestDto.setReason(scrapDto.getReason());
+        AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
+        if (!result.isSuccess()) {
+            logger.error("{bizType},{parameter} transfer bail fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "集团资产赔付失败,请联系管理员！");
+        }
     }
 
     private void validateScrapAsset(Asset asset, String operator) {
@@ -1010,6 +1046,30 @@ public class AssetBOImpl implements AssetBO {
         if (!operator.equals(asset.getOwnerWorkno())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于您名下");
         }
+    }
+
+    private void transferBail(AssetScrapDto scrapDto, String userId) {
+        CuntaoTransferBailDto bailDto = buildBailDtoByScrapDto(scrapDto, userId);
+        ResultModel<Boolean> resultModel = newBailService.transferUserBail(bailDto);
+        if (!resultModel.isSuccess()) {
+            logger.warn("{bizType},{parameter} transfer bail fail " + resultModel.getMessage(), "assetWarn",
+                JSON.toJSONString(bailDto));
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "资产赔付失败,请联系管理员！");
+        }
+    }
+
+    private CuntaoTransferBailDto buildBailDtoByScrapDto(AssetScrapDto scrapDto, String userId) {
+        CuntaoTransferBailDto bailDto = new CuntaoTransferBailDto();
+        bailDto.setInAccountUserId(inAccountUserId);
+        bailDto.setOutAccountUserId(Long.valueOf(userId));
+        bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+        bailDto.setAmount(Long.valueOf(scrapDto.getPayment()) * 100);
+        bailDto.setSource("org");
+        bailDto.setReason("scrapAsset");
+        bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
+        bailDto.setOutOrderId("scrap_asset" + scrapDto.getScrapAssetId());
+        return bailDto;
     }
 
     @Override
