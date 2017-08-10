@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
 public interface CuntaoUserOrgMapper {
     /**
@@ -93,4 +95,6 @@ public interface CuntaoUserOrgMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(CuntaoUserOrg record);
+    
+    
 }

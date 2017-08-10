@@ -474,4 +474,5 @@
       role = #{role,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
 </mapper>
