@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -318,7 +319,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prLine.setNeedByDate(record.getGmtExceptOpen());
 		prLine.setDeliveryAddressId(new Long(address));
 		prLine.setReceiver(record.getReceiverWorkNo());
-		prLine.setQuantity(record.getExceptNum());
+		prLine.setQuantity(new BigDecimal(record.getExceptNum()));
 		prLine.setRemark(applyReason(record));
 		prLineList.add(prLine);
 		return prLineList;
