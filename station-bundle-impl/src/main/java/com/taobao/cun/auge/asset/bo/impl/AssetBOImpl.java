@@ -21,6 +21,7 @@ import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
+import com.alibaba.it.asset.api.dto.AssetTransDto;
 
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
@@ -705,9 +706,27 @@ public class AssetBOImpl implements AssetBO {
         updateAsset.setOwnerWorkno(signDto.getOperator());
         boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
+            //调集团接口转移责任人
+            transferItAsset(signDto);
             sendSignMessage(asset.getOwnerWorkno(), updateAsset);
         }
         return buildAssetDetail(updateAsset);
+    }
+
+    private void transferItAsset(AssetDto signDto) {
+        AssetTransDto transDto = new AssetTransDto();
+        transDto.setAssetCode(signDto.getAliNo());
+        transDto.setVoucherId("transferAsset" + signDto.getAliNo());
+        transDto.setOwner(signDto.getOperator());
+        transDto.setGroupCode(GROUP_CODE);
+        AssetApiResultDO<Boolean> result = cuntaoApiService.transferOwner(
+            Collections.singletonList(transDto));
+        if (!result.isSuccess()) {
+            logger.error("{bizType}, transferItAsset error,{errorMsg} ", "assetError", result.getErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "集团资产转移失败,请联系管理员！");
+        }
+
     }
 
     private void sendSignMessage(String owner, Asset asset) {
@@ -1008,7 +1027,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setAssetCode(asset.getAliNo());
         requestDto.setWorkId(asset.getUserId());
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
-        requestDto.setVoucher("scrapingAsset" + asset.getId());
+        requestDto.setVoucher("scrapingAsset" + asset.getAliNo());
         requestDto.setDeductible(scrapDto.getFree());
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setReason(scrapDto.getReason());
@@ -1051,7 +1070,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setAssetCode(asset.getAliNo());
         requestDto.setWorkId(asset.getUserId());
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
-        requestDto.setVoucher("scrapAsset" + asset.getId());
+        requestDto.setVoucher("scrapAsset" + asset.getAliNo());
         requestDto.setDeductible("n");
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setGroupCode(GROUP_CODE);
