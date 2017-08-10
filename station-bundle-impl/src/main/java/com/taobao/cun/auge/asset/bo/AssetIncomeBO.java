@@ -42,14 +42,13 @@ public interface AssetIncomeBO {
 	 * @return
 	 */
 	public AssetIncomeDto getIncomeDtoById(Long incomeId);
-	
+
 	/**
-	 * 县点签收资产
-	 * @param assetId
-	 * @param typeEnum
+	 * 县点资产签收
+	 * @param aliNo
 	 * @param operator
 	 */
-	public void signAssetByCounty(Long assetId,String operator);
+	public void signAssetByCounty(String aliNo,String operator);
 	
 	/**
 	 * 村点签收资产

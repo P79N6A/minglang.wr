@@ -222,4 +222,6 @@ public interface AssetBO {
     public Map<String, String> getStationAssetState(Long stationId);
 
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
+
+    public Asset getAssetByAliNo(String aliNo);
 }

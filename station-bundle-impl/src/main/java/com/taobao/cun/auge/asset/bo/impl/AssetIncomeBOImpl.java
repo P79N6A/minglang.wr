@@ -3,6 +3,8 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.dal.domain.Asset;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,6 +48,8 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 	private AssetRolloutBO assetRolloutBO;
 	@Autowired
 	private DiamondConfiguredProperties configuredProperties;
+	@Autowired
+	private AssetBO assetBO;
 	
 	@Override
 	public PageDto<AssetIncomeDto> getIncomeList(AssetIncomeQueryCondition queryParam) {
@@ -123,11 +127,15 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signAssetByCounty(Long assetId,String operator) {
-		ValidateUtils.notNull(assetId);
+	public void signAssetByCounty(String aliNo,String operator) {
+
+		ValidateUtils.notNull(aliNo);
 		ValidateUtils.notNull(operator);
-		
-		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+		Asset asset = assetBO.getAssetByAliNo(aliNo);
+		if (asset == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(asset.getId());
 		if (detail == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
 		}

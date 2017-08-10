@@ -709,8 +709,28 @@ public class AssetBOImpl implements AssetBO {
             //调集团接口转移责任人
             transferItAsset(signDto);
             sendSignMessage(asset.getOwnerWorkno(), updateAsset);
+        } else {
+            //调集团接口出库
+            obtainItAsset(signDto);
         }
         return buildAssetDetail(updateAsset);
+    }
+
+    private void obtainItAsset(AssetDto signDto) {
+        AssetTransDto transDto = new AssetTransDto();
+        transDto.setAssetCode(signDto.getAliNo());
+        transDto.setOwner(signDto.getOperator());
+        transDto.setUser(signDto.getOperator());
+        transDto.setVoucherId("obtainAsset" + signDto.getAliNo());
+        transDto.setWorkId(signDto.getOperator());
+        transDto.setGroupCode(GROUP_CODE);
+        AssetApiResultDO<Boolean> result = cuntaoApiService.assetObtain(
+            Collections.singletonList(transDto));
+        if (!result.isSuccess() || !result.getResult()) {
+            logger.error("{bizType}, obtainItAsset error,{errorMsg} ", "assetError", result.getErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "集团资产出库失败,请联系管理员！");
+        }
     }
 
     private void transferItAsset(AssetDto signDto) {
@@ -912,7 +932,8 @@ public class AssetBOImpl implements AssetBO {
         return buildAssetDetail(asset);
     }
 
-    private Asset getAssetByAliNo(String aliNo) {
+    @Override
+    public Asset getAssetByAliNo(String aliNo) {
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(aliNo);
         return ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
