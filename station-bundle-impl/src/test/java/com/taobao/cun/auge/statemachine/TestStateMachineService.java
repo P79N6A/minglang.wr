@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.statemachine;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -16,12 +17,13 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum.PartnerInstanceType;
+import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.tpa.TestTpaApplyService;
 
 @RunWith(SpringRunner.class)
@@ -34,6 +36,10 @@ public class TestStateMachineService {
 	
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
+	
+	@Autowired
+	private PartnerInstanceService partnerInstanceService;
+	
 	@Test
 	public void testTPSettlingWithStateMachine() throws IOException{
 		System.err.println("start testTPSettlingWithStateMachine");
@@ -43,6 +49,20 @@ public class TestStateMachineService {
 		stateMachineService.executePhase(phaseEvent);
 		System.err.println("end testTPSettlingWithStateMachine");
 	}
+	
+	@Test
+	public void testTPServicingWithStateMachine() throws IOException{
+		System.err.println("start testTPServicingWithStateMachine");
+		OpenStationDto openStationDto = new OpenStationDto();
+		openStationDto.setImme(true);
+		openStationDto.setOpenDate(new Date());
+		openStationDto.setOperator("62333");
+		openStationDto.setOperatorType(OperatorTypeEnum.BUC);
+		openStationDto.setPartnerInstanceId(3648734374l);
+		partnerInstanceService.openStation(openStationDto);
+		System.err.println("end testTPServicingWithStateMachine");
+	}
+	
 	
 	@Test
 	public void testTPASettlingWithStateMachine() throws IOException{

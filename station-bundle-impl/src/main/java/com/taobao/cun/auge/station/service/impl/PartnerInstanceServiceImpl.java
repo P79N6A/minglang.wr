@@ -779,6 +779,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
               dispachToServiceEvent(openStationDto, instanceId);
            	*/
 			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if (rel == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
+                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"合伙人信息不存在");
+            }
 			PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
 			partnerInstanceDto.setOpenDate(openStationDto.getOpenDate());
 			partnerInstanceDto.copyOperatorDto(openStationDto);
