@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.common.lang.StringUtil;
+import com.google.common.collect.Lists;
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
@@ -27,6 +28,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -44,6 +46,8 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
 import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
 import com.taobao.cun.auge.station.response.TpaApplyResponse;
+import com.taobao.cun.auge.station.response.TpaListQueryResponse;
+import com.taobao.cun.auge.station.response.TpaStationInfo;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -95,6 +99,10 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 	
 	@Autowired
 	private StationBO stationBO;
+	
+	@Autowired
+	private CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	
 	private static final Logger logger = LoggerFactory.getLogger(TpaApplyServiceImpl.class);
 
 	@Override
@@ -561,5 +569,41 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			}
 		}
 		return "T"+num;
+	}
+
+	@Override
+	public TpaListQueryResponse queryTpaStations(Long parentStationId) {
+		TpaListQueryResponse response = new TpaListQueryResponse();
+		try {
+			List<PartnerInstanceDto> partnerInstances = partnerInstanceQueryService.queryTpaPartnerInstances(parentStationId);
+			List<TpaStationInfo> stations = Lists.newArrayList();
+			for(PartnerInstanceDto instance : partnerInstances){
+				TpaStationInfo info = new TpaStationInfo();
+				info.setTaobaoUserId(instance.getTaobaoUserId());
+				info.setLoginId(instance.getPartnerDto().getTaobaoNick());
+				info.setApplierName(instance.getPartnerDto().getName());
+				info.setMobile(instance.getPartnerDto().getMobile());
+				info.setApplyDate(instance.getApplyTime());
+				info.setName(instance.getStationDto().getName());
+				info.setEmail(instance.getPartnerDto().getEmail());
+				info.setIdenNum(instance.getPartnerDto().getIdenNum());
+				info.setAlipayAccount(instance.getPartnerDto().getAlipayAccount());
+				info.setOperatorType(instance.getType().getCode());
+				info.setPartnerStationId(instance.getParentStationId());
+				Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(instance.getStationId());
+				info.setState(instance.getState().getCode());
+				info.setStateMessage(instance.getState().getDesc());
+				info.setCainiaoLogisticsStatus(cainiaoStationId !=null?"SERVICING":"CLOSE");
+				info.setCainiaoStationId(cainiaoStationId);
+				info.setTpaStationId(instance.getStationId());
+				stations.add(info);
+			}
+			response.setSuccess(true);
+			response.setStations(stations);
+		} catch (Exception e) {
+			response.setErrorMessage("系统异常");
+			response.setSuccess(false);
+		}
+		return response;
 	}
 }

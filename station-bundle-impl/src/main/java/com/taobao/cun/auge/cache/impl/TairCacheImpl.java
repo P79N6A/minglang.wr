@@ -95,5 +95,16 @@ public class TairCacheImpl implements TairCache {
 			throw new RuntimeException("delete(String) fail, key=[" + keys + "], resultCode=[" + resultCode + "]");
 		}
 	}
+	
+	public Integer incr(Serializable key, int value, int defaultValue,
+			int expireTime) {
+		Result<Integer> result = tairManager.incr(tairNamespace, key, value,
+				defaultValue, expireTime);
+		if (!result.isSuccess()) {
+			throw new RuntimeException("incr(String) fail, key=[" + key
+					+ "], resultCode=[" + result + "]");
+		}
+		return result.getValue();
+	}
 
 }

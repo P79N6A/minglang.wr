@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +41,9 @@ import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
 import com.taobao.cun.auge.msg.service.MessageService;
+import com.taobao.cun.auge.opensearch.OpenSearchManager;
+import com.taobao.cun.auge.opensearch.OpenSearchParser;
+import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
 import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -343,14 +349,29 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 				.build();
 	}
 	
-	 @Bean
-	    public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
+	@Bean
+	public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
 	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 	                .build();
-	    }
-       @Bean
-       public PolicyQueryService policyQueryService(HsfConsumerContext context, @Value("${alipay.insure.version}") String version) {
+	}
+    @Bean
+    public PolicyQueryService policyQueryService(HsfConsumerContext context, @Value("${alipay.insure.version}") String version) {
            return context.hsfConsumerBuilder(PolicyQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
-       }
+    }
+    
+    @Bean
+	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){
+    	OpenSearchManager openSearchManager = new OpenSearchManager();
+    	openSearchManager.setAccesskey("pvnIGaF0vEzBuf9i");
+    	openSearchManager.setSecret("3g1RnBTeCyr8adYzX9tcufOffdR6T8");
+    	openSearchManager.setHost(host);
+    	List<String> indexs=new ArrayList<String>();
+    	indexs.add(index);
+    	openSearchManager.setIndexs(indexs);
+    	OpenSearchParser parser=new StationQueryOpenSearchParser();
+    	openSearchManager.setParser(parser);
+    	openSearchManager.init();
+    	return openSearchManager;
+	}
 }

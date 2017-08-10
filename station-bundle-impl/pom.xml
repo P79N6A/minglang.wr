@@ -375,6 +375,10 @@
 			<groupId>com.alibaba.it.asset</groupId>
 			<artifactId>asset-interface</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+		</dependency>		
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

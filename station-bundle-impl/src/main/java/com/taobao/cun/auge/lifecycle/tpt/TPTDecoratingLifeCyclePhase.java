@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpt;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -51,8 +51,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
-public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPT",event=StateMachineEvent.DECORATING_EVENT,desc="镇小二装修中服务节点")
+public class TPTDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
 	private StationBO stationBO;
@@ -85,13 +85,13 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二信息")
+	@PhaseStepMeta(descr="更新镇小二信息")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nonthing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二实例状态到装修中")
+	@PhaseStepMeta(descr="更新镇小二实例状态到装修中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);

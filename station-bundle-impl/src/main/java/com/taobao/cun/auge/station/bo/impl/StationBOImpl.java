@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,12 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.util.CollectionUtil;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
@@ -184,24 +186,11 @@ public class StationBOImpl implements StationBO {
 		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
 	
-	@Override
 	public Page<Station> getStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
 
-		StationExample example = new StationExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-
-		if (StringUtil.isNotBlank(stationCondition.getName())) {
-			criteria.andNameLike(stationCondition.getName());
-		}
-		if (null != stationCondition.getOrgId()) {
-			criteria.andApplyOrgEqualTo(stationCondition.getOrgId());
-		}
-		if (null != stationCondition.getStationStatusEnum()) {
-			criteria.andStatusEqualTo(stationCondition.getStationStatusEnum().getCode());
-		}
+		StationExtExample stationExtExample = StationExtExampleConverter.convert(stationCondition);
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
-		return (Page<Station>)stationMapper.selectByExample(example);
+		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
 	}
 }

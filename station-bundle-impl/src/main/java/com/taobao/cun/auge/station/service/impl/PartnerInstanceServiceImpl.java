@@ -39,6 +39,7 @@ import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
@@ -56,6 +57,7 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.PaymentAccountQueryAdapter;
@@ -148,10 +150,12 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
@@ -822,19 +826,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人没有完成培训");
         }
         //判断装修是否未付款
-//		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-//		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
-//		if (decorate != null
-//				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-//						decorate.getPaymentType())
-//				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-//						decorate.getStatus())) {
-//			throw new AugeServiceException(
-//					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY);
-//		}
-        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
-        }
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+		if (decorate != null
+				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+						decorate.getPaymentType())
+				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+						decorate.getStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,
+					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY.getDesc());
+		}
+//        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+//            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
+//        }
 
         PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
         partnerLifecycleDto.setLifecycleId(items.getId());
@@ -1230,7 +1234,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 记录村点状态变化
             sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
             return instanceId;*/
-    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto);
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.SETTLING_EVENT);
 		stateMachineService.executePhase(phaseEvent);
 		return partnerInstanceDto.getId();
     }
@@ -1389,10 +1393,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             generalTaskSubmitService.submitDegradePartner(rel, PartnerInstanceConverter.convert(parentRel), degradeDto);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    @SuppressWarnings("static-access")
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void applySettleSuccess(PartnerInstanceSettleSuccessDto settleSuccessDto){
-        ValidateUtils.validateParam(settleSuccessDto);
+       /* ValidateUtils.validateParam(settleSuccessDto);
         Long instanceId = settleSuccessDto.getInstanceId();
         ValidateUtils.notNull(instanceId);
             PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
@@ -1400,7 +1405,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             partnerInstanceHandler.handleSettleSuccess(settleSuccessDto, rel);
 
             // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);*/
+    	ValidateUtils.validateParam(settleSuccessDto);
+    	Long instanceId = settleSuccessDto.getInstanceId();
+    	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+    	PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+    	ValidateUtils.notNull(partnerInstanceDto);
+    	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
+    	StateMachineEvent sme = null;
+    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
+    		sme = sme.DECORATING_EVENT;
+    	}else{
+    		sme = sme.SERVICING_EVENT;
+    	}
+    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,sme);
+		stateMachineService.executePhase(phaseEvent);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)

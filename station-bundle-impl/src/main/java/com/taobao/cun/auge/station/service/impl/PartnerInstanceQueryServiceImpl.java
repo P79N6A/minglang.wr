@@ -2,7 +2,9 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -32,6 +35,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
+import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
@@ -47,6 +51,7 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
@@ -55,6 +60,7 @@ import com.taobao.cun.auge.station.convert.PartnerLifecycleConverter;
 import com.taobao.cun.auge.station.convert.ProcessedStationStatusConverter;
 import com.taobao.cun.auge.station.convert.QuitStationApplyConverter;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -285,6 +291,19 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 			}
 			PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
 			return success;
+	}
+	
+	@Override
+	public PageDto<PartnerInstanceDto> queryByPage(StationCondition stationCondition){
+		ValidateUtils.validateParam(stationCondition);
+		
+		StationExtExample stationExtExample = StationExtExampleConverter.convert(stationCondition);
+		
+		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
+		Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByStationExample(stationExtExample);
+
+		PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+		return success;
 	}
 
 	private void buildLifecycleItems(Page<PartnerInstance> page) {
@@ -655,5 +674,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 		
 		List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
 		return success;
+	}
+
+	@Override
+	public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId) {
+		List<PartnerInstanceDto> instances = Lists.newArrayList();
+		List<PartnerStationRel> psRels = this.partnerInstanceBO.queryTpaPartnerInstances(parentStationId);
+		for (PartnerStationRel instance : psRels) {
+			Station station = stationBO.getStationById(instance.getStationId());
+			Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+			PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance, station, partner);
+			instances.add(partnerInstanceDto);
+		}
+		return instances;
 	}
 }

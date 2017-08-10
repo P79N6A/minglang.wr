@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
@@ -25,7 +26,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 合伙人实例查询服务
@@ -82,6 +82,14 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public boolean isOtherPartnerQuit(Long instanceId);
+	
+	/**
+	 * 根据组织、村点信息，查询实例列表
+	 * 
+	 * @param pageCondition
+	 * @return
+	 */
+	public PageDto<PartnerInstanceDto> queryByPage(StationCondition stationCondition);
 	
 	/**
 	 * 使用stationapply state 查询
@@ -314,4 +322,11 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public Long getCurStationIdByTaobaoUserId(Long taobaoUserId);
+    
+    /**
+     * 根据父站点ID查询淘帮手信息
+     * @param parentStationId
+     * @return
+     */
+    public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId);
 }
