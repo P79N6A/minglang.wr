@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample;
@@ -89,6 +90,8 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			c.andStatusIn(status);
 		}
 		int total=cuntaoUserOrgMapper.countByExample(example);
+		example.setOrderByClause("gmt_modified desc");
+        PageHelper.startPage(queryCondition.getPage(), queryCondition.getPageSize());
 		List<CuntaoUserOrg> userOrgs = cuntaoUserOrgMapper.selectByExample(example);
 		List<CuntaoUserOrgListDto> rst=new ArrayList<CuntaoUserOrgListDto>();
 		for(CuntaoUserOrg userOrg:userOrgs){
