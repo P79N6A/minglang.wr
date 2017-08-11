@@ -1,9 +1,11 @@
 package com.taobao.cun.auge.user.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +18,14 @@ import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.CuntaoUserOrgMapper;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
+import com.taobao.cun.auge.user.dto.CuntaoBucUserOrgCreateDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgListDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgQueryDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserStausEnum;
 import com.taobao.cun.auge.user.dto.CuntaoUserTypeEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
+import com.taobao.cun.common.exception.ParamException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
 
@@ -135,6 +139,108 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
             }
         }
 		return valueMap;
+	}
+
+	@Override
+	public Boolean addBucUsers(
+			List<CuntaoBucUserOrgCreateDto> cuntaoBucUserOrgCreateDtoList) {
+		for (CuntaoBucUserOrgCreateDto vo : cuntaoBucUserOrgCreateDtoList) {
+			validate(vo);
+			String loginId;
+			if (vo.getUserType().getCode()
+					.equals(CuntaoUserTypeEnum.BUC.getCode())) {
+				loginId = vo.getWorkNo().replaceFirst("^0+", "");
+			} else {
+				loginId = vo.getWorkNo();
+			}
+			CuntaoUserOrg cuntaoUserOrgDO = new CuntaoUserOrg();
+			Date now = new Date();
+			cuntaoUserOrgDO.setUserType(vo.getUserType().getCode());
+			cuntaoUserOrgDO.setStatus(CuntaoUserStausEnum.VALID.getCode());
+			cuntaoUserOrgDO.setModifier(loginId);
+			cuntaoUserOrgDO.setLoginId(loginId);
+			cuntaoUserOrgDO.setCreator(loginId);
+			cuntaoUserOrgDO.setGmtCreate(now);
+			cuntaoUserOrgDO.setGmtModified(now);
+			cuntaoUserOrgDO.setStartTime(now);
+			cuntaoUserOrgDO.setOrgId(vo.getOrgId());
+			cuntaoUserOrgDO.setUserName(vo.getUserName());
+			cuntaoUserOrgDO.setIsDeleted("n");
+			cuntaoUserOrgDO.setFeature(getFeatureString(vo.getMobile(),
+					vo.getDivisionId()));
+			cuntaoUserOrgDO.setFeatureCc(1);
+			judgeExist(vo.getOrgId(), loginId);
+			cuntaoUserOrgMapper.insert(cuntaoUserOrgDO);
+		}
+		return true;
+	}
+	
+	private void judgeExist(Long orgId,String loginId){
+		CuntaoUserOrgExample example=new CuntaoUserOrgExample();
+		Criteria c = example.createCriteria().andIsDeletedEqualTo("n");
+		c.andOrgIdEqualTo(orgId);
+		c.andLoginIdEqualTo(loginId);
+		c.andStatusEqualTo(CuntaoUserStausEnum.VALID.getCode());
+		int count=cuntaoUserOrgMapper.countByExample(example);
+		if(count>0){
+			 throw new RuntimeException("该同学已经在组织中了哦![" + orgId + "]");
+		}
+	}
+	
+	private String getFeatureString(String mobile,String division){
+		 Map<String,String> featureMap=new HashMap<String,String>();
+			if(mobile==null){
+				featureMap.put("mobile", "");
+			}else{
+				featureMap.put("mobile", mobile);
+			}
+			if(division==null){
+				featureMap.put("divisionId", "");
+			}else{
+				featureMap.put("divisionId", division);
+			}
+			return toString(featureMap);
+		
+	}
+	private String toString(Map<String, String> featureMap){
+		StringBuilder feature=new StringBuilder();
+		if(featureMap!=null&&!featureMap.isEmpty()){
+			for(Entry<String,String> entry:featureMap.entrySet()){
+				feature.append(";").append(entry.getKey()).append(":").append(entry.getValue());
+			}
+			return feature.substring(1);
+		}
+		return feature.toString();
+	}
+	
+	 private void validate(CuntaoBucUserOrgCreateDto vo) {
+	      if(vo==null) throw new ParamException("CuntaoBucUserOrgCreateVo is null");
+	      if(vo.getOrgId()==null) throw new ParamException("CuntaoBucUserOrgCreateVo.orgid is null");
+	      if(vo.getUserType().getCode().equals(CuntaoUserTypeEnum.BUC.getCode())){
+	    	  if(StringUtils.isBlank(vo.getUserName())) throw new RuntimeException("CuntaoBucUserOrgCreateVo.username is null"); 
+	      }            
+	      if(StringUtils.isBlank(vo.getWorkNo())) throw new RuntimeException("CuntaoBucUserOrgCreateVo.workno is null");
+	   }
+
+	@Override
+	public Boolean invalidBucUsers(String workNo, Long orgId) {
+		if(StringUtils.isEmpty(workNo)||orgId==null){
+			throw new RuntimeException("param is null");
+		}
+		CuntaoUserOrgExample example=new CuntaoUserOrgExample();
+		Criteria c = example.createCriteria().andIsDeletedEqualTo("n");
+		c.andOrgIdEqualTo(orgId);
+		c.andLoginIdEqualTo(workNo);
+		c.andStatusEqualTo(CuntaoUserStausEnum.VALID.getCode());
+		List<CuntaoUserOrg> userOrg=cuntaoUserOrgMapper.selectByExample(example);
+		for(CuntaoUserOrg user:userOrg){
+			user.setModifier(workNo);
+			user.setGmtModified(new Date());
+			user.setEndTime(new Date());
+			user.setStatus(CuntaoUserStausEnum.INVALID.getCode());
+			cuntaoUserOrgMapper.updateByPrimaryKey(user);
+		}
+		return true;
 	}
 
 }
