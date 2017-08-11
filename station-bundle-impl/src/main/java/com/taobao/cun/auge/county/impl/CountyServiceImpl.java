@@ -1,18 +1,12 @@
 package com.taobao.cun.auge.county.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +145,12 @@ public class CountyServiceImpl implements CountyService{
 		returnDto.setFreeDeadline(countyDto.getFreeDeadline());
 		returnDto.setSelfCosts(countyDto.getSelfCosts());
 		returnDto.setEmployeeName(countyDto.getEmployeeName());
+		returnDto.setOrgId(countyDto.getOrgId());
+		if(countyDto.getStartOperationTime()!=null){
+			returnDto.setStartOperationTime(countyDto.getStartOperationTime());
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+			returnDto.setStartOperationTimeStr(sdf.format(countyDto.getStartOperationTime()));
+		}
 		return returnDto;
 	}
 
