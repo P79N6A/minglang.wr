@@ -997,7 +997,7 @@ public class AssetBOImpl implements AssetBO {
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator())
             .andUseAreaTypeEqualTo(condition.getUseAreaType()).andUseAreaIdEqualTo(condition.getUseAreaId())
-            .andStatusIn(AssetStatusEnum.getScrapShowList());
+            .andStatusIn(AssetStatusEnum.getValidStatusList());
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         Page<Asset> assetPage = (Page<Asset>)assetList;
