@@ -68,8 +68,6 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private PartnerApplyBO partnerApplyBO;
 	
-	@Autowired
-	private GeneralTaskSubmitService generalTaskSubmitService;
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
