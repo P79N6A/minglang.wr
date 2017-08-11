@@ -563,19 +563,19 @@ public class AssetBOImpl implements AssetBO {
             AreaAssetListDto dto = new AreaAssetListDto();
             List<Asset> list = entry.getValue();
             Asset asset = list.get(0);
-            dto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
-            dto.setOwner(asset.getOwnerName());
             if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(asset.getUseAreaType())) {
                 dto.setUseArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getUseAreaId()).getName());
             } else if (AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
                 dto.setUseArea(stationBO.getStationById(asset.getUseAreaId()).getName());
-                dto.setUseAreaType(asset.getUseAreaType());
-                dto.setUseAreaId(asset.getUseAreaId());
-                dto.setPutAway(String.valueOf(
-                    list.stream().filter(
-                        i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER
-                            .getCode().equals(i.getStatus())).count()));
             }
+            dto.setOwnerArea(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName());
+            dto.setOwner(asset.getOwnerName());
+            dto.setUseAreaType(asset.getUseAreaType());
+            dto.setUseAreaId(asset.getUseAreaId());
+            dto.setPutAway(String.valueOf(
+                list.stream().filter(
+                    i -> AssetStatusEnum.DISTRIBUTE.getCode().equals(i.getStatus()) || AssetStatusEnum.TRANSFER
+                        .getCode().equals(i.getStatus())).count()));
             dto.setCountList(buildAssetCountDtoList(list));
             dtoList.add(dto);
         }

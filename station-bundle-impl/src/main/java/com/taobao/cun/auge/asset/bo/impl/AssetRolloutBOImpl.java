@@ -421,20 +421,17 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		roDto.setType(AssetRolloutTypeEnum.SCRAP);
 		roDto.copyOperatorDto(scrapDto);
 		Long rolloutId = addRollout(roDto);
-		List<AssetDetailDto> detailDtoList = assetBO.getScarpDetailListByIdList(
-			scrapDto.getScrapAssetIdList(), scrapDto);
-		detailDtoList.forEach(dto -> {
-			AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
-			detail.setAssetId(dto.getId());
-			detail.setCategory(dto.getCategory());
-			detail.setRolloutId(rolloutId);
-			detail.setType(AssetRolloutIncomeDetailTypeEnum.SCRAP);
-			detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
-			detail.setPrice(dto.getPayment());
-			detail.setOperatorTime(new Date());
-			detail.copyOperatorDto(scrapDto);
-			assetRolloutIncomeDetailBO.addDetail(detail);
-		});
+		AssetDetailDto dto = assetBO.getScrapDetailById(scrapDto.getScrapAssetId(), scrapDto);
+		AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+		detail.setAssetId(dto.getId());
+		detail.setCategory(dto.getCategory());
+		detail.setRolloutId(rolloutId);
+		detail.setType(AssetRolloutIncomeDetailTypeEnum.SCRAP);
+		detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+		detail.setPrice(dto.getPayment());
+		detail.setOperatorTime(new Date());
+		detail.copyOperatorDto(scrapDto);
+		assetRolloutIncomeDetailBO.addDetail(detail);
 		return rolloutId;
 	}
 
