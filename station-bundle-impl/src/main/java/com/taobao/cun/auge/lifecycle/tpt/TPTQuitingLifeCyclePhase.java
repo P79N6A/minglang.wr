@@ -36,12 +36,12 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
- * 合伙人入驻中阶段组件
+ * 镇小二退出中阶段组件
  * @author zhenhuan.zhangzh
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.QUITING_EVENT,desc="镇小二退出中服务节点")
+@Phase(type="TPT",event=StateMachineEvent.QUITING_EVENT,desc="镇小二退出中服务节点")
 public class TPTQuitingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired

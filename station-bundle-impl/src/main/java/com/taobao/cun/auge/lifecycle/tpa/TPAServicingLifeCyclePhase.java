@@ -28,6 +28,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
+/**
+ * 淘帮手服务中阶段组件
+ * @author zhenhuan.zhangzh
+ *
+ */
 @Component
 @Phase(type="TPA",event=StateMachineEvent.SERVICING_EVENT,desc="淘帮手服务中节点服务")
 public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{

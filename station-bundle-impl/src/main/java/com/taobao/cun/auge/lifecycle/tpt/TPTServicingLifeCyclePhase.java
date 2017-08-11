@@ -27,7 +27,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
- * 合伙人入驻中阶段组件
+ * 镇小二服务中阶段组件
  * @author zhenhuan.zhangzh
  *
  */

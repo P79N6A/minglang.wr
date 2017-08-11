@@ -31,7 +31,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
- * 淘帮手入驻中阶段组件
+ * 淘帮手停业中阶段组件
  * @author zhenhuan.zhangzh
  *
  */
