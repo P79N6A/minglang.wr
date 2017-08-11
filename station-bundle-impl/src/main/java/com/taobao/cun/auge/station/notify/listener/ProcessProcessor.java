@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.notify.listener;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.taobao.common.category.util.StringUtil;
@@ -22,7 +24,6 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
@@ -43,12 +44,10 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
-import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -56,7 +55,6 @@ import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -261,13 +259,14 @@ public class ProcessProcessor {
 		try {
 			PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			Long stationId = partnerStationRel.getStationId();
+			//Long stationId = partnerStationRel.getStationId();
 
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
-			String operator = operatorDto.getOperator();
+			//String operator = operatorDto.getOperator();
 
 			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
 				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
+				partnerInstanceDto.copyOperatorDto(operatorDto);
 	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSED_EVENT);
 				stateMachineService.executePhase(phaseEvent);
 				/*
@@ -324,6 +323,7 @@ public class ProcessProcessor {
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);*/
 				
 				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
+				partnerInstanceDto.copyOperatorDto(operatorDto);
 	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
 				stateMachineService.executePhase(phaseEvent);
 			}
@@ -399,17 +399,25 @@ public class ProcessProcessor {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 			OperatorDto operatorDto = OperatorDto.defaultOperator();
-			String operator = operatorDto.getOperator();
+			//String operator = operatorDto.getOperator();
 
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			Long stationId = instance.getStationId();
+			//Long stationId = instance.getStationId();
 
 			// 校验退出申请单是否存在
-			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(instanceId);
+			//QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(instanceId);
 
 			// 审批通过
 			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
+				partnerInstanceDto.copyOperatorDto(operatorDto);
+				Map<String,Object> extensionInfos = Maps.newHashMap();
+				extensionInfos.put("fromAuditflow", true);
+	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.QUIT_EVENT,extensionInfos);
+	            stateMachineService.executePhase(phaseEvent);
+				
+				/*
 				// 村点已撤点
 				if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 					stationBO.changeState(stationId, StationStatusEnum.QUITING, StationStatusEnum.QUIT, operator);
@@ -420,7 +428,14 @@ public class ProcessProcessor {
 
 				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
 						quitApply.getIsQuitStation());
-			} else {
+			*/} else {
+				
+				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
+				partnerInstanceDto.copyOperatorDto(operatorDto);
+	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSED_EVENT);
+	            stateMachineService.executePhase(phaseEvent);
+				
+				/*
 				// 合伙人实例已停业
 				partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, operator);
 				// 村点已停业
@@ -446,7 +461,7 @@ public class ProcessProcessor {
 
 				// 发送合伙人实例状态变化事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.QUITTING_REFUSED, operatorDto);
-			}
+			*/}
 	}
 
 	/**

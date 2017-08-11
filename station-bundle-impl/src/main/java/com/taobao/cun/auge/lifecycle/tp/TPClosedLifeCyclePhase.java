@@ -19,6 +19,7 @@ import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
+import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -49,12 +50,20 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
-	
+	@Autowired
+	private QuitStationApplyBO quitStationApplyBO;
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
+		}
+		
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
+		}
+		
 	}
 
 	@Override
@@ -67,33 +76,54 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="更新村小二实例状态到已停业")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
-		partnerInstanceDto.setServiceEndTime(new Date());
-		partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
+			partnerInstanceDto.setServiceEndTime(new Date());
+			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
+		}
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			partnerInstanceBO.changeState(partnerInstanceDto.getId(), PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, partnerInstanceDto.getOperator());
+		}
 	}
 
 	@Override
 	@PhaseStepMeta(descr="创建已停业lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
-		PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
-		partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
-		partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-		partnerLifecycle.copyOperatorDto(partnerInstanceDto);
-		if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
-			partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
+			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+			partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
+			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			partnerLifecycle.copyOperatorDto(partnerInstanceDto);
+			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
+			}
+			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+				partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+			}
+	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 		}
-		if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
-			partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
+		
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(), PartnerLifecycleBusinessTypeEnum.QUITING,
+					PartnerLifecycleCurrentStepEnum.PROCESSING);
+			PartnerLifecycleDto param = new PartnerLifecycleDto();
+			param.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
+			param.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+			param.setLifecycleId(items.getId());
+			partnerLifecycleBO.updateLifecycle(param);
 		}
-        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+		
 	}
 
 	@Override
 	@PhaseStepMeta(descr="")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		 
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			quitStationApplyBO.deleteQuitStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
+		}
 		
 	}
 
@@ -102,14 +132,26 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 // 发出合伙人实例状态变更事件
-        dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceDto);
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			 dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceDto);
+		}
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.QUITTING_REFUSED, partnerInstanceDto);
+		}
+		
 	}
 
 	@Override
 	@PhaseStepMeta(descr="同步老模型")
 	public void syncStationApply(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
+		}
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceDto.getId());
+		}
+		
 	}
 
 	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange, OperatorDto operator) {

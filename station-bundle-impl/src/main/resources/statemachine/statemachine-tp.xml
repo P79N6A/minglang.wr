@@ -70,6 +70,7 @@
             <cs:stateMachineComponent method="quiting"/> 
         </onentry>
         <transition event="QUIT_EVENT" target="QUIT"/>
+        <transition event="CLOSED_EVENT" target="CLOSED"/>
     </state>
      <state id="QUIT">
         <onentry>

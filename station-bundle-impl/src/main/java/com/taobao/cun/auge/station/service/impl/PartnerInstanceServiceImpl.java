@@ -1369,9 +1369,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"数据异常");
                 }
             }
-            partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+			partnerInstanceDto.copyOperatorDto(partnerInstanceQuitDto);
+			Map<String,Object> extensionInfos = Maps.newHashMap();
+			extensionInfos.put("fromThawTask", true);
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.QUIT_EVENT,extensionInfos);
+            stateMachineService.executePhase(phaseEvent);
+			
+            
+            
+           /* partnerInstanceHandler.handleQuit(partnerInstanceQuitDto, PartnerInstanceTypeEnum.valueof(rel.getType()));
             // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
+            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);*/
     }
 
     @Override
