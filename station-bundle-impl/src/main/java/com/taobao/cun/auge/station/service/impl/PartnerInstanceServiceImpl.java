@@ -1190,7 +1190,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 partnerInstanceHandler.validateOtherPartnerQuit(instanceType, instanceId);
             }
 
-            // 保存退出申请单
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
+        	partnerInstanceDto.copyOperatorDto(quitDto);
+        	Map<String,Object> extensionInfos = Maps.newConcurrentMap();
+        	extensionInfos.put("quitApply", quitDto);
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.QUITING_EVENT,extensionInfos);
+    		stateMachineService.executePhase(phaseEvent);
+            
+           /* // 保存退出申请单
             QuitStationApply quitStationApply = QuitStationApplyConverter.convert(quitDto, instance, buildOperatorName(quitDto));
             quitStationApplyBO.saveQuitStationApply(quitStationApply, operator);
 
@@ -1209,7 +1216,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
 
             // 发送合伙人实例状态变化事件
-            dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_QUITTING, quitDto);
+            dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_QUITTING, quitDto);*/
 
             // 失效tair
     }
