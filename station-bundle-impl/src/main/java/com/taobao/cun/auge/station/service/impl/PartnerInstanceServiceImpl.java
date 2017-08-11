@@ -897,16 +897,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             Assert.notNull(partnerInstance, "没有服务中的合伙人。taobaoUserId = " + taobaoUserId);
 
             Long instanceId = partnerInstance.getId();
-            Long stationId = partnerInstance.getStationId();
-
-            String taobaoUserIdStr = String.valueOf(taobaoUserId);
-            OperatorDto operatorDto = new OperatorDto();
-            operatorDto.setOperator(taobaoUserIdStr);
-            operatorDto.setOperatorType(OperatorTypeEnum.HAVANA);
-
             // FIXME FHH 合伙人主动申请退出时，为什么不校验是否存在淘帮手，非要到审批时再校验
             partnerInstanceChecker.checkCloseApply(instanceId);
-            // 更新合伙人实例状态为停业中
+            
+          /*  // 更新合伙人实例状态为停业中
             closingPartnerInstance(partnerInstance, PartnerInstanceCloseTypeEnum.PARTNER_QUIT, operatorDto);
 
             // 更新村点状态为停业中
@@ -931,7 +925,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 发送状态变化事件
             PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
                     PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(instanceId), operatorDto);
-            EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+            EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);*/
+            
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerInstance);
+            partnerInstanceDto.setOperator(taobaoUserId+"");
+            partnerInstanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
+            partnerInstanceDto.setCloseType(PartnerInstanceCloseTypeEnum.PARTNER_QUIT);
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSING_EVENT);
+			stateMachineService.executePhase(phaseEvent);
     }
 
     /**
@@ -997,7 +998,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             BeanValidator.validateWithThrowable(confirmCloseDto);
 
             Long instanceId = confirmCloseDto.getPartnerInstanceId();
-            String employeeId = confirmCloseDto.getOperator();
+            //String employeeId = confirmCloseDto.getOperator();
             Boolean isAgree = confirmCloseDto.isAgree();
             PartnerStationRel partnerInstance = partnerInstanceBO.findPartnerInstanceById(instanceId);
             PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(instanceId,
@@ -1007,7 +1008,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"没有停业申请中的合伙人。ConfirmCloseDto = " + JSON.toJSONString(confirmCloseDto));
             }
 
-            Long stationId = partnerInstance.getStationId();
 
             PartnerLifecycleItemCheckResultEnum confirmExecutable = PartnerLifecycleRuleParser.parseExecutable(
                     PartnerInstanceTypeEnum.valueof(partnerInstance.getType()), PartnerLifecycleItemCheckEnum.confirm,
@@ -1015,18 +1015,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             if (!PartnerLifecycleItemCheckResultEnum.EXECUTABLE.equals(confirmExecutable)) {
                 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,PartnerInstanceExceptionEnum.PARTNER_INSTANCE_ITEM_UNEXECUTABLE.getDesc());
             }
-            PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
-            partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
-            partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-            partnerLifecycle.copyOperatorDto(confirmCloseDto);
+           // PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
+           // partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
+           // partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+          //  partnerLifecycle.copyOperatorDto(confirmCloseDto);
 
             if (isAgree) {
                 // 校验是否还有下一级别的人。例如校验合伙人是否还存在淘帮手存在
-                PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
-                partnerInstanceHandler.validateClosePreCondition(partnerType, partnerInstance);
+                //PartnerInstanceTypeEnum partnerType = PartnerInstanceTypeEnum.valueof(partnerInstance.getType());
+                //partnerInstanceHandler.validateClosePreCondition(partnerType, partnerInstance);
 
+                PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerInstance);
+                partnerInstanceDto.copyOperatorDto(confirmCloseDto);
+                
+                LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSED_EVENT);
+    			stateMachineService.executePhase(phaseEvent);
+    			
                 // 更新合伙人实例，已停业
-                PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
+              /*  PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
                 partnerInstanceDto.setId(instanceId);
                 partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
                 partnerInstanceDto.setServiceEndTime(new Date());
@@ -1045,8 +1051,15 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
                 // 发出合伙人实例状态变更事件
-                dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, confirmCloseDto);
+                dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, confirmCloseDto);*/
             } else {
+            	 PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerInstance);
+                 partnerInstanceDto.copyOperatorDto(confirmCloseDto);
+            	
+                 LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+     			 stateMachineService.executePhase(phaseEvent);
+     			
+            	/*
                 // 更新合伙人实例，服务中
                 partnerInstanceBO.changeState(instanceId, PartnerInstanceStateEnum.CLOSING, PartnerInstanceStateEnum.SERVICING, employeeId);
 
@@ -1069,7 +1082,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
                 // 发出合伙人实例状态变更事件
                 dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, confirmCloseDto);
-            }
+            */}
     }
 
     @Override
@@ -1085,6 +1098,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     }
 
     private void applyCloseInternal(ForcedCloseDto forcedCloseDto, PartnerInstanceCloseTypeEnum closeType) {
+    	BeanValidator.validateWithThrowable(forcedCloseDto);
+    	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(forcedCloseDto.getInstanceId());
+    	PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+    	partnerInstanceDto.setCloseType(closeType);
+    	partnerInstanceDto.copyOperatorDto(forcedCloseDto);
+    	Map<String,Object> extensionInfos = Maps.newConcurrentMap();
+    	extensionInfos.put("forcedCloseDto", forcedCloseDto);
+        LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSING_EVENT,extensionInfos);
+		stateMachineService.executePhase(phaseEvent);
+    	/*
         // 参数校验
         BeanValidator.validateWithThrowable(forcedCloseDto);
             Long instanceId = forcedCloseDto.getInstanceId();
@@ -1116,7 +1139,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 通过事件，定时钟，启动停业流程
             dispatchInstStateChangeEvent(instanceId, instanceStateChange, forcedCloseDto);
             // 失效tair
-    }
+    */}
 
     /**
      * 添加停业生命周期

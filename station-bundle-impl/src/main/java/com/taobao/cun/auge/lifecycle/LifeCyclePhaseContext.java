@@ -34,7 +34,7 @@ public class LifeCyclePhaseContext {
 	private Map<String,Object> extensionInfos = Maps.newConcurrentMap();
 	
 
-
+	
 	public PartnerInstanceDto getPartnerInstance() {
 		return partnerInstance;
 	}
@@ -53,6 +53,11 @@ public class LifeCyclePhaseContext {
 		}
 	}
 
+	public Object getExtension(String extensionKey) {
+		return extensionInfos.get(extensionKey);
+	}
+	
+	
 	public PhaseKey getPhaseKey() {
 		return new PhaseKey(userType,event);
 	}

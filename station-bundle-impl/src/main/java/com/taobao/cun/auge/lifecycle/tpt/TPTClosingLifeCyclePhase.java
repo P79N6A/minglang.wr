@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpt;
 
 import java.util.Date;
 
@@ -47,8 +47,8 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.CLOSING_EVENT,desc="村小二停业中服务节点")
-public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPT",event=StateMachineEvent.CLOSING_EVENT,desc="镇小二停业中服务节点")
+public class TPTClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -66,21 +66,21 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 	private CloseStationApplyBO closeStationApplyBO;
 	
 	@Override
-	@PhaseStepMeta(descr="更新村小二站点状态到停业中")
+	@PhaseStepMeta(descr="更新镇小二站点状态到停业中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
-		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSING, partnerInstanceDto.getOperator());
+		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getState()), StationStatusEnum.CLOSING, partnerInstanceDto.getOperator());
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二信息（无操作）")
+	@PhaseStepMeta(descr="更新镇小二信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二实例状态到停业中")
+	@PhaseStepMeta(descr="更新镇小二实例状态到停业中")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//外部调用需要设置addCloseType
@@ -121,8 +121,8 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="触发停业中事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		 PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(partnerInstanceDto);
-		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(instanceStateChange, partnerInstanceBO.getPartnerInstanceById(partnerInstanceDto.getId()), partnerInstanceDto);
+		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(
+        PartnerInstanceStateChangeEnum.START_CLOSING, partnerInstanceBO.getPartnerInstanceById(partnerInstanceDto.getId()), partnerInstanceDto);
         EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
 
