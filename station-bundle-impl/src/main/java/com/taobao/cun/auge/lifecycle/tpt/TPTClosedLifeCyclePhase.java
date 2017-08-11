@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tpt;
 
 import java.util.Date;
 import java.util.List;
@@ -44,8 +44,8 @@ import com.taobao.cun.auge.station.service.StationDecorateService;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.CLOSED_EVENT,desc="村小二已停业服务节点")
-public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPT",event=StateMachineEvent.CLOSED_EVENT,desc="镇小二已停业服务节点")
+public class TPTClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
@@ -56,22 +56,21 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
-	
 	@Override
-	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
+	@PhaseStepMeta(descr="更新镇小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二信息（无操作）")
+	@PhaseStepMeta(descr="更新镇小二信息（无操作）")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		//do nothing
 	}
 
 	@Override
-	@PhaseStepMeta(descr="更新村小二实例状态到已停业")
+	@PhaseStepMeta(descr="更新镇小二实例状态到已停业")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
@@ -98,10 +97,9 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="")
+	@PhaseStepMeta(descr="停业扩展业务（无操作）")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		 
-		
+		//do nothing
 	}
 
 	@Override
@@ -125,8 +123,5 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	                operator);
 	        EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	 }
-	
-	
-	
-	
+
 }

@@ -1100,6 +1100,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     private void applyCloseInternal(ForcedCloseDto forcedCloseDto, PartnerInstanceCloseTypeEnum closeType) {
     	BeanValidator.validateWithThrowable(forcedCloseDto);
     	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(forcedCloseDto.getInstanceId());
+    	partnerInstanceChecker.checkCloseApply(forcedCloseDto.getInstanceId());
     	PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
     	partnerInstanceDto.setCloseType(closeType);
     	partnerInstanceDto.copyOperatorDto(forcedCloseDto);

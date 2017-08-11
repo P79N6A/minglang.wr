@@ -66,6 +66,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private CloseStationApplyBO closeStationApplyBO;
+	
 	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点信息到服务中")
@@ -97,7 +98,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta
+	@PhaseStepMeta(descr="更新村小二LifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
@@ -118,15 +119,19 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta
+	@PhaseStepMeta(descr="更新村小二扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstanceDto.getState().getCode())){
 			initPartnerInstanceLevel(partnerInstanceDto);
 		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
 			   // 合伙人停业审核拒绝了，删除停业协议
-	        partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceDto.getId(),
-	                PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceDto.getOperator());
+			  //合伙人发起的删除停业协议
+			 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())){
+				 partnerProtocolRelBO.cancelProtocol(partnerInstanceDto.getTaobaoUserId(), ProtocolTypeEnum.PARTNER_QUIT_PRO, partnerInstanceDto.getId(),
+			     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceDto.getOperator());
+			 }
+	       
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}
