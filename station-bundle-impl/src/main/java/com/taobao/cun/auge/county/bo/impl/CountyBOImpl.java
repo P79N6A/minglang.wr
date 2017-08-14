@@ -292,6 +292,7 @@ public class CountyBOImpl implements CountyBO {
         if(queryCondition.getIsMobile()){
         	//移动端组织id
         	dealWithMobileForQuery(queryCondition);
+        	param.put("fullIdPaths", queryCondition.getFullIdPaths());
         }
 		int total = countyStationMapper.countCountyStation(param);
 		List<CountyDto> countyStationDtos = null;
