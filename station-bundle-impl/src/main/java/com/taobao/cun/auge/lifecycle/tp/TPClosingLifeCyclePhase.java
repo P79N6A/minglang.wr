@@ -110,7 +110,7 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 		 }else{
 			 ForcedCloseDto forcedCloseDto = (ForcedCloseDto)context.getExtension("forcedCloseDto");
 			  //生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
-	         PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(partnerInstanceDto);
+	         PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(context);
 			 CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toCloseStationApplyDto(forcedCloseDto, partnerInstanceDto.getCloseType(), instanceStateChange);
 	         closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 		 }
@@ -121,7 +121,7 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="触发停业中事件变更")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		 PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(partnerInstanceDto);
+		 PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(context);
 		PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(instanceStateChange, partnerInstanceBO.getPartnerInstanceById(partnerInstanceDto.getId()), partnerInstanceDto);
         EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 	}
@@ -141,8 +141,12 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
      * @param operatorDto
      */
     private void closingPartnerInstance(PartnerInstanceDto partnerInstance) {
-    	partnerInstance.setState(PartnerInstanceStateEnum.CLOSING);
-        partnerInstanceBO.updatePartnerStationRel(partnerInstance);
+    	PartnerInstanceDto rel = new PartnerInstanceDto();
+    	rel.setId(partnerInstance.getId());
+    	rel.setVersion(partnerInstance.getVersion());
+    	rel.setState(PartnerInstanceStateEnum.CLOSING);
+    	rel.copyOperatorDto(partnerInstance);
+        partnerInstanceBO.updatePartnerStationRel(rel);
     }
     
     
@@ -194,10 +198,10 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
     }
     
     
-    private static PartnerInstanceStateChangeEnum convertClosingStateChange(PartnerInstanceDto partnerInstance) {
-		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstance.getState())) {
+    private static PartnerInstanceStateChangeEnum convertClosingStateChange(LifeCyclePhaseContext context) {
+		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(context.getSourceState())) {
 			return PartnerInstanceStateChangeEnum.DECORATING_CLOSING;
-		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState())) {
+		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState())) {
 			return PartnerInstanceStateChangeEnum.START_CLOSING;
 		} else {
 			// 状态校验,只有装修中，或者服务中可以停业

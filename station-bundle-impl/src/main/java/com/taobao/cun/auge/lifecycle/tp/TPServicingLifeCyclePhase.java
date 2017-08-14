@@ -86,7 +86,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
 		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.SERVICING, partnerInstanceDto.getOperator());
-		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
 			   //防止有垃圾数据 导致  staiton实体信息 不一致，更新成  当前人的信息
 	        StationDto stationDto = new StationDto();
 	        stationDto.setId(partnerInstanceDto.getStationId());
@@ -113,7 +113,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//已停业恢复到服务中
-		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
 	        	partnerInstanceBO.reService(partnerInstanceDto.getId(), PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, partnerInstanceDto.getOperator());
 	     }else{
 	    	   partnerInstanceBO.changeState(partnerInstanceDto.getId(), partnerInstanceDto.getState(), PartnerInstanceStateEnum.SERVICING,
@@ -121,7 +121,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	     }
      
         //装修中到服务中更新开业事件
-        if(PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstanceDto.getState().getCode())){
+        if(PartnerInstanceStateEnum.DECORATING.getCode().equals(context.getSourceState())){
         	Date openDate = partnerInstanceDto.getOpenDate();
             // 更新开业时间
             partnerInstanceBO.updateOpenDate(partnerInstanceDto.getId(), openDate,partnerInstanceDto.getOperator());
@@ -154,9 +154,9 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="更新村小二扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(context.getSourceState())){
 			initPartnerInstanceLevel(partnerInstanceDto);
-		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			   // 合伙人停业审核拒绝了，删除停业协议
 			  //合伙人发起的删除停业协议
 			 if (PartnerInstanceCloseTypeEnum.PARTNER_QUIT.equals(partnerInstanceDto.getCloseType())){
@@ -166,7 +166,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	       
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
-		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
 		}
@@ -178,14 +178,14 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Long instanceId = partnerInstanceDto.getId();
-		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.DECORATING.getCode().equals(context.getSourceState())){
 			 //记录村点状态变化
 	        sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, partnerInstanceDto);
 	         //开业包项目事件
 	        dispachToServiceEvent(partnerInstanceDto, instanceId);
-		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		}else if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			 dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceDto);
-		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
 			 PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(partnerInstanceDto, partnerInstanceDto.getOperator());
 		     EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
 		}

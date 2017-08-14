@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
@@ -70,7 +71,25 @@ public class TestStateMachineService {
 		System.err.println("end testTPClosingWithStateMachine");
 	}
 	
+	@Test
+	public void testTPClosedWithStateMachine() throws IOException{
+		System.err.println("start testTPClosedWithStateMachine");
+		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
+		confirmCloseDto.setAgree(true);
+		confirmCloseDto.setPartnerInstanceId(3648734374l);
+		confirmCloseDto.setOperator("62333");
+		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);
+		confirmCloseDto.setOperatorOrgId(1l);
+		partnerInstanceService.confirmClose(confirmCloseDto);
+		System.err.println("end testTPClosedWithStateMachine");
+	}
 	
+	@Test
+	public void testTPreServiceWithStateMachine() throws IOException{
+		System.err.println("start testTPreServiceWithStateMachine");
+		partnerInstanceService.reService(3648734374l, "62333");
+		System.err.println("end testTPreServiceWithStateMachine");
+	}
 	
 	
 	@Test

@@ -34,7 +34,15 @@ public class LifeCyclePhaseContext {
 	 */
 	private Map<String,Object> extensionInfos = Maps.newConcurrentMap();
 	
-
+	/**
+	 * 原始状态
+	 */
+	private String sourceState;
+	
+	/**
+	 * 目标状态
+	 */
+	private String targetState;
 	
 	public PartnerInstanceDto getPartnerInstance() {
 		return partnerInstance;
@@ -82,5 +90,21 @@ public class LifeCyclePhaseContext {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	public String getSourceState() {
+		return sourceState;
+	}
+
+	public void setSourceState(String sourceState) {
+		this.sourceState = sourceState;
+	}
+
+	public String getTargetState() {
+		return targetState;
+	}
+
+	public void setTargetState(String targetState) {
+		this.targetState = targetState;
 	}
 }

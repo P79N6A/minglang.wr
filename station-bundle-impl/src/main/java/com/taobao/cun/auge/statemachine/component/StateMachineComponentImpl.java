@@ -7,6 +7,7 @@ import com.alibaba.shared.xfsm.core.context.RequestContext;
 import com.taobao.cun.auge.lifecycle.LifeCycleManager;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.statemachine.StateMachineComponent;
+import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
 @StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine"},actionKey="stateMachineComponent")
@@ -19,6 +20,8 @@ public class StateMachineComponentImpl {
 		LifeCyclePhaseContext context = new LifeCyclePhaseContext();
 		context.setPartnerInstance(partnerInstanceDto);
 		context.setEvent(ctx.get("event"));;
+		context.setSourceState(partnerInstanceDto.getState().getCode());
+		context.setTargetState(StateMachineEvent.valueOfEvent(context.getEvent()).getState());
 		context.setUserType(partnerInstanceDto.getType().getCode());
 		context.setExtensionInfos(ctx.context());
 		return context;

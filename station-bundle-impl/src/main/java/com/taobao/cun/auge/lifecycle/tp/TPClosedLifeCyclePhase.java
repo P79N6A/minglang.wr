@@ -56,11 +56,11 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.CLOSING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
 		}
 		
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
 		}
 		
@@ -76,12 +76,12 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="更新村小二实例状态到已停业")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			partnerInstanceDto.setState(PartnerInstanceStateEnum.CLOSED);
 			partnerInstanceDto.setServiceEndTime(new Date());
 			partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
 		}
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			partnerInstanceBO.changeState(partnerInstanceDto.getId(), PartnerInstanceStateEnum.QUITING, PartnerInstanceStateEnum.CLOSED, partnerInstanceDto.getOperator());
 		}
 	}
@@ -90,22 +90,22 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="创建已停业lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			PartnerLifecycleItems partnerLifecycleItem = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(),PartnerLifecycleBusinessTypeEnum.CLOSING);
 			PartnerLifecycleDto partnerLifecycle = new PartnerLifecycleDto();
 			partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			partnerLifecycle.copyOperatorDto(partnerInstanceDto);
-			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(context.getSourceState())){
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 			}
-			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
+			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(context.getSourceState())){
 				partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			}
 	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 		}
 		
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(partnerInstanceDto.getId(), PartnerLifecycleBusinessTypeEnum.QUITING,
 					PartnerLifecycleCurrentStepEnum.PROCESSING);
 			PartnerLifecycleDto param = new PartnerLifecycleDto();
@@ -121,7 +121,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}
 		
@@ -132,10 +132,10 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 // 发出合伙人实例状态变更事件
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			 dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.CLOSED, partnerInstanceDto);
 		}
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.QUITTING_REFUSED, partnerInstanceDto);
 		}
 		
@@ -145,10 +145,10 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="同步老模型")
 	public void syncStationApply(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
 		}
-		if(PartnerInstanceStateEnum.QUITING.getCode().equals(partnerInstanceDto.getState().getCode())){
+		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceDto.getId());
 		}
 		

@@ -110,7 +110,7 @@ public class TPTClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 		 }else{
 			 ForcedCloseDto forcedCloseDto = (ForcedCloseDto)context.getExtension("forcedCloseDto");
 			  //生成状态变化枚举，装修中-》停业申请中，或者，服务中-》停业申请中
-	         PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(partnerInstanceDto);
+	         PartnerInstanceStateChangeEnum instanceStateChange = convertClosingStateChange(context);
 			 CloseStationApplyDto closeStationApplyDto = CloseStationApplyConverter.toCloseStationApplyDto(forcedCloseDto, partnerInstanceDto.getCloseType(), instanceStateChange);
 	         closeStationApplyBO.addCloseStationApply(closeStationApplyDto);
 		 }
@@ -194,10 +194,10 @@ public class TPTClosingLifeCyclePhase extends AbstractLifeCyclePhase{
     }
     
     
-    private static PartnerInstanceStateChangeEnum convertClosingStateChange(PartnerInstanceDto partnerInstance) {
-		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstance.getState())) {
+    private static PartnerInstanceStateChangeEnum convertClosingStateChange(LifeCyclePhaseContext context) {
+		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(context)) {
 			return PartnerInstanceStateChangeEnum.DECORATING_CLOSING;
-		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState())) {
+		} else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context)) {
 			return PartnerInstanceStateChangeEnum.START_CLOSING;
 		} else {
 			// 状态校验,只有装修中，或者服务中可以停业
