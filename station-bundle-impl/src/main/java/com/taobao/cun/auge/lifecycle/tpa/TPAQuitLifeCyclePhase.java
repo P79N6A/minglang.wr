@@ -39,7 +39,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 
 /**
  * 淘帮手已退出阶段组件
