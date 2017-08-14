@@ -60,6 +60,8 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
@@ -114,6 +116,8 @@ public class CountyBOImpl implements CountyBO {
     PartnerApplyService partnerApplyService;
     @Autowired
     MessageService messageService;
+    @Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
@@ -285,6 +289,10 @@ public class CountyBOImpl implements CountyBO {
         param.put("fullIdPaths", queryCondition.getFullIdPaths());
         param.put("countyName", queryCondition.getCountyName());
         param.put("leaseProtocolEndTime", queryCondition.getLeaseProtocolEndTime());
+        if(queryCondition.getIsMobile()){
+        	//移动端组织id
+        	dealWithMobileForQuery(queryCondition);
+        }
 		int total = countyStationMapper.countCountyStation(param);
 		List<CountyDto> countyStationDtos = null;
 		if(total > 0){
@@ -330,6 +338,19 @@ public class CountyBOImpl implements CountyBO {
 		result.setTotal(total);
 		result.setItems(countyStationDtos);
 		return result;
+	}
+	
+	private void dealWithMobileForQuery(CountyQueryCondition queryCondition){
+		Long orgId=queryCondition.getOrgId();
+    	if(orgId==null){
+    		orgId=1L;
+    	}
+    	List<CuntaoOrgDto> orgs = Lists.newArrayList(cuntaoOrgServiceClient.getAuthorizedCuntaoOrg(orgId, orgId));
+		List<String> fullIdPaths = Lists.newArrayList();
+		for(CuntaoOrgDto dto : orgs){
+			fullIdPaths.add(dto.getFullIdPath());
+		}
+		queryCondition.setFullIdPaths(fullIdPaths);
 	}
 	
 	private String formatDate(Date date) {

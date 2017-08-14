@@ -118,6 +118,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 				.getStatus()));
 		cuntaoUserOrgVo.setWorkNo(userOrg.getLoginId());
 		cuntaoUserOrgVo.setMobile(toMap(userOrg.getFeature()).get("mobile"));
+		cuntaoUserOrgVo.setLoginId(userOrg.getLoginId());
 		String divisionId = toMap(userOrg.getFeature()).get("divisionId");
 		if (StringUtils.isNotEmpty(divisionId)) {
 			cuntaoUserOrgVo.setDivisionId(new Long(divisionId));
