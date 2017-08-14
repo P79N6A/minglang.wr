@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
+import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -15,18 +18,22 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 
 /**
  * 淘帮手服务中阶段组件
@@ -45,6 +52,14 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	private CloseStationApplyBO closeStationApplyBO;
+	
+	@Autowired
+	private GeneralTaskSubmitService generalTaskSubmitService;
+	
+	
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点到服务中")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -67,7 +82,11 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		setPartnerInstanceToServicing(partnerInstanceDto,partnerInstanceDto,null);
+		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+        	partnerInstanceBO.reService(partnerInstanceDto.getId(), PartnerInstanceStateEnum.CLOSED, PartnerInstanceStateEnum.SERVICING, partnerInstanceDto.getOperator());
+		}else{
+			setPartnerInstanceToServicing(partnerInstanceDto,partnerInstanceDto,null);
+		}
 	}
 
 	@Override
@@ -90,14 +109,25 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手服务中扩展信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		 if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
+			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
+		}
 	}
 
 	@Override
 	@PhaseStepMeta(descr="同步老模型")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId = partnerInstanceDto.getId();
-		sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, partnerInstanceDto);
+		if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
+			 PartnerInstanceStateChangeEvent event = buildCloseToServiceEvent(partnerInstanceDto, partnerInstanceDto.getOperator());
+		     EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, event);
+		}else{
+			
+			Long instanceId = partnerInstanceDto.getId();
+			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_SERVICING, partnerInstanceDto);
+		}
 	}
 
 	@Override
@@ -130,5 +160,19 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
+	
+	 private PartnerInstanceStateChangeEvent buildCloseToServiceEvent(PartnerInstanceDto partnerInstanceDto, String operator) {
+	        PartnerInstanceStateChangeEvent event = new PartnerInstanceStateChangeEvent();
+	        event.setPartnerType(partnerInstanceDto.getType());
+	        event.setTaobaoUserId(partnerInstanceDto.getTaobaoUserId());
+	        event.setStationId(partnerInstanceDto.getStationId());
+	        event.setPartnerInstanceId(partnerInstanceDto.getId());
+	        event.setStateChangeEnum(PartnerInstanceStateChangeEnum.CLOSE_TO_SERVICE);
+	        event.setOperator(operator);
+	        event.setOperatorType(OperatorTypeEnum.SYSTEM);
+	        return event;
+	    }
 
 }
+
+
