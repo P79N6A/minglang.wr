@@ -18,12 +18,16 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
+import com.taobao.cun.auge.station.dto.ForcedCloseDto;
 import com.taobao.cun.auge.station.dto.OpenStationDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
+import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
+import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.tpa.TestTpaApplyService;
 
@@ -41,6 +45,8 @@ public class TestStateMachineService {
 	@Autowired
 	private PartnerInstanceService partnerInstanceService;
 	
+	@Autowired
+	private ProcessProcessor processProcessor;
 	@Test
 	public void testTPSettlingWithStateMachine() throws IOException{
 		System.err.println("start testTPSettlingWithStateMachine");
@@ -72,10 +78,33 @@ public class TestStateMachineService {
 	}
 	
 	@Test
+	public void testTPClosingByManagerWithStateMachine() throws IOException{
+		System.err.println("start testTPClosingWithStateMachine");
+		ForcedCloseDto forceClosedDto = new ForcedCloseDto();
+		forceClosedDto.setInstanceId(3648734374l);
+		forceClosedDto.setOperator("62333");
+		forceClosedDto.setOperatorType(OperatorTypeEnum.BUC);
+		forceClosedDto.setOperatorOrgId(1l);
+		forceClosedDto.setReason(CloseStationApplyCloseReasonEnum.ASSESS_FAIL);
+		forceClosedDto.setRemarks("test");
+		partnerInstanceService.applyCloseByManager(forceClosedDto);
+		System.err.println("end testTPClosingWithStateMachine");
+	}
+	
+	@Test
+	public void testTPClosedByWorkFlowWithStateMachine() throws Exception{
+		System.err.println("start testTPClosedWithStateMachine");
+		processProcessor.closeApprove(3648734374l, ProcessApproveResultEnum.APPROVE_PASS);
+		System.err.println("end testTPClosedWithStateMachine");
+	}
+	
+	
+	
+	@Test
 	public void testTPClosedWithStateMachine() throws IOException{
 		System.err.println("start testTPClosedWithStateMachine");
 		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
-		confirmCloseDto.setAgree(true);
+		confirmCloseDto.setAgree(false);
 		confirmCloseDto.setPartnerInstanceId(3648734374l);
 		confirmCloseDto.setOperator("62333");
 		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);

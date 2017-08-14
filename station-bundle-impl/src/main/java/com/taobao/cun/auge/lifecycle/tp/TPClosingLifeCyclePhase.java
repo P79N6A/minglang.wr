@@ -145,6 +145,7 @@ public class TPClosingLifeCyclePhase extends AbstractLifeCyclePhase{
     	rel.setId(partnerInstance.getId());
     	rel.setVersion(partnerInstance.getVersion());
     	rel.setState(PartnerInstanceStateEnum.CLOSING);
+    	rel.setCloseType(partnerInstance.getCloseType());
     	rel.copyOperatorDto(partnerInstance);
         partnerInstanceBO.updatePartnerStationRel(rel);
     }
