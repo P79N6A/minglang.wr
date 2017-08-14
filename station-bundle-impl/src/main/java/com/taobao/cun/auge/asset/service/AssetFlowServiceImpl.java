@@ -424,7 +424,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 						prLine.setNeedByDate(assetFlowDto.getPlanReceiveTime());
 						prLine.setDeliveryAddressId(assetDefaultAddressId);
 						prLine.setReceiver(receiverId + "");
-						prLine.setQuantity(detail.getApplyNum());
+						prLine.setQuantity(new BigDecimal(detail.getApplyNum()));
 						prLine.setRemark(getPrRemark(assetFlowDto));
 						prLine.setAcceptanceStandard(acceptanceStandard);
 						prLineList.add(prLine);
