@@ -1409,7 +1409,7 @@ public class AssetBOImpl implements AssetBO {
             example.setFullIdPath(query.getFullIdPath());
         }
 
-        if (query.getUserId() != null) {
+        if (StringUtils.isNotEmpty(query.getUserId())) {
             cri.andUserIdEqualTo(query.getUserId());
         }
 
