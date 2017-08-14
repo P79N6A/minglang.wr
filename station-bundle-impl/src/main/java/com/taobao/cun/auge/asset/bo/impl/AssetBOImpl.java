@@ -1413,7 +1413,7 @@ public class AssetBOImpl implements AssetBO {
             cri.andUserIdEqualTo(query.getUserId());
         }
 
-        example.setOrderByClause("a.id desc");
+        example.setOrderByClause("a.gmt_modified desc");
         PageHelper.startPage(query.getPageNum(), query.getPageSize());
         Page<Asset> page = assetExtMapper.selectByExample(example);
         List<AssetDetailDto> targetList = buildAssetDetailDtoList(page);

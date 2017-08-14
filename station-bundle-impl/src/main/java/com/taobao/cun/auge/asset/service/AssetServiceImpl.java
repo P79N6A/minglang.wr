@@ -98,13 +98,13 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	  public PageDto<String> getBoNoByOrgId(Long orgId,Integer pageNum,Integer pageSize){
-			return assetBO.getBoNoByOrgId(orgId, pageNum, pageSize);
+	public PageDto<String> getBoNoByOrgId(Long orgId,Integer pageNum,Integer pageSize){
+		return assetBO.getBoNoByOrgId(orgId, pageNum, pageSize);
 	}
 
 	@Override
-	  public void checkingAssetBatch(List<Long> assetIds,String operator){
-			 assetBO.checkingAssetBatch(assetIds, operator);
+	public void checkingAssetBatch(List<Long> assetIds,String operator){
+		assetBO.checkingAssetBatch(assetIds, operator);
 	}
 
 	@Override
