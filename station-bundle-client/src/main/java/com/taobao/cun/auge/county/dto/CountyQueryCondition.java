@@ -16,7 +16,6 @@ public class CountyQueryCondition implements Serializable{
 	private int pageSize;
 	private int page;
 	private Long orgId;
-	private String orgIdPath;
 	private Boolean isMobile;
 	
 	
