@@ -15,7 +15,23 @@ public class CountyQueryCondition implements Serializable{
 	private Date leaseProtocolEndTime;
 	private int pageSize;
 	private int page;
+	private Long orgId;
+	private String orgIdPath;
+	private Boolean isMobile;
 	
+	
+	public Long getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
+	public Boolean getIsMobile() {
+		return isMobile;
+	}
+	public void setIsMobile(Boolean isMobile) {
+		this.isMobile = isMobile;
+	}
 	public String getCountyOfficial() {
 		return countyOfficial;
 	}
