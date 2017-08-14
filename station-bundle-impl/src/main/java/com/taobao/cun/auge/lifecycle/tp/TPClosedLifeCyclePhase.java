@@ -96,10 +96,10 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 			partnerLifecycle.setLifecycleId(partnerLifecycleItem.getId());
 			partnerLifecycle.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
 			partnerLifecycle.copyOperatorDto(partnerInstanceDto);
-			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(context.getSourceState())){
+			if(PartnerInstanceCloseTypeEnum.PARTNER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
 				partnerLifecycle.setConfirm(PartnerLifecycleConfirmEnum.CONFIRM);
 			}
-			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(context.getSourceState())){
+			if(PartnerInstanceCloseTypeEnum.WORKER_QUIT.getCode().equals(partnerInstanceDto.getCloseType().getCode())){
 				partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_PASS);
 			}
 	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
