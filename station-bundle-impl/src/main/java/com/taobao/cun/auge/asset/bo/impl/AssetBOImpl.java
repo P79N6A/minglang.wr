@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.it.asset.api.Attachment;
 import com.alibaba.it.asset.api.CuntaoApiService;
@@ -22,12 +23,12 @@ import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 import com.alibaba.it.asset.api.dto.AssetTransDto;
-
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -1316,6 +1318,7 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Long purchase(AssetPurchaseDto purDto) {
         Objects.requireNonNull(purDto, "采购数据不能为空");
         Objects.requireNonNull(purDto.getDetailDto(), "采购详情数据不能为空");
@@ -1340,6 +1343,10 @@ public class AssetBOImpl implements AssetBO {
         Long incomeId = assetIncomeBO.addIncome(icDto);
 
         for (AssetPurchaseDetailDto pDto : purDto.getDetailDto()) {
+        	//校验资产重复alino是否唯一
+        	if(!checkUniqueAliNo(pDto.getAliNo())){
+        		 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "采购失败" + ",当前资产["+pDto.getAliNo()+"]已存在");
+        	}
             Asset a = bulidPurAsset(purDto, pDto);
             DomainUtils.beforeInsert(a, purDto.getOperator());
             assetMapper.insert(a);
@@ -1359,7 +1366,18 @@ public class AssetBOImpl implements AssetBO {
         return incomeId;
     }
 
-    private Asset bulidPurAsset(AssetPurchaseDto purDto, AssetPurchaseDetailDto pdDto) {
+    private Boolean checkUniqueAliNo(String aliNo) {
+        AssetExample assetExample = new AssetExample();
+        assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(aliNo);
+        //组织头部
+        List<Asset> preAssets = assetMapper.selectByExample(assetExample);
+        if (CollectionUtils.isEmpty(preAssets)) {
+            return true;
+        }
+        return false;
+	}
+
+	private Asset bulidPurAsset(AssetPurchaseDto purDto, AssetPurchaseDetailDto pdDto) {
         Asset a = new Asset();
         a.setAliNo(pdDto.getAliNo());
         a.setBrand(pdDto.getBrand());
