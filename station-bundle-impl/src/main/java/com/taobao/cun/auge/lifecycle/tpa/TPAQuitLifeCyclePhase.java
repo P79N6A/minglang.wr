@@ -2,6 +2,8 @@ package com.taobao.cun.auge.lifecycle.tpa;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +52,8 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 @Phase(type="TPA",event=StateMachineEvent.QUIT_EVENT,desc="淘帮手退出中服务节点")
 public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 
+	private Logger logger = LoggerFactory.getLogger(TPAQuitLifeCyclePhase.class);
+	
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
 	
@@ -74,14 +78,18 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
+	
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 	
 		Boolean fromAuditflow = (Boolean)context.getExtensionWithDefault("fromAuditflow",false);
+		logger.info("start tpa createOrUpdateStation fromAuditflow ["+fromAuditflow+"]");
 		//村点退出阶段逻辑非常恶心，保证金解冻后PartnerInstance的状态才变成已退出，但是审批通过后村点状态已经是已退出了，在这个阶段实例状态和村点状态是不一致的。
 		//来自审批流的请求才更新村点状态，和老逻辑保持一致。
 		if(fromAuditflow){
 			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceDto.getId());
-			
+			if(quitApply !=null){
+				logger.info("start tpa createOrUpdateStation quitApply ["+quitApply.getIsQuitStation()+"]");
+			}
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
 				stationBO.changeState(partnerInstanceDto.getId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
