@@ -81,5 +81,21 @@ public interface AugeErrorCodes {
 	 * 旺旺业务校验错误码，不报警
 	 */
 	public static final String WANGWANG_BUSINESS_CHECK_ERROR_CODE = "B-00015";
+	
+	/**
+	 * 查询po单失败 不报警
+	 */
+	public static final String PURCHASE_BUSINESS_CHECK_ERROR_CODE = "B-00016";
+	
+	/**
+	 * 签到参数校验失败不报警
+	 */
+	public static final String PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE = "B-00017";
+	
+
+	/**
+	 * 签到失败不报警
+	 */
+	public static final String PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE = "B-00018";
 
 }

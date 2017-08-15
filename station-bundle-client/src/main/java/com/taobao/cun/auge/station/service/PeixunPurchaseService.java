@@ -45,4 +45,15 @@ public interface PeixunPurchaseService {
 	public List<PartnerPeixunSupplierDto> getSupplierList();
 
 	public String getPurchaseJson();
+	
+	/**
+	 * 根据省id获取对应供应商列表
+	 */
+	public List<PartnerPeixunSupplierDto> getSupplierListByProvince(Long provinceOrgId);
+	
+	/**
+	 * 判断采购中心流程是否走完
+	 */
+	public Boolean judgePurchaseProcessEnd(Long id);
+	
 }

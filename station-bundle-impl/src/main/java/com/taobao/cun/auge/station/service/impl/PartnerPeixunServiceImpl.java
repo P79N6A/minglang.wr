@@ -10,13 +10,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
+import com.alibaba.fastjson.JSON;
 import com.taobao.common.category.util.StringUtil;
+import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -57,6 +67,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("partnerPeixunService")
 @HSFProvider(serviceInterface = PartnerPeixunService.class)
 public class PartnerPeixunServiceImpl implements PartnerPeixunService{
+	private static final Logger logger = LoggerFactory.getLogger(PartnerPeixunService.class);
 
 	@Autowired
 	PartnerPeixunBO partnerPeixunBO;
@@ -79,6 +90,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	PartnerInstanceQueryService partnerInstanceQueryService;
 	@Autowired
 	PartnerCourseScheduleBO partnerCourseScheduleBO;
+	
+	@Value("${partner.peixun.sign.url}")
+	private String peixunSignUrl;
 	@Override
 	public List<PartnerPeixunDto> queryBatchPeixunPocess(List<Long> userIds,String courseType,String courseCode) {
 		return partnerPeixunBO.queryBatchPeixunRecord(userIds,courseType,courseCode);
@@ -294,5 +308,66 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		Assert.notNull(id);
 		return partnerPeixunBO.queryPeixunRecordById(id);
 	}
+	
+	public void sign(String ticketNo,String courseType,Long loginUserId,String poNo){
+		String courseCode=validateSignAndGetCourseCode(ticketNo,courseType,loginUserId,poNo);
+		//调用crm进行签到
+		signToCrm(ticketNo,courseCode,poNo);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void signToCrm(String ticketNo,String courseCode,String poNo){
+		 String queryString = ("ticket="+ticketNo+"&&code="+courseCode+"&&poNo="+poNo);
+//         String lisReq = "http://cunxuexi.taobao.com/user/sign/signin.json"+"?"+queryString;
+		 String signUrl=peixunSignUrl+"?"+queryString;
+         HttpClient httpClient = new HttpClient();
+         HttpMethod method = new GetMethod(signUrl);
+         HttpClientParams params = new HttpClientParams();
+         params.setConnectionManagerTimeout(3000);
+         httpClient.setParams(params);
+         try {
+             httpClient.executeMethod(method);
+             if(method.getStatusCode() == HttpStatus.SC_OK) {
+            	 Map<String,Object> json= (Map<String, Object>) JSON.parse(method.getResponseBodyAsString());
+            	 Map<String,Object> json1=(Map<String, Object>) json.get("content");
+            	 if(!(Boolean)json1.get("success")){
+                 	throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,"签到失败:"+json1.get("data"));
+            	 }
+             } else {
+            	throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,"签到失败");
+             }
+         } catch (Exception e) {
+        	logger.error("signToCrm error", e);
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,e.getMessage());
+         }
+    }
+	
+	private String validateSignAndGetCourseCode(String ticketNo,String courseType,Long loginUserId,String poNo){
+		if(StringUtils.isEmpty(ticketNo)){
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"签到码不能为空");
+		}
+		if(StringUtils.isEmpty(poNo)){
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"该签到页面已过期,请访问最新签到页面");
+		}
+		if(loginUserId==null){
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"用户信息获取失败");
+		}
+		List<AppResourceDto> apps=appResourceService.queryAppResourceList("PARTNER_PEIXUN_CODE");
+		for(AppResourceDto app:apps){
+			if(app.getName().equals(courseType)){
+				String courseCode=app.getValue();
+				PartnerCourseRecord record=partnerPeixunBO.queryOfflinePeixunRecord(loginUserId, PartnerPeixunCourseTypeEnum.valueof(courseCode), courseCode);
+				if(PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
+					throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"已经签到，请勿重复签到");
+				}else if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
+					throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"订单状态不正确，无法签到");
+				}
+				return record.getCourseCode();
+			}
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"签到课程类型错误");
+		}
+		return null;
+	}
+
 
 }
