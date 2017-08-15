@@ -60,6 +60,20 @@ public class TestStateMachineService {
 		System.err.println("end testTPSettlingWithStateMachine");
 	}
 	
+	
+
+	@Test
+	public void testTPDecoratingWithStateMachine() throws InterruptedException{
+		System.err.println("start testTPDecoratingWithStateMachine");
+		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
+		settleSuccessDto.setInstanceId(3648734376l);
+		settleSuccessDto.setOperator("3709109723");
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		partnerInstanceService.applySettleSuccess(settleSuccessDto);
+		System.err.println("end testTPDecoratingWithStateMachine");
+	}
+	
+	
 	@Test
 	public void testTPServicingWithStateMachine() throws IOException{
 		System.err.println("start testTPServicingWithStateMachine");
@@ -68,7 +82,7 @@ public class TestStateMachineService {
 		openStationDto.setOpenDate(new Date());
 		openStationDto.setOperator("62333");
 		openStationDto.setOperatorType(OperatorTypeEnum.BUC);
-		openStationDto.setPartnerInstanceId(3648734374l);
+		openStationDto.setPartnerInstanceId(3648734376l);
 		partnerInstanceService.openStation(openStationDto);
 		System.err.println("end testTPServicingWithStateMachine");
 	}
@@ -84,7 +98,7 @@ public class TestStateMachineService {
 	public void testTPClosingByManagerWithStateMachine() throws IOException{
 		System.err.println("start testTPClosingWithStateMachine");
 		ForcedCloseDto forceClosedDto = new ForcedCloseDto();
-		forceClosedDto.setInstanceId(3648734374l);
+		forceClosedDto.setInstanceId(3648734376l);
 		forceClosedDto.setOperator("62333");
 		forceClosedDto.setOperatorType(OperatorTypeEnum.BUC);
 		forceClosedDto.setOperatorOrgId(1l);
@@ -97,18 +111,23 @@ public class TestStateMachineService {
 	@Test
 	public void testTPClosedByWorkFlowWithStateMachine() throws Exception{
 		System.err.println("start testTPClosedWithStateMachine");
-		processProcessor.closeApprove(3648734374l, ProcessApproveResultEnum.APPROVE_PASS);
+		processProcessor.closeApprove(3648734376l, ProcessApproveResultEnum.APPROVE_PASS);
 		System.err.println("end testTPClosedWithStateMachine");
 	}
 	
-	
+	@Test
+	public void testTPClosedRefusedByWorkFlowWithStateMachine() throws Exception{
+		System.err.println("start testTPClosedWithStateMachine");
+		processProcessor.closeApprove(3648734376l, ProcessApproveResultEnum.APPROVE_REFUSE);
+		System.err.println("end testTPClosedWithStateMachine");
+	}
 	
 	@Test
 	public void testTPClosedRefusedWithStateMachine() throws IOException{
 		System.err.println("start testTPClosedWithStateMachine");
 		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
 		confirmCloseDto.setAgree(false);
-		confirmCloseDto.setPartnerInstanceId(3648734374l);
+		confirmCloseDto.setPartnerInstanceId(3648734376l);
 		confirmCloseDto.setOperator("62333");
 		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);
 		confirmCloseDto.setOperatorOrgId(1l);
@@ -122,7 +141,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPClosedWithStateMachine");
 		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
 		confirmCloseDto.setAgree(true);
-		confirmCloseDto.setPartnerInstanceId(3648734374l);
+		confirmCloseDto.setPartnerInstanceId(3648734376l);
 		confirmCloseDto.setOperator("62333");
 		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);
 		confirmCloseDto.setOperatorOrgId(1l);
@@ -140,7 +159,7 @@ public class TestStateMachineService {
 		QuitStationApplyDto quitDto = new QuitStationApplyDto();
 		quitDto.setApprovalFileName("test");
 		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
-		quitDto.setInstanceId(3648734374l);
+		quitDto.setInstanceId(3648734376l);
 		quitDto.setIsQuitStation(true);
 		quitDto.setOperator("62333");
 		quitDto.setOperatorOrgId(1l);
@@ -162,7 +181,7 @@ public class TestStateMachineService {
 		QuitStationApplyDto quitDto = new QuitStationApplyDto();
 		quitDto.setApprovalFileName("test");
 		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
-		quitDto.setInstanceId(3648734374l);
+		quitDto.setInstanceId(3648734376l);
 		quitDto.setIsQuitStation(false);
 		quitDto.setOperator("62333");
 		quitDto.setOperatorOrgId(1l);
@@ -181,14 +200,14 @@ public class TestStateMachineService {
 	@Test
 	public void testTPreServiceWithStateMachine() throws IOException{
 		System.err.println("start testTPreServiceWithStateMachine");
-		partnerInstanceService.reService(3648734374l, "62333");
+		partnerInstanceService.reService(3648734376l, "62333");
 		System.err.println("end testTPreServiceWithStateMachine");
 	}
 	
 	@Test
 	public void testTPQuitRefusedWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitRefusedWithStateMachine");
-		processProcessor.quitApprove(3648734374l, ProcessApproveResultEnum.APPROVE_REFUSE);
+		processProcessor.quitApprove(3648734376l, ProcessApproveResultEnum.APPROVE_REFUSE);
 		System.err.println("end testTPQuitRefusedWithStateMachine");
 	}
 	
@@ -196,7 +215,7 @@ public class TestStateMachineService {
 	@Test
 	public void testTPQuitByAuditFlowWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitByAuditFlowWithStateMachine");
-		processProcessor.quitApprove(3648734374l, ProcessApproveResultEnum.APPROVE_PASS);
+		processProcessor.quitApprove(3648734376l, ProcessApproveResultEnum.APPROVE_PASS);
 		System.err.println("end testTPQuitByAuditFlowWithStateMachine");
 	}
 	
@@ -204,7 +223,7 @@ public class TestStateMachineService {
 	public void testTPQuitByThawTaskWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitByThawTaskWithStateMachine");
 		PartnerInstanceQuitDto partnerInstanceQuitDto = new PartnerInstanceQuitDto();
-		partnerInstanceQuitDto.setInstanceId(3648734374l);
+		partnerInstanceQuitDto.setInstanceId(3648734376l);
 		partnerInstanceQuitDto.setOperator("system");
 		partnerInstanceQuitDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		partnerInstanceService.quitPartnerInstance(partnerInstanceQuitDto);
@@ -223,33 +242,6 @@ public class TestStateMachineService {
 	}
 	
 	
-	@Test
-	public void testTPDecoratingWithStateMachine() throws InterruptedException{
-		System.err.println("start testTPDecoratingWithStateMachine");
-		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-		settleSuccessDto.setInstanceId(3648734374l);
-		settleSuccessDto.setOperator("3709109723");
-		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
-    	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(settleSuccessDto.getInstanceId());
-    	PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-    	partnerInstanceDto.setType(PartnerInstanceTypeEnum.valueof(rel.getType()));
-    	partnerInstanceDto.setId(settleSuccessDto.getInstanceId());
-    	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
-    	partnerInstanceDto.setStationId(rel.getStationId());
-    	partnerInstanceDto.setPartnerId(rel.getPartnerId());
-    	partnerInstanceDto.setTaobaoUserId(rel.getTaobaoUserId());
-    	partnerInstanceDto.setVersion(rel.getVersion());
-    	partnerInstanceDto.setState(PartnerInstanceStateEnum.valueof(rel.getState()));
-    	StateMachineEvent sme = null;
-    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
-    		sme = sme.DECORATING_EVENT;
-    	}else{
-    		sme = sme.SERVICING_EVENT;
-    	}
-    	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,sme);
-		stateMachineService.executePhase(phaseEvent);
-		System.err.println("end testTPDecoratingWithStateMachine");
-	}
 	
 	
 
