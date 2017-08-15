@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
@@ -61,9 +62,11 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 		
 		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
-			stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
+			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceDto.getId());
+			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
+				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.CLOSED, partnerInstanceDto.getOperator());
+			}
 		}
-		
 	}
 
 	@Override
