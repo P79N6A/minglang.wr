@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.6.4</ague.station.client.version>
+		<ague.station.client.version>2.7.1</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.2.9</alibaba-spring-boot.version>
 	</properties>
 
@@ -395,7 +395,7 @@
 			<dependency>
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>ceres.shard</artifactId>
-			  <version>1.0.0.39</version>
+			  <version>1.0.0.69</version>
 			  <exclusions>
 			 	 <exclusion>
 			   	<groupId>com.alibaba.citrus</groupId>  
@@ -403,6 +403,17 @@
 			  	</exclusion>
 			  </exclusions>
 			 </dependency>
+			<dependency>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>cmall.shared</artifactId>
+			<version>1.0.0.9</version>
+			  <exclusions>
+			 	 <exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+			  	</exclusion>
+			  </exclusions>
+			</dependency>
 			 	
             <dependency>
                 <groupId>com.taobao.cun</groupId>
@@ -572,6 +583,17 @@
 				<groupId>com.alipay.baoxian</groupId>
 				<artifactId>baoxian-scene-facade</artifactId>
 				<version>1.0.0.20160421</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+				<version>2.1.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-nop</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

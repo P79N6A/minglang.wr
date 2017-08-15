@@ -57,4 +57,5 @@ public interface TairCache {
 	 */
 	void minvalid(List<String> keys);
 
+	public Integer incr(Serializable key, int value, int defaultValue, int expireTime);
 }

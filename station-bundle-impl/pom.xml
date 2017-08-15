@@ -267,6 +267,10 @@
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>ceres.shard</artifactId>
 		</dependency>
+			<dependency>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>cmall.shared</artifactId>
+			</dependency>
 		<dependency>
 			<groupId>com.taobao.common.uic.uic-common</groupId>
 			<artifactId>common-uic-common</artifactId>
@@ -358,6 +362,10 @@
 				<groupId>com.alipay.baoxian</groupId>
 				<artifactId>baoxian-scene-facade</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+		</dependency>		
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
