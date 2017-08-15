@@ -39,6 +39,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 
 /**
  * 淘帮手已退出阶段组件
@@ -66,6 +67,9 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private PartnerApplyBO partnerApplyBO;
+	
+	@Autowired
+	private GeneralTaskSubmitService generalTaskSubmitService;
 	
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
@@ -151,6 +155,10 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
+			
+			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceDto.getId());
+			generalTaskSubmitService.submitQuitApprovedTask(partnerInstanceDto.getId(), partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId(),
+					quitApply.getIsQuitStation());
 		}
 		
 	}
