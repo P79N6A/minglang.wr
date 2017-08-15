@@ -83,7 +83,7 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			
 			// 村点已撤点
 			if (quitApply.getIsQuitStation() == null || "y".equals(quitApply.getIsQuitStation())) {
-				stationBO.changeState(partnerInstanceDto.getId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
+				stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.QUITING, StationStatusEnum.QUIT, partnerInstanceDto.getOperator());
 			}
 		}
 		
