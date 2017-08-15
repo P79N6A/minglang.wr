@@ -56,7 +56,7 @@ public class TPAClosingLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		Station station = stationBO.getStationById(partnerInstanceDto.getStationId());
-		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getState()), StationStatusEnum.CLOSING, partnerInstanceDto.getOperator());
+		stationBO.changeState(partnerInstanceDto.getStationId(), StationStatusEnum.valueof(station.getStatus()), StationStatusEnum.CLOSING, partnerInstanceDto.getOperator());
 	}
 
 	@Override

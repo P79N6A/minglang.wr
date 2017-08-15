@@ -56,8 +56,7 @@ public class TestStateMachineService {
 		System.err.println("start testTPSettlingWithStateMachine");
 		String requestJSON = IOUtils.toString(TestTpaApplyService.class.getClassLoader().getResourceAsStream("tpSettleRequest.json"));
 		PartnerInstanceDto request = JSON.parseObject(requestJSON, PartnerInstanceDto.class);
-		LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(request,StateMachineEvent.SETTLING_EVENT);
-		stateMachineService.executePhase(phaseEvent);
+		partnerInstanceService.applySettle(request);
 		System.err.println("end testTPSettlingWithStateMachine");
 	}
 	
@@ -216,12 +215,11 @@ public class TestStateMachineService {
 	
 	@Test
 	public void testTPASettlingWithStateMachine() throws IOException{
-		System.err.println("start testTPSettlingWithStateMachine");
+		System.err.println("start testTPASettlingWithStateMachine");
 		String requestJSON = IOUtils.toString(TestTpaApplyService.class.getClassLoader().getResourceAsStream("tpaSettleRequest.json"));
 		PartnerInstanceDto request = JSON.parseObject(requestJSON, PartnerInstanceDto.class);
-		LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(request,StateMachineEvent.SETTLING_EVENT);
-		stateMachineService.executePhase(phaseEvent);
-		System.err.println("end testTPSettlingWithStateMachine");
+		partnerInstanceService.applySettle(request);
+		System.err.println("end testTPASettlingWithStateMachine");
 	}
 	
 	
@@ -258,11 +256,61 @@ public class TestStateMachineService {
 	@Test
 	public void testTPAServicingWithStateMachine(){
 		System.err.println("start testTPAServicingWithStateMachine");
-		PartnerInstanceDto partnerInstanceDto = new PartnerInstanceDto();
-		partnerInstanceDto.setType(PartnerInstanceTypeEnum.TPA);
-		LifeCyclePhaseEvent phaseEvent = new LifeCyclePhaseEvent("TPAStateMachine",StateMachineEvent.SERVICING_EVENT,partnerInstanceDto);
-		phaseEvent.setCurrentState("SETTLING");
-		stateMachineService.executePhase(phaseEvent);
+		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
+		settleSuccessDto.setInstanceId(3648734375l);
+		settleSuccessDto.setOperator("3709109723");
+		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		partnerInstanceService.applySettleSuccess(settleSuccessDto);
 		System.err.println("end testTPAServicingWithStateMachine");
 	}
+	
+	
+	@Test
+	public void testTPAClosingByManagerWithStateMachine() throws IOException{
+		System.err.println("start testTPClosingWithStateMachine");
+		ForcedCloseDto forceClosedDto = new ForcedCloseDto();
+		forceClosedDto.setInstanceId(3648734375l);
+		forceClosedDto.setOperator("62333");
+		forceClosedDto.setOperatorType(OperatorTypeEnum.BUC);
+		forceClosedDto.setOperatorOrgId(1l);
+		forceClosedDto.setReason(CloseStationApplyCloseReasonEnum.ASSESS_FAIL);
+		forceClosedDto.setRemarks("test");
+		partnerInstanceService.applyCloseByManager(forceClosedDto);
+		System.err.println("end testTPClosingWithStateMachine");
+	}
+	
+	
+	@Test
+	public void testTPAQuitingByManagerWithStateMachine() throws IOException{
+		System.err.println("start testTPAQuitByManagerWithStateMachine");
+		QuitStationApplyDto quitDto = new QuitStationApplyDto();
+		quitDto.setApprovalFileName("test");
+		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
+		quitDto.setInstanceId(3648734375l);
+		quitDto.setIsQuitStation(true);
+		quitDto.setOperator("62333");
+		quitDto.setOperatorOrgId(1l);
+		quitDto.setOperatorType(OperatorTypeEnum.BUC);
+		quitDto.setIsRemoveBrand(true);
+		quitDto.setLoanHasClose(true);
+		quitDto.setLoanProveFileName("test");
+		quitDto.setOtherDescription("test");
+		quitDto.setRemoveBrandFileName("test");
+		quitDto.setRemoveBrandUserType(RemoveBrandUserTypeEnum.PARTNER);
+		partnerInstanceService.applyQuitByManager(quitDto);
+		System.err.println("end testTPAQuitByManagerWithStateMachine");
+	}
+	
+	
+	@Test
+	public void testTPAQuitByThawTaskWithStateMachine() throws Exception{
+		System.err.println("start testTPAQuitByThawTaskWithStateMachine");
+		PartnerInstanceQuitDto partnerInstanceQuitDto = new PartnerInstanceQuitDto();
+		partnerInstanceQuitDto.setInstanceId(3648734375l);
+		partnerInstanceQuitDto.setOperator("system");
+		partnerInstanceQuitDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+		partnerInstanceService.quitPartnerInstance(partnerInstanceQuitDto);
+		System.err.println("end testTPAQuitByThawTaskWithStateMachine");
+	}
+	
 }

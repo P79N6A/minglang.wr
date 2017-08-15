@@ -20,6 +20,8 @@ public class LifeCyclePhaseEventBuilder {
 		event.setStateMachine(partnerInstanceDto.getType().getCode()+"StateMachine");
 		if(partnerInstanceDto.getState() !=null){
 			event.setCurrentState(partnerInstanceDto.getState().getCode());
+		}else if(smEvent.getEvent().equals(StateMachineEvent.SETTLING_EVENT.getEvent())){
+			event.setCurrentState("NEW");
 		}
 		event.setEvent(smEvent);
 		event.setPayload(partnerInstanceDto);

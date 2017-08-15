@@ -41,7 +41,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  *
  */
 @Component
-@Phase(type="TPT",event=StateMachineEvent.QUITING_EVENT,desc="淘帮手退出中服务节点")
+@Phase(type="TPA",event=StateMachineEvent.QUITING_EVENT,desc="淘帮手退出中服务节点")
 public class TPAQuitingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
