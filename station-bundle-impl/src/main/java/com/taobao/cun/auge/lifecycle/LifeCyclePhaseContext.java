@@ -1,10 +1,16 @@
 package com.taobao.cun.auge.lifecycle;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
+/**
+ * 
+ * @author zhenhuan.zhangzh
+ *
+ */
 public class LifeCyclePhaseContext {
 
 	/**
@@ -28,8 +34,16 @@ public class LifeCyclePhaseContext {
 	 */
 	private Map<String,Object> extensionInfos = Maps.newConcurrentMap();
 	
-
-
+	/**
+	 * 原始状态
+	 */
+	private String sourceState;
+	
+	/**
+	 * 目标状态
+	 */
+	private String targetState;
+	
 	public PartnerInstanceDto getPartnerInstance() {
 		return partnerInstance;
 	}
@@ -48,6 +62,16 @@ public class LifeCyclePhaseContext {
 		}
 	}
 
+	public Object getExtension(String extensionKey) {
+		return extensionInfos.get(extensionKey);
+	}
+	
+	public Object getExtensionWithDefault(String extensionKey,Object defaultValue) {
+		return Optional.ofNullable(extensionInfos.get(extensionKey)).orElse(defaultValue);
+	}
+	
+	
+	
 	public PhaseKey getPhaseKey() {
 		return new PhaseKey(userType,event);
 	}
@@ -66,5 +90,21 @@ public class LifeCyclePhaseContext {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+
+	public String getSourceState() {
+		return sourceState;
+	}
+
+	public void setSourceState(String sourceState) {
+		this.sourceState = sourceState;
+	}
+
+	public String getTargetState() {
+		return targetState;
+	}
+
+	public void setTargetState(String targetState) {
+		this.targetState = targetState;
 	}
 }

@@ -19,7 +19,11 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
-
+/**
+ * 
+ * @author zhenhuan.zhangzh
+ *
+ */
 @Component
 public class LifeCycleValidator {
 	@Autowired

@@ -32,6 +32,9 @@
         <transition event="SERVICING_EVENT" target="SERVICING">
             <log expr="'DECORATING-》SERVCIING'" />
         </transition>
+         <transition event="CLOSING_EVENT" target="CLOSING">
+            <log expr="'DECORATING-》CLOSING'" />
+        </transition>
     </state>
 
     <state id="SERVICING">
@@ -50,6 +53,7 @@
             <cs:stateMachineComponent method="closing"/> 
         </onentry>
         <transition event="CLOSED_EVENT" target="CLOSED"/>
+        <transition event="SERVICING_EVENT" target="SERVICING"/>
     </state>
 
     <state id="CLOSED">
@@ -58,6 +62,7 @@
             <cs:stateMachineComponent method="closed"/> 
         </onentry>
         <transition event="QUITING_EVENT" target="QUITING"/>
+        <transition event="SERVICING_EVENT" target="SERVICING"/>
     </state>
     
    <state id="QUITING">
@@ -66,6 +71,7 @@
             <cs:stateMachineComponent method="quiting"/> 
         </onentry>
         <transition event="QUIT_EVENT" target="QUIT"/>
+        <transition event="CLOSED_EVENT" target="CLOSED"/>
     </state>
      <state id="QUIT">
         <onentry>

@@ -48,6 +48,7 @@
             <cs:stateMachineComponent method="closed"/> 
         </onentry>
         <transition event="QUITING_EVENT" target="QUITING"/>
+        <transition event="SERVICING_EVENT" target="SERVICING"/>
     </state>
     
    <state id="QUITING">
