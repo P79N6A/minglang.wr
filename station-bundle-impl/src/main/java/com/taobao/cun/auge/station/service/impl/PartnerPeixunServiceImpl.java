@@ -311,6 +311,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	public void sign(String ticketNo,String courseType,Long loginUserId,String poNo){
 		String courseCode=validateSignAndGetCourseCode(ticketNo,courseType,loginUserId,poNo);
+		if(StringUtils.isEmpty(courseCode)){
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"未找到匹配的培训订单");
+		}
 		//调用crm进行签到
 		signToCrm(ticketNo,courseCode,poNo);
 	}
@@ -356,7 +359,10 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		for(AppResourceDto app:apps){
 			if(app.getName().equals(courseType)){
 				String courseCode=app.getValue();
-				PartnerCourseRecord record=partnerPeixunBO.queryOfflinePeixunRecord(loginUserId, PartnerPeixunCourseTypeEnum.valueof(courseCode), courseCode);
+				PartnerCourseRecord record=partnerPeixunBO.queryOfflinePeixunRecord(loginUserId, PartnerPeixunCourseTypeEnum.valueof(courseType), courseCode);
+				if(record==null){
+					return null;
+				}
 				if(PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
 					throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"已经签到，请勿重复签到");
 				}else if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
