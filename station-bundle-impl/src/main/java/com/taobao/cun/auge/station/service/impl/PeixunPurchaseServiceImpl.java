@@ -123,20 +123,21 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
 	}
 
 	@Override
-	public Boolean judgePurchaseProcessEnd(Long id) {
+	public String getPoNo(Long id) {
 		Assert.notNull(id);
-		PeixunPurchaseDto dto=queryById(id);
-		String poNo=dto.getPrNo();
-		try{
-			PoResultDto poDto=poQueryService.queryPoInfo(poNo);
-			if(poDto!=null&&"已生效".equals(poDto.getStatus())){
-				return true;
-			}else{
-				return false;
-			}
-		}catch(Exception e){
-			throw new AugeBusinessException(AugeErrorCodes.PURCHASE_BUSINESS_CHECK_ERROR_CODE,e.getMessage());
-		}
+//		PeixunPurchaseDto dto=queryById(id);
+//		String poNo=dto.getPrNo();
+//		try{
+//			PoResultDto poDto=poQueryService.queryPoInfo(poNo);
+//			if(poDto!=null&&"已生效".equals(poDto.getStatus())){
+//				return true;
+//			}else{
+//				return false;
+//			}
+//		}catch(Exception e){
+//			throw new AugeBusinessException(AugeErrorCodes.PURCHASE_BUSINESS_CHECK_ERROR_CODE,e.getMessage());
+//		}
+		return "test";
 	}
 	
 }

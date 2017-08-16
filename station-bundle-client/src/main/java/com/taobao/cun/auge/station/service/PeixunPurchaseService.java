@@ -54,6 +54,6 @@ public interface PeixunPurchaseService {
 	/**
 	 * 判断采购中心流程是否走完
 	 */
-	public Boolean judgePurchaseProcessEnd(Long id);
+	public String getPoNo(Long id);
 	
 }
