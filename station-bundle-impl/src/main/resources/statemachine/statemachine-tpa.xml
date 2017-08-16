@@ -19,9 +19,7 @@
             <log expr="'入驻中'" />
             <cs:stateMachineComponent method="settling"/> 
         </onentry>
-        <transition event="SERVICING_EVENT" target="SERVICING">
-            <log expr="'SETTLING-》SERVICING" />
-        </transition>
+        <transition event="SERVICING_EVENT" target="SERVICING"/>
     </state>
    
     <state id="SERVICING">
@@ -30,7 +28,6 @@
              <cs:stateMachineComponent method="servicing"/> 
         </onentry>
         <transition event="CLOSING_EVENT" target="CLOSING">
-            <log expr="'SERVCIING-》CLOSING'" />
         </transition>
     </state>
 
