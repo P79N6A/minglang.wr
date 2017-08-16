@@ -23,6 +23,7 @@ import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerPeixunSupplierDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
+import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PeixunPurchaseService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -125,8 +126,11 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
 	@Override
 	public String getPoNo(Long id) {
 		Assert.notNull(id);
-//		PeixunPurchaseDto dto=queryById(id);
-//		String poNo=dto.getPrNo();
+		PeixunPurchaseDto dto=queryById(id);
+		String poNo=dto.getPrNo();
+		if(!PeixunPurchaseStatusEnum.ORDER.getCode().equals(dto.getStatus())){
+			return null;
+		}
 //		try{
 //			PoResultDto poDto=poQueryService.queryPoInfo(poNo);
 //			if(poDto!=null&&"已生效".equals(poDto.getStatus())){
