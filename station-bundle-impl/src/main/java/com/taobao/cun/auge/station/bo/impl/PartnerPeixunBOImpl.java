@@ -684,16 +684,17 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     public void refundAuditExecute(Long id,boolean auditResult){
     		Assert.notNull(id);
     		PartnerCourseRecord qihangRecord=partnerCourseRecordMapper.selectByPrimaryKey(id);
-    		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-    				"UPGRADE");
-    		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(),
-    				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
+    		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE","UPGRADE");
+    		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(), PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
     		if(!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())||!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(chengZhangRecord.getStatus())){
-    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款审核消息");
+    			//throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款审核消息");
+				logger.warn("培训订单状态不正确，无法处理退款审核消息,recourseId:{},auditResoult:{},qihangCourseStatus:{},chengZhangCourseStatus:{}", new Object[]{id, auditResult, qihangRecord.getStatus(), chengZhangRecord.getStatus()});
     		}
     		if(!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(qihangRecord.getRefundStatus())||!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(chengZhangRecord.getRefundStatus())){
-    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"审核状态不正确，无法处理退款审核消息");
-    		}
+    			//throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"审核状态不正确，无法处理退款审核消息");
+				logger.warn("审核状态不正确，无法处理退款审核消息, recourseId:{},auditResoult:{}, refundStatus:{}", id, auditResult, qihangRecord.getRefundStatus());
+
+			}
     		//更新退款状态
     		if(auditResult){
     			//审核通过
