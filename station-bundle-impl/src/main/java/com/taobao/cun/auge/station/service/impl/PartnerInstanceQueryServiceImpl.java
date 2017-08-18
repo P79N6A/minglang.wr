@@ -159,8 +159,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Autowired
 	private TestUserService testUserService;
-	
-	private boolean isC2BTestUser(Long taobaoUserId) {
+
+    private List<ProcessedStationStatusExecutor> processedStationStatusExecutorList;
+
+
+    private boolean isC2BTestUser(Long taobaoUserId) {
 		return testUserService.isTestUser(taobaoUserId, "c2b", true);
 	}
 	
@@ -561,15 +564,25 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
 	@Override
 	public StationStatisticDto getStationStatistics(StationStatisticsCondition condition) {
-		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
-		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
-		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
-		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(condition);
-		List<ProcessedStationStatus> whole = new ArrayList<ProcessedStationStatus>();
-		whole.addAll(processingList);
-		whole.addAll(processedList);
-		whole.addAll(courseList);
-		whole.addAll(decorateList);
+        if(null==processedStationStatusExecutorList){
+            processedStationStatusExecutorList = Lists.newArrayList();
+            processedStationStatusExecutorList.add(c -> partnerStationRelExtMapper.countProcessingStatus(c));
+            processedStationStatusExecutorList.add(c -> partnerStationRelExtMapper.countProcessedStatus(c));
+            processedStationStatusExecutorList.add(c -> partnerStationRelExtMapper.countCourseStatus(c));
+            processedStationStatusExecutorList.add(c -> partnerStationRelExtMapper.countDecorateStatus(c));
+        }
+        List<ProcessedStationStatus> whole =Lists.newArrayList();
+        processedStationStatusExecutorList.parallelStream().forEach(executor->{whole.addAll(executor.execute(condition));});
+//
+//		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);
+//		List<ProcessedStationStatus> processedList = partnerStationRelExtMapper.countProcessedStatus(condition);
+//		List<ProcessedStationStatus> courseList = partnerStationRelExtMapper.countCourseStatus(condition);
+//		List<ProcessedStationStatus> decorateList = partnerStationRelExtMapper.countDecorateStatus(condition);
+//		List<ProcessedStationStatus> whole = new ArrayList<ProcessedStationStatus>();
+//		whole.addAll(processingList);
+//		whole.addAll(processedList);
+//		whole.addAll(courseList);
+//		whole.addAll(decorateList);
 		StationStatisticDto statusDtoList = ProcessedStationStatusConverter.toProcessedStationStatusDtos(whole);
 		return statusDtoList;
 	}
