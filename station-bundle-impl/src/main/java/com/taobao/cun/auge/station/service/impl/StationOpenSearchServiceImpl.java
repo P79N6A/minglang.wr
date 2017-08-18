@@ -194,16 +194,16 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 
 	private Long validAddressCode(String code) {
 		if (StringUtils.isBlank(code)) {
-			return 0l;
+			return 0L;
 		}
 		try {
 			Long codeLong = Long.valueOf(code);
 			if (null == codeLong || codeLong == 0) {
-				return 0l;
+				return 0L;
 			}
 			return codeLong;
 		} catch (Exception e) {
-			return 0l;
+			return 0L;
 		}
 	}
 

@@ -35,7 +35,7 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 		// 获取停业原因
 		CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);
 		if (null == forcedCloseDto) {
-			return 0l;
+			return 0L;
 		} 
 		return forcedCloseDto.getId();
 	}
@@ -43,7 +43,7 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	public Long findQuitApplyId(Long instanceId) {
 		QuitStationApplyDto quitApply = partnerInstanceQueryService.getQuitStationApply(instanceId);
 		if(null == quitApply){
-			return 0l;
+			return 0L;
 		}
 		return quitApply.getId();
 	}

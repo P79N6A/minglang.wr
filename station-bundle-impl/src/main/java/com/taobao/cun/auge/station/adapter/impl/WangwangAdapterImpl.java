@@ -22,7 +22,7 @@ public class WangwangAdapterImpl implements WangwangAdapter {
 	public static final String ADD_TAG_VALUE = "1";
 	public static final String REMOVE_TAG_VALUE = "0";
 
-	public static final Long SUCCESS_CODE = 10000l;
+	public static final Long SUCCESS_CODE = 10000L;
 
 	@Value("${wangwang.strCaller:cntaobaoCuntao}")
 	private String strCaller;

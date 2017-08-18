@@ -270,7 +270,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIdEqualTo(partnerInstanceDto.getId());
 		criteria.andIsDeletedEqualTo("n");
 		if (partnerInstanceDto.getVersion() != null) {
-			rel.setVersion(rel.getVersion() + 1l);
+			rel.setVersion(rel.getVersion() + 1L);
 			criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
 		}
 

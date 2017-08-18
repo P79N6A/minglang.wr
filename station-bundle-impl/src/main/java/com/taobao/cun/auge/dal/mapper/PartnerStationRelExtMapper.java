@@ -19,7 +19,6 @@ public interface PartnerStationRelExtMapper {
 	List<ProcessedStationStatus> countProcessingStatus(StationStatisticsCondition condition);
 	
 	List<ProcessedStationStatus> countCourseStatus(StationStatisticsCondition condition);
-	
 	List<ProcessedStationStatus> countDecorateStatus(StationStatisticsCondition condition);
 	
 	/**
