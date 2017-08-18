@@ -379,7 +379,6 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 				}
 				return record.getCourseCode();
 			}
-			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"签到课程类型错误");
 		}
 		return null;
 	}
