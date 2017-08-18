@@ -110,11 +110,13 @@ public class DateUtil {
 	 * @throws Exception
 	 */
 	public static Date parseDate(String strFormat, String dateValue) {
-		if (dateValue == null)
-			return null;
+		if (dateValue == null) {
+            return null;
+        }
 
-		if (strFormat == null)
-			strFormat = TIME_PATTON_DEFAULT;
+		if (strFormat == null) {
+            strFormat = TIME_PATTON_DEFAULT;
+        }
 
 		// SimpleDateFormat dateFormat = new SimpleDateFormat(strFormat);
 
@@ -159,8 +161,9 @@ public class DateUtil {
 	
 	
 	public static Date formatDate(String format, String dateStr) {
-		if (format == null)
-			format = "yyyy-MM-dd";
+		if (format == null) {
+            format = "yyyy-MM-dd";
+        }
 		DateFormat format1 = new SimpleDateFormat(format);
 		Date date = null;
 		try {
@@ -200,8 +203,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String format(Date aTs_Datetime, String as_Pattern) {
-		if (aTs_Datetime == null || as_Pattern == null)
-			return null;
+		if (aTs_Datetime == null || as_Pattern == null) {
+            return null;
+        }
 
 		// //SimpleDateFormat dateFromat = new SimpleDateFormat();
 		SimpleDateFormat dateFromat = getSdf(as_Pattern);
@@ -216,8 +220,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String formatTime(Date aTs_Datetime, String as_Format) {
-		if (aTs_Datetime == null || as_Format == null)
-			return null;
+		if (aTs_Datetime == null || as_Format == null) {
+            return null;
+        }
 
 		// SimpleDateFormat dateFromat = new SimpleDateFormat();
 		SimpleDateFormat dateFromat = getSdf(as_Format);
@@ -236,8 +241,9 @@ public class DateUtil {
 	 * @return
 	 */
 	public static String format(Timestamp aTs_Datetime, String as_Pattern) {
-		if (aTs_Datetime == null || as_Pattern == null)
-			return null;
+		if (aTs_Datetime == null || as_Pattern == null) {
+            return null;
+        }
 
 		// SimpleDateFormat dateFromat = new SimpleDateFormat();
 		SimpleDateFormat dateFromat = getSdf(as_Pattern);
@@ -379,8 +385,9 @@ public class DateUtil {
 	}
 
 	public static String getDateString(Date date, String format) {
-		if (date == null)
-			return "";
+		if (date == null) {
+            return "";
+        }
 		if (StringUtils.isEmpty(format)) {
 			format = "yyyy-MM-dd";
 		}

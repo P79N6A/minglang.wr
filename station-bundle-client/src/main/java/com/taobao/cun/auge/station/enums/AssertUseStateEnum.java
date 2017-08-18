@@ -49,10 +49,12 @@ public class AssertUseStateEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof AssertUseStateEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof AssertUseStateEnum)) {
+            return false;
+        }
 		AssertUseStateEnum objType = (AssertUseStateEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -63,8 +65,9 @@ public class AssertUseStateEnum implements Serializable {
 	}
 
 	public static AssertUseStateEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

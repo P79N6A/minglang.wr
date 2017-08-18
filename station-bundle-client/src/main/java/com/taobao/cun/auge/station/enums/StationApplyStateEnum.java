@@ -128,10 +128,12 @@ public class StationApplyStateEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof StationApplyStateEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof StationApplyStateEnum)) {
+            return false;
+        }
 		StationApplyStateEnum objType = (StationApplyStateEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -142,8 +144,9 @@ public class StationApplyStateEnum implements Serializable {
 	}
 
 	public static StationApplyStateEnum valueof(String code) {
-		if (code==null)
-			return null;
+		if (code==null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 	/**

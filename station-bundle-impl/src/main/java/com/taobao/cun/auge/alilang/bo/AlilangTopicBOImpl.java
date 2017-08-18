@@ -59,7 +59,8 @@ public class AlilangTopicBOImpl implements AlilangTopicBO {
 	}
 
 
-	public List<AlilangTopicDto> getTopics() {
+	@Override
+    public List<AlilangTopicDto> getTopics() {
 		try {
 			String alilangTopic = Diamond.getConfig(AlilangTopicBO.ALILANG_TOPIC_DATAID, AlilangTopicBO.ALILANG_TOPIC_GROUP, 2000);
 			if(StringUtils.isNotEmpty(alilangTopic)){

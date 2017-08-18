@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.qualification.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -72,7 +73,7 @@ public class C2BQualificationConsumer {
 			EntityQuali quali = sellerQualiServiceAdapter.queryQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
 			Assert.notNull(quali);
 			//不是营业执照的消息不处理
-			if(quali.getQuali().getQualiInfoId() !=qualiInfoId){
+			if(!Objects.equals(quali.getQuali().getQualiInfoId(), qualiInfoId)){
 				return;
 			}
 			ListHidByEidAndEidTypeResponse listHidByEidAndEidTypeResponse = sellerQualiServiceAdapter.queryHavanaIdByQuali(quali.getEid(), quali.getEidType()).get();

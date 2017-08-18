@@ -36,10 +36,12 @@ public class WangwangAdapterImpl implements WangwangAdapter {
 	@Autowired
 	private com.taobao.wws.hsf2icesrv hsf2icesrv;
 
+	@Override
 	public void addWangWangTagByNick(String taobaoNick) {
 		updateWangWangTag(taobaoNick, ADD_TAG_VALUE);
 	}
 
+	@Override
 	public void removeWangWangTagByNick(String taobaoNick) {
 		updateWangWangTag(taobaoNick, REMOVE_TAG_VALUE);
 	}

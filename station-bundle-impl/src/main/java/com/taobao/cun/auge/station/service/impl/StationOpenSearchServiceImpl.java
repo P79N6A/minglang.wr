@@ -60,6 +60,7 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 		return buildMtopResult(buildStationNameSearch(stationName));
 	}
 
+	@Override
 	public Result<List<StationOpenSearchDto>> queryStationsByName(
 			String userId, String stationName) {
 		Result<List<StationOpenSearchDto>> result = new Result<List<StationOpenSearchDto>>();
@@ -404,12 +405,14 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 	}
 
 	private void validate(String name) {
-		if (StringUtils.isBlank(name))
+		if (StringUtils.isBlank(name)) {
 			throw new RuntimeException("name is null!");
+		}
 		if (StationSearchServiceConstants.STATION_SEARCH_BLACK_STRING
-				.contains("," + name + ","))
+				.contains("," + name + ",")) {
 			throw new AugeBusinessException("FAIL_BIZ_BLACK_LIST_ERROR", "您的关键词"
-					+ name + "搜索范围太广，请输入村服务点或者代购员名字搜索");
+				+ name + "搜索范围太广，请输入村服务点或者代购员名字搜索");
+		}
 	}
 
 	private String[] getQueryParams(String name) {

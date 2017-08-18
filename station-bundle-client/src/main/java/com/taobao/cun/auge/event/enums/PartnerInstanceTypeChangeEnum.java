@@ -80,10 +80,12 @@ public class PartnerInstanceTypeChangeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerInstanceTypeChangeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerInstanceTypeChangeEnum)) {
+            return false;
+        }
 		PartnerInstanceTypeChangeEnum objType = (PartnerInstanceTypeChangeEnum) obj;
 		return objType.getType().equals(this.getType());
 	}
@@ -97,8 +99,9 @@ public class PartnerInstanceTypeChangeEnum implements Serializable {
 	}
 
 	public static PartnerInstanceTypeChangeEnum valueof(ChangeEnum type) {
-		if (type == null)
-			return null;
+		if (type == null) {
+            return null;
+        }
 		return mappings.get(type);
 	}
 

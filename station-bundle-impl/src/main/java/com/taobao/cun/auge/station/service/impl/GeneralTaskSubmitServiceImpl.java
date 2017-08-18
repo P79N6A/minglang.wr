@@ -102,7 +102,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	@Autowired
 	PartnerTypeChangeApplyBO partnerTypeChangeApplyBO;
 	
-	public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
+	@Override
+    public void submitSettlingSysProcessTasks(PartnerInstanceDto instance, String operator) {
 			// 异构系统交互提交后台任务
 			List<GeneralTaskDto> taskDtos = Lists.newArrayList();
 
@@ -375,7 +376,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * 
 	 * @param processTask
 	 */
-	public void submitApproveProcessTask(ApproveProcessTask processTask) {
+	@Override
+    public void submitApproveProcessTask(ApproveProcessTask processTask) {
 		BeanValidator.validateWithThrowable(processTask);
 			StartProcessDto startProcessDto = new StartProcessDto();
 
@@ -412,7 +414,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * @param mobile
 	 * @param operatorId
 	 */
-	public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content) {
+	@Override
+    public void submitSmsTask(Long taobaoUserId, String mobile, String operatorId, String content) {
 		if (StringUtil.isEmpty(mobile)) {
 			logger.error("合伙人手机号码为空。taobaoUserId=" + taobaoUserId);
 			return;
@@ -850,7 +853,8 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 	 * @param instanceId
 	 * @param operatorId
 	 */
-	public void submitClosedCainiaoStation(Long instanceId, String operatorId) {
+	@Override
+    public void submitClosedCainiaoStation(Long instanceId, String operatorId) {
 			GeneralTaskDto cainiaoTaskVo = new GeneralTaskDto();
 			cainiaoTaskVo.setBusinessNo(String.valueOf(instanceId));
 			cainiaoTaskVo.setBeanName("caiNiaoService");

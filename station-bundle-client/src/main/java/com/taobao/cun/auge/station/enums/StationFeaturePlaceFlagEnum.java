@@ -51,10 +51,12 @@ public class StationFeaturePlaceFlagEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof StationFeaturePlaceFlagEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof StationFeaturePlaceFlagEnum)) {
+            return false;
+        }
 		StationFeaturePlaceFlagEnum objType = (StationFeaturePlaceFlagEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -65,8 +67,9 @@ public class StationFeaturePlaceFlagEnum  implements Serializable {
 	}
 
 	public static StationFeaturePlaceFlagEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 
