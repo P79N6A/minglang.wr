@@ -334,7 +334,16 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
             	 Map<String,Object> json= (Map<String, Object>) JSON.parse(method.getResponseBodyAsString());
             	 Map<String,Object> json1=(Map<String, Object>) json.get("content");
             	 if(!(Boolean)json1.get("success")){
-                 	throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,"签到失败:"+json1.get("data"));
+            		 String errMsg="签到失败";
+            		 String errorDate=String.valueOf(json1.get("data"));
+            		 if("INVALID_TICKET".equals(errorDate)){
+            			 errMsg="无效券号";
+            		 }else if("HAVE_SIGNED".equals(errorDate)){
+            			 errMsg="已经签到";
+            		 }else if("INVALID_CODE".equals(errorDate)){
+            			 errMsg="无效课程code";
+            		 }
+                 	throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,"签到失败:"+errMsg);
             	 }
              } else {
             	throw new AugeBusinessException(AugeErrorCodes.PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE,"签到失败");
