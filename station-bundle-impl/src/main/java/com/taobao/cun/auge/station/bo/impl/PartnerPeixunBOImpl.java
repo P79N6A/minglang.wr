@@ -221,7 +221,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private PartnerCourseRecord handleComplete(JSONObject ob,String courseType){
 		Long userId=ob.getLong("buyerAliId");
 		String code=ob.getString("productCode");
-		String poNo=ob.getString("poNo");
+		String poNo=ob.getString("rtnMsg");
 		Assert.notNull(userId);
 		Assert.notNull(code);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();

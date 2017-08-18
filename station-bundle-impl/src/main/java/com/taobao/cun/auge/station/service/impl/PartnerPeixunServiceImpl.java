@@ -320,7 +320,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	@SuppressWarnings("unchecked")
 	private void signToCrm(String ticketNo,String courseCode,String poNo){
-		 String queryString = ("ticket="+ticketNo+"&&code="+courseCode+"&&poNo="+poNo);
+		 String queryString = ("ticket="+ticketNo+"&&code="+courseCode+"&&rtnMsg="+poNo);
 //         String lisReq = "http://cunxuexi.taobao.com/user/sign/signin.json"+"?"+queryString;
 		 String signUrl=peixunSignUrl+"?"+queryString;
          HttpClient httpClient = new HttpClient();
