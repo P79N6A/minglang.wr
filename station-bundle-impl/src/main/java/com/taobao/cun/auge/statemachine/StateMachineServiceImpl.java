@@ -41,12 +41,14 @@ public class StateMachineServiceImpl implements StateMachineService {
 
 	private RequestContext createRequestContext(LifeCyclePhaseEvent phaseEvent) {
 		 RequestContext ctx = new RequestContext(phaseEvent.getStateMachine());
+		  ctx.setContext( phaseEvent.getExtensionInfo());
 		 if(phaseEvent.getCurrentState()!=null){
 			ctx.setCurrentState(phaseEvent.getCurrentState());
 		  }
 		  ctx.set("event", phaseEvent.getEvent().getEvent());
 		  ctx.set("payload", phaseEvent.getPayload());
 	      ctx.events(new XFSMEvent(phaseEvent.getEvent().getEvent(),phaseEvent.getPayload()));
+	    
 		return ctx;
 	}
 

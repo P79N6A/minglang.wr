@@ -22,6 +22,11 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import net.sf.cglib.proxy.NoOp;
 
+/**
+ * 
+ * @author zhenhuan.zhangzh
+ *
+ */
 @Component
 public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 
