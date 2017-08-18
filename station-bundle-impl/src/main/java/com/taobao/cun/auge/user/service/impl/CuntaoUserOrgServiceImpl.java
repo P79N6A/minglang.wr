@@ -3,6 +3,7 @@ package com.taobao.cun.auge.user.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,6 +119,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 				.getStatus()));
 		cuntaoUserOrgVo.setWorkNo(userOrg.getLoginId());
 		cuntaoUserOrgVo.setMobile(toMap(userOrg.getFeature()).get("mobile"));
+		cuntaoUserOrgVo.setLoginId(userOrg.getLoginId());
 		String divisionId = toMap(userOrg.getFeature()).get("divisionId");
 		if (StringUtils.isNotEmpty(divisionId)) {
 			cuntaoUserOrgVo.setDivisionId(new Long(divisionId));
@@ -188,16 +190,16 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	}
 	
 	private String getFeatureString(String mobile,String division){
-		 Map<String,String> featureMap=new HashMap<String,String>();
-			if(mobile==null){
-				featureMap.put("mobile", "");
-			}else{
-				featureMap.put("mobile", mobile);
-			}
+		 Map<String,String> featureMap=new LinkedHashMap<>();
 			if(division==null){
 				featureMap.put("divisionId", "");
 			}else{
 				featureMap.put("divisionId", division);
+			}
+			if(mobile==null){
+				featureMap.put("mobile", "");
+			}else{
+				featureMap.put("mobile", mobile);
 			}
 			return toString(featureMap);
 		

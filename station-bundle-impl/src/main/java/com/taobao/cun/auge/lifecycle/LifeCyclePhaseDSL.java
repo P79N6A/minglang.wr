@@ -34,8 +34,6 @@ public class LifeCyclePhaseDSL {
 	 
 	 
 	public LifeCyclePhaseDSL then(Consumer<LifeCyclePhaseContext> consumer){
-		
-		
 		consumers.add(consumer);
 		return this;
 	}

@@ -7,6 +7,11 @@ import org.springframework.util.Assert;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
+/**
+ * 
+ * @author zhenhuan.zhangzh
+ *
+ */
 public class LifeCyclePhaseEvent {
 
 
