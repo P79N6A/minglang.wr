@@ -74,6 +74,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
             AssetIncomeDto aiDto = AssetIncomeConverter.toAssetIncomeDto(ai);
             bulidCount(aiDto);
             dtoList.add(aiDto);
+            
         }
         return PageDtoUtil.success(incomeList, dtoList);
 	}
