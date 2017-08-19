@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class StoreDto implements Serializable{
 
 	private static final long serialVersionUID = 3116443473224484893L;
-
+	
 	private Long id;
 	/**
 	 * 门店名称
@@ -15,4 +15,6 @@ public class StoreDto implements Serializable{
 	 * 共享门店ID
 	 */
 	private Long shareStoreId;
+	
+	private Long categoryId;
 }
