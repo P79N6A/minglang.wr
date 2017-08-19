@@ -29,7 +29,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.7.1</ague.station.client.version>
+		<ague.station.client.version>2.7.2</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.2.9</alibaba-spring-boot.version>
 	</properties>
 
@@ -63,11 +63,6 @@
 				<groupId>com.alibaba.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-uic</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba.boot</groupId>
-				<artifactId>diamond-spring-boot-starter</artifactId>
-				<version>1.0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
