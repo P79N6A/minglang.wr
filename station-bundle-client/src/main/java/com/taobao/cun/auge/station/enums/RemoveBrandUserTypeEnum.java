@@ -16,6 +16,8 @@ public class RemoveBrandUserTypeEnum implements Serializable {
     private String code;
     private String desc;
     
+    public static final RemoveBrandUserTypeEnum TEMP  = new RemoveBrandUserTypeEnum("TEMP", "暂不拆除");
+    
     public static final RemoveBrandUserTypeEnum NONE  = new RemoveBrandUserTypeEnum("NONE", "不拆除");
     
     public static final RemoveBrandUserTypeEnum PARTNER  = new RemoveBrandUserTypeEnum("PARTNER", "村小二");
@@ -27,6 +29,7 @@ public class RemoveBrandUserTypeEnum implements Serializable {
     	mappings.put("NONE", NONE);
     	mappings.put("PARTNER", PARTNER);
         mappings.put("ISV", ISV);
+        mappings.put("TEMP", TEMP);
     }
 
     public RemoveBrandUserTypeEnum(String code, String desc) {
