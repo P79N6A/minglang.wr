@@ -46,7 +46,7 @@
     <result column="version" jdbcType="BIGINT" property="version" />
     <result column="is_on_town" jdbcType="CHAR" property="isOnTown" />
     <result column="cainiao_warehouse_id" jdbcType="BIGINT" property="cainiaoWarehouseId" />
-    <result column="station_type" jdbcType="VARCHAR" property="stationType" />
+    <result column="station_type" jdbcType="INTEGER" property="stationType" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -208,7 +208,7 @@
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
       #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{cainiaoWarehouseId,jdbcType=BIGINT}, 
-      #{stationType,jdbcType=VARCHAR})
+      #{stationType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -460,7 +460,7 @@
         #{cainiaoWarehouseId,jdbcType=BIGINT},
       </if>
       <if test="stationType != null">
-        #{stationType,jdbcType=VARCHAR},
+        #{stationType,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -602,7 +602,7 @@
         cainiao_warehouse_id = #{record.cainiaoWarehouseId,jdbcType=BIGINT},
       </if>
       <if test="record.stationType != null">
-        station_type = #{record.stationType,jdbcType=VARCHAR},
+        station_type = #{record.stationType,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -655,7 +655,7 @@
       version = #{record.version,jdbcType=BIGINT},
       is_on_town = #{record.isOnTown,jdbcType=CHAR},
       cainiao_warehouse_id = #{record.cainiaoWarehouseId,jdbcType=BIGINT},
-      station_type = #{record.stationType,jdbcType=VARCHAR}
+      station_type = #{record.stationType,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -785,7 +785,7 @@
         cainiao_warehouse_id = #{cainiaoWarehouseId,jdbcType=BIGINT},
       </if>
       <if test="stationType != null">
-        station_type = #{stationType,jdbcType=VARCHAR},
+        station_type = #{stationType,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -835,7 +835,7 @@
       version = #{version,jdbcType=BIGINT},
       is_on_town = #{isOnTown,jdbcType=CHAR},
       cainiao_warehouse_id = #{cainiaoWarehouseId,jdbcType=BIGINT},
-      station_type = #{stationType,jdbcType=VARCHAR}
+      station_type = #{stationType,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

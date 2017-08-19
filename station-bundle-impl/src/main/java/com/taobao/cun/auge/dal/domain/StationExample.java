@@ -2925,62 +2925,52 @@ public class StationExample {
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeEqualTo(String value) {
+        public Criteria andStationTypeEqualTo(Integer value) {
             addCriterion("station_type =", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNotEqualTo(String value) {
+        public Criteria andStationTypeNotEqualTo(Integer value) {
             addCriterion("station_type <>", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeGreaterThan(String value) {
+        public Criteria andStationTypeGreaterThan(Integer value) {
             addCriterion("station_type >", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeGreaterThanOrEqualTo(String value) {
+        public Criteria andStationTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("station_type >=", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeLessThan(String value) {
+        public Criteria andStationTypeLessThan(Integer value) {
             addCriterion("station_type <", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeLessThanOrEqualTo(String value) {
+        public Criteria andStationTypeLessThanOrEqualTo(Integer value) {
             addCriterion("station_type <=", value, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeLike(String value) {
-            addCriterion("station_type like", value, "stationType");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationTypeNotLike(String value) {
-            addCriterion("station_type not like", value, "stationType");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationTypeIn(List<String> values) {
+        public Criteria andStationTypeIn(List<Integer> values) {
             addCriterion("station_type in", values, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNotIn(List<String> values) {
+        public Criteria andStationTypeNotIn(List<Integer> values) {
             addCriterion("station_type not in", values, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeBetween(String value1, String value2) {
+        public Criteria andStationTypeBetween(Integer value1, Integer value2) {
             addCriterion("station_type between", value1, value2, "stationType");
             return (Criteria) this;
         }
 
-        public Criteria andStationTypeNotBetween(String value1, String value2) {
+        public Criteria andStationTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("station_type not between", value1, value2, "stationType");
             return (Criteria) this;
         }
