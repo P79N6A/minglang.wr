@@ -375,7 +375,7 @@
 			<dependency>
 				<groupId>com.taobao.common.uic.uic-common</groupId>
 				<artifactId>common-uic-common</artifactId>
-				<version>3.7.5.2</version>
+				<version>3.7.5.9</version>
 				<exclusions>
 					<exclusion>
 						<groupId>ch.qos.logback</groupId>
