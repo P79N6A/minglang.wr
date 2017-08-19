@@ -2,7 +2,7 @@ package com.taobao.cun.auge.store.dto;
 
 import java.io.Serializable;
 
-import com.taobao.cun.auge.county.dto.AddressDto;
+import com.taobao.cun.auge.common.Address;
 
 /**
  * 村淘门店
@@ -54,7 +54,7 @@ public class StoreDto implements Serializable{
 	/**
 	 * 门店地址
 	 */
-	private AddressDto addressDto;
+	private Address address;
 
 	public Long getId() {
 		return id;
@@ -128,11 +128,12 @@ public class StoreDto implements Serializable{
 		this.taobaoUserId = taobaoUserId;
 	}
 
-	public AddressDto getAddressDto() {
-		return addressDto;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setAddressDto(AddressDto addressDto) {
-		this.addressDto = addressDto;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
+
 }

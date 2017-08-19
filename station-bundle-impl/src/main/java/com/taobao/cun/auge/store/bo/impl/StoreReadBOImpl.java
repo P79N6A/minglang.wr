@@ -15,7 +15,9 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreStatus;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
@@ -45,8 +47,14 @@ public class StoreReadBOImpl implements StoreReadBO {
 		CuntaoStore cuntaoStore = cuntaoStores.get(0);
 		StoreDto storeDto = new StoreDto();
 		storeDto.setId(cuntaoStore.getId());
-		
-		return null;
+		storeDto.setAddress(stationDto.getAddress());
+		storeDto.setName(cuntaoStore.getName());
+		storeDto.setShareStoreId(cuntaoStore.getShareStoreId());
+		storeDto.setScmId(cuntaoStore.getScmId());
+		storeDto.setStoreCategory(StoreCategory.valueOf(cuntaoStore.getStoreCategory()));
+		storeDto.setTaobaoUserId(station.getTaobaoUserId());
+		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
+		return storeDto;
 	}
 
 }

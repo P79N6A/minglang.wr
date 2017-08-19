@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Strings;
@@ -25,12 +24,16 @@ import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
 import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
+import com.taobao.place.client.domain.result.ResultCode;
 import com.taobao.place.client.service.StoreCreateService;
+import com.taobao.place.client.service.StoreUpdateService;
 
 @Component
 public class StoreWriteBOImpl implements StoreWriteBO {
 	@Resource
 	private StoreCreateService storeCreateService;
+	@Resource
+	private StoreUpdateService storeUpdateService;
 	@Resource
 	private CuntaoStoreMapper cuntaoStoreMapper;
 	@Resource
@@ -39,16 +42,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private UserTagService userTagService;
 	
 	@Override
-	public Long create(StoreCreateDto dto) throws StoreException{
-		Station station = stationBO.getStationById(dto.getStationId());
+	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
+		Station station = stationBO.getStationById(storeCreateDto.getStationId());
 		if(station == null){
-			throw new StoreException("服务站不存在,id=" + dto.getStationId());
+			throw new StoreException("服务站不存在,id=" + storeCreateDto.getStationId());
 		}
 		StoreDTO storeDTO = new StoreDTO();
-		storeDTO.setName(dto.getName());
-		storeDTO.setCategoryId(dto.getCategoryId());
+		storeDTO.setName(storeCreateDto.getName());
+		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
 		storeDTO.setAddress(station.getAddress());
-		storeDTO.setOuterId(String.valueOf(dto.getStationId()));
+		storeDTO.setOuterId(String.valueOf(storeCreateDto.getStationId()));
 		//省
 		if(!Strings.isNullOrEmpty(station.getProvince())){
 			storeDTO.setProv(Integer.parseInt(station.getProvince()));
@@ -81,24 +84,34 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
 		}
-		if("STORE_REPEAT".equals(result.getResultCode())){
-			throw new StoreException("该用户已有门店，不能重复创建");
-		}
+		
+		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
+            storeDTO.setStoreId(result.getResult());
+            // 更新
+            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, station.getTaobaoUserId(), StoreBizType.CUN_TAO.getValue());
+            if(updateResult.isFailured()){
+            	throw new StoreException(updateResult.getFullErrorMsg());
+            }
+        }
 		//打标
-//		if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
-//			userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
-//		}
+		if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
+			userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
+		}
 		
 		//本地存储
 		CuntaoStore cuntaoStore = new CuntaoStore();
-		BeanUtils.copyProperties(cuntaoStore, dto);
 		cuntaoStore.setShareStoreId(result.getResult());
-		cuntaoStore.setModifier(dto.getCreator());
+		cuntaoStore.setModifier(storeCreateDto.getCreator());
+		cuntaoStore.setCreator(storeCreateDto.getCreator());
+		cuntaoStore.setModifier(storeCreateDto.getCreator());
+		cuntaoStore.setName(storeCreateDto.getName());
+		cuntaoStore.setStationId(storeCreateDto.getStationId());
 		cuntaoStore.setGmtCreate(new Date());
 		cuntaoStore.setGmtModified(new Date());
 		cuntaoStore.setIsDeleted("n");
 		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
-		cuntaoStore.setStoreCategory(dto.getStoreCategory().getCategory());
+		cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
+		cuntaoStore.setScmId(0L);
 		cuntaoStoreMapper.insert(cuntaoStore);
 		
 		//更新station type

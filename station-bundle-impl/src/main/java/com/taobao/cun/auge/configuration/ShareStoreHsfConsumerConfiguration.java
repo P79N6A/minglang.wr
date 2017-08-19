@@ -4,17 +4,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.springframework.boot.util.builder.HsfConsumerBuilder;
-import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.aliexpress.boot.hsf.HSFGroup;
+import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.place.client.service.StoreCreateService;
+import com.taobao.place.client.service.StoreUpdateService;
 
 @Configuration
 public class ShareStoreHsfConsumerConfiguration {
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean storeCreateService(
-			@Value("${hsf.consumer.version.sharestore}") String version, 
-			@Value("${hsf.consumer.group.sharestore}") String group){
-		return HsfConsumerBuilder.create(StoreCreateService.class, group, version).build();
+	@Bean
+	public StoreCreateService storeCreateService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.sharestore}") String version){
+		return context.hsfConsumerBuilder(StoreCreateService.class, HSFGroup.HSF.getName(), version).build();
+	}
+	
+	@Bean
+	public StoreUpdateService storeUpdateService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.sharestore}") String version){
+		return context.hsfConsumerBuilder(StoreUpdateService.class, HSFGroup.HSF.getName(), version).build();
 	}
 }
