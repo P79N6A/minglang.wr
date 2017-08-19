@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.tag;
+package com.taobao.cun.auge.tag.service;
 
 public interface UserTagService {
 

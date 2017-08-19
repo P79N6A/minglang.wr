@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.taobao.cun.auge.tag.UserTag;
-import com.taobao.cun.auge.tag.UserTagService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
