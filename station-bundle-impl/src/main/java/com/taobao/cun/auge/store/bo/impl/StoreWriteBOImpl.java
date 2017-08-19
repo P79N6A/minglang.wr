@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
@@ -45,7 +46,14 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
 		Station station = stationBO.getStationById(storeCreateDto.getStationId());
 		if(station == null){
-			throw new StoreException("服务站不存在,id=" + storeCreateDto.getStationId());
+			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
+		}
+		StationDto stationDto = StationConverter.toStationDto(station);
+		if(!stationDto.isStore()){
+			return null;
+		}
+		if(stationDto.isStore()){
+			throw new StoreException("该服务站已经存在门店,station_id=" + storeCreateDto.getStationId());
 		}
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(storeCreateDto.getName());
