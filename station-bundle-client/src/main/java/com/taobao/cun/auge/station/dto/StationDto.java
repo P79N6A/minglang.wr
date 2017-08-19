@@ -12,6 +12,7 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 
 public class StationDto extends OperatorDto implements Serializable{
@@ -130,6 +131,8 @@ public class StationDto extends OperatorDto implements Serializable{
 	 */
 	private PartnerInstanceIsOnTown partnerInstanceIsOnTown;
 
+	private Integer stationType;
+	
 	public Long getId() {
 		return id;
 	}
@@ -321,4 +324,22 @@ public class StationDto extends OperatorDto implements Serializable{
 	public void setAttachments(List<AttachmentDto> attachments) {
 		this.attachments = attachments;
 	}
+	
+	public boolean isStore(){
+		return StationType.hasType(stationType, StationType.STORE);
+	}
+	
+	public boolean isStation(){
+		return StationType.hasType(stationType, StationType.STATION);
+	}
+
+	public Integer getStationType() {
+		return stationType;
+	}
+
+	public void setStationType(Integer stationType) {
+		this.stationType = stationType;
+	}
+	
+	
 }
