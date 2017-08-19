@@ -336,6 +336,7 @@ public class StationDto extends OperatorDto implements Serializable{
 	}
 	
 	public boolean isStationType(StationType type){
+		if(this.stationType == null) return false;
 		return StationType.hasType(stationType,type);
 	}
 	
