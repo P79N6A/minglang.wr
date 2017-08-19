@@ -67,23 +67,27 @@ public class PartnerInstanceLevelEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerInstanceLevelEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerInstanceLevelEnum)) {
+            return false;
+        }
 		PartnerInstanceLevelEnum objType = (PartnerInstanceLevelEnum) obj;
 		return objType.getLevel().equals(this.getLevel());
 	}
 
 	public static PartnerInstanceLevelEnum valueof(PartnerInstanceLevel level) {
-		if (level == null)
-			return null;
+		if (level == null) {
+            return null;
+        }
 		return mappings.get(level);
 	}
 
 	public static PartnerInstanceLevelEnum valueof(String levelStr) {
-		if (levelStr == null || levelStr.length() == 0)
-			return null;
+		if (levelStr == null || levelStr.length() == 0) {
+            return null;
+        }
 		PartnerInstanceLevel level = null;
 		try {
 			level = PartnerInstanceLevel.valueOf(levelStr);

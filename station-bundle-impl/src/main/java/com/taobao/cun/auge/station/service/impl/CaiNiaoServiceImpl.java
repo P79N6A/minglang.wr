@@ -569,7 +569,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	/** 停业通知菜鸟 */
-	public void closeCainiaoStation(SyncModifyCainiaoStationDto syncModifyCainiaoStationDto){
+	@Override
+    public void closeCainiaoStation(SyncModifyCainiaoStationDto syncModifyCainiaoStationDto){
 		PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyCainiaoStationDto.getPartnerInstanceId());
 		Long stationId = instanceDto.getStationId();
 		// 查询菜鸟物流站关系表
@@ -581,7 +582,8 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 	}
 
 	/** 经纬度修改同步菜鸟 */
-	public void modifyLngLatToCainiao(SyncModifyLngLatDto syncModifyLngLatDto){
+	@Override
+    public void modifyLngLatToCainiao(SyncModifyLngLatDto syncModifyLngLatDto){
 			PartnerInstanceDto instanceDto = partnerInstanceBO.getPartnerInstanceById(syncModifyLngLatDto.getPartnerInstanceId());
 			Long stationId = instanceDto.getStationId();
 			// 查询菜鸟物流站关系表

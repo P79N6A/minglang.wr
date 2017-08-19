@@ -47,8 +47,9 @@ public class ProcessTypeEnum implements Serializable {
 	}
 
 	public static ProcessTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 
@@ -62,18 +63,23 @@ public class ProcessTypeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		ProcessTypeEnum other = (ProcessTypeEnum) obj;
 		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
+			if (other.code != null) {
+                return false;
+            }
+		} else if (!code.equals(other.code)) {
+            return false;
+        }
 		return true;
 	}
 }

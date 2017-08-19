@@ -49,17 +49,20 @@ public class CuntaoUserStausEnum implements Serializable{
 	}
 	
 	public final static CuntaoUserStausEnum valueof(String code) {
-		if (code==null)
-			return null;
+		if (code==null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof CuntaoUserStausEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof CuntaoUserStausEnum)) {
+            return false;
+        }
 		CuntaoUserStausEnum objType = (CuntaoUserStausEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}

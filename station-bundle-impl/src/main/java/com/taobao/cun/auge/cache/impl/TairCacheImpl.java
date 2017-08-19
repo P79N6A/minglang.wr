@@ -73,6 +73,7 @@ public class TairCacheImpl implements TairCache {
 		put(key, value, 0);
 	}
 
+	@Override
 	public void put(String key, Serializable value, int expireTime) {
 		ResultCode resultCode = tairManager.put(tairNamespace, key, value, 0, expireTime);
 		if (!resultCode.isSuccess()) {
@@ -96,8 +97,9 @@ public class TairCacheImpl implements TairCache {
 		}
 	}
 	
+	@Override
 	public Integer incr(Serializable key, int value, int defaultValue,
-			int expireTime) {
+						int expireTime) {
 		Result<Integer> result = tairManager.incr(tairNamespace, key, value,
 				defaultValue, expireTime);
 		if (!result.isSuccess()) {

@@ -14,7 +14,9 @@ public class StationBuyerQueryListDtoConverter {
 	private static final String TPVName = "村拍档";
 
     public static List<StationOpenSearchDto> convertStationBuyerQueryListVoList(List items) {
-        if (CollectionUtils.isEmpty(items)) return null;
+        if (CollectionUtils.isEmpty(items)) {
+            return null;
+        }
         List<StationBuyerQueryListVo> voList = (List<StationBuyerQueryListVo>)items;
         List<StationOpenSearchDto> list = new ArrayList<StationOpenSearchDto>();
         for (StationBuyerQueryListVo vo:voList){

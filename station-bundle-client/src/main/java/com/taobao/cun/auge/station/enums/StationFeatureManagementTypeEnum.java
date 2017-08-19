@@ -51,10 +51,12 @@ public class StationFeatureManagementTypeEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof StationFeatureManagementTypeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof StationFeatureManagementTypeEnum)) {
+            return false;
+        }
 		StationFeatureManagementTypeEnum objType = (StationFeatureManagementTypeEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -65,8 +67,9 @@ public class StationFeatureManagementTypeEnum  implements Serializable {
 	}
 
 	public static StationFeatureManagementTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

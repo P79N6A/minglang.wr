@@ -182,7 +182,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
 
 	@Override
 	public List<UserProfile> queryUserForMeeting(String name, Long taobaoUserId) {
-		if (taobaoUserId == null || taobaoUserId == 0l) {
+		if (taobaoUserId == null || taobaoUserId == 0L) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"taobaoUserId is null");
 		}
 		PartnerStationRel rel = partnerInstanceBO

@@ -60,10 +60,12 @@ public class WisdomCountyStateEnum implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (obj == null) {
             return false;
-        if (!(obj instanceof WisdomCountyStateEnum))
+        }
+        if (!(obj instanceof WisdomCountyStateEnum)) {
             return false;
+        }
         WisdomCountyStateEnum objType = (WisdomCountyStateEnum) obj;
         return objType.getCode().equals(this.getCode());
     }
@@ -74,8 +76,9 @@ public class WisdomCountyStateEnum implements Serializable{
     }
 
     public static WisdomCountyStateEnum valueof(String code) {
-        if (code == null)
+        if (code == null) {
             return null;
+        }
         return mappings.get(code);
     }
 

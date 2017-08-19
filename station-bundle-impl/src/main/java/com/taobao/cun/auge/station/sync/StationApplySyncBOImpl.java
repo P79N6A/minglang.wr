@@ -101,7 +101,7 @@ public class StationApplySyncBOImpl implements StationApplySyncBO {
 	public StationApply addStationApply(Long partnerInstanceId){
 			StationApply stationApply = buildStationApply(partnerInstanceId, SyncStationApplyEnum.ADD);
 			DomainUtils.beforeInsert(stationApply, DomainUtils.DEFAULT_OPERATOR);
-			stationApply.setVersion(0l);
+			stationApply.setVersion(0L);
 			// stationApply.setCustomerLevel(customerLevel);
 			logger.info("sync add to station_apply : {}", JSON.toJSONString(stationApply));
 			stationApplyMapper.insertSelective(stationApply);

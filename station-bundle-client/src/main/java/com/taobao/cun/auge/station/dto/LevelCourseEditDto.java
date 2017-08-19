@@ -108,19 +108,37 @@ public class LevelCourseEditDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         LevelCourseEditDto other = (LevelCourseEditDto) obj;
         if (courseCode == null) {
-            if (other.courseCode != null) return false;
-        } else if (!courseCode.equals(other.courseCode)) return false;
+            if (other.courseCode != null) {
+                return false;
+            }
+        } else if (!courseCode.equals(other.courseCode)) {
+            return false;
+        }
         if (courseName == null) {
-            if (other.courseName != null) return false;
-        } else if (!courseName.equals(other.courseName)) return false;
+            if (other.courseName != null) {
+                return false;
+            }
+        } else if (!courseName.equals(other.courseName)) {
+            return false;
+        }
         if (growthIndex == null) {
-            if (other.growthIndex != null) return false;
-        } else if (!growthIndex.equals(other.growthIndex)) return false;
+            if (other.growthIndex != null) {
+                return false;
+            }
+        } else if (!growthIndex.equals(other.growthIndex)) {
+            return false;
+        }
         return true;
     }
 
