@@ -366,6 +366,10 @@
 				<groupId>com.taobao.openSearch</groupId>
 				<artifactId>openSearch</artifactId>
 		</dependency>		
+		<dependency>
+			  <groupId>com.taobao.place</groupId>
+			  <artifactId>place-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

@@ -590,6 +590,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+			  <groupId>com.taobao.place</groupId>
+			  <artifactId>place-client</artifactId>
+			  <version>1.3.92-health-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
