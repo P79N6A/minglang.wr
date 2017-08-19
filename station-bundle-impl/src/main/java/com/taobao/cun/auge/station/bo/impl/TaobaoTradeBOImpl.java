@@ -29,6 +29,7 @@ public class TaobaoTradeBOImpl implements TaobaoTradeBO{
 	@Autowired
 	private RefundReadService refundReadService;
 
+	@Override
 	public TaobaoNoEndTradeDto findNoEndTradeOrders(Long buyerId, Date endDate){
 	        TaobaoNoEndTradeDto data = new TaobaoNoEndTradeDto();
 	        QueryBizOrderDO query = new QueryBizOrderDO();

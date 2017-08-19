@@ -59,8 +59,9 @@ public class PartnerInstanceCloseTypeEnum implements Serializable {
 	}
 
 	public static PartnerInstanceCloseTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 
@@ -74,18 +75,23 @@ public class PartnerInstanceCloseTypeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		PartnerInstanceCloseTypeEnum other = (PartnerInstanceCloseTypeEnum) obj;
 		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
+			if (other.code != null) {
+                return false;
+            }
+		} else if (!code.equals(other.code)) {
+            return false;
+        }
 		return true;
 	}
 }

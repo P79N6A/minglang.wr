@@ -54,6 +54,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		partnerLifecycleItemsMapper.insert(items);
 	}
 	
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateLifecycle(PartnerLifecycleDto partnerLifecycleDto)  {
 		ValidateUtils.notNull(partnerLifecycleDto);
@@ -68,8 +69,9 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		partnerLifecycleItemsMapper.updateByPrimaryKeySelective(items);
 	}
 
+	@Override
 	public Long getLifecycleItemsId(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,
-			PartnerLifecycleCurrentStepEnum stepEnum)  {
+									PartnerLifecycleCurrentStepEnum stepEnum)  {
 		PartnerLifecycleItems items = getLifecycleItems(instanceId, businessTypeEnum, stepEnum);
 		if (items != null) {
 			return items.getId();
@@ -77,8 +79,9 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		return null;
 	}
 
-	public PartnerLifecycleItems getLifecycleItems(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,
-			PartnerLifecycleCurrentStepEnum stepEnum)  {
+	@Override
+    public PartnerLifecycleItems getLifecycleItems(Long instanceId, PartnerLifecycleBusinessTypeEnum businessTypeEnum,
+                                                   PartnerLifecycleCurrentStepEnum stepEnum)  {
 		ValidateUtils.notNull(businessTypeEnum);
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(stepEnum);
@@ -178,6 +181,7 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		this.updateLifecycle(param);
 	}
 	
+	@Override
 	public PartnerLifecycleItems getLifecycleItems(long id){
 		return partnerLifecycleItemsMapper.selectByPrimaryKey(id);
 	}

@@ -78,7 +78,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
 	}
 	
-	public void syncCuntaoQulification(Long taobaoUserId) {
+	@Override
+    public void syncCuntaoQulification(Long taobaoUserId) {
 			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
 			if(cuntaoQualification == null) {
 				return;
@@ -112,7 +113,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	}
 	
 	
-	public Qualification queryHavanaC2BQualification(Long taobaoUserId){
+	@Override
+    public Qualification queryHavanaC2BQualification(Long taobaoUserId){
 			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryQuali(taobaoUserId);
 			Optional<UserQualiRecord> auditRecords = Optional.ofNullable(sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId));
 			Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,auditRecords);

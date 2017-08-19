@@ -57,7 +57,8 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			return result;
 	}
 
-	public void insertRecord(CuntaoFlowRecordDto recordDto) {
+	@Override
+    public void insertRecord(CuntaoFlowRecordDto recordDto) {
 			CuntaoFlowRecord record = new CuntaoFlowRecord();
 			DomainUtils.beforeInsert(record, recordDto.getOperatorWorkid());
 			record.setOperatorName(recordDto.getOperatorName());
@@ -71,7 +72,8 @@ public class CuntaoFlowRecordQueryServiceImpl implements CuntaoFlowRecordQuerySe
 			cuntaoFlowRecordMapper.insertSelective(record);
 	}
 	
-	public List<CuntaoFlowRecordDto> queryByIds(List<Long> ids){
+	@Override
+    public List<CuntaoFlowRecordDto> queryByIds(List<Long> ids){
 		Assert.notEmpty(ids);
 		CuntaoFlowRecordExample example = new CuntaoFlowRecordExample();
 		example.setOrderByClause("id");

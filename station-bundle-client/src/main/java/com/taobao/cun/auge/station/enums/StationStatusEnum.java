@@ -85,10 +85,12 @@ public class StationStatusEnum implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (obj == null) {
             return false;
-        if (!(obj instanceof StationStatusEnum))
+        }
+        if (!(obj instanceof StationStatusEnum)) {
             return false;
+        }
         StationStatusEnum objType = (StationStatusEnum) obj;
         return objType.getCode().equals(this.getCode());
     }
@@ -99,8 +101,9 @@ public class StationStatusEnum implements Serializable {
     }
 
     public static StationStatusEnum valueof(String code) {
-        if (code == null)
+        if (code == null) {
             return null;
+        }
         return mappings.get(code);
     }
 

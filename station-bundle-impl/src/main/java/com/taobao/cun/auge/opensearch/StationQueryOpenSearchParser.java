@@ -40,9 +40,13 @@ public class StationQueryOpenSearchParser implements OpenSearchParser {
 
     public OrginOpenSearchReturnVariableValue getVariableValue(String variableValue){
         JSONObject variableValueObjecct = JSONObject.parseObject(variableValue);
-        if (variableValueObjecct==null) return null;
+        if (variableValueObjecct==null) {
+            return null;
+        }
         String distanceValue = variableValueObjecct.getString("distance_value");
-        if (StringUtil.isBlank(distanceValue) || distanceValue.length()<=1) return null;
+        if (StringUtil.isBlank(distanceValue) || distanceValue.length()<=1) {
+            return null;
+        }
         OrginOpenSearchReturnVariableValue orginOpenSearchReturnVariableValue = new OrginOpenSearchReturnVariableValue();
         List<String> extInfoList = new ArrayList<String>();
         extInfoList.add(distanceValue.substring(1, distanceValue.length() - 1));

@@ -186,7 +186,8 @@ public class StationBOImpl implements StationBO {
 		return stationExtMapper.getTpStationsByName(stationExtExample);
 	}
 	
-	public Page<Station> getStations(StationCondition stationCondition) {
+	@Override
+    public Page<Station> getStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
 
 		StationExtExample stationExtExample = StationExtExampleConverter.convert(stationCondition);

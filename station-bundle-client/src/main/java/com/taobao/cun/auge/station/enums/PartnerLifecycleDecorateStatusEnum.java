@@ -56,10 +56,12 @@ public class PartnerLifecycleDecorateStatusEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerLifecycleDecorateStatusEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerLifecycleDecorateStatusEnum)) {
+            return false;
+        }
 		PartnerLifecycleDecorateStatusEnum objType = (PartnerLifecycleDecorateStatusEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -70,8 +72,9 @@ public class PartnerLifecycleDecorateStatusEnum  implements Serializable {
 	}
 
 	public static PartnerLifecycleDecorateStatusEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

@@ -13,7 +13,9 @@ public class AugeFailureAnalysisReporter implements FailureAnalysisReporter{
 	private static final Logger logger = LoggerFactory.getLogger(AugeFailureAnalysisReporter.class);
 	@Override
 	public void report(FailureAnalysis analysis) {
-		if(analysis == null) return;
+		if(analysis == null) {
+            return;
+        }
          AugeFailureAnalysis augeFailureAnalysis = (AugeFailureAnalysis)analysis;
          if(augeFailureAnalysis.isFatal()){
         	 logger.error("{bizType},{action},{parameter},{clientAppName},{targetServerIp}", augeFailureAnalysis.getBizType(), augeFailureAnalysis.getAction(), augeFailureAnalysis.getParameters(),RequestCtxUtil.getAppNameOfClient(),RequestCtxUtil.getTargetServerIp(),augeFailureAnalysis.getCause());

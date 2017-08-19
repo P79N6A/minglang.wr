@@ -78,7 +78,8 @@ public class Emp360AdapterImpl implements Emp360Adapter {
 		return empInfoMap;
 	}
 
-	public String getName(String workNo){
+	@Override
+    public String getName(String workNo){
 		String name = "";
 		if (StringUtils.isNotEmpty(workNo)) {
 			List<String> workNoList = new ArrayList<String>();

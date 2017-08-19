@@ -56,10 +56,12 @@ public class PartnerLifecycleRoleApproveEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerLifecycleRoleApproveEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerLifecycleRoleApproveEnum)) {
+            return false;
+        }
 		PartnerLifecycleRoleApproveEnum objType = (PartnerLifecycleRoleApproveEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -70,8 +72,9 @@ public class PartnerLifecycleRoleApproveEnum  implements Serializable {
 	}
 
 	public static PartnerLifecycleRoleApproveEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

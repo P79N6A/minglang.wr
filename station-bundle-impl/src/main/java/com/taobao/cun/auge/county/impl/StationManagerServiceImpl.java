@@ -51,6 +51,7 @@ public class StationManagerServiceImpl implements StationManagerService {
 		return managerDtos;
 	}
 
+	@Override
 	public void saveOrUpdateStationManager(String operator, CountyDto countyDto) {
 		List<StationManagerDto> managers = countyDto.getManagers();
 		// 批量逻辑删除原数据
