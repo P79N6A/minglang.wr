@@ -2,14 +2,15 @@ package com.taobao.cun.auge.station.enums;
 
 public enum StationType {
 
-	STATION,
+	STATION(1 << 0),
 	
-	STORE;
+	STORE(1 << 1);
 	
 	private int type;
 	
-    private StationType(){
-    	type = (1 << ordinal());
+	
+    private StationType(int type){
+    	this.type = type;
     }
 
 	public int getType() {
@@ -29,5 +30,5 @@ public enum StationType {
 	        return types;
 	}
 	
-	
+
 }
