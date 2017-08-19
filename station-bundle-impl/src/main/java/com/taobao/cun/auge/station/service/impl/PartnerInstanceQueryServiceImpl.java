@@ -1,10 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -96,6 +93,8 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
 import com.taobao.cun.auge.station.util.PartnerInstanceStateEnumUtil;
 import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -160,6 +159,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     @Autowired
     private TestUserService testUserService;
 
+    @Autowired
+    private StoreReadBO storeReadBO;
+    
     private List<ProcessedStationStatusExecutor> processedStationStatusExecutorList;
 
 
@@ -371,6 +373,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
         Station station = stationBO.getStationById(instance.getStationId());
         StationDto stationDto = StationConverter.toStationDto(station);
+        if(stationDto.getStationType()!=null){
+        	if(stationDto.isStore()){
+        		StoreDto storeDto = storeReadBO.getStoreDtoByStation(stationDto.getId());
+        		stationDto.setStoreDto(storeDto);
+        	}
+        }
         instance.setStationDto(stationDto);
 
         return instance;

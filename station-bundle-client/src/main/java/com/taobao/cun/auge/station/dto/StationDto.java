@@ -14,6 +14,7 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
+import com.taobao.cun.auge.store.dto.StoreDto;
 
 public class StationDto extends OperatorDto implements Serializable{
 
@@ -132,6 +133,11 @@ public class StationDto extends OperatorDto implements Serializable{
 	private PartnerInstanceIsOnTown partnerInstanceIsOnTown;
 
 	private Integer stationType;
+	
+	/**
+	 * 门店信息
+	 */
+	private StoreDto storeDto;
 	
 	public Long getId() {
 		return id;
@@ -326,11 +332,15 @@ public class StationDto extends OperatorDto implements Serializable{
 	}
 	
 	public boolean isStore(){
-		return StationType.hasType(stationType, StationType.STORE);
+		return isStationType(StationType.STORE);
+	}
+	
+	public boolean isStationType(StationType type){
+		return StationType.hasType(stationType,type);
 	}
 	
 	public boolean isStation(){
-		return StationType.hasType(stationType, StationType.STATION);
+		return isStationType(StationType.STATION);
 	}
 
 	public Integer getStationType() {
@@ -339,6 +349,14 @@ public class StationDto extends OperatorDto implements Serializable{
 
 	public void setStationType(Integer stationType) {
 		this.stationType = stationType;
+	}
+
+	public StoreDto getStoreDto() {
+		return storeDto;
+	}
+
+	public void setStoreDto(StoreDto storeDto) {
+		this.storeDto = storeDto;
 	}
 	
 	
