@@ -49,9 +49,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
 		}
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(!stationDto.isStore()){
-			return null;
-		}
 		if(stationDto.isStore()){
 			throw new StoreException("该服务站已经存在门店,station_id=" + storeCreateDto.getStationId());
 		}
@@ -80,10 +77,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			storeDTO.setTownName(station.getTownDetail());
 		}
 		if(!Strings.isNullOrEmpty(station.getLat())){
-			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLat()));
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
 		if(!Strings.isNullOrEmpty(station.getLng())){
-			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLng()));
+			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
 		}
 		
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
