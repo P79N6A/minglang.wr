@@ -8,7 +8,7 @@ import com.taobao.cun.auge.dal.domain.Sample;
 public class SampleRepository {
 
 	public Long save(Sample sample){
-		sample.setId(1l);
+		sample.setId(1L);
 		System.out.println("save repository");
 		return sample.getId();
 	}

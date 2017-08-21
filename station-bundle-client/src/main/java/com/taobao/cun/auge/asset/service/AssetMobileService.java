@@ -167,7 +167,7 @@ public interface AssetMobileService {
      * @param checkDto
      * @return
      */
-    public Boolean checkAsset(AssetCheckDto checkDto);
+    public AssetDetailDto checkAsset(AssetCheckDto checkDto);
 
     /**
      * 资产赔偿时获得资产列表

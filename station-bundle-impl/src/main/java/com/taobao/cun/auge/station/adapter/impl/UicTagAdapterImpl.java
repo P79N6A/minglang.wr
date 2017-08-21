@@ -38,6 +38,8 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 	
 	private Long TPT_TAG = new Double(Math.pow(2, 55)).longValue();
 
+
+	@Override
 	public void addUserTag(UserTagDto userTagDto) {
 		BeanValidator.validateWithThrowable(userTagDto);
 		try {

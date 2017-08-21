@@ -52,7 +52,7 @@ public class TpaGmvCheckConfiguration {
 
 	// 淘帮手自动停业:订单限制
 	@Value("${order.limit.4.auto.close}")
-	private Long orderLimit4AutoClose = 10l;
+	private Long orderLimit4AutoClose = 10L;
 
 	public Long getOrderLimit4AutoClose() {
 		return orderLimit4AutoClose;

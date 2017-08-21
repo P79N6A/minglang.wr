@@ -43,11 +43,10 @@ public class CountyStationBOImpl implements CountyStationBO {
 		return ResultUtils.selectOne(resList);
 	}
 
+	@Override
 	public Long addCountyStation(CountyStation cs){
 		countyStationMapper.insert(cs);
 		return cs.getId();
 	}
-	
-
 
 }

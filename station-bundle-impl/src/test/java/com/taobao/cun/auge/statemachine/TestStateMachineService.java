@@ -66,7 +66,7 @@ public class TestStateMachineService {
 	public void testTPDecoratingWithStateMachine() throws InterruptedException{
 		System.err.println("start testTPDecoratingWithStateMachine");
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-		settleSuccessDto.setInstanceId(3648734376l);
+		settleSuccessDto.setInstanceId(3648734376L);
 		settleSuccessDto.setOperator("3709109723");
 		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		partnerInstanceService.applySettleSuccess(settleSuccessDto);
@@ -82,7 +82,7 @@ public class TestStateMachineService {
 		openStationDto.setOpenDate(new Date());
 		openStationDto.setOperator("62333");
 		openStationDto.setOperatorType(OperatorTypeEnum.BUC);
-		openStationDto.setPartnerInstanceId(3648734376l);
+		openStationDto.setPartnerInstanceId(3648734376L);
 		partnerInstanceService.openStation(openStationDto);
 		System.err.println("end testTPServicingWithStateMachine");
 	}
@@ -98,10 +98,10 @@ public class TestStateMachineService {
 	public void testTPClosingByManagerWithStateMachine() throws IOException{
 		System.err.println("start testTPClosingWithStateMachine");
 		ForcedCloseDto forceClosedDto = new ForcedCloseDto();
-		forceClosedDto.setInstanceId(3648734376l);
+		forceClosedDto.setInstanceId(3648734376L);
 		forceClosedDto.setOperator("62333");
 		forceClosedDto.setOperatorType(OperatorTypeEnum.BUC);
-		forceClosedDto.setOperatorOrgId(1l);
+		forceClosedDto.setOperatorOrgId(1L);
 		forceClosedDto.setReason(CloseStationApplyCloseReasonEnum.ASSESS_FAIL);
 		forceClosedDto.setRemarks("test");
 		partnerInstanceService.applyCloseByManager(forceClosedDto);
@@ -111,14 +111,14 @@ public class TestStateMachineService {
 	@Test
 	public void testTPClosedByWorkFlowWithStateMachine() throws Exception{
 		System.err.println("start testTPClosedWithStateMachine");
-		processProcessor.closeApprove(3648734376l, ProcessApproveResultEnum.APPROVE_PASS);
+		processProcessor.closeApprove(3648734376L, ProcessApproveResultEnum.APPROVE_PASS);
 		System.err.println("end testTPClosedWithStateMachine");
 	}
 	
 	@Test
 	public void testTPClosedRefusedByWorkFlowWithStateMachine() throws Exception{
 		System.err.println("start testTPClosedWithStateMachine");
-		processProcessor.closeApprove(3648734376l, ProcessApproveResultEnum.APPROVE_REFUSE);
+		processProcessor.closeApprove(3648734376L, ProcessApproveResultEnum.APPROVE_REFUSE);
 		System.err.println("end testTPClosedWithStateMachine");
 	}
 	
@@ -127,10 +127,10 @@ public class TestStateMachineService {
 		System.err.println("start testTPClosedWithStateMachine");
 		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
 		confirmCloseDto.setAgree(false);
-		confirmCloseDto.setPartnerInstanceId(3648734376l);
+		confirmCloseDto.setPartnerInstanceId(3648734376L);
 		confirmCloseDto.setOperator("62333");
 		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);
-		confirmCloseDto.setOperatorOrgId(1l);
+		confirmCloseDto.setOperatorOrgId(1L);
 		partnerInstanceService.confirmClose(confirmCloseDto);
 		System.err.println("end testTPClosedWithStateMachine");
 	}
@@ -141,10 +141,10 @@ public class TestStateMachineService {
 		System.err.println("start testTPClosedWithStateMachine");
 		ConfirmCloseDto confirmCloseDto = new ConfirmCloseDto();
 		confirmCloseDto.setAgree(true);
-		confirmCloseDto.setPartnerInstanceId(3648734376l);
+		confirmCloseDto.setPartnerInstanceId(3648734376L);
 		confirmCloseDto.setOperator("62333");
 		confirmCloseDto.setOperatorType(OperatorTypeEnum.BUC);
-		confirmCloseDto.setOperatorOrgId(1l);
+		confirmCloseDto.setOperatorOrgId(1L);
 		partnerInstanceService.confirmClose(confirmCloseDto);
 		System.err.println("end testTPClosedWithStateMachine");
 	}
@@ -159,10 +159,10 @@ public class TestStateMachineService {
 		QuitStationApplyDto quitDto = new QuitStationApplyDto();
 		quitDto.setApprovalFileName("test");
 		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
-		quitDto.setInstanceId(3648734376l);
+		quitDto.setInstanceId(3648734376L);
 		quitDto.setIsQuitStation(true);
 		quitDto.setOperator("62333");
-		quitDto.setOperatorOrgId(1l);
+		quitDto.setOperatorOrgId(1L);
 		quitDto.setOperatorType(OperatorTypeEnum.BUC);
 		quitDto.setIsRemoveBrand(true);
 		quitDto.setLoanHasClose(true);
@@ -181,10 +181,10 @@ public class TestStateMachineService {
 		QuitStationApplyDto quitDto = new QuitStationApplyDto();
 		quitDto.setApprovalFileName("test");
 		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
-		quitDto.setInstanceId(3648734376l);
+		quitDto.setInstanceId(3648734376L);
 		quitDto.setIsQuitStation(false);
 		quitDto.setOperator("62333");
-		quitDto.setOperatorOrgId(1l);
+		quitDto.setOperatorOrgId(1L);
 		quitDto.setOperatorType(OperatorTypeEnum.BUC);
 		quitDto.setIsRemoveBrand(true);
 		quitDto.setLoanHasClose(true);
@@ -200,14 +200,14 @@ public class TestStateMachineService {
 	@Test
 	public void testTPreServiceWithStateMachine() throws IOException{
 		System.err.println("start testTPreServiceWithStateMachine");
-		partnerInstanceService.reService(3648734376l, "62333");
+		partnerInstanceService.reService(3648734376L, "62333");
 		System.err.println("end testTPreServiceWithStateMachine");
 	}
 	
 	@Test
 	public void testTPQuitRefusedWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitRefusedWithStateMachine");
-		processProcessor.quitApprove(3648734376l, ProcessApproveResultEnum.APPROVE_REFUSE);
+		processProcessor.quitApprove(3648734376L, ProcessApproveResultEnum.APPROVE_REFUSE);
 		System.err.println("end testTPQuitRefusedWithStateMachine");
 	}
 	
@@ -215,7 +215,7 @@ public class TestStateMachineService {
 	@Test
 	public void testTPQuitByAuditFlowWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitByAuditFlowWithStateMachine");
-		processProcessor.quitApprove(3648734376l, ProcessApproveResultEnum.APPROVE_PASS);
+		processProcessor.quitApprove(3648734376L, ProcessApproveResultEnum.APPROVE_PASS);
 		System.err.println("end testTPQuitByAuditFlowWithStateMachine");
 	}
 	
@@ -223,7 +223,7 @@ public class TestStateMachineService {
 	public void testTPQuitByThawTaskWithStateMachine() throws Exception{
 		System.err.println("start testTPQuitByThawTaskWithStateMachine");
 		PartnerInstanceQuitDto partnerInstanceQuitDto = new PartnerInstanceQuitDto();
-		partnerInstanceQuitDto.setInstanceId(3648734376l);
+		partnerInstanceQuitDto.setInstanceId(3648734376L);
 		partnerInstanceQuitDto.setOperator("system");
 		partnerInstanceQuitDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		partnerInstanceService.quitPartnerInstance(partnerInstanceQuitDto);
@@ -249,7 +249,7 @@ public class TestStateMachineService {
 	public void testTPAServicingWithStateMachine(){
 		System.err.println("start testTPAServicingWithStateMachine");
 		PartnerInstanceSettleSuccessDto settleSuccessDto = new PartnerInstanceSettleSuccessDto();
-		settleSuccessDto.setInstanceId(3648734375l);
+		settleSuccessDto.setInstanceId(3648734375L);
 		settleSuccessDto.setOperator("3709109723");
 		settleSuccessDto.setOperatorType(OperatorTypeEnum.HAVANA);
 		partnerInstanceService.applySettleSuccess(settleSuccessDto);
@@ -261,10 +261,10 @@ public class TestStateMachineService {
 	public void testTPAClosingByManagerWithStateMachine() throws IOException{
 		System.err.println("start testTPClosingWithStateMachine");
 		ForcedCloseDto forceClosedDto = new ForcedCloseDto();
-		forceClosedDto.setInstanceId(3648734375l);
+		forceClosedDto.setInstanceId(3648734375L);
 		forceClosedDto.setOperator("62333");
 		forceClosedDto.setOperatorType(OperatorTypeEnum.BUC);
-		forceClosedDto.setOperatorOrgId(1l);
+		forceClosedDto.setOperatorOrgId(1L);
 		forceClosedDto.setReason(CloseStationApplyCloseReasonEnum.ASSESS_FAIL);
 		forceClosedDto.setRemarks("test");
 		partnerInstanceService.applyCloseByManager(forceClosedDto);
@@ -278,10 +278,10 @@ public class TestStateMachineService {
 		QuitStationApplyDto quitDto = new QuitStationApplyDto();
 		quitDto.setApprovalFileName("test");
 		quitDto.setAssertUseState(AssertUseStateEnum.HAS_RETURN);
-		quitDto.setInstanceId(3648734375l);
+		quitDto.setInstanceId(3648734375L);
 		quitDto.setIsQuitStation(true);
 		quitDto.setOperator("62333");
-		quitDto.setOperatorOrgId(1l);
+		quitDto.setOperatorOrgId(1L);
 		quitDto.setOperatorType(OperatorTypeEnum.BUC);
 		quitDto.setIsRemoveBrand(true);
 		quitDto.setLoanHasClose(true);
@@ -298,7 +298,7 @@ public class TestStateMachineService {
 	public void testTPAQuitByThawTaskWithStateMachine() throws Exception{
 		System.err.println("start testTPAQuitByThawTaskWithStateMachine");
 		PartnerInstanceQuitDto partnerInstanceQuitDto = new PartnerInstanceQuitDto();
-		partnerInstanceQuitDto.setInstanceId(3648734375l);
+		partnerInstanceQuitDto.setInstanceId(3648734375L);
 		partnerInstanceQuitDto.setOperator("system");
 		partnerInstanceQuitDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		partnerInstanceService.quitPartnerInstance(partnerInstanceQuitDto);

@@ -63,6 +63,7 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.springframework.util.StringUtils;
 
 @Component
 public class AssetRolloutBOImpl implements AssetRolloutBO {
@@ -394,6 +395,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		roDto.setReason(scrapDto.getReason());
 		roDto.setReceiverAreaId(scrapDto.getOperatorOrgId());
 		roDto.setTotalPayment(scrapDto.getPayment());
+		if (!StringUtils.isEmpty(scrapDto.getRemark())) {
+			roDto.setRemark(scrapDto.getRemark());
+		}
 		if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
 			roDto.setAttachId(JSON.toJSONString(scrapDto.getAttachmentList()));
 		}

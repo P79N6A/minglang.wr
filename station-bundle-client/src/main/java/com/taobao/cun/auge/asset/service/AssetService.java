@@ -120,7 +120,7 @@ public interface AssetService {
      * @param checkDto
      * @return
      */
-    public Boolean checkAsset(AssetCheckDto checkDto);
+    public AssetDetailDto checkAsset(AssetCheckDto checkDto);
 
     /**
      * 村小二 签收资产    admin使用

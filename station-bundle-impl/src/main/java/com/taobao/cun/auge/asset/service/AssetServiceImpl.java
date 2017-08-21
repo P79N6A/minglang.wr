@@ -230,7 +230,7 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public Boolean checkAsset(AssetCheckDto checkDto) {
+	public AssetDetailDto checkAsset(AssetCheckDto checkDto) {
 		return assetBO.checkAsset(checkDto);
 	}
 

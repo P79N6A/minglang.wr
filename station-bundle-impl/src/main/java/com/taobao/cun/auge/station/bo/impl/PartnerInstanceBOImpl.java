@@ -89,8 +89,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     CriusTaskExecuteMapper criusTaskExecuteMapper;
 
     @Override
-    public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId,
-                                                              PartnerInstanceStateEnum instanceState) {
+    public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
+    {
         ValidateUtils.notNull(taobaoUserId);
         ValidateUtils.notNull(instanceState);
         PartnerStationRelExample example = new PartnerStationRelExample();
@@ -186,7 +186,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     @Override
     public List<PartnerStationRel> findPartnerInstances(Long stationId) {
         if (null == stationId) {
-            return Collections.<PartnerStationRel>emptyList();
+            return Collections.<PartnerStationRel> emptyList();
         }
         PartnerStationRelExample example = new PartnerStationRelExample();
         Criteria criteria = example.createCriteria();
@@ -221,14 +221,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
-                            String operator) {
+    public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
+    {
         PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 
         if (!preState.getCode().equals(partnerInstance.getState())) {
             logger.error("partner instance state is not " + preState.getDesc());
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,
-                "partner instance state is not " + preState.getDesc());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance state is not " + preState.getDesc());
         }
 
         PartnerStationRel updateInstance = new PartnerStationRel();
@@ -246,8 +245,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
         if (null == partnerInstance) {
             logger.error("partner instance is not exist.instance id " + instanceId);
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,
-                "partner instance is not exist.instance id " + instanceId);
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance is not exist.instance id " + instanceId);
         }
         return partnerInstance;
     }
@@ -281,7 +279,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         int updateCount = partnerStationRelMapper.updateByExampleSelective(rel, example);
 
         if (updateCount < 1) {
-            throw new AugeBusinessException(AugeErrorCodes.CONCURRENT_UPDATE_ERROR_CODE, "当前数据有更新，请刷新页面重试");
+            throw new AugeBusinessException(AugeErrorCodes.CONCURRENT_UPDATE_ERROR_CODE,"当前数据有更新，请刷新页面重试");
         }
     }
 
@@ -307,8 +305,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         ValidateUtils.notNull(operator);
         PartnerStationRel partnerStationRel = partnerStationRelMapper.selectByPrimaryKey(instanceId);
         if (partnerStationRel == null) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,
-                "PartnerInstanceId is null instanceId[" + instanceId + "]");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceId is null instanceId["+instanceId+"]");
         }
 
         partnerStationRel.setOpenDate(openDate);
@@ -330,8 +327,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
         if (null == rel) {
             logger.error("partner instance is not exist.stationId " + stationId);
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,
-                "partner instance is not exist.stationId " + stationId);
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance is not exist.stationId " + stationId);
         }
         return rel.getId();
     }
@@ -391,31 +387,30 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
-    public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) {
+    public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto){
         ValidateUtils.validateParam(partnerInstanceDto);
         PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
 
         String operator = partnerInstanceDto.getOperator();
         //设置合伙人的历史服务站  is_current 为n
-        setIsCurrentToNForParnter(partnerStationRel.getTaobaoUserId(), operator);
+        setIsCurrentToNForParnter(partnerStationRel.getTaobaoUserId(),operator);
 
         //设置上一个合伙人 当前服务站所属关系为N
-        setIsCurrentToN(partnerStationRel.getStationId(), operator);
+        setIsCurrentToN(partnerStationRel.getStationId(),operator);
 
         DomainUtils.beforeInsert(partnerStationRel, operator);
         partnerStationRelMapper.insert(partnerStationRel);
         return partnerStationRel.getId();
     }
 
-    private void setIsCurrentToNForParnter(Long taobaoUserId, String operator) {
+    private void setIsCurrentToNForParnter(Long taobaoUserId,String operator) {
 
         PartnerStationRelExample example = new PartnerStationRelExample();
         Criteria criteria = example.createCriteria();
-        criteria.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId).andIsCurrentEqualTo(
-            PartnerInstanceIsCurrentEnum.Y.getCode());
+        criteria.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
         List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
-        if (resList != null && resList.size() > 0) {
-            for (PartnerStationRel rel : resList) {
+        if (resList != null && resList.size()>0) {
+            for (PartnerStationRel rel: resList) {
                 PartnerStationRel updateInstance = new PartnerStationRel();
                 updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
                 updateInstance.setId(rel.getId());
@@ -425,15 +420,15 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         }
     }
 
-    private void setIsCurrentToN(Long stationId, String operator) {
+
+    private void setIsCurrentToN(Long stationId,String operator) {
 
         PartnerStationRelExample example = new PartnerStationRelExample();
         Criteria criteria = example.createCriteria();
-        criteria.andIsDeletedEqualTo("n").andStationIdEqualTo(stationId).andIsCurrentEqualTo(
-            PartnerInstanceIsCurrentEnum.Y.getCode());
+        criteria.andIsDeletedEqualTo("n").andStationIdEqualTo(stationId).andIsCurrentEqualTo(PartnerInstanceIsCurrentEnum.Y.getCode());
         List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
-        if (resList != null && resList.size() > 0) {
-            for (PartnerStationRel rel : resList) {
+        if (resList != null && resList.size()>0) {
+            for (PartnerStationRel rel: resList) {
                 PartnerStationRel updateInstance = new PartnerStationRel();
                 updateInstance.setIsCurrent(PartnerInstanceIsCurrentEnum.N.getCode());
                 updateInstance.setId(rel.getId());
@@ -460,16 +455,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
             if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
                 return false;
             } else {
-                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(),
-                    PartnerLifecycleBusinessTypeEnum.QUITING);
+                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
                 if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
-                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()),
-                        PartnerLifecycleItemCheckEnum.roleApprove, item))) {
+                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
                     continue;
                 }
 
-                //				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item
-                // .getCurrentStep())) {
+                //				if (StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
                 //					continue;
                 //				}
                 return false;
@@ -541,8 +533,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         Set<Long> idSet = Sets.newHashSet();
         for (Long id : instanceIdList) {
             CriusTaskExecuteExample example = new CriusTaskExecuteExample();
-            example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo(
-                TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode())
+            example.createCriteria().andIsDeletedEqualTo("n").andBusinessTypeEqualTo(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode())
                 .andBusinessNoEqualTo(String.valueOf(id));
             List<CriusTaskExecute> existTaskList = criusTaskExecuteMapper.selectByExample(example);
             if (CollectionUtils.isEmpty(existTaskList)) {
@@ -566,11 +557,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
             if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
                 return rel;
             } else {
-                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(),
-                    PartnerLifecycleBusinessTypeEnum.QUITING);
+                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
                 if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
-                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()),
-                        PartnerLifecycleItemCheckEnum.roleApprove, item))) {
+                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
                     continue;
                 }
                 return rel;
@@ -585,8 +574,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         int count = 0;
         PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId)
-            .andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateIn(
-            PartnerInstanceStateEnum.getValidTpaStatusArray());
+            .andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateIn(PartnerInstanceStateEnum.getValidTpaStatusArray());
         List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(resList)) {
             return count;
@@ -595,15 +583,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
             if (!StringUtils.equals(PartnerInstanceStateEnum.QUITING.getCode(), rel.getState())) {
                 count++;
             } else {
-                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(),
-                    PartnerLifecycleBusinessTypeEnum.QUITING);
+                PartnerLifecycleItems item = partnerLifecycleBO.getLifecycleItems(rel.getId(), PartnerLifecycleBusinessTypeEnum.QUITING);
                 if (null != item && PartnerLifecycleItemCheckResultEnum.EXECUTED.equals(PartnerLifecycleRuleParser
-                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()),
-                        PartnerLifecycleItemCheckEnum.roleApprove, item))) {
+                    .parseExecutable(PartnerInstanceTypeEnum.valueof(rel.getType()), PartnerLifecycleItemCheckEnum.roleApprove, item))) {
                     continue;
                 }
-                //				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING
-				// .getCode(), item.getCurrentStep())) {
+                //				if (null != item && StringUtils.equals(PartnerLifecycleCurrentStepEnum.PROCESSING.getCode(), item.getCurrentStep())) {
                 //					continue;
                 //				}
                 count++;
@@ -618,15 +603,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         ValidateUtils.notNull(taobaoUserId);
         PartnerStationRel rel = this.getActivePartnerInstance(taobaoUserId);
         if (rel == null) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,
-                "getActivePartnerInstance is null:taobaoUserId[" + taobaoUserId + "]");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"getActivePartnerInstance is null:taobaoUserId["+taobaoUserId+"]");
         }
-        partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y,
-            OperatorDto.defaultOperator());
+        partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y, OperatorDto.defaultOperator());
     }
 
     @Override
-    public boolean isAllPartnerQuit(Long stationId) {
+    public boolean isAllPartnerQuit(Long stationId) 	{
         List<PartnerStationRel> instances = findPartnerInstances(stationId);
 
         return isAllPartnerQuit(instances);
@@ -677,9 +660,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Override
     public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) {
-        List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId,
-            PartnerInstanceIsCurrentEnum.Y.getCode());
-        if (psRels.size() < 1) {
+        List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.Y.getCode());
+        if (psRels.size() < 1){
             return null;
         }
         //原则上系统只允许存在一条这样的数据
@@ -691,14 +673,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Override
     public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) {
-        List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId,
-            PartnerInstanceIsCurrentEnum.N.getCode());
-        if (psRels.size() < 1) {
+        List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.N.getCode());
+        if (psRels.size() < 1){
             return null;
         }
         List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>(psRels.size());
-        for (PartnerStationRel psRel : psRels) {
-            if (null == psRel) {
+        for (PartnerStationRel psRel : psRels){
+            if(null == psRel){
                 continue;
             }
             Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
@@ -711,13 +692,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     @Override
     public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(
         Long stationId) {
-        List<PartnerStationRel> psRels = getPartnerStationRelByStationId(stationId,
-            PartnerInstanceIsCurrentEnum.N.getCode());
-        if (psRels.size() < 1) {
+        List<PartnerStationRel> psRels = getPartnerStationRelByStationId(stationId, PartnerInstanceIsCurrentEnum.N.getCode());
+        if (psRels.size() < 1){
             return null;
         }
         List<PartnerInstanceDto> partnerInstanceDtos = new ArrayList<>();
-        for (PartnerStationRel psRel : psRels) {
+        for (PartnerStationRel psRel : psRels){
             Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
             Station station = stationBO.getStationById(psRel.getStationId());
 
@@ -742,8 +722,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     }
 
     @Override
-    public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState,
-                          String operator) {
+    public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator) {
         changeState(instanceId, preState, postState, operator);
         PartnerStationRel updateInstance = new PartnerStationRel();
         updateInstance.setId(instanceId);
@@ -766,7 +745,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Override
     public void updateIsCurrentByInstanceId(Long instanceId,
-                                            PartnerInstanceIsCurrentEnum isCurrentEnum) {
+                                            PartnerInstanceIsCurrentEnum isCurrentEnum)
+    {
         PartnerStationRel updateInstance = new PartnerStationRel();
         updateInstance.setIsCurrent(isCurrentEnum.getCode());
         updateInstance.setId(instanceId);
@@ -801,17 +781,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     @Override
     public List<PartnerStationRel> getBatchActivePartnerInstance(
-        List<Long> taobaoUserId, List<String> instanceType, List<String> statusList) {
-        if (taobaoUserId.size() == 0) {
+        List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) {
+        if(taobaoUserId.size()==0){
             return new ArrayList<PartnerStationRel>();
         }
         PartnerStationRelExample example = new PartnerStationRelExample();
-        Criteria c = example.createCriteria();
+        Criteria c=example.createCriteria();
         c.andIsDeletedEqualTo("n").andTaobaoUserIdIn(taobaoUserId).andIsCurrentEqualTo("y");
-        if (instanceType != null && instanceType.size() > 0) {
+        if(instanceType!=null&&instanceType.size()>0){
             c.andTypeIn(instanceType);
         }
-        if (statusList != null && statusList.size() > 0) {
+        if(statusList!=null&&statusList.size()>0){
             c.andStateIn(statusList);
         }
         List<PartnerStationRel> resList = partnerStationRelMapper.selectByExample(example);
@@ -821,14 +801,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     @Override
     public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,
                                                                String name) {
-        Map<String, Object> param = new HashMap<String, Object>();
+        Map<String,Object> param=new HashMap<String,Object>();
         param.put("orgId", orgId);
         param.put("name", name);
         return partnerStationRelMapper.queryUserProfileForAlilangMeeting(param);
     }
 
     @Override
-    public Boolean judgeMobileUseble(Long taobaoUserId, Long partnerId, String mobile) {
+    public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile) {
         Assert.notNull(mobile);
         List<String> types = new ArrayList<String>();
         types.add(PartnerInstanceTypeEnum.TP.getCode());
@@ -845,20 +825,20 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         param.put("statusLists", statuses);
         List<PartnerStationRel> rels = partnerStationRelMapper
             .getInstanceForMobileJudge(param);
-        if (taobaoUserId != null) {
+        if(taobaoUserId != null){
             for (PartnerStationRel p : rels) {
                 if (p.getTaobaoUserId().compareTo(taobaoUserId) != 0) {
                     return false;
                 }
             }
-        } else if (partnerId != null) {
+        }else if(partnerId !=null){
             for (PartnerStationRel p : rels) {
                 if (p.getPartnerId().compareTo(partnerId) != 0) {
                     return false;
                 }
             }
-        } else {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "user id is null");
+        }else{
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"user id is null");
 
         }
         return true;
@@ -874,10 +854,9 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     }
 
     @Override
-    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId) {
+    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
         PartnerStationRelExample example = new PartnerStationRelExample();
-        example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(
-            PartnerInstanceTypeEnum.TPA.getCode());
+        example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
         return partnerStationRelMapper.selectByExample(example);
     }
 }

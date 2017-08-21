@@ -85,7 +85,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			return res.getData();
 	}
 	
-	public Long addCountyByOrg(CaiNiaoStationDto stationDto) {
+	@Override
+    public Long addCountyByOrg(CaiNiaoStationDto stationDto) {
 		if (stationDto == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.addCounty.param.error:station is null!");
 		}
@@ -574,7 +575,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 		return result.getData();
 	}
 
-	public boolean closeToCainiaoStation(Long cainiaoStationId)  {
+	@Override
+    public boolean closeToCainiaoStation(Long cainiaoStationId)  {
 			Result<Boolean> res = stationWriteService.pauseStationById(cainiaoStationId, Modifier.newSystem());
 			if (!res.isSuccess()) {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
@@ -582,7 +584,8 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			return res.getData();
 	}
 
-	public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto)  {
+	@Override
+    public boolean modifyLngLatToCainiao(SyncModifyLngLatDto dto)  {
 			UpdateStationInfoParam param = new UpdateStationInfoParam();
 			param.setId(dto.getCainiaoStationId());
 			param.setLng(dto.getLng());

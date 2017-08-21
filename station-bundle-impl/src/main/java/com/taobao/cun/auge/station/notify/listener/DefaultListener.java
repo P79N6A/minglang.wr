@@ -36,8 +36,9 @@ public class DefaultListener implements MessageListener {
 	@Override
 	public void receiveMessage(Message message, MessageStatus status) {
 		logger.info("DefaultListener receiveMessage start");
-		if (message == null)
-			return;
+		if (message == null) {
+            return;
+        }
 		if (message instanceof StringMessage){
 			StringMessage strMessage = (StringMessage) message;
 			if (StringUtils.isEmpty(strMessage.getBody())) {
