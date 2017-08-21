@@ -1104,7 +1104,7 @@ public class AssetBOImpl implements AssetBO {
         if (!"n".equals(asset.getIsDeleted())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产仓库中不存在");
         }
-        if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
+        if (!AssetStatusEnum.getCanScrapStatusList().contains(asset.getStatus())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不在正常使用状态下");
         }
         if (!operator.equals(asset.getOwnerWorkno())) {

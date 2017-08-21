@@ -76,6 +76,15 @@ public class AssetStatusEnum implements Serializable{
         this.desc = desc;
     }
 
+    public static List<String> getCanScrapStatusList() {
+        List<String> list = new ArrayList<String>();
+        list.add(USE.getCode());
+        list.add(TRANSFER.getCode());
+        list.add(DISTRIBUTE.getCode());
+        list.add(PEND.getCode());
+        return list;
+    }
+
     public static List<String> getValidStatusList() {
         List<String> list = new ArrayList<String>();
         list.add(USE.getCode());
