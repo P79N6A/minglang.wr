@@ -200,6 +200,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
 		ValidateUtils.notNull(incomeId);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
 		example.setIncomeId(incomeId);
+		
 		if (status != null) {
 			example.setDetailStatus(status.getCode());
 		}
