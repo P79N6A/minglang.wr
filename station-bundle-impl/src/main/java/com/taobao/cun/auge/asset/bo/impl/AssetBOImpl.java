@@ -709,11 +709,11 @@ public class AssetBOImpl implements AssetBO {
         boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
-            transferItAsset(signDto);
+            //transferItAsset(signDto);
             sendSignMessage(asset.getOwnerWorkno(), updateAsset);
         } else {
             //调集团接口出库
-            obtainItAsset(signDto);
+            //obtainItAsset(signDto);
         }
         return buildAssetDetail(updateAsset);
     }
@@ -1015,14 +1015,15 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于您名下");
         }
         AssetDetailDto detailDto = buildAssetDetail(asset);
-        AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
-            detailDto.getAliNo(), GROUP_CODE);
-        if (!queryResult.isSuccess()) {
-            logger.error("{bizType}, getScrapDetailById error,{errorMsg} ", "assetError", queryResult.getErrorMsg());
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "查询资产净值失败,请联系管理员！");
-        }
-        detailDto.setPayment(queryResult.getResult().getNetValue());
+        //AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
+        //    detailDto.getAliNo(), GROUP_CODE);
+        //if (!queryResult.isSuccess()) {
+        //    logger.error("{bizType}, getScrapDetailById error,{errorMsg} ", "assetError", queryResult.getErrorMsg());
+        //    throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+        //        "查询资产净值失败,请联系管理员！");
+        //}
+        //detailDto.setPayment(queryResult.getResult().getNetValue());
+        detailDto.setPayment("1000");
         return detailDto;
     }
 
@@ -1039,7 +1040,7 @@ public class AssetBOImpl implements AssetBO {
         Asset asset = assetMapper.selectByPrimaryKey(scrapDto.getScrapAssetId());
         validateScrapAsset(asset, scrapDto.getOperator());
         //发起赔付流程
-        scrapingItAsset(asset, scrapDto);
+        //scrapingItAsset(asset, scrapDto);
         asset.setStatus(AssetStatusEnum.SCRAPING.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
@@ -1079,9 +1080,9 @@ public class AssetBOImpl implements AssetBO {
         //资产状态校验
         validateScrapAsset(asset, scrapDto.getOperator());
         //保证金转移
-        transferBail(scrapDto, asset.getUserId());
+        //transferBail(scrapDto, asset.getUserId());
         //通知集团资产废弃
-        scrapItAsset(asset, scrapDto);
+        //scrapItAsset(asset, scrapDto);
         //村淘库资产状态变更
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
