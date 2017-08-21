@@ -23,6 +23,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -87,6 +88,12 @@ public interface AssetMobileService {
      * @return
      */
     public AssetDetailDto signAssetByCounty(AssetDto signDto);
+    /**
+     * 资产一键签收(操作人县小二)
+     * @param signDto
+     * @return
+     */
+    public Boolean signAllAssetByCounty(AssetSignDto signDto);
     /**
      * 资产回收
      * @param recycleDto

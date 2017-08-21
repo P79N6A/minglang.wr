@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -695,17 +696,8 @@ public class AssetBOImpl implements AssetBO {
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败" + AssetBO.NO_EXIT_ASSET);
         }
-        Asset updateAsset = new Asset();
-        DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
-        updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+        Asset updateAsset = buildUpdateAsset(signDto);
         updateAsset.setId(asset.getId());
-        updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-        updateAsset.setUserId(signDto.getOperator());
-        updateAsset.setUseAreaId(signDto.getOperatorOrgId());
-        updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
-        updateAsset.setOwnerName(emp360Adapter.getName(signDto.getOperator()));
-        updateAsset.setOwnerOrgId(signDto.getOperatorOrgId());
-        updateAsset.setOwnerWorkno(signDto.getOperator());
         boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
@@ -715,7 +707,7 @@ public class AssetBOImpl implements AssetBO {
             //调集团接口出库
             //obtainItAsset(signDto);
         }
-        return buildAssetDetail(updateAsset);
+        return buildAssetDetail(assetMapper.selectByPrimaryKey(updateAsset.getId()));
     }
 
     private void obtainItAsset(AssetDto signDto) {
@@ -861,6 +853,7 @@ public class AssetBOImpl implements AssetBO {
         DomainUtils.beforeUpdate(asset, transferDto.getOperator());
         asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
+        //TODO  集团责任人变更
         return assetList;
     }
 
@@ -1693,4 +1686,35 @@ public class AssetBOImpl implements AssetBO {
         }
         return buildAssetDetail(asset);
 	}
+
+    @Override
+    public Boolean signAllAssetByCounty(AssetSignDto signDto) {
+        Objects.requireNonNull(signDto.getIncomeId(), "入库id不能为空");
+        Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
+        Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
+        List<Long> idList = assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(
+            AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
+        if(CollectionUtils.isNotEmpty(idList)) {
+            Asset updateAsset = buildUpdateAsset(signDto);
+            AssetExample example = new AssetExample();
+            example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+            assetMapper.updateByExampleSelective(updateAsset, example);
+            //TODO 集团
+        }
+        return true;
+    }
+
+    private Asset buildUpdateAsset(OperatorDto signDto) {
+        Asset updateAsset = new Asset();
+        DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
+        updateAsset.setStatus(AssetStatusEnum.USE.getCode());
+        updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+        updateAsset.setUserId(signDto.getOperator());
+        updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+        updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
+        updateAsset.setOwnerName(emp360Adapter.getName(signDto.getOperator()));
+        updateAsset.setOwnerOrgId(signDto.getOperatorOrgId());
+        updateAsset.setOwnerWorkno(signDto.getOperator());
+        return updateAsset;
+    }
 }

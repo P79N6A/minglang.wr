@@ -38,6 +38,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -133,6 +134,11 @@ public class AssetMobileServiceImpl implements AssetMobileService {
         //签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
         assetIncomeBO.signAssetByCounty(signDto.getAliNo(), signDto.getOperator());
         return assetBO.signAssetByCounty(signDto);
+    }
+
+    @Override
+    public Boolean signAllAssetByCounty(AssetSignDto signDto) {
+        return assetBO.signAllAssetByCounty(signDto);
     }
 
     @Override
