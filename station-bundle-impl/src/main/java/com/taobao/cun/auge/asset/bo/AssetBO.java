@@ -15,6 +15,7 @@ import com.taobao.cun.auge.asset.dto.AssetOperatorDto;
 import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
@@ -226,4 +227,6 @@ public interface AssetBO {
     public Asset getAssetByAliNo(String aliNo);
     
     public AssetDetailDto judgeDistribute(AssetDto assetDto);
+
+    public Boolean signAllAssetByCounty(AssetSignDto signDto);
 }

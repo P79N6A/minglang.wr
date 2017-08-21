@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.enums.ScrapFreeStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +134,11 @@ public class AssetMobileServiceImpl implements AssetMobileService {
         //签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
         assetIncomeBO.signAssetByCounty(signDto.getAliNo(), signDto.getOperator());
         return assetBO.signAssetByCounty(signDto);
+    }
+
+    @Override
+    public Boolean signAllAssetByCounty(AssetSignDto signDto) {
+        return assetBO.signAllAssetByCounty(signDto);
     }
 
     @Override
