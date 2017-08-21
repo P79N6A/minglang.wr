@@ -1673,4 +1673,23 @@ public class AssetBOImpl implements AssetBO {
         record.setTraceId(String.valueOf(assetDto.getNewStationId()));
         cuntaoFlowRecordBO.addRecord(record);
     }
+
+	@Override
+	public AssetDetailDto judgeDistribute(AssetDto assetDto) {
+		Objects.requireNonNull(assetDto.getAliNo(), "编号不能为空");
+        Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");
+        Asset asset = getAssetByAliNo(assetDto.getAliNo());
+        if (asset == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "录入失败" + AssetBO.NO_EXIT_ASSET);
+        }
+        if (!assetDto.getOperator().equals(assetDto.getOperator())) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "录入失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
+        }
+        if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "录入失败，该资产正处于分发、转移中！" + getPromptInfo(asset));
+        }
+        return buildAssetDetail(asset);
+	}
 }

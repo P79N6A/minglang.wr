@@ -199,11 +199,9 @@ public class AssetRolloutIncomeDetailBOImpl implements
 			AssetRolloutIncomeDetailStatusEnum status,int pageNum,int pageSize) {
 		ValidateUtils.notNull(incomeId);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andIncomeIdEqualTo(incomeId);
+		example.setIncomeId(incomeId);
 		if (status != null) {
-			criteria.andStatusEqualTo(status.getCode());
+			example.setDetailStatus(status.getCode());
 		}
 		PageHelper.startPage(pageNum, pageSize);
 		return assetRolloutIncomeDetailExtMapper.queryFullDetailInfo(example);
@@ -230,11 +228,9 @@ public class AssetRolloutIncomeDetailBOImpl implements
 			AssetRolloutIncomeDetailStatusEnum status, int pageNum, int pageSize) {
 		ValidateUtils.notNull(rolloutId);
 		AssetRolloutIncomeDetailExtExample example = new AssetRolloutIncomeDetailExtExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-		criteria.andRolloutIdEqualTo(rolloutId);
+		example.setRolloutId(rolloutId);
 		if (status != null) {
-			criteria.andStatusEqualTo(status.getCode());
+			example.setDetailStatus(status.getCode());
 		}
 		PageHelper.startPage(pageNum, pageSize);
 		return assetRolloutIncomeDetailExtMapper.queryFullDetailInfo(example);

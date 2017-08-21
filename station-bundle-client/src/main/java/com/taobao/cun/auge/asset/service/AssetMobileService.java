@@ -189,4 +189,11 @@ public interface AssetMobileService {
      * @param scrapDto
      */
     public void scrapAsset(AssetScrapDto scrapDto);
+    
+    
+    /**
+     * 判断资产是否能分发,不能的话会抛出异常
+     * @param assetDto
+     */
+    public AssetDetailDto judgeDistribute(AssetDto assetDto);
 }

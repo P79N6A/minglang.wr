@@ -38,9 +38,15 @@
      where arid.asset_id = a.id
      and arid.is_deleted= 'n'
      and a.is_deleted='n'
-		<if test="_parameter != null">
-			<include refid="Example_Where_Clause" />
+	<if test="detailStatus != null">
+			AND arid.status = #{detailStatus,jdbcType=VARCHAR},
 		</if>
+	<if test="detailStatus != null">
+			AND arid.income_id = #{incomeId,jdbcType=BIGINT},
+	</if>	
+	<if test="detailStatus != null">
+			AND arid.rollout_id = #{rolloutId,jdbcType=BIGINT},
+	</if>	
 	order by arid.operator_time desc
   </select>
   

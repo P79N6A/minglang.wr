@@ -224,4 +224,6 @@ public interface AssetBO {
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
 
     public Asset getAssetByAliNo(String aliNo);
+    
+    public AssetDetailDto judgeDistribute(AssetDto assetDto);
 }

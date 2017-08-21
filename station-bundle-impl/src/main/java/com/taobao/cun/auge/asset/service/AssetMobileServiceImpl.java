@@ -302,4 +302,9 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     public Boolean checkAsset(AssetCheckDto checkDto) {
         return assetBO.checkAsset(checkDto);
     }
+
+	@Override
+	public AssetDetailDto judgeDistribute(AssetDto assetDto) {
+		 return assetBO.judgeDistribute(assetDto);
+	}
 }
