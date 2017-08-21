@@ -165,6 +165,12 @@ public interface AssetBO {
      * @param taobaoUserId
      */
     public void validateAssetForQuiting(Long stationId, Long taobaoUserId);
+    
+    /**
+     * 检验村点开业
+     * 
+     */
+    public void validateAssetForOpenStation(Long instanceId);
 
     /**
      * 资产采购

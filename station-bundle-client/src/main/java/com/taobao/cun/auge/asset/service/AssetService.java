@@ -163,5 +163,11 @@ public interface AssetService {
     public Map<String, String> getStationAssetState(Long stationId);
 
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
+    
+    /**
+     * 检验村点开业
+     * @param instanceId
+     */
+    public void validateAssetForOpenStation(Long instanceId);
 
 }
