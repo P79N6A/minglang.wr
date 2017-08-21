@@ -41,10 +41,10 @@
 	<if test="detailStatus != null">
 			AND arid.status = #{detailStatus,jdbcType=VARCHAR},
 		</if>
-	<if test="detailStatus != null">
+	<if test="incomeId != null">
 			AND arid.income_id = #{incomeId,jdbcType=BIGINT},
 	</if>	
-	<if test="detailStatus != null">
+	<if test="rolloutId != null">
 			AND arid.rollout_id = #{rolloutId,jdbcType=BIGINT},
 	</if>	
 	order by arid.operator_time desc
