@@ -56,19 +56,22 @@ public class CountyStationManageModelEnum  implements Serializable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
+		if (obj == null) {
+            return false;
+        }
 
-		if (!(obj instanceof CountyStationManageModelEnum))
-			return false;
+		if (!(obj instanceof CountyStationManageModelEnum)) {
+            return false;
+        }
 
 		CountyStationManageModelEnum objType = (CountyStationManageModelEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
 
 	public static CountyStationManageModelEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 }

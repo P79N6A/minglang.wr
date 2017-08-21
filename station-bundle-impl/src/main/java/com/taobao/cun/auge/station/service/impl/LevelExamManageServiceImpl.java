@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -133,7 +134,7 @@ public class LevelExamManageServiceImpl implements LevelExamManageService {
             String extendInfo = JSON.toJSONString(new ExamLevelExtendInfo(level.name()));
             ExamDispatchDto newExamDispatchDto = newExamDispatchDto(taobaoUserId, nickName, paperId, extendInfo, "PartnerServicingLevelExamDispatchStrategy");
             ResultModel<Boolean> result = examUserDispatchService.dispatchExam(newExamDispatchDto);
-            if (result == null || !result.isSuccess() || result.getResult() == Boolean.FALSE) {
+            if (result == null || !result.isSuccess() || Objects.equals(result.getResult(), Boolean.FALSE)) {
                 logger.error("PartnerServicingLevelExamDispatchStrategy taobaoUserId:{}, dispatch paper:{}",taobaoUserId, paperId);
                 return false;
             }

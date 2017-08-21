@@ -16,7 +16,9 @@ public class DataConditionMatcher implements OperationMatcher{
 
 	@Override
 	public boolean match(OperationData operationData, Operation operation) {
-		if(StringUtils.isEmpty(operation.getCondition()))return false;
+		if(StringUtils.isEmpty(operation.getCondition())) {
+            return false;
+        }
 		StandardEvaluationContext context = new StandardEvaluationContext(operationData);
 		Map<String,Object> variables = operationData.getProperties();
 		if(variables !=null){

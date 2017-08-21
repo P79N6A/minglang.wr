@@ -46,10 +46,12 @@ public class PartnerPeixunCourseTypeEnum implements Serializable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof OperatorTypeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof OperatorTypeEnum)) {
+            return false;
+        }
 		OperatorTypeEnum objType = (OperatorTypeEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -60,8 +62,9 @@ public class PartnerPeixunCourseTypeEnum implements Serializable{
 	}
 
 	public static PartnerPeixunCourseTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

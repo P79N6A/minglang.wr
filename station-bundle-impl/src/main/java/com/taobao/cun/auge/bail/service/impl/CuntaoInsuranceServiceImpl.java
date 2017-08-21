@@ -35,6 +35,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     private static final Logger logger = LoggerFactory
             .getLogger(CuntaoInsuranceServiceImpl.class);
 
+     @Override
      public Boolean hasInsurance(Long taobaoUserId){
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
            return true;
@@ -67,6 +68,7 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     }
     
     /*村小二保险续签*/
+    @Override
     public  Integer hasReInsurance(Long taobaoUserId) {
         if (diamondConfiguredProperties.getInSureSwitch().equals("false") || isInFactoryAlipayList(taobaoUserId)) {
             return 0;

@@ -77,10 +77,12 @@ public class PartnerInstanceStateEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerInstanceStateEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerInstanceStateEnum)) {
+            return false;
+        }
 		PartnerInstanceStateEnum objType = (PartnerInstanceStateEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -91,8 +93,9 @@ public class PartnerInstanceStateEnum  implements Serializable {
 	}
 
 	public static PartnerInstanceStateEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 	

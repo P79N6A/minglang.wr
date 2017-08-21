@@ -68,15 +68,17 @@ public class StationCategoryEnum implements Serializable {
     }
 
     public static StationCategoryEnum valueof(String code) {
-        if (code == null)
+        if (code == null) {
             return null;
+        }
         return mappings.get(code);
     }
     
     
     public static StationCategoryEnum valueofDesc(String desc) {
-        if (desc == null)
+        if (desc == null) {
             return null;
+        }
        return mappings.values().stream().filter(category -> category.getDesc().equals(desc)).findFirst().get();
     }
 
@@ -91,18 +93,23 @@ public class StationCategoryEnum implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         StationCategoryEnum other = (StationCategoryEnum) obj;
         if (code == null) {
-            if (other.code != null)
+            if (other.code != null) {
                 return false;
-        } else if (!code.equals(other.code))
+            }
+        } else if (!code.equals(other.code)) {
             return false;
+        }
         return true;
     }
 }

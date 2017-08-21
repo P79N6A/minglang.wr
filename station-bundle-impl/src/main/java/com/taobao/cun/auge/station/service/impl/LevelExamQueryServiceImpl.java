@@ -75,6 +75,7 @@ public class LevelExamQueryServiceImpl implements LevelExamQueryService {
         return new LevelExamingResult(isPassLevelExam, notPassExamLevels, passedLevelStrList, dispathedLevels);
     }
     
+    @Override
     public boolean isOpenEvaluateCheckExamPass() {
         String isEvaluate = appResourceService.queryAppResourceValue(LevelExamUtil.LEVEL_EXAM_CONFIG, LevelExamUtil.LEVEL_EXAM_EVALUATE_SWITCH);
         if(StringUtils.isNotBlank(isEvaluate)){
