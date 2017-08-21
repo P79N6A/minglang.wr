@@ -1050,7 +1050,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setAssetCode(asset.getAliNo());
         requestDto.setWorkId(asset.getUserId());
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
-        requestDto.setVoucher("scrapingAsset" + asset.getAliNo());
+        requestDto.setVoucherId("scrapingAsset" + asset.getAliNo());
         requestDto.setDeductible(scrapDto.getFree());
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setReason(scrapDto.getReason());
@@ -1093,7 +1093,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setAssetCode(asset.getAliNo());
         requestDto.setWorkId(asset.getUserId());
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
-        requestDto.setVoucher("scrapAsset" + asset.getAliNo());
+        requestDto.setVoucherId("scrapAsset" + asset.getAliNo());
         requestDto.setDeductible("n");
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setGroupCode(GROUP_CODE);
