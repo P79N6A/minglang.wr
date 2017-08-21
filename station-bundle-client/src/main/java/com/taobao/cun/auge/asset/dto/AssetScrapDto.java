@@ -26,6 +26,8 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
 
     private List<Attachment> attachmentList;
 
+    private String remark;
+
     public String getReason() {
         return reason;
     }
@@ -72,6 +74,14 @@ public class AssetScrapDto extends AssetOperatorDto implements Serializable {
 
     public void setScrapAssetId(Long scrapAssetId) {
         this.scrapAssetId = scrapAssetId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public List<Attachment> getAttachmentList() {
