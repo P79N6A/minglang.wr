@@ -81,7 +81,6 @@ public class AssetStatusEnum implements Serializable{
         list.add(USE.getCode());
         list.add(TRANSFER.getCode());
         list.add(DISTRIBUTE.getCode());
-        list.add(PEND.getCode());
         return list;
     }
 
@@ -91,6 +90,7 @@ public class AssetStatusEnum implements Serializable{
         list.add(TRANSFER.getCode());
         list.add(DISTRIBUTE.getCode());
         list.add(PEND.getCode());
+        list.add(SCRAPING.getCode());
         return list;
     }
 
