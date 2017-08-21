@@ -131,7 +131,7 @@ public interface AssetMobileService {
      * @param distributeDto
      * @return
      */
-    public Boolean distributeAsset(AssetDistributeDto distributeDto);
+    public Long distributeAsset(AssetDistributeDto distributeDto);
     
     /**
      * 获得入库单详情列表    查询  待入库，已入库，已撤销的资产时，使用

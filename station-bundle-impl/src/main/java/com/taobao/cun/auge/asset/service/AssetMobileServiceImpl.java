@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.taobao.cun.auge.asset.dto.AssetScrapDto;
-import com.taobao.cun.auge.asset.enums.ScrapFreeStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,12 +37,14 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutDetailQueryCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetScrapDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetUseAreaTypeEnum;
+import com.taobao.cun.auge.asset.enums.ScrapFreeStatusEnum;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -206,12 +206,12 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public Boolean distributeAsset(AssetDistributeDto distributeDto) {
+    public Long distributeAsset(AssetDistributeDto distributeDto) {
         //1.检验资产为县使用，操作人 和资产责任人一致 更新资产状态为分发中
         List<Asset> assetList = assetBO.distributeAsset(distributeDto);
         //2.创建出库单
-        assetRolloutBO.distributeAsset(distributeDto, assetList);
-        return Boolean.TRUE;
+        Long rolloutId = assetRolloutBO.distributeAsset(distributeDto, assetList);
+        return rolloutId;
     }
 
     @Override
