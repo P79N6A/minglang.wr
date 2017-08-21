@@ -40,13 +40,13 @@
      and a.is_deleted='n'
      
 	<if test="detailStatus != null">
-			AND arid.status = #{detailStatus,jdbcType=VARCHAR},
+			AND arid.status = #{detailStatus,jdbcType=VARCHAR}
 		</if>
 	<if test="incomeId != null">
-			AND arid.income_id = #{incomeId,jdbcType=BIGINT},
+			AND arid.income_id = #{incomeId,jdbcType=BIGINT}
 	</if>	
 	<if test="rolloutId != null">
-			AND arid.rollout_id = #{rolloutId,jdbcType=BIGINT},
+			AND arid.rollout_id = #{rolloutId,jdbcType=BIGINT}
 	</if>	
 	order by arid.operator_time desc
   </select>
