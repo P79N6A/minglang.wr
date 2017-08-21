@@ -12,32 +12,23 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.it.asset.api.Attachment;
-import com.alibaba.it.asset.api.CuntaoApiService;
-import com.alibaba.it.asset.api.dto.AssetApiResultDO;
-import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
-import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
-import com.alibaba.it.asset.api.dto.AssetTransDto;
-import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
-import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
-import com.taobao.cun.settle.bail.enums.UserTypeEnum;
-import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
-import com.taobao.cun.settle.common.model.ResultModel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.it.asset.api.Attachment;
+import com.alibaba.it.asset.api.CuntaoApiService;
+import com.alibaba.it.asset.api.dto.AssetApiResultDO;
+import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
+import com.alibaba.it.asset.api.dto.AssetTransDto;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -59,6 +50,7 @@ import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetScrapDto;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
@@ -94,9 +86,10 @@ import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.AssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
-import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
@@ -109,11 +102,17 @@ import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.ExtEvent;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.util.RequestCtxUtil;
 
 @Component
@@ -142,7 +141,10 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private PartnerInstanceQueryService partnerInstanceQueryService;
-
+    
+    @Autowired
+    private PartnerInstanceBO partnerInstanceBO;
+    
     @Autowired
     private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 
@@ -1503,7 +1505,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(taobaoUserId, "taobaouserId不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId).andUserIdEqualTo(
-            String.valueOf(taobaoUserId)).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode());
+            String.valueOf(taobaoUserId)).andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode()).andStatusEqualTo(AssetStatusEnum.USE.getCode());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         return buildAssetDetailDtoList(assetList);
     }
@@ -1717,4 +1719,22 @@ public class AssetBOImpl implements AssetBO {
         updateAsset.setOwnerWorkno(signDto.getOperator());
         return updateAsset;
     }
+
+	@Override
+	public void validateAssetForOpenStation(Long instanceId) {
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		if (rel == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，当前村点不存在" );
+        }
+		Long stationId = rel.getStationId();
+		Long taobaoUserId = rel.getTaobaoUserId();
+		List<AssetDetailDto> adList = getUseAssetListByStation(stationId,taobaoUserId);
+		if (CollectionUtils.isEmpty(adList)) {
+			  throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，当前村点没有签收资产" );
+		}
+		List<String> categoryList = adList.stream().map(AssetDetailDto::getCategory).collect(Collectors.toList());
+		if( categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY")){
+			 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，资产须为1台电视,1台显示器,1台主机" );
+		}
+	}
 }

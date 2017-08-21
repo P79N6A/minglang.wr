@@ -21,6 +21,7 @@ import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.LatitudeUtil;
@@ -52,6 +53,7 @@ import com.taobao.cun.auge.station.response.TpaStationInfo;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.crius.alipay.dto.AlipayRiskScanData;
 import com.taobao.cun.crius.alipay.dto.AlipayRiskScanResult;
 import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
@@ -102,7 +104,13 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 	private StationBO stationBO;
 	
 	@Autowired
+	StationQueryService StationQueryService;
+	
+	@Autowired
 	private CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	
+	@Autowired
+	private TairCache tairCache;
 	
 	private static final Logger logger = LoggerFactory.getLogger(TpaApplyServiceImpl.class);
 
@@ -606,5 +614,31 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			response.setSuccess(false);
 		}
 		return response;
+	}
+	
+	@Override
+	public Boolean hasPlace(Long stationId) {
+		Assert.notNull(stationId);
+		String placeFlag = tairCache.get("tpa_has_place"+stationId);
+		//tair中没有
+		if(placeFlag == null){
+			StationDto station = StationQueryService.getStation(stationId);
+			Map<String, String> features = station.getFeature();
+			String placeFlagFromDB = features.get("placeFlag");
+			
+			if("Y".equalsIgnoreCase(placeFlagFromDB)){
+				tairCache.put("tpa_has_place"+stationId, placeFlagFromDB,60 * 10);
+				return true;
+			}else{
+				tairCache.put("tpa_has_place"+stationId, "N",60 * 10);
+				return false;
+			}
+		}else{
+			if("Y".equalsIgnoreCase(placeFlag)){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 }

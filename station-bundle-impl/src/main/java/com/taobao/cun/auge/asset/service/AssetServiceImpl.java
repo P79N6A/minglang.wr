@@ -238,4 +238,10 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean signAssetByStation(AssetDto signDto) {
 		return assetBO.signAssetByStation(signDto);
 	}
+
+	@Override
+	public void validateAssetForOpenStation(Long instanceId) {
+		assetBO.validateAssetForOpenStation(instanceId);
+		
+	}
 }
