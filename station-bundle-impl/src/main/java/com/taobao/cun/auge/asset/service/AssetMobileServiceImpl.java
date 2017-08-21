@@ -229,7 +229,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     private List<AssetRolloutIncomeDetailExtDto> bulidAssetDetailDtoList(
         List<AssetRolloutIncomeDetailExtDto> assetList) {
         List<AssetRolloutIncomeDetailExtDto> res = new ArrayList<AssetRolloutIncomeDetailExtDto>();
-        if (CollectionUtils.isEmpty(assetList)) {
+        if (CollectionUtils.isNotEmpty(assetList)) {
             for (AssetRolloutIncomeDetailExtDto a : assetList) {
                 a.setCategoryName(configuredProperties.getCategoryMap().get(a.getCategory()));
                 res.add(a);
