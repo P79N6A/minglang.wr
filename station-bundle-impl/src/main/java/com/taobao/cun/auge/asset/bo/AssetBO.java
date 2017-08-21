@@ -137,7 +137,7 @@ public interface AssetBO {
      * @param checkDto
      * @return
      */
-    public Boolean checkAsset(AssetCheckDto checkDto);
+    public AssetDetailDto checkAsset(AssetCheckDto checkDto);
 
     /**
      * 设置资产待盘点

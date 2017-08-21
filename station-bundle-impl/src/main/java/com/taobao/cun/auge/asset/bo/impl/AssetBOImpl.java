@@ -1190,7 +1190,7 @@ public class AssetBOImpl implements AssetBO {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public Boolean checkAsset(AssetCheckDto checkDto) {
+    public AssetDetailDto checkAsset(AssetCheckDto checkDto) {
         ValidateUtils.validateParam(checkDto);
         Objects.requireNonNull(checkDto.getAliNo(), "盘点资产不能为空");
         Objects.requireNonNull(checkDto.getUserId(), "盘点人不能为空");
@@ -1212,7 +1212,7 @@ public class AssetBOImpl implements AssetBO {
             CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(), checkDto.getOperator(),
             AssetCheckStatusEnum.CHECKED.getDesc());
         EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
-        return Boolean.TRUE;
+        return buildAssetDetail(record);
     }
 
     private Asset validateUserIdForAssetCheck(String userId, String useAreaType, String aliNo) {
