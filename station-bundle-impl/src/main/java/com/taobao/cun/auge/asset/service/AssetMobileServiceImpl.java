@@ -233,6 +233,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
             for (AssetRolloutIncomeDetailExtDto a : assetList) {
                 a.setCategoryName(configuredProperties.getCategoryMap().get(a.getCategory()));
                 res.add(a);
+                
             }
         }
         return res;
