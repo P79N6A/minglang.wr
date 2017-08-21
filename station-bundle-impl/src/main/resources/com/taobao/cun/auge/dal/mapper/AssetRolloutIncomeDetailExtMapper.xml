@@ -38,6 +38,7 @@
      where arid.asset_id = a.id
      and arid.is_deleted= 'n'
      and a.is_deleted='n'
+     
 	<if test="detailStatus != null">
 			AND arid.status = #{detailStatus,jdbcType=VARCHAR},
 		</if>
