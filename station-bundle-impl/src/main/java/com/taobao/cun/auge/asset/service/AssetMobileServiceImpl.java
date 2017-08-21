@@ -294,7 +294,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
     @Override
     @Transactional
-    public void scrapAsset(AssetScrapDto scrapDto) {
+    public Boolean scrapAsset(AssetScrapDto scrapDto) {
         if (ScrapFreeStatusEnum.N.getCode().equals(scrapDto.getFree()) && AssetUseAreaTypeEnum.STATION.getCode().equals(
             scrapDto.getScrapAreaType())) {
             //村点的直接扣除保证金
@@ -303,6 +303,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
             assetBO.scrapAsset(scrapDto);
         }
         assetRolloutBO.scrapAsset(scrapDto);
+        return true;
     }
 
     @Override

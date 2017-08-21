@@ -195,7 +195,7 @@ public interface AssetMobileService {
      * 赔付资产
      * @param scrapDto
      */
-    public void scrapAsset(AssetScrapDto scrapDto);
+    public Boolean scrapAsset(AssetScrapDto scrapDto);
     
     
     /**
