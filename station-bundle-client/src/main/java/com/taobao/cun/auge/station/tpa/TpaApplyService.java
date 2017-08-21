@@ -54,4 +54,12 @@ public interface TpaApplyService {
 	 * @return
 	 */
 	public TpaListQueryResponse queryTpaStations(Long parentStationId);
+	
+	/**
+	 * 是否具有经营场所
+	 * 
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean hasPlace(Long stationId);
 }
