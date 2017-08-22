@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,14 +175,14 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
     @Override
     @Transactional
-    public Long transferAssetOtherCounty(AssetTransferDto transferDto) {
+    public List<Long> transferAssetOtherCounty(AssetTransferDto transferDto) {
         //1 资产状态变更
         List<Asset> assetList = assetBO.transferAssetOtherCounty(transferDto);
         //2. 生成出库单,根据出库单的主键来创建工作流
         Long rolloutId = assetRolloutBO.transferAssetOtherCounty(transferDto, assetList);
         //3 生成工作流 审批
         assetFlowService.createTransferFlow(rolloutId, transferDto.getOperator());
-        return rolloutId;
+        return Collections.singletonList(rolloutId);
     }
 
     @Override

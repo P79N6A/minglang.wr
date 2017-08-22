@@ -118,7 +118,7 @@ public interface AssetMobileService {
      * 转移资产给他县
      * @return
      */
-    public Long transferAssetOtherCounty(AssetTransferDto transferDto);
+    public List<Long> transferAssetOtherCounty(AssetTransferDto transferDto);
 
     /**
      * 判断资产是否能转移,不能的话会抛出异常
