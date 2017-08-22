@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -53,6 +54,9 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private QuitStationApplyBO quitStationApplyBO;
+	
+	@Autowired
+	private AssetBO assetBO;
 	@Override
 	@PhaseStepMeta(descr="更新村小二站点状态到已停业")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -121,9 +125,11 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	}
 
 	@Override
-	@PhaseStepMeta(descr="")
+	@PhaseStepMeta(descr="扩展业务")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		//设置资产状态为待回收
+		assetBO.cancelAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
 		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}

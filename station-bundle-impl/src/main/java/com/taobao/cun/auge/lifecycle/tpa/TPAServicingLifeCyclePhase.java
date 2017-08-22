@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -58,6 +59,8 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private GeneralTaskSubmitService generalTaskSubmitService;
 	
+	@Autowired
+	private AssetBO assetBO;
 	
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点到服务中")
@@ -112,7 +115,9 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		 if(PartnerInstanceStateEnum.CLOSED.getCode().equals(partnerInstanceDto.getState().getCode())){
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
-		}
+			 
+			assetBO.cancelAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
+		 }
 	}
 
 	@Override
