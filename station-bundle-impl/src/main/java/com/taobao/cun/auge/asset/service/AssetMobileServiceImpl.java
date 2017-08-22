@@ -153,7 +153,8 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public Boolean transferAssetSelfCounty(AssetTransferDto transferDto) {
+    public List<Long> transferAssetSelfCounty(AssetTransferDto transferDto) {
+        List<Long> result = new ArrayList<>();
         //1.资产状态变更
         List<Asset> assetList = assetBO.transferAssetSelfCounty(transferDto);
         //2  生成出入库单
@@ -162,25 +163,25 @@ public class AssetMobileServiceImpl implements AssetMobileService {
         List<Asset> stationUseList = assetList.stream().filter(
             i -> AssetUseAreaTypeEnum.STATION.getCode().equals(i.getUseAreaType())).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(countyUseList)) {
-            assetRolloutBO.transferAssetSelfCounty(transferDto, countyUseList, AssetIncomeSignTypeEnum.SCAN);
+            result.add(assetRolloutBO.transferAssetSelfCounty(transferDto, countyUseList, AssetIncomeSignTypeEnum.SCAN));
         }
         if (CollectionUtils.isNotEmpty(stationUseList)) {
-            assetRolloutBO.transferAssetSelfCounty(transferDto, stationUseList, AssetIncomeSignTypeEnum.CONFIRM);
+            result.add(assetRolloutBO.transferAssetSelfCounty(transferDto, stationUseList, AssetIncomeSignTypeEnum.CONFIRM));
         }
-        return Boolean.TRUE;
+        return result;
 
     }
 
     @Override
     @Transactional
-    public Boolean transferAssetOtherCounty(AssetTransferDto transferDto) {
+    public Long transferAssetOtherCounty(AssetTransferDto transferDto) {
         //1 资产状态变更
         List<Asset> assetList = assetBO.transferAssetOtherCounty(transferDto);
         //2. 生成出库单,根据出库单的主键来创建工作流
         Long rolloutId = assetRolloutBO.transferAssetOtherCounty(transferDto, assetList);
         //3 生成工作流 审批
         assetFlowService.createTransferFlow(rolloutId, transferDto.getOperator());
-        return Boolean.TRUE;
+        return rolloutId;
     }
 
     @Override
