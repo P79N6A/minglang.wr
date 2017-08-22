@@ -1208,7 +1208,7 @@ public class AssetBOImpl implements AssetBO {
             CuntaoFlowRecordTargetTypeEnum.NEW_ASSET_CHECK.getCode(), checkDto.getOperator(),
             AssetCheckStatusEnum.CHECKED.getDesc());
         EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
-        return buildAssetDetail(record);
+        return buildAssetDetail(assetMapper.selectByPrimaryKey(asset.getId()));
     }
 
     private Asset validateUserIdForAssetCheck(String userId, String useAreaType, String aliNo) {
