@@ -22,7 +22,7 @@ public class AssetRolloutIncomeDetailExtDto implements Serializable{
     
     private String price;
     
-    private Date operator_time;
+    private Date operatorTime;
 
     private String type;
     
@@ -84,12 +84,12 @@ public class AssetRolloutIncomeDetailExtDto implements Serializable{
 		this.price = price;
 	}
 
-	public Date getOperator_time() {
-		return operator_time;
+	public Date getOperatorTime() {
+		return operatorTime;
 	}
 
-	public void setOperator_time(Date operator_time) {
-		this.operator_time = operator_time;
+	public void setOperatorTime(Date operatorTime) {
+		this.operatorTime = operatorTime;
 	}
 
 	public String getType() {
