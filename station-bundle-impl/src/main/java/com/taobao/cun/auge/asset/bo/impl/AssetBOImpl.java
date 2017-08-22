@@ -1725,6 +1725,7 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public void validateAssetForOpenStation(Long instanceId) {
+		
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		if (rel == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，当前村点不存在" );
