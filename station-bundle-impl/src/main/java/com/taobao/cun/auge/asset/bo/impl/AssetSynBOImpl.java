@@ -43,22 +43,28 @@ import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
-import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
+import com.taobao.cun.auge.dal.domain.AssetRollout;
+import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
 import com.taobao.cun.auge.dal.mapper.AssetMapper;
+import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.user.service.CuntaoUserService;
+import com.taobao.cun.auge.user.service.UserRole;
 
 @Component
 public class AssetSynBOImpl implements AssetSynBO {
@@ -83,6 +89,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
 	@Autowired
 	private AssetIncomeMapper assetIncomeMapper;
+	
+	@Autowired
+	private AssetRolloutMapper assetRolloutMapper;
 
 	@Autowired
 	private UicReadAdapter uicReadAdapter;
@@ -97,6 +106,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
 	@Autowired
 	private StationBO stationBO;
+	
+    @Autowired
+    private CuntaoUserService cuntaoUserService;
 	
 
     public final static Map<String,String> catMap = new HashMap<String,String>();
@@ -199,22 +211,28 @@ public class AssetSynBOImpl implements AssetSynBO {
 		if (p == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
 		}
-		//创建出库单
-		AssetRolloutDto roDto = new AssetRolloutDto();
-		roDto.setApplierWorkno(a.getOwnerWorkno());
-		roDto.setApplierName(a.getOwnerName());
-		roDto.setStatus(AssetRolloutStatusEnum.WAIT_ROLLOUT);
-		roDto.setApplierOrgId(a.getOwnerOrgId());
-		roDto.setApplierOrgName(cuntaoOrgServiceClient.getCuntaoOrg(a.getOwnerOrgId()).getName());
-		roDto.setReceiverId(p.getTaobaoUserId().toString());
-		roDto.setReceiverName(p.getName());
-		roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.STATION);
-		roDto.setReceiverAreaName(sName);
-		roDto.setReceiverAreaId(stationId);
-		roDto.setRemark("分发至 "+sName +"-" +p.getName());
-		roDto.setType(AssetRolloutTypeEnum.DISTRIBUTION);
-		roDto.copyOperatorDto(OperatorDto.defaultOperator());
-		Long rolloutId = assetRolloutBO.addRollout(roDto);
+		Long rolloutId = null;
+		AssetRollout ar = queryRollout(stationId,p.getTaobaoUserId().toString());
+		if (ar == null) {
+			//创建出库单
+			AssetRolloutDto roDto = new AssetRolloutDto();
+			roDto.setApplierWorkno(a.getOwnerWorkno());
+			roDto.setApplierName(a.getOwnerName());
+			roDto.setStatus(AssetRolloutStatusEnum.WAIT_ROLLOUT);
+			roDto.setApplierOrgId(a.getOwnerOrgId());
+			roDto.setApplierOrgName(cuntaoOrgServiceClient.getCuntaoOrg(a.getOwnerOrgId()).getName());
+			roDto.setReceiverId(p.getTaobaoUserId().toString());
+			roDto.setReceiverName(p.getName());
+			roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.STATION);
+			roDto.setReceiverAreaName(sName);
+			roDto.setReceiverAreaId(stationId);
+			roDto.setRemark("分发至 "+sName +"-" +p.getName());
+			roDto.setType(AssetRolloutTypeEnum.DISTRIBUTION);
+			roDto.copyOperatorDto(OperatorDto.defaultOperator());
+			rolloutId = assetRolloutBO.addRollout(roDto);
+		}else {
+			rolloutId= ar.getId();
+		}
 		
 		// 出入库单详情  入库单id 在审批通过时 创建 并更新上去
 		AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
@@ -226,6 +244,17 @@ public class AssetSynBOImpl implements AssetSynBO {
 		detail.setOperatorTime(new Date());
 		detail.copyOperatorDto(OperatorDto.defaultOperator());
 		assetRolloutIncomeDetailBO.addDetail(detail);
+	}
+	private  AssetRollout queryRollout(Long stationId,String taobaoUserId) {
+		AssetRolloutExample example = new AssetRolloutExample();
+		com.taobao.cun.auge.dal.domain.AssetRolloutExample.Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andReceiverAreaTypeEqualTo(AssetRolloutReceiverAreaTypeEnum.STATION.getCode());
+		criteria.andReceiverAreaIdEqualTo(stationId);
+		criteria.andReceiverIdEqualTo(taobaoUserId);
+		criteria.andStatusEqualTo(AssetRolloutStatusEnum.WAIT_ROLLOUT.getCode());
+		List<AssetRollout> aiList = assetRolloutMapper.selectByExample(example);
+		return ResultUtils.selectOne(aiList);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -264,8 +293,6 @@ public class AssetSynBOImpl implements AssetSynBO {
         detail.setOperatorTime(new Date());
         detail.copyOperatorDto(OperatorDto.defaultOperator());
         assetRolloutIncomeDetailBO.addDetail(detail);
-		
-		
 	}
 	
 	private  AssetIncome queryIncome(String poNo, Long orgId) {
@@ -398,7 +425,12 @@ public class AssetSynBOImpl implements AssetSynBO {
 	}
 
 	private String getWorkerNo(Long orgId, String workerName) {
-		return null;
+        List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(orgId, UserRole.COUNTY_LEADER);
+        if (CollectionUtils.isEmpty(userLists)) {
+        	return "";
+        }
+        CuntaoUser countyLeader = userLists.iterator().next();
+        return countyLeader.getLoginId();
 	}
 
 }
