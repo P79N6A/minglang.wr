@@ -235,4 +235,10 @@ public interface AssetBO {
     public AssetDetailDto judgeDistribute(AssetDto assetDto);
 
     public Boolean signAllAssetByCounty(AssetSignDto signDto);
+
+    /**
+     * 消费集团报废资产消息通知
+     * @param assetDto
+     */
+    public void confirmScrapAsset(AssetDto assetDto);
 }

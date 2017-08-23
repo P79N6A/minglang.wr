@@ -1706,6 +1706,20 @@ public class AssetBOImpl implements AssetBO {
         return true;
     }
 
+    @Override
+    public void confirmScrapAsset(AssetDto assetDto) {
+        Asset asset = getAssetByAliNo(assetDto.getAliNo());
+        if (asset == null || AssetStatusEnum.SCRAP.getCode().equals(asset.getStatus())) {
+            logger.warn("{bizType}, asset had scrap " + assetDto.getAliNo(), "assetWarn");
+            return;
+        }
+        Asset record = new Asset();
+        DomainUtils.beforeUpdate(record, assetDto.getOperator());
+        record.setId(asset.getId());
+        record.setStatus(AssetStatusEnum.SCRAP.getCode());
+        assetMapper.updateByPrimaryKeySelective(record);
+    }
+
     private Asset buildUpdateAsset(OperatorDto signDto) {
         Asset updateAsset = new Asset();
         DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
