@@ -13,6 +13,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.ceres.commonservice.po.PoQueryService;
 import com.alibaba.ceres.commonservice.po.model.PoResultDto;
+import com.alibaba.ceres.service.Result;
+import com.alibaba.ceres.service.pr.model.PrPoDto;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -131,17 +133,24 @@ public class PeixunPurchaseServiceImpl implements PeixunPurchaseService {
 		if(!PeixunPurchaseStatusEnum.ORDER.getCode().equals(dto.getStatus())){
 			return null;
 		}
-//		try{
-//			PoResultDto poDto=poQueryService.queryPoInfo(poNo);
-//			if(poDto!=null&&"已生效".equals(poDto.getStatus())){
-//				return true;
-//			}else{
-//				return false;
-//			}
-//		}catch(Exception e){
-//			throw new AugeBusinessException(AugeErrorCodes.PURCHASE_BUSINESS_CHECK_ERROR_CODE,e.getMessage());
-//		}
-		return "test";
+		try{
+			Result<List<PrPoDto>> result=poQueryService.queryPoByPr(poNo);
+			if(!result.isSuccess()){
+				throw new AugeBusinessException(AugeErrorCodes.PURCHASE_BUSINESS_CHECK_ERROR_CODE,result.getMessage());
+			}
+			List<PrPoDto> dtos=result.getValue();
+			if(dtos==null||dtos.size()==0){
+				return null;
+			}
+			PrPoDto po=dtos.get(0);
+			if("已生效".equals(po.getStatus())){
+				return po.getPoNumber();
+			}else{
+				return null;
+			}
+		}catch(Exception e){
+			throw new AugeBusinessException(AugeErrorCodes.PURCHASE_BUSINESS_CHECK_ERROR_CODE,e.getMessage());
+		}
 	}
 	
 }
