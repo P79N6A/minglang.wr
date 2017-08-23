@@ -22,7 +22,8 @@ public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 	@Autowired
 	TairCache tairCache;
 
-	public Long addOrg(CuntaoOrg org, String operator) {
+	@Override
+    public Long addOrg(CuntaoOrg org, String operator) {
 		CuntaoOrgExample example = new CuntaoOrgExample();
 		Criteria c = example.createCriteria();
 		c.andIsDeletedEqualTo("n").andIdEqualTo(org.getParentId());

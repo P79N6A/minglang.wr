@@ -3,6 +3,7 @@ package com.taobao.cun.auge.user.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,7 +40,8 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	@Autowired
 	CuntaoUserOrgMapper cuntaoUserOrgMapper;
 	
-	public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
+	@Override
+    public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
 		if(StringUtils.isEmpty(empId)||StringUtils.isEmpty(cuntaoFullIdPath)){
 			return false;
 		}
@@ -189,16 +191,16 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	}
 	
 	private String getFeatureString(String mobile,String division){
-		 Map<String,String> featureMap=new HashMap<String,String>();
-			if(mobile==null){
-				featureMap.put("mobile", "");
-			}else{
-				featureMap.put("mobile", mobile);
-			}
+		 Map<String,String> featureMap=new LinkedHashMap<>();
 			if(division==null){
 				featureMap.put("divisionId", "");
 			}else{
 				featureMap.put("divisionId", division);
+			}
+			if(mobile==null){
+				featureMap.put("mobile", "");
+			}else{
+				featureMap.put("mobile", mobile);
 			}
 			return toString(featureMap);
 		
@@ -215,12 +217,20 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	}
 	
 	 private void validate(CuntaoBucUserOrgCreateDto vo) {
-	      if(vo==null) throw new ParamException("CuntaoBucUserOrgCreateVo is null");
-	      if(vo.getOrgId()==null) throw new ParamException("CuntaoBucUserOrgCreateVo.orgid is null");
+	      if(vo==null) {
+              throw new ParamException("CuntaoBucUserOrgCreateVo is null");
+          }
+	      if(vo.getOrgId()==null) {
+              throw new ParamException("CuntaoBucUserOrgCreateVo.orgid is null");
+          }
 	      if(vo.getUserType().getCode().equals(CuntaoUserTypeEnum.BUC.getCode())){
-	    	  if(StringUtils.isBlank(vo.getUserName())) throw new RuntimeException("CuntaoBucUserOrgCreateVo.username is null"); 
+	    	  if(StringUtils.isBlank(vo.getUserName())) {
+                  throw new RuntimeException("CuntaoBucUserOrgCreateVo.username is null");
+              }
 	      }            
-	      if(StringUtils.isBlank(vo.getWorkNo())) throw new RuntimeException("CuntaoBucUserOrgCreateVo.workno is null");
+	      if(StringUtils.isBlank(vo.getWorkNo())) {
+			  throw new RuntimeException("CuntaoBucUserOrgCreateVo.workno is null");
+		  }
 	   }
 
 	@Override

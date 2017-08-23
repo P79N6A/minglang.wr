@@ -270,7 +270,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIdEqualTo(partnerInstanceDto.getId());
 		criteria.andIsDeletedEqualTo("n");
 		if (partnerInstanceDto.getVersion() != null) {
-			rel.setVersion(rel.getVersion() + 1l);
+			rel.setVersion(rel.getVersion() + 1L);
 			criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
 		}
 
@@ -843,7 +843,8 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	
-	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
+	@Override
+    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
 		return partnerStationRelMapper.selectByExample(example);

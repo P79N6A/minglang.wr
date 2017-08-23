@@ -85,25 +85,51 @@ public class LevelCourseLearningDto implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         LevelCourseLearningDto other = (LevelCourseLearningDto) obj;
         if (courseDetailUrl == null) {
-            if (other.courseDetailUrl != null) return false;
-        } else if (!courseDetailUrl.equals(other.courseDetailUrl)) return false;
+            if (other.courseDetailUrl != null) {
+                return false;
+            }
+        } else if (!courseDetailUrl.equals(other.courseDetailUrl)) {
+            return false;
+        }
         if (courseName == null) {
-            if (other.courseName != null) return false;
-        } else if (!courseName.equals(other.courseName)) return false;
+            if (other.courseName != null) {
+                return false;
+            }
+        } else if (!courseName.equals(other.courseName)) {
+            return false;
+        }
         if (courseType == null) {
-            if (other.courseType != null) return false;
-        } else if (!courseType.equals(other.courseType)) return false;
+            if (other.courseType != null) {
+                return false;
+            }
+        } else if (!courseType.equals(other.courseType)) {
+            return false;
+        }
         if (status == null) {
-            if (other.status != null) return false;
-        } else if (!status.equals(other.status)) return false;
+            if (other.status != null) {
+                return false;
+            }
+        } else if (!status.equals(other.status)) {
+            return false;
+        }
         if (growthIndex == null) {
-            if (other.growthIndex != null) return false;
-        } else if (!growthIndex.equals(other.growthIndex)) return false;
+            if (other.growthIndex != null) {
+                return false;
+            }
+        } else if (!growthIndex.equals(other.growthIndex)) {
+            return false;
+        }
         return true;
     }
 

@@ -335,7 +335,7 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getManagerId())) {
 			example.setManagerId(condition.getManagerId());
 		}
-		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
+		if (null != condition.getProviderId() && 0L != condition.getProviderId()) {
 			example.setProviderId(condition.getProviderId());
 		}
 		Address address = condition.getAddress();

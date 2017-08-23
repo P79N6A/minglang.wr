@@ -210,11 +210,13 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		
 	}
 	
-	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize){
+	@Override
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum, int pageSize){
 		return stationDecorateBO.getStationDecorateListForSchedule(pageNum, pageSize);
 	}
 
 	
+	@Override
 	public int getStationDecorateListCountForSchedule(){
 		return stationDecorateBO.getStationDecorateListCountForSchedule();
 	}

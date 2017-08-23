@@ -142,33 +142,44 @@ public class RuntimeMetaInfoCollector {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
+			if (this == obj) {
+                return true;
+            }
+			if (obj == null) {
+                return false;
+            }
+			if (getClass() != obj.getClass()) {
+                return false;
+            }
 			PhaseInfo other = (PhaseInfo) obj;
 			if (className == null) {
-				if (other.className != null)
-					return false;
-			} else if (!className.equals(other.className))
-				return false;
+				if (other.className != null) {
+                    return false;
+                }
+			} else if (!className.equals(other.className)) {
+                return false;
+            }
 			if (desc == null) {
-				if (other.desc != null)
-					return false;
-			} else if (!desc.equals(other.desc))
-				return false;
+				if (other.desc != null) {
+                    return false;
+                }
+			} else if (!desc.equals(other.desc)) {
+                return false;
+            }
 			if (event == null) {
-				if (other.event != null)
-					return false;
-			} else if (!event.equals(other.event))
-				return false;
+				if (other.event != null) {
+                    return false;
+                }
+			} else if (!event.equals(other.event)) {
+                return false;
+            }
 			if (type == null) {
-				if (other.type != null)
-					return false;
-			} else if (!type.equals(other.type))
-				return false;
+				if (other.type != null) {
+                    return false;
+                }
+			} else if (!type.equals(other.type)) {
+                return false;
+            }
 			return true;
 		}
 

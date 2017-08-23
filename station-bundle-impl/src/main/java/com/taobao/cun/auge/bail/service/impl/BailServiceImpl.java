@@ -13,6 +13,8 @@ import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ import org.springframework.util.Assert;
  * Created by xujianhui on 16/12/27.
  */
 @Service("bailService")
-@HSFProvider(serviceInterface = BailService.class, clientTimeout=15000)
+@HSFProvider(serviceInterface = BailService.class, clientTimeout = 15000)
 public class BailServiceImpl implements BailService {
 
     private static final Logger logger = LoggerFactory.getLogger(BailServiceImpl.class);
@@ -35,16 +37,17 @@ public class BailServiceImpl implements BailService {
     public ResultModel<Boolean> isUserSignBail(Long taobaoUserId, String alipayId, UserTypeEnum userTypeEnum) {
         Assert.notNull(taobaoUserId);
         Assert.notNull(userTypeEnum);
-            ResultModel<Boolean> result = cuntaoNewBailService.isUserSignBail(taobaoUserId, alipayId, userTypeEnum);
-            if(result!=null && !result.isSuccess()){
-                logger.warn("BailServiceImpl bailService isUserSignBail fail,taobaoUserId:{}, alipayId:{}, ,message:{}, errorMsg:{}",taobaoUserId, alipayId, result.getMessage(), result.getException());
-            }
-            return result;
+        ResultModel<Boolean> result = cuntaoNewBailService.isUserSignBail(taobaoUserId, alipayId, userTypeEnum);
+        if (result != null && !result.isSuccess()) {
+            logExceptionInfo("isUserSignBail", taobaoUserId, alipayId, result.getMessage());
+        }
+        return result;
     }
 
     @Override
     @Deprecated
-    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, UserTypeEnum userTypeEnum, String returnUrl,
+                                                BailChannelEnum channel) {
         Assert.notNull(taobaoUserId);
         Assert.notNull(userTypeEnum);
         Assert.notNull(channel);
@@ -54,15 +57,16 @@ public class BailServiceImpl implements BailService {
         signDto.setUserTypeEnum(userTypeEnum);
         signDto.setReturnUrl(returnUrl);
         signDto.setBailChannelEnum(channel);
-            ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
-            if(result!=null && !result.isSuccess()){
-                logger.warn("BailServiceImpl bailService process fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
-            }
-            return result;
+        ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
+        if (result != null && !result.isSuccess()) {
+            logExceptionInfo("buildSignBailUrl0", taobaoUserId, "", result.getMessage());
+        }
+        return result;
     }
 
     @Override
-    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, String outerOrderNo, UserTypeEnum userTypeEnum, String returnUrl, BailChannelEnum channel) {
+    public ResultModel<String> buildSignBailUrl(Long taobaoUserId, String outerOrderNo, UserTypeEnum userTypeEnum,
+                                                String returnUrl, BailChannelEnum channel) {
         Assert.notNull(taobaoUserId);
         Assert.notNull(outerOrderNo);
         Assert.notNull(userTypeEnum);
@@ -74,20 +78,22 @@ public class BailServiceImpl implements BailService {
         signDto.setReturnUrl(returnUrl);
         signDto.setBailChannelEnum(channel);
         signDto.setOutRequestNo(outerOrderNo);
-            ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
-            if(result!=null && !result.isSuccess()){
-                logger.warn("BailServiceImpl bailService buildSignBailUrl fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", taobaoUserId, result.getMessage(), result.getException());
-            }
-            return result;
+        ResultModel<String> result = cuntaoNewBailService.buildSignBailUrl(signDto);
+        if (result != null && !result.isSuccess()) {
+            logExceptionInfo("buildSignBailUrl", taobaoUserId, "", result.getMessage());
+        }
+        return result;
     }
 
     /**
      * 解冻0元 直接返回成功
+     *
      * @param cuntaoUnFreezeBailDto 可以使用BaiDtoBuilder.generateUnfreezeBailDto构建
      * @return
      */
     @Override
     public ResultModel<Boolean> unfreezeUserBail(CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto) {
+        logger.warn("unfreezeUserBail:{}", ToStringBuilder.reflectionToString(cuntaoUnFreezeBailDto));
         if (Long.valueOf(0L).equals(cuntaoUnFreezeBailDto.getAmount())) {
             ResultModel<Boolean> resultModel = new ResultModel<>();
             resultModel.setSuccess(true);
@@ -96,32 +102,38 @@ public class BailServiceImpl implements BailService {
         }
         String outOrderId = cuntaoUnFreezeBailDto.getOutOrderId() + "UNFREEZE";
         cuntaoUnFreezeBailDto.setOutOrderId(outOrderId);
-            ResultModel<Boolean> result = cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
-            if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService unfreezeUserBail fail, taobaoUserId:{}, ,message:{}, errorMsg:{}", cuntaoUnFreezeBailDto.getTaobaoUserId(), result.getMessage(), result.getException());
-            }
-            return result;
+        ResultModel<Boolean> result = cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
+        if (result != null && !result.isSuccess()) {
+            logExceptionInfo("unfreezeUserBail", cuntaoUnFreezeBailDto.getTaobaoUserId(),
+                cuntaoUnFreezeBailDto.getAlipayId(), result.getMessage());
+        }
+        return result;
     }
 
     @Override
     public ResultModel<Boolean> freezeUserBail(CuntaoFreezeBailDto cuntaoFreezeBailDto) {
+        logger.warn("unfreezeUserBail:{}", ToStringBuilder.reflectionToString(cuntaoFreezeBailDto));
         Assert.notNull(cuntaoFreezeBailDto);
         Assert.notNull(cuntaoFreezeBailDto.getTaobaoUserId());
         Assert.notNull(cuntaoFreezeBailDto.getAmount());
-            ResultModel<Boolean> result = cuntaoNewBailService.freezeUserBail(cuntaoFreezeBailDto);
-            if(result!=null && !result.isSuccess()){
-                logger.error("BailServiceImpl bailService freezeUserBail fail, alipayId:{}, ,message:{}, errorMsg:{}", cuntaoFreezeBailDto.getAlipayId(), result.getMessage(), result.getException());
-            }
-            return result;
+        ResultModel<Boolean> result = cuntaoNewBailService.freezeUserBail(cuntaoFreezeBailDto);
+        if (result != null && !result.isSuccess()) {
+            logExceptionInfo("freezeUserBail", cuntaoFreezeBailDto.getTaobaoUserId(), cuntaoFreezeBailDto.getAlipayId(),
+                result.getMessage());
+        }
+        return result;
     }
 
     @Override
     public ResultModel<Boolean> transferUserBail(CuntaoTransferBailDto cuntaoTransferBailDto) {
+        logger.warn("transferUserBail:{}", ToStringBuilder.reflectionToString(cuntaoTransferBailDto));
         return cuntaoNewBailService.transferUserBail(cuntaoTransferBailDto);
     }
 
     @Override
-    public ResultModel<Boolean> transferUserBailForPunish(CuntaoTransferBailForPunishDto cuntaoTransferBailForPunishDto) {
+    public ResultModel<Boolean> transferUserBailForPunish(
+        CuntaoTransferBailForPunishDto cuntaoTransferBailForPunishDto) {
+        logger.warn("transferUserBailForPunish:{}", ToStringBuilder.reflectionToString(cuntaoTransferBailForPunishDto));
         return cuntaoNewBailService.transferUserBailForPunish(cuntaoTransferBailForPunishDto);
     }
 
@@ -134,6 +146,7 @@ public class BailServiceImpl implements BailService {
     @Override
     public ResultModel<Boolean> fillSignInfo(Map<String, String> params) {
         Assert.notEmpty(params);
+        logger.warn("fillSignInfo:{}", params);
         return cuntaoNewBailService.fillSignInfo(params);
     }
 
@@ -142,5 +155,15 @@ public class BailServiceImpl implements BailService {
         Assert.notNull(taobaoUserId);
         Assert.notNull(userTypeEnum);
         return cuntaoNewBailService.queryUserFreezeAmount(taobaoUserId, userTypeEnum);
+    }
+
+    private void logExceptionInfo(String operation, Long taobaoUserId, String alipayId, String msg) {
+        if (StringUtils.contains(msg, "MONEY_NOT_ENOUGH") || StringUtils.contains(msg, "NOT_SIGN")) {
+            logger.warn("operation:{}, taobaoUserId:{}, alipayId{}, errorMsg:{}",
+                new Object[] {operation, taobaoUserId, alipayId, msg});
+        } else {
+            logger.error("operation:{}, taobaoUserId:{}, alipayId{}, errorMsg:{}",
+                new Object[] {operation, taobaoUserId, alipayId, msg});
+        }
     }
 }

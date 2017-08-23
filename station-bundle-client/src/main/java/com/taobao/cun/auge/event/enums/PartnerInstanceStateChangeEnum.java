@@ -116,10 +116,12 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerInstanceStateChangeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerInstanceStateChangeEnum)) {
+            return false;
+        }
 		PartnerInstanceStateChangeEnum objType = (PartnerInstanceStateChangeEnum) obj;
 		return objType.getType().equals(this.getType());
 	}
@@ -133,8 +135,9 @@ public class PartnerInstanceStateChangeEnum implements Serializable {
 	}
 
 	public static PartnerInstanceStateChangeEnum valueof(ChangeEnum type) {
-		if (type == null)
-			return null;
+		if (type == null) {
+            return null;
+        }
 		return mappings.get(type);
 	}
 

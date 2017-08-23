@@ -61,7 +61,9 @@ public class OperationServiceImpl implements OperationService {
 	
 	private CheckPermissionsResult getCheckPermissionResult(String empId, Long orgId, String roleName, List<Operation> operations) {
 		Set<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toSet());
-		if(CollectionUtils.isEmpty(permissionNames)) return null;
+		if(CollectionUtils.isEmpty(permissionNames)) {
+            return null;
+        }
 		PermissonBatchResult permissonBatchResult = endorUserPermissionService.batchCheck(empId, orgId, roleName, permissionNames);
 		
 		List<CheckPermissionResultInner> checkPermissionResults = Lists.newArrayList();
@@ -101,7 +103,9 @@ public class OperationServiceImpl implements OperationService {
 	
 	private CheckPermissionsResult getCheckPermissionResult(Integer bucUserId, List<Operation> operations) {
 		List<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toList());
-		if(CollectionUtils.isEmpty(permissionNames))return null;
+		if(CollectionUtils.isEmpty(permissionNames)) {
+            return null;
+        }
 		CheckPermissionsParam checkPermissionsParam = new CheckPermissionsParam();
 		checkPermissionsParam.setAccessKey(accessKey);
 		checkPermissionsParam.setUserId(bucUserId);

@@ -22,7 +22,7 @@ public class WangwangAdapterImpl implements WangwangAdapter {
 	public static final String ADD_TAG_VALUE = "1";
 	public static final String REMOVE_TAG_VALUE = "0";
 
-	public static final Long SUCCESS_CODE = 10000l;
+	public static final Long SUCCESS_CODE = 10000L;
 
 	@Value("${wangwang.strCaller:cntaobaoCuntao}")
 	private String strCaller;
@@ -36,10 +36,12 @@ public class WangwangAdapterImpl implements WangwangAdapter {
 	@Autowired
 	private com.taobao.wws.hsf2icesrv hsf2icesrv;
 
+	@Override
 	public void addWangWangTagByNick(String taobaoNick) {
 		updateWangWangTag(taobaoNick, ADD_TAG_VALUE);
 	}
 
+	@Override
 	public void removeWangWangTagByNick(String taobaoNick) {
 		updateWangWangTag(taobaoNick, REMOVE_TAG_VALUE);
 	}

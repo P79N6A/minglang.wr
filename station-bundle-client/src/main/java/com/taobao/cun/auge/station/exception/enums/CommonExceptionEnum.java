@@ -68,8 +68,9 @@ public class CommonExceptionEnum implements Serializable {
     }
 
     public static CommonExceptionEnum valueof(String code) {
-        if (code == null)
+        if (code == null) {
             return null;
+        }
         return mappings.get(code);
     }
 
@@ -83,18 +84,23 @@ public class CommonExceptionEnum implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         CommonExceptionEnum other = (CommonExceptionEnum) obj;
         if (code == null) {
-            if (other.code != null)
+            if (other.code != null) {
                 return false;
-        } else if (!code.equals(other.code))
+            }
+        } else if (!code.equals(other.code)) {
             return false;
+        }
         return true;
     }
     

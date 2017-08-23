@@ -286,8 +286,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 					if (dateFormat.format(schedule.getGmtCourse()).equals(
 							nowDate)) {
 						if (new Date().before(schedule.getGmtEnd())
-								&& new Date().after(schedule.getGmtStart()))
+								&& new Date().after(schedule.getGmtStart())) {
 							return true;
+						}
 					}
 				}
 				return false;
@@ -296,7 +297,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return true;
 	}
 
-	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
+	@Override
+    public String  commitRefund(Long taobaoUserId, String refundReason, String operator, Long applyOrg){
 		Assert.notNull(taobaoUserId);
 		Assert.notNull(refundReason);
 		Assert.notNull(operator);
@@ -304,6 +306,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return partnerPeixunBO.commitRefund(taobaoUserId,refundReason,operator,applyOrg);
 	}
 
+	@Override
 	public PartnerPeixunDto queryPeixunRecordById(Long id){
 		Assert.notNull(id);
 		return partnerPeixunBO.queryPeixunRecordById(id);

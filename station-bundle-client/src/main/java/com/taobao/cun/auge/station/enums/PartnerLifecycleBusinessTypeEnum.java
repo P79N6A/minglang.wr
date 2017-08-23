@@ -55,10 +55,12 @@ public class PartnerLifecycleBusinessTypeEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerLifecycleBusinessTypeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerLifecycleBusinessTypeEnum)) {
+            return false;
+        }
 		PartnerLifecycleBusinessTypeEnum objType = (PartnerLifecycleBusinessTypeEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -69,8 +71,9 @@ public class PartnerLifecycleBusinessTypeEnum  implements Serializable {
 	}
 
 	public static PartnerLifecycleBusinessTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

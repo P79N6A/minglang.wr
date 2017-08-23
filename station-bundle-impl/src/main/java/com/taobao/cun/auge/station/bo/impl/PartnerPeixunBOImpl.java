@@ -128,7 +128,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	
 	public static String FLOW_BUSINESS_CODE="peixun_refund";
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunFinishSucess(StringMessage strMessage, JSONObject ob) {
 		String messageType=strMessage.getMessageType();
 		if(!NotifyContents.CUNXUEXI_PEIXUN_COMPLETE_MST.equals(messageType)){
@@ -148,6 +149,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handlePeixunPaymentProcess(StringMessage strMessage,
 			JSONObject ob) {
@@ -257,6 +259,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
         return record;
 	}
 
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public PartnerCourseRecord initPeixunRecord(Long userId,
 			PartnerPeixunCourseTypeEnum courseType, String courseCode) {
@@ -284,7 +287,8 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		return record;
 	}
 	
-	public String getPeixunTicket(Long userId,String courseCode,String orderNum){
+	@Override
+	public String getPeixunTicket(Long userId, String courseCode, String orderNum){
 		AppAuthDTO auth = new AppAuthDTO();
 		auth.setAuthkey(peixunClientKey);
 		auth.setCode(peixunClientCode);
@@ -361,6 +365,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 	
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void invalidPeixunRecord(Long userId,PartnerPeixunCourseTypeEnum courseType,String courseCode) {
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
@@ -381,6 +386,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		
 	}
 	
+	@Override
 	public PartnerPeixunDto queryOnlineCourseRecord(Long userId, String courseCode) {
 		PartnerPeixunDto result = new PartnerPeixunDto();
 		AppAuthDTO auth = new AppAuthDTO();
@@ -542,6 +548,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 	
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public String  commitRefund(Long taobaoUserId,String refundReason,String operator,Long applyOrg){
 		String applyCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
@@ -683,19 +690,21 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}
 	}
 	
-    public void refundAuditExecute(Long id,boolean auditResult){
+    @Override
+	public void refundAuditExecute(Long id, boolean auditResult){
     		Assert.notNull(id);
     		PartnerCourseRecord qihangRecord=partnerCourseRecordMapper.selectByPrimaryKey(id);
-    		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-    				"UPGRADE");
-    		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(),
-    				PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
+    		String upgradeCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE","UPGRADE");
+    		PartnerCourseRecord chengZhangRecord= queryOfflinePeixunRecord(qihangRecord.getPartnerUserId(), PartnerPeixunCourseTypeEnum.UPGRADE, upgradeCode);
     		if(!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(qihangRecord.getStatus())||!PartnerPeixunStatusEnum.REFUNDING.getCode().equals(chengZhangRecord.getStatus())){
-    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款审核消息");
+    			//throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训订单状态不正确，无法处理退款审核消息");
+				logger.warn("培训订单状态不正确，无法处理退款审核消息,recourseId:{},auditResoult:{},qihangCourseStatus:{},chengZhangCourseStatus:{}", new Object[]{id, auditResult, qihangRecord.getStatus(), chengZhangRecord.getStatus()});
     		}
     		if(!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(qihangRecord.getRefundStatus())||!PartnerPeixunRefundStatusEnum.REFOND_WAIT_AUDIT.getCode().equals(chengZhangRecord.getRefundStatus())){
-    			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"审核状态不正确，无法处理退款审核消息");
-    		}
+    			//throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"审核状态不正确，无法处理退款审核消息");
+				logger.warn("审核状态不正确，无法处理退款审核消息, recourseId:{},auditResoult:{}, refundStatus:{}", id, auditResult, qihangRecord.getRefundStatus());
+
+			}
     		//更新退款状态
     		if(auditResult){
     			//审核通过
@@ -716,6 +725,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
     		refundForBizAuditService.noticeRefundAuditResult(qihangRecord.getRefundNo(), auditResult);
     }
     
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void handleRefundFinishSucess(ObjectMessage objMessage){
 			logger.info("handleRefundFinishSucess start:"+objMessage.getObject());
@@ -767,6 +777,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			}
     }
 	
+	@Override
 	public PartnerPeixunDto queryPeixunRecordById(Long id){
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
 		Criteria criteria = example.createCriteria();
@@ -783,6 +794,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
 	}
 	
+	@Override
 	public void validateQuitable(Long taobaoUserId){
 		String applyCode=appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
 				"APPLY_IN");

@@ -123,7 +123,8 @@ public class CountyBOImpl implements CountyBO {
     private static final String MESSAGE_TYPE_ID = "120975556";
 	
 	
-	public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
+	@Override
+    public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
 		if(areaOrgIds==null||areaOrgIds.size()==0){
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"areaOrgIds is null");
 		}
@@ -140,7 +141,8 @@ public class CountyBOImpl implements CountyBO {
 		return result;
 	}
 	
-	public List<CountyDto> getCountyStationByProvince(String provinceCode) {
+	@Override
+    public List<CountyDto> getCountyStationByProvince(String provinceCode) {
 		Validate.notNull(provinceCode, "provinceCode is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -165,7 +167,8 @@ public class CountyBOImpl implements CountyBO {
 	}
     
     
-	public List<CountyDto> getCountyStationList(List<Long> areaIds){
+	@Override
+    public List<CountyDto> getCountyStationList(List<Long> areaIds){
 		Validate.notNull(areaIds, "areaIds is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -178,7 +181,8 @@ public class CountyBOImpl implements CountyBO {
         return result;
 	}
 	
-	public CountyDto getCountyStation(Long id) {
+	@Override
+    public CountyDto getCountyStation(Long id) {
 		Validate.notNull(id, "id is null");
 		CountyStation county = countyStationMapper.selectByPrimaryKey(id);
 		if (county != null) {
@@ -191,7 +195,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 
-	public CountyDto getCountyStationByOrgId(Long id) {
+	@Override
+    public CountyDto getCountyStationByOrgId(Long id) {
 		Validate.notNull(id, "id is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -206,7 +211,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public List<CountyDto> getCountyStationByOrgIds(List<Long> ids) {
+	@Override
+    public List<CountyDto> getCountyStationByOrgIds(List<Long> ids) {
 		Validate.notNull(ids, "ids is null");
 		if (CollectionUtils.isEmpty(ids)) {
 			return Collections.<CountyDto> emptyList();
@@ -227,7 +233,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
         Validate.notNull(queryCondition, "queryCondition is null");
         Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
         if (queryCondition.getPageStart() < 0) {
@@ -280,7 +287,8 @@ public class CountyBOImpl implements CountyBO {
         return returnModel;
 	}
 	
-	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
 		Assert.notNull(queryCondition);
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("countyOfficial", queryCondition.getCountyOfficial());
@@ -537,7 +545,8 @@ public class CountyBOImpl implements CountyBO {
 		map.put(URLDecoder.decode(k, "UTF-8"), URLDecoder.decode(v, "UTF-8"));
 	}
 	 
-	public CountyDto saveCountyStation(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto saveCountyStation(String operator, CountyDto countyDto){
 		validateSaveCountyStationParam(countyDto);
 		//TODO 解决前台没有传入detail问题
 //        converDetail(countyDto);
@@ -1110,7 +1119,8 @@ public class CountyBOImpl implements CountyBO {
 	}
 
 	
-	public CountyDto startOperate(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto startOperate(String operator, CountyDto countyDto){
 	        validateStartOperateParam(countyDto);
 	        countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
 	        return saveCountyStation(operator, countyDto);

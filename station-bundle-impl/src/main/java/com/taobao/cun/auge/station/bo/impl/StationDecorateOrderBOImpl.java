@@ -126,7 +126,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	}
 	
 	public static void main(String[] args) {
-		List<String> s1 = Stream.of(1l,2l,3l).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
+		List<String> s1 = Stream.of(1L,2L,3L).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
 		System.out.println(s1);
 	}
 

@@ -38,7 +38,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
- * 合伙人入驻中阶段组件
+ * 村小二入驻中阶段组件
  * @author zhenhuan.zhangzh
  *
  */
