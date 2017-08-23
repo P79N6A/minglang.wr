@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.it.asset.api.Attachment;
 import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
+import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 import com.alibaba.it.asset.api.dto.AssetTransDto;
 import com.github.pagehelper.Page;
@@ -703,11 +705,11 @@ public class AssetBOImpl implements AssetBO {
         boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
-            //transferItAsset(signDto);
+            transferItAsset(signDto);
             sendSignMessage(asset.getOwnerWorkno(), updateAsset);
         } else {
             //调集团接口出库
-            //obtainItAsset(signDto);
+            obtainItAsset(signDto);
         }
         return buildAssetDetail(assetMapper.selectByPrimaryKey(updateAsset.getId()));
     }
@@ -735,6 +737,8 @@ public class AssetBOImpl implements AssetBO {
         transDto.setVoucherId("transferAsset" + signDto.getAliNo());
         transDto.setOwner(signDto.getOperator());
         transDto.setGroupCode(GROUP_CODE);
+        transDto.setWorkId(signDto.getOperator());
+        transDto.setUser(signDto.getOperator());
         AssetApiResultDO<Boolean> result = cuntaoApiService.transferOwner(
             Collections.singletonList(transDto));
         if (!result.isSuccess()) {
@@ -1010,15 +1014,14 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于您名下");
         }
         AssetDetailDto detailDto = buildAssetDetail(asset);
-        //AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
-        //    detailDto.getAliNo(), GROUP_CODE);
-        //if (!queryResult.isSuccess()) {
-        //    logger.error("{bizType}, getScrapDetailById error,{errorMsg} ", "assetError", queryResult.getErrorMsg());
-        //    throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-        //        "查询资产净值失败,请联系管理员！");
-        //}
-        //detailDto.setPayment(queryResult.getResult().getNetValue());
-        detailDto.setPayment("1000");
+        AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
+            detailDto.getAliNo(), GROUP_CODE);
+        if (!queryResult.isSuccess()) {
+            logger.error("{bizType}, getScrapDetailById error,{errorMsg} ", "assetError", queryResult.getErrorMsg());
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "查询资产净值失败,请联系管理员！");
+        }
+        detailDto.setPayment(queryResult.getResult().getNetValue());
         return detailDto;
     }
 
@@ -1035,7 +1038,7 @@ public class AssetBOImpl implements AssetBO {
         Asset asset = assetMapper.selectByPrimaryKey(scrapDto.getScrapAssetId());
         validateScrapAsset(asset, scrapDto.getOperator());
         //发起赔付流程
-        //scrapingItAsset(asset, scrapDto);
+        scrapingItAsset(asset, scrapDto);
         asset.setStatus(AssetStatusEnum.SCRAPING.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
@@ -1075,9 +1078,9 @@ public class AssetBOImpl implements AssetBO {
         //资产状态校验
         validateScrapAsset(asset, scrapDto.getOperator());
         //保证金转移
-        //transferBail(scrapDto, asset.getUserId());
+        transferBail(scrapDto, asset.getUserId());
         //通知集团资产废弃
-        //scrapItAsset(asset, scrapDto);
+        scrapItAsset(asset, scrapDto);
         //村淘库资产状态变更
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
@@ -1093,7 +1096,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setDeductible("n");
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setGroupCode(GROUP_CODE);
-        requestDto.setReason(scrapDto.getReason());
+        requestDto.setReason(AssetScrapReasonEnum.valueOf(scrapDto.getReason()).getDesc());
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
         if (!result.isSuccess()) {
             logger.error("{bizType},{parameter} scrap it asset fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
@@ -1701,7 +1704,15 @@ public class AssetBOImpl implements AssetBO {
             AssetExample example = new AssetExample();
             example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
             assetMapper.updateByExampleSelective(updateAsset, example);
-            //TODO 集团
+            //批量调集团接口转移资产责任人
+            assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(AssetRolloutIncomeDetail::getAssetId).map(this::getAssetById).map(
+                asset -> {
+                    AssetDto assetDto = new AssetDto();
+                    assetDto.setAliNo(asset.getAliNo());
+                    assetDto.setOperator(signDto.getOperator());
+                    return assetDto;
+                }
+            ).forEach(this::transferItAsset);
         }
         return true;
     }
