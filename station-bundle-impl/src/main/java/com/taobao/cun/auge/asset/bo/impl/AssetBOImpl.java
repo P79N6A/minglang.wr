@@ -1737,8 +1737,8 @@ public class AssetBOImpl implements AssetBO {
 			  throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，当前村点没有签收资产" );
 		}
 		List<String> categoryList = adList.stream().map(AssetDetailDto::getCategory).collect(Collectors.toList());
-		if( categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY")){
-			 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，资产须为1台电视,1台显示器,1台主机" );
+		if(!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))){
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，资产须为1台电视,1台显示器,1台主机" );
 		}
 	}
 }
