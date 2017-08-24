@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
+import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -159,7 +160,7 @@ public class AssetBOImpl implements AssetBO {
     @Autowired
     private CuntaoNewBailService newBailService;
 
-    @Autowired
+    @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "it.service.version")
     private CuntaoApiService cuntaoApiService;
 
     @Autowired

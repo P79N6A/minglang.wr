@@ -26,7 +26,6 @@ import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
-import com.alibaba.it.asset.api.CuntaoApiService;
 
 @Configuration
 public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
@@ -166,10 +165,4 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
                 version, 5000);
     }
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean cuntaoApiService(
-		@Value("${hsf.consumer.version.auge.cuntaoApiService}") String version) {
-		return getConsumerBean(CuntaoApiService.class, HSFGroup.HSF,
-			version, 5000);
-	}
 }
