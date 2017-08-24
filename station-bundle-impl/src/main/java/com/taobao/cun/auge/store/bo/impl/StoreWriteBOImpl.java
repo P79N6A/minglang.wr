@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.common.utils.POIUtils;
@@ -47,6 +49,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
 	
 	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
 		Station station = stationBO.getStationById(storeCreateDto.getStationId());
 		if(station == null){
