@@ -605,8 +605,12 @@
       				<artifactId>servlet-api-2.5</artifactId>
         			</exclusion>
         			<exclusion>
-         			 	<groupId>com.taobao.itemcenter</groupId>  
-     				 	<artifactId>itemcenter-client</artifactId> 
+         			 	 <groupId>com.taobao.itemcenter</groupId>  
+      					<artifactId>itemcenter-client</artifactId> 
+        			</exclusion>
+        			<exclusion>
+           				<groupId>com.taobao.itemcenter</groupId>  
+      					<artifactId>itemcenter-common</artifactId> 
         			</exclusion>
 				</exclusions>
 			</dependency>
