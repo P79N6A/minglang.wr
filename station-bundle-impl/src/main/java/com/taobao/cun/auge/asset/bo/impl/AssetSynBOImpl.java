@@ -17,10 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.bo.AssetSynBO;
+import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
@@ -80,6 +82,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 
 	@Autowired
 	private AssetIncomeBO assetIncomeBO;
+	
+	@Autowired
+	private AssetBO assetBO;
 
 	@Autowired
 	private AssetRolloutIncomeDetailBO assetRolloutIncomeDetailBO;
@@ -109,8 +114,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
     @Autowired
     private CuntaoUserService cuntaoUserService;
-	
-
+    
     public final static Map<String,String> catMap = new HashMap<String,String>();
     static {
     	catMap.put("主机", "MAIN");
@@ -182,10 +186,20 @@ public class AssetSynBOImpl implements AssetSynBO {
 			Asset a = bulidStationUseAsset(ca);
 			 DomainUtils.beforeInsert(a, "sys");
 	         assetMapper.insert(a);
+	         //集团资产变更责任人
+	         changeOwner(a);
 		} else if ("COUNTY_SIGN".equals(ca.getStatus())) {
 			Asset a = bulidCountyUseAsset(ca);
 			DomainUtils.beforeInsert(a,"sys");
 	         assetMapper.insert(a);
+	         if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
+	        	 //报废资产
+	        	 //这个不用掉，业务已经维护
+	         }else {
+	        	 //集团资产变更责任人
+		         changeOwner(a);
+	         }
+	      
 		} else if ("UNSIGN".equals(ca.getStatus())) {
 			Asset a = bulidSIGNAsset(ca);
 			assetMapper.insert(a);
@@ -194,9 +208,18 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}else if ("WAIT_STATION_SIGN".equals(ca.getStatus())) {
 			Asset a = bulidDistributeAsset(ca);
 			assetMapper.insert(a);
+			 //集团资产变更责任人
+	         changeOwner(a);
 			//插入分发出库单
 			addDistributeRolloutInfo(a,ca);
 		}
+	}
+	
+	private void changeOwner(Asset a) {
+		AssetDto  aDto = new AssetDto();
+		aDto.setAliNo(a.getAliNo());
+		aDto.setOperator(a.getOwnerWorkno());
+		assetBO.transferItAsset(aDto);
 	}
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void addDistributeRolloutInfo(Asset a,CuntaoAsset ca) {

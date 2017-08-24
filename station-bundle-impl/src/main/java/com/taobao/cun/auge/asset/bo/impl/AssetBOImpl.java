@@ -87,6 +87,8 @@ import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
+import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
@@ -109,6 +111,7 @@ import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.ExtEvent;
@@ -734,8 +737,9 @@ public class AssetBOImpl implements AssetBO {
                 "集团资产出库失败,请联系管理员！");
         }
     }
-
-    private void transferItAsset(AssetDto signDto) {
+    
+    @Override
+    public void transferItAsset(AssetDto signDto) {
         AssetTransDto transDto = new AssetTransDto();
         transDto.setAssetCode(signDto.getAliNo());
         transDto.setVoucherId("transferAsset" + signDto.getAliNo());
@@ -1171,7 +1175,12 @@ public class AssetBOImpl implements AssetBO {
         ValidateUtils.validateParam(distributeDto);
         Objects.requireNonNull(distributeDto.getStationId(), "服务站id不能为空");
         Objects.requireNonNull(distributeDto.getAssetIdList(), "待分发资产不能为空");
-
+        
+        Station s = stationBO.getStationById(distributeDto.getStationId()); 
+        if (s ==null || !(canDistributeList().contains(s.getStatus()))) {
+        	 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "当前服务站状态不能分发资产!");
+        }
+        
         AssetExample assetExample = new AssetExample();
         AssetExample.Criteria criteria = assetExample.createCriteria();
         criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(distributeDto.getOperator()).andIdIn(
@@ -1189,6 +1198,13 @@ public class AssetBOImpl implements AssetBO {
         asset.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
         return assetList;
+    }
+    
+    private  List<String> canDistributeList() {
+    	List<String> sStatus = new ArrayList<String>();
+    	sStatus.add(StationStatusEnum.SERVICING.getCode());
+    	sStatus.add(StationStatusEnum.DECORATING.getCode());
+    	return sStatus;
     }
 
     @Override
@@ -1274,22 +1290,107 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(stationId, "村点id不能为空");
         Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
         AssetExample assetExample = bulidStationAssetParam(stationId, taobaoUserId);
+        
+        List<Asset> assetList = assetMapper.selectByExample(assetExample);
+        if (CollectionUtils.isEmpty(assetList)) {
+        	return;
+        }
+        Asset a = assetList.get(0);
+        
         Asset asset = new Asset();
         DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
         asset.setRecycle(RecycleStatusEnum.Y.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
+        
+        
+		Station s = stationBO.getStationById(stationId);
+		if (s == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，服务站信息异常");
+		}
+		String sName = s.getName();
+		
+		Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
+		if (p == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
+		}
+		
+        //创建入库单
+        AssetIncomeDto icDto = new AssetIncomeDto();
+        icDto.setApplierAreaId(stationId);
+        icDto.setApplierAreaName(s.getName());
+        icDto.setApplierAreaType(AssetIncomeApplierAreaTypeEnum.STATION);
+        icDto.setApplierId(String.valueOf(taobaoUserId));
+        icDto.setApplierName(p.getName());
+        icDto.setReceiverName(a.getOwnerName());
+        icDto.setReceiverOrgId(a.getOwnerOrgId());
+        icDto.setReceiverOrgName(getOrgName(a.getOwnerOrgId()));
+        icDto.setReceiverWorkno(a.getOwnerWorkno());
+        icDto.setRemark("从  "+sName +" 回收");
+        icDto.setStatus(AssetIncomeStatusEnum.TODO);
+        icDto.setType(AssetIncomeTypeEnum.RECOVER);
+        icDto.setSignType(AssetIncomeSignTypeEnum.SCAN);
+        icDto.copyOperatorDto(OperatorDto.defaultOperator());
+        Long incomeId = assetIncomeBO.addIncome(icDto);
 
+        for (Asset ass :assetList) {
+            AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+            detail.setAssetId(ass.getId());
+            detail.setCategory(a.getCategory());
+            detail.setIncomeId(incomeId);
+            detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
+            detail.setType(AssetRolloutIncomeDetailTypeEnum.RECOVER);
+            detail.setOperatorTime(new Date());
+            detail.copyOperatorDto(OperatorDto.defaultOperator());
+            assetRolloutIncomeDetailBO.addDetail(detail);
+        }
     }
+    
+    private String getOrgName(Long orgId){
+		String name = "";
+		try {
+			CuntaoOrgDto orgDto = cuntaoOrgServiceClient.getCuntaoOrg(orgId);
+			if (orgDto !=null) {
+				name= orgDto.getName();
+			}
+			return name;
+		} catch (Exception e) {
+			logger.error("assetRolloutBO.getOrgName error param:"+orgId,e);
+			throw e;
+		}
+	}
 
     @Override
     public void cancelAssetRecycleIsY(Long stationId, Long taobaoUserId) {
         Objects.requireNonNull(stationId, "村点id不能为空");
         Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
         AssetExample assetExample = bulidStationAssetParam(stationId, taobaoUserId);
+        
+        List<Asset> assetList = assetMapper.selectByExample(assetExample);
+        if (CollectionUtils.isEmpty(assetList)) {
+        	return;
+        }
+        
         Asset asset = new Asset();
         DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
         asset.setRecycle(RecycleStatusEnum.N.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
+        
+        for (Asset a : assetList) {
+        	 //如果有入库单   检查 是否删除入库单
+            AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(a.getId());
+            if (detail != null) {
+            	assetRolloutIncomeDetailBO.deleteWaitSignDetail(a.getId(), "sys");
+                Long incomeId = detail.getIncomeId();
+                if (incomeId == null) {
+                    throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                        "删除失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+                }
+                //更新出入库单状态
+                if (CollectionUtils.isEmpty(assetRolloutIncomeDetailBO.queryListByIncomeId(incomeId))) {
+                    assetIncomeBO.deleteAssetIncome(incomeId, "sys");
+                }
+            }
+        }
 
     }
 
@@ -1460,6 +1561,7 @@ public class AssetBOImpl implements AssetBO {
         //如果有入库单   检查 是否删除入库单
         AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
         if (detail != null) {
+        	assetRolloutIncomeDetailBO.deleteWaitSignDetail(assetId, operator);
             Long incomeId = detail.getIncomeId();
             if (incomeId == null) {
                 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,

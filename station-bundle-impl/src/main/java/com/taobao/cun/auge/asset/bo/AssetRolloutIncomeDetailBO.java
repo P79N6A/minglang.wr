@@ -125,4 +125,11 @@ public interface AssetRolloutIncomeDetailBO {
 	 */
 	public PageDto<AssetRolloutIncomeDetailDto> queryAssetRiDetailByPage(Long assetId, int pageNum, int pageSize);
 	
+	/**
+	 * 删除待入库详情
+	 * @param assetId
+	 * @param operator
+	 */
+	public void deleteWaitSignDetail(Long assetId,String operator);
+	
 }
