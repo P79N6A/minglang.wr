@@ -614,6 +614,11 @@
         			</exclusion>
 				</exclusions>
 			</dependency>
+			<dependency>
+			  <groupId>org.apache.hadoop</groupId>
+			  <artifactId>zookeeper</artifactId>
+			  <version>99.0-does-not-exist</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
