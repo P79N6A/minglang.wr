@@ -25,7 +25,7 @@ public class StoreDto implements Serializable{
 	/**
 	 * SCM库存ID
 	 */
-	private Long scmId;
+	private String scmCode;
 	
 	/**
 	 * 所属服务站ID
@@ -80,12 +80,12 @@ public class StoreDto implements Serializable{
 		this.shareStoreId = shareStoreId;
 	}
 
-	public Long getScmId() {
-		return scmId;
+	public String getScmCode() {
+		return scmCode;
 	}
 
-	public void setScmId(Long scmId) {
-		this.scmId = scmId;
+	public void setScmCode(String scmCode) {
+		this.scmCode = scmCode;
 	}
 
 	public Long getStationId() {

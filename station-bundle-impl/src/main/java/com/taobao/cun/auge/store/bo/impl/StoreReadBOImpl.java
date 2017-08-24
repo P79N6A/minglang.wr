@@ -50,7 +50,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setAddress(stationDto.getAddress());
 		storeDto.setName(cuntaoStore.getName());
 		storeDto.setShareStoreId(cuntaoStore.getShareStoreId());
-		storeDto.setScmId(cuntaoStore.getScmId());
+		storeDto.setScmCode(cuntaoStore.getScmCode());
 		storeDto.setStoreCategory(StoreCategory.valueOf(cuntaoStore.getStoreCategory()));
 		storeDto.setTaobaoUserId(station.getTaobaoUserId());
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));

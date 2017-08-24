@@ -855,63 +855,73 @@ public class CuntaoStoreExample {
             return (Criteria) this;
         }
 
-        public Criteria andScmIdIsNull() {
-            addCriterion("scm_id is null");
+        public Criteria andScmCodeIsNull() {
+            addCriterion("scm_code is null");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdIsNotNull() {
-            addCriterion("scm_id is not null");
+        public Criteria andScmCodeIsNotNull() {
+            addCriterion("scm_code is not null");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdEqualTo(Long value) {
-            addCriterion("scm_id =", value, "scmId");
+        public Criteria andScmCodeEqualTo(String value) {
+            addCriterion("scm_code =", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdNotEqualTo(Long value) {
-            addCriterion("scm_id <>", value, "scmId");
+        public Criteria andScmCodeNotEqualTo(String value) {
+            addCriterion("scm_code <>", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdGreaterThan(Long value) {
-            addCriterion("scm_id >", value, "scmId");
+        public Criteria andScmCodeGreaterThan(String value) {
+            addCriterion("scm_code >", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("scm_id >=", value, "scmId");
+        public Criteria andScmCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("scm_code >=", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdLessThan(Long value) {
-            addCriterion("scm_id <", value, "scmId");
+        public Criteria andScmCodeLessThan(String value) {
+            addCriterion("scm_code <", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdLessThanOrEqualTo(Long value) {
-            addCriterion("scm_id <=", value, "scmId");
+        public Criteria andScmCodeLessThanOrEqualTo(String value) {
+            addCriterion("scm_code <=", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdIn(List<Long> values) {
-            addCriterion("scm_id in", values, "scmId");
+        public Criteria andScmCodeLike(String value) {
+            addCriterion("scm_code like", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdNotIn(List<Long> values) {
-            addCriterion("scm_id not in", values, "scmId");
+        public Criteria andScmCodeNotLike(String value) {
+            addCriterion("scm_code not like", value, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdBetween(Long value1, Long value2) {
-            addCriterion("scm_id between", value1, value2, "scmId");
+        public Criteria andScmCodeIn(List<String> values) {
+            addCriterion("scm_code in", values, "scmCode");
             return (Criteria) this;
         }
 
-        public Criteria andScmIdNotBetween(Long value1, Long value2) {
-            addCriterion("scm_id not between", value1, value2, "scmId");
+        public Criteria andScmCodeNotIn(List<String> values) {
+            addCriterion("scm_code not in", values, "scmCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andScmCodeBetween(String value1, String value2) {
+            addCriterion("scm_code between", value1, value2, "scmCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andScmCodeNotBetween(String value1, String value2) {
+            addCriterion("scm_code not between", value1, value2, "scmCode");
             return (Criteria) this;
         }
 
@@ -972,6 +982,66 @@ public class CuntaoStoreExample {
 
         public Criteria andStationIdNotBetween(Long value1, Long value2) {
             addCriterion("station_id not between", value1, value2, "stationId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdIsNull() {
+            addCriterion("taobao_user_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdIsNotNull() {
+            addCriterion("taobao_user_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdEqualTo(Long value) {
+            addCriterion("taobao_user_id =", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdNotEqualTo(Long value) {
+            addCriterion("taobao_user_id <>", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdGreaterThan(Long value) {
+            addCriterion("taobao_user_id >", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("taobao_user_id >=", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdLessThan(Long value) {
+            addCriterion("taobao_user_id <", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("taobao_user_id <=", value, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdIn(List<Long> values) {
+            addCriterion("taobao_user_id in", values, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdNotIn(List<Long> values) {
+            addCriterion("taobao_user_id not in", values, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdBetween(Long value1, Long value2) {
+            addCriterion("taobao_user_id between", value1, value2, "taobaoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTaobaoUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("taobao_user_id not between", value1, value2, "taobaoUserId");
             return (Criteria) this;
         }
     }
