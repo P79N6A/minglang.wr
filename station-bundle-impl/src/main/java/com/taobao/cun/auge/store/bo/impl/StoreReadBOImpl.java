@@ -11,6 +11,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -26,14 +27,14 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
 	private StationBO stationBO;
 	
+	@Resource
+	private PartnerInstanceBO partnerInstanceBO;
+	
 	@Override
-	public StoreDto getStoreDtoByStation(Long stationId) {
+	public StoreDto getStoreDtoByStationId(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
-		if(station == null){
-			return null;
-		}
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(!stationDto.isStore()){
+		if(station == null||!stationDto.isStore()){
 			return null;
 		}
 		
@@ -44,7 +45,12 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		
-		CuntaoStore cuntaoStore = cuntaoStores.get(0);
+		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
+		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore);
+		return storeDto;
+	}
+
+	private StoreDto toStoreDto(Station station, StationDto stationDto, CuntaoStore cuntaoStore) {
 		StoreDto storeDto = new StoreDto();
 		storeDto.setId(cuntaoStore.getId());
 		storeDto.setAddress(stationDto.getAddress());
@@ -55,6 +61,24 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setTaobaoUserId(station.getTaobaoUserId());
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
 		storeDto.setStationId(station.getId());
+		return storeDto;
+	}
+
+	@Override
+	public StoreDto getStoreDtoByTaobaoUserId(Long taobaoUserId) {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andTaobaoUserIdEqualTo(taobaoUserId).andIsDeletedEqualTo("n");
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(cuntaoStores)){
+			return null;
+		}
+		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
+		Station station = stationBO.getStationById(cuntaoStore.getStationId());
+		StationDto stationDto = StationConverter.toStationDto(station);
+		if(station == null||!stationDto.isStore()){
+			return null;
+		}
+		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore);
 		return storeDto;
 	}
 

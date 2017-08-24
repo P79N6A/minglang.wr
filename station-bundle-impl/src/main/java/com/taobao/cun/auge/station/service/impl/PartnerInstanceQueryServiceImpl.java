@@ -375,7 +375,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         StationDto stationDto = StationConverter.toStationDto(station);
         if(stationDto.getStationType()!=null){
         	if(stationDto.isStore()){
-        		StoreDto storeDto = storeReadBO.getStoreDtoByStation(stationDto.getId());
+        		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationDto.getId());
         		stationDto.setStoreDto(storeDto);
         	}
         }
