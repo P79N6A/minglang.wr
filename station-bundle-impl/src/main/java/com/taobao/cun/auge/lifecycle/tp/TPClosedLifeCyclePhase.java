@@ -129,7 +129,7 @@ public class TPClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		//设置资产状态为待回收
-		assetBO.cancelAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
+		assetBO.setAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
 		if(PartnerInstanceStateEnum.QUITING.getCode().equals(context.getSourceState())){
 			quitStationApplyBO.deleteQuitStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}

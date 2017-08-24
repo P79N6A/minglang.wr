@@ -173,7 +173,7 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
 			//TDDO:资产回收 状态  设置为空
-			assetBO.setAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
+			assetBO.cancelAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
 			
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
