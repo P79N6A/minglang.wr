@@ -619,6 +619,11 @@
 			  <artifactId>zookeeper</artifactId>
 			  <version>99.0-does-not-exist</version>
 			</dependency>
+			<dependency>
+			  <groupId>apache-collections</groupId>
+			  <artifactId>commons-collections</artifactId>
+			  <version>999-not-exist-v3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
