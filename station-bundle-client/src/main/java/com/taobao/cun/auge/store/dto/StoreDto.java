@@ -42,11 +42,6 @@ public class StoreDto implements Serializable{
 	private StoreStatus storeStatus;
 	
 	/**
-	 * 门店CODE，跟Station Code一致
-	 */
-	private String code;
-	
-	/**
 	 * 淘宝用户ID
 	 */
 	private Long taobaoUserId;
@@ -112,13 +107,6 @@ public class StoreDto implements Serializable{
 		this.storeStatus = storeStatus;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
 
 	public Long getTaobaoUserId() {
 		return taobaoUserId;
