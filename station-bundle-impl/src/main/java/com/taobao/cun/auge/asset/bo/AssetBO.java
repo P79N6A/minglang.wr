@@ -241,4 +241,9 @@ public interface AssetBO {
      * @param assetDto
      */
     public void confirmScrapAsset(AssetDto assetDto);
+    /**
+     * 通知集团资产变更责任人
+     * @param signDto
+     */
+    public void transferItAsset(AssetDto signDto);
 }

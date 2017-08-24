@@ -144,6 +144,8 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
     @Override
     public AssetDetailDto recycleAsset(AssetDto recycleDto) {
+    	//签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
+        assetIncomeBO.signAssetByCounty(recycleDto.getAliNo(), recycleDto.getOperator());
         return assetBO.recycleAsset(recycleDto);
     }
 

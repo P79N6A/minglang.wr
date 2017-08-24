@@ -257,4 +257,18 @@ public class AssetRolloutIncomeDetailBOImpl implements
             Collectors.toList());
         return PageDtoUtil.success(page, targetList);
     }
+
+	@Override
+	public void deleteWaitSignDetail(Long assetId,String operator) {
+        ValidateUtils.notNull(assetId);
+        AssetRolloutIncomeDetail detail = queryWaitSignByAssetId(assetId);
+        if (detail == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "操作失败，当前资产不是待签收资产，请核对资产信息！如有疑问，请联系资产管理员。");
+        }
+        AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+        record.setId(detail.getId());
+        DomainUtils.beforeDelete(record, operator);
+        assetRolloutIncomeDetailMapper.updateByPrimaryKey(record);
+	}
 }
