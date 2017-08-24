@@ -20,8 +20,7 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Override
 	public StoreDto getStoreByTaobaoUserId(Long taobaoUserId) {
-		// TODO Auto-generated method stub
-		return null;
+		return storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
 	}
 
 }
