@@ -15,7 +15,9 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
+import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
@@ -41,6 +43,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private StationBO stationBO;
 	@Resource
 	private UserTagService userTagService;
+	@Resource
+	private InventoryStoreWriteBo inventoryStoreWriteBo;
 	
 	@Override
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -98,6 +102,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
             	throw new StoreException(updateResult.getFullErrorMsg());
             }
         }
+		
+		String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId());
 		//打标
 		if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
 			userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
@@ -118,6 +124,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
 		cuntaoStore.setScmCode("");
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+		cuntaoStore.setScmCode(scmCode);
 		cuntaoStoreMapper.insert(cuntaoStore);
 		
 		//更新station type
@@ -131,6 +138,14 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		station.setStationType(stationType | StationType.STORE.getType());
 		stationBO.updateStation(StationConverter.toStationDto(station));
 		return result.getResult();
+	}
+
+	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId) throws StoreException {
+		InventoryStoreCreateDto inventoryStoreCreateDto = new InventoryStoreCreateDto();
+		inventoryStoreCreateDto.setName(storeCreateDto.getName());
+		inventoryStoreCreateDto.setAlias(storeCreateDto.getName());
+		inventoryStoreCreateDto.setUserId(userId);
+		return inventoryStoreWriteBo.create(inventoryStoreCreateDto);
 	}
 
 }
