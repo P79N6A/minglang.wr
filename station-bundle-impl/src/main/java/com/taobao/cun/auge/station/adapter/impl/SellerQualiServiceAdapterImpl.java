@@ -57,7 +57,8 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		return quali.isPresent();
 	}
 	
-	public void insertQualiRecord(CuntaoQualification qualification){
+	@Override
+    public void insertQualiRecord(CuntaoQualification qualification){
 		QualiAddRequest request = new QualiAddRequest();
 		request.setQualiInfoName("bizLicense");
 		request.setSource("cuntao");
@@ -142,6 +143,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 		return Optional.ofNullable(result.getData());
 	}
 	
+	@Override
 	public Optional<ListHidByEidAndEidTypeResponse> queryHavanaIdByQuali(String eid, int eidType){
 		Result<ListHidByEidAndEidTypeResponse> result = sellerQualiService.listHidByEidAndEidType(eid, eidType);
 		if(!result.isSuccessful()){

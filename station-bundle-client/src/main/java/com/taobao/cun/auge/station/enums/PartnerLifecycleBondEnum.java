@@ -54,10 +54,12 @@ public class PartnerLifecycleBondEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerLifecycleBondEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerLifecycleBondEnum)) {
+            return false;
+        }
 		PartnerLifecycleBondEnum objType = (PartnerLifecycleBondEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -68,8 +70,9 @@ public class PartnerLifecycleBondEnum  implements Serializable {
 	}
 
 	public static PartnerLifecycleBondEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

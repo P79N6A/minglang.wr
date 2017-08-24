@@ -29,7 +29,7 @@ public class TestTpaApplyService {
 	@Test
 	public void testCheckTpa(){
 		CheckTpaApplyRequest request = new CheckTpaApplyRequest();
-		request.setPartnerStationId(3731943l);
+		request.setPartnerStationId(3731943L);
 		request.setTaobaoNick("gytest604");
 		CheckTpaApplyResponse response = tpaApplyService.checkTpaApply(request);
 		System.out.println(response);
@@ -49,19 +49,19 @@ public class TestTpaApplyService {
 		TpaApplyInfoDto request = JSON.parseObject(requestJSON, TpaApplyInfoDto.class);
 		request.setEmail("test@126.com");
 		request.getAddress().setAddressDetail("testAddressDetail");
-		request.setStationId(3733326l);
+		request.setStationId(3733326L);
 		TpaApplyResponse reponse = tpaApplyService.updateTpa(request);
 	}
 	
 	@Test
 	public void testGetTpaApplyInfo(){
-		TpaApplyInfoDto info = tpaApplyService.getTpaApplyInfo("gytest604", 3731943l);
+		TpaApplyInfoDto info = tpaApplyService.getTpaApplyInfo("gytest604", 3731943L);
 		System.out.println(info);
 	}
 	
 	@Test
 	public void testGetTpaInfo(){
-		TpaApplyInfoDto info = tpaApplyService.getTpaInfo(3733326l);
+		TpaApplyInfoDto info = tpaApplyService.getTpaInfo(3733326L);
 		System.out.println(info);
 	}
 }

@@ -92,19 +92,37 @@ public class LevelCourseCondition implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         LevelCourseCondition other = (LevelCourseCondition) obj;
         if (tag == null) {
-            if (other.tag != null) return false;
-        } else if (!tag.equals(other.tag)) return false;
+            if (other.tag != null) {
+                return false;
+            }
+        } else if (!tag.equals(other.tag)) {
+            return false;
+        }
         if (userId == null) {
-            if (other.userId != null) return false;
-        } else if (!userId.equals(other.userId)) return false;
+            if (other.userId != null) {
+                return false;
+            }
+        } else if (!userId.equals(other.userId)) {
+            return false;
+        }
         if (userLevel == null) {
-            if (other.userLevel != null) return false;
-        } else if (!userLevel.equals(other.userLevel)) return false;
+            if (other.userLevel != null) {
+                return false;
+            }
+        } else if (!userLevel.equals(other.userLevel)) {
+            return false;
+        }
         return true;
     }
 

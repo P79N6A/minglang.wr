@@ -23,7 +23,8 @@ public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
 	@Autowired
 	NotifyManagerBean notifyPublisherManagerBean;
 
-	public void publish(DefaultNotifyPublishVo vo){
+	@Override
+    public void publish(DefaultNotifyPublishVo vo){
 		Assert.notNull(vo.getTopic());
 		Assert.notNull(vo.getMessageType());
 			executePublish(vo);

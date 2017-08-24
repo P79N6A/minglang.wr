@@ -11,6 +11,8 @@ import com.taobao.cun.auge.station.dto.PartnerUpdateServicingDto;
 
 public final class PartnerValidator {
 
+	public static final Pattern P = Pattern.compile("^((1))\\d{10}$");
+
 	private PartnerValidator(){
 		
 	}
@@ -61,8 +63,7 @@ public final class PartnerValidator {
 	}
 	
 	private static boolean isMobileNO(String mobiles) {
-		Pattern p = Pattern.compile("^((1))\\d{10}$");
-		Matcher m = p.matcher(mobiles);
+		Matcher m = P.matcher(mobiles);
 		return m.matches();
 	}
 

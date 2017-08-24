@@ -598,6 +598,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
     }
 
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void signC2BSettledProtocol(Long taobaoUserId, boolean signedC2BProtocol, boolean isFrozenMoney){
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
@@ -1461,9 +1462,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
     	StateMachineEvent sme = null;
     	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
-    		sme = sme.DECORATING_EVENT;
+    		sme = StateMachineEvent.DECORATING_EVENT;
     	}else{
-    		sme = sme.SERVICING_EVENT;
+    		sme = StateMachineEvent.SERVICING_EVENT;
     	}
     	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,sme);
 		stateMachineService.executePhase(phaseEvent);
@@ -2004,6 +2005,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     /**
      * 更新服务站地址信息
      */
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateStationAddress(Long taobaoUserId, StationDto updateStation, boolean isSendMail)
            {
@@ -2091,6 +2093,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     /**
      * 更新服务站经纬度信息
      */
+    @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void updateStationLngLat(Long taobaoUserId, StationDto updateStation){
         if (updateStation != null) {

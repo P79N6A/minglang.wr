@@ -59,15 +59,18 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.getProvinceList(areaOrgIds);
 	}
 	
-	public List<CountyDto> getCountyStationByProvince(String provinceCode){
+	@Override
+    public List<CountyDto> getCountyStationByProvince(String provinceCode){
 		return countyBO.getCountyStationByProvince(provinceCode);
 	}
 
-	public List<CountyDto> getCountyStationList(List<Long> areaIds){
+	@Override
+    public List<CountyDto> getCountyStationList(List<Long> areaIds){
 		return countyBO.getCountyStationList(areaIds);
 	}
 
-	public CountyDto getCountyStation(Long id,Boolean isMobile){
+	@Override
+    public CountyDto getCountyStation(Long id, Boolean isMobile){
 		CountyDto dto= countyBO.getCountyStation(id);
 		if(isMobile){
 			return convertForMobile(dto);
@@ -76,7 +79,8 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 
-	public List<Long> getCountiesByOrgId(List<Long> orgIds){
+	@Override
+    public List<Long> getCountiesByOrgId(List<Long> orgIds){
 		List<CountyDto> countyDtos = countyBO.getCountyStationByOrgIds(orgIds);
 		List<Long> counties = new ArrayList<Long>(countyDtos.size());
 		for(CountyDto countyDto:countyDtos){
@@ -105,11 +109,13 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.getCountyStationByCounty(countyCode);
 	}
 
-	public CountyDto getCountyStationByOrgId(Long id){
+	@Override
+    public CountyDto getCountyStationByOrgId(Long id){
 		return countyBO.getCountyStationByOrgId(id);
 	}
 	
-	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
 		PageDto<CountyDto> result=countyBO.getCountyStationList(queryCondition);
 		if(queryCondition.isMobile()){
 			List<CountyDto> dtos=new ArrayList<CountyDto>();
@@ -189,7 +195,8 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.queryCountyStation(queryCondition);
 	}
 	
-	public CountyDto startOperate(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto startOperate(String operator, CountyDto countyDto){
 		logger.info("startOperate"+JSON.toJSONString(countyDto));
 			CountyDto rst = countyBO.startOperate(operator,countyDto);
 			return rst;

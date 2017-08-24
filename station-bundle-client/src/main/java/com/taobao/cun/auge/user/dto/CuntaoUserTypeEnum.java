@@ -47,10 +47,12 @@ public class CuntaoUserTypeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof CuntaoUserTypeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof CuntaoUserTypeEnum)) {
+            return false;
+        }
 		CuntaoUserTypeEnum objType = (CuntaoUserTypeEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}

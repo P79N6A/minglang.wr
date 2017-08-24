@@ -53,10 +53,12 @@ public class PartnerLifecycleSettledApproveEnum  implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof PartnerLifecycleSettledApproveEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof PartnerLifecycleSettledApproveEnum)) {
+            return false;
+        }
 		PartnerLifecycleSettledApproveEnum objType = (PartnerLifecycleSettledApproveEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -67,8 +69,9 @@ public class PartnerLifecycleSettledApproveEnum  implements Serializable {
 	}
 
 	public static PartnerLifecycleSettledApproveEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

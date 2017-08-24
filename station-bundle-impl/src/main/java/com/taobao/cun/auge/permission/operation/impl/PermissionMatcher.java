@@ -9,7 +9,9 @@ public class PermissionMatcher implements OperationMatcher{
 	
 	@Override
 	public boolean match(OperationData operationData,Operation operation) {
-		if(StringUtils.isEmpty(operation.getPermission()))return true;
+		if(StringUtils.isEmpty(operation.getPermission())) {
+            return true;
+        }
 		if(operationData instanceof InnerPermissionData){
 			InnerPermissionData permissionData = (InnerPermissionData)operationData;
 			return permissionData.hasPermission(operation.getPermission());

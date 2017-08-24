@@ -212,13 +212,23 @@ public class LevelCourse {
     }
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         LevelCourse other = (LevelCourse) obj;
         if (courseCode == null) {
-            if (other.courseCode != null) return false;
-        } else if (!courseCode.equals(other.courseCode)) return false;
+            if (other.courseCode != null) {
+                return false;
+            }
+        } else if (!courseCode.equals(other.courseCode)) {
+            return false;
+        }
         return true;
     }
     

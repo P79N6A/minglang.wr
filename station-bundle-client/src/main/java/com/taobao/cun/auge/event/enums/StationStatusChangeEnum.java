@@ -110,10 +110,12 @@ public class StationStatusChangeEnum implements Serializable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof StationStatusChangeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof StationStatusChangeEnum)) {
+            return false;
+        }
 		StationStatusChangeEnum objType = (StationStatusChangeEnum) obj;
 		return objType.getType().equals(this.getType());
 	}
@@ -127,8 +129,9 @@ public class StationStatusChangeEnum implements Serializable{
 	}
 
 	public static StationStatusChangeEnum valueof(ChangeEnum type) {
-		if (type == null)
-			return null;
+		if (type == null) {
+            return null;
+        }
 		return mappings.get(type);
 	}
 

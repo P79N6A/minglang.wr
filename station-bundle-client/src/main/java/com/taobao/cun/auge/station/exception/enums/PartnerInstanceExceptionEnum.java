@@ -52,25 +52,30 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum {
 
 	}
 
-	public String getCode() {
+	@Override
+    public String getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	@Override
+    public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getDesc() {
+	@Override
+    public String getDesc() {
 		return desc;
 	}
 
-	public void setDesc(String desc) {
+	@Override
+    public void setDesc(String desc) {
 		this.desc = desc;
 	}
 
 	public static PartnerInstanceExceptionEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 
@@ -84,18 +89,23 @@ public class PartnerInstanceExceptionEnum extends CommonExceptionEnum {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		if (this == obj) {
+            return true;
+        }
+		if (obj == null) {
+            return false;
+        }
+		if (getClass() != obj.getClass()) {
+            return false;
+        }
 		PartnerInstanceExceptionEnum other = (PartnerInstanceExceptionEnum) obj;
 		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
+			if (other.code != null) {
+                return false;
+            }
+		} else if (!code.equals(other.code)) {
 			return false;
+		}
 		return true;
 	}
 
