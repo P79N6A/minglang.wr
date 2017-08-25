@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.store.dto;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -8,7 +10,9 @@ import org.hibernate.validator.constraints.NotEmpty;
  * 创建仓库的DTO
  *
  */
-public class InventoryStoreCreateDto {
+public class InventoryStoreCreateDto implements Serializable{
+	private static final long serialVersionUID = 6288183021002325541L;
+
 	/**
 	 * 仓库CODE,最好不要自己指定，让系统自动生成
 	 */

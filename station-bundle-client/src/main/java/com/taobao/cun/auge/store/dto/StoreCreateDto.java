@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.store.dto;
 
-public class StoreCreateDto {
+import java.io.Serializable;
 
+public class StoreCreateDto implements Serializable{
+	private static final long serialVersionUID = 3402121165343030411L;
 	private String creator;
 	/**
 	 * 门店名称
