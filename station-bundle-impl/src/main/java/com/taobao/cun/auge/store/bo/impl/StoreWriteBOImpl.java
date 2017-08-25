@@ -136,7 +136,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setIsDeleted("n");
 		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
 		cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
-		cuntaoStore.setScmCode("");
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 		cuntaoStore.setScmCode(scmCode);
 		cuntaoStoreMapper.insert(cuntaoStore);
