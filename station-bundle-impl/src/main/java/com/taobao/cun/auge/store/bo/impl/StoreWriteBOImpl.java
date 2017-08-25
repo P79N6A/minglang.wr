@@ -64,24 +64,35 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
 		storeDTO.setAddress(station.getAddress());
 		storeDTO.setOuterId(String.valueOf(storeCreateDto.getStationId()));
+		//仓库的区域CODE，取叶子节点
+		String areaId = null;
 		//省
 		if(!Strings.isNullOrEmpty(station.getProvince())){
 			storeDTO.setProv(Integer.parseInt(station.getProvince()));
 			storeDTO.setProvName(station.getProvinceDetail());
+			areaId = station.getProvince();
 		}
 		//市
 		if(!Strings.isNullOrEmpty(station.getCity())){
 			storeDTO.setCity(Integer.parseInt(station.getCity()));
 			storeDTO.setCityName(station.getCityDetail());
+			areaId = station.getCity();
 		}
 		//区/县
 		if(!Strings.isNullOrEmpty(station.getCounty())){
 			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
 			storeDTO.setDistrictName(station.getCountyDetail());
+			areaId = station.getCounty();
 		}
 		if(!Strings.isNullOrEmpty(station.getTown())){
 			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
+			areaId = station.getTown();
+		}
+		
+		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if(Strings.isNullOrEmpty(areaId)){
+			throw new StoreException("缺少行政地址CODE，无法创建仓库");
 		}
 		if(!Strings.isNullOrEmpty(station.getLat())){
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
@@ -106,7 +117,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
             }
         }
 		
-		String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId());
+		String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId(), areaId);
 		//打标
 		if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
 			userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
@@ -143,11 +154,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return result.getResult();
 	}
 
-	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId) throws StoreException {
+	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId, String areaId) throws StoreException {
 		InventoryStoreCreateDto inventoryStoreCreateDto = new InventoryStoreCreateDto();
 		inventoryStoreCreateDto.setName(storeCreateDto.getName());
 		inventoryStoreCreateDto.setAlias(storeCreateDto.getName());
 		inventoryStoreCreateDto.setUserId(userId);
+		inventoryStoreCreateDto.setAreaId(Long.parseLong(areaId));
 		return inventoryStoreWriteBo.create(inventoryStoreCreateDto);
 	}
 

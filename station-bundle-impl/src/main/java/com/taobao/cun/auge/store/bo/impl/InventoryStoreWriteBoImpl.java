@@ -36,7 +36,7 @@ public class InventoryStoreWriteBoImpl implements InventoryStoreWriteBo {
 		data.setStoreCode(inventoryStoreCreateDto.getCode());
 		data.setPriority(inventoryStoreCreateDto.getPriority());
 		data.setType(StoreType.MERCHANT_WAREHOUSE);
-		data.setAreaId(1L);
+		data.setAreaId(inventoryStoreCreateDto.getAreaId());
 		data.setUserId(inventoryStoreCreateDto.getUserId());
 		
 		StoreSaveDTO saveDTO = new StoreSaveDTO.Builder().

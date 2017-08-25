@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.store.dto;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
@@ -31,8 +33,23 @@ public class InventoryStoreCreateDto {
 	/**
 	 * 淘宝用户ID
 	 */
+	@NotNull(message="淘宝用户ID不能为空")
 	private Long userId;
 	
+	/**
+	 * 行政CODE，取到叶子节点的CODE即可，例如到县一级就是县的CODE
+	 */
+	@NotNull(message="地址CODE不能为空")
+	private Long areaId;
+	
+	public Long getAreaId() {
+		return areaId;
+	}
+
+	public void setAreaId(Long areaId) {
+		this.areaId = areaId;
+	}
+
 	public Long getUserId() {
 		return userId;
 	}
