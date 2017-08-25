@@ -163,7 +163,7 @@ public class AssetBOImpl implements AssetBO {
     @Autowired
     private CuntaoNewBailService newBailService;
 
-    @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "it.service.version")
+    @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
     private CuntaoApiService cuntaoApiService;
 
     @Autowired
