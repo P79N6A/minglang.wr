@@ -57,7 +57,7 @@ public class InventoryStoreWriteBoImpl implements InventoryStoreWriteBo {
 		String value = String.valueOf(inventoryStoreCodeSequence.nextValue());
 		String code = "";
 		for(char c : value.toCharArray()){
-			code += (char)(c + 'A');
+			code += (char)(Integer.parseInt(c+"") + 'A');
 		}
 		return "CUNTAO_" + code.toUpperCase();
 	}
