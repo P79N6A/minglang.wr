@@ -8,7 +8,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerInstanceBO {
 
@@ -27,15 +26,14 @@ public interface PartnerInstanceBO {
 	 * @param stationId
 	 * @return
 	 */
-	public Long findStationApplyIdByStationId(Long stationId) throws AugeServiceException;
+	public Long findStationApplyIdByStationId(Long stationId);
 	
 	/**
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public Long findPartnerInstanceIdByStationId(Long stationId) throws AugeServiceException;
+	public Long findPartnerInstanceIdByStationId(Long stationId);
 
 	/**
 	 * 根据stationId查询stationAPPLYid
@@ -43,7 +41,7 @@ public interface PartnerInstanceBO {
 	 * @param stationId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	public PartnerStationRel findPartnerInstanceByStationId(Long stationId);
 
 	/**
 	 *
@@ -68,14 +66,13 @@ public interface PartnerInstanceBO {
 	 * @param stationApplyId
 	 * @return
 	 */
-	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException;
+	public Long getInstanceIdByStationApplyId(Long stationApplyId);
 	/**
 	 * 根据stationapplyId查询实例
 	 * @param stationApplyId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) throws AugeServiceException;
+	public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId);
 
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表主键id
@@ -83,7 +80,7 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException;
+	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState);
 
 	/**
 	 * 根据taobaoUserId 查询合伙人实例表
@@ -92,7 +89,7 @@ public interface PartnerInstanceBO {
 	 * @return
 	 */
 	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
-			throws AugeServiceException;
+			;
 
 	/**
 	 * 根据实例id查询村点id
@@ -100,7 +97,7 @@ public interface PartnerInstanceBO {
 	 * @param instanceId
 	 * @return
 	 */
-	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException;
+	public Long findStationIdByInstanceId(Long instanceId);
 
 	/**
 	 * 根据合伙人实例id，查询实例
@@ -108,7 +105,7 @@ public interface PartnerInstanceBO {
 	 * @param instanceId
 	 * @return
 	 */
-	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException;
+	public PartnerStationRel findPartnerInstanceById(Long instanceId);
 
 	/**
 	 * 查询子合伙人数量
@@ -119,7 +116,7 @@ public interface PartnerInstanceBO {
 	 *            子合伙人状态
 	 * @return
 	 */
-	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException;
+	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state);
 
 	/**
 	 * 查询子合伙人
@@ -127,27 +124,26 @@ public interface PartnerInstanceBO {
 	 * @param instanceId
 	 * @param stateEnums
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException;
+	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums);
 	
 	/**
 	 * 查询一个村点上，所有的实例
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException;
+	public List<PartnerStationRel> findPartnerInstances(Long stationId);
 	
 	/**
 	 * 查询村点上，最后一个结束服务的实例
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException;
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId);
 	
 	/**
 	 * 状态流转
@@ -160,21 +156,21 @@ public interface PartnerInstanceBO {
 	 *            后置状态
 	 */
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
-			throws AugeServiceException;
+			;
 
 	/**
 	 * 更新实例
 	 * 
 	 */
-	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto);
 
 	/**
 	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) throws AugeServiceException;
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId);
 
 	/**
 	 * 设置开业时间
@@ -182,53 +178,51 @@ public interface PartnerInstanceBO {
 	 * @param instanceId
 	 * @param openDate
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void updateOpenDate(Long instanceId, Date openDate, String operator) throws AugeServiceException;
+	public void updateOpenDate(Long instanceId, Date openDate, String operator);
 
 	/**
 	 * 新增实例关系
 	 * 
 	 * @param partnerInstanceDto
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException;
+	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto);
 
 	/**
 	 * 检查taobaouserid 是否可以入驻
 	 * 
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean checkSettleQualification(Long taobaoUserId) throws AugeServiceException;
+	public boolean checkSettleQualification(Long taobaoUserId);
 
 	/**
 	 * 删除关系表数据
 	 * 
 	 * @param instanceId
-	 * @throws AugeServiceException
 	 */
-	public void deletePartnerStationRel(Long instanceId, String operator) throws AugeServiceException;
+	public void deletePartnerStationRel(Long instanceId, String operator);
 
 	/**
 	 * 获得待开业数据
 	 * 
 	 * @param fetchNum
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException;
+	public List<Long> getWaitOpenStationList(int fetchNum);
 
 	/**
 	 * 获得待解冻保证金数据
 	 * 
 	 * @param fetchNum
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException;
+	public List<Long> getWaitThawMoneyList(int fetchNum);
 
 	/**
 	 * 获得状态为活跃[settling,decorating,servicing,closing,closed,quitting(推出待解冻除外)]
@@ -237,55 +231,54 @@ public interface PartnerInstanceBO {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException ;
+	public PartnerStationRel getActivePartnerInstance(Long taobaoUserId) ;
 	
 	
 	/**
 	 *  获得有效的的淘帮手
 	 * @param parentStationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public int  getActiveTpaByParentStationId(Long parentStationId) throws AugeServiceException;
+	public int  getActiveTpaByParentStationId(Long parentStationId);
 	
 	
-	public void finishCourse(Long taobaoUserId) throws AugeServiceException;
+	public void finishCourse(Long taobaoUserId);
 	
 	/**
 	 * 是否所有合伙人都处于退出待解冻、已退出状态
 	 * 
 	 * @param stationId
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+	public boolean isAllPartnerQuit(Long stationId);
 
 	/**
 	 * 同一个站点，除instanceId的合伙人，其他合伙人是否都处于退出待解冻、已退出状态
 	 * 
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
+	public boolean isOtherPartnerQuit(Long instanceId);
 
 	/**
 	 * 获得当前实例业务数据，包含（partner,station,partnerLifecycleItems）
 	 *
 	 * @param partnerId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId);
 
 	/**
 	 * 获得当前人的历史对应关系
 	 */
-	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId);
 	
 	/**
 	 * 获得当前服务站的历史对应关系
 	 */
-	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId);
 
 	/**
 	 * 停业中，重新进入服务中
@@ -294,10 +287,10 @@ public interface PartnerInstanceBO {
 	 * @param preState
 	 * @param postState
 	 * @param operator
-	 * @throws AugeServiceException
+	 * @
 	 */
 	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
-			throws AugeServiceException;
+			;
 	
 	
 	/**
@@ -305,12 +298,12 @@ public interface PartnerInstanceBO {
 	 *
 	 * @param partnerId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
+	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(Long taobaoUserId);
 	
 	
-	public void updateIsCurrentByInstanceId(Long instanceId,PartnerInstanceIsCurrentEnum isCurrentEnum)throws AugeServiceException;
+	public void updateIsCurrentByInstanceId(Long instanceId,PartnerInstanceIsCurrentEnum isCurrentEnum);
 
 	/**
 	 * 查询该账号，上一次进入的村淘的实例，以服务结束时间，最新的为准
@@ -323,9 +316,11 @@ public interface PartnerInstanceBO {
 	public Long findStationIdByStationApplyId(Long stationApplyId);
 	
 	public List<PartnerStationRel> getBatchActivePartnerInstance(
-			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException;
+			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList);
 	
 	public List<UserProfile> queryUserProfileForAlilangMeeting(Long orgId,String name);
 	
 	public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile); 
+	
+	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId);
 }

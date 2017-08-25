@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.qualification.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -49,7 +50,6 @@ public class C2BQualificationConsumer {
 	@PostConstruct
 	public void init() throws MQClientException {
 		 consumer = new MetaPushConsumer(qualiCID);
-		 
 	        consumer.subscribe(qualiTopic, "*");
 	 
 	        consumer.registerMessageListener(new MessageListenerConcurrently() {
@@ -68,13 +68,12 @@ public class C2BQualificationConsumer {
 	
 
     public void receiveMessage(MessageExt ext) {
-		 try {
-			 logger.info("recevieQualiMessage:["+ext.toString()+"]");
+			logger.info("recevieQualiMessage:["+ext.toString()+"]");
 			QualiLifeCycleMessage qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
 			EntityQuali quali = sellerQualiServiceAdapter.queryQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
 			Assert.notNull(quali);
 			//不是营业执照的消息不处理
-			if(quali.getQuali().getQualiInfoId() !=qualiInfoId){
+			if(!Objects.equals(quali.getQuali().getQualiInfoId(), qualiInfoId)){
 				return;
 			}
 			ListHidByEidAndEidTypeResponse listHidByEidAndEidTypeResponse = sellerQualiServiceAdapter.queryHavanaIdByQuali(quali.getEid(), quali.getEidType()).get();
@@ -82,10 +81,6 @@ public class C2BQualificationConsumer {
 			if(CollectionUtils.isNotEmpty(listHidByEidAndEidTypeResponse.getQualiBindHids())){
 				listHidByEidAndEidTypeResponse.getQualiBindHids().stream().forEach(taobaoUserId -> cuntaoQualificationService.syncCuntaoQulificationFromMetaq(taobaoUserId,qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()));
 			}
-		} catch (Exception e) {
-			logger.error("receiveMessage quali error!messageId["+ext.getMsgId()+"]",e);
-			throw e;
-		}
      }
     
 }

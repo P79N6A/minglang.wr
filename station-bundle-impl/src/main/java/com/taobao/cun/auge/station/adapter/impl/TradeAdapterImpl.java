@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.bo.TaobaoTradeBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -41,7 +42,7 @@ public class TradeAdapterImpl implements TradeAdapter {
 				build.append("\n");
 			}
 			logger.warn("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
-			throw new AugeBusinessException("村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
+			throw new AugeBusinessException(AugeErrorCodes.TRADE_BUSINESS_CHECK_ERROR_CODE,"村掌柜仍有未完成的代购单（交易订单确认收货）、待退款（退款完结），请联系掌柜核实" + build.toString());
 		}
 	}
 }

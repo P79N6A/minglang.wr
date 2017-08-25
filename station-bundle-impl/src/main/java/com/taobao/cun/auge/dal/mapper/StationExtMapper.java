@@ -16,4 +16,8 @@ public interface StationExtMapper {
      * @return
      */
     List<Station> getTpStationsByName(StationExtExample stationExtExample);
+    
+    
+    List<Station> selectByExample(StationExtExample stationExtExample);
+    
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath*:applicationContext-xfsm.xml"/>
+
+	<!-- 村小二状态机配置 -->
+    <bean id="TPStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+        <property name="path" value="statemachine/statemachine-tp.xml"/>
+        <property name="listener">
+            <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
+        </property>
+    </bean>
+
+	<!-- 淘帮手状态机配置 -->
+    <bean id="TPAStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+        <property name="path" value="statemachine/statemachine-tpa.xml"/>
+        <property name="listener">
+            <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
+        </property>
+    </bean>
+</beans>

@@ -1,21 +1,25 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import com.taobao.cun.auge.common.utils.DomainUtils;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
-import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordCondition;
-import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
-import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,19 +34,25 @@ import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
 import com.taobao.cun.auge.asset.service.CuntaoAssetEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample.Criteria;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExtExample;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetExtMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.flowRecord.condition.CuntaoFlowRecordCondition;
+import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.util.RequestCtxUtil;
@@ -78,6 +88,13 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+
+    @Autowired
+    private CuntaoNewBailService newBailService;
+
+    private final Long inAccountUserId = 2631673100L;
+
+    private static final Logger logger = LoggerFactory.getLogger(AssetBOImpl.class);
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -247,7 +264,7 @@ public class AssetBOImpl implements AssetBO {
         Assert.notNull(operator, "operator can not be null");
         CuntaoAsset asset = cuntaoAssetMapper.selectByPrimaryKey(assetId);
         if (getBuyAssetRecord(asset.getNewStationId()) != null) {
-            throw new AugeServiceException("对不起，该资产已申请自购，无法进行回收！");
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"对不起，该资产已申请自购，无法进行回收！");
         }
         asset.setStatus(CuntaoAssetEnum.COUNTY_SIGN.getCode());
         asset.setModifier(operator);
@@ -407,17 +424,17 @@ public class AssetBOImpl implements AssetBO {
         CuntaoAssetExample example = new CuntaoAssetExample();
         List<CuntaoAsset> assets = cuntaoAssetMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(assets)) {
-            throw new AugeBusinessException("can not find biz by serialNoOrAliNo[" + serialNoOrAliNo + "]");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find biz by serialNoOrAliNo[" + serialNoOrAliNo + "]");
         }
         return convert2CuntaoAssetDto(assets.iterator().next());
     }
 
     @Override
-    public Boolean judgeCanBuyAsset(Long stationId) {
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            return false;
-        }
-        return getBuyAssetRecord(stationId) == null;
+    public Map<String, String> getStationAssetState(Long stationId) {
+        Map<String, String> result = new HashMap<>();
+        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
+        return result;
     }
 
     private CuntaoFlowRecord getBuyAssetRecord(Long stationId) {
@@ -428,30 +445,83 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
-    public Boolean buyAsset(CuntaoAssetDto assetDto) {
-        Long stationId = assetDto.getNewStationId();
-        if (stationId == null || assetDto.getOperator() == null) {
-            throw new AugeServiceException("操作信息不能为空!");
+    public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
+        Map<String, String> result = new HashMap<>();
+        result.put("success", "true");
+        PageDto<CuntaoAssetDto> assetPageDto = checkAssetState(assetDto, result);
+        if ("true".equals(result.get("success"))) {
+            CuntaoTransferBailDto bailDto = buildBailDto(assetDto);
+            ResultModel<Boolean> resultModel = newBailService.transferUserBail(bailDto);
+            if (resultModel.isSuccess() && resultModel.getResult()) {
+                assetPageDto.getItems().parallelStream().map(CuntaoAssetDto::getId).forEach(this::scrapAsset);
+                saveBuyRecord(assetDto, assetPageDto.getItems());
+                result.put("success", "true");
+            } else {
+                result.put("message", resultModel.getMessage());
+                result.put("success", "false");
+                logger.warn("{bizType},{parameter} buy asset fail " + resultModel.getMessage(), "assetWarn",
+                    JSON.toJSONString(bailDto));
+            }
         }
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            throw new AugeServiceException("该村点不允许提交资产采购意向,请联系资产管理员!");
-        }
-        if (getBuyAssetRecord(stationId) != null) {
-            throw new AugeServiceException("该村点已经提交过资产采购意向!");
-        }
-        if (!validateStationAssetNum(stationId)) {
-            throw new AugeServiceException("对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
-        }
-        saveBuyRecord(assetDto);
-        return null;
+        return result;
     }
 
-    private boolean validateStationAssetNum(Long stationId) {
+    private void scrapAsset(Long id) {
+        CuntaoAsset cuntaoAsset = cuntaoAssetMapper.selectByPrimaryKey(id);
+        cuntaoAsset.setModifier("huigou-baofei");
+        cuntaoAsset.setGmtModified(new Date());
+        cuntaoAsset.setStationId(null);
+        cuntaoAsset.setStationName(null);
+        cuntaoAsset.setNewStationId(null);
+        cuntaoAsset.setPartnerInstanceId(null);
+        cuntaoAsset.setStatus("COUNTY_SIGN");
+        cuntaoAsset.setAssetOwner("樱橴(20502)");
+        cuntaoAssetMapper.updateByPrimaryKey(cuntaoAsset);
+    }
+
+    private PageDto<CuntaoAssetDto> checkAssetState(CuntaoAssetDto assetDto, Map<String, String> result) {
+        Long stationId = assetDto.getNewStationId();
+        if (stationId == null || assetDto.getOperator() == null) {
+            result.put("message", "操作信息不能为空!");
+            result.put("success", "false");
+            return null;
+        }
+        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+            result.put("success", "false");
+            return null;
+        }
+        if (getBuyAssetRecord(stationId) != null) {
+            result.put("message", "该村点已经提交过资产采购意向!");
+            result.put("success", "false");
+            return null;
+        }
         AssetQueryCondition condition = new AssetQueryCondition();
         condition.setStationId(stationId);
         condition.setPageNum(1);
         condition.setPageSize(10);
         PageDto<CuntaoAssetDto> pageDto = queryByPage(condition);
+        if (!validateStationAssetNum(pageDto)) {
+            result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+            result.put("success", "false");
+        }
+        return pageDto;
+    }
+
+    private CuntaoTransferBailDto buildBailDto(CuntaoAssetDto assetDto) {
+        CuntaoTransferBailDto bailDto = new CuntaoTransferBailDto();
+        bailDto.setInAccountUserId(inAccountUserId);
+        bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
+        bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+        bailDto.setAmount(1500*100L);
+        bailDto.setSource("org");
+        bailDto.setReason("buyAsset");
+        bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
+        bailDto.setOutOrderId("buy_asset"+assetDto.getNewStationId());
+        return bailDto;
+    }
+
+    private boolean validateStationAssetNum(PageDto<CuntaoAssetDto> pageDto ) {
         if (pageDto.getTotal() != 3L) {
             return false;
         }
@@ -460,14 +530,16 @@ public class AssetBOImpl implements AssetBO {
         return categoryList.contains("主机") && categoryList.contains("电视机") && categoryList.contains("显示器");
     }
 
-    private void saveBuyRecord(CuntaoAssetDto assetDto) {
+    private void saveBuyRecord(CuntaoAssetDto assetDto, List<CuntaoAssetDto> assetDtoList) {
         CuntaoFlowRecord record = new CuntaoFlowRecord();
         record.setTargetId(assetDto.getNewStationId());
         record.setTargetType(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getCode());
         record.setNodeTitle(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getDesc());
         record.setOperateTime(new Date());
         record.setOperatorWorkid(assetDto.getOperator());
-        record.setOperatorName(emp360Adapter.getName(assetDto.getOperator()));
+        record.setOperatorName(assetDto.getOperator());
+        record.setRemarks(assetDtoList.stream().map(CuntaoAssetDto::getId).map(String::valueOf).collect(Collectors.joining(",")));
+        record.setTraceId(String.valueOf(assetDto.getNewStationId()));
         cuntaoFlowRecordBO.addRecord(record);
     }
 }

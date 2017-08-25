@@ -340,27 +340,17 @@ public class CuntaoFlowRecordListener implements EventListener {
 	
 	// 获取停业原因
 	private String findCloseReason(Long instanceId) {
-		try {
 			CloseStationApplyDto forcedCloseDto = partnerInstanceQueryService.getCloseStationApply(instanceId);
 			if (CloseStationApplyCloseReasonEnum.OTHER.equals(forcedCloseDto.getCloseReason())) {
 				return forcedCloseDto.getOtherReason();
 			} else {
 				return null != forcedCloseDto.getCloseReason() ? forcedCloseDto.getCloseReason().getDesc() : "";
 			}
-		} catch (Exception e) {
-			logger.error("查询停业原因失败。instanceId=" + instanceId, e);
-			return "";
-		}
 	}
 	
 	// 获取退出原因
 	private String findQuitReason(Long instanceId) {
-		try {
 			QuitStationApplyDto quitStationApplyDto = partnerInstanceQueryService.getQuitStationApply(instanceId);
 			return quitStationApplyDto.getOtherDescription();
-		} catch (Exception e) {
-			logger.error("查询退出原因失败。instanceId=" + instanceId, e);
-			return "";
-		}
 	}
 }

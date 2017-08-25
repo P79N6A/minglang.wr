@@ -15,10 +15,12 @@ public class StationDecorateOrderServiceImpl implements StationDecorateOrderServ
 	@Autowired
 	private StationDecorateOrderBO stationDecorateOrderBO;
 	
-	public StationDecorateOrderDto getDecorateOrderById(Long bizOrderId){
+	@Override
+    public StationDecorateOrderDto getDecorateOrderById(Long bizOrderId){
 		return stationDecorateOrderBO.getDecorateOrderById(bizOrderId).orElse(null);
 	}
 
+	@Override
 	public StationDecorateOrderDto getDecorateOrder(Long sellerTaobaoUserId, Long buyerTaobaoUserId){
 		return stationDecorateOrderBO.getDecorateOrder(sellerTaobaoUserId,buyerTaobaoUserId).orElse(null);
 	}

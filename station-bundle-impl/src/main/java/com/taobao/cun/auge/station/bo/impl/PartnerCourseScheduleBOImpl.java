@@ -26,7 +26,6 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflect;
@@ -34,11 +33,13 @@ import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseScheduleReflectExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseScheduleReflectMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleReflectDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleShowDto;
 import com.taobao.cun.auge.station.enums.PartnerScheduleStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 @Component("partnerCourseScheduleBO")
 public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 
@@ -79,7 +80,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 		criteria.andCourseCodeEqualTo(dto.getCourseCode());
 		List<PartnerCourseScheduleReflect> records=partnerCourseScheduleReflectMapper.selectByExample(example);
 		if(records.size()>0){
-			throw new AugeServiceException("已经反馈过，请不要重复反馈");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"已经反馈过，请不要重复反馈");
 		}
 		PartnerCourseScheduleReflect pcsr=new PartnerCourseScheduleReflect();
 		BeanUtils.copyProperties(dto, pcsr);
@@ -126,7 +127,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 			if (coursesResult.isSuccess()) {
 				return coursesResult.getData().getRows()==null?Lists.newArrayList():coursesResult.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ coursesResult.getMsg());
 			}
 		} catch (Exception e) {
@@ -146,7 +147,7 @@ public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 			if (result.isSuccess()) {
 				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
 			} else {
-				throw new RuntimeException("query record error,"
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
 						+ result.getMsg());
 			}
 		} catch (Exception e) {

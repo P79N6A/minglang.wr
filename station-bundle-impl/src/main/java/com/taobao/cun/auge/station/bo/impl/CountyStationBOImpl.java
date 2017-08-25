@@ -22,7 +22,7 @@ public class CountyStationBOImpl implements CountyStationBO {
 	
 	@Override
 	public CountyStation getCountyStationByOrgId(Long orgId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(orgId);
 		CountyStationExample example = new CountyStationExample();
 		Criteria criteria = example.createCriteria();
@@ -32,7 +32,8 @@ public class CountyStationBOImpl implements CountyStationBO {
 		return ResultUtils.selectOne(resList);
 	}
 
-	public Long addCountyStation(CountyStation cs){
+	@Override
+    public Long addCountyStation(CountyStation cs){
 		countyStationMapper.insert(cs);
 		return cs.getId();
 	}

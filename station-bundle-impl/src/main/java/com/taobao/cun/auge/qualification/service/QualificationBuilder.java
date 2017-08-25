@@ -79,6 +79,7 @@ public class QualificationBuilder {
 		businessTypeMapping.put("个体户", SMALL_BUSINESS);
 		businessTypeMapping.put("个体", SMALL_BUSINESS);
 		businessTypeMapping.put("个体工商户", SMALL_BUSINESS);
+		businessTypeMapping.put("个人独资企业", SMALL_BUSINESS);
 		businessTypeMapping.put("自然人", PERSONAL_BUSINESS);
 	}
 	
@@ -120,10 +121,8 @@ public class QualificationBuilder {
 				qualification.setErrorCode("");
 				qualification.setErrorMessage("");
 			}
-			if(UserQualiRecordStatus.AUDIT_PASS ==  auditStatus){
 				qualification.setSubmitTime(userQualiRecord.get().getSubmitTime());
 				qualification.setAuditTime(userQualiRecord.get().getAuditTime());
-			}
 		}
 		
 		return qualification;	

@@ -21,7 +21,6 @@ import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -37,10 +36,17 @@ public class StationQueryServiceImpl implements StationQueryService {
 	
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
+	
+	@Override
+	public StationDto getStation(Long stationId){
+		ValidateUtils.notNull(stationId);
+		Station station = stationBO.getStationById(stationId);
+		return StationConverter.toStationDto(station);
+	}
 
 	@Override
 	public StationDto queryStationInfo(StationCondition stationCondition)
-			throws AugeServiceException {
+		{
 		ValidateUtils.validateParam(stationCondition);
 		ValidateUtils.notNull(stationCondition.getId());
 		
@@ -53,7 +59,7 @@ public class StationQueryServiceImpl implements StationQueryService {
 	}
 
 	@Override
-	public List<StationDto> queryStations(List<Long> stationIds) throws AugeServiceException {
+	public List<StationDto> queryStations(List<Long> stationIds){
 		if (CollectionUtils.isEmpty(stationIds)) {
 			return Collections.<StationDto> emptyList();
 		}
@@ -63,26 +69,26 @@ public class StationQueryServiceImpl implements StationQueryService {
 	}
 
 	@Override
-	public List<StationDto> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException {
+	public List<StationDto> getTpStationsByName(StationCondition stationCondition){
 		ValidateUtils.validateParam(stationCondition);
 		List<Station> stations = stationBO.getTpStationsByName(stationCondition);
 		return stations.stream().map(StationConverter::toStationDto).collect(Collectors.toList());
 	}
 	
 	@Override
-	public ShutDownStationApplyDto findShutDownStationApply(Long stationId) throws AugeServiceException{
+	public ShutDownStationApplyDto findShutDownStationApply(Long stationId){
 		ValidateUtils.notNull(stationId);
 		return shutDownStationApplyBO.findShutDownStationApply(stationId);
 	}
 	
 	@Override
-	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId) throws AugeServiceException{
+	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId){
 		ValidateUtils.notNull(applyId);
 		return shutDownStationApplyBO.findShutDownStationApplyById(applyId);
 	}
 	
 	@Override
-	public PageDto<StationDto> queryStations(StationCondition stationCondition) throws AugeServiceException {
+	public PageDto<StationDto> queryStations(StationCondition stationCondition){
 		ValidateUtils.validateParam(stationCondition);
 		Page<Station> page = stationBO.getStations(stationCondition);
 

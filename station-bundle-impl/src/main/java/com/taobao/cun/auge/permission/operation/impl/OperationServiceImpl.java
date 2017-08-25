@@ -17,7 +17,6 @@ import com.alibaba.buc.acl.api.input.check.CheckPermissionsParam;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult.CheckPermissionResultInner;
 import com.alibaba.buc.acl.api.service.AccessControlService;
-import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.dto.AppResourceDto;
@@ -28,7 +27,6 @@ import com.taobao.cun.auge.permission.operation.OperationData;
 import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.cun.auge.permission.operation.PagedOperationData;
 import com.taobao.cun.auge.permission.service.EndorUserPermissionService;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @HSFProvider(serviceInterface = OperationService.class)
@@ -55,21 +53,18 @@ public class OperationServiceImpl implements OperationService {
 	EmbeddedValueResolver valueResolver = new EmbeddedValueResolver();
 	
 	@Override
-	public List<Operation> getOperations(String empId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) throws AugeServiceException {
-		try {
+	public List<Operation> getOperations(String empId, Long orgId, String roleName, List<String> operationsCodes, List<OperationData> operationDatas) {
 			List<Operation> operations = getOperations(operationsCodes);
-			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
+			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, orgId, roleName, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (Exception e) {
-			logger.error("getOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
-	private CheckPermissionsResult getCheckPermissionResult(String empId, String roleName, List<Operation> operations) {
+	private CheckPermissionsResult getCheckPermissionResult(String empId, Long orgId, String roleName, List<Operation> operations) {
 		Set<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toSet());
-		if(CollectionUtils.isEmpty(permissionNames)) return null;
-		PermissonBatchResult permissonBatchResult = endorUserPermissionService.batchCheck(empId, permissionNames, roleName);
+		if(CollectionUtils.isEmpty(permissionNames)) {
+            return null;
+        }
+		PermissonBatchResult permissonBatchResult = endorUserPermissionService.batchCheck(empId, orgId, roleName, permissionNames);
 		
 		List<CheckPermissionResultInner> checkPermissionResults = Lists.newArrayList();
 		permissionNames.forEach(permissionName->{
@@ -84,46 +79,33 @@ public class OperationServiceImpl implements OperationService {
 	}
 	
 	@Override
-	public Map<String,List<Operation>> getPagedOperations(String empId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
-		try {
+	public Map<String,List<Operation>> getPagedOperations(String empId, Long orgId, String roleName, List<String> operationsCodes,List<PagedOperationData> operationDatas){
 			List<Operation> operations = getOperations(operationsCodes);
-			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, roleName, operations);
+			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(empId, orgId, roleName, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (BucException e) {
-			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
 	@Override
 	public Map<String,List<Operation>> getPagedOperations(Integer bucUserId,List<String> operationsCodes,List<PagedOperationData> operationDatas){
-		try {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchPagedOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (BucException e) {
-			logger.error("getPagedOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 
 	@Override
 	public List<Operation> getOperations(Integer bucUserId, List<String> operationsCodes,
-			List<OperationData> operationDatas) throws AugeServiceException {
-		try {
+			List<OperationData> operationDatas) {
 			List<Operation> operations = getOperations(operationsCodes);
 			CheckPermissionsResult checkPermissionsResult = getCheckPermissionResult(bucUserId, operations);
 			return matchOperations(operations,operationDatas,checkPermissionsResult);
-		} catch (Exception e) {
-			logger.error("getOperations error!operationsCodes["+JSON.toJSONString(operationsCodes)+"] operationDatas["+operationDatas+"]",e);
-			throw new  AugeServiceException(e);
-		}
 	}
 	
 	
 	private CheckPermissionsResult getCheckPermissionResult(Integer bucUserId, List<Operation> operations) {
 		List<String> permissionNames = operations.stream().filter(oper ->  StringUtils.isNotEmpty(oper.getPermission())).map(oper -> oper.getPermission()).collect(Collectors.toList());
-		if(CollectionUtils.isEmpty(permissionNames))return null;
+		if(CollectionUtils.isEmpty(permissionNames)) {
+            return null;
+        }
 		CheckPermissionsParam checkPermissionsParam = new CheckPermissionsParam();
 		checkPermissionsParam.setAccessKey(accessKey);
 		checkPermissionsParam.setUserId(bucUserId);
@@ -132,7 +114,7 @@ public class OperationServiceImpl implements OperationService {
 		return checkPermissionsResult;
 	}
 
-	private List<Operation> getOperations(List<String> operationsCode) throws BucException {
+	private List<Operation> getOperations(List<String> operationsCode){
 		List<AppResourceDto> resources = appResourceService.queryAppResourceList(operationsCode);
 		List<Operation> operations = resources.stream().map(resource -> {
 			 return createOperation(resource);

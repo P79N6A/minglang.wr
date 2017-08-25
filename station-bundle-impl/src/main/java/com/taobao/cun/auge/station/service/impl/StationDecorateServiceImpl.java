@@ -17,6 +17,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -32,8 +33,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -87,33 +87,23 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	private String stationDecorateReflectUrl;
 	
 	@Override
-	public void audit(StationDecorateAuditDto stationDecorateAuditDto) throws AugeServiceException {
+	public void audit(StationDecorateAuditDto stationDecorateAuditDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateAuditDto);
 		if (!stationDecorateAuditDto.getIsAgree()) {
 			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
-			logger.error(error);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,error);
 		}
-		try {
 			Long sdId = stationDecorateAuditDto.getId();
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(sdId);
 			if (sd == null) {
 				String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "StationDecorate is null");
-				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			//审批服务站装修记录
 			auditStationDecorate(stationDecorateAuditDto);
 			//更新生命周期表为已完成
 			setLifecycleDecorate(stationDecorateAuditDto, sd);
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("audit", JSONObject.toJSONString(stationDecorateAuditDto), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	private void setLifecycleDecorate(
@@ -121,8 +111,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(sd.getPartnerUserId());
 		if (rel == null) {
 			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "PartnerStationRel is null");
-			logger.error(error);
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 		}
 		
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(rel.getId(),
@@ -157,23 +146,14 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	}
 
 	@Override
-	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId) throws AugeServiceException {
+	public StationDecorateDto getInfoByTaobaoUserId(Long taobaoUserId){
 		ValidateUtils.notNull(taobaoUserId);
-		try {
 			PartnerStationRel  rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
 			if (rel == null) {
 				String error = getErrorMessage("getInfoByTaobaoUserId",String.valueOf(taobaoUserId), "rel is null");
-				logger.error(error);
-				throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
 			}
 			return getInfoByStationId(rel.getStationId());
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("getInfoByTaobaoUserId", JSONObject.toJSONString(taobaoUserId), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 	
 	/**
@@ -181,29 +161,25 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	 * @param sdDto
 	 */
 	private void setShopItemInfo(StationDecorateDto sdDto) {
-		try {
 			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
 				AppResourceDto resource = appResourceService.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
 				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 					sdDto.setTaobaoItemUrl(taobaoItemUrl+resource.getValue());
 				}
 			}
-		} catch (Exception e) {
-			logger.error("setShopInfo error: key"+sdDto.getSellerTaobaoUserId());
-		}
 	}
+	
 	@Override
-	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto) throws AugeServiceException {
+	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateReflectDto);
-		try {
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(stationDecorateReflectDto.getId());
 			if (sd == null) {
-				throw new AugeServiceException("查询不到当前装修记录");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"查询不到当前装修记录");
 			}
 			if (StationDecorateStatusEnum.UNDECORATE.getCode().equals(sd.getStatus())||
 					StationDecorateStatusEnum.DONE.getCode().equals(sd.getStatus())) {
-				throw new AugeServiceException("当前状态不能提交反馈");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
 //			Station station=stationBO.getStationById(sd.getStationId());
@@ -212,13 +188,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 //			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("reflectStationDecorate", JSONObject.toJSONString(stationDecorateReflectDto), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	private StationDecorateDto buildStationDecorateDtoForReflect(
@@ -241,11 +210,13 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		
 	}
 	
-	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum,int pageSize){
+	@Override
+	public List<StationDecorateDto> getStationDecorateListForSchedule(int pageNum, int pageSize){
 		return stationDecorateBO.getStationDecorateListForSchedule(pageNum, pageSize);
 	}
 
 	
+	@Override
 	public int getStationDecorateListCountForSchedule(){
 		return stationDecorateBO.getStationDecorateListCountForSchedule();
 	}
@@ -257,16 +228,15 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 
 	@Override
 	public void syncStationDecorateFromTaobao(
-			StationDecorateDto stationDecorateDto) throws AugeServiceException {
+			StationDecorateDto stationDecorateDto){
 		stationDecorateBO.syncStationDecorateFromTaobao(stationDecorateDto);
 		
 	}
 
 	@Override
 	public StationDecorateDto getInfoByStationId(Long stationId)
-			throws AugeServiceException {
+			{
 		ValidateUtils.notNull(stationId);
-		try {
 			StationDecorateDto sdDto =  null;
 			sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 			if (sdDto == null) {
@@ -303,23 +273,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			}
 			setShopItemInfo(sdDto);
 			return sdDto;
-		} catch (AugeServiceException augeException) {
-			throw augeException;
-		} catch (Exception e) {
-			String error = getErrorMessage("getInfoByStationId", String.valueOf(stationId), e.getMessage());
-			logger.error(error, e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 
 	@Override
 	public Map<Long, StationDecorateStatusEnum> getStatusByStationId(
-			List<Long> stationIds) throws AugeServiceException {
+			List<Long> stationIds){
 		return stationDecorateBO.getStatusByStationId(stationIds);
 	}
 
 	@Override
-	public String getReflectUrl(Long taobaoUserId) throws AugeServiceException {
+	public String getReflectUrl(Long taobaoUserId){
 		StationDecorateDto dto = this.getInfoByTaobaoUserId(taobaoUserId);
 		if (dto != null) {
 			if (StationDecorateStatusEnum.DECORATING.equals(dto.getStatus())
@@ -345,7 +308,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		if (StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(
 				sdDto.getStatus().getCode())) {
 			// 装修反馈待审核，需要小二审核完毕才能退出
-			throw new RuntimeException("村点装修状态不允许退出，请先审核装修反馈记录");
+			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"村点装修状态不允许退出，请先审核装修反馈记录");
 		} 
 		//其他状态暂时不做判断，走线下流程
 //		if (StationDecorateStatusEnum.DONE.getCode().equals(

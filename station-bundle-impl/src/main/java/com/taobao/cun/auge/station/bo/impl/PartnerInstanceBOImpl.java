@@ -9,15 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.ali.com.google.common.collect.Sets;
@@ -39,6 +30,7 @@ import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
@@ -58,12 +50,17 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.pandora.util.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Component("partnerInstanceBO")
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
@@ -91,7 +88,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public PartnerStationRel getPartnerInstanceByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState)
-			throws AugeServiceException {
+			{
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(instanceState);
 		PartnerStationRelExample example = new PartnerStationRelExample();
@@ -108,7 +105,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) throws AugeServiceException {
+	public Long getInstanceIdByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum instanceState) {
 		PartnerStationRel rel = getPartnerInstanceByTaobaoUserId(taobaoUserId, instanceState);
 		if (rel != null) {
 			return rel.getId();
@@ -117,7 +114,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public Long getInstanceIdByStationApplyId(Long stationApplyId) throws AugeServiceException {
+	public Long getInstanceIdByStationApplyId(Long stationApplyId) {
 		PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
 		if (rel == null) {
 			return null;
@@ -127,7 +124,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) throws AugeServiceException {
+	public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) {
 		ValidateUtils.notNull(stationApplyId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -142,7 +139,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) throws AugeServiceException {
+	public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
@@ -158,7 +155,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) throws AugeServiceException {
+	public List<PartnerStationRel> findChildPartners(Long instanceId, List<PartnerInstanceStateEnum> stateEnums) {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		Long parentStationId = curPartnerInstance.getStationId();
 
@@ -185,7 +182,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public List<PartnerStationRel> findPartnerInstances(Long stationId) throws AugeServiceException {
+	public List<PartnerStationRel> findPartnerInstances(Long stationId) {
 		if (null == stationId) {
 			return Collections.<PartnerStationRel> emptyList();
 		}
@@ -202,7 +199,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public PartnerStationRel findLastClosePartnerInstance(Long stationId) throws AugeServiceException{
+	public PartnerStationRel findLastClosePartnerInstance(Long stationId) {
 		if (null == stationId) {
 			return null;
 		}
@@ -223,12 +220,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void changeState(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator)
-			throws AugeServiceException {
+			{
 		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 
 		if (!preState.getCode().equals(partnerInstance.getState())) {
 			logger.error("partner instance state is not " + preState.getDesc());
-			throw new AugeServiceException("partner instance state is not " + preState.getDesc());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance state is not " + preState.getDesc());
 		}
 
 		PartnerStationRel updateInstance = new PartnerStationRel();
@@ -242,24 +239,24 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerStationRel findPartnerInstanceById(Long instanceId) throws AugeServiceException {
+	public PartnerStationRel findPartnerInstanceById(Long instanceId) {
 		PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
 		if (null == partnerInstance) {
 			logger.error("partner instance is not exist.instance id " + instanceId);
-			throw new AugeServiceException(StationExceptionEnum.PARTNER_INSTANCE_NOT_EXIST);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance is not exist.instance id " + instanceId);
 		}
 		return partnerInstance;
 	}
 
 	@Override
-	public Long findStationIdByInstanceId(Long instanceId) throws AugeServiceException {
+	public Long findStationIdByInstanceId(Long instanceId) {
 		PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
 		return curPartnerInstance.getStationId();
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public void updatePartnerStationRel(PartnerInstanceDto partnerInstanceDto) {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());
 		// ValidateUtils.notNull(partnerInstanceDto.getVersion());
@@ -273,14 +270,14 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		criteria.andIdEqualTo(partnerInstanceDto.getId());
 		criteria.andIsDeletedEqualTo("n");
 		if (partnerInstanceDto.getVersion() != null) {
-			rel.setVersion(rel.getVersion() + 1l);
+			rel.setVersion(rel.getVersion() + 1L);
 			criteria.andVersionEqualTo(partnerInstanceDto.getVersion());
 		}
 
 		int updateCount = partnerStationRelMapper.updateByExampleSelective(rel, example);
 
 		if (updateCount < 1) {
-			throw new AugeServiceException(CommonExceptionEnum.VERION_IS_INVALID);
+			throw new AugeBusinessException(AugeErrorCodes.CONCURRENT_UPDATE_ERROR_CODE,"当前数据有更新，请刷新页面重试");
 		}
 	}
 
@@ -291,7 +288,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) throws AugeServiceException {
+	public PartnerInstanceDto getPartnerInstanceById(Long instanceId) {
 		PartnerStationRel psRel = findPartnerInstanceById(instanceId);
 		Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
 		Station station = stationBO.getStationById(psRel.getStationId());
@@ -301,12 +298,12 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void updateOpenDate(Long instanceId, Date openDate, String operator) throws AugeServiceException {
+	public void updateOpenDate(Long instanceId, Date openDate, String operator) {
 		ValidateUtils.notNull(instanceId);
 		ValidateUtils.notNull(operator);
 		PartnerStationRel partnerStationRel = partnerStationRelMapper.selectByPrimaryKey(instanceId);
 		if (partnerStationRel == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerInstanceId is null instanceId["+instanceId+"]");
 		}
 
 		partnerStationRel.setOpenDate(openDate);
@@ -315,7 +312,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public Long findStationApplyIdByStationId(Long stationId) throws AugeServiceException {
+	public Long findStationApplyIdByStationId(Long stationId) {
 		PartnerStationRel partnerStationRel = findPartnerInstanceByStationId(stationId);
 		if (partnerStationRel != null) {
 			return partnerStationRel.getStationApplyId();
@@ -324,17 +321,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public Long findPartnerInstanceIdByStationId(Long stationId) throws AugeServiceException{
+	public Long findPartnerInstanceIdByStationId(Long stationId) {
 		PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
 		if (null == rel) {
 			logger.error("partner instance is not exist.stationId " + stationId);
-			throw new AugeServiceException(StationExceptionEnum.PARTNER_INSTANCE_NOT_EXIST);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance is not exist.stationId " + stationId);
 		}
 		return rel.getId();
 	}
 
 	@Override
-	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) throws AugeServiceException {
+	public PartnerStationRel findPartnerInstanceByStationId(Long stationId) {
 		ValidateUtils.notNull(stationId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -373,7 +370,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 		return partnerStationRelMapper.selectByExample(example);
 	}
 
-	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) throws AugeServiceException {
+	public List<PartnerStationRel> findPartnerInstanceByPartnerId(Long partnerId, List<String> states) {
 		ValidateUtils.notNull(partnerId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 
@@ -388,7 +385,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto) throws AugeServiceException {
+	public Long addPartnerStationRel(PartnerInstanceDto partnerInstanceDto){
 		ValidateUtils.validateParam(partnerInstanceDto);
 		PartnerStationRel partnerStationRel = PartnerInstanceConverter.convert(partnerInstanceDto);
 		
@@ -440,7 +437,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public boolean checkSettleQualification(Long taobaoUserId) throws AugeServiceException {
+	public boolean checkSettleQualification(Long taobaoUserId) {
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if (partner == null || partner.getId() == null) {
 			return true;
@@ -474,7 +471,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void deletePartnerStationRel(Long instanceId, String operator) throws AugeServiceException {
+	public void deletePartnerStationRel(Long instanceId, String operator) {
 		PartnerStationRel rel = new PartnerStationRel();
 		rel.setId(instanceId);
 		DomainUtils.beforeDelete(rel, operator);
@@ -482,7 +479,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException {
+	public List<Long> getWaitOpenStationList(int fetchNum) {
 		if (fetchNum < 0) {
 			return null;
 		}
@@ -507,7 +504,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public List<Long> getWaitThawMoneyList(int fetchNum) throws AugeServiceException {
+	public List<Long> getWaitThawMoneyList(int fetchNum) {
 		if (fetchNum < 0) {
 			return null;
 		}
@@ -571,7 +568,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public int getActiveTpaByParentStationId(Long parentStationId) throws AugeServiceException {
+	public int getActiveTpaByParentStationId(Long parentStationId) {
 		int count = 0;
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId)
@@ -600,17 +597,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public void finishCourse(Long taobaoUserId) throws AugeServiceException {
+	public void finishCourse(Long taobaoUserId) {
 		ValidateUtils.notNull(taobaoUserId);
 		PartnerStationRel rel = this.getActivePartnerInstance(taobaoUserId);
 		if (rel == null) {
-			throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"getActivePartnerInstance is null:taobaoUserId["+taobaoUserId+"]");
 		}
 		partnerLifecycleBO.updateCourseState(rel.getId(), PartnerLifecycleCourseStatusEnum.Y, OperatorDto.defaultOperator());
 	}
 	
 	@Override
-	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException	{
+	public boolean isAllPartnerQuit(Long stationId) 	{
 		List<PartnerStationRel> instances = findPartnerInstances(stationId);
 
 		return isAllPartnerQuit(instances);
@@ -644,7 +641,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException{
+	public boolean isOtherPartnerQuit(Long instanceId) {
 		PartnerStationRel partnerInstance = findPartnerInstanceById(instanceId);
 		
 		PartnerStationRelExample example = new PartnerStationRelExample();
@@ -660,7 +657,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) {
 		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.Y.getCode());
 		if (psRels.size() < 1){
 			return null;
@@ -673,7 +670,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 
 	@Override
-	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException {
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) {
 		List<PartnerStationRel> psRels = getPartnerStationRelByPartnerId(partnerId, PartnerInstanceIsCurrentEnum.N.getCode());
 		if (psRels.size() < 1){
 			return null;
@@ -692,7 +689,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(
-			Long stationId) throws AugeServiceException {
+			Long stationId) {
 		List<PartnerStationRel> psRels = getPartnerStationRelByStationId(stationId, PartnerInstanceIsCurrentEnum.N.getCode());
 		if (psRels.size() < 1){
 			return null;
@@ -723,7 +720,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	}
 	
 	@Override
-	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator) throws AugeServiceException {
+	public void reService(Long instanceId, PartnerInstanceStateEnum preState, PartnerInstanceStateEnum postState, String operator) {
 		changeState(instanceId, preState, postState, operator);
 		PartnerStationRel updateInstance = new PartnerStationRel();
 		updateInstance.setId(instanceId);
@@ -734,7 +731,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
 	@Override
 	public PartnerStationRel getCurrentPartnerInstanceByTaobaoUserId(
-			Long taobaoUserId) throws AugeServiceException {
+			Long taobaoUserId) {
 		ValidateUtils.notNull(taobaoUserId);
 		PartnerStationRelExample example = new PartnerStationRelExample();
 		Criteria criteria = example.createCriteria();
@@ -747,7 +744,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	@Override
 	public void updateIsCurrentByInstanceId(Long instanceId,
 			PartnerInstanceIsCurrentEnum isCurrentEnum)
-			throws AugeServiceException {
+			{
 		PartnerStationRel updateInstance = new PartnerStationRel();
 		updateInstance.setIsCurrent(isCurrentEnum.getCode());
 		updateInstance.setId(instanceId);
@@ -782,7 +779,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 	
 	@Override
 	public List<PartnerStationRel> getBatchActivePartnerInstance(
-			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) throws AugeServiceException {
+			List<Long> taobaoUserId,List<String> instanceType,List<String> statusList) {
 		if(taobaoUserId.size()==0){
 			return new ArrayList<PartnerStationRel>();
 		}
@@ -839,9 +836,17 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 				}
 			}
 		}else{
-			throw new AugeServiceException("user id is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"user id is null");
 
 		}
 		return true;
+	}
+	
+	
+	@Override
+    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
+		return partnerStationRelMapper.selectByExample(example);
 	}
 }

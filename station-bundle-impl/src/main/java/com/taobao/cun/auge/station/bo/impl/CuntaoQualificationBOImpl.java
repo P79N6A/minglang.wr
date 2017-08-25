@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,7 +48,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void updateQualification(CuntaoQualification cuntaoQualification) {
 		cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
-		if(cuntaoQualification.getStatus() == QualificationStatus.VALID){
+		if(Objects.equals(cuntaoQualification.getStatus(), QualificationStatus.VALID)){
 			CuntaoQualification record = new CuntaoQualification();
 			record.setId(cuntaoQualification.getId());
 			record.setErrorCode("");
@@ -89,7 +90,8 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Override
 	public void submitHavanaQualification(Long taobaoUserId) {
 		CuntaoQualification cuntaoQualification = this.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
-		if(cuntaoQualification.getStatus() == QualificationStatus.SUBMIT_FAIL||cuntaoQualification.getStatus() == QualificationStatus.UN_SUBMIT){
+		if(Objects.equals(cuntaoQualification.getStatus(), QualificationStatus.SUBMIT_FAIL) || Objects.equals(
+            cuntaoQualification.getStatus(), QualificationStatus.UN_SUBMIT)){
 			DomainUtils.beforeUpdate(cuntaoQualification, "system");
 			sellerQualiServiceAdapter.insertQualiRecord(cuntaoQualification);
 			cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);

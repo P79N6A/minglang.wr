@@ -37,18 +37,19 @@ public class ProcessedStationStatusConverter {
 	public static StationStatisticDto toProcessedStationStatusDtos(List<ProcessedStationStatus> statusList){
 		Map<String,Integer> map=new HashMap<String,Integer>();
 		for (ProcessedStationStatus p : statusList) {
-			String key = mapping.get(p.getStatus());
-			if(key!=null){
-				if(map.containsKey(key)){
-					Integer val=map.get(key);
-					val=val+p.getCount();
-					map.put(key, val);
-				}
-				else{
-					map.put(key, p.getCount());
+			if(p != null){
+				String key = mapping.get(p.getStatus());
+				if(key!=null){
+					if(map.containsKey(key)){
+						Integer val=map.get(key);
+						val=val+p.getCount();
+						map.put(key, val);
+					}
+					else{
+						map.put(key, p.getCount());
+					}
 				}
 			}
-			
 		}
 
 		StationStatisticDto stationStatisticDto =new StationStatisticDto();

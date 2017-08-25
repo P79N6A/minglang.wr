@@ -3,13 +3,6 @@ package com.taobao.cun.auge.alilang;
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.alilang.dto.AlilangForceInstallConfigDto;
-import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
-import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
-import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
-import com.taobao.diamond.client.Diamond;
-
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -17,20 +10,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.alilang.dto.AlilangForceInstallConfigDto;
+import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
+import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
-import org.springframework.util.CollectionUtils;
 
 
 @Service("alilangHomePageService")
@@ -132,7 +131,7 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
     }
 
 
-    private boolean isForceInstallAlilang(PartnerStationRel partnerInstance) {
+    private boolean isForceInstallAlilang(PartnerStationRel partnerInstance) throws Exception {
         //是否强制安装阿里郎
         try {
         	if(!PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState())){
@@ -172,17 +171,19 @@ public class AlilangHomePageServiceImpl implements AlilangHomePageService {
                 }
                 currentOrg = currentOrg.getParent();
             }
+            return false;
         } catch (Exception e) {
             logger.error(ERROR_MSG + "isForceInstallAlilang", e);
+            throw e;
         }
-        return false;
+       
     }
 
 
 	@Override
 	public List<UserProfile> queryUserForMeeting(String name, Long taobaoUserId) {
-		if (taobaoUserId == null || taobaoUserId == 0l) {
-			throw new AugeServiceException("taobaoUserId is null");
+		if (taobaoUserId == null || taobaoUserId == 0L) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"taobaoUserId is null");
 		}
 		PartnerStationRel rel = partnerInstanceBO
 				.getActivePartnerInstance(taobaoUserId);

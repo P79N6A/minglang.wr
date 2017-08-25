@@ -25,12 +25,12 @@
 		<spring-boot-starter-bom.version>1.0.0-SNAPSHOT</spring-boot-starter-bom.version>
 		<spring-boot.version>1.4.2.RELEASE</spring-boot.version>
 		<spring-platform-bom.version>2.0.1.RELEASE</spring-platform-bom.version>
-		<spring-cloud.version>Brixton.RELEASE</spring-cloud.version>
+		<spring-cloud.version>Camden.SR3</spring-cloud.version>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>2.5.0</ague.station.client.version>
-
+		<ague.station.client.version>2.7.3</ague.station.client.version>
+		<alibaba-spring-boot.version>1.4.2.9</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
@@ -38,10 +38,17 @@
 			<!-- spring-boot-starter-bom must be in the 1st, to avoid tricky dependency 
 				collision issues. -->
 			<!-- spring-boot-starter-bom 必须在第一位, 以避免各种依赖冲突问题. -->
-			<dependency>
-				<groupId>com.aliexpress.boot</groupId>
-				<artifactId>spring-boot-starter-bom</artifactId>
-				<version>${spring-boot-starter-bom.version}</version>
+			  <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>alibaba-spring-boot-dependencies</artifactId>
+                <version>${alibaba-spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -53,38 +60,9 @@
 				<scope>import</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring-boot.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba.boot</groupId>
-				<artifactId>alimetrics-spring-boot-starter</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-			<dependency>
 				<groupId>com.alibaba.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-uic</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>com.aliexpress.boot</groupId>
-				<artifactId>spring-boot-starter-hsf</artifactId>
-				<version>1.2.3</version>
-			</dependency>
-			<dependency>
-				<groupId>io.spring.platform</groupId>
-				<artifactId>platform-bom</artifactId>
-				<version>${spring-platform-bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba.boot</groupId>
-				<artifactId>diamond-spring-boot-starter</artifactId>
-				<version>1.0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -185,7 +163,7 @@
 			<dependency>
 				<groupId>com.taobao</groupId>
 				<artifactId>biz-base-org</artifactId>
-				<version>1.0.3</version>
+				<version>1.0.8</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>
@@ -210,7 +188,7 @@
 			<dependency>
 				<groupId>com.taobao.metaq.final</groupId>
 				<artifactId>metaq-client</artifactId>
-				<version>3.4.5</version>
+				 <version>4.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
@@ -227,7 +205,7 @@
 			<dependency>
 				<groupId>com.alibaba.cainiao</groupId>
 				<artifactId>cuntaonetwork-client</artifactId>
-				<version>1.1.46</version>
+				<version>1.1.54</version>
 			</dependency>
 
 			<dependency>
@@ -257,7 +235,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaoar.shared.scene</artifactId>
-				<version>0.1.5</version>
+				<version>0.3.7</version>
 			</dependency>
 			<dependency>
 		        <groupId>com.alibaba.boot</groupId>
@@ -335,7 +313,7 @@
 			<dependency>
 				<groupId>com.alibaba.middleware.jingwei</groupId>
 				<artifactId>jingwei-client</artifactId>
-				<version>3.2.2</version>
+				<version>3.2.3</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.apache.httpcomponents</groupId>
@@ -412,7 +390,7 @@
 			<dependency>
 			  <groupId>com.alibaba.crm.shared</groupId>
 			  <artifactId>ceres.shard</artifactId>
-			  <version>1.0.0.39</version>
+			  <version>1.0.0.69</version>
 			  <exclusions>
 			 	 <exclusion>
 			   	<groupId>com.alibaba.citrus</groupId>  
@@ -420,6 +398,17 @@
 			  	</exclusion>
 			  </exclusions>
 			 </dependency>
+			<dependency>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>cmall.shared</artifactId>
+			<version>1.0.0.9</version>
+			  <exclusions>
+			 	 <exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+			  	</exclusion>
+			  </exclusions>
+			</dependency>
 			 	
             <dependency>
                 <groupId>com.taobao.cun</groupId>
@@ -434,7 +423,7 @@
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
 				<artifactId>cuntaosettle.client</artifactId>
-				<version>1.0.25.jdk6</version>
+				<version>1.1.6</version>
 			</dependency>
 			<dependency>
 			  	<groupId>com.alibaba.external</groupId>
@@ -497,6 +486,11 @@
 			  <artifactId>biz-client</artifactId>
 			  <version>1.2.7</version>
 			</dependency>
+            <dependency>
+                <groupId>com.taobao</groupId>
+                <artifactId>biz-base-data</artifactId>
+                <version>1.0.2</version>
+            </dependency>
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>attachement-client</artifactId>
@@ -515,7 +509,7 @@
 			<dependency>
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
-				<version>2.1.4</version>
+				<version>2.1.8-SNAPSHOT</version>
 			</dependency>		
 			<dependency>
 			  <groupId>com.alibaba.crm</groupId>
@@ -557,6 +551,42 @@
 					<exclusion>
 						<groupId>org.apache.zookeeper</groupId>
 						<artifactId>zookeeper</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+			  <groupId>io.advantageous.reakt</groupId>
+			  <artifactId>reakt</artifactId>
+			  <version>3.1.0</version>
+			</dependency>
+			<dependency>
+			  <groupId>com.alibaba.china.shared</groupId>
+			  <artifactId>xfsm.spring</artifactId>
+			  <version>1.0.10</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.namelist</groupId>
+				<artifactId>namelist-common</artifactId>
+				<version>2.4.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.crius</groupId>
+				<artifactId>user-client</artifactId>
+				<version>1.0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alipay.baoxian</groupId>
+				<artifactId>baoxian-scene-facade</artifactId>
+				<version>1.0.0.20160421</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+				<version>2.1.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-nop</artifactId>
 					</exclusion>
 				</exclusions>
 			</dependency>

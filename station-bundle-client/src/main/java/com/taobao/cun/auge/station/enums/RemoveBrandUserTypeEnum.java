@@ -16,6 +16,8 @@ public class RemoveBrandUserTypeEnum implements Serializable {
     private String code;
     private String desc;
     
+    public static final RemoveBrandUserTypeEnum TEMP  = new RemoveBrandUserTypeEnum("TEMP", "暂不拆除");
+    
     public static final RemoveBrandUserTypeEnum NONE  = new RemoveBrandUserTypeEnum("NONE", "不拆除");
     
     public static final RemoveBrandUserTypeEnum PARTNER  = new RemoveBrandUserTypeEnum("PARTNER", "村小二");
@@ -27,6 +29,7 @@ public class RemoveBrandUserTypeEnum implements Serializable {
     	mappings.put("NONE", NONE);
     	mappings.put("PARTNER", PARTNER);
         mappings.put("ISV", ISV);
+        mappings.put("TEMP", TEMP);
     }
 
     public RemoveBrandUserTypeEnum(String code, String desc) {
@@ -55,8 +58,9 @@ public class RemoveBrandUserTypeEnum implements Serializable {
     }
 
     public static RemoveBrandUserTypeEnum valueof(String code) {
-        if (code == null)
+        if (code == null) {
             return null;
+        }
         return mappings.get(code);
     }
 
@@ -70,18 +74,23 @@ public class RemoveBrandUserTypeEnum implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         RemoveBrandUserTypeEnum other = (RemoveBrandUserTypeEnum) obj;
         if (code == null) {
-            if (other.code != null)
+            if (other.code != null) {
                 return false;
-        } else if (!code.equals(other.code))
+            }
+        } else if (!code.equals(other.code)) {
             return false;
+        }
         return true;
     }
 }

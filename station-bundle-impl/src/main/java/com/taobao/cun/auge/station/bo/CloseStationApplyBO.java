@@ -14,31 +14,31 @@ public interface CloseStationApplyBO {
 	 * 新增停业申请
 	 * @param closeStationApplyDto
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public Long addCloseStationApply(CloseStationApplyDto closeStationApplyDto) throws AugeServiceException;
+	public Long addCloseStationApply(CloseStationApplyDto closeStationApplyDto) ;
 	
 	/**
 	 * 删除停业申请
 	 * @param closeStationApplyDto
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public void deleteCloseStationApply(Long partnerInstanceId, String operator) throws AugeServiceException;
+	public void deleteCloseStationApply(Long partnerInstanceId, String operator) ;
 	
 	/**
 	 * 查询停业申请
 	 * @param partnerInstanceId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException;
+	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) ;
 
 	/**
 	 * 根据每次申请单id，查询停业申请单
 	 * 
 	 * @param applyId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
 	public CloseStationApplyDto getCloseStationApplyById(Long applyId);
 }

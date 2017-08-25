@@ -16,35 +16,31 @@ public interface PartnerInstanceScheduleService {
 	 * 获得待开业数据
 	 * @param fetchNum
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<Long> getWaitOpenStationList(int fetchNum) throws AugeServiceException;
+	public List<Long> getWaitOpenStationList(int fetchNum);
 	
 	
 	/**
 	 * 定时开业
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public Boolean openStation(Long instanceId) throws AugeServiceException;
+	public Boolean openStation(Long instanceId);
 	
 	
 	/**
 	 * 获得待解冻保证金数据
 	 * @param fetchNum
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<Long>  getWaitThawMoneyList(int fetchNum) throws AugeServiceException;
+	public List<Long>  getWaitThawMoneyList(int fetchNum);
 	
 	/**
 	 * 解冻保证金
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public Boolean thawMoney(Long instanceId) throws AugeServiceException;
+	public Boolean thawMoney(Long instanceId);
 	
 	
 	
@@ -52,17 +48,15 @@ public interface PartnerInstanceScheduleService {
 	 * 历史的已冻结保证金的账户，初始化账户表account_money AccountNo字段
 	 * @param pageQuery
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<AccountMoneyDto>  getWaitInitAccountNoList(int fetchNum) throws AugeServiceException;
+	public List<AccountMoneyDto>  getWaitInitAccountNoList(int fetchNum);
 	
 	/**
 	 * 历史的已冻结保证金的账户，初始化账户表account_money AccountNo字段
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public Boolean initAccountNo(AccountMoneyDto accountMoneyDto) throws AugeServiceException;
+	public Boolean initAccountNo(AccountMoneyDto accountMoneyDto);
 	
 	
 }

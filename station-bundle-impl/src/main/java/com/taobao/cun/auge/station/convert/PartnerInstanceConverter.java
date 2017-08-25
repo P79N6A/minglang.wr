@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -49,7 +51,6 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRule;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleItem;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
-import com.taobao.pandora.util.StringUtils;
 
 public final class PartnerInstanceConverter {
 
@@ -334,7 +335,7 @@ public final class PartnerInstanceConverter {
 		if (StringUtil.isNotBlank(condition.getManagerId())) {
 			example.setManagerId(condition.getManagerId());
 		}
-		if (null != condition.getProviderId() && 0l != condition.getProviderId()) {
+		if (null != condition.getProviderId() && 0L != condition.getProviderId()) {
 			example.setProviderId(condition.getProviderId());
 		}
 		Address address = condition.getAddress();
@@ -479,7 +480,7 @@ public final class PartnerInstanceConverter {
 			return PartnerInstanceStateChangeEnum.START_CLOSING;
 		} else {
 			// 状态校验,只有装修中，或者服务中可以停业
-			throw new AugeBusinessException("只有服务中、装修中服务站才可以申请停业");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"只有服务中、装修中服务站才可以申请停业");
 		}
 	}
 }

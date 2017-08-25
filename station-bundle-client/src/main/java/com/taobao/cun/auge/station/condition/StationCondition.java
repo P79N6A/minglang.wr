@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.station.condition;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 /**
@@ -29,8 +31,21 @@ public class StationCondition extends OperatorDto implements Serializable {
 	private Long orgId;
 
 	private String orgIdPath;
-
+	
+	/**
+	 * 合伙人类型
+	 */
+	private PartnerInstanceTypeEnum type;
+	
+	/**
+	 * 单个村点状态
+	 */
 	private StationStatusEnum stationStatusEnum;
+	
+	/**
+	 * 村点状态列表
+	 */
+	private List<StationStatusEnum> stationStatuses;
 
 	private Integer pageStart; // 分页参数
 
@@ -98,5 +113,21 @@ public class StationCondition extends OperatorDto implements Serializable {
 
 	public void setOrgId(Long orgId) {
 		this.orgId = orgId;
+	}
+
+	public List<StationStatusEnum> getStationStatuses() {
+		return stationStatuses;
+	}
+
+	public void setStationStatuses(List<StationStatusEnum> stationStatuses) {
+		this.stationStatuses = stationStatuses;
+	}
+
+	public PartnerInstanceTypeEnum getType() {
+		return type;
+	}
+
+	public void setType(PartnerInstanceTypeEnum type) {
+		this.type = type;
 	}
 }

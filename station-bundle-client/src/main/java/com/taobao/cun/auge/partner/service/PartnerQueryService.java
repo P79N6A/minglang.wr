@@ -1,35 +1,45 @@
 package com.taobao.cun.auge.partner.service;
 
 import com.taobao.cun.auge.station.dto.PartnerDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerQueryService {
-	
 	/**
-	 * 根据taobaoUserId查询合伙人信息
+	 * 根据taobaoUserId查询合伙人信息，核心信息已经脱敏
 	 * 
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId) throws AugeServiceException;
-	
+	PartnerDto queryPartnerByTaobaoUserId(Long taobaoUserId);
+
 	/**
-	 * 根据partnerId查询合伙人信息
+	 * 根据partnerId查询合伙人信息，核心信息已经脱敏
 	 * 
 	 * @param partnerId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartner(Long partnerId) throws AugeServiceException;
+	PartnerDto queryPartner(Long partnerId);
 
 	/**
-	 * 根据stationId查询当前站点的合伙人信息
+	 * 根据stationId查询当前站点的合伙人信息，核心信息已经脱敏
 	 *
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	PartnerDto queryPartnerByStationId(Long stationId) throws AugeServiceException;
-	
+	PartnerDto queryPartnerByStationId(Long stationId);
+
+	/**
+	 * 根据taobaoUserId查询合伙人信息，核心信息未脱敏
+	 * 
+	 * @param taobaoUserId
+	 * @return
+	 */
+	PartnerDto getPartnerByTaobaoUserId(Long taobaoUserId);
+
+	/**
+	 * 根据stationId查询当前站点的合伙人信息，核心信息未脱敏
+	 * 
+	 * @param stationId
+	 * @return
+	 */
+	PartnerDto getPartnerByStationId(Long stationId);
 }

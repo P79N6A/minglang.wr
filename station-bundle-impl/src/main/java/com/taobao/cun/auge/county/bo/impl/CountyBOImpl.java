@@ -56,9 +56,12 @@ import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgAdminAddressMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.msg.dto.MailSendDto;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
+import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.CountyStationBO;
@@ -71,7 +74,6 @@ import com.taobao.cun.auge.station.enums.CountyStationManageModelEnum;
 import com.taobao.cun.auge.station.enums.CountyStationManageStatusEnum;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.common.exception.BusinessException;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.ListUtils;
 import com.taobao.cun.dto.org.enums.CuntaoOrgDeptProEnum;
@@ -114,14 +116,17 @@ public class CountyBOImpl implements CountyBO {
     PartnerApplyService partnerApplyService;
     @Autowired
     MessageService messageService;
+    @Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	private static final String TEMPLATE_ID = "580107779";
     private static final String SOURCE_ID = "cuntao_org*edit_addr";
     private static final String MESSAGE_TYPE_ID = "120975556";
 	
 	
-	public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
+	@Override
+    public List<CountyDto> getProvinceList(List<Long> areaOrgIds) {
 		if(areaOrgIds==null||areaOrgIds.size()==0){
-			throw new AugeBusinessException("areaOrgIds is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"areaOrgIds is null");
 		}
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("areaOrgIds", areaOrgIds);
@@ -136,7 +141,8 @@ public class CountyBOImpl implements CountyBO {
 		return result;
 	}
 	
-	public List<CountyDto> getCountyStationByProvince(String provinceCode) {
+	@Override
+    public List<CountyDto> getCountyStationByProvince(String provinceCode) {
 		Validate.notNull(provinceCode, "provinceCode is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -161,7 +167,8 @@ public class CountyBOImpl implements CountyBO {
 	}
     
     
-	public List<CountyDto> getCountyStationList(List<Long> areaIds){
+	@Override
+    public List<CountyDto> getCountyStationList(List<Long> areaIds){
 		Validate.notNull(areaIds, "areaIds is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -174,7 +181,8 @@ public class CountyBOImpl implements CountyBO {
         return result;
 	}
 	
-	public CountyDto getCountyStation(Long id) {
+	@Override
+    public CountyDto getCountyStation(Long id) {
 		Validate.notNull(id, "id is null");
 		CountyStation county = countyStationMapper.selectByPrimaryKey(id);
 		if (county != null) {
@@ -187,7 +195,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 
-	public CountyDto getCountyStationByOrgId(Long id) {
+	@Override
+    public CountyDto getCountyStationByOrgId(Long id) {
 		Validate.notNull(id, "id is null");
 		CountyStationExample example = new CountyStationExample();
 		Criteria c = example.createCriteria();
@@ -202,7 +211,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public List<CountyDto> getCountyStationByOrgIds(List<Long> ids) {
+	@Override
+    public List<CountyDto> getCountyStationByOrgIds(List<Long> ids) {
 		Validate.notNull(ids, "ids is null");
 		if (CollectionUtils.isEmpty(ids)) {
 			return Collections.<CountyDto> emptyList();
@@ -223,7 +233,8 @@ public class CountyBOImpl implements CountyBO {
 		}
 	}
 	
-	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
         Validate.notNull(queryCondition, "queryCondition is null");
         Validate.notNull(queryCondition.getParentId(), "queryCondition.parentId is null");
         if (queryCondition.getPageStart() < 0) {
@@ -248,6 +259,15 @@ public class CountyBOImpl implements CountyBO {
         if(queryCondition.getStatusArray()!=null&&queryCondition.getStatusArray().size()>0){
         	c.andManageStatusIn(queryCondition.getStatusArray());
         }
+		if(StringUtils.isNotEmpty(queryCondition.getProvinceCode())){
+			c.andProvinceEqualTo(queryCondition.getProvinceCode());
+		}
+		if(StringUtils.isNotEmpty(queryCondition.getCityCode())){
+			c.andCityEqualTo(queryCondition.getCityCode());
+		}
+		if(StringUtils.isNotEmpty(queryCondition.getCountyCode())){
+			c.andCountyEqualTo(queryCondition.getCountyCode());
+		}
         int total=countyStationMapper.countByExample(example);
         if (null == queryCondition.getOrderByEnum()) {
         	  example.setOrderByClause("gmt_modified desc");
@@ -267,7 +287,8 @@ public class CountyBOImpl implements CountyBO {
         return returnModel;
 	}
 	
-	public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> queryCountyStation(CountyQueryCondition queryCondition){
 		Assert.notNull(queryCondition);
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("countyOfficial", queryCondition.getCountyOfficial());
@@ -276,6 +297,11 @@ public class CountyBOImpl implements CountyBO {
         param.put("fullIdPaths", queryCondition.getFullIdPaths());
         param.put("countyName", queryCondition.getCountyName());
         param.put("leaseProtocolEndTime", queryCondition.getLeaseProtocolEndTime());
+        if(queryCondition.getIsMobile()){
+        	//移动端组织id
+        	dealWithMobileForQuery(queryCondition);
+        	param.put("fullIdPaths", queryCondition.getFullIdPaths());
+        }
 		int total = countyStationMapper.countCountyStation(param);
 		List<CountyDto> countyStationDtos = null;
 		if(total > 0){
@@ -321,6 +347,19 @@ public class CountyBOImpl implements CountyBO {
 		result.setTotal(total);
 		result.setItems(countyStationDtos);
 		return result;
+	}
+	
+	private void dealWithMobileForQuery(CountyQueryCondition queryCondition){
+		Long orgId=queryCondition.getOrgId();
+    	if(orgId==null){
+    		orgId=1L;
+    	}
+    	List<CuntaoOrgDto> orgs = Lists.newArrayList(cuntaoOrgServiceClient.getAuthorizedCuntaoOrg(orgId, orgId));
+		List<String> fullIdPaths = Lists.newArrayList();
+		for(CuntaoOrgDto dto : orgs){
+			fullIdPaths.add(dto.getFullIdPath());
+		}
+		queryCondition.setFullIdPaths(fullIdPaths);
 	}
 	
 	private String formatDate(Date date) {
@@ -506,7 +545,8 @@ public class CountyBOImpl implements CountyBO {
 		map.put(URLDecoder.decode(k, "UTF-8"), URLDecoder.decode(v, "UTF-8"));
 	}
 	 
-	public CountyDto saveCountyStation(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto saveCountyStation(String operator, CountyDto countyDto){
 		validateSaveCountyStationParam(countyDto);
 		//TODO 解决前台没有传入detail问题
 //        converDetail(countyDto);
@@ -647,7 +687,7 @@ public class CountyBOImpl implements CountyBO {
 				}
 			}
 			if (exist) {
-				throw new AugeBusinessException("县服务中心不能重名");
+				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"县服务中心不能重名");
 			}
 		}
 	}
@@ -683,7 +723,7 @@ public class CountyBOImpl implements CountyBO {
 	private void validateParentOrg(CountyDto countyDto) {
 		CuntaoOrg org=cuntaoOrgMapper.selectByPrimaryKey(countyDto.getParentId());
 		if(org==null){
-			throw new AugeBusinessException("查询大区异常"+countyDto.getParentId());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"查询大区异常"+countyDto.getParentId());
 		}
 	}
 	
@@ -751,7 +791,7 @@ public class CountyBOImpl implements CountyBO {
         if (taobaoNick != null) {
             ResultDO<BaseUserDO> baseUserDO = uicReadServiceClient.getBaseUserByNick(taobaoNick);
             if (baseUserDO == null || baseUserDO.getModule() == null || !baseUserDO.isSuccess()) {
-                throw new AugeBusinessException("not find taobaoUserID: " + taobaoNick);
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"not find taobaoUserID: " + taobaoNick);
             }
             return baseUserDO.getModule().getUserId();
         }
@@ -798,7 +838,7 @@ public class CountyBOImpl implements CountyBO {
         CaiNiaoStationDto stationDto = toNewCaiNiaoStationDto(countyDto);
         Long caiNiaostationId = caiNiaoAdapter.addCountyByOrg(stationDto);
         if (caiNiaostationId == null) {
-            throw new BusinessException("同步菜鸟驿站失败");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"同步菜鸟驿站失败");
         } else {
         	CuntaoCainiaoStationRelDto relDO = new CuntaoCainiaoStationRelDto();
             relDO.setObjectId(countyDto.getId());
@@ -954,7 +994,7 @@ public class CountyBOImpl implements CountyBO {
     private void syncModifiedCountyStationToCainiao(CountyStation old,  CountyDto countyDto) {
     	CuntaoCainiaoStationRel rel= cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(old.getId(), CuntaoCainiaoStationRelTypeEnum.COUNTY_STATION);
         if (rel == null) {
-            throw new AugeBusinessException("cuntaoCainiaoStationRelDao.getCuntaoCainiaoStationRelByCountyStationId is null");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"cuntaoCainiaoStationRelDao.getCuntaoCainiaoStationRelByCountyStationId is null");
         }
         //地址变更了，才发邮件,即使CountyStationDto中地址变更了
         if(needToSendAddressUpdatedEmail(old, countyDto)) {
@@ -1079,10 +1119,55 @@ public class CountyBOImpl implements CountyBO {
 	}
 
 	
-	public CountyDto startOperate(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto startOperate(String operator, CountyDto countyDto){
 	        validateStartOperateParam(countyDto);
 	        countyDto.setManageStatus(CountyStationManageStatusEnum.OPERATING);
 	        return saveCountyStation(operator, countyDto);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCity(String cityCode) {
+		Validate.notNull(cityCode, "cityCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andCityEqualTo(cityCode);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<CountyDto>emptyList();
+
+		}
+		List<CountyDto> rst = new ArrayList<CountyDto>();
+		for (CountyStation cs : stations) {
+			CountyDto dto = toCountyDto(cs);
+			rst.add(dto);
+		}
+		return rst;
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		Validate.notNull(countyCode, "countyCode is null");
+		CountyStationExample example = new CountyStationExample();
+		Criteria c = example.createCriteria();
+		c.andIsDeletedEqualTo("n").andManageStatusEqualTo("OPERATING")
+				.andCountyEqualTo(countyCode);
+		List<CountyStation> stations = countyStationMapper
+				.selectByExample(example);
+
+		if (CollectionUtils.isEmpty(stations)) {
+			return Collections.<CountyDto>emptyList();
+
+		}
+		List<CountyDto> rst = new ArrayList<CountyDto>();
+		for (CountyStation cs : stations) {
+			CountyDto dto = toCountyDto(cs);
+			rst.add(dto);
+		}
+		return rst;
 	}
 	
 	

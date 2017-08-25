@@ -16,6 +16,7 @@ import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
 import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
 import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
 import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
@@ -28,7 +29,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.impl.workflow.ApproverTaskCodeGenerator;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
@@ -136,7 +137,7 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
 		ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
         if (!rm.isSuccess()) {
             logger.error("启动审批流程失败。param=" + JSON.toJSONString(levelProcessDto) , rm.getException());
-            throw new AugeServiceException("启动流程失败。param = " + JSON.toJSONString(levelProcessDto),
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"启动流程失败。param = " + JSON.toJSONString(levelProcessDto),
                     rm.getException());
         }
     }
@@ -171,23 +172,18 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
      * 初始化答辩材料
      */
     private void initReplyMaterial(String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
-        try {
             PartnerLevelTaskBusinessDataDTO businessDataDTO = new PartnerLevelTaskBusinessDataDTO();
             businessDataDTO.setAuditedPersonId(partnerInstanceLevelDto.getTaobaoUserId());
             businessDataDTO.setProcessInstanceId(processInstanceId);
             businessDataDTO.setInfoType(LevelTaskDataTypeEnum.REPLY_ATTACHMENT);
             businessDataDTO.setAuditStatus(TaskNodeAuditStatus.NOT_AUDIT.name());
             partnerLevelTaskBusinessDataService.saveTaskBusinessData(processInstanceId, null, businessDataDTO);
-        }catch (Exception e) {
-            logger.error("INIT REPLY MATERIAL ERROR! processInstanceId:" + processInstanceId, e);
-        }
     }
 
     /**
      * 分发调查问卷
      */
     private void dispatchQuesionnaire(JSONObject jsonObject, String processInstanceId, PartnerInstanceLevelDto partnerInstanceLevelDto) {
-        try {
             if(PartnerInstanceLevelEnum.S_8.equals(partnerInstanceLevelDto.getExpectedLevel()) || PartnerInstanceLevelEnum.S_7.equals(partnerInstanceLevelDto.getExpectedLevel())) {
                 QuestionnireDispatchParamDTO dispatchParamDTO = new QuestionnireDispatchParamDTO();
                 dispatchParamDTO.setQuestionnireEventId(processInstanceId);
@@ -204,9 +200,6 @@ public class LevelAuditFlowProcessServiceImpl implements LevelAuditFlowService{
                 dispatchParamDTO.setEventDataJson(JSON.toJSONString(eventData));
                 questionnireManageService.dispatchQuestionnire(dispatchParamDTO);
             }
-        }catch (Exception e){
-            logger.error("dispatch quesionnire error, processInstanceId:" + processInstanceId + " taobaoUserId:" + partnerInstanceLevelDto.getTaobaoUserId(), e);
-        }
     }
 
     private OrgPermissionHolder getApproversOrgId(PartnerInstanceLevelEnum expectedLevel, Long countyOrgId){

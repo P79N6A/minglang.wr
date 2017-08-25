@@ -16,12 +16,14 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceExt;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceExtBO;
 import com.taobao.cun.auge.station.convert.PartnerChildMaxNumChangeEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerChildMaxNumUpdateDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceExtDto;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
@@ -48,7 +50,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 		PartnerStationRel parent = partnerInstanceBO.findPartnerInstanceByStationId(partnerStationId);
 		if (parent == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerStationRel is null");
 		}
 		Long instanceId = parent.getId();
 		return partnerInstanceExtBO.findPartnerMaxChildNum(instanceId);
@@ -67,7 +69,7 @@ public class PartnerInstanceExtServiceImpl implements PartnerInstanceExtService 
 
 		PartnerStationRel parent = partnerInstanceBO.findPartnerInstanceByStationId(parentStationId);
 		if (parent == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerStationRel is null");
 		}
 		Long instanceId = parent.getId();
 

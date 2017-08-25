@@ -28,39 +28,30 @@ public class TairCacheImpl implements TairCache {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Serializable> T get(String key) {
-		try {
 			Result<DataEntry> result = tairManager.get(this.tairNamespace, key);
 			if (ResultCode.SUCCESS.equals(result.getRc())) {
 				return (T) result.getValue().getValue();
 			} else {
 				logger.debug("get(String) failed, key=[{}], Result:{}", key, result);
 			}
-		} catch (Throwable e) {
-			logger.error("get(String) failed, key=[" + key + "]", e);
-		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Serializable> T get(String key, int expireTime) {
-		try {
 			Result<DataEntry> result = tairManager.get(this.tairNamespace, key, expireTime);
 			if (ResultCode.SUCCESS.equals(result.getRc())) {
 				return (T) result.getValue().getValue();
 			} else {
 				logger.debug("get(String, int) failed, key=[{}], Result:{}", key, result);
 			}
-		} catch (Throwable e) {
-			logger.error("get(String, int) failed, key=[" + key + "]", e);
-		}
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Serializable> Map<String, T> mget(List<String> keyList) {
-		try {
 			Result<List<DataEntry>> result = tairManager.mget(tairNamespace, keyList);
 			if (ResultCode.SUCCESS.equals(result.getRc())) {
 				List<DataEntry> entryList = result.getValue();
@@ -74,9 +65,6 @@ public class TairCacheImpl implements TairCache {
 			} else {
 				logger.debug("mget(List<String>) failed, keyList={}, Result:{}", keyList, result);
 			}
-		} catch (Throwable e) {
-			logger.error("mget(List<String>) failed, keyList=" + keyList, e);
-		}
 		return null;
 	}
 
@@ -85,6 +73,7 @@ public class TairCacheImpl implements TairCache {
 		put(key, value, 0);
 	}
 
+	@Override
 	public void put(String key, Serializable value, int expireTime) {
 		ResultCode resultCode = tairManager.put(tairNamespace, key, value, 0, expireTime);
 		if (!resultCode.isSuccess()) {
@@ -106,6 +95,18 @@ public class TairCacheImpl implements TairCache {
 		if (!resultCode.isSuccess()) {
 			throw new RuntimeException("delete(String) fail, key=[" + keys + "], resultCode=[" + resultCode + "]");
 		}
+	}
+	
+	@Override
+	public Integer incr(Serializable key, int value, int defaultValue,
+						int expireTime) {
+		Result<Integer> result = tairManager.incr(tairNamespace, key, value,
+				defaultValue, expireTime);
+		if (!result.isSuccess()) {
+			throw new RuntimeException("incr(String) fail, key=[" + key
+					+ "], resultCode=[" + result + "]");
+		}
+		return result.getValue();
 	}
 
 }

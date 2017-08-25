@@ -51,18 +51,21 @@ public class AssetFlowDetailAssetTypeEnum implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (obj == null) {
             return false;
-        if (!(obj instanceof AssetFlowDetailAssetTypeEnum))
+        }
+        if (!(obj instanceof AssetFlowDetailAssetTypeEnum)) {
             return false;
+        }
         AssetFlowDetailAssetTypeEnum objType = (AssetFlowDetailAssetTypeEnum) obj;
         return objType.getCode().equals(this.getCode());
     }
 
 
     public static AssetFlowDetailAssetTypeEnum valueof(String code) {
-        if (code==null)
+        if (code==null) {
             return null;
+        }
         return mappings.get(code);
     }
 

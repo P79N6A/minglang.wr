@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -13,9 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.github.pagehelper.Page;
+
 import com.ali.com.google.common.collect.Lists;
 import com.alibaba.common.lang.StringUtil;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
@@ -27,14 +29,16 @@ import com.taobao.cun.auge.dal.domain.StationExample.Criteria;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.dal.mapper.StationMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationExtExampleConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.util.CollectionUtil;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
@@ -48,13 +52,13 @@ public class StationBOImpl implements StationBO {
 	StationExtMapper stationExtMapper;
 
 	@Override
-	public Station getStationById(Long stationId) throws AugeServiceException {
+	public Station getStationById(Long stationId){
 		ValidateUtils.notNull(stationId);
 		return stationMapper.selectByPrimaryKey(stationId);
 	}
 	
 	@Override
-	public List<Station> getStationById(List<Long> stationIds) throws AugeServiceException {
+	public List<Station> getStationById(List<Long> stationIds){
 		if (CollectionUtils.isEmpty(stationIds)) {
 			return Collections.<Station> emptyList();
 		}
@@ -69,7 +73,7 @@ public class StationBOImpl implements StationBO {
 
 	@Override
 	public Station getStationByStationNum(String stationNum)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationNum);
 		StationExample example = new StationExample();
 		Criteria criteria = example.createCriteria();
@@ -81,7 +85,7 @@ public class StationBOImpl implements StationBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void changeState(Long stationId, StationStatusEnum preStatus, StationStatusEnum postStatus, String operator)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationId);
 		ValidateUtils.notNull(preStatus);
 		ValidateUtils.notNull(postStatus);
@@ -89,7 +93,7 @@ public class StationBOImpl implements StationBO {
 		Station station = getStationById(stationId);
 		if (!StringUtils.equals(preStatus.getCode(), station.getStatus())) {
 			logger.warn("村点状态不正确。当前状态为" + station.getStatus());
-			throw new AugeServiceException(StationExceptionEnum.STATION_STATUS_CHANGED);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点状态不正确。当前状态为" + station.getStatus());
 		}
 		Station record = new Station();
 		record.setId(stationId);
@@ -103,7 +107,7 @@ public class StationBOImpl implements StationBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public Long addStation(StationDto stationDto) throws AugeServiceException {
+	public Long addStation(StationDto stationDto){
 		ValidateUtils.notNull(stationDto);
 		Station record = StationConverter.toStation(stationDto);
 		Date now = new Date();
@@ -119,12 +123,12 @@ public class StationBOImpl implements StationBO {
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void updateStation(StationDto stationDto) throws AugeServiceException {
+	public void updateStation(StationDto stationDto){
 		ValidateUtils.notNull(stationDto);
 		ValidateUtils.notNull(stationDto.getId());
 		Station oldRecord = getStationById(stationDto.getId());
 		if (oldRecord == null) {
-			throw new AugeServiceException(StationExceptionEnum.STATION_NOT_EXIST);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"station is null");
 		}
 		Station record = StationConverter.toStation(stationDto);
 		
@@ -149,7 +153,7 @@ public class StationBOImpl implements StationBO {
 
 	@Override
 	public int getStationCountByStationNum(String stationNum)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationNum);
 		StationExample example = new StationExample();
 		Criteria criteria = example.createCriteria();
@@ -162,7 +166,7 @@ public class StationBOImpl implements StationBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deleteStation(Long stationId,String operator)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(stationId);
 		Station rel = new Station();
 		rel.setId(stationId);
@@ -171,7 +175,7 @@ public class StationBOImpl implements StationBO {
 	}
 
 	@Override
-	public List<Station> getTpStationsByName(StationCondition stationCondition) throws AugeServiceException {
+	public List<Station> getTpStationsByName(StationCondition stationCondition){
 		ValidateUtils.notNull(stationCondition);
 		StationExtExample stationExtExample = new StationExtExample();
 		stationExtExample.setName(stationCondition.getName());
@@ -183,23 +187,11 @@ public class StationBOImpl implements StationBO {
 	}
 	
 	@Override
-	public Page<Station> getStations(StationCondition stationCondition) throws AugeServiceException{
+    public Page<Station> getStations(StationCondition stationCondition) {
 		ValidateUtils.notNull(stationCondition);
 
-		StationExample example = new StationExample();
-		Criteria criteria = example.createCriteria();
-		criteria.andIsDeletedEqualTo("n");
-
-		if (StringUtil.isNotBlank(stationCondition.getName())) {
-			criteria.andNameLike(stationCondition.getName());
-		}
-		if (null != stationCondition.getOrgId()) {
-			criteria.andApplyOrgEqualTo(stationCondition.getOrgId());
-		}
-		if (null != stationCondition.getStationStatusEnum()) {
-			criteria.andStatusEqualTo(stationCondition.getStationStatusEnum().getCode());
-		}
+		StationExtExample stationExtExample = StationExtExampleConverter.convert(stationCondition);
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
-		return (Page<Station>)stationMapper.selectByExample(example);
+		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
 	}
 }

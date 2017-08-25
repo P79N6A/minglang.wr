@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.qualification.service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -62,7 +63,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
 		C2BSettlingResponse response = new C2BSettlingResponse();
-		try {
 			Assert.notNull(settlingStepRequest);
 			Assert.notNull(settlingStepRequest.getTaobaoUserId());
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(settlingStepRequest.getTaobaoUserId());
@@ -85,13 +85,6 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 				setStepName(settlingStepRequest.getTaobaoUserId(),parnterInstance.getId(),isSignProcotol,isFrozenMoney,response);
 				return response;
 			}
-			
-		} catch (Exception e) {
-			logger.error("settlingStep error!",e);
-			response.setErrorMessage("系统异常");
-			response.setSuccessful(false);
-			return response;
-		}
 	}
 
 	private boolean isTestUser(Long taobaoUserId) {
@@ -113,7 +106,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		if(qualification != null){
 			response.setQualificationStatus(qualification.getStatus());
 			response.setErrorCode(qualification.getErrorCode());
-			if(qualification.getStatus() == QualificationStatus.AUDIT_FAIL){
+			if(Objects.equals(qualification.getStatus(), QualificationStatus.AUDIT_FAIL)){
 				response.setErrorMessage(qualification.getErrorMessage());
 			}
 		}
@@ -140,7 +133,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 		if(qualification != null){
 			response.setQualificationStatus(qualification.getStatus());
 			response.setErrorCode(qualification.getErrorCode());
-			if(qualification.getStatus() == QualificationStatus.AUDIT_FAIL){
+			if(Objects.equals(qualification.getStatus(), QualificationStatus.AUDIT_FAIL)){
 				response.setErrorMessage(qualification.getErrorMessage());
 			}
 		}

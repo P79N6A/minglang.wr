@@ -61,13 +61,9 @@ public class AlilangUserInitServiceImpl implements AlilangUserInitService {
 	@Override
 	  public void testInit(Long id) {
 	    PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(id);
-	    if(partnerInstanceDto != null && PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
-	      try{
+	   // if(partnerInstanceDto != null && PartnerInstanceTypeEnum.TP.equals(partnerInstanceDto.getType())){
 	        newAlilangUser(partnerInstanceDto);
-	      }catch(Exception e){
-	        logger.error("init alilang user error. instance_id={}", partnerInstanceDto.getId(), e);
-	      }
-	    }
+	   // }
 	  }
 	
 	private void newAlilangUser(PartnerInstanceDto partnerInstanceDto) {

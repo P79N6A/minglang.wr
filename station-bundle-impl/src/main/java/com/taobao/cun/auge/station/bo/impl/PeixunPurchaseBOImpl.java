@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,12 +23,11 @@ import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
 import com.alibaba.fastjson.JSON;
-
 import com.taobao.cun.auge.common.PageDto;
-import com.taobao.cun.auge.common.exception.AugeServiceException;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PeixunPurchase;
 import com.taobao.cun.auge.dal.mapper.PeixunPurchaseMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.enums.PeixunPurchaseTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.crius.bpm.dto.CuntaoProcessInstance;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
@@ -82,18 +83,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}else{
 			PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(dto.getId());
 			if(record==null){
-				throw new AugeServiceException("not find record");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 			}
 			//判断修改人和提交人是否一致
 			if(!record.getApplyWorkNo().equals(dto.getOperator())){
-				throw new AugeServiceException("与提交人不一致，无权限修改");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PRIVILEDGE_ERROR_CODE,"与提交人不一致，无权限修改");
 			}
 			//判断是否是可编辑状态
 			if (!PeixunPurchaseStatusEnum.AUDIT_NOT_PASS.getCode().equals(
 					record.getStatus())
 					&&!PeixunPurchaseStatusEnum.ROLLBACK.getCode().equals(
 							record.getStatus())) {
-				throw new AugeServiceException("当前状态不可编辑");
+				throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"当前状态不可编辑");
 			}
 			copyForUpdate(record,dto);
 			peixunPurchaseMapper.updateByPrimaryKey(record);
@@ -106,7 +107,6 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	private void createFlow(Long applyId, String loginId, Long orgId) {
 	    Map<String, String> initData = new HashMap<String, String>();
 	    initData.put("orgId", String.valueOf(orgId));
-		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
@@ -118,46 +118,43 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 
 			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
-				throw new AugeServiceException(rm.getException());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,rm.getException().getMessage());
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException("流程启动失败", e);
-		}
 	}
 	
 	private void validateForCreate(PeixunPurchaseDto dto){
 		if(StringUtils.isEmpty(dto.getMasterWorkNo())){
-			throw new AugeServiceException("masterWorkNo is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"masterWorkNo is null");
 		}
 		if(StringUtils.isEmpty(dto.getLoginId())){
-			throw new AugeServiceException("loginId is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"loginId is null");
 		}
 		if(StringUtils.isEmpty(dto.getIsShare())){
-			throw new AugeServiceException("isShare is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"isShare is null");
 		}
 		if(StringUtils.isEmpty(dto.getPurchaseType())){
-			throw new AugeServiceException("purchaseType is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"purchaseType is null");
 		}
 		if(StringUtils.isEmpty(dto.getReceiverMobile())){
-			throw new AugeServiceException("recevieMobile is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"recevieMobile is null");
 		}
 		if(StringUtils.isEmpty(dto.getReceiverWorkNo())){
-			throw new AugeServiceException("recevieWorkNo is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"recevieWorkNo is null");
 		}
 		if(StringUtils.isEmpty(dto.getStatus())){
-			throw new AugeServiceException("status is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"status is null");
 		}
 		if(dto.getExceptNum()==null){
-			throw new AugeServiceException("exceptNum is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"exceptNum is null");
 		}
 		if(PeixunPurchaseStatusEnum.valueof(dto.getStatus())==null){
-			throw new AugeServiceException("status is not right");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"status is not right");
 		}
 		if(StringUtils.isEmpty(dto.getOperator())){
-			throw new AugeServiceException("operator is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"operator is null");
 		}
 		if(StringUtils.isEmpty(dto.getPurchaseSupplier())){
-			throw new AugeServiceException("purchaseSupplier is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"purchaseSupplier is null");
 		}
 	}
 	
@@ -191,14 +188,14 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean audit(Long id, String operate,String operateName,String auditDesc,Boolean isPass) {
 		if(id==null||StringUtils.isEmpty(operate)){
-			throw new AugeServiceException("param is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param is null");
 		}
 		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(record==null){
-			throw new AugeServiceException("not find record");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 		}
 		if(!PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(record.getStatus())){
-			throw new AugeServiceException("非待审核状态");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"非待审核状态");
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
@@ -218,18 +215,18 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public boolean rollback(Long id, String operate) {
 		if(id==null||StringUtils.isEmpty(operate)){
-			throw new AugeServiceException("param is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param is null");
 		}
 		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(record==null){
-			throw new AugeServiceException("not find record");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 		}
 		if (!PeixunPurchaseStatusEnum.WAIT_AUDIT.getCode().equals(
 						record.getStatus())) {
-			throw new AugeServiceException("当前状态无法撤回");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"当前状态无法撤回");
 		}
 		if(!operate.equals(record.getApplyWorkNo())){
-			throw new AugeServiceException("操作人与提交人不一致，无法撤回");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"操作人与提交人不一致，无法撤回");
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
@@ -241,15 +238,11 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 	}
 	
 	private void endTask(Long id, String operate) {
-		try {
 			ResultModel<CuntaoProcessInstance> instance = cuntaoWorkFlowService
 					.findRunningProcessInstance(FLOW_BUSINESS_CODE,
 							String.valueOf(id));
 			String instanceId = instance.getResult().getProcessInstanceId();
 			cuntaoWorkFlowService.teminateProcessInstance(instanceId, operate);
-		} catch (Exception e) {
-			throw new AugeServiceException("终止流程失败", e);
-		}
 	}
 
 	@Override
@@ -259,14 +252,14 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		Assert.notNull(operate);
 		PeixunPurchase record=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(record==null){
-			throw new AugeServiceException("not find record");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 		}
 		if (!PeixunPurchaseStatusEnum.AUDIT_PASS.getCode().equals(
 				record.getStatus())) {
-			throw new AugeServiceException("还未审核通过，无法下单");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"还未审核通过，无法下单");
 		}
 		if(!operate.equals(record.getApplyWorkNo())){
-			throw new AugeServiceException("提交人与申请人不一致，无法下单");
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"提交人与申请人不一致，无法下单");
 		}
 		PrDto prDto = new PrDto();
 		prDto.setActualRequestor(record.getApplyWorkNo());
@@ -279,13 +272,13 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 			Result<?> result = prService.submitPr(prDto);
 			
 			if (!result.isSuccess()) {
-				throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + result.getMessage());
 			}
 			String prNo=(String)result.getValue();
 			record.setPrNo(prNo);
 		} catch (Exception e) {
 			logger.error("submit pr error " + JSON.toJSONString(prDto), e);
-			throw new RuntimeException("提交pr失败，失败原因：" + e);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + e);
 		}
 		record.setGmtModified(new Date());
 		record.setModifier(operate);
@@ -326,7 +319,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		prLine.setNeedByDate(record.getGmtExceptOpen());
 		prLine.setDeliveryAddressId(new Long(address));
 		prLine.setReceiver(record.getReceiverWorkNo());
-		prLine.setQuantity(record.getExceptNum());
+		prLine.setQuantity(new BigDecimal(record.getExceptNum()));
 		prLine.setRemark(applyReason(record));
 		prLineList.add(prLine);
 		return prLineList;
@@ -376,7 +369,7 @@ public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 		}
 		PeixunPurchase pp=peixunPurchaseMapper.selectByPrimaryKey(id);
 		if(pp==null){
-			throw new AugeServiceException("not find record");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find record");
 		}
 		PeixunPurchaseDto result=new PeixunPurchaseDto();
 		BeanUtils.copyProperties(pp, result);

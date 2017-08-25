@@ -12,8 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.tc.domain.dataobject.BizOrderDO;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.domain.dataobject.PayOrderDO;
@@ -123,7 +126,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 	}
 	
 	public static void main(String[] args) {
-		List<String> s1 = Stream.of(1l,2l,3l).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
+		List<String> s1 = Stream.of(1L,2L,3L).map(v -> v.toString()).filter(s -> s.equals("2")).collect(Collectors.toList());
 		System.out.println(s1);
 	}
 
@@ -142,11 +145,11 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 				if (bizOrderDO.getAuctionPrice() == orderAmount
 						&& bizOrderDO.isPaid()
 						&& bizOrderDO.getPayStatus() != PayOrderDO.STATUS_TRANSFERED) {
-					throw new RuntimeException("存在未完结的淘宝装修订单");
+					throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"存在未完结的淘宝装修订单");
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new AugeSystemException(e);
 		}
 	}
 }

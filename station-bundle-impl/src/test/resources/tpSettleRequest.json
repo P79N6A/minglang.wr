@@ -1,0 +1,119 @@
+{
+    "operator": "62333",
+    "operatorOrgId": 3,
+    "operatorType": {
+        "code": "BUC",
+        "desc": "BUC用户"
+    },
+    "partnerDto": {
+        "alipayAccount": "17086312715",
+        "attachments": [
+            {
+                "attachmentTypeId": {
+                    "code": 1,
+                    "desc": "身份证扫描件"
+                },
+                "bizType": {
+                    "code": "PARTNER",
+                    "desc": "合伙人"
+                },
+                "fileType": "jpg",
+                "fsId": "TB1Pkn.XXXXXXaDXpXXXXXXXXXX.tfsprivate",
+                "title": "TB1Pkn.XXXXXXaDXpXXXXXXXXXX.tfsprivate"
+            }
+        ],
+        "businessType": {
+            "code": "PARTTIME",
+            "desc": "兼职"
+        },
+        "email": "",
+        "idenNum": "610623196203275986",
+        "leaseArea": 20,
+        "mobile": "13412345678",
+        "name": "4217ba2e4d",
+        "solidPoint": "y",
+        "taobaoNick": "cuntaomobile4",
+        "taobaoUserId": 3709109723
+    },
+    "stationDecoratePaymentTypeEnum": {
+        "code": "SELF",
+        "desc": "自费"
+    },
+    "stationDecorateTypeEnum": {
+        "code": "NEW",
+        "desc": "新村点装修"
+    },
+    "stationDto": {
+        "address": {
+            "addressDetail": "erewrewr",
+            "city": "330100",
+            "cityDetail": "杭州",
+            "county": "330122",
+            "countyDetail": "桐庐",
+            "lat": "2980720",
+            "lng": "11967490",
+            "province": "330000",
+            "provinceDetail": "浙江",
+            "town": "330122003",
+            "townDetail": "桐君街道",
+            "villageDetail": ""
+        },
+        "applyOrg": 3,
+        "areaType": {
+            "code": "FIX_NEW",
+            "desc": "固点"
+        },
+        "attachments": [
+            {
+                "attachmentTypeId": {
+                    "code": 8,
+                    "desc": "政府协议"
+                },
+                "bizType": {
+                    "code": "CRIUS_STATION",
+                    "desc": "村点"
+                },
+                "fileType": "png",
+                "fsId": "TB1zvKUXgaww1JjyzdKXXbYzXXa.tfsprivate",
+                "title": "pap1.png"
+            }
+        ],
+        "covered": "无",
+        "description": "",
+        "fixedProtocols": {
+            "confirmTime": 1501575655840,
+            "endTime": 1504108800000,
+            "protocolTypeEnum": {
+                "code": "GOV_FIXED",
+                "desc": "政府固点"
+            },
+            "startTime": 1501516800000,
+            "targetType": {
+                "code": "CRIUS_STATION",
+                "desc": "村点"
+            }
+        },
+        "fixedType": {
+            "code": "GOV_FIXED",
+            "desc": "政府固点"
+        },
+        "format": "无",
+        "logisticsState": {
+            "code": "ARRIVE",
+            "desc": "能到"
+        },
+        "name": "振环测试村点004",
+        "partnerInstanceIsOnTown": {
+            "code": "y",
+            "desc": "是"
+        },
+        "products": "无",
+        "stationNum": "ZZHTEST004"
+    },
+    "taobaoUserId": 3709109723,
+    "type": {
+        "code": "TP",
+        "desc": "合伙人",
+        "type": "TP"
+    }
+}

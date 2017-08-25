@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
@@ -22,19 +23,14 @@ public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
 	@Autowired
 	NotifyManagerBean notifyPublisherManagerBean;
 
-	public void publish(DefaultNotifyPublishVo vo){
+	@Override
+    public void publish(DefaultNotifyPublishVo vo){
 		Assert.notNull(vo.getTopic());
 		Assert.notNull(vo.getMessageType());
-		try {
 			executePublish(vo);
-		} catch (Exception e) {
-			logger.error("publish notify error "+JSON.toJSONString(vo), e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 	
 	private void executePublish(DefaultNotifyPublishVo vo) {
-		try {
 			StringMessage msg = new StringMessage();
 			msg.setBody(JSON.toJSONString(vo));
 			msg.setTopic(vo.getTopic());
@@ -51,10 +47,6 @@ public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{
 			} else {
 				notifyPublisherManagerBean.sendMessage(msg);
 			}
-		} catch (Exception e) {
-			logger.error("publish notify error " + JSON.toJSONString(vo), e);
-			throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-		}
 	}
 		
 }

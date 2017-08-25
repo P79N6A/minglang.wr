@@ -19,7 +19,6 @@ import com.taobao.cun.auge.station.convert.AccountMoneyConverter;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 @Component("accountMoneyBO")
 public class AccountMoneyBOImpl implements AccountMoneyBO {
@@ -30,7 +29,7 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addAccountMoney(AccountMoneyDto accountMoneyDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(accountMoneyDto);
 		AccountMoney accountMoney = AccountMoneyConverter.toAccountMoney(accountMoneyDto);
 		DomainUtils.beforeInsert(accountMoney, accountMoneyDto.getOperator());
@@ -41,7 +40,7 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long updateAccountMoneyByObjectId(AccountMoneyDto accountMoneyDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.validateParam(accountMoneyDto);
 		ValidateUtils.notNull(accountMoneyDto.getTargetType());
 		ValidateUtils.notNull(accountMoneyDto.getObjectId());
@@ -64,7 +63,7 @@ public class AccountMoneyBOImpl implements AccountMoneyBO {
 	@Override
 	public AccountMoneyDto getAccountMoney(AccountMoneyTypeEnum type,
 			AccountMoneyTargetTypeEnum targetType, Long objectId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(type);
 		ValidateUtils.notNull(targetType);
 		ValidateUtils.notNull(objectId);

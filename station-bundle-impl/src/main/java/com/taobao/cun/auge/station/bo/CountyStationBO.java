@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.CountyStation;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 
@@ -15,9 +14,9 @@ public interface CountyStationBO {
 	 * 根据组织id查询县信息
 	 * @param orgId
 	 * @return
-	 * @throws AugeServiceException
+	 * @
 	 */
-	public CountyStation getCountyStationByOrgId(Long orgId)  throws AugeServiceException;
+	public CountyStation getCountyStationByOrgId(Long orgId)  ;
 	
 	public Long addCountyStation(CountyStation cs);
 }

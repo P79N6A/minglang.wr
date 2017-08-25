@@ -2,14 +2,16 @@ package com.taobao.cun.auge.station.service.impl.incentive.audit;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
  * Created by xujianhui on 17/3/30.
@@ -34,7 +36,7 @@ public class NonFundAuditOperatorOrgCheckService implements AuditOperatorOrgChec
     public Long getAuditOperatorOrgId(List<IncentiveAreaDto> incentiveAreaList) {
 
         if (CollectionUtils.isEmpty(incentiveAreaList) || incentiveAreaList.get(0).getOrgId() == null){
-            throw new AugeServiceException("非法的激励区域!");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"非法的激励区域!");
         }
         Long orgId = incentiveAreaList.get(0).getOrgId();
         CuntaoOrgDto orgDto = cuntaoOrgServiceClient.getAncestor(orgId, OrgRangeType.LARGE_AREA);

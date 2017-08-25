@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
+import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.BondFreezingInfoDto;
@@ -25,7 +26,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 合伙人实例查询服务
@@ -40,9 +40,8 @@ public interface PartnerInstanceQueryService {
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator) throws AugeServiceException;
+	public PartnerInstanceDto queryInfo(Long stationId,OperatorDto operator);
 
 	/**
 	 * 查询合伙人实例信息
@@ -50,7 +49,7 @@ public interface PartnerInstanceQueryService {
 	 * @param condition
 	 * @return
 	 */
-	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition) throws AugeServiceException;
+	public PartnerInstanceDto queryInfo(PartnerInstanceCondition condition);
 	
 	/**
 	 * 查询最后一个退出的合伙人实例
@@ -58,35 +57,39 @@ public interface PartnerInstanceQueryService {
 	 * @param stationId
 	 * @param operator
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId) throws AugeServiceException;
+	public PartnerInstanceDto queryLastClosePartnerInstance(Long stationId);
 	
 	/**
 	 * 查询村点上，所有的入驻实例
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) throws AugeServiceException;
+	public List<PartnerInstanceDto> queryPartnerInstances(Long stationId);
 	
 	/**
 	 * 是否所有合伙人都已经处于退出待解冻、退出状态
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public boolean isAllPartnerQuit(Long stationId) throws AugeServiceException;
+	public boolean isAllPartnerQuit(Long stationId);
 
 	/**
 	 * 查询除instanceId外的，其他人是否都已经处于退出待解冻、退出状态
 	 * 
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public boolean isOtherPartnerQuit(Long instanceId) throws AugeServiceException;
+	public boolean isOtherPartnerQuit(Long instanceId);
+	
+	/**
+	 * 根据组织、村点信息，查询实例列表
+	 * 
+	 * @param pageCondition
+	 * @return
+	 */
+	public PageDto<PartnerInstanceDto> queryByPage(StationCondition stationCondition);
 	
 	/**
 	 * 使用stationapply state 查询
@@ -125,9 +128,8 @@ public interface PartnerInstanceQueryService {
 	 * 
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId) throws AugeServiceException;
+	public PartnerInstanceDto getActivePartnerInstance(Long taobaoUserId);
 	
 	/**
 	 * 批量查询
@@ -136,9 +138,8 @@ public interface PartnerInstanceQueryService {
 	 * @param instanceTypes
 	 * @param states
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<PartnerInstanceDto> getBatchActivePartnerInstance(List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states) throws AugeServiceException;
+	public List<PartnerInstanceDto> getBatchActivePartnerInstance(List<Long> taobaoUserId,List<PartnerInstanceTypeEnum> instanceTypes,List<PartnerInstanceStateEnum> states);
 
 	/**
 	 * 获取用户账户资金情况，如保证金
@@ -147,7 +148,7 @@ public interface PartnerInstanceQueryService {
 	 * @param type
 	 * @return
 	 */
-	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type) throws AugeServiceException;
+	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type);
 
 	/**
 	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
@@ -171,24 +172,22 @@ public interface PartnerInstanceQueryService {
 	 * @param instanceId
 	 * @return
 	 */
-	public Long getStationApplyId(Long instanceId) throws AugeServiceException;
+	public Long getStationApplyId(Long instanceId);
 
 	/**
 	 * 
 	 * @param partnerInstanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId) throws AugeServiceException;
+	public CloseStationApplyDto getCloseStationApply(Long partnerInstanceId);
 	
 	/**
 	 * 根据每次申请单id，查询停业申请单
 	 * 
 	 * @param applyId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public CloseStationApplyDto getCloseStationApplyById(Long applyId) throws AugeServiceException;
+	public CloseStationApplyDto getCloseStationApplyById(Long applyId);
 	
 	/**
 	 * 获取待冻结保证金信息
@@ -196,7 +195,7 @@ public interface PartnerInstanceQueryService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId) throws AugeServiceException;
+	public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId);
 
 	/**
 	 * 获取待签约协议信息,e.g. 入驻协议，管理协议
@@ -205,41 +204,37 @@ public interface PartnerInstanceQueryService {
 	 * @param type
 	 * @return
 	 */
-	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type) throws AugeServiceException;
+	public ProtocolSigningInfoDto getProtocolSigningInfo(Long taobaoUserId, ProtocolTypeEnum type);
 	
 	/**
 	 * 获得指定类型数据的协议
 	 * @param objectId
 	 * @param targetType
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) throws AugeServiceException;
+	public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type);
 	
 	/**
 	 * 获得退出申请单
 	 * @param instanceId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public QuitStationApplyDto getQuitStationApply(Long instanceId)throws AugeServiceException;
+	public QuitStationApplyDto getQuitStationApply(Long instanceId);
 	
 	/**
 	 * 根据每次申请单id，查询退出申请单
 	 * 
 	 * @param applyId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public QuitStationApplyDto getQuitStationApplyById(Long applyId) throws AugeServiceException;
+	public QuitStationApplyDto getQuitStationApplyById(Long applyId);
 	
 	/**
 	 * 获取合伙人层级信息
 	 * @param taobaoUserId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId) throws AugeServiceException;
+	public PartnerInstanceLevelDto getPartnerInstanceLevel(Long taobaoUserId);
 	
 	/**
 	 * 获取合伙人层级成长信息
@@ -261,31 +256,28 @@ public interface PartnerInstanceQueryService {
 	 *
 	 * @param partnerId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	public PartnerInstanceDto getCurrentPartnerInstanceByPartnerId(Long partnerId);
 
 	/**
 	 * 获得当前人的历史对应关系
 	 */
-	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId) throws AugeServiceException;
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByPartnerId(Long partnerId);
 	
 	/**
 	 * 查询服务站，当前实例
 	 * 
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public PartnerInstanceDto getCurrentPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	public PartnerInstanceDto getCurrentPartnerInstanceByStationId(Long stationId);
 	
 	/**
 	 * 获得当前服务站的历史对应关系
 	 * @param stationId
 	 * @return
-	 * @throws AugeServiceException
 	 */
-	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId) throws AugeServiceException;
+	public List<PartnerInstanceDto> getHistoryPartnerInstanceByStationId(Long stationId);
 	
 	 /* 根据合伙人组织ID路径获取入驻/退出流程中不同状态村点的数量
 	 * @param orgIdPath
@@ -330,4 +322,11 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public Long getCurStationIdByTaobaoUserId(Long taobaoUserId);
+    
+    /**
+     * 根据父站点ID查询淘帮手信息
+     * @param parentStationId
+     * @return
+     */
+    public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId);
 }

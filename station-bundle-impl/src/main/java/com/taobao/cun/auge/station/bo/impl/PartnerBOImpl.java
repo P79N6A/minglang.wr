@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.ExPartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerFlowerNameApplyMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -34,7 +36,8 @@ import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerFlowerNameApplyStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerFlowerNameSourceEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
@@ -60,7 +63,7 @@ public class PartnerBOImpl implements PartnerBO {
 
 	@Override
 	public Partner getNormalPartnerByTaobaoUserId(Long taobaoUserId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(taobaoUserId);
 		PartnerExample example = new PartnerExample();
 		Criteria criteria = example.createCriteria();
@@ -72,7 +75,7 @@ public class PartnerBOImpl implements PartnerBO {
 
 	@Override
 	public Long getNormalPartnerIdByTaobaoUserId(Long taobaoUserId)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(taobaoUserId);
 		Partner partner = getNormalPartnerByTaobaoUserId(taobaoUserId);
 		if (partner != null) {
@@ -84,7 +87,7 @@ public class PartnerBOImpl implements PartnerBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addPartner(PartnerDto partnerDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(partnerDto);
 		Partner record = PartnerConverter.toParnter(partnerDto,false);
 		DomainUtils.beforeInsert(record, partnerDto.getOperator());
@@ -95,7 +98,7 @@ public class PartnerBOImpl implements PartnerBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updatePartner(PartnerDto partnerDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(partnerDto);
 		ValidateUtils.notNull(partnerDto.getId());
 		Partner record = PartnerConverter.toParnter(partnerDto,true);
@@ -104,7 +107,7 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public Partner getPartnerById(Long partnerId) throws AugeServiceException {
+	public Partner getPartnerById(Long partnerId)  {
 		ValidateUtils.notNull(partnerId);
 		return exPartnerMapper.selectByPrimaryKey(partnerId);
 	}
@@ -112,7 +115,7 @@ public class PartnerBOImpl implements PartnerBO {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void deletePartner(Long partnerId, String operator)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(partnerId);
 		Partner rel = new Partner();
 		rel.setId(partnerId);
@@ -121,13 +124,13 @@ public class PartnerBOImpl implements PartnerBO {
 	}
 
 	@Override
-	public Partner getPartnerByAliLangUserId(String aliLangUserId) throws AugeServiceException {
+	public Partner getPartnerByAliLangUserId(String aliLangUserId)  {
 		ValidateUtils.notNull(aliLangUserId);
 		return exPartnerMapper.selectByAlilangUserId(aliLangUserId); 
 	}
 
 	@Override
-	public List<Partner> getPartnerByMobile(String mobile) throws AugeServiceException {
+	public List<Partner> getPartnerByMobile(String mobile)  {
 		ValidateUtils.notNull(mobile);
 		PartnerExample example = new PartnerExample();
 		example.createCriteria()
@@ -147,24 +150,26 @@ public class PartnerBOImpl implements PartnerBO {
 		Assert.notNull(dto.getNameSource());
 		Long id=null;
 		//验证花名是否黑名单
-		try {
-			String flowerNameBlackString = Diamond.getConfig(DIAMOND_BLACK,
-					DIAMOND_GROUP, 3000);
-			if (flowerNameBlackString.contains(dto.getFlowerName())) {
-				throw new AugeServiceException("此花名不允许使用，请更换再试。");
+			String flowerNameBlackString = null;
+			try {
+				flowerNameBlackString = Diamond.getConfig(DIAMOND_BLACK,
+						DIAMOND_GROUP, 3000);
+			} catch (IOException e) {
+				throw new AugeSystemException("get flowblackListerrror",e);
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException(e.getMessage());
-		}
+			if (flowerNameBlackString.contains(dto.getFlowerName())) {
+				throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"此花名不允许使用，请更换再试。");
+			}
+		
 		if(dto.getId()!=null){
 			id=dto.getId();
 			//判断是否是审核没通过
 			PartnerFlowerNameApply pf=partnerFlowerNameApplyMapper.selectByPrimaryKey(dto.getId());
 			if(pf==null){
-				throw new AugeServiceException("修改失败，查找不到申请记录");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"修改失败，查找不到申请记录");
 			}
 			if(!PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode().equals(pf.getStatus())){
-				throw new AugeServiceException("当前状态不允许修改");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"当前状态不允许修改");
 			}
 			validateFlowerNameExist(dto);
 			pf.setNameMeaning(dto.getNameMeaning());
@@ -201,22 +206,21 @@ public class PartnerBOImpl implements PartnerBO {
 		criteria1.andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(dto.getTaobaoUserId()).andStatusNotEqualTo(PartnerFlowerNameApplyStatusEnum.AUDIT_NOT_PASS.getCode());
 		List<PartnerFlowerNameApply> applys1=partnerFlowerNameApplyMapper.selectByExample(example1);
 		if(applys1.size()>0){
-			throw new AugeServiceException("花名已经申请过，请不要重复申请");
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"花名已经申请过，请不要重复申请");
 		}
 	}
 	private void createFlow(Long applyId, Long loginId) {
 		//获取组织
 		PartnerStationRel rel=partnerInstanceBO.getActivePartnerInstance(loginId);
 		if(rel==null){
-			throw new AugeServiceException("当前状态无法申请花名");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态无法申请花名");
 		}
 		Station s=stationBO.getStationById(rel.getStationId());
 		if(s==null){
-			throw new AugeServiceException("村点状态无效");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点状态无效");
 		}
 		Map<String, String> initData = new HashMap<String, String>();
 		initData.put("orgId", String.valueOf(s.getApplyOrg()));
-		try {
 			StartProcessInstanceDto startDto = new StartProcessInstanceDto();
 
 			startDto.setBusinessCode(FLOW_BUSINESS_CODE);
@@ -227,11 +231,9 @@ public class PartnerBOImpl implements PartnerBO {
 
 			ResultModel<Boolean> rm = cuntaoWorkFlowService.startProcessInstance(startDto);
 			if (!rm.isSuccess()) {
-				throw new AugeServiceException(rm.getException());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,rm.getException().getMessage());
 			}
-		} catch (Exception e) {
-			throw new AugeServiceException("申请花名失败", e);
-		}
+		
 	}
 
 	private void validateFlowerNameExist(PartnerFlowerNameApplyDto dto){
@@ -240,7 +242,7 @@ public class PartnerBOImpl implements PartnerBO {
 		criteria.andIsDeletedEqualTo("n").andFlowerNameEqualTo(dto.getFlowerName()).andTaobaoUserIdNotEqualTo(dto.getTaobaoUserId());
 		List<PartnerFlowerNameApply> applys=partnerFlowerNameApplyMapper.selectByExample(example);
 		if(applys.size()>0){
-			throw new AugeServiceException("花名已经存在，请选择别的花名申请");
+			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"花名已经存在，请选择别的花名申请");
 		}
 	}
 

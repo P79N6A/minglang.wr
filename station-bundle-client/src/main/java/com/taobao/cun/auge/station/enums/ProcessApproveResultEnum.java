@@ -47,10 +47,12 @@ public class ProcessApproveResultEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof ProcessApproveResultEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof ProcessApproveResultEnum)) {
+            return false;
+        }
 		ProcessApproveResultEnum objType = (ProcessApproveResultEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -61,8 +63,9 @@ public class ProcessApproveResultEnum implements Serializable {
 	}
 
 	public static ProcessApproveResultEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

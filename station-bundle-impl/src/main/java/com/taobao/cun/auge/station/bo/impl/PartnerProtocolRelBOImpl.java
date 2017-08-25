@@ -16,6 +16,7 @@ import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.convert.PartnerProtocolRelConverter;
@@ -23,6 +24,7 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 
@@ -43,12 +45,13 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 				PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType) {
 		Long protocolId = protocolBO.getValidProtocol(type).getId();
 		if (null == protocolId) {
-			throw new RuntimeException("protocol not exists: " + type);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocol not exists: " + type);
 		}
 
 		PartnerProtocolRel partnerProtocolRelDO = new PartnerProtocolRel();
@@ -92,13 +95,13 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	@Override
 	public Long addPartnerProtocolRel(
 			PartnerProtocolRelDto partnerProtocolRelDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(partnerProtocolRelDto);
 		PartnerProtocolRel record = PartnerProtocolRelConverter.toPartnerProtocolRel(partnerProtocolRelDto);
 		if (partnerProtocolRelDto.getProtocolId() == null && partnerProtocolRelDto.getProtocolTypeEnum() != null) {
 			Long protocolId = protocolBO.getValidProtocol(partnerProtocolRelDto.getProtocolTypeEnum()).getId();
 			if (protocolId == null) {
-				throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocolBO.getValidProtocol is null");
 			}
 			record.setProtocolId(protocolId);
 		}
@@ -113,14 +116,14 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	@Override
 	public void deletePartnerProtocolRel(
 			PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.validateParam(partnerProtocolRelDeleteDto);
 		ValidateUtils.notNull(partnerProtocolRelDeleteDto.getTargetType());
 		ValidateUtils.notNull(partnerProtocolRelDeleteDto.getObjectId());
 		ValidateUtils.notEmpty(partnerProtocolRelDeleteDto.getProtocolTypeList());
 		List<Long>  protocolIds = protocolBO.getAllProtocolId(partnerProtocolRelDeleteDto.getProtocolTypeList());
 		if (protocolIds == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocolBO.getAllProtocolId is null");
 		}
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
 		
@@ -141,7 +144,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	public PartnerProtocolRelDto getPartnerProtocolRelDto(
 			ProtocolTypeEnum type, Long objectId,
 			PartnerProtocolRelTargetTypeEnum targetType)
-			throws AugeServiceException {
+			 {
 		ValidateUtils.notNull(type);
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(targetType);
@@ -150,7 +153,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		types.add(type);
 		List<Long>  protocolIds = protocolBO.getAllProtocolId(types);
 		if (protocolIds == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocolBO.getAllProtocolId is null");
 		}
 		
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
@@ -171,7 +174,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	
 	@Override
 	public PartnerProtocolRelDto getPartnerProtocolRelDto(Long objectId,
-			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId) throws AugeServiceException {
+			PartnerProtocolRelTargetTypeEnum targetType, Long protocolId)  {
 		ValidateUtils.notNull(objectId);
 		ValidateUtils.notNull(targetType);
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
@@ -190,7 +193,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 
 	@Override
 	public PartnerProtocolRelDto getLastPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId, ProtocolTypeEnum type,
-			PartnerProtocolRelTargetTypeEnum targetType) throws AugeServiceException {
+			PartnerProtocolRelTargetTypeEnum targetType)  {
 		ValidateUtils.notNull(type);
 		ValidateUtils.notNull(taobaoUserId);
 		ValidateUtils.notNull(targetType);
@@ -199,7 +202,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		types.add(type);
 		List<Long>  protocolIds = protocolBO.getAllProtocolId(types);
 		if (protocolIds == null) {
-			throw new AugeServiceException(CommonExceptionEnum.RECORD_IS_NULL);
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocolBO.getAllProtocolId is null");
 		}
 		
 		PartnerProtocolRelExample example = new PartnerProtocolRelExample();

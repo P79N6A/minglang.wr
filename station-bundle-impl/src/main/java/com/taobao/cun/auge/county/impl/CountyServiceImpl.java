@@ -1,18 +1,12 @@
 package com.taobao.cun.auge.county.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.LatitudeUtil;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.county.CountyService;
 import com.taobao.cun.auge.county.bo.CountyBO;
@@ -32,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.mapper.CountyStationMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -54,13 +50,8 @@ public class CountyServiceImpl implements CountyService{
 	@Override
 	public CountyDto saveCountyStation(String operator,CountyDto countyDto) {
 		logger.info("saveCountyStation"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.saveCountyStation(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("保存县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override
@@ -68,15 +59,18 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.getProvinceList(areaOrgIds);
 	}
 	
-	public List<CountyDto> getCountyStationByProvince(String provinceCode){
+	@Override
+    public List<CountyDto> getCountyStationByProvince(String provinceCode){
 		return countyBO.getCountyStationByProvince(provinceCode);
 	}
 
-	public List<CountyDto> getCountyStationList(List<Long> areaIds){
+	@Override
+    public List<CountyDto> getCountyStationList(List<Long> areaIds){
 		return countyBO.getCountyStationList(areaIds);
 	}
 
-	public CountyDto getCountyStation(Long id,Boolean isMobile){
+	@Override
+    public CountyDto getCountyStation(Long id, Boolean isMobile){
 		CountyDto dto= countyBO.getCountyStation(id);
 		if(isMobile){
 			return convertForMobile(dto);
@@ -85,7 +79,8 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 
-	public List<Long> getCountiesByOrgId(List<Long> orgIds){
+	@Override
+    public List<Long> getCountiesByOrgId(List<Long> orgIds){
 		List<CountyDto> countyDtos = countyBO.getCountyStationByOrgIds(orgIds);
 		List<Long> counties = new ArrayList<Long>(countyDtos.size());
 		for(CountyDto countyDto:countyDtos){
@@ -99,11 +94,28 @@ public class CountyServiceImpl implements CountyService{
 		return counties;
 	}
 
-	public CountyDto getCountyStationByOrgId(Long id){
+	@Override
+	public List<CountyDto> getCountyListByOrgIds(List<Long> orgIds) {
+		return countyBO.getCountyStationByOrgIds(orgIds);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCity(String cityCode) {
+		return countyBO.getCountyStationByCity(cityCode);
+	}
+
+	@Override
+	public List<CountyDto> getCountyStationByCounty(String countyCode) {
+		return countyBO.getCountyStationByCounty(countyCode);
+	}
+
+	@Override
+    public CountyDto getCountyStationByOrgId(Long id){
 		return countyBO.getCountyStationByOrgId(id);
 	}
 	
-	public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
+	@Override
+    public PageDto<CountyDto> getCountyStationList(CountyStationQueryCondition queryCondition){
 		PageDto<CountyDto> result=countyBO.getCountyStationList(queryCondition);
 		if(queryCondition.isMobile()){
 			List<CountyDto> dtos=new ArrayList<CountyDto>();
@@ -139,6 +151,12 @@ public class CountyServiceImpl implements CountyService{
 		returnDto.setFreeDeadline(countyDto.getFreeDeadline());
 		returnDto.setSelfCosts(countyDto.getSelfCosts());
 		returnDto.setEmployeeName(countyDto.getEmployeeName());
+		returnDto.setOrgId(countyDto.getOrgId());
+		if(countyDto.getStartOperationTime()!=null){
+			returnDto.setStartOperationTime(countyDto.getStartOperationTime());
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+			returnDto.setStartOperationTimeStr(sdf.format(countyDto.getStartOperationTime()));
+		}
 		return returnDto;
 	}
 
@@ -177,15 +195,11 @@ public class CountyServiceImpl implements CountyService{
 		return countyBO.queryCountyStation(queryCondition);
 	}
 	
-	public CountyDto startOperate(String operator,CountyDto countyDto){
+	@Override
+    public CountyDto startOperate(String operator, CountyDto countyDto){
 		logger.info("startOperate"+JSON.toJSONString(countyDto));
-		try {
 			CountyDto rst = countyBO.startOperate(operator,countyDto);
 			return rst;
-		} catch (Exception e){
-			logger.error("s县点失败："+JSON.toJSONString(countyDto),e);
-			throw new AugeBusinessException("保存县点失败："+e);
-		}
 	}
 
 	@Override
@@ -201,7 +215,7 @@ public class CountyServiceImpl implements CountyService{
 			example.createCriteria().andCityEqualTo(countyAreaId.toString()).andIsDeletedEqualTo("n");
 			countyStations = countyStationMapper.selectByExample(example);
 			if(CollectionUtils.isEmpty(countyStations)){
-				throw new AugeBusinessException("can not find county by areaId["+countyAreaId+"]");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"can not find county by areaId["+countyAreaId+"]");
 			}
 		}
 		countyStation = countyStations.iterator().next();
@@ -226,7 +240,7 @@ public class CountyServiceImpl implements CountyService{
 			} else if (StringUtils.isNotBlank(countyStation.getProvince())) {
 				lastDivisionId = countyStation.getProvince();
 			}
-			Map<String, String> map = findLatitude(lastDivisionId, StringUtils.trim(countyStation.getAddressDetail()));
+			Map<String, String> map = LatitudeUtil.findLatitude(lastDivisionId, StringUtils.trim(countyStation.getAddressDetail()));
 			String lng = map.get("lng");
 			String lat = map.get("lat");
 			CountyStation county = new CountyStation();
@@ -239,23 +253,5 @@ public class CountyServiceImpl implements CountyService{
 		}
 	}
 	
-	public static Map<String, String> findLatitude(String lastDivisionId, String addressDetail) {
-		if (StringUtil.isEmpty(lastDivisionId)) {
-			return Collections.<String, String> emptyMap();
-		}
-		try {
-			StringBuilder url = new StringBuilder("http://lsp.wuliu.taobao.com/locationservice/addr/geo_coding.do?");
-			url.append("lastDivisionId=").append(lastDivisionId).append("&addr=").append(addressDetail);
-			HttpClient httpCLient = new DefaultHttpClient();
-			HttpGet httpget = new HttpGet(url.toString());
-			HttpResponse response = httpCLient.execute(httpget);
-			HttpEntity entity = response.getEntity();
-			String answer = EntityUtils.toString(entity);
-			String json = answer.split("=")[1];
-			return (Map<String, String>) JSON.parse(json.split("}")[0] + "}");
-		} catch (Exception e) {
-			logger.error("lastDivisionId = " + lastDivisionId + " ,addressDetail = " + addressDetail, e);
-			return Collections.<String, String> emptyMap();
-		}
-	}
+
 }

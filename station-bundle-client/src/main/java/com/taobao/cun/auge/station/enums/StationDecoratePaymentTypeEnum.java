@@ -60,10 +60,12 @@ public class StationDecoratePaymentTypeEnum implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof StationDecoratePaymentTypeEnum))
-			return false;
+		if (obj == null) {
+            return false;
+        }
+		if (!(obj instanceof StationDecoratePaymentTypeEnum)) {
+            return false;
+        }
 		StationDecoratePaymentTypeEnum objType = (StationDecoratePaymentTypeEnum) obj;
 		return objType.getCode().equals(this.getCode());
 	}
@@ -74,8 +76,9 @@ public class StationDecoratePaymentTypeEnum implements Serializable {
 	}
 
 	public static StationDecoratePaymentTypeEnum valueof(String code) {
-		if (code == null)
-			return null;
+		if (code == null) {
+            return null;
+        }
 		return mappings.get(code);
 	}
 

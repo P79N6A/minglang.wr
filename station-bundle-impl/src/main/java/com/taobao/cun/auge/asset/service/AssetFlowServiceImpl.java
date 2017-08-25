@@ -51,7 +51,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoAssetFlowMapper;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.domain.CuntaoFlowRecordEvent;
-import com.taobao.cun.auge.org.dto.CuntaoOrgDto;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -109,7 +109,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	private String receiverId; 
 	@Override
 	public PageDto<CuntaoAssetFlowDto> queryByPage(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		try {
 			CuntaoAssetFlowExtExample example = new CuntaoAssetFlowExtExample();
 			com.taobao.cun.auge.dal.domain.CuntaoAssetFlowExtExample.Criteria cri = example.createCriteria();
 			PageHelper.startPage(cuntaoAssetFlowQueryDto.getPageNum(), cuntaoAssetFlowQueryDto.getPageSize());
@@ -140,11 +139,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			List<CuntaoAssetFlowDto> targetList = page.getResult().stream().map(source -> convertToflowDto(source)).collect(Collectors.toList());
 			PageDto<CuntaoAssetFlowDto> result = PageDtoUtil.success(page, targetList);
 			return result;
-		} catch (Exception e) {
-			logger.error("queryByPage error",e);
-			throw new AugeBusinessException("queryByPage error");
-		}
-		
 	}
 
 	private CuntaoAssetFlowDto convertToflowDto(CuntaoAssetFlow fd) {
@@ -209,7 +203,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public CuntaoAssetFlowDto getFlowById(Long assetFlowId) {
-		try {
 			Assert.notNull(assetFlowId);
 			CuntaoAssetFlow flow= cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
 			CuntaoAssetFlowDetailExample example = new CuntaoAssetFlowDetailExample();
@@ -220,11 +213,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			List<CuntaoAssetFlowDetailDto> detailDtoList =	details.stream().map(souce -> convertToDetailDto(souce)).collect(Collectors.toList());
 			convertToflowDto.setAssetFlowDetailList(detailDtoList);
 			return convertToflowDto;
-		} catch (Exception e) {
-			logger.error("getFlowById error! flowId["+assetFlowId+"]",e);
-			throw new AugeBusinessException("getFlowById error! flowId["+assetFlowId+"]");
-		}
-		
 	}
 
 	private CuntaoAssetFlowDetailDto convertToDetailDto(CuntaoAssetFlowDetail flowDetailDO) {
@@ -265,7 +253,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public void saveFlow(CuntaoAssetFlowDto cuntaoAssetFlowDto, String operator) {
-		try {
 			Assert.notNull(cuntaoAssetFlowDto);
 			CuntaoAssetFlow cuntaoAssetFlow = this.convertToCuntaoAssetFlow(cuntaoAssetFlowDto, operator);
 			this.cuntaoAssetFlowMapper.insertSelective(cuntaoAssetFlow);
@@ -281,11 +268,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			/*CuntaoOrgDto org = cuntaoOrgServiceClient.getCuntaoOrg(Long.parseLong(cuntaoAssetFlowDto.getApplyOrg()));
 			createTask(flowId,String.valueOf(org.getParentId()),operator);*/
 			createTask(flowId,cuntaoAssetFlowDto.getApplyOrg(),operator);
-		} catch (Exception e) {
-			logger.error("saveFlow error!",e);
-			throw new AugeBusinessException("saveFlow error");
-		}
-		
 	}
 
 	
@@ -341,7 +323,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public Map<String, List<CuntaoAssetSituationDto>> getAssetSituation(Long applyOrgId) {
-		try {
 			Assert.notNull(applyOrgId);
 			Map<String, List<CuntaoAssetSituationDto>> res = new HashMap<String, List<CuntaoAssetSituationDto>>();
 			List<Map<String,Object>> assetSituation = this.cuntaoAssetExtMapper.getAssetSituation(applyOrgId);
@@ -371,16 +352,10 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 				res.put(CuntaoAssetSituationDto.COUNTY_APPLY__ASSET, countyAssetDtoList2);
 			}
 			return res;
-		} catch (Exception e) {
-			logger.error("getAssetSituation error!",e);
-			throw new AugeBusinessException("getAssetSituation error");
-		}
-		
 	}
 
 	@Override
 	public void updateFlow(CuntaoAssetFlowDto cuntaoAssetFlowDto, String operator) {
-		try {
 			Assert.notNull(cuntaoAssetFlowDto);
 			Assert.notNull(operator);
 			
@@ -399,11 +374,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			if(cuntaoAssetFlowDto.isApplyPr()) {
 				syncAsset(operator, flow, flow.getId());
 			}
-		} catch (Exception e) {
-			logger.error("updateFlow error!",e);
-			throw new AugeBusinessException("getAssetSituation error");
-		}
-		
 	}
 
 	private void syncAsset(String operator, CuntaoAssetFlow cuntaoAssetFlow, Long assetFlowId) {
@@ -424,7 +394,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 		Result<?> result = prService.submitPr(prDto);
 		//this.updateAssetFlow(flowDto, contextDto);
 		if(!result.isSuccess()) {
-			throw new RuntimeException("提交pr失败，失败原因：" + result.getMessage());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + result.getMessage());
 		}
 	}
 	
@@ -454,7 +424,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 						prLine.setNeedByDate(assetFlowDto.getPlanReceiveTime());
 						prLine.setDeliveryAddressId(assetDefaultAddressId);
 						prLine.setReceiver(receiverId + "");
-						prLine.setQuantity(detail.getApplyNum());
+						prLine.setQuantity(new BigDecimal(detail.getApplyNum()));
 						prLine.setRemark(getPrRemark(assetFlowDto));
 						prLine.setAcceptanceStandard(acceptanceStandard);
 						prLineList.add(prLine);
@@ -562,7 +532,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public void audit(CuntaoAssetFlowAuditDto cuntaoAssetFlowAuditDto, String operator) {
-		try {
 			Assert.notNull(cuntaoAssetFlowAuditDto);
 			Assert.notNull(operator);
 			CuntaoAssetFlow flow = new CuntaoAssetFlow();
@@ -574,12 +543,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			if(c != null && c > 0){
 				finishTask(cuntaoAssetFlowAuditDto,operator);
 			}
-		} catch (Exception e) {
-			logger.error("auditAssetFlow error!",e);
-			throw new AugeBusinessException("auditAssetFlow error");
-		}
-		
-		
 	}
 
 	private void finishTask(CuntaoAssetFlowAuditDto auditDto, String  operator){
@@ -601,7 +564,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	
 	@Override
 	public List<CuntaoAssetFlowDetailForExcelDto> getDetailForExcel(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		try {
 			Assert.notNull(cuntaoAssetFlowQueryDto);
 			List<CuntaoAssetFlowDetailForExcelDto>  resList = Lists.newArrayList();
 			
@@ -631,11 +593,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 				}
 			}
 			return resList;
-		} catch (Exception e) {
-			logger.error("getDetailForExcel error!",e);
-			throw new AugeBusinessException("getDetailForExcel error");
-		}
-		
 	}
 
 	 private CuntaoAssetFlowDetailForExcel buildParamForExcel(CuntaoAssetFlowQueryDto queryDto) {
@@ -656,29 +613,22 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 	 
 	@Override
 	public Integer getDetailCountForExcel(CuntaoAssetFlowQueryDto cuntaoAssetFlowQueryDto) {
-		try {
 			Assert.notNull(cuntaoAssetFlowQueryDto);
 			return this.cuntaoAssetFlowExtMapper.selectCountForExcel(buildParamForExcel(cuntaoAssetFlowQueryDto));
-		} catch (Exception e) {
-			logger.error("getDetailCountForExcel error!",e);
-			throw new AugeBusinessException("getDetailCountForExcel error");
-		}
-		
 	}
 
 	@Override
 	public void cancelFlow(Long assetFlowId, String operator) {
-		try {
 			Assert.notNull(assetFlowId);
 			Assert.notNull(operator);
 			CuntaoAssetFlow flow = this.cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
 			if( flow != null){
 				if (!AssetFlowApplyStatusEnum.AUDITING.getCode().equals(flow.getApplyStatus())) {
 					String applyStatusDesc = AssetFlowApplyStatusEnum.valueof(flow.getApplyStatus()).getDesc();
-					throw new RuntimeException("申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
+					throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"申请单状态为【"+applyStatusDesc+"】，不能取消申请！");
 				}
 			}else{
-				throw new RuntimeException("查询不到当前申请单");
+				throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"查询不到当前申请单");
 			}
 			
 			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(assetFlowId), "assetApply", operator);
@@ -688,16 +638,10 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			cuntaoAssetFlow.setGmtModified(new Date());
 			cuntaoAssetFlow.setApplyStatus(AssetFlowApplyStatusEnum.CANCEL.getCode());
 			this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
-		} catch (Exception e) {
-			logger.error("cancelFlow error!",e);
-			throw new AugeBusinessException("cancelFlow error");
-		}
-		
 	}
 
 	@Override
 	public void deleteFlow(Long assetFlowId, String operator) {
-		try {
 			Assert.notNull(assetFlowId);
 			Assert.notNull(operator);
 			CuntaoAssetFlow cuntaoAssetFlow = new CuntaoAssetFlow();
@@ -706,17 +650,10 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			cuntaoAssetFlow.setGmtModified(new Date());
 			cuntaoAssetFlow.setIsDeleted("y");
 			this.cuntaoAssetFlowMapper.updateByPrimaryKeySelective(cuntaoAssetFlow);
-		} catch (Exception e) {
-			logger.error("deleteFlow error!flowId:["+assetFlowId+"]",e);
-			throw new AugeBusinessException("deleteFlow error");
-		}
-		
-		
 	}
 
 	@Override
 	public void updateFlowDetails(List<CuntaoAssetFlowDetailDto> details, String operator) {
-		try {
 			Assert.notNull(details);
 			Assert.notNull(operator);
 			if(details !=null){
@@ -727,12 +664,6 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 					sendQuitEvent(detailDo, operator);
 				}
 			}
-		} catch (Exception e) {
-			logger.error("updateFlowDetails error!",e);
-			throw new AugeBusinessException("updateFlowDetails error");
-		}
-		
-		
 	}
 
 	private void sendQuitEvent(CuntaoAssetFlowDetail detailDo, String operator) {

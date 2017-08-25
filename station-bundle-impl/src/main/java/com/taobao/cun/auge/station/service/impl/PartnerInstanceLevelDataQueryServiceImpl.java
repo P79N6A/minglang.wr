@@ -4,10 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.auge.data.PartnerInstanceLevelDataService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +25,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
-import com.taobao.cun.crius.data.service.PartnerInstanceLevelDataService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
 
@@ -47,9 +45,9 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
     
     @Override
     public PartnerInstanceLevelGrowthDto getPartnerInstanceLevelGrowthData(Long taobaoUserId) {
-        return getGrowthData(taobaoUserId, PartnerInstanceLevelGrowthDto.class, new DataFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto>(){
+        return getGrowthData(taobaoUserId, PartnerInstanceLevelGrowthDto.class, new DataFetcher<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthDto >(){
             @Override
-            public ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDto> getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate) {
+            public com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthDto  getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate) {
                 return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthData(taobaoUserId, stationId, statDate);
             }
         });
@@ -57,9 +55,9 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
 
     @Override
     public List<PartnerInstanceLevelGrowthTrendDto> getPartnerInstanceLevelGrowthTrendData(Long taobaoUserId, String statDate) {
-        return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDto.class,  new DataListFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>(){
+        return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDto.class,  new DataListFetcher<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthTrendDto >(){
             @Override
-            public ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDto>> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
+            public List<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthTrendDto > getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
                 return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendData(taobaoUserId, stationId, startDate, endDate);
             }
         });
@@ -67,9 +65,9 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
     
     @Override
     public PartnerInstanceLevelGrowthDtoV2 getPartnerInstanceLevelGrowthDataV2(Long taobaoUserId) {
-        return getGrowthData(taobaoUserId, PartnerInstanceLevelGrowthDtoV2.class, new DataFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDtoV2>(){
+        return getGrowthData(taobaoUserId, PartnerInstanceLevelGrowthDtoV2.class, new DataFetcher<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthDtoV2 >(){
             @Override
-            public ResultModel<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthDtoV2> getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate) {
+            public com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthDtoV2  getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate) {
                 return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthDataV2(taobaoUserId, stationId, statDate);
             }
         });
@@ -77,16 +75,15 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
 
     @Override
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate) {
-        return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDtoV2.class,  new DataListFetcher<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDtoV2>(){
+        return getTrendData(taobaoUserId, statDate, PartnerInstanceLevelGrowthTrendDtoV2.class,  new DataListFetcher<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthTrendDtoV2 >(){
             @Override
-            public ResultModel<List<com.taobao.cun.crius.data.service.dto.PartnerInstanceLevelGrowthTrendDtoV2>> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
+            public List<com.taobao.cun.auge.data.dto.PartnerInstanceLevelGrowthTrendDtoV2 > getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String startDate, String endDate) {
                 return partnerInstanceLevelDataService.getPartnerInstanceLevelGrowthTrendDataV2(taobaoUserId, stationId, startDate, endDate);
             }
         });
     }
     
     private <T, S> T getGrowthData(Long taobaoUserId, Class<T> clazz, DataFetcher<S> df) {
-        try {
             PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
                 return null;
@@ -94,13 +91,12 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
             // 今天的数据没有则取昨天的数据
             List<PartnerInstanceLevelGrowthStatDateDto> statDateList = getRecentStatDateList();
             for (PartnerInstanceLevelGrowthStatDateDto statDate : statDateList) {
-                ResultModel<S> result = df.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
-                checkResult(result, "getPartnerInstanceLevelGrowthData");
-                if (null == result.getResult()) {
+                S result = df.getPartnerInstanceLevelGrowthData(instance.getTaobaoUserId(), instance.getStationId(), statDate.getStatDate());
+                if (null == result) {
                     continue;
                 }
-                T dto = clazz.newInstance();
-                BeanCopyUtils.copyNotNullProperties(result.getResult(), dto);
+                T dto = BeanUtils.instantiate(clazz);
+                BeanCopyUtils.copyNotNullProperties(result, dto);
                 BeanCopyUtils.copyNotNullProperties(statDate, dto);
                 return dto;
             }
@@ -108,19 +104,9 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                 logger.warn("PartnerInstanceLevelGrowthData not exists " + taobaoUserId);
             }
             return null;
-        } catch (AugeServiceException e) {
-            String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
-            logger.error(error, e);
-            throw e;
-        } catch (Exception e) {
-            String error = getErrorMessage("getPartnerInstanceLevelGrowthData", String.valueOf(taobaoUserId), e.getMessage());
-            logger.error(error, e);
-            throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
     }
 
     private <T,S> List<T> getTrendData(Long taobaoUserId, String statDate, Class<T> clazz, DataListFetcher<S> dataFetcher) {
-        try {
             PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
             if (null == instance || !PartnerInstanceTypeEnum.TP.getCode().equals(instance.getType())) {
                 return null;
@@ -131,12 +117,11 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
             }
             calendar.add(Calendar.DATE, (-1 * DEFAULT_GROWTH_TREND_STAT_DAYS));
             String statStartDate = CalendarUtil.formatDate(calendar.getTime(), CalendarUtil.DATE_FMT_3);
-            ResultModel<List<S>> result = dataFetcher.getPartnerInstanceLevelTrendData(taobaoUserId, instance.getStationId(), statStartDate, statDate);
-            checkResult(result, "getPartnerInstanceLevelGrowthTrendData");
-            if (CollectionUtils.isEmpty(result.getResult())) {
+            List<S> result = dataFetcher.getPartnerInstanceLevelTrendData(taobaoUserId, instance.getStationId(), statStartDate, statDate);
+            if (CollectionUtils.isEmpty(result)) {
                 return null;
             }
-            List<T> list = Lists.transform(result.getResult(),
+            List<T> list = Lists.transform(result,
                     new Function<S, T>() {
                         @Override
                         public T apply(S input) {
@@ -152,17 +137,6 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
                     });
 
             return list;
-        } catch (AugeServiceException e) {
-            String error = getAugeExceptionErrorMessage("getPartnerInstanceLevelGrowthTrendData",
-                    String.valueOf(taobaoUserId) + "," + statDate, e.getMessage());
-            logger.error(error, e);
-            throw e;
-        } catch (Exception e) {
-            String error = getErrorMessage("getPartnerInstanceLevelGrowthTrendData", String.valueOf(taobaoUserId) + "," + statDate,
-                    e.getMessage());
-            logger.error(error, e);
-            throw new AugeServiceException(CommonExceptionEnum.SYSTEM_ERROR);
-        }
     }
     
     /**
@@ -204,28 +178,14 @@ public class PartnerInstanceLevelDataQueryServiceImpl implements PartnerInstance
         return sb.toString();
     }
 
-    private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PartnerInstanceQueryService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
-                .append(error);
-        return sb.toString();
-    }
     
-    private <T> void checkResult(ResultModel<T> rm, String msg) {
-        if (!rm.isSuccess()) {
-            if (rm.getException() != null) {
-                throw rm.getException();
-            } else {
-                throw new RuntimeException("get ResultModel failed: " + msg);
-            }
-        }
-    }
+
 
     public static interface DataFetcher<T> {
-        ResultModel<T> getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate);
+        T getPartnerInstanceLevelGrowthData(Long taobaoUserId, Long stationId, String statDate);
     }
     
     public static interface DataListFetcher<T> {
-        ResultModel<List<T>> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String statDate, String endDate);
+        List<T> getPartnerInstanceLevelTrendData(Long taobaoUserId, Long stationId, String statDate, String endDate);
     }
 }
