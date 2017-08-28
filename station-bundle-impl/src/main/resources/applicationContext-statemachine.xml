@@ -22,4 +22,12 @@
             <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
         </property>
     </bean>
+    
+    <!-- 镇小二状态机配置 -->
+    <bean id="TPTStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
+        <property name="path" value="statemachine/statemachine-tpt.xml"/>
+        <property name="listener">
+            <bean class="com.alibaba.shared.xfsm.core.listener.SimpleXFSMListener"/>
+        </property>
+    </bean>
 </beans>
