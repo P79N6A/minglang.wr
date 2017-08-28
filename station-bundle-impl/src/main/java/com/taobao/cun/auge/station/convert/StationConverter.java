@@ -62,6 +62,7 @@ public class StationConverter {
 		stationDto.setStationNum(station.getStationNum());
 		stationDto.setStatus(StationStatusEnum.valueof(station.getStatus()));
 		stationDto.setAddress(address);
+		stationDto.setStationType(station.getStationType());
 		stationDto.setFeature(FeatureUtil.toMap(station.getFeature()));
 		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(station.getIsOnTown()));
 		return stationDto;
@@ -109,6 +110,7 @@ public class StationConverter {
 		station.setAlipayAccount(stationDto.getAlipayAccount());
 		station.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null
 				: stationDto.getPartnerInstanceIsOnTown().getCode());
+		station.setStationType(stationDto.getStationType());
 		return station;
 	}
 

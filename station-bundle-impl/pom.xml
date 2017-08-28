@@ -31,10 +31,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-		 <dependency>
-	        <groupId>com.alibaba.boot</groupId>
-	        <artifactId>infrastructure-spring-boot-starters</artifactId>
-    	</dependency>
+		<dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>infrastructure-spring-boot-starters</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>io.dropwizard.metrics</groupId>
 			<artifactId>metrics-core</artifactId>
@@ -51,25 +51,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-loader</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> </dependency> -->
-		<!-- AliExpress Starters 
-		<dependency>
-    		<groupId>com.alibaba.cloud</groupId>
-    		<artifactId>spring-cloud-stream-starter-metaq</artifactId>
-		</dependency>
-		-->
-		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> </dependency> -->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-eureka</artifactId> 
+			</dependency> -->
+		<!-- AliExpress Starters <dependency> <groupId>com.alibaba.cloud</groupId> 
+			<artifactId>spring-cloud-stream-starter-metaq</artifactId> </dependency> -->
+		<!-- <dependency> <groupId>com.aliexpress.boot</groupId> <artifactId>spring-boot-starter-maven</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>com.aliexpress.boot</groupId>
 			<artifactId>spring-boot-starter-endpoints</artifactId>
 		</dependency>
 		<dependency>
-			 <groupId>com.alibaba.boot</groupId>  
-       		 <artifactId>tair-spring-boot-starter</artifactId>  
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>tair-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.boot</groupId>  
-        	<artifactId>tddl-spring-boot-starter</artifactId>  
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>tddl-spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.springframework.boot</groupId>
@@ -187,9 +185,9 @@
 		</dependency>
 
 		<dependency>
-        	<groupId>com.alibaba.boot</groupId>
-        	<artifactId>notify-spring-boot-starter</artifactId>
-   		 </dependency>
+			<groupId>com.alibaba.boot</groupId>
+			<artifactId>notify-spring-boot-starter</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
@@ -264,28 +262,28 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.crm.shared</groupId>
-			  <artifactId>ceres.shard</artifactId>
+			<groupId>com.alibaba.crm.shared</groupId>
+			<artifactId>ceres.shard</artifactId>
 		</dependency>
-			<dependency>
+		<dependency>
 			<groupId>com.alibaba.crm.shared</groupId>
 			<artifactId>cmall.shared</artifactId>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>com.taobao.common.uic.uic-common</groupId>
 			<artifactId>common-uic-common</artifactId>
 		</dependency>
 		<dependency>
-		   <groupId>org.jmockit</groupId> 
-		   <artifactId>jmockit</artifactId> 
-		   <version>1.28</version>
-		   <scope>test</scope>
-        </dependency>
-        <dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>1.28</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.cun</groupId>
 			<artifactId>cun-common-client</artifactId>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>com.esotericsoftware.kryo</groupId>
 			<artifactId>kryo</artifactId>
 		</dependency>
@@ -299,28 +297,28 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			 <groupId>org.slf4j</groupId>
-			 <artifactId>log4j-over-slf4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>log4j</groupId>
-			  <artifactId>log4j</artifactId>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.pm</groupId>
-			  <artifactId>sc.api</artifactId>
+			<groupId>com.alibaba.pm</groupId>
+			<artifactId>sc.api</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.pm</groupId>
-			  <artifactId>sc.portal.api</artifactId>
+			<groupId>com.alibaba.pm</groupId>
+			<artifactId>sc.portal.api</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.common.division</groupId>
-				<artifactId>common-division</artifactId>
-		</dependency>	
-		<dependency>	
-		  <groupId>com.taobao.crius</groupId>
-		  <artifactId>biz-client</artifactId>
+			<groupId>com.taobao.common.division</groupId>
+			<artifactId>common-division</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>biz-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>
@@ -331,41 +329,49 @@
 			<artifactId>cun-common-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.cun.module</groupId>
-				<artifactId>recruit-bundle-client</artifactId>
-			</dependency>
-		<dependency>
-			  <groupId>com.alibaba.crm</groupId>
-			  <artifactId>pacific-service-api</artifactId>
+			<groupId>com.taobao.cun.module</groupId>
+			<artifactId>recruit-bundle-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.alibaba.infop.shared</groupId>
-				<artifactId>tax.api</artifactId>
+			<groupId>com.alibaba.crm</groupId>
+			<artifactId>pacific-service-api</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>io.advantageous.reakt</groupId>
-			  <artifactId>reakt</artifactId>
+			<groupId>com.alibaba.infop.shared</groupId>
+			<artifactId>tax.api</artifactId>
 		</dependency>
 		<dependency>
-			  <groupId>com.alibaba.china.shared</groupId>
-			  <artifactId>xfsm.spring</artifactId>
+			<groupId>io.advantageous.reakt</groupId>
+			<artifactId>reakt</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.namelist</groupId>
-				<artifactId>namelist-common</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.taobao.crius</groupId>
-				<artifactId>user-client</artifactId>
-			</dependency>
-		<dependency>
-				<groupId>com.alipay.baoxian</groupId>
-				<artifactId>baoxian-scene-facade</artifactId>
+			<groupId>com.alibaba.china.shared</groupId>
+			<artifactId>xfsm.spring</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.openSearch</groupId>
-				<artifactId>openSearch</artifactId>
-		</dependency>		
+			<groupId>com.taobao.namelist</groupId>
+			<artifactId>namelist-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.crius</groupId>
+			<artifactId>user-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alipay.baoxian</groupId>
+			<artifactId>baoxian-scene-facade</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.openSearch</groupId>
+			<artifactId>openSearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.taobao.place</groupId>
+			<artifactId>place-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.tmall.sic</groupId>
+			<artifactId>sic-client</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
