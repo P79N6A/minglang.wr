@@ -612,6 +612,18 @@
            				<groupId>com.taobao.itemcenter</groupId>  
       					<artifactId>itemcenter-common</artifactId> 
         			</exclusion>
+        			<exclusion>
+           				 <groupId>com.taobao.inventory</groupId>  
+      					<artifactId>ip-client</artifactId>  
+        			</exclusion>
+        			<exclusion>
+           				 <groupId>com.taobao.mallitemcenter</groupId>  
+      					 <artifactId>mic-client</artifactId>  
+        			</exclusion>
+        			<exclusion>
+           				 <groupId>com.taobao.mallitemcenter</groupId>  
+                         <artifactId>mic-common</artifactId> 
+        			</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
