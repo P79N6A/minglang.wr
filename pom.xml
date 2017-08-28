@@ -624,6 +624,11 @@
 			  <artifactId>commons-collections</artifactId>
 			  <version>999-not-exist-v3</version>
 			</dependency>
+			<dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>slf4j-nop</artifactId>
+			  <version>999-not-exist-v3</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
