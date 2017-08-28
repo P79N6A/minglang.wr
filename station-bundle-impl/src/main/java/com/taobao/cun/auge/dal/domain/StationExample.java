@@ -2855,66 +2855,6 @@ public class StationExample {
             return (Criteria) this;
         }
 
-        public Criteria andCainiaoWarehouseIdIsNull() {
-            addCriterion("cainiao_warehouse_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdIsNotNull() {
-            addCriterion("cainiao_warehouse_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdEqualTo(Long value) {
-            addCriterion("cainiao_warehouse_id =", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdNotEqualTo(Long value) {
-            addCriterion("cainiao_warehouse_id <>", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdGreaterThan(Long value) {
-            addCriterion("cainiao_warehouse_id >", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("cainiao_warehouse_id >=", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdLessThan(Long value) {
-            addCriterion("cainiao_warehouse_id <", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdLessThanOrEqualTo(Long value) {
-            addCriterion("cainiao_warehouse_id <=", value, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdIn(List<Long> values) {
-            addCriterion("cainiao_warehouse_id in", values, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdNotIn(List<Long> values) {
-            addCriterion("cainiao_warehouse_id not in", values, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdBetween(Long value1, Long value2) {
-            addCriterion("cainiao_warehouse_id between", value1, value2, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
-        public Criteria andCainiaoWarehouseIdNotBetween(Long value1, Long value2) {
-            addCriterion("cainiao_warehouse_id not between", value1, value2, "cainiaoWarehouseId");
-            return (Criteria) this;
-        }
-
         public Criteria andStationTypeIsNull() {
             addCriterion("station_type is null");
             return (Criteria) this;

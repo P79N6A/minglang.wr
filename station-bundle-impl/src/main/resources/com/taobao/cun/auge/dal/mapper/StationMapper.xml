@@ -45,7 +45,6 @@
     <result column="fixed_type" jdbcType="VARCHAR" property="fixedType" />
     <result column="version" jdbcType="BIGINT" property="version" />
     <result column="is_on_town" jdbcType="CHAR" property="isOnTown" />
-    <result column="cainiao_warehouse_id" jdbcType="BIGINT" property="cainiaoWarehouseId" />
     <result column="station_type" jdbcType="INTEGER" property="stationType" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -123,8 +122,7 @@
     taobao_nick, state, is_deleted, province, city, county, town, province_detail, city_detail, 
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
-    manager_id, provider_id, feature, status, fixed_type, version, is_on_town, cainiao_warehouse_id, 
-    station_type
+    manager_id, provider_id, feature, status, fixed_type, version, is_on_town, station_type
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
@@ -193,8 +191,8 @@
       products, logistics_state, format, 
       area_type, manager_id, provider_id, 
       feature, status, fixed_type, 
-      version, is_on_town, cainiao_warehouse_id, 
-      station_type)
+      version, is_on_town, station_type
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoNick,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
@@ -207,8 +205,8 @@
       #{products,jdbcType=VARCHAR}, #{logisticsState,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, 
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
-      #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{cainiaoWarehouseId,jdbcType=BIGINT}, 
-      #{stationType,jdbcType=INTEGER})
+      #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{stationType,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -334,9 +332,6 @@
       <if test="isOnTown != null">
         is_on_town,
       </if>
-      <if test="cainiaoWarehouseId != null">
-        cainiao_warehouse_id,
-      </if>
       <if test="stationType != null">
         station_type,
       </if>
@@ -455,9 +450,6 @@
       </if>
       <if test="isOnTown != null">
         #{isOnTown,jdbcType=CHAR},
-      </if>
-      <if test="cainiaoWarehouseId != null">
-        #{cainiaoWarehouseId,jdbcType=BIGINT},
       </if>
       <if test="stationType != null">
         #{stationType,jdbcType=INTEGER},
@@ -598,9 +590,6 @@
       <if test="record.isOnTown != null">
         is_on_town = #{record.isOnTown,jdbcType=CHAR},
       </if>
-      <if test="record.cainiaoWarehouseId != null">
-        cainiao_warehouse_id = #{record.cainiaoWarehouseId,jdbcType=BIGINT},
-      </if>
       <if test="record.stationType != null">
         station_type = #{record.stationType,jdbcType=INTEGER},
       </if>
@@ -654,7 +643,6 @@
       fixed_type = #{record.fixedType,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=BIGINT},
       is_on_town = #{record.isOnTown,jdbcType=CHAR},
-      cainiao_warehouse_id = #{record.cainiaoWarehouseId,jdbcType=BIGINT},
       station_type = #{record.stationType,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -781,9 +769,6 @@
       <if test="isOnTown != null">
         is_on_town = #{isOnTown,jdbcType=CHAR},
       </if>
-      <if test="cainiaoWarehouseId != null">
-        cainiao_warehouse_id = #{cainiaoWarehouseId,jdbcType=BIGINT},
-      </if>
       <if test="stationType != null">
         station_type = #{stationType,jdbcType=INTEGER},
       </if>
@@ -834,7 +819,6 @@
       fixed_type = #{fixedType,jdbcType=VARCHAR},
       version = #{version,jdbcType=BIGINT},
       is_on_town = #{isOnTown,jdbcType=CHAR},
-      cainiao_warehouse_id = #{cainiaoWarehouseId,jdbcType=BIGINT},
       station_type = #{stationType,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
