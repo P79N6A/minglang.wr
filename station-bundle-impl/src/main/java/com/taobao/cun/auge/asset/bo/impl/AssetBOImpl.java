@@ -930,7 +930,7 @@ public class AssetBOImpl implements AssetBO {
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "录入失败" + AssetBO.NO_EXIT_ASSET);
         }
-        if (!assetDto.getOperator().equals(assetDto.getOperator())) {
+        if (!asset.getOwnerWorkno().equals(assetDto.getOperator())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "录入失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
         }
@@ -1787,7 +1787,7 @@ public class AssetBOImpl implements AssetBO {
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "录入失败" + AssetBO.NO_EXIT_ASSET);
         }
-        if (!assetDto.getOperator().equals(assetDto.getOperator())) {
+        if (!asset.getOwnerWorkno().equals(assetDto.getOperator())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "录入失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
         }
