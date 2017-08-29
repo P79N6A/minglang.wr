@@ -14,7 +14,7 @@ public class StationSearchServiceConstants {
 	public static int QUERY_BY_DISTANCE_FETCH_START = 0;
 	@AppSwitch(des = "经纬度搜索取数据的大小", valueDes = "经纬度搜索开始取数据的大小", level = Switch.Level.p2)
 	public static int QUERY_BY_DISTANCE_FETCH_SIZE = 10;
-	@AppSwitch(des = "服务站名称搜索的黑名单", level = Switch.Level.p2, callback = "com.taobao.cun.core.switches.StationSearchNameBlackListCallback")
+	@AppSwitch(des = "服务站名称搜索的黑名单", level = Switch.Level.p2)
 	public static String STATION_SEARCH_BLACK_STRING = ",服务,服务站,";
 
 }

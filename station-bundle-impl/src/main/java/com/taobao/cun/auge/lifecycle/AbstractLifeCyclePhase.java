@@ -36,6 +36,7 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 
@@ -67,14 +68,14 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		stationDto.setState(StationStateEnum.INVALID);
 		stationDto.setStatus(StationStatusEnum.NEW);
 		stationDto.copyOperatorDto(partnerInstanceDto);
-
+		stationDto.setStationType(StationType.STATION.getType());
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		if (partnerDto != null) {
 			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
 			stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
 			stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
 		}
-
+     
 		// 判断服务站编号是否使用中
 		Long stationId = partnerInstanceDto.getStationId();
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());

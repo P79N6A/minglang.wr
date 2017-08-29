@@ -3,13 +3,13 @@
     <include resource="com/aliexpress/boot/logging/logback/base.xml"/>
     <logger name="com.taobao.cun" level="INFO" additivity="true"/>
     <springProfile name="production">
-        <root level="WARN">
+        <root level="INFO">
             <appender-ref ref="ALIMONITOR"/>
             <appender-ref ref="APPLICATION"/>
         </root>
     </springProfile>
     <springProfile name="!production">
-        <root level="WARN">
+        <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="APPLICATION"/>
         </root>

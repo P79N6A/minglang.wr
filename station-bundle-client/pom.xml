@@ -20,31 +20,31 @@
 			<version>1.1.0.Final</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
+		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
-                <groupId>com.taobao.cun</groupId>
-                <artifactId>cun-common-client</artifactId>
-        </dependency>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cun-common-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.cun</groupId>
-				<artifactId>cuntaosettle.client</artifactId>
+			<groupId>com.taobao.cun</groupId>
+			<artifactId>cuntaosettle.client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>
@@ -55,9 +55,14 @@
 			<artifactId>cun-common-client</artifactId>
 		</dependency>
 		<dependency>
-				<groupId>com.taobao.trade.platform</groupId>
-				<artifactId>tp-client-base</artifactId>
-		</dependency>		
+			<groupId>com.taobao.trade.platform</groupId>
+			<artifactId>tp-client-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
