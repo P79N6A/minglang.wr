@@ -100,7 +100,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
             statusList.add(
                 new AssetMobileConditionDto(AssetStatusEnum.TRANSFER.getCode(), AssetStatusEnum.TRANSFER.getDesc()));
             statusList.add(new AssetMobileConditionDto(AssetStatusEnum.PEND.getCode(), AssetStatusEnum.PEND.getDesc()));
-            statusList.add(new AssetMobileConditionDto("CHECKING", "待盘点"));
+            statusList.add(new AssetMobileConditionDto("UNCHECKED", "待盘点"));
             statusList.add(new AssetMobileConditionDto("Y", "待回收"));
             map.put("status", statusList);
             // 4 hour cache
@@ -145,7 +145,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     @Override
     public AssetDetailDto recycleAsset(AssetDto recycleDto) {
     	//签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
-        assetIncomeBO.signAssetByCounty(recycleDto.getAliNo(), recycleDto.getOperator());
+        //assetIncomeBO.signAssetByCounty(recycleDto.getAliNo(), recycleDto.getOperator());
         return assetBO.recycleAsset(recycleDto);
     }
 

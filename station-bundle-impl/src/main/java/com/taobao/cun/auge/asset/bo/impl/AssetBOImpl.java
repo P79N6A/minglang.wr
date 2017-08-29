@@ -818,6 +818,15 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "回收失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
         }
+        
+        if (!AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType())) {
+                throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                    "回收失败, 当前资产不是村小二使用，不需要回收" + getPromptInfo(asset));
+            }
+        
+        //创建入库单
+        createRecycleIncome(asset,asset.getUseAreaId(),Long.parseLong(asset.getUserId()));
+        
         DomainUtils.beforeUpdate(asset, signDto.getOperator());
         asset.setStatus(AssetStatusEnum.USE.getCode());
         asset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
@@ -827,6 +836,47 @@ public class AssetBOImpl implements AssetBO {
         asset.setRecycle(RecycleStatusEnum.N.getCode());
         assetMapper.updateByPrimaryKeySelective(asset);
         return buildAssetDetail(asset);
+    }
+    
+    private void createRecycleIncome(Asset a, Long stationId,Long taobaoUserId) {
+    	Station s = stationBO.getStationById(stationId);
+		if (s == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，服务站信息异常");
+		}
+		String sName = s.getName();
+		
+		Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
+		if (p == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
+		}
+		
+        //创建入库单
+        AssetIncomeDto icDto = new AssetIncomeDto();
+        icDto.setApplierAreaId(stationId);
+        icDto.setApplierAreaName(s.getName());
+        icDto.setApplierAreaType(AssetIncomeApplierAreaTypeEnum.STATION);
+        icDto.setApplierId(String.valueOf(taobaoUserId));
+        icDto.setApplierName(p.getName());
+        icDto.setReceiverName(a.getOwnerName());
+        icDto.setReceiverOrgId(a.getOwnerOrgId());
+        icDto.setReceiverOrgName(getOrgName(a.getOwnerOrgId()));
+        icDto.setReceiverWorkno(a.getOwnerWorkno());
+        icDto.setRemark("从  "+sName +" 回收");
+        icDto.setStatus(AssetIncomeStatusEnum.DONE);
+        icDto.setType(AssetIncomeTypeEnum.RECOVER);
+        icDto.setSignType(AssetIncomeSignTypeEnum.SCAN);
+        icDto.copyOperatorDto(OperatorDto.defaultOperator());
+        Long incomeId = assetIncomeBO.addIncome(icDto);
+
+        AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
+        detail.setAssetId(a.getId());
+        detail.setCategory(a.getCategory());
+        detail.setIncomeId(incomeId);
+        detail.setStatus(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN);
+        detail.setType(AssetRolloutIncomeDetailTypeEnum.RECOVER);
+        detail.setOperatorTime(new Date());
+        detail.copyOperatorDto(OperatorDto.defaultOperator());
+        assetRolloutIncomeDetailBO.addDetail(detail);
     }
 
     @Override
@@ -1294,54 +1344,11 @@ public class AssetBOImpl implements AssetBO {
         if (CollectionUtils.isEmpty(assetList)) {
         	return;
         }
-        Asset a = assetList.get(0);
         
         Asset asset = new Asset();
         DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
         asset.setRecycle(RecycleStatusEnum.Y.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
-        
-        
-		Station s = stationBO.getStationById(stationId);
-		if (s == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，服务站信息异常");
-		}
-		String sName = s.getName();
-		
-		Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
-		if (p == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
-		}
-		
-        //创建入库单
-        AssetIncomeDto icDto = new AssetIncomeDto();
-        icDto.setApplierAreaId(stationId);
-        icDto.setApplierAreaName(s.getName());
-        icDto.setApplierAreaType(AssetIncomeApplierAreaTypeEnum.STATION);
-        icDto.setApplierId(String.valueOf(taobaoUserId));
-        icDto.setApplierName(p.getName());
-        icDto.setReceiverName(a.getOwnerName());
-        icDto.setReceiverOrgId(a.getOwnerOrgId());
-        icDto.setReceiverOrgName(getOrgName(a.getOwnerOrgId()));
-        icDto.setReceiverWorkno(a.getOwnerWorkno());
-        icDto.setRemark("从  "+sName +" 回收");
-        icDto.setStatus(AssetIncomeStatusEnum.TODO);
-        icDto.setType(AssetIncomeTypeEnum.RECOVER);
-        icDto.setSignType(AssetIncomeSignTypeEnum.SCAN);
-        icDto.copyOperatorDto(OperatorDto.defaultOperator());
-        Long incomeId = assetIncomeBO.addIncome(icDto);
-
-        for (Asset ass :assetList) {
-            AssetRolloutIncomeDetailDto detail = new AssetRolloutIncomeDetailDto();
-            detail.setAssetId(ass.getId());
-            detail.setCategory(a.getCategory());
-            detail.setIncomeId(incomeId);
-            detail.setStatus(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN);
-            detail.setType(AssetRolloutIncomeDetailTypeEnum.RECOVER);
-            detail.setOperatorTime(new Date());
-            detail.copyOperatorDto(OperatorDto.defaultOperator());
-            assetRolloutIncomeDetailBO.addDetail(detail);
-        }
     }
     
     private String getOrgName(Long orgId){
@@ -1373,24 +1380,6 @@ public class AssetBOImpl implements AssetBO {
         DomainUtils.beforeUpdate(asset, OperatorDto.DEFAULT_OPERATOR);
         asset.setRecycle(RecycleStatusEnum.N.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
-        
-        for (Asset a : assetList) {
-        	 //如果有入库单   检查 是否删除入库单
-            AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(a.getId());
-            if (detail != null) {
-            	assetRolloutIncomeDetailBO.deleteWaitSignDetail(a.getId(), "sys");
-                Long incomeId = detail.getIncomeId();
-                if (incomeId == null) {
-                    throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                        "删除失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
-                }
-                //更新出入库单状态
-                if (CollectionUtils.isEmpty(assetRolloutIncomeDetailBO.queryListByIncomeId(incomeId))) {
-                    assetIncomeBO.deleteAssetIncome(incomeId, "sys");
-                }
-            }
-        }
-
     }
 
     private AssetExample bulidStationAssetParam(Long stationId, Long taobaoUserId) {
