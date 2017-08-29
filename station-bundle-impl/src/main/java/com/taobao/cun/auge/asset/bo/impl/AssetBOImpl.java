@@ -811,12 +811,12 @@ public class AssetBOImpl implements AssetBO {
         assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo());
         Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
         if (asset == null) {
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败" + AssetBO.NO_EXIT_ASSET);
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "回收失败" + AssetBO.NO_EXIT_ASSET);
         }
         if (!asset.getOwnerWorkno().equals(signDto.getOperator()) || !asset.getOwnerOrgId().equals(
             signDto.getOperatorOrgId())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "入库失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
+                "回收失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
         }
         DomainUtils.beforeUpdate(asset, signDto.getOperator());
         asset.setStatus(AssetStatusEnum.USE.getCode());
