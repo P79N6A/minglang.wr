@@ -7,9 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.core.annotation.AnnotationUtils;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 
 /***
  * 运行期元数据采集类
