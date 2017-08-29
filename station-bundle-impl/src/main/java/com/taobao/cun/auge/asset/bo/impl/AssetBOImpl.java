@@ -628,7 +628,7 @@ public class AssetBOImpl implements AssetBO {
             if ("Y".equals(condition.getStatus())) {
                 criteria.andRecycleEqualTo(condition.getStatus());
                 criteria.andStatusIn(AssetStatusEnum.getValidStatusList());
-            } else if ("UNCHECKED".equals(condition.getStatus())) {
+            } else if ("CHECKING".equals(condition.getStatus())) {
                 criteria.andCheckStatusEqualTo(condition.getStatus());
                 criteria.andStatusIn(AssetStatusEnum.getValidStatusList());
             } else {
@@ -674,7 +674,7 @@ public class AssetBOImpl implements AssetBO {
         if (StringUtils.isNotEmpty(condition.getStatus())) {
             if ("Y".equals(condition.getStatus())) {
                 criteria.andRecycleEqualTo(condition.getStatus());
-            } else if ("UNCHECKED".equals(condition.getStatus())) {
+            } else if ("CHECKING".equals(condition.getStatus())) {
                 criteria.andCheckStatusEqualTo(condition.getStatus());
             } else {
                 criteria.andStatusEqualTo(condition.getStatus());
@@ -808,8 +808,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
         Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
         AssetExample assetExample = new AssetExample();
-        assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andRecycleEqualTo(
-            RecycleStatusEnum.Y.getCode());
+        assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo());
         Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败" + AssetBO.NO_EXIT_ASSET);
