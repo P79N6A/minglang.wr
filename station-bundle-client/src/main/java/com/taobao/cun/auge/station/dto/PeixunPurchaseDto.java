@@ -87,6 +87,18 @@ public class PeixunPurchaseDto implements Serializable {
 
 	private String purchaseSupplierName = "";
 	
+	private String prNo;
+	
+	
+	
+	public String getPrNo() {
+		return prNo;
+	}
+
+	public void setPrNo(String prNo) {
+		this.prNo = prNo;
+	}
+
 	public String getApplyWorkNo() {
 		return applyWorkNo;
 	}

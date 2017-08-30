@@ -59,4 +59,9 @@ public interface PartnerPeixunService {
 	
 	public PartnerPeixunDto queryPeixunRecordById(Long id);
 	
+	/**
+	 * 签到
+	 */
+	public void sign(String ticketNo,String courseType,Long loginUserId,String poNo);
+	
 }
