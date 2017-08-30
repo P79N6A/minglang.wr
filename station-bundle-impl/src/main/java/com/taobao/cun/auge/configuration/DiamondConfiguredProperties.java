@@ -46,7 +46,10 @@ public class DiamondConfiguredProperties {
 
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
-    
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.value.station}')}")
+    private Map<Long, Long> stationValueMap;
+
     @Value("${inSure.switch}")
     private String inSureSwitch;
     
@@ -106,5 +109,9 @@ public class DiamondConfiguredProperties {
     
     public Map<String, String> getPurchaseProvinceMap() {
         return purchaseProvinceMap;
+    }
+    
+    public Map<Long, Long> getStationValueMap() {
+        return stationValueMap;
     }
 }
