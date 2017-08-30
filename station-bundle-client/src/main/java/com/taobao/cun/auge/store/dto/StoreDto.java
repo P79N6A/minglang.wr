@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.dto;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.station.dto.PartnerDto;
 
 /**
  * 村淘门店
@@ -50,6 +51,12 @@ public class StoreDto implements Serializable{
 	 * 门店地址
 	 */
 	private Address address;
+	
+	/**
+	 * 电话号码
+	 */
+	private String mobile;
+	
 
 	public Long getId() {
 		return id;
@@ -123,5 +130,15 @@ public class StoreDto implements Serializable{
 	public void setAddress(Address address) {
 		this.address = address;
 	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	
 
 }
