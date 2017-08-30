@@ -223,6 +223,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private PartnerCourseRecord handleComplete(JSONObject ob,String courseType){
 		Long userId=ob.getLong("buyerAliId");
 		String code=ob.getString("productCode");
+		String poNo=ob.getString("rtnMsg");
 		Assert.notNull(userId);
 		Assert.notNull(code);
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
@@ -241,6 +242,7 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 		}
         record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
         record.setGmtDone(new Date());
+        record.setPoNo(poNo);
         DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
         partnerCourseRecordMapper.updateByPrimaryKey(record);
         //更新lifecycle

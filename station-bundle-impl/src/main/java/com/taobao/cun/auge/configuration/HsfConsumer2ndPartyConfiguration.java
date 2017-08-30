@@ -21,6 +21,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.CountyDomainWriteService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
+import com.alibaba.ceres.commonservice.po.PoQueryService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.crm.pacific.facade.refund.ApplyRefundService;
@@ -373,5 +374,10 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     	openSearchManager.setParser(parser);
     	openSearchManager.init();
     	return openSearchManager;
+	}
+    
+    @Bean(initMethod = "init")
+	public HSFSpringConsumerBean poQueryService(@Value("${alibaba.ceres.version}") String version) {
+		return getConsumerBean(PoQueryService.class, HSFGroup.HSF, version, 30000);
 	}
 }

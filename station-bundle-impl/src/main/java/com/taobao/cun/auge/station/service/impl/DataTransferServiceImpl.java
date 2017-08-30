@@ -299,7 +299,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 		 BufferedReader b = new BufferedReader(new FileReader("D://shujuqianyi.txt"));
 		 String l=null;
 		 while((l=b.readLine())!=null){
-		 String queryString = ("ticket="+l+"&&code=bc471");
+		 String queryString = ("ticket=123123&&code=bc471");
          String lisReq = "http://cunxuexi.taobao.com/user/sign/signin.json"+"?"+queryString;
          HttpClient httpClient = new HttpClient();
          HttpMethod method = new GetMethod(lisReq);
@@ -311,6 +311,10 @@ public class DataTransferServiceImpl implements DataTransferService{
              if(method.getStatusCode() == HttpStatus.SC_OK) {
             	 System.out.println("sign ok");
             	 System.out.println(method.getResponseBodyAsString());
+            	 Map<String,Object> json= (Map<String, Object>) JSON.parse(method.getResponseBodyAsString());
+            	 System.out.println(json.get("success"));
+            	 Map<String,Object> json1=(Map<String, Object>) json.get("content");
+            	 System.out.println(json1);
              } else {
             	 System.out.println("error");
              }
