@@ -1223,6 +1223,7 @@ public class AssetBOImpl implements AssetBO {
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto) {
         ValidateUtils.validateParam(distributeDto);
         Objects.requireNonNull(distributeDto.getStationId(), "服务站id不能为空");
+        
         if (CollectionUtils.isEmpty(distributeDto.getAssetIdList())) {
         	 throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "待分发资产不能为空!");
         }
