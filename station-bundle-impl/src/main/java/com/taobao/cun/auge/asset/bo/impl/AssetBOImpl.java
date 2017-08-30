@@ -707,7 +707,7 @@ public class AssetBOImpl implements AssetBO {
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败" + AssetBO.NO_EXIT_ASSET);
         }
-        Asset updateAsset = buildUpdateAsset(signDto);
+        Asset updateAsset = buildUpdateAsset(signDto, asset.getUseAreaType());
         updateAsset.setId(asset.getId());
         boolean res = assetMapper.updateByPrimaryKeySelective(updateAsset) > 0;
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
@@ -1800,7 +1800,7 @@ public class AssetBOImpl implements AssetBO {
         List<Long> idList = assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(
             AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
         if(CollectionUtils.isNotEmpty(idList)) {
-            Asset updateAsset = buildUpdateAsset(signDto);
+            Asset updateAsset = buildUpdateAsset(signDto, AssetUseAreaTypeEnum.COUNTY.getCode());
             AssetExample example = new AssetExample();
             example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
             assetMapper.updateByExampleSelective(updateAsset, example);
@@ -1831,17 +1831,19 @@ public class AssetBOImpl implements AssetBO {
         assetMapper.updateByPrimaryKeySelective(record);
     }
 
-    private Asset buildUpdateAsset(OperatorDto signDto) {
+    private Asset buildUpdateAsset(OperatorDto signDto, String type) {
         Asset updateAsset = new Asset();
         DomainUtils.beforeUpdate(updateAsset, signDto.getOperator());
         updateAsset.setStatus(AssetStatusEnum.USE.getCode());
-        updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-        updateAsset.setUserId(signDto.getOperator());
-        updateAsset.setUseAreaId(signDto.getOperatorOrgId());
-        updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
         updateAsset.setOwnerName(emp360Adapter.getName(signDto.getOperator()));
         updateAsset.setOwnerOrgId(signDto.getOperatorOrgId());
         updateAsset.setOwnerWorkno(signDto.getOperator());
+        if (AssetUseAreaTypeEnum.STATION.getCode().equals(type)) {
+            updateAsset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
+            updateAsset.setUserId(signDto.getOperator());
+            updateAsset.setUseAreaId(signDto.getOperatorOrgId());
+            updateAsset.setUserName(emp360Adapter.getName(signDto.getOperator()));
+        }
         return updateAsset;
     }
 
