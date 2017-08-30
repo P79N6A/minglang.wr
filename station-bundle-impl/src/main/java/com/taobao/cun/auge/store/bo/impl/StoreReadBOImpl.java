@@ -49,6 +49,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 		
 		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
+		if(partner == null){
+			return null;
+		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
 	}
@@ -83,6 +86,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
+		if(partner == null){
+			return null;
+		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		
 		return storeDto;
@@ -103,6 +109,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
+		if(partner == null){
+			return null;
+		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
 	}
@@ -122,6 +131,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
+		if(partner == null){
+			return null;
+		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
 	}
