@@ -904,7 +904,7 @@ public class AssetBOImpl implements AssetBO {
         }
         AssetExample assetExample = new AssetExample();
         AssetExample.Criteria criteria = assetExample.createCriteria();
-        criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator());
+        criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
         if (CollectionUtils.isNotEmpty(transferDto.getUnTransferAssetIdList())) {
             criteria.andIdNotIn(transferDto.getUnTransferAssetIdList());
         }
@@ -916,7 +916,6 @@ public class AssetBOImpl implements AssetBO {
         DomainUtils.beforeUpdate(asset, transferDto.getOperator());
         asset.setStatus(AssetStatusEnum.TRANSFER.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
-        //TODO  集团责任人变更
         return assetList;
     }
 
@@ -1109,7 +1108,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setVoucherId("scrapingAsset" + asset.getAliNo());
         requestDto.setDeductible(scrapDto.getFree());
         requestDto.setApplicantWorkId(scrapDto.getOperator());
-        requestDto.setReason(scrapDto.getReason());
+        requestDto.setReason(AssetScrapReasonEnum.valueOf(scrapDto.getReason()).getDesc());
         if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
             requestDto.setAttachments(scrapDto.getAttachmentList().stream().map(attachment -> {
                 Attachment itAttachment = new Attachment();
