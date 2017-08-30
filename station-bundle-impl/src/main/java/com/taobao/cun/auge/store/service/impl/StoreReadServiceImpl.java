@@ -28,4 +28,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 		return storeReadBO.getStoreByScmCode(scmCode);
 	}
 
+	@Override
+	public StoreDto getStoreBySharedStoreId(Long sharedStoreId) {
+		return storeReadBO.getStoreBySharedStoreId(sharedStoreId);
+	}
+
 }

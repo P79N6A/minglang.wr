@@ -24,4 +24,11 @@ public interface StoreReadService {
 	 * @return
 	 */
 	StoreDto getStoreByScmCode(String scmCode);
+	
+	/**
+	 * 获取门店信息
+	 * @param scmCode
+	 * @return
+	 */
+	StoreDto getStoreBySharedStoreId(Long sharedStoreId);
 }

@@ -13,4 +13,6 @@ public interface StoreReadBO {
 	 * @return
 	 */
 	StoreDto getStoreByScmCode(String scmCode);
+	
+    StoreDto getStoreBySharedStoreId(Long sharedStoreId);
 }
