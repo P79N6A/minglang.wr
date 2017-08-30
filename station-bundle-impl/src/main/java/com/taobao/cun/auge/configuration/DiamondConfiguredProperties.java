@@ -54,7 +54,10 @@ public class DiamondConfiguredProperties {
     private Map<String, String> exceptionRegularMap;
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
-    
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.value.station}')}")
+    private Map<Long, Long> stationValueMap;
+
     @Value("${inSure.switch}")
     private String inSureSwitch;
     
@@ -118,5 +121,9 @@ public class DiamondConfiguredProperties {
 
     public List<Long> getInsureWhiteListConfig() {
         return insureWhiteListConfig;
+    }
+
+    public Map<Long, Long> getStationValueMap() {
+        return stationValueMap;
     }
 }

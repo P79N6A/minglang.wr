@@ -1110,7 +1110,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setDeductible(scrapDto.getFree());
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setReason(scrapDto.getReason());
-        if (scrapDto.getAttachmentList().size() > 0) {
+        if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
             requestDto.setAttachments(scrapDto.getAttachmentList().stream().map(attachment -> {
                 Attachment itAttachment = new Attachment();
                 BeanUtils.copyProperties(attachment, itAttachment);
@@ -1737,7 +1737,12 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setInAccountUserId(inAccountUserId);
         bailDto.setOutAccountUserId(Long.valueOf(assetDto.getOperator()));
         bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
-        bailDto.setAmount(1500 * 100L);
+        Long assetValue = diamondConfiguredProperties.getStationValueMap().get(assetDto.getNewStationId());
+        if (assetValue != null && assetValue != 0L) {
+            bailDto.setAmount(assetValue);
+        } else {
+            bailDto.setAmount(1500*100L);
+        }
         bailDto.setSource("org");
         bailDto.setReason("buyAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
