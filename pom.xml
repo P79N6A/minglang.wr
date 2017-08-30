@@ -29,8 +29,8 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 		<ague.station.client.version>2.4.1-SNAPSHOT</ague.station.client.version>
-		<ague.station.client.version>2.7.7</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.2.9</alibaba-spring-boot.version>
+		
 	</properties>
 
 	<dependencyManagement>
@@ -408,10 +408,6 @@
 						<groupId>javax.servlet</groupId>
 						<artifactId>servlet-api</artifactId>
 					</exclusion>
-					<exclusion>
-					 <groupId>com.alibaba.external</groupId>
-  					 <artifactId>google.gson</artifactId>
-                     </exclusion>
 				</exclusions>
 			</dependency>
 
@@ -622,18 +618,6 @@
         			<exclusion>
            				<groupId>com.taobao.itemcenter</groupId>  
       					<artifactId>itemcenter-common</artifactId> 
-        			</exclusion>
-        			<exclusion>
-           				 <groupId>com.taobao.inventory</groupId>  
-      					<artifactId>ip-client</artifactId>  
-        			</exclusion>
-        			<exclusion>
-           				 <groupId>com.taobao.mallitemcenter</groupId>  
-      					 <artifactId>mic-client</artifactId>  
-        			</exclusion>
-        			<exclusion>
-           				 <groupId>com.taobao.mallitemcenter</groupId>  
-                         <artifactId>mic-common</artifactId> 
         			</exclusion>
 				</exclusions>
 			</dependency>
