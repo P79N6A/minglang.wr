@@ -1110,7 +1110,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setDeductible(scrapDto.getFree());
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setReason(scrapDto.getReason());
-        if (scrapDto.getAttachmentList().size() > 0) {
+        if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
             requestDto.setAttachments(scrapDto.getAttachmentList().stream().map(attachment -> {
                 Attachment itAttachment = new Attachment();
                 BeanUtils.copyProperties(attachment, itAttachment);
