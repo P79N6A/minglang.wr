@@ -111,10 +111,20 @@ public class PartnerCourseRecord {
     private String refundNo;
     private String refundReason;
     private String refundStatus;
+    private String poNo;
     
     
     
-    public String getRefundStatus() {
+    
+    public String getPoNo() {
+		return poNo;
+	}
+
+	public void setPoNo(String poNo) {
+		this.poNo = poNo;
+	}
+
+	public String getRefundStatus() {
 		return refundStatus;
 	}
 
