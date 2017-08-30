@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -161,7 +162,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Autowired
     private StoreReadBO storeReadBO;
-    
+
     private List<ProcessedStationStatusExecutor> processedStationStatusExecutorList;
 
 
@@ -574,9 +575,13 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         if (null == processedStationStatusExecutorList) {
             initProcessedStationStatusExecutorList();
         }
-        List<ProcessedStationStatus> whole = Lists.newArrayList();
+        List<ProcessedStationStatus> whole = new CopyOnWriteArrayList<ProcessedStationStatus>();
         processedStationStatusExecutorList.parallelStream().forEach(executor -> {
-            whole.addAll(executor.execute(condition));
+            try {
+                whole.addAll(executor.execute(condition));
+            }catch (Exception e) {
+                logger.error("{parameter}", condition, e);
+            }
         });
 //
 //		List<ProcessedStationStatus> processingList = partnerStationRelExtMapper.countProcessingStatus(condition);

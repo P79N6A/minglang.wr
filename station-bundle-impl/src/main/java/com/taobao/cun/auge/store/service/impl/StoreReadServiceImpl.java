@@ -23,4 +23,14 @@ public class StoreReadServiceImpl implements StoreReadService {
 		return storeReadBO.getStoreDtoByTaobaoUserId(taobaoUserId);
 	}
 
+	@Override
+	public StoreDto getStoreByScmCode(String scmCode) {
+		return storeReadBO.getStoreByScmCode(scmCode);
+	}
+
+	@Override
+	public StoreDto getStoreBySharedStoreId(Long sharedStoreId) {
+		return storeReadBO.getStoreBySharedStoreId(sharedStoreId);
+	}
+
 }
