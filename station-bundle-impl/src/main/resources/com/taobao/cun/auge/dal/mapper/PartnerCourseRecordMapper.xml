@@ -22,6 +22,7 @@
     <result column="refund_no" property="refundNo" jdbcType="VARCHAR" />
     <result column="refund_reason" property="refundReason" jdbcType="VARCHAR" />
     <result column="refund_status" property="refundStatus" jdbcType="VARCHAR" />
+    <result column="po_no" property="poNo" jdbcType="VARCHAR" />
     
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -99,7 +100,7 @@
       This element was generated on Tue Jul 12 20:13:50 CST 2016.
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, course_type, course_code, 
-    status, order_num, gmt_done, partner_user_id,refund_no,refund_reason,refund_status
+    status, order_num, gmt_done, partner_user_id,refund_no,refund_reason,refund_status,po_no
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample" >
     <!--
@@ -164,11 +165,11 @@
     insert into partner_course_record (gmt_create, gmt_modified, creator, 
       modifier, is_deleted, course_type, 
       course_code, status, order_num, 
-      gmt_done, partner_user_id,refund_no,refund_reason,refund_status)
+      gmt_done, partner_user_id,refund_no,refund_reason,refund_status,po_no)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{courseType,jdbcType=VARCHAR}, 
       #{courseCode,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR}, 
-      #{gmtDone,jdbcType=TIMESTAMP}, #{partnerUserId,jdbcType=BIGINT},#{refundNo,jdbcType=VARCHAR},#{refundReason,jdbcType=VARCHAR},#{refundStatus,jdbcType=VARCHAR})
+      #{gmtDone,jdbcType=TIMESTAMP}, #{partnerUserId,jdbcType=BIGINT},#{refundNo,jdbcType=VARCHAR},#{refundReason,jdbcType=VARCHAR},#{refundStatus,jdbcType=VARCHAR},#{poNo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerCourseRecord" >
     <!--
@@ -223,6 +224,9 @@
        <if test="refundStatus != null" >
         refund_status,
       </if>
+       <if test="poNo != null" >
+        po_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="gmtCreate != null" >
@@ -266,6 +270,9 @@
       </if>
        <if test="refundStatus != null" >
         #{refundStatus,jdbcType=VARCHAR},
+      </if>
+       <if test="poNo != null" >
+        #{poNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -333,6 +340,9 @@
       <if test="record.refundStatus != null" >
         refund_status = #{record.refundStatus,jdbcType=VARCHAR},
       </if>
+       <if test="record.poNo != null" >
+        po_no = #{record.poNo,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -359,7 +369,8 @@
       partner_user_id = #{record.partnerUserId,jdbcType=BIGINT},
       refund_no = #{record.refundNo,jdbcType=VARCHAR},
       refund_reason = #{record.refundReason,jdbcType=VARCHAR},
-      refund_status = #{record.refundStatus,jdbcType=VARCHAR}
+      refund_status = #{record.refundStatus,jdbcType=VARCHAR},
+      po_no = #{record.poNo,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -414,6 +425,9 @@
       <if test="refundStatus != null" >
         refund_status = #{refundStatus,jdbcType=BIGINT},
       </if>
+      <if test="refundStatus != null" >
+        po_no = #{poNo,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -437,7 +451,8 @@
       partner_user_id = #{partnerUserId,jdbcType=BIGINT},
       refund_no = #{refundNo,jdbcType=VARCHAR},
       refund_reason = #{refundReason,jdbcType=VARCHAR},
-      refund_status = #{refundStatus,jdbcType=VARCHAR}
+      refund_status = #{refundStatus,jdbcType=VARCHAR},
+      po_no = #{poNo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
    <resultMap id="dataTransferResultMap" type="com.taobao.cun.crius.exam.dto.ExamInstanceDto" >

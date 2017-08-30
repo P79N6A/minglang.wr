@@ -160,9 +160,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			Date now = new Date();
 			cuntaoUserOrgDO.setUserType(vo.getUserType().getCode());
 			cuntaoUserOrgDO.setStatus(CuntaoUserStausEnum.VALID.getCode());
-			cuntaoUserOrgDO.setModifier(loginId);
+			cuntaoUserOrgDO.setModifier(vo.getOperator());
 			cuntaoUserOrgDO.setLoginId(loginId);
-			cuntaoUserOrgDO.setCreator(loginId);
+			cuntaoUserOrgDO.setCreator(vo.getOperator());
 			cuntaoUserOrgDO.setGmtCreate(now);
 			cuntaoUserOrgDO.setGmtModified(now);
 			cuntaoUserOrgDO.setStartTime(now);
