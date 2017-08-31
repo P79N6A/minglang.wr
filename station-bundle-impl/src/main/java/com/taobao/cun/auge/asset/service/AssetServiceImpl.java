@@ -26,6 +26,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.Asset;
@@ -151,8 +152,10 @@ public class AssetServiceImpl implements AssetService{
 		transferDto.setReceiverAreaId(rolloutDto.getReceiverAreaId());
 		transferDto.setReceiverWorkNo(rolloutDto.getReceiverId());
 		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
+			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.AUDIT_NOT_PASS, rolloutDto.getApplierWorkno());
 			assetBO.disagreeTransferAsset(transferDto);
 		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {
+			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.WAIT_ROLLOUT, rolloutDto.getApplierWorkno());
 			assetBO.agreeTransferAsset(transferDto);
 			sendTransferMessage(rolloutId, transferDto);
 		}
