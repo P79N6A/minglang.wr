@@ -1787,7 +1787,7 @@ public class AssetBOImpl implements AssetBO {
         }
         if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "录入失败，该资产正处于分发、转移中！" + getPromptInfo(asset));
+                "录入失败,该资产正处于分发、转移中！" + getPromptInfo(asset));
         }
         return buildAssetDetail(asset);
 	}
@@ -1796,16 +1796,22 @@ public class AssetBOImpl implements AssetBO {
     public Boolean signAllAssetByCounty(AssetSignDto signDto) {
         Objects.requireNonNull(signDto.getIncomeId(), "入库id不能为空");
         Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
-        Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
+        Objects.requireNonNull(signDto.getOperatorOrgId(), "操作人组织不能为空");
         List<Long> idList = assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(
             AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
         if(CollectionUtils.isNotEmpty(idList)) {
+
             Asset updateAsset = buildUpdateAsset(signDto, AssetUseAreaTypeEnum.COUNTY.getCode());
             AssetExample example = new AssetExample();
             example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+            List<Asset> assetList = assetMapper.selectByExample(example);
+            if (!assetList.stream().allMatch(asset -> AssetUseAreaTypeEnum.STATION.getCode().equals(asset.getUseAreaType()))) {
+                throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                    "签收失败,该资产不处于村点使用下!");
+            }
             assetMapper.updateByExampleSelective(updateAsset, example);
             //批量调集团接口转移资产责任人
-            assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(AssetRolloutIncomeDetail::getAssetId).map(this::getAssetById).map(
+            assetList.stream().map(
                 asset -> {
                     AssetDto assetDto = new AssetDto();
                     assetDto.setAliNo(asset.getAliNo());
