@@ -1801,7 +1801,7 @@ public class AssetBOImpl implements AssetBO {
             AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
         if(CollectionUtils.isNotEmpty(idList)) {
 
-            Asset updateAsset = buildUpdateAsset(signDto, AssetUseAreaTypeEnum.COUNTY.getCode());
+            Asset updateAsset = buildUpdateAsset(signDto, AssetUseAreaTypeEnum.STATION.getCode());
             AssetExample example = new AssetExample();
             example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
             List<Asset> assetList = assetMapper.selectByExample(example);
