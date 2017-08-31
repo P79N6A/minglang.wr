@@ -131,5 +131,11 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @param operator
 	 */
 	public void deleteWaitSignDetail(Long assetId,String operator);
+	/**
+	 * 转移审批通过，增加入库单id到详情中
+	 * @param rolloutId
+	 * @param operator
+	 */
+	public void  addIncomeIdByRolloutId(Long rolloutId, Long incomeId,String operator);
 	
 }

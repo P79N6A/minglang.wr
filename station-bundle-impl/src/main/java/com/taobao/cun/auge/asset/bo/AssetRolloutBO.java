@@ -85,4 +85,9 @@ public interface AssetRolloutBO {
 	public Long scrapAsset(AssetScrapDto scrapDto);
 	
 	public List<AssetRollout> getDistributeAsset(Long stationId,Long taobaoUserId);
+	/**
+	 * 转移他县 审批通过，创建入库单
+	 * @param rolloutDto
+	 */
+	public void transferAssetOtherCounty(AssetRolloutDto rolloutDto);
 }

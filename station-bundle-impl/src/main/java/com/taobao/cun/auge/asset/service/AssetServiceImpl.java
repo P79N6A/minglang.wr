@@ -153,9 +153,11 @@ public class AssetServiceImpl implements AssetService{
 		transferDto.setReceiverWorkNo(rolloutDto.getReceiverId());
 		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.AUDIT_NOT_PASS, rolloutDto.getApplierWorkno());
+			
 			assetBO.disagreeTransferAsset(transferDto);
 		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.WAIT_ROLLOUT, rolloutDto.getApplierWorkno());
+			assetRolloutBO.transferAssetOtherCounty(rolloutDto);
 			assetBO.agreeTransferAsset(transferDto);
 			sendTransferMessage(rolloutId, transferDto);
 		}

@@ -43,6 +43,7 @@ import com.taobao.cun.auge.asset.enums.AssetRolloutReceiverAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
 import com.taobao.cun.auge.asset.service.AssetFlowService;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -63,6 +64,7 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+
 import org.springframework.util.StringUtils;
 
 @Component
@@ -326,6 +328,28 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 			assetRolloutIncomeDetailBO.addDetail(detail);
 		}
 		return rolloutId;
+	}
+	
+	public void transferAssetOtherCounty(AssetRolloutDto rolloutDto) {
+		//创建入库单
+		AssetIncomeDto icDto = new AssetIncomeDto();
+		icDto.setApplierAreaId(rolloutDto.getApplierOrgId());
+		icDto.setApplierAreaName(rolloutDto.getApplierOrgName());
+		icDto.setApplierAreaType(AssetIncomeApplierAreaTypeEnum.COUNTY);
+		icDto.setApplierId(rolloutDto.getApplierWorkno());
+		icDto.setApplierName(rolloutDto.getApplierName());
+		icDto.setReceiverName(rolloutDto.getReceiverName());
+		icDto.setReceiverOrgId(rolloutDto.getReceiverAreaId());
+		icDto.setReceiverOrgName(rolloutDto.getReceiverAreaName());
+		icDto.setReceiverWorkno(rolloutDto.getReceiverId());
+		icDto.setRemark(rolloutDto.getApplierOrgName()+"-"+rolloutDto.getApplierName()+" 申请转移");
+		icDto.setStatus(AssetIncomeStatusEnum.TODO);
+		icDto.setType(AssetIncomeTypeEnum.TRANSFER);
+		icDto.setSignType(AssetIncomeSignTypeEnum.SCAN);
+		icDto.copyOperatorDto(OperatorDto.defaultOperator());
+		Long incomeId = assetIncomeBO.addIncome(icDto);
+		
+		assetRolloutIncomeDetailBO.addIncomeIdByRolloutId(rolloutDto.getId(),incomeId,OperatorDto.DEFAULT_OPERATOR);
 	}
 
 	@Override

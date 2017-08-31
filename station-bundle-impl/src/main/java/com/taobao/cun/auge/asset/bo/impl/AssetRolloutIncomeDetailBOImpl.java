@@ -19,11 +19,13 @@ import com.taobao.cun.auge.asset.convert.AssetRolloutIncomeDetailConverter;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailExtDto;
+import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetailExample.Criteria;
@@ -270,5 +272,18 @@ public class AssetRolloutIncomeDetailBOImpl implements
         record.setId(detail.getId());
         DomainUtils.beforeDelete(record, operator);
         assetRolloutIncomeDetailMapper.updateByPrimaryKey(record);
+	}
+
+	@Override
+	public void addIncomeIdByRolloutId(Long rolloutId, Long incomeId,String operator) {
+		  AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andRolloutIdEqualTo(rolloutId);
+        AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+        DomainUtils.beforeUpdate(record, operator);
+        record.setIncomeId(incomeId);
+        assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
+		
 	}
 }
