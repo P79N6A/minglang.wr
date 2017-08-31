@@ -138,6 +138,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     }
 
     @Override
+    @Transactional
     public Boolean signAllAssetByCounty(AssetSignDto signDto) {
         return assetBO.signAllAssetByCounty(signDto);
     }
