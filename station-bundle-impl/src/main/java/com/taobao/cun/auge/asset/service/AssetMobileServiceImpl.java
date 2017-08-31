@@ -100,7 +100,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
             statusList.add(
                 new AssetMobileConditionDto(AssetStatusEnum.TRANSFER.getCode(), AssetStatusEnum.TRANSFER.getDesc()));
             statusList.add(new AssetMobileConditionDto(AssetStatusEnum.PEND.getCode(), AssetStatusEnum.PEND.getDesc()));
-            statusList.add(new AssetMobileConditionDto("UNCHECKED", "待盘点"));
+            statusList.add(new AssetMobileConditionDto("CHECKING", "待盘点"));
             statusList.add(new AssetMobileConditionDto("Y", "待回收"));
             map.put("status", statusList);
             // 4 hour cache
