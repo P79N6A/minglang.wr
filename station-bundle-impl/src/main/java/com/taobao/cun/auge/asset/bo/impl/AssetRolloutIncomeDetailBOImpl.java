@@ -276,13 +276,26 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
 	@Override
 	public void addIncomeIdByRolloutId(Long rolloutId, Long incomeId,String operator) {
-		  AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
         Criteria criteria = example.createCriteria();
         criteria.andIsDeletedEqualTo("n");
         criteria.andRolloutIdEqualTo(rolloutId);
         AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
         DomainUtils.beforeUpdate(record, operator);
         record.setIncomeId(incomeId);
+        assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
+	}
+
+	@Override
+	public void signAssetByIncomeId(Long incomeId, String operator) {
+		AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+		Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andIncomeIdEqualTo(incomeId);
+        criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+        AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+        DomainUtils.beforeUpdate(record, operator);
+        record.setStatus(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
         assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
 		
 	}

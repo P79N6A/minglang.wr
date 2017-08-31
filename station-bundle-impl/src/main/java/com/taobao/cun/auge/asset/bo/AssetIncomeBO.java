@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.bo;
 
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
@@ -57,6 +58,12 @@ public interface AssetIncomeBO {
 	 * @param operator
 	 */
 	public void signAssetByStation(Long assetId,String operator);
+	
+	/**
+	 * 县一键签收资产
+	 * @param signDto
+	 */
+	public void signAllAssetByCounty(AssetSignDto signDto);
 	
 	/**
 	 * 撤销入库单

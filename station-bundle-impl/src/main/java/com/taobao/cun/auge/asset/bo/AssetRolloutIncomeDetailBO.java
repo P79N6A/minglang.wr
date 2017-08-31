@@ -36,6 +36,13 @@ public interface AssetRolloutIncomeDetailBO {
 	public void signAsset(Long id, String operator);
 	
 	/**
+	 * 一键签收
+	 * @param incomeId
+	 * @param operator
+	 */
+	public void signAssetByIncomeId(Long incomeId,String operator);
+	
+	/**
 	 * 根据出库单id 查询 对应资产是否都被签收
 	 * @param rolloutId
 	 * @return

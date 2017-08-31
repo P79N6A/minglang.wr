@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.dal.domain.Asset;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
+import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
@@ -166,6 +169,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		}
 	}
 	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void signAssetByStation(Long assetId, String operator) {
 		ValidateUtils.notNull(assetId);
@@ -192,7 +196,8 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, operator);
 		}
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void cancelAssetIncome(Long incomeId, String operator) {
 		ValidateUtils.notNull(incomeId);
@@ -213,6 +218,31 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		assetIncomeMapper.updateByPrimaryKeySelective(record);
 		
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	@Override
+	public void signAllAssetByCounty(AssetSignDto signDto) {
+		Long incomeId = signDto.getIncomeId();
+		if (incomeId== null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		AssetIncome ai = getIncomeById(incomeId);
+		if (!ai.getReceiverWorkno().equals(signDto.getOperator())) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		List<AssetRolloutIncomeDetail> dList = assetRolloutIncomeDetailBO.queryListByIncomeId(incomeId);
+		if (CollectionUtils.isNotEmpty(dList)) {
+			//签收资产
+			assetRolloutIncomeDetailBO.signAssetByIncomeId(incomeId, signDto.getOperator());
+			//更新出入库单状态
+			updateStatus(incomeId, AssetIncomeStatusEnum.DONE, signDto.getOperator());
+			Long rolloutId = dList.get(0).getRolloutId();
+			if (rolloutId != null) {
+				assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, signDto.getOperator());
+			}
+		}
+	}
+	
 
 	
 }
