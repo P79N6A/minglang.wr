@@ -47,11 +47,6 @@ public class DiamondConfiguredProperties {
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.category}')}")
     private Map<String, String> categoryMap;
 
-    /*@Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${exception.full}')}")
-    private Map<String, String> exceptionFullMap;*/
-
-    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${exception.regular}')}")
-    private Map<String, String> exceptionRegularMap;
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
 
@@ -107,13 +102,6 @@ public class DiamondConfiguredProperties {
         return categoryMap;
     }
 
-   /* public Map<String, String> getExceptionFullMap() {
-        return exceptionFullMap;
-    }*/
-
-    public Map<String, String> getExceptionRegularMap() {
-        return exceptionRegularMap;
-    }
     public List<Long> getCanBuyStationList() {
         return canBuyStationList;
     }
