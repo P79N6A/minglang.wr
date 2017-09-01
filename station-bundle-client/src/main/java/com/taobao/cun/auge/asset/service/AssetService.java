@@ -169,5 +169,12 @@ public interface AssetService {
      * @param instanceId
      */
     public void validateAssetForOpenStation(Long instanceId);
+    
+    /**
+     * 资产新老模型同步使用
+     * @param cuntaoAssetIds
+     * @return
+     */
+    public Boolean syncAsset(List<Long> cuntaoAssetIds);
 
 }
