@@ -163,8 +163,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 				logger.info("sync asset,asset={}", ca);
 				try {
 					syn(ca);
-					//修改资产创建人  标记已同步
-					setCuntaoAssetCreator(ca.getId());
 				} catch (Exception e) {
 					logger.error("sync asset error,asset="+JSONObject.toJSONString(ca),e);
 				}
@@ -177,7 +175,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		CuntaoAsset asset = new CuntaoAsset();
 		asset.setId(id);
 		asset.setCreator(CREATOR);
-		cuntaoAssetMapper.updateByPrimaryKey(asset);
+		cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = Exception.class)
@@ -215,6 +213,8 @@ public class AssetSynBOImpl implements AssetSynBO {
 			//插入分发出库单
 			addDistributeRolloutInfo(a,ca);
 		}
+		//修改资产创建人  标记已同步
+		setCuntaoAssetCreator(ca.getId());
 	}
 	
 	private void changeOwner(Asset a) {
