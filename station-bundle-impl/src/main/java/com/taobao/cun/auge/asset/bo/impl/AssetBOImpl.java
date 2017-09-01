@@ -1590,6 +1590,9 @@ public class AssetBOImpl implements AssetBO {
             assetIdList.addAll(
                 waitSignList.stream().map(AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList()));
         }
+        if (CollectionUtils.isEmpty(assetIdList)) {
+        	return null;
+        }
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetIdList);
         List<Asset> assetList = assetMapper.selectByExample(assetExample);

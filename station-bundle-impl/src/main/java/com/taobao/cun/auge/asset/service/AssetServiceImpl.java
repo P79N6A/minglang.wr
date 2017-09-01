@@ -16,6 +16,7 @@ import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
+import com.taobao.cun.auge.asset.bo.AssetSynBO;
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
@@ -59,6 +60,9 @@ public class AssetServiceImpl implements AssetService{
 
 	@Autowired
 	private Emp360Adapter emp360Adapter;
+	
+	@Autowired
+	private AssetSynBO assetSynBO;
 	
 	@Override
 	public void saveAsset(CuntaoAssetDto cuntaoAssetDto,String operator) {
@@ -248,5 +252,10 @@ public class AssetServiceImpl implements AssetService{
 	public void validateAssetForOpenStation(Long instanceId) {
 		assetBO.validateAssetForOpenStation(instanceId);
 		
+	}
+
+	@Override
+	public Boolean syncAsset(List<Long> cuntaoAssetIds) {
+		return assetSynBO.syncAsset(cuntaoAssetIds);
 	}
 }
