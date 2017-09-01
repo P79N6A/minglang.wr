@@ -202,11 +202,13 @@ public class AssetSynBOImpl implements AssetSynBO {
 	      
 		} else if ("UNSIGN".equals(ca.getStatus())) {
 			Asset a = bulidSIGNAsset(ca);
+			DomainUtils.beforeInsert(a, "sys");
 			assetMapper.insert(a);
 			//插入采购入库单
 			addPurchaseIncomeInfo(a);
 		}else if ("WAIT_STATION_SIGN".equals(ca.getStatus())) {
 			Asset a = bulidDistributeAsset(ca);
+			DomainUtils.beforeInsert(a, "sys");
 			assetMapper.insert(a);
 			 //集团资产变更责任人
 	         changeOwner(a);
