@@ -391,7 +391,7 @@
 			<dependency>
 				<groupId>com.alibaba.crm.shared</groupId>
 				<artifactId>ceres.shard</artifactId>
-				<version>1.0.0.69</version>
+				<version>1.0.0.71</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.alibaba.citrus</groupId>
