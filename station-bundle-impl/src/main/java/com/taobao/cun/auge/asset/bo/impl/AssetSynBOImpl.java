@@ -160,7 +160,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 	private void  batchSyn(List<CuntaoAsset> assetList) {
 		if (CollectionUtils.isNotEmpty(assetList)) {
 			for (CuntaoAsset ca :assetList) {
-				logger.info("sync asset,asset={}", ca);
+				logger.info("sync asset,asset={}", JSONObject.toJSONString(ca));
 				try {
 					syn(ca);
 				} catch (Exception e) {
