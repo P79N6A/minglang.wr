@@ -119,6 +119,12 @@
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>tddl-sequence</artifactId>
+					<groupId>com.taobao.tddl</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -157,6 +163,12 @@
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>tddl-sequence</artifactId>
+					<groupId>com.taobao.tddl</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
