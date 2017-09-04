@@ -20,12 +20,10 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
@@ -49,14 +47,12 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
-import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
@@ -306,8 +302,9 @@ public class ProcessProcessor {
 				// 短信推送
 				// 通知admin，合伙人退出。让他们监听村点状态变更事件
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSED, operatorDto);
-			*/} else {
-				//获取停业申请单
+			*/
+            } else {
+                //获取停业申请单
 				/*CloseStationApplyDto closeStationApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
 				PartnerInstanceStateEnum sourceInstanceState = closeStationApplyDto.getInstanceState();
 		
@@ -334,101 +331,102 @@ public class ProcessProcessor {
 
 				// 记录村点状态变化
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);*/
-				
-				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
-				partnerInstanceDto.copyOperatorDto(operatorDto);
-	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
-				stateMachineService.executePhase(phaseEvent);
-			}
-		} catch (Exception e) {
-			logger.error(ERROR_MSG + "monitorCloseApprove", e);
-			throw e;
-		}
-	}
-	
-	private boolean isSmyProcess(String businessCode){
-		return ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)
 
-				|| ProcessBusinessCodeEnum.audioHomePage.name().equals(businessCode)
+                PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
+                partnerInstanceDto.copyOperatorDto(operatorDto);
+                LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+                stateMachineService.executePhase(phaseEvent);
+            }
+        } catch (Exception e) {
+            logger.error(ERROR_MSG + "monitorCloseApprove", e);
+            throw e;
+        }
+    }
 
-				|| ProcessBusinessCodeEnum.partnerNoticeHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerNoticeCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerActivityLargeAreaCunmiHomePage.name().equals(businessCode)
+    private boolean isSmyProcess(String businessCode) {
+        return ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)
 
-				|| ProcessBusinessCodeEnum.partnerProjectHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerProjectLargeAreaCunmiHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.audioHomePage.name().equals(businessCode)
 
-				|| ProcessBusinessCodeEnum.partnerTrainingHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingCunmiHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaHomePage.name().equals(businessCode)
-				|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaCunmiHomePage.name().equals(businessCode);
-	}
+                || ProcessBusinessCodeEnum.partnerNoticeHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerNoticeCunmiHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerActivityHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerActivityCunmiHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerActivityLargeAreaHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerActivityLargeAreaCunmiHomePage.name().equals(businessCode)
 
-	/**
-	 * 更新生命周期表，流程审批结果
-	 * 
-	 * @param instanceId
-	 * @param operator
-	 * @param approveResult
-	 */
-	private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
-		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
-				PartnerLifecycleCurrentStepEnum.PROCESSING);
+                || ProcessBusinessCodeEnum.partnerProjectHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerProjectCunmiHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerProjectLargeAreaHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerProjectLargeAreaCunmiHomePage.name().equals(businessCode)
 
-		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
+                || ProcessBusinessCodeEnum.partnerTrainingHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerTrainingCunmiHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerTrainingLargeAreaHomePage.name().equals(businessCode)
+                || ProcessBusinessCodeEnum.partnerTrainingLargeAreaCunmiHomePage.name().equals(businessCode)
+                || "noticeHomePageLockScreen".equals(businessCode);
+    }
 
-		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
-		partnerLifecycleDto.setRoleApprove(approveResult);
-		partnerLifecycleDto.setPartnerInstanceId(instanceId);
-		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
-		partnerLifecycleDto.setLifecycleId(items.getId());
+    /**
+     * 更新生命周期表，流程审批结果
+     *
+     * @param instanceId
+     * @param operator
+     * @param approveResult
+     */
+    private void updatePartnerLifecycle(Long instanceId, PartnerLifecycleRoleApproveEnum approveResult) {
+        PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.CLOSING,
+                PartnerLifecycleCurrentStepEnum.PROCESSING);
 
-		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
-	}
+        PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 
-	/**
-	 * 处理退出审批结果
-	 * 
-	 * @param stationApplyId
-	 * @param approveResult
-	 * @throws Exception
-	 */
-	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		quitApprove(partnerStationRel.getId(), approveResult);
-	}
+        partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.END);
+        partnerLifecycleDto.setRoleApprove(approveResult);
+        partnerLifecycleDto.setPartnerInstanceId(instanceId);
+        partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
+        partnerLifecycleDto.setLifecycleId(items.getId());
 
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
-			OperatorDto operatorDto = OperatorDto.defaultOperator();
-			//String operator = operatorDto.getOperator();
+        partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
+    }
 
-			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
+    /**
+     * 处理退出审批结果
+     *
+     * @param stationApplyId
+     * @param approveResult
+     * @throws Exception
+     */
+    public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+        PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+        quitApprove(partnerStationRel.getId(), approveResult);
+    }
 
-			//Long stationId = instance.getStationId();
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
+        OperatorDto operatorDto = OperatorDto.defaultOperator();
+        //String operator = operatorDto.getOperator();
 
-			// 校验退出申请单是否存在
-			//QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(instanceId);
+        PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
 
-			// 审批通过
-			if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
-				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
-				partnerInstanceDto.copyOperatorDto(operatorDto);
-				Map<String,Object> extensionInfos = Maps.newHashMap();
-				extensionInfos.put("fromAuditflow", true);
-	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.QUIT_EVENT,extensionInfos);
-	            stateMachineService.executePhase(phaseEvent);
+        //Long stationId = instance.getStationId();
+
+        // 校验退出申请单是否存在
+        //QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(instanceId);
+
+        // 审批通过
+        if (ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult)) {
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
+            partnerInstanceDto.copyOperatorDto(operatorDto);
+            Map<String, Object> extensionInfos = Maps.newHashMap();
+            extensionInfos.put("fromAuditflow", true);
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.QUIT_EVENT, extensionInfos);
+            stateMachineService.executePhase(phaseEvent);
 				
 				/*
 				// 村点已撤点
@@ -441,12 +439,13 @@ public class ProcessProcessor {
 
 				generalTaskSubmitService.submitQuitApprovedTask(instanceId, stationId, instance.getTaobaoUserId(),
 						quitApply.getIsQuitStation());
-			*/} else {
-				
-				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
-				partnerInstanceDto.copyOperatorDto(operatorDto);
-	            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSED_EVENT);
-	            stateMachineService.executePhase(phaseEvent);
+			*/
+        } else {
+
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance);
+            partnerInstanceDto.copyOperatorDto(operatorDto);
+            LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.CLOSED_EVENT);
+            stateMachineService.executePhase(phaseEvent);
 				
 				/*
 				// 合伙人实例已停业
