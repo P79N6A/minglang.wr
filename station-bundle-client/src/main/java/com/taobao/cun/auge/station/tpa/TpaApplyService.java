@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.tpa;
 
 import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
 import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
 import com.taobao.cun.auge.station.response.TpaApplyResponse;
@@ -62,4 +63,11 @@ public interface TpaApplyService {
 	 * @return
 	 */
 	public Boolean hasPlace(Long stationId);
+	
+	/**
+	 * 获取合伙人的淘帮手列表
+	 * @param 合伙人stationId
+	 * @return
+	 */
+	public TpaListQueryResponse queryTpaStationsByTaobaoUserId(Long taobaoUserId,PartnerInstanceStateEnum state);
 }
