@@ -41,6 +41,7 @@ import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
@@ -585,28 +586,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		TpaListQueryResponse response = new TpaListQueryResponse();
 		try {
 			List<PartnerInstanceDto> partnerInstances = partnerInstanceQueryService.queryTpaPartnerInstances(parentStationId);
-			List<TpaStationInfo> stations = Lists.newArrayList();
-			for(PartnerInstanceDto instance : partnerInstances){
-				TpaStationInfo info = new TpaStationInfo();
-				info.setTaobaoUserId(instance.getTaobaoUserId());
-				info.setLoginId(instance.getPartnerDto().getTaobaoNick());
-				info.setApplierName(instance.getPartnerDto().getName());
-				info.setMobile(instance.getPartnerDto().getMobile());
-				info.setApplyDate(instance.getApplyTime());
-				info.setName(instance.getStationDto().getName());
-				info.setEmail(instance.getPartnerDto().getEmail());
-				info.setIdenNum(instance.getPartnerDto().getIdenNum());
-				info.setAlipayAccount(instance.getPartnerDto().getAlipayAccount());
-				info.setOperatorType(instance.getType().getCode());
-				info.setPartnerStationId(instance.getParentStationId());
-				Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(instance.getStationId());
-				info.setState(instance.getState().getCode());
-				info.setStateMessage(instance.getState().getDesc());
-				info.setCainiaoLogisticsStatus(cainiaoStationId !=null?"SERVICING":"CLOSE");
-				info.setCainiaoStationId(cainiaoStationId);
-				info.setTpaStationId(instance.getStationId());
-				stations.add(info);
-			}
+			List<TpaStationInfo> stations = mappingTpaInfos(partnerInstances);
 			response.setSuccess(true);
 			response.setStations(stations);
 		} catch (Exception e) {
@@ -614,6 +594,32 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			response.setSuccess(false);
 		}
 		return response;
+	}
+
+	private List<TpaStationInfo> mappingTpaInfos(List<PartnerInstanceDto> partnerInstances) {
+		List<TpaStationInfo> stations = Lists.newArrayList();
+		for(PartnerInstanceDto instance : partnerInstances){
+			TpaStationInfo info = new TpaStationInfo();
+			info.setTaobaoUserId(instance.getTaobaoUserId());
+			info.setLoginId(instance.getPartnerDto().getTaobaoNick());
+			info.setApplierName(instance.getPartnerDto().getName());
+			info.setMobile(instance.getPartnerDto().getMobile());
+			info.setApplyDate(instance.getApplyTime());
+			info.setName(instance.getStationDto().getName());
+			info.setEmail(instance.getPartnerDto().getEmail());
+			info.setIdenNum(instance.getPartnerDto().getIdenNum());
+			info.setAlipayAccount(instance.getPartnerDto().getAlipayAccount());
+			info.setOperatorType(instance.getType().getCode());
+			info.setPartnerStationId(instance.getParentStationId());
+			Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(instance.getStationId());
+			info.setState(instance.getState().getCode());
+			info.setStateMessage(instance.getState().getDesc());
+			info.setCainiaoLogisticsStatus(cainiaoStationId !=null?"SERVICING":"CLOSE");
+			info.setCainiaoStationId(cainiaoStationId);
+			info.setTpaStationId(instance.getStationId());
+			stations.add(info);
+		}
+		return stations;
 	}
 	
 	@Override
@@ -640,5 +646,21 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 				return false;
 			}
 		}
+	}
+
+	@Override
+	public TpaListQueryResponse queryTpaStationsByTaobaoUserId(Long taobaoUserId, PartnerInstanceStateEnum state) {
+		TpaListQueryResponse response = new TpaListQueryResponse();
+		try {
+			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			List<PartnerInstanceDto> partnerInstances =  partnerInstanceQueryService.queryTpaPartnerInstances(partnerInstance.getStationId(),state);
+			List<TpaStationInfo> stations = mappingTpaInfos(partnerInstances);
+			response.setSuccess(true);
+			response.setStations(stations);
+		} catch (Exception e) {
+			response.setErrorMessage("系统异常");
+			response.setSuccess(false);
+		}
+		return response;
 	}
 }

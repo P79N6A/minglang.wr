@@ -329,4 +329,11 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId);
+    
+    /**
+     * 根据父站点ID查询淘帮手信息
+     * @param parentStationId
+     * @return
+     */
+    public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state);
 }

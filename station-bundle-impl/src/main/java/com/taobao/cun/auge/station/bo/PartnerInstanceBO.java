@@ -323,4 +323,6 @@ public interface PartnerInstanceBO {
 	public Boolean judgeMobileUseble(Long taobaoUserId,Long partnerId, String mobile); 
 	
 	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId);
+	
+	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state);
 }
