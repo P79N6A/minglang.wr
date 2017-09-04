@@ -131,7 +131,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		List<CuntaoAsset> assetList = new ArrayList<CuntaoAsset>();
 		if (CollectionUtils.isNotEmpty(cuntaoAssetIds)) {//指定参数
 			CuntaoAssetExample cuntaoAssetExample = new CuntaoAssetExample();
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andCreatorNotEqualTo(CREATOR)
 					.andIdIn(cuntaoAssetIds);
 			assetList = cuntaoAssetMapper.selectByExample(cuntaoAssetExample);
 			batchSyn(assetList);
@@ -142,7 +142,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andCreatorNotEqualTo(CREATOR)
 					.andStatusIn(vaildStatus);
 			int count = cuntaoAssetMapper.countByExample(cuntaoAssetExample);
-			logger.info("sync asset,count={}", count);
+			logger.info("sync asset begin,count={}", count);
 			int pageSize = 200;
 			int pageNum = 1;
 			int total = count % pageSize == 0 ? count / pageSize : count
@@ -155,6 +155,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 				pageNum++;
 			}
 		}
+		logger.info("sync-asset-finish");
 		return Boolean.TRUE;
 	}
 	private void  batchSyn(List<CuntaoAsset> assetList) {

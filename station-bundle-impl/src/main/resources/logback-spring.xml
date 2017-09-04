@@ -32,9 +32,9 @@
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
     </appender>
-    <logger name="com.taobao.cun.auge.asset.bo.impl.AssetSynBOImpl" level="INFO">
+    <logger name="com.taobao.cun.auge.asset.bo.AssetSynBO" level="INFO" additivity="false">
         <appender-ref ref="ASSETSYNC"/>
     </logger>
-    
+   
     
 </configuration>
