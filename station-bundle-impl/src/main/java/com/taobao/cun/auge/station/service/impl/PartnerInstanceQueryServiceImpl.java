@@ -722,4 +722,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         return instances;
     }
+    
+    
+    @Override
+    public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state) {
+        List<PartnerInstanceDto> instances = Lists.newArrayList();
+        List<PartnerStationRel> psRels = this.partnerInstanceBO.queryTpaPartnerInstances(parentStationId,state);
+        for (PartnerStationRel instance : psRels) {
+            Station station = stationBO.getStationById(instance.getStationId());
+            Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
+            PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(instance, station, partner);
+            instances.add(partnerInstanceDto);
+        }
+        return instances;
+    }
 }

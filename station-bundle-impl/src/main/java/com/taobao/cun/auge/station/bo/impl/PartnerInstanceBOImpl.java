@@ -27,7 +27,6 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
-import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -68,9 +67,6 @@ import org.springframework.util.Assert;
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceBO.class);
-
-    @Autowired
-    PartnerMapper partnerMapper;
 
     @Autowired
     PartnerStationRelMapper partnerStationRelMapper;
@@ -858,5 +854,13 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
         return partnerStationRelMapper.selectByExample(example);
-    }
+	}
+	
+	@Override
+    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state){
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateEqualTo(state.getCode());
+		return partnerStationRelMapper.selectByExample(example);
+	}
+
 }
