@@ -41,7 +41,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
 
 @Service("CuntaoUserOrgService")
-@HSFProvider(serviceInterface = CuntaoUserOrgService.class,serviceVersion="1.0.0.daily.fjx")
+@HSFProvider(serviceInterface = CuntaoUserOrgService.class)
 public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 
 	@Autowired
