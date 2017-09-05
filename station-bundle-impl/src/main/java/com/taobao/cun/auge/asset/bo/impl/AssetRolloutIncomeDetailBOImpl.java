@@ -172,6 +172,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
         Criteria criteria = example.createCriteria();
         criteria.andIsDeletedEqualTo("n");
         criteria.andAssetIdEqualTo(assetId);
+        criteria.andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
 
         assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
         return detail;
