@@ -22,6 +22,8 @@ import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.bo.AssetSynBO;
+import com.taobao.cun.auge.asset.convert.AssetOwner;
+import com.taobao.cun.auge.asset.convert.AssetOwnerParser;
 import com.taobao.cun.auge.asset.dto.AssetDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
@@ -58,7 +60,6 @@ import com.taobao.cun.auge.dal.mapper.AssetMapper;
 import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoAssetMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.org.dto.CuntaoUser;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -66,7 +67,6 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
-import com.taobao.cun.auge.user.service.UserRole;
 
 @Component
 public class AssetSynBOImpl implements AssetSynBO {
@@ -339,10 +339,12 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setCategory(catMap.get(cuntaoAsset.getCategory()));
 		a.setModel(cuntaoAsset.getModel());
 		
-		//TODO:名字取得不对
-		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
+		
+		AssetOwner ao= getAssetOwnerInfo(cuntaoAsset.getOrgId());
+		a.setOwnerName(ao.getOwnerName());
+		a.setOwnerWorkno(ao.getOwnerWorkno());
+		
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		if (isScrap(cuntaoAsset.getAssetOwner())) {// 如果名字是黄继英的   要设置为 已报废
@@ -352,8 +354,8 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
-		a.setUserName(cuntaoAsset.getAssetOwner());
+		a.setUserId(ao.getOwnerWorkno());
+		a.setUserName(ao.getOwnerName());
 		a.setCheckStatus(cuntaoAsset.getCheckStatus());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
 		a.setRecycle(RecycleStatusEnum.N.getCode());
@@ -372,16 +374,19 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setBrand(cuntaoAsset.getBrand());
 		a.setCategory(catMap.get(cuntaoAsset.getCategory()));
 		a.setModel(cuntaoAsset.getModel());
-		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
+		
+		AssetOwner ao= getAssetOwnerInfo(cuntaoAsset.getOrgId());
+		a.setOwnerName(ao.getOwnerName());
+		a.setOwnerWorkno(ao.getOwnerWorkno());
+		
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.SIGN.getCode());
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
-		a.setUserName(cuntaoAsset.getAssetOwner());
+		a.setUserId(ao.getOwnerWorkno());
+		a.setUserName(ao.getOwnerName());
 		a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
 		a.setRecycle(RecycleStatusEnum.N.getCode());
@@ -394,16 +399,19 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setBrand(cuntaoAsset.getBrand());
 		a.setCategory(catMap.get(cuntaoAsset.getCategory()));
 		a.setModel(cuntaoAsset.getModel());
-		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
+		
+		AssetOwner ao= getAssetOwnerInfo(cuntaoAsset.getOrgId());
+		a.setOwnerName(ao.getOwnerName());
+		a.setOwnerWorkno(ao.getOwnerWorkno());
+		
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
-		a.setUserName(cuntaoAsset.getAssetOwner());
+		a.setUserId(ao.getOwnerWorkno());
+		a.setUserName(ao.getOwnerName());
 		a.setCheckStatus(cuntaoAsset.getCheckStatus());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
 		a.setRecycle(RecycleStatusEnum.N.getCode());
@@ -416,9 +424,13 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setBrand(cuntaoAsset.getBrand());
 		a.setCategory(catMap.get(cuntaoAsset.getCategory()));
 		a.setModel(cuntaoAsset.getModel());
-		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
+		
+		AssetOwner ao= getAssetOwnerInfo(cuntaoAsset.getOrgId());
+		a.setOwnerName(ao.getOwnerName());
+		a.setOwnerWorkno(ao.getOwnerWorkno());
+		
+		
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.USE.getCode());
@@ -445,13 +457,29 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return a;
 	}
 
-	private String getWorkerNo(Long orgId) {
-        List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(orgId, UserRole.COUNTY_LEADER);
-        if (CollectionUtils.isEmpty(userLists)) {
-        	return "";
-        }
-        CuntaoUser countyLeader = userLists.iterator().next();
-        return countyLeader.getLoginId();
+//	private String getWorkerNo(Long orgId) {
+//        List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(orgId, UserRole.COUNTY_LEADER);
+//        if (CollectionUtils.isEmpty(userLists)) {
+//        	return "";
+//        }
+//        CuntaoUser countyLeader = userLists.iterator().next();
+//        return countyLeader.getLoginId();
+//	}
+	
+	private AssetOwner getAssetOwnerInfo(String orgId) {
+		Map<String, List<AssetOwner>> rdMap = AssetOwnerParser.getOwnerList();
+		List<AssetOwner> rdList = rdMap.get("assetOwner");
+		if (orgId== null) {
+			return null;
+		}
+		if (CollectionUtils.isNotEmpty(rdList)) {
+			for (AssetOwner rd : rdList) {
+				if (org.apache.commons.lang3.StringUtils.equals(orgId, rd.getOrgId())) {
+					return rd;
+            	}
+			}
+		}
+		return null;
 	}
 
 }
