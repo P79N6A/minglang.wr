@@ -536,4 +536,16 @@
       flower_name = #{flowerName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <select id="queryAll" resultType="com.taobao.cun.auge.testuser.PartnerRole">
+  select b.name, b.taobao_user_id as userid, a.type as role from partner_station_rel a, partner b,station c
+	where a.station_id=c.id
+	and a.partner_id=b.id
+	and a.state in('SERVICING','TO_AUDIT','CLOSED','SETTLING','CLOSING','DECORATING','QUITING','TO_LOGISTICS_AUDIT')
+	and c.status in('CLOSED','SERVICING','DECORATING','CLOSING','QUITING','NEW','TO_AUDIT','TO_LOGISTICS_AUDIT')
+	and c.state='NORMAL'
+	and b.state='NORMAL'
+	and a.type is not null
+	and a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n'
+  </select>
 </mapper>
