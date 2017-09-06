@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerExample;
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
+import com.taobao.cun.auge.testuser.PartnerRole;
 
 public interface PartnerMapper {
     /**
@@ -93,4 +96,6 @@ public interface PartnerMapper {
      * @mbggenerated Mon Sep 26 11:29:22 CST 2016
      */
     int updateByPrimaryKey(Partner record);
+    
+    List<PartnerRole> queryAll();
 }
