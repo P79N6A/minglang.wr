@@ -128,7 +128,7 @@ public class ProcessProcessor {
         String msgType = strMessage.getMessageType();
         String businessCode = ob.getString("businessCode");
         String objectId = ob.getString("objectId");
-        String partnerInstanceId = ob.getString("partnerInstanceId");
+        String isInstanceId = ob.getString("isInstanceId");
         Long businessId = Long.valueOf(objectId);
         // 监听流程实例结束
         if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
@@ -137,11 +137,15 @@ public class ProcessProcessor {
 
             // 村点强制停业
             if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
-                monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 if ("true".equals(isInstanceId)) {
+            		 closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 }else{
+            		 monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 }
                 // 合伙人退出
             } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
-                if (StringUtil.isNotBlank(partnerInstanceId)) {
-                    quitApprove(Long.valueOf(partnerInstanceId), ProcessApproveResultEnum.valueof(resultCode));
+                if ("true".equals(isInstanceId)) {
+                    quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
                 } else {
                     monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
                 }
