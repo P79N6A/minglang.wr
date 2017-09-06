@@ -8,25 +8,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample;
 import com.taobao.cun.auge.dal.domain.CuntaoUserOrgExample.Criteria;
+import com.taobao.cun.auge.dal.domain.CuntaoUserRoleLog;
 import com.taobao.cun.auge.dal.mapper.CuntaoUserOrgMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoUserRoleLogMapper;
 import com.taobao.cun.auge.org.dto.CuntaoUserRole;
 import com.taobao.cun.auge.user.dto.CuntaoBucUserOrgCreateDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgListDto;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgQueryDto;
+import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 import com.taobao.cun.auge.user.dto.CuntaoUserStausEnum;
 import com.taobao.cun.auge.user.dto.CuntaoUserTypeEnum;
+import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.common.exception.ParamException;
+import com.taobao.cun.common.util.BeanCopy;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
 
@@ -39,6 +49,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Autowired
 	CuntaoUserOrgMapper cuntaoUserOrgMapper;
+	
+	@Resource
+	CuntaoUserRoleLogMapper cuntaoUserRoleLogMapper;
 	
 	@Override
     public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
@@ -160,9 +173,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			Date now = new Date();
 			cuntaoUserOrgDO.setUserType(vo.getUserType().getCode());
 			cuntaoUserOrgDO.setStatus(CuntaoUserStausEnum.VALID.getCode());
-			cuntaoUserOrgDO.setModifier(loginId);
+			cuntaoUserOrgDO.setModifier(vo.getOperator());
 			cuntaoUserOrgDO.setLoginId(loginId);
-			cuntaoUserOrgDO.setCreator(loginId);
+			cuntaoUserOrgDO.setCreator(vo.getOperator());
 			cuntaoUserOrgDO.setGmtCreate(now);
 			cuntaoUserOrgDO.setGmtModified(now);
 			cuntaoUserOrgDO.setStartTime(now);
@@ -252,6 +265,153 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrgMapper.updateByPrimaryKey(user);
 		}
 		return true;
+	}
+	
+	@Override
+	public List<CuntaoUserOrgVO> getCuntaoOrgUsers(List<Long> orgIds, List<String> roles){
+		CuntaoUserOrgExample example = new CuntaoUserOrgExample();
+		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo("VALID").andUserTypeEqualTo("BUC");
+		criteria.andOrgIdIn(orgIds).andRoleIn(roles);
+		List<CuntaoUserOrg> cuntaoUserOrgs = cuntaoUserOrgMapper.selectByExample(example);
+		if(Iterables.isEmpty(cuntaoUserOrgs)){
+			return Lists.newArrayList();
+		}
+		
+		return Lists.transform(cuntaoUserOrgs, new Function<CuntaoUserOrg, CuntaoUserOrgVO>(){
+			@Override
+			public CuntaoUserOrgVO apply(CuntaoUserOrg input) {
+				CuntaoUserOrgVO cuntaoUserOrgVO = BeanCopy.copy(CuntaoUserOrgVO.class, input);
+				cuntaoUserOrgVO.setUserRoleEnum(UserRoleEnum.valueof(input.getRole()));
+				return cuntaoUserOrgVO;
+			}});
+	}
+	
+	@Override
+	public void assignLeaders(Long orgId, String leaderType, List<CuntaoUserOrgVO> cuntaoUserOrgVOs) {
+		CuntaoUserOrgExample example = new CuntaoUserOrgExample();
+		example.createCriteria()
+			.andOrgIdEqualTo(orgId)
+			.andRoleEqualTo(leaderType)
+			.andIsDeletedEqualTo("n")
+			.andStatusEqualTo("VALID");
+		List<CuntaoUserOrg> cuntaoUserOrgs = cuntaoUserOrgMapper.selectByExample(example);
+		
+		List<String> oldLoginIds = null;
+		if(!Iterables.isEmpty(cuntaoUserOrgs)){
+			oldLoginIds = Lists.transform(cuntaoUserOrgs, new Function<CuntaoUserOrg, String>(){
+				@Override
+				public String apply(CuntaoUserOrg input) {
+					return input.getLoginId();
+				}});
+		}else{
+			oldLoginIds = Lists.newArrayList();
+		}
+		
+		List<String> newLoginIds = Lists.transform(cuntaoUserOrgVOs, new Function<CuntaoUserOrgVO, String>(){
+			@Override
+			public String apply(CuntaoUserOrgVO input) {
+				return input.getLoginId();
+			}});
+		
+		//原来在cuntaoUserOrgs中,但不在cuntaoUserOrgVOs中，则取消掉负责人身份
+		List<String> removeList = Lists.newArrayList(oldLoginIds);
+		Iterables.removeAll(removeList, newLoginIds);
+		if(!Iterables.isEmpty(removeList)){
+			for(String loginId : removeList){
+				unassignLeader(orgId, loginId, leaderType, cuntaoUserOrgVOs.get(0).getModifier());
+			}
+		}
+		//不在原来列表中的则是新加的
+		List<String> addList = Lists.newArrayList(newLoginIds);
+		Iterables.removeAll(addList, oldLoginIds);
+		if(!Iterables.isEmpty(addList)){
+			for(String loginId : addList){
+				for(CuntaoUserOrgVO cuntaoUserOrgVO : cuntaoUserOrgVOs){
+					if(loginId.equals(cuntaoUserOrgVO.getLoginId())){
+						assignLeader(cuntaoUserOrgVO);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	private void assignLeader(CuntaoUserOrgVO cuntaoUserOrgVO) {
+		CuntaoUserOrgExample example = new CuntaoUserOrgExample();
+		example.createCriteria()
+			.andLoginIdEqualTo(cuntaoUserOrgVO.getLoginId())
+			.andOrgIdEqualTo(cuntaoUserOrgVO.getOrgId())
+			.andIsDeletedEqualTo("n")
+			.andStatusEqualTo("VALID");
+		List<CuntaoUserOrg> cuntaoUserOrgs = cuntaoUserOrgMapper.selectByExample(example);
+		
+		CuntaoUserRoleLog userRoleLog = new CuntaoUserRoleLog();
+		if(Iterables.isEmpty(cuntaoUserOrgs)){
+			CuntaoUserOrg cuntaoUserOrg = new CuntaoUserOrg();
+			cuntaoUserOrg.setCreator(cuntaoUserOrgVO.getCreator());
+			cuntaoUserOrg.setModifier(cuntaoUserOrgVO.getModifier());
+			cuntaoUserOrg.setGmtCreate(new Date());
+			cuntaoUserOrg.setGmtModified(new Date());
+			cuntaoUserOrg.setIsDeleted("n");
+			cuntaoUserOrg.setOrgId(cuntaoUserOrgVO.getOrgId());
+			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
+			cuntaoUserOrg.setLoginId(cuntaoUserOrgVO.getLoginId());
+			cuntaoUserOrg.setUserName(cuntaoUserOrgVO.getUserName());
+			cuntaoUserOrg.setUserType(cuntaoUserOrgVO.getUserType());
+			cuntaoUserOrg.setStartTime(new Date());
+			cuntaoUserOrg.setFeatureCc(0);
+			cuntaoUserOrg.setStatus("VALID");
+			cuntaoUserOrgMapper.insert(cuntaoUserOrg);
+		}else{
+			CuntaoUserOrg cuntaoUserOrg = cuntaoUserOrgs.get(0);
+			//如果角色没有发生变化，那么直接返回
+			if(cuntaoUserOrgVO.getUserRoleEnum().getCode().equals(cuntaoUserOrg.getRole())){
+				return;
+			}
+			cuntaoUserOrg.setModifier(cuntaoUserOrgVO.getModifier());
+			cuntaoUserOrg.setGmtModified(new Date());
+			userRoleLog.setOldRole(cuntaoUserOrg.getRole());
+			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
+			cuntaoUserOrgMapper.updateByPrimaryKey(cuntaoUserOrg);
+		}
+		userRoleLog.setLoginId(cuntaoUserOrgVO.getLoginId());
+		userRoleLog.setOrgId(cuntaoUserOrgVO.getOrgId());
+		userRoleLog.setGmtCreate(new Date());
+		userRoleLog.setGmtModified(new Date());
+		userRoleLog.setCreator(cuntaoUserOrgVO.getCreator());
+		userRoleLog.setModifier(cuntaoUserOrgVO.getModifier());
+		userRoleLog.setNewRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
+		cuntaoUserRoleLogMapper.insert(userRoleLog);
+	}
+	
+	private void unassignLeader(Long orgId, String loginId, String leaderType, String modifier) {
+		CuntaoUserOrgExample example = new CuntaoUserOrgExample();
+		example.createCriteria()
+			.andLoginIdEqualTo(loginId)
+			.andOrgIdEqualTo(orgId)
+			.andIsDeletedEqualTo("n")
+			.andRoleEqualTo(leaderType)
+			.andStatusEqualTo("VALID");
+		List<CuntaoUserOrg> cuntaoUserOrgs = cuntaoUserOrgMapper.selectByExample(example);
+		if(!Iterables.isEmpty(cuntaoUserOrgs)){
+			CuntaoUserRoleLog userRoleLog = new CuntaoUserRoleLog();
+			CuntaoUserOrg cuntaoUserOrg = cuntaoUserOrgs.get(0);
+			cuntaoUserOrg.setModifier(modifier);
+			cuntaoUserOrg.setGmtModified(new Date());
+			//以下两行顺序别搞反了，否则会出大事的！！！
+			userRoleLog.setOldRole(cuntaoUserOrg.getRole());
+			cuntaoUserOrg.setRole("");
+			cuntaoUserOrgMapper.updateByPrimaryKey(cuntaoUserOrg);
+			
+			userRoleLog.setGmtCreate(new Date());
+			userRoleLog.setGmtModified(new Date());
+			userRoleLog.setNewRole("");
+			userRoleLog.setCreator(modifier);
+			userRoleLog.setModifier(modifier);
+			userRoleLog.setLoginId(cuntaoUserOrg.getLoginId());
+			userRoleLog.setOrgId(cuntaoUserOrg.getOrgId());
+			cuntaoUserRoleLogMapper.insert(userRoleLog);
+		}
 	}
 
 }

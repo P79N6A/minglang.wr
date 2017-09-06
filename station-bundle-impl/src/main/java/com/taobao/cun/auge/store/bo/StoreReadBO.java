@@ -6,4 +6,13 @@ public interface StoreReadBO {
 	StoreDto getStoreDtoByStationId(Long stationId);
 	
 	StoreDto getStoreDtoByTaobaoUserId(Long taobaoUserId);
+	
+	/**
+	 * 获取门店信息
+	 * @param scmCode
+	 * @return
+	 */
+	StoreDto getStoreByScmCode(String scmCode);
+	
+    StoreDto getStoreBySharedStoreId(Long sharedStoreId);
 }

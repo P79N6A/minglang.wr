@@ -13,8 +13,19 @@ public class CuntaoBucUserOrgCreateDto implements Serializable{
     private String divisionId;
     
     private Long providerId;
+    private String operator;
     
-    public String getWorkNo() {
+    
+    
+    public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public String getWorkNo() {
         return workNo;
     }
 

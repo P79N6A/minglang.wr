@@ -44,14 +44,14 @@ JAVA_OPTS="-server"
 
 # use memory based on the available resources in the machine
 let memTotal=`cat /proc/meminfo | grep MemTotal | awk '{printf "%d", $2/1024*0.75 }'`
-if [ $memTotal -gt 60000 ]; then
+if [ $memTotal -gt 6000 ]; then
     JAVA_OPTS="${JAVA_OPTS} -Xms4g -Xmx4g"
     JAVA_OPTS="${JAVA_OPTS} -Xmn2g"
 else
     JAVA_OPTS="${JAVA_OPTS} -Xms2g -Xmx2g"
     JAVA_OPTS="${JAVA_OPTS} -Xmn1g"
 fi
-JAVA_OPTS="${JAVA_OPTS} -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m"
+JAVA_OPTS="${JAVA_OPTS} -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m"
 JAVA_OPTS="${JAVA_OPTS} -XX:MaxDirectMemorySize=1g"
 JAVA_OPTS="${JAVA_OPTS} -XX:SurvivorRatio=10"
 JAVA_OPTS="${JAVA_OPTS} -XX:+UseConcMarkSweepGC -XX:CMSMaxAbortablePrecleanTime=5000"

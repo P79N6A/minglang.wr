@@ -124,7 +124,7 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 	-->
-		<table tableName="cuntao_store" enableCountByExample="true" enableUpdateByExample="true"
+		<table tableName="cuntao_user_role_log" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>

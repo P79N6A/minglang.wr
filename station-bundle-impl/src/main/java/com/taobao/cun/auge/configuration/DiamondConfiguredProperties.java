@@ -46,12 +46,18 @@ public class DiamondConfiguredProperties {
 
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
-    
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.value.station}')}")
+    private Map<Long, Long> stationValueMap;
+
     @Value("${inSure.switch}")
     private String inSureSwitch;
     
     @Value("#{'${com.taobao.cun.admin.alipay.whitelist}'.split(',')}")
     private List<Long> insureWhiteListConfig;
+    
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${train.purchase.province}')}")
+    private Map<String, String> purchaseProvinceMap;
 
     public String getApply() {
         return apply;
@@ -99,5 +105,13 @@ public class DiamondConfiguredProperties {
 
     public List<Long> getInsureWhiteListConfig() {
         return insureWhiteListConfig;
+    }
+    
+    public Map<String, String> getPurchaseProvinceMap() {
+        return purchaseProvinceMap;
+    }
+    
+    public Map<Long, Long> getStationValueMap() {
+        return stationValueMap;
     }
 }
