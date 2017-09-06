@@ -338,10 +338,11 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setBrand(cuntaoAsset.getBrand());
 		a.setCategory(catMap.get(cuntaoAsset.getCategory()));
 		a.setModel(cuntaoAsset.getModel());
+		
+		//TODO:名字取得不对
 		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		if (isScrap(cuntaoAsset.getAssetOwner())) {// 如果名字是黄继英的   要设置为 已报废
@@ -351,8 +352,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setUserName(cuntaoAsset.getAssetOwner());
 		a.setCheckStatus(cuntaoAsset.getCheckStatus());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
@@ -374,15 +374,13 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setModel(cuntaoAsset.getModel());
 		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.SIGN.getCode());
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setUserName(cuntaoAsset.getAssetOwner());
 		a.setCheckStatus(AssetCheckStatusEnum.UNCHECKED.getCode());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
@@ -398,15 +396,13 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setModel(cuntaoAsset.getModel());
 		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
 		a.setUseAreaId(Long.parseLong(cuntaoAsset.getOrgId()));
 		a.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setUserId(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setUserName(cuntaoAsset.getAssetOwner());
 		a.setCheckStatus(cuntaoAsset.getCheckStatus());
 		a.setCheckTime(cuntaoAsset.getCheckTime());
@@ -422,8 +418,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		a.setModel(cuntaoAsset.getModel());
 		a.setOwnerName(cuntaoAsset.getAssetOwner());
 		a.setOwnerOrgId(Long.parseLong(cuntaoAsset.getOrgId()));
-		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId()),
-				cuntaoAsset.getAssetOwner()));
+		a.setOwnerWorkno(getWorkerNo(Long.parseLong(cuntaoAsset.getOrgId())));
 		a.setPoNo(cuntaoAsset.getBoNo());
 		a.setSerialNo(cuntaoAsset.getSerialNo());
 		a.setStatus(AssetStatusEnum.USE.getCode());
@@ -450,7 +445,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return a;
 	}
 
-	private String getWorkerNo(Long orgId, String workerName) {
+	private String getWorkerNo(Long orgId) {
         List<CuntaoUser> userLists = cuntaoUserService.getCuntaoUsers(orgId, UserRole.COUNTY_LEADER);
         if (CollectionUtils.isEmpty(userLists)) {
         	return "";
