@@ -128,6 +128,7 @@ public class ProcessProcessor {
         String msgType = strMessage.getMessageType();
         String businessCode = ob.getString("businessCode");
         String objectId = ob.getString("objectId");
+        String isInstanceId = ob.getString("isInstanceId");
         Long businessId = Long.valueOf(objectId);
         // 监听流程实例结束
         if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
@@ -136,10 +137,18 @@ public class ProcessProcessor {
 
             // 村点强制停业
             if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
-            	closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 if ("true".equals(isInstanceId)) {
+            		 closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 }else{
+            		 monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 }
                 // 合伙人退出
             } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
-                quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+                if ("true".equals(isInstanceId)) {
+                    quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+                } else {
+                    monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+                }
             } else if (isSmyProcess(businessCode)) {
                 monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
                 //村点撤点
@@ -236,6 +245,18 @@ public class ProcessProcessor {
         busiWorkBaseInfoService.updateHomepageShowApproveResult(Long.parseLong(objectId), businessCode,
                 ProcessApproveResultEnum.APPROVE_PASS.equals(approveResult));
 
+    }
+
+    /**
+     * 处理停业审批结果
+     *
+     * @param stationApplyId
+     * @param approveResult
+     * @throws Exception
+     */
+    public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+        PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+        closeApprove(partnerStationRel.getId(), approveResult);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -373,10 +394,15 @@ public class ProcessProcessor {
     /**
      * 处理退出审批结果
      *
-     * @param instanceId
+     * @param stationApplyId
      * @param approveResult
      * @throws Exception
      */
+    public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
+        PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
+        quitApprove(partnerStationRel.getId(), approveResult);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void quitApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
         OperatorDto operatorDto = OperatorDto.defaultOperator();
