@@ -31,4 +31,14 @@ public interface StoreReadService {
 	 * @return
 	 */
 	StoreDto getStoreBySharedStoreId(Long sharedStoreId);
+	
+	/**
+	 * 获取门店距离
+	 * @param stationId
+	 * @param x
+	 * @param y
+	 * @param distance
+	 * @return
+	 */
+	 String getStoreDistance(Long stationId,Double lng,Double lat);
 }

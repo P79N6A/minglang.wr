@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -20,6 +21,7 @@ import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
+import com.taobao.place.util.DistanceUtil;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
@@ -30,7 +32,6 @@ public class StoreReadBOImpl implements StoreReadBO {
 	
 	@Resource
 	private PartnerBO partnerBO;
-	
 	
 	@Override
 	public StoreDto getStoreDtoByStationId(Long stationId) {
@@ -136,6 +137,25 @@ public class StoreReadBOImpl implements StoreReadBO {
 		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
+	}
+
+	
+
+	@Override
+	public String getStoreDistance(Long stationId, Double lng, Double lat) {
+		if(stationId == null || lng == null || lat == null){
+			return null;
+		}
+		StoreDto store = this.getStoreDtoByStationId(stationId);
+		if(store != null && store.getAddress() != null){
+			if(store.getAddress().getLat() == null || store.getAddress().getLng() == null){
+				return null;
+			}
+			double storeLat = POIUtils.toStanardPOI(store.getAddress().getLat());
+			double storeLng = POIUtils.toStanardPOI(store.getAddress().getLng());
+			return DistanceUtil.getDistanceString(storeLng, storeLat, lng, lat);
+		}
+		return null;
 	}
 
 }

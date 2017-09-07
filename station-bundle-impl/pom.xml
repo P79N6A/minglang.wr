@@ -376,6 +376,18 @@
 			<groupId>com.tmall.sic</groupId>
 			<artifactId>sic-client</artifactId>
 		</dependency>
+		<dependency>
+				<groupId>com.taobao.search.engine</groupId>
+				<artifactId>search-engine</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.common.searchengine</groupId>
+				<artifactId>common-searchengine</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.search.client.config.helper</groupId>
+				<artifactId>search-client-config-helper</artifactId>
+			</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
