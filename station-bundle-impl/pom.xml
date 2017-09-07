@@ -24,6 +24,10 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>com.taobao.cun.endor</groupId>
+			<artifactId>endor-client</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.cun.module</groupId>
 			<artifactId>station-bundle-client</artifactId>
 		</dependency>
