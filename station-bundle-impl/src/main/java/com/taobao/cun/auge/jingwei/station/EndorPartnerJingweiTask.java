@@ -25,6 +25,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.cun.endor.dto.BizUserRole;
 import com.taobao.cun.endor.dto.User;
+import com.taobao.cun.endor.exception.UserNotExistRuntimeException;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 
@@ -144,7 +145,11 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 			}
 			
 			private void deleteUserRole(Long taobaoUserId, Long bizOrgId, String roleName) {
-				userRoleService.deleteBizUserRole("cuntaostore", String.valueOf(taobaoUserId), rootId, roleName);
+				try{
+					userRoleService.deleteBizUserRole("cuntaostore", String.valueOf(taobaoUserId), rootId, roleName);
+				}catch(UserNotExistRuntimeException e){
+					//忽略
+				}
 			}});
 		client.startTask();
 	}
