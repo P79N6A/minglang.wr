@@ -25,6 +25,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.cun.endor.dto.BizUserRole;
 import com.taobao.cun.endor.dto.User;
+import com.taobao.cun.endor.exception.UserNotExistRuntimeException;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 
@@ -81,10 +82,10 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 							if(modifiedRow.containsKey("is_deleted") && "y".equals(modifiedRow.get("is_deleted"))){
 								deleteUserRole(taobaoUserId, stationId, type);
 							}else if(!Strings.isNullOrEmpty(state)){
-								if(isQuit(state)){
-									deleteUserRole(taobaoUserId, stationId, type);
-								}else{
+								if(isNeedSync(state)){
 									addUserRole(taobaoUserId, stationId, type);
+								}else{
+									deleteUserRole(taobaoUserId, stationId, type);
 								}
 							}
 						}
@@ -93,7 +94,7 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 						for(Map<String, Serializable> rowDataMap : rowDataMaps){
 							syncLog = syncLogBo.addLog(new JingweiMessage("UPDATE", "partner", rowDataMap, null).toSyncLog());
 							String state = (String) rowDataMap.get("state");
-							if(!isQuit(state)){//无论是怎样插入的（数据订正、创建的...）只要不是QUIT状态，那么都同步到ENDOR
+							if(isNeedSync(state)){//无论是怎样插入的（数据订正、创建的...）只要不是QUIT状态，那么都同步到ENDOR
 								Long taobaoUserId = (Long)(rowDataMap.get("taobao_user_id"));
 								Long stationId = (Long)(rowDataMap.get("station_id"));
 								String type = (String) rowDataMap.get("type");
@@ -139,12 +140,21 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 				userRoleService.addBizUserRole("cuntaostore", bizUserRole);
 			}
 			
-			private boolean isQuit(String state){
-				return PartnerInstanceStateEnum.QUIT.getCode().equals(state);
+			private boolean isNeedSync(String state){
+				return PartnerInstanceStateEnum.SERVICING.getCode().equals(state) 
+						|| PartnerInstanceStateEnum.DECORATING.getCode().equals(state)
+						|| PartnerInstanceStateEnum.CLOSED.getCode().equals(state)
+						|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state)
+						|| PartnerInstanceStateEnum.QUITING.getCode().equals(state);
+						
 			}
 			
 			private void deleteUserRole(Long taobaoUserId, Long bizOrgId, String roleName) {
-				userRoleService.deleteBizUserRole("cuntaostore", String.valueOf(taobaoUserId), rootId, roleName);
+				try{
+					userRoleService.deleteBizUserRole("cuntaostore", String.valueOf(taobaoUserId), rootId, roleName);
+				}catch(UserNotExistRuntimeException e){
+					//忽略
+				}
 			}});
 		client.startTask();
 	}
