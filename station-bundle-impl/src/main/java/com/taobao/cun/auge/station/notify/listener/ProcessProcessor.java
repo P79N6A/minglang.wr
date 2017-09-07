@@ -134,16 +134,18 @@ public class ProcessProcessor {
         if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
             JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
             String resultCode = instanceStatus.getString("code");
-
+            if(ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)){
+            	return;
+            }
             // 村点强制停业
-            if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
+            if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
             	 if ("true".equals(isInstanceId)) {
             		 closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
             	 }else{
             		 monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
             	 }
                 // 合伙人退出
-            } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
+            } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
                 if ("true".equals(isInstanceId)) {
                     quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
                 } else {
@@ -184,10 +186,10 @@ public class ProcessProcessor {
             // 任务被激活
         } else if (ProcessMsgTypeEnum.TASK_ACTIVATED.getCode().equals(msgType)) {
             // 村点强制停业
-            if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)) {
+            if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
                 monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.CLOSING);
                 // 村点退出
-            } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
+            } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
                 monitorTaskStarted(businessId, PartnerLifecycleBusinessTypeEnum.QUITING);
             }
             //任务完成
@@ -476,12 +478,11 @@ public class ProcessProcessor {
     /**
      * 监听任务已启动,修改生命周期表，流程中心任务已启动
      *
-     * @param stationApplyId
+     * @param instanceId
      * @param businessType
      */
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void monitorTaskStarted(Long stationApplyId, PartnerLifecycleBusinessTypeEnum businessType) {
-        Long instanceId = partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
+    public void monitorTaskStarted(Long instanceId, PartnerLifecycleBusinessTypeEnum businessType) {
 
         PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
                 PartnerLifecycleCurrentStepEnum.PROCESSING);
