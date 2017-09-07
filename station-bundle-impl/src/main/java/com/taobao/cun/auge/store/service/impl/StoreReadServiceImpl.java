@@ -33,4 +33,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 		return storeReadBO.getStoreBySharedStoreId(sharedStoreId);
 	}
 
+	@Override
+	public String getStoreDistance(Long stationId, Double lng, Double lat) {
+		return storeReadBO.getStoreDistance(stationId, lng, lat);
+	}
+
 }
