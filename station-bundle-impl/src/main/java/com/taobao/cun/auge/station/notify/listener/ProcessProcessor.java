@@ -48,6 +48,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -411,7 +412,9 @@ public class ProcessProcessor {
         //String operator = operatorDto.getOperator();
 
         PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-
+        if(PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType())){
+        	return;
+        }
         //Long stationId = instance.getStationId();
 
         // 校验退出申请单是否存在
