@@ -140,18 +140,18 @@ public class ProcessProcessor {
             }
             // 村点强制停业
             if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-            	 if ("true".equals(isInstanceId)) {
+            	 //if ("true".equals(isInstanceId)) {
             		 closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-            	 }else{
-            		 monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-            	 }
+            	 //}else{
+            		// monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+            	 //}
                 // 合伙人退出
             } else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-                if ("true".equals(isInstanceId)) {
+                //if ("true".equals(isInstanceId)) {
                     quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-                } else {
-                    monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-                }
+                //} else {
+                //    monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
+                //}
             } else if (isSmyProcess(businessCode)) {
                 monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
                 //村点撤点
