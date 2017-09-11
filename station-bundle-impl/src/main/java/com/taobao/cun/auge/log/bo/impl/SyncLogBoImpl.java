@@ -30,4 +30,9 @@ public class SyncLogBoImpl implements SyncLogBo {
 		syncLogMapper.updateByPrimaryKey(syncLog);
 	}
 
+	@Override
+	public void clear() {
+		syncLogMapper.clearAll();
+	}
+
 }

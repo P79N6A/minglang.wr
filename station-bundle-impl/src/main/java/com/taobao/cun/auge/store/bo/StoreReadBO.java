@@ -15,4 +15,6 @@ public interface StoreReadBO {
 	StoreDto getStoreByScmCode(String scmCode);
 	
     StoreDto getStoreBySharedStoreId(Long sharedStoreId);
+    
+    String getStoreDistance(Long stationId,Double lng,Double lat);
 }
