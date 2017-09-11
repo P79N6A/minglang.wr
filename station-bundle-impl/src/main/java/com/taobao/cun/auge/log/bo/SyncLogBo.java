@@ -6,4 +6,6 @@ public interface SyncLogBo {
 	SyncLog addLog(SyncLog syncLog);
 	
 	void updateState(SyncLog syncLog);
+	
+	void clear();
 }

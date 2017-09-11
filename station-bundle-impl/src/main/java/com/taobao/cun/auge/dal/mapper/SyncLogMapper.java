@@ -117,4 +117,6 @@ public interface SyncLogMapper {
      * @mbggenerated
      */
     int updateByPrimaryKey(SyncLog record);
+
+	void clearAll();
 }

@@ -657,6 +657,21 @@
 				<artifactId>endor-client</artifactId>
 				<version>1.1.0</version>
 			</dependency>
+			<dependency>
+				<groupId>com.taobao.search.engine</groupId>
+				<artifactId>search-engine</artifactId>
+				<version>1.1.6</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.common.searchengine</groupId>
+				<artifactId>common-searchengine</artifactId>
+				<version>4.5.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.search.client.config.helper</groupId>
+				<artifactId>search-client-config-helper</artifactId>
+				<version>2.1.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
