@@ -18,8 +18,10 @@ import com.alibaba.middleware.jingwei.client.custom.InsertEvent;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 import com.google.common.base.Strings;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.service.PartnerService;
@@ -51,6 +53,8 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 	private PartnerService partnerService;
 	@Resource
 	private SyncLogBo syncLogBo;
+	@Resource
+	private PartnerInstanceBO partnerInstanceBO;
 	
 	private Long rootId = 2L;
 	
@@ -150,6 +154,11 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 			}
 			
 			private void deleteUserRole(Long taobaoUserId, Long bizOrgId, String roleName) {
+				//如果还存在服务中的记录，那么不用删除
+				PartnerStationRel rel = partnerInstanceBO.getPartnerInstanceByTaobaoUserId(taobaoUserId, PartnerInstanceStateEnum.SERVICING);
+				if(rel != null && roleName.equals(rel.getType())){
+					return;
+				}
 				try{
 					userRoleService.deleteBizUserRole("cuntaostore", String.valueOf(taobaoUserId), rootId, roleName);
 				}catch(UserNotExistRuntimeException e){
