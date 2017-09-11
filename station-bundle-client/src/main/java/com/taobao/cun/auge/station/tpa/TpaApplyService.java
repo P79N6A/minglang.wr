@@ -12,8 +12,6 @@ import com.taobao.cun.auge.station.response.TpaListQueryResponse;
  *
  */
 public interface TpaApplyService {
-	
-	public boolean isAlipayRiskUser(Long taobaoUserId);
 
 	/**
 	 * 检查淘帮手申请请求
