@@ -258,4 +258,13 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean syncAsset(List<Long> cuntaoAssetIds) {
 		return assetSynBO.syncAsset(cuntaoAssetIds);
 	}
+
+	@Override
+	public void sendAppMessage(String owner, Long id, Long ownerOrgId, String ownerWorkno, String type) {
+		Asset asset = new Asset();
+		asset.setId(id);
+		asset.setOwnerOrgId(ownerOrgId);
+		asset.setOwnerWorkno(ownerWorkno);
+		assetBO.sendAppMessage(owner, asset, type);
+	}
 }

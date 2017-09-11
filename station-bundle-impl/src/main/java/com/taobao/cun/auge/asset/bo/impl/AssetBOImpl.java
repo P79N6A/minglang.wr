@@ -193,34 +193,6 @@ public class AssetBOImpl implements AssetBO {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void saveCuntaoAsset(CuntaoAssetDto cuntaoAssetDto, String operator) {
     	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "服务不可用");
-      /*  Assert.notNull(cuntaoAssetDto, "cuntaoAssetDto can not be null");
-        if (cuntaoAssetDto.getId() == null) {
-            if (cuntaoAssetDto.getStationId() != null) {
-                Long stationId = partnerInstanceQueryService.findStationIdByStationApplyId(
-                    Long.parseLong(cuntaoAssetDto.getStationId()));
-                Long partnerInstanceId = partnerInstanceQueryService.getPartnerInstanceId(
-                    Long.valueOf(cuntaoAssetDto.getStationId()));
-                cuntaoAssetDto.setNewStationId(stationId);
-                cuntaoAssetDto.setPartnerInstanceId(partnerInstanceId);
-            }
-            CuntaoAsset asset = convert2CuntaoAsset(cuntaoAssetDto);
-            cuntaoAssetMapper.insertSelective(asset);
-        } else {
-            CuntaoAsset cuntaoAsset = cuntaoAssetMapper.selectByPrimaryKey(cuntaoAssetDto.getId());
-            cuntaoAssetMapper.updateByPrimaryKeySelective(convert2CuntaoAsset(cuntaoAssetDto));
-            if (!CuntaoAssetEnum.STATION_SIGN.getCode().equals(cuntaoAsset.getStatus()) && CuntaoAssetEnum.STATION_SIGN
-                .getCode().equals(cuntaoAssetDto.getStatus())) {
-                AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(), ASSET_SIGN, operator,
-                    cuntaoAssetDto.getStatus());
-                EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
-            }
-            if (!CuntaoAssetEnum.CHECKED.getCode().equals(cuntaoAsset.getCheckStatus()) && CuntaoAssetEnum.CHECKED
-                .getCode().equals(cuntaoAssetDto.getCheckStatus())) {
-                AssetChangeEvent event = buildAssetChangeEvent(cuntaoAssetDto.getId(), ASSET_CHECK, operator,
-                    cuntaoAssetDto.getCheckStatus());
-                EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);
-            }
-        }*/
     }
 
     private AssetChangeEvent buildAssetChangeEvent(Long assetId, String type, String operator, OperatorTypeEnum opType,String desc) {
@@ -317,57 +289,18 @@ public class AssetBOImpl implements AssetBO {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void signAsset(Long assetId, String operator) {
     	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "服务不可用");
-       /* Assert.notNull(assetId, "assetId can not be null");
-        Assert.notNull(operator, "operator can not be null");
-        CuntaoAsset asset = new CuntaoAsset();
-        asset.setId(assetId);
-        asset.setModifier(operator);
-        asset.setGmtModified(new Date());
-        asset.setStatus(CuntaoAssetEnum.STATION_SIGN.getCode());
-        asset.setReceiver(operator);
-        asset.setOperator(operator);
-        asset.setOperatorRole(CuntaoAssetEnum.PARTNER.getCode());
-        asset.setOperateTime(new Date());
-        cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
-        AssetChangeEvent event = buildAssetChangeEvent(assetId, ASSET_CHECK, operator, asset.getCheckStatus());
-        EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);*/
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void checkAsset(Long assetId, String operator, CuntaoAssetEnum checkRole) {
     	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "服务不可用");
-       /* Assert.notNull(assetId, "assetId can not be null");
-        Assert.notNull(operator, "operator can not be null");
-        CuntaoAsset asset = new CuntaoAsset();
-        asset.setModifier(operator);
-        asset.setGmtModified(new Date());
-        asset.setId(assetId);
-        asset.setCheckStatus(CuntaoAssetEnum.CHECKED.getCode());
-        asset.setCheckTime(new Date());
-        asset.setCheckOperator(operator);
-        asset.setCheckRole(checkRole.getCode());
-        cuntaoAssetMapper.updateByPrimaryKeySelective(asset);
-        AssetChangeEvent event = buildAssetChangeEvent(assetId, ASSET_SIGN, operator, asset.getStatus());
-        EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);*/
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void callbackAsset(Long assetId, String operator) {
     	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "服务不可用");
-       /* Assert.notNull(assetId, "assetId can not be null");
-        Assert.notNull(operator, "operator can not be null");
-        CuntaoAsset asset = cuntaoAssetMapper.selectByPrimaryKey(assetId);
-        asset.setStatus(CuntaoAssetEnum.COUNTY_SIGN.getCode());
-        asset.setModifier(operator);
-        asset.setGmtModified(new Date());
-        asset.setStationId(null);
-        asset.setNewStationId(null);
-        asset.setPartnerInstanceId(null);
-        cuntaoAssetMapper.updateByPrimaryKey(asset);
-        AssetChangeEvent event = buildAssetChangeEvent(assetId, ASSET_SIGN, operator, asset.getStatus());
-        EventDispatcherUtil.dispatch(EventConstant.ASSET_CHANGE_EVENT, event);*/
     }
 
     @Override
@@ -415,12 +348,6 @@ public class AssetBOImpl implements AssetBO {
     public void checkingAssetBatch(List<Long> assetIds, String operator) {
         Assert.notNull(assetIds);
         Assert.notNull(operator);
-/*		CuntaoAsset record = new CuntaoAsset();
-        record.setCheckStatus(CuntaoAssetEnum.CHECKING.getCode());
-		record.setOperator(operator);
-		CuntaoAssetExample example = new CuntaoAssetExample();
-		example.createCriteria().andIdIn(assetIds);
-		this.cuntaoAssetMapper.updateByExampleSelective(record, example);*/
         Asset record = new Asset();
         DomainUtils.beforeUpdate(record, operator);
         record.setCheckStatus(AssetCheckStatusEnum.CHECKING.getCode());
@@ -713,7 +640,7 @@ public class AssetBOImpl implements AssetBO {
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
             transferItAsset(signDto);
-            sendSignMessage(asset.getOwnerWorkno(), updateAsset);
+            sendAppMessage(asset.getOwnerWorkno(), updateAsset, AssetStatusEnum.TRANSFER.getCode());
         } else {
             //调集团接口出库
             obtainItAsset(signDto);
@@ -757,22 +684,30 @@ public class AssetBOImpl implements AssetBO {
 
     }
 
-    private void sendSignMessage(String owner, Asset asset) {
+    @Override
+    public void sendAppMessage(String owner, Asset asset, String type) {
         AssetSignEvent signEvent = new AssetSignEvent();
         signEvent.setAppId("cuntaoCRM");
         signEvent.setReceivers(Collections.singletonList(Long.valueOf(owner)));
         signEvent.setReceiverType("EMPIDS");
         signEvent.setMsgType("ASSET");
-        signEvent.setMsgTypeDetail("SIGN");
+        //signEvent.setMsgTypeDetail("SIGN");
+        signEvent.setMsgTypeDetail(type);
         signEvent.setAction("all");
         Content content = signEvent.new Content();
         content.setBizId(asset.getId());
         content.setPublishTime(new Date());
-        content.setTitle("您转移的资产已被对方签收，请关注！");
-        content.setContent(
-            "您转移至" + cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName() + " " + emp360Adapter
-                .getName(asset.getOwnerWorkno()) + "的资产已被对方签收，查看详情");
-        content.setRouteUrl("url");
+        if (AssetStatusEnum.SIGN.getCode().equals(type)) {
+            content.setTitle("您转移的资产已被对方签收，请关注！");
+            content.setContent(
+                "您转移至" + cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName() + " " + emp360Adapter
+                    .getName(asset.getOwnerWorkno()) + "的资产已被对方签收，查看详情");
+        } else if (AssetStatusEnum.SCRAP.getCode().equals(type)) {
+            content.setTitle("您申报的资产遗失、损毁已完成赔付，请关注！");
+            content.setContent(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName() + " " + emp360Adapter
+                    .getName(asset.getOwnerWorkno()) + "的资产遗失、损毁已完成赔付，查看详情");
+
+        }
         signEvent.setContent(content);
         EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
     }
@@ -1141,6 +1076,7 @@ public class AssetBOImpl implements AssetBO {
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
+        sendAppMessage(asset.getOwnerWorkno(), asset, AssetStatusEnum.SCRAP.getCode());
     }
 
     private void scrapItAsset(Asset asset, AssetScrapDto scrapDto) {
@@ -1802,6 +1738,7 @@ public class AssetBOImpl implements AssetBO {
         record.setId(asset.getId());
         record.setStatus(AssetStatusEnum.SCRAP.getCode());
         assetMapper.updateByPrimaryKeySelective(record);
+        sendAppMessage(asset.getOwnerWorkno(), asset, AssetStatusEnum.SCRAP.getCode());
     }
 
     private Asset buildUpdateAsset(OperatorDto signDto, boolean changUser) {

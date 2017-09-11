@@ -242,4 +242,6 @@ public interface AssetBO {
      * @param signDto
      */
     public void transferItAsset(AssetDto signDto);
+
+    public void sendAppMessage(String owner, Asset asset, String type);
 }

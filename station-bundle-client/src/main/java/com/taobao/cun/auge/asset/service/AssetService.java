@@ -177,4 +177,6 @@ public interface AssetService {
      */
     public Boolean syncAsset(List<Long> cuntaoAssetIds);
 
+    public void sendAppMessage(String owner, Long id, Long ownerOrgId, String ownerWorkno, String type);
+
 }
