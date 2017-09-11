@@ -35,7 +35,6 @@ import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
 import com.taobao.cun.auge.station.bo.CuntaoFlowRecordBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
@@ -46,6 +45,7 @@ import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
@@ -54,7 +54,6 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
-import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
@@ -99,11 +98,6 @@ public class ProcessProcessor {
 	CuntaoFlowRecordBO cuntaoFlowRecordBO;
 
 	@Autowired
-	PartnerInstanceService partnerInstanceService;
-	@Autowired
-	PartnerInstanceLevelBO partnerInstanceLevelBO;
-
-	@Autowired
 	LevelAuditFlowService levelAuditFlowService;
 
 	@Autowired
@@ -128,27 +122,20 @@ public class ProcessProcessor {
 		String msgType = strMessage.getMessageType();
 		String businessCode = ob.getString("businessCode");
 		String objectId = ob.getString("objectId");
-		String isInstanceId = ob.getString("isInstanceId");
 		Long businessId = Long.valueOf(objectId);
 		// 监听流程实例结束
 		if (ProcessMsgTypeEnum.PROC_INST_FINISH.getCode().equals(msgType)) {
 			JSONObject instanceStatus = ob.getJSONObject("instanceStatus");
 			String resultCode = instanceStatus.getString("code");
-
+			if(ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode) || ProcessBusinessEnum.TPV_CLOSE.getCode().equals(businessCode)){
+				return;
+			}
 			// 村点强制停业
 			if (ProcessBusinessEnum.stationForcedClosure.getCode().equals(businessCode)) {
-				if ("true".equals(isInstanceId)) {
-					closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-				}else{
-					monitorCloseApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-				}
+				closeApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 				// 合伙人退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
-				if ("true".equals(isInstanceId)) {
-					quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-				} else {
-					monitorQuitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-				}
+				quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
 			} else if (isSmyProcess(businessCode)) {
 				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
 				//村点撤点
@@ -411,7 +398,9 @@ public class ProcessProcessor {
 		//String operator = operatorDto.getOperator();
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(instanceId);
-
+		if(PartnerInstanceTypeEnum.TPV.getCode().equals(instance.getType())){
+			return;
+		}
 		//Long stationId = instance.getStationId();
 
 		// 校验退出申请单是否存在
@@ -483,6 +472,7 @@ public class ProcessProcessor {
 	 */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void monitorTaskStarted(Long instanceId, PartnerLifecycleBusinessTypeEnum businessType) {
+
 		PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, businessType,
 			PartnerLifecycleCurrentStepEnum.PROCESSING);
 
