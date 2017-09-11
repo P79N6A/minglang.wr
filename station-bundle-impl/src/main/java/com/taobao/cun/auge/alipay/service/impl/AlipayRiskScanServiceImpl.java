@@ -15,14 +15,13 @@ import com.taobao.cun.auge.alipay.dto.AlipayRiskScanResult;
 import com.taobao.cun.auge.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.auge.alipay.service.util.AlipayRiskScanSignGenerator;
 import com.taobao.cun.auge.alipay.service.util.HttpClientUtil;
-import com.taobao.cun.auge.client.result.ResultModel;
 import com.taobao.cun.common.exceptions.ServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
-@Service("augeAlipayRiskScanService")
+@Service("alipayRiskScanService")
 @HSFProvider(serviceInterface= AlipayRiskScanService.class,serviceVersion="1.0.0.daily.fhh")
 public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 	private static final Logger logger = LoggerFactory.getLogger(AlipayRiskScanServiceImpl.class);
@@ -40,20 +39,20 @@ public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 	private String url;
 
 	@Override
-	public ResultModel<AlipayRiskScanResult> checkEntryRisk(Long taobaoUserId) {
+	public AlipayRiskScanResult checkEntryRisk(Long taobaoUserId) {
 		return checkEntryRisk(taobaoUserId, null);
 	}
 	
 
 	@Override
-	public ResultModel<AlipayRiskScanResult> checkEntryRisk(String taobaoNick) {
+	public AlipayRiskScanResult checkEntryRisk(String taobaoNick) {
 		return checkEntryRisk(null, taobaoNick);
 	}
 
 
-	private ResultModel<AlipayRiskScanResult> checkEntryRisk(Long taobaoUserId, String taobaoNick) {
+	private AlipayRiskScanResult checkEntryRisk(Long taobaoUserId, String taobaoNick) {
 		if ((null == taobaoUserId || 0 == taobaoUserId) && StringUtils.isBlank(taobaoNick)) {
-			return unSucceed("input parameter is null");
+			throw new IllegalArgumentException("input parameter is null");
 		}
 		try {
 			ResultDO<BaseUserDO> baseUserDOresult = null;
@@ -67,7 +66,7 @@ public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 			}
 			BaseUserDO userDO = baseUserDOresult.getModule();
 			if (null == userDO || StringUtils.isBlank(userDO.getIdCardNumber())) {
-				return success(AlipayRiskScanResult.success(true, "因为没有找到身份证信息，入职校验存在风险"));
+				return AlipayRiskScanResult.success(true, "因为没有找到身份证信息，入职校验存在风险");
 			}
 			Map<String, Object> params = Maps.newHashMap();
 			params.put("eventType", EVENT_TYPE);
@@ -84,36 +83,13 @@ public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 			}
 			String response = HttpClientUtil.get(url, map, null);
 			if (StringUtils.isBlank(response)){
-				return unSucceed("支付宝接口调用失败");
+				throw new ServiceException("支付宝接口调用失败");
 			}
 			AlipayRiskScanResult result = JSON.parseObject(response, AlipayRiskScanResult.class);
-			if (result.isSuccess()) {
-				return success(result);
-			} else {
-				return unSucceed(result.getErrorMsg());
-			}
+			return result;
 		} catch (Exception e) {
 			logger.error("checkEntryRisk error", e);
-			return unSucceed(e.getMessage());
+			throw new ServiceException("checkEntryRisk error",e);
 		}
 	}
-	
-	public static <T> ResultModel<T> success(T data){
-		ResultModel<T> result = new ResultModel<T>();
-		
-		result.setSuccess(true);
-		result.setResult(data);
-		
-		return result;
-	}
-	
-	public static <T> ResultModel<T> unSucceed(String message){
-		ResultModel<T> result = new ResultModel<T>();
-		
-		result.setSuccess(false);
-		result.setErrorMessage(message);
-		
-		return result;
-	}
-
 }
