@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.store.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreStatus;
 
 public interface StoreReadService {
 	
@@ -41,4 +44,11 @@ public interface StoreReadService {
 	 * @return
 	 */
 	 String getStoreDistance(Long stationId,Double lng,Double lat);
+	 
+	 /**
+	  * 获取所有门店ID
+	  * @param status
+	  * @return
+	  */
+	 List<Long> getAllStoreIdsByStatus(StoreStatus status);
 }

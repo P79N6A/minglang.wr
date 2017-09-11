@@ -1,12 +1,14 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
@@ -156,6 +158,16 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return DistanceUtil.getDistanceString(storeLng, storeLat, lng, lat);
 		}
 		return null;
+	}
+
+	public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andStatusEqualTo(status.getStatus()).andIsDeletedEqualTo("n");
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		if(cuntaoStores != null){
+			return cuntaoStores.stream().map(store -> store.getShareStoreId()).collect(Collectors.toList());
+		}
+		return Lists.newArrayList();
 	}
 
 }

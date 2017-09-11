@@ -1,6 +1,9 @@
 package com.taobao.cun.auge.store.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreStatus;
 
 public interface StoreReadBO {
 	StoreDto getStoreDtoByStationId(Long stationId);
@@ -17,4 +20,6 @@ public interface StoreReadBO {
     StoreDto getStoreBySharedStoreId(Long sharedStoreId);
     
     String getStoreDistance(Long stationId,Double lng,Double lat);
+    
+    List<Long> getAllStoreIdsByStatus(StoreStatus status);
 }

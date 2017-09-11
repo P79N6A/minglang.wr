@@ -1,9 +1,12 @@
 package com.taobao.cun.auge.store.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -36,6 +39,11 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Override
 	public String getStoreDistance(Long stationId, Double lng, Double lat) {
 		return storeReadBO.getStoreDistance(stationId, lng, lat);
+	}
+
+	@Override
+	public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
+		return storeReadBO.getAllStoreIdsByStatus(status);
 	}
 
 }
