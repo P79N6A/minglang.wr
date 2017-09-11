@@ -45,7 +45,6 @@ import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
-import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
@@ -341,12 +340,6 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	@Bean
 	public NamelistMatchService namelistMatchService(HsfConsumerContext context, @Value("${namelistMatchService.version}") String version) {
 		return context.hsfConsumerBuilder(NamelistMatchService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
-				.build();
-	}
-	
-	@Bean
-	public AlipayRiskScanService alipayRiskScanService(HsfConsumerContext context, @Value("${alipayRiskScanService.version}") String version) {
-		return context.hsfConsumerBuilder(AlipayRiskScanService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
 	

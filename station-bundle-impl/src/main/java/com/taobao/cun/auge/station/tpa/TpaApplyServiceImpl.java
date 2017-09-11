@@ -21,6 +21,9 @@ import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.alipay.dto.AlipayRiskScanData;
+import com.taobao.cun.auge.alipay.dto.AlipayRiskScanResult;
+import com.taobao.cun.auge.alipay.service.AlipayRiskScanService;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -55,10 +58,6 @@ import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.StationQueryService;
-import com.taobao.cun.crius.alipay.dto.AlipayRiskScanData;
-import com.taobao.cun.crius.alipay.dto.AlipayRiskScanResult;
-import com.taobao.cun.crius.alipay.service.AlipayRiskScanService;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerApplyStateEnum;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
@@ -296,15 +295,12 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 	}
 
 	private boolean isAlipayRiskUser(Long taobaoUserId) {
-		ResultModel<AlipayRiskScanResult> riskResult = alipayRiskScanService.checkEntryRisk(taobaoUserId);
-		if (riskResult.isSuccess()) {
-			AlipayRiskScanResult risk = riskResult.getResult();
-			if (risk != null && risk.isSuccess()) {
-				AlipayRiskScanData riskData = risk.getData();
-				return riskData.isRisk();
-			}
+		AlipayRiskScanResult risk = alipayRiskScanService.checkEntryRisk(taobaoUserId);
+		if (risk != null && risk.isSuccess()) {
+			AlipayRiskScanData riskData = risk.getData();
+			return riskData.isRisk();
 		}
-		logger.error("alipayRiskScanService error", riskResult.getException());
+		logger.error("alipayRiskScanService error", risk.getErrorMsg());
 		// 如果支付宝效验异常暂时放过
 		return false;
 	}
