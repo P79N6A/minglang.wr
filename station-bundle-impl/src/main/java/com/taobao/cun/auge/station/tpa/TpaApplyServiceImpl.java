@@ -71,7 +71,7 @@ import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
 @Service("tpaApplyService")
-@HSFProvider(serviceInterface = TpaApplyService.class, clientTimeout = 7000)
+@HSFProvider(serviceInterface = TpaApplyService.class, clientTimeout = 7000,serviceVersion="1.0.0.daily.fhh")
 public class TpaApplyServiceImpl implements TpaApplyService {
 	@Autowired
 	private PartnerInstanceService partnerInstanceService;
@@ -294,7 +294,7 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 		pDto.setIdenNum(aliPaymentAccountDto.getIdCardNumber());
 	}
 
-	private boolean isAlipayRiskUser(Long taobaoUserId) {
+	public boolean isAlipayRiskUser(Long taobaoUserId) {
 		AlipayRiskScanResult risk = alipayRiskScanService.checkEntryRisk(taobaoUserId);
 		if (risk != null && risk.isSuccess()) {
 			AlipayRiskScanData riskData = risk.getData();
