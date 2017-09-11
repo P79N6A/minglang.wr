@@ -22,7 +22,7 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
-@Service("alipayRiskScanService")
+@Service("augeAlipayRiskScanService")
 @HSFProvider(serviceInterface= AlipayRiskScanService.class,serviceVersion="1.0.0.daily.fhh")
 public class AlipayRiskScanServiceImpl implements AlipayRiskScanService {
 	private static final Logger logger = LoggerFactory.getLogger(AlipayRiskScanServiceImpl.class);
