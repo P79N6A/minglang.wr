@@ -1611,50 +1611,6 @@ public class AssetBOImpl implements AssetBO {
         return buildAssetDetailDtoList(assetList);
     }
 
-    @Override
-    public void syncCuntaoAsset() {
-        CuntaoAssetExample cuntaoAssetExample = new CuntaoAssetExample();
-        cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n");
-        List<String> vaildStatus = Arrays.asList("COUNTY_SIGN", "STATION_SIGN", "UNSIGN", "WAIT_STATION_SIGN");
-        int count = cuntaoAssetMapper.countByExample(cuntaoAssetExample);
-        int pageSize = 200;
-        int current = 1;
-        int total = count % pageSize == 0 ? count / pageSize : count / pageSize + 1;
-        while (current <= total) {
-            PageHelper.startPage(current++, pageSize);
-            List<CuntaoAsset> assetList = cuntaoAssetMapper.selectByExample(cuntaoAssetExample).stream().filter(
-                cuntaoAsset -> vaildStatus.contains(cuntaoAsset.getStatus())).collect(Collectors.toList());
-            assetList.parallelStream().map(this::buildAssetByCuntaoAsset).forEach(record -> assetMapper.insert(record));
-        }
-    }
-
-    private Asset buildAssetByCuntaoAsset(CuntaoAsset cuntaoAsset) {
-        Map<String, String> map = new HashMap<>();
-        map.put("COUNTY_SIGN", "USE");
-        map.put("STATION_SIGN", "USE");
-        map.put("UNSIGN", "SIGN");
-        map.put("WAIT_STATION_SIGN", "DISTRIBUTE");
-        Asset asset = new Asset();
-        BeanUtils.copyProperties(cuntaoAsset, asset);
-        asset.setPoNo(cuntaoAsset.getBoNo());
-        asset.setStatus(map.get(cuntaoAsset.getStatus()));
-        asset.setOwnerOrgId(Long.valueOf(cuntaoAsset.getOrgId()));
-        asset.setOwnerName(cuntaoAsset.getAssetOwner());
-        asset.setCheckStatus(AssetCheckStatusEnum.valueof(cuntaoAsset.getCheckStatus()).getCode());
-        //asset.setOwnerWorkno();
-        if ("STATION_SIGN".equals(cuntaoAsset.getStatus())) {
-            //asset.setUserId();
-            asset.setUseAreaType(AssetUseAreaTypeEnum.STATION.getCode());
-            asset.setUseAreaId(Long.valueOf(cuntaoAsset.getStationId()));
-            asset.setUserName(cuntaoAsset.getReceiver());
-        } else {
-            //asset.setUserId();
-            asset.setUseAreaType(AssetUseAreaTypeEnum.COUNTY.getCode());
-            asset.setUseAreaId(Long.valueOf(cuntaoAsset.getOrgId()));
-            asset.setUserName(cuntaoAsset.getAssetOwner());
-        }
-        return asset;
-    }
 
     @Override
     public Map<String, String> getStationAssetState(Long stationId) {
@@ -1675,16 +1631,16 @@ public class AssetBOImpl implements AssetBO {
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto) {
         Map<String, String> result = new HashMap<>();
         result.put("success", "true");
-        PageDto<CuntaoAssetDto> assetPageDto = checkAssetState(assetDto, result);
+        List<Asset> assetList = checkAssetState(assetDto, result);
         if ("true".equals(result.get("success"))) {
             CuntaoTransferBailDto bailDto = buildBailDto(assetDto);
             ResultModel<Boolean> resultModel = newBailService.transferUserBail(bailDto);
             if (resultModel.isSuccess() && resultModel.getResult()) {
-                assetPageDto.getItems().parallelStream().map(CuntaoAssetDto::getId).forEach(this::scrapAsset);
-                saveBuyRecord(assetDto, assetPageDto.getItems());
+                scrapBuyAsset(assetList.stream().map(Asset::getId).collect(Collectors.toList()), assetDto.getOperator());
+                saveBuyRecord(assetDto, assetList);
                 result.put("success", "true");
             } else {
-                result.put("message", resultModel.getMessage());
+                result.put("message", getErrorMsg(resultModel.getMessage()));
                 result.put("success", "false");
                 logger.warn("{bizType},{parameter} buy asset fail " + resultModel.getMessage(), "assetWarn",
                     JSON.toJSONString(bailDto));
@@ -1693,20 +1649,25 @@ public class AssetBOImpl implements AssetBO {
         return result;
     }
 
-    private void scrapAsset(Long id) {
-        CuntaoAsset cuntaoAsset = cuntaoAssetMapper.selectByPrimaryKey(id);
-        cuntaoAsset.setModifier("huigou-baofei");
-        cuntaoAsset.setGmtModified(new Date());
-        cuntaoAsset.setStationId(null);
-        cuntaoAsset.setStationName(null);
-        cuntaoAsset.setNewStationId(null);
-        cuntaoAsset.setPartnerInstanceId(null);
-        cuntaoAsset.setStatus("COUNTY_SIGN");
-        cuntaoAsset.setAssetOwner("樱橴(20502)");
-        cuntaoAssetMapper.updateByPrimaryKey(cuntaoAsset);
+    private String getErrorMsg(String msg) {
+        for (String key : diamondConfiguredProperties.getAssetTransferErrorMap().keySet()) {
+            if (msg.contains(key)) {
+                return diamondConfiguredProperties.getAssetTransferErrorMap().get(key);
+            }
+        }
+        return msg;
     }
 
-    private PageDto<CuntaoAssetDto> checkAssetState(CuntaoAssetDto assetDto, Map<String, String> result) {
+    private void scrapBuyAsset(List<Long> idList, String operator) {
+        AssetExample example = new AssetExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+        Asset record = new Asset();
+        record.setStatus(AssetStatusEnum.SCRAP.getCode());
+        DomainUtils.beforeUpdate(record, operator);
+        assetMapper.updateByExampleSelective(record, example);
+    }
+
+    private List<Asset> checkAssetState(CuntaoAssetDto assetDto, Map<String, String> result) {
         Long stationId = assetDto.getNewStationId();
         if (stationId == null || assetDto.getOperator() == null) {
             result.put("message", "操作信息不能为空!");
@@ -1723,16 +1684,20 @@ public class AssetBOImpl implements AssetBO {
             result.put("success", "false");
             return null;
         }
-        AssetQueryCondition condition = new AssetQueryCondition();
-        condition.setStationId(stationId);
-        condition.setPageNum(1);
-        condition.setPageSize(10);
-        PageDto<CuntaoAssetDto> pageDto = queryByPage(condition);
-        if (!validateStationAssetNum(pageDto)) {
-            result.put("message", "对不起,该村点不符合采购资格,名下资产须为1台电视,1台显示器,1台主机时方可提交采购!");
+        List<Asset> assetList = getUseAssetListByStationId(stationId);
+        if (!validateStationAssetNum(assetList)) {
+            result.put("message", "对不起该村点不符合自购资格，您名下的资产需为1主机1显示器1电视时方可进行自购，请将3个设备背面的编码提供给您对应的县运营小二处理");
             result.put("success", "false");
         }
-        return pageDto;
+        return assetList;
+    }
+
+    public List<Asset> getUseAssetListByStationId(Long stationId) {
+        Objects.requireNonNull(stationId, "服务站id不能为空");
+        AssetExample assetExample = new AssetExample();
+        assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaIdEqualTo(stationId)
+            .andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode()).andStatusEqualTo(AssetStatusEnum.USE.getCode());
+        return assetMapper.selectByExample(assetExample);
     }
 
     private CuntaoTransferBailDto buildBailDto(CuntaoAssetDto assetDto) {
@@ -1753,16 +1718,16 @@ public class AssetBOImpl implements AssetBO {
         return bailDto;
     }
 
-    private boolean validateStationAssetNum(PageDto<CuntaoAssetDto> pageDto) {
-        if (pageDto.getTotal() != 3L) {
+    private boolean validateStationAssetNum(List<Asset> assetList) {
+        if (assetList == null || assetList.size() != 3) {
             return false;
         }
-        List<String> categoryList = pageDto.getItems().stream().map(CuntaoAssetDto::getCategory).collect(
+        List<String> categoryList = assetList.stream().map(Asset::getCategory).collect(
             Collectors.toList());
-        return categoryList.contains("主机") && categoryList.contains("电视机") && categoryList.contains("显示器");
+        return categoryList.contains("MAIN") && categoryList.contains("TV") && categoryList.contains("DISPLAY");
     }
 
-    private void saveBuyRecord(CuntaoAssetDto assetDto, List<CuntaoAssetDto> assetDtoList) {
+    private void saveBuyRecord(CuntaoAssetDto assetDto, List<Asset> assetList) {
         CuntaoFlowRecord record = new CuntaoFlowRecord();
         record.setTargetId(assetDto.getNewStationId());
         record.setTargetType(CuntaoFlowRecordTargetTypeEnum.ASSET_BUY.getCode());
@@ -1770,9 +1735,8 @@ public class AssetBOImpl implements AssetBO {
         record.setOperateTime(new Date());
         record.setOperatorWorkid(assetDto.getOperator());
         record.setOperatorName(assetDto.getOperator());
-        record.setRemarks(assetDtoList.stream().map(CuntaoAssetDto::getId).map(String::valueOf)
+        record.setRemarks(assetList.stream().map(Asset::getId).map(String::valueOf)
             .collect(Collectors.joining(",")));
-        record.setTraceId(String.valueOf(assetDto.getNewStationId()));
         cuntaoFlowRecordBO.addRecord(record);
     }
 

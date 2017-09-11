@@ -221,10 +221,6 @@ public interface AssetBO {
      */
     public List<AssetDetailDto> getUseAssetListByStation(Long stationId, Long taobaoUserId);
 
-    /**
-     * 同步cuntao_asset表
-     */
-    public void syncCuntaoAsset();
 
     public Map<String, String> getStationAssetState(Long stationId);
 
