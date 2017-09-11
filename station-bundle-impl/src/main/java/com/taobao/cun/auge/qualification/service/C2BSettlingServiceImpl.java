@@ -66,6 +66,11 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			Assert.notNull(settlingStepRequest);
 			Assert.notNull(settlingStepRequest.getTaobaoUserId());
 			PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(settlingStepRequest.getTaobaoUserId());
+			if(parnterInstance == null){
+				response.setSuccessful(false);
+				response.setErrorMessage("村小二退出中或已退出");
+				return response;
+			}
 			boolean testUser = isTestUser(parnterInstance.getTaobaoUserId());
 			boolean isSignProcotol = this.hasC2BSignProcotol(parnterInstance.getId());
 			
