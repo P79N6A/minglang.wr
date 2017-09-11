@@ -27,6 +27,7 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CriusTaskExecuteMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -50,8 +51,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.TaskBusinessTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,6 +66,9 @@ import org.springframework.util.Assert;
 public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceBO.class);
+
+    @Autowired
+    PartnerMapper partnerMapper;
 
     @Autowired
     PartnerStationRelMapper partnerStationRelMapper;
@@ -323,7 +325,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
         if (null == rel) {
             logger.error("partner instance is not exist.stationId " + stationId);
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"partner instance is not exist.stationId " + stationId);
+            throw new AugeBusinessException(AugeErrorCodes.STATION_BUSINESS_CHECK_ERROR_CODE,"partner instance is not exist.stationId " + stationId);
         }
         return rel.getId();
     }
@@ -840,27 +842,27 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         return true;
     }
 
-    @Override
-    public Partner getPartnerByStationId(Long stationId) {
-        PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
-        if (rel == null) {
-            throw new AugeServiceException(CommonExceptionEnum.DATA_UNNORMAL);
-        }
-        return partnerBO.getPartnerById(rel.getPartnerId());
-    }
 
     @Override
     public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId){
         PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode());
         return partnerStationRelMapper.selectByExample(example);
-	}
-	
-	@Override
-    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state){
-		PartnerStationRelExample example = new PartnerStationRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateEqualTo(state.getCode());
-		return partnerStationRelMapper.selectByExample(example);
-	}
+    }
 
+    @Override
+    public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state){
+        PartnerStationRelExample example = new PartnerStationRelExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andParentStationIdEqualTo(parentStationId).andTypeEqualTo(PartnerInstanceTypeEnum.TPA.getCode()).andStateEqualTo(state.getCode());
+        return partnerStationRelMapper.selectByExample(example);
+    }
+
+    @Override
+    public Partner getPartnerByStationId(Long stationId) {
+        PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
+        if (rel == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "数据异常");
+        }
+        return partnerBO.getPartnerById(rel.getPartnerId());
+    }
 }
