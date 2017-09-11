@@ -144,18 +144,26 @@ public class StoreReadBOImpl implements StoreReadBO {
 	
 
 	@Override
-	public String getStoreDistance(Long stationId, Double lng, Double lat) {
+	public String[] getStationDistance(Long stationId, Double lng, Double lat) {
 		if(stationId == null || lng == null || lat == null){
 			return null;
 		}
-		StoreDto store = this.getStoreDtoByStationId(stationId);
-		if(store != null && store.getAddress() != null){
-			if(store.getAddress().getLat() == null || store.getAddress().getLng() == null){
+		Station station = stationBO.getStationById(stationId);
+		if(station != null){
+			if(station.getLat()== null || station.getLng() == null){
 				return null;
 			}
-			double storeLat = POIUtils.toStanardPOI(store.getAddress().getLat());
-			double storeLng = POIUtils.toStanardPOI(store.getAddress().getLng());
-			return DistanceUtil.getDistanceString(storeLng, storeLat, lng, lat);
+			double storeLat = POIUtils.toStanardPOI(station.getLat());
+			double storeLng = POIUtils.toStanardPOI(station.getLng());
+			int distance = (int) DistanceUtil.getDistance(storeLng, storeLat, lng, lat);
+			if (distance <= 0) {
+				distance = 0;
+			}
+			if (distance < 1000) {
+				return new String[]{distance+"","米"};
+			}else{
+				return new String[]{distance/ 1000+"","公里"};
+			}
 		}
 		return null;
 	}

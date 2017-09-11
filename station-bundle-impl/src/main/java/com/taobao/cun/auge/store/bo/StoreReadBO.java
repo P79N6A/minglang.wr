@@ -19,7 +19,7 @@ public interface StoreReadBO {
 	
     StoreDto getStoreBySharedStoreId(Long sharedStoreId);
     
-    String getStoreDistance(Long stationId,Double lng,Double lat);
+    String[] getStationDistance(Long stationId,Double lng,Double lat);
     
     List<Long> getAllStoreIdsByStatus(StoreStatus status);
 }

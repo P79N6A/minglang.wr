@@ -37,8 +37,8 @@ public class StoreReadServiceImpl implements StoreReadService {
 	}
 
 	@Override
-	public String getStoreDistance(Long stationId, Double lng, Double lat) {
-		return storeReadBO.getStoreDistance(stationId, lng, lat);
+	public String[] getStationDistance(Long stationId, Double lng, Double lat) {
+		return storeReadBO.getStationDistance(stationId, lng, lat);
 	}
 
 	@Override
