@@ -123,6 +123,12 @@
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>tddl-sequence</artifactId>
+					<groupId>com.taobao.tddl</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -161,6 +167,12 @@
 		<dependency>
 			<groupId>com.taobao.trade.platform</groupId>
 			<artifactId>tp-client-base</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>tddl-sequence</artifactId>
+					<groupId>com.taobao.tddl</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -337,6 +349,23 @@
 			<artifactId>recruit-bundle-client</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
+		<!--<dependency>-->
+			<!--<groupId>ch.qos.logback</groupId>-->
+			<!--<artifactId>logback-classic</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>ch.qos.logback</groupId>-->
+			<!--<artifactId>logback-core</artifactId>-->
+		<!--</dependency>-->
+		<dependency>
+			  <groupId>com.alibaba.crm</groupId>
+			  <artifactId>pacific-service-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.alibaba.crm</groupId>
 			<artifactId>pacific-service-api</artifactId>
 		</dependency>
@@ -352,6 +381,14 @@
 			<groupId>com.alibaba.china.shared</groupId>
 			<artifactId>xfsm.spring</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.alibaba.it.asset</groupId>
+			<artifactId>asset-interface</artifactId>
+		</dependency>
+		<dependency>
+				<groupId>com.taobao.openSearch</groupId>
+				<artifactId>openSearch</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>com.taobao.namelist</groupId>
 			<artifactId>namelist-common</artifactId>
@@ -405,8 +442,6 @@
 				</executions>
 				<configuration>
 					<mainClass>com.taobao.cun.auge.Application</mainClass>
-					<!-- do not enable it, this will creats a non standard jar and cause 
-						autoconfig to fail -->
 					<executable>false</executable>
 					<excludeDevtools>true</excludeDevtools>
 				</configuration>

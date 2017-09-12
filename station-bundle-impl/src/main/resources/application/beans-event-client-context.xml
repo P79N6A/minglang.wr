@@ -23,8 +23,10 @@
 	<bean id="eventListenerDispatcher" class="com.taobao.cun.crius.event.client.impl.EventListenerDispatcherImpl"/>
 	
 	<bean id="eventListenerMgr" class="com.taobao.cun.crius.event.client.impl.EventListenerMgrImpl"/>
-	
-	<bean class="com.taobao.cun.crius.event.client.EventClientLifecycleListener"/>
-	
+
+	<bean class="com.taobao.cun.crius.event.client.EventConsumerLifecycleListener"/>
+
+	<bean class="com.taobao.cun.crius.event.client.EventProducerLifecycleListener"/>
+
 	<bean class="com.taobao.cun.crius.event.client.EventDispatcher" factory-method="getInstance"/>
 </beans>
