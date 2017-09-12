@@ -640,7 +640,7 @@ public class AssetBOImpl implements AssetBO {
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
             transferItAsset(signDto);
-            sendAppMessage(asset.getOwnerWorkno(), updateAsset, AssetStatusEnum.TRANSFER.getCode());
+            sendAppMessage(asset.getOwnerWorkno(), updateAsset, AssetStatusEnum.SIGN.getCode());
         } else {
             //调集团接口出库
             obtainItAsset(signDto);
@@ -690,8 +690,7 @@ public class AssetBOImpl implements AssetBO {
         signEvent.setAppId("cuntaoCRM");
         signEvent.setReceivers(Collections.singletonList(Long.valueOf(owner)));
         signEvent.setReceiverType("EMPIDS");
-        signEvent.setMsgType("ASSET");
-        //signEvent.setMsgTypeDetail("SIGN");
+        signEvent.setMsgType("cuntaoCRMAsset");
         signEvent.setMsgTypeDetail(type);
         signEvent.setAction("all");
         Content content = signEvent.new Content();

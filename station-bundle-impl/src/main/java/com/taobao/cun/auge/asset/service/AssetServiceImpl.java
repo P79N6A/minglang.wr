@@ -172,7 +172,7 @@ public class AssetServiceImpl implements AssetService{
 		signEvent.setAppId("cuntaoCRM");
 		signEvent.setReceivers(Collections.singletonList(Long.valueOf(transferDto.getReceiverWorkNo())));
 		signEvent.setReceiverType("EMPIDS");
-		signEvent.setMsgType("ASSET");
+		signEvent.setMsgType("cuntaoCRMAsset");
 		signEvent.setMsgTypeDetail("SIGN");
 		signEvent.setAction("all");
 		Content content = signEvent.new Content();
