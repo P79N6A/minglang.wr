@@ -26,7 +26,6 @@
 		<javaClientGenerator targetPackage="${targetMapperPackage}" targetProject="${targetJavaProject}"
 			type="XMLMAPPER" />
 
-<!-- 
 		<table tableName="account_money" enableCountByExample="true" enableUpdateByExample="true"
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
@@ -123,7 +122,7 @@
 			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
-	-->
+
 		<table tableName="sync_log" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />

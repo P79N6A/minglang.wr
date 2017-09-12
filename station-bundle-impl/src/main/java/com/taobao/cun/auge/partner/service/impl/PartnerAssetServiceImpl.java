@@ -1,22 +1,17 @@
 package com.taobao.cun.auge.partner.service.impl;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.asset.bo.AssetBO;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.common.resultmodel.PagedResultModel;
+import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.dto.ContextDto;
 import com.taobao.cun.dto.SystemTypeEnum;
-import com.taobao.cun.dto.asset.CuntaoAssetDto;
-import com.taobao.cun.dto.asset.CuntaoAssetQueryCondition;
 import com.taobao.cun.service.asset.CuntaoAssetService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -32,24 +27,40 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
+	
+	@Autowired
+	AssetBO assetBO;
 
 	@Override
 	public boolean isBackAsset(Long instanceId) {
-			CuntaoAssetQueryCondition queryCondition = new CuntaoAssetQueryCondition();
-
-			queryCondition.setPartnerInstanceId(instanceId);
-			queryCondition.getPage().setStart(0);
-			queryCondition.getPage().setSize(1000);
-			
-			PagedResultModel<List<CuntaoAssetDto>> r = cuntaoAssetService.queryByPage(queryCondition, buildSystemContextDto());
-
-			if (r.isSuccess()) {
-				return 0 == r.getTotalResultSize();
-			} else {
-				String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, null);
-				logger.error(error);
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询资产失败，请稍后再试！");
+//		try {
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+			if(rel== null) {
+				throw new AugeServiceException("查询不到村小二信息！");
 			}
+			assetBO.validateAssetForQuiting(rel.getStationId(), rel.getTaobaoUserId());
+			return true;
+			
+//			CuntaoAssetQueryCondition queryCondition = new CuntaoAssetQueryCondition();
+//
+//			queryCondition.setPartnerInstanceId(instanceId);
+//			queryCondition.getPage().setStart(0);
+//			queryCondition.getPage().setSize(1000);
+//			
+//			PagedResultModel<List<CuntaoAssetDto>> r = cuntaoAssetService.queryByPage(queryCondition, buildSystemContextDto());
+//
+//			if (r.isSuccess()) {
+//				return 0 == r.getTotalResultSize();
+//			} else {
+//				String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, null);
+//				logger.error(error);
+//				throw new AugeServiceException("查询资产失败，请稍后再试！");
+//			}
+//		} catch (Exception e) {
+//			String error = getErrorMessage("isBackAsset", "instanceId:" + instanceId, e.getMessage());
+//			logger.error(error, e);
+//			throw new AugeServiceException("查询资产失败，请稍后再试！");
+//		}
 	}
 
 	private ContextDto buildSystemContextDto() {

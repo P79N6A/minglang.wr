@@ -88,4 +88,20 @@ public interface AssetFlowService {
 	 * @throws Exception
 	 */
 	public void updateFlowDetails(List<CuntaoAssetFlowDetailDto> details,String operator);
+
+	/**
+	 * 创建资产转移流程
+	 * @param businessId
+	 * @param operator
+	 */
+	public void createTransferFlow(Long businessId, String operator);
+
+	/**
+	 * 撤销资产转移流程
+	 * @param businessId
+	 * @param operator
+	 */
+	public void cancelTransferFlow(Long businessId, String operator);
+
+
 }
