@@ -131,7 +131,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		List<CuntaoAsset> assetList = new ArrayList<CuntaoAsset>();
 		if (CollectionUtils.isNotEmpty(cuntaoAssetIds)) {//指定参数
 			CuntaoAssetExample cuntaoAssetExample = new CuntaoAssetExample();
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andCreatorNotEqualTo(CREATOR)
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
 					.andIdIn(cuntaoAssetIds);
 			assetList = cuntaoAssetMapper.selectByExample(cuntaoAssetExample);
 			batchSyn(assetList);
@@ -139,7 +139,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			CuntaoAssetExample cuntaoAssetExample = new CuntaoAssetExample();
 			List<String> vaildStatus = Arrays.asList("COUNTY_SIGN",
 					"STATION_SIGN", "UNSIGN", "WAIT_STATION_SIGN");
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andCreatorNotEqualTo(CREATOR)
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
 					.andStatusIn(vaildStatus);
 			cuntaoAssetExample.setOrderByClause("id asc");
 			int count = cuntaoAssetMapper.countByExample(cuntaoAssetExample);
@@ -149,6 +149,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			int total = count % pageSize == 0 ? count / pageSize : count
 					/ pageSize + 1;
 			while (pageNum <= total) {
+				logger.info("sync-asset-doing {},{}",pageNum,pageSize);
 				PageHelper.startPage(pageNum, pageSize);
 				assetList = cuntaoAssetMapper
 						.selectByExample(cuntaoAssetExample);
@@ -182,6 +183,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = Exception.class)
 	private void syn(CuntaoAsset ca) {
+		if (CREATOR.equals(ca.getCreator())) {
+			return;
+		}
 		if ("STATION_SIGN".equals(ca.getStatus())) {
 			Asset a = bulidStationUseAsset(ca);
 			 DomainUtils.beforeInsert(a, "sys");
