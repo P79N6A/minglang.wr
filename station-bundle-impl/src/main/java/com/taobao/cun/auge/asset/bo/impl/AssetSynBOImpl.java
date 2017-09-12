@@ -141,6 +141,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 					"STATION_SIGN", "UNSIGN", "WAIT_STATION_SIGN");
 			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andCreatorNotEqualTo(CREATOR)
 					.andStatusIn(vaildStatus);
+			cuntaoAssetExample.setOrderByClause("id asc");
 			int count = cuntaoAssetMapper.countByExample(cuntaoAssetExample);
 			logger.info("sync asset begin,count={}", count);
 			int pageSize = 200;
@@ -233,12 +234,11 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 		String sName = s.getName();
 		
-		Partner p = partnerInstanceBO.getPartnerByStationId(stationId);
-		if (p == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"分发失败，合伙人信息异常");
-		}
+		PartnerStationRel psl = partnerInstanceBO
+				.findPartnerInstanceById(ca.getPartnerInstanceId());
+		
 		Long rolloutId = null;
-		AssetRollout ar = queryRollout(stationId,p.getTaobaoUserId().toString());
+		AssetRollout ar = queryRollout(stationId,String.valueOf(psl.getTaobaoUserId()));
 		if (ar == null) {
 			//创建出库单
 			AssetRolloutDto roDto = new AssetRolloutDto();
@@ -247,12 +247,13 @@ public class AssetSynBOImpl implements AssetSynBO {
 			roDto.setStatus(AssetRolloutStatusEnum.WAIT_ROLLOUT);
 			roDto.setApplierOrgId(a.getOwnerOrgId());
 			roDto.setApplierOrgName(cuntaoOrgServiceClient.getCuntaoOrg(a.getOwnerOrgId()).getName());
-			roDto.setReceiverId(p.getTaobaoUserId().toString());
-			roDto.setReceiverName(p.getName());
+			roDto.setReceiverId(String.valueOf(psl.getTaobaoUserId()));
+			String name = uicReadAdapter.getFullName(psl.getTaobaoUserId());
+			roDto.setReceiverName(name);
 			roDto.setReceiverAreaType(AssetRolloutReceiverAreaTypeEnum.STATION);
 			roDto.setReceiverAreaName(sName);
 			roDto.setReceiverAreaId(stationId);
-			roDto.setRemark("分发至 "+sName +"-" +p.getName());
+			roDto.setRemark("分发至 "+sName +"-" +name);
 			roDto.setType(AssetRolloutTypeEnum.DISTRIBUTION);
 			roDto.copyOperatorDto(OperatorDto.defaultOperator());
 			rolloutId = assetRolloutBO.addRollout(roDto);
