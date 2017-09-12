@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,11 +55,12 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto)
+	public Long insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto)
 			 {
 		CuntaoCainiaoStationRel relDO = convertToDomain(relDto);
 		DomainUtils.beforeInsert(relDO, relDto.getOperator());
 		cuntaoCainiaoStationRelMapper.insert(relDO);
+		return relDO.getId();
 	}
 	
 	private CuntaoCainiaoStationRel convertToDomain(CuntaoCainiaoStationRelDto relDto){
@@ -78,5 +81,19 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 			return null;
 		}
 		return rel.getCainiaoStationId();
+	}
+	
+	@Override
+	public List<CuntaoCainiaoStationRel> findCainiaoStationRels(List<Long> stationIds) {
+		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andObjectIdIn(stationIds).andTypeEqualTo("STATION");
+		List<CuntaoCainiaoStationRel> rels = cuntaoCainiaoStationRelMapper.selectByExample(example);
+		return rels;
+	}
+	
+	public Boolean updateCainiaoStationRel(CuntaoCainiaoStationRel stationRel,String operator) {
+		DomainUtils.beforeUpdate(stationRel, operator);
+		cuntaoCainiaoStationRelMapper.updateByPrimaryKeySelective(stationRel);
+		return true;
 	}
 }
