@@ -1,28 +1,12 @@
-package com.taobao.cun.auge.station.bo;
+package com.taobao.cun.auge.logistics.service;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationPageQueryDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 
-/**
- * 物流基础服务
- * @author quanzhu.wangqz
- *
- */
-public interface LogisticsStationBO {
+public interface LogisticsStationService {
 
-	/**
-	 * 根据主键删除
-	 * @param id
-	 * @param operator
-	 * @
-	 */
-	public void delete(Long id,String operator) ;
-	
-	
-	public void changeState(Long id,String operator,String targetState) ;
-	
 	/**
 	 * 添加菜鸟物流站点
 	 * 
@@ -33,13 +17,12 @@ public interface LogisticsStationBO {
 	/**
 	 * 删除菜鸟物流站点
 	 * 
-	 * @param cainiaoStationId
-	 *            菜鸟站点id
+	 * @param cainiaoStationId 菜鸟站点id
 	 * @param modifier
 	 * @return
 	 */
 	public Boolean deleteLogisticsStation(Long cainiaoStationId, String modifier);
-
+	
 	/**
 	 * 修改菜鸟物流站点
 	 * 
@@ -47,6 +30,8 @@ public interface LogisticsStationBO {
 	 * @return
 	 */
 	public Boolean updateLogisticsStation(LogisticsStationDto stationDto);
+	
+	
 
 	/**
 	 * 查询单个菜鸟物流站点
@@ -65,17 +50,26 @@ public interface LogisticsStationBO {
 	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationPageQueryDto queryDto);
 	
 	/**
-	 * 查询带审核的LogisticStation
-	 * @param taobaoUserId
+	 * 查询单个菜鸟物流站点
+	 * 
+	 * @param queryDto
 	 * @return
 	 */
-	public LogisticsStationDto findToAuditLogisticsStationByTaobaoUserId(Long taobaoUserId);
+	public LogisticsStationDto findLogisticsStation(Long cainiaoStationId);
 	
 	/**
-	 * 根据ID查找
-	 * @param id
+	 * 查询单个菜鸟物流站点
+	 * 
+	 * @param queryDto
 	 * @return
 	 */
-	public LogisticsStationDto findLogisticStation(Long id);
+	public  LogisticsStationDto findLogisticsStationByStationId(Long stationId);
 	
+	/**
+	 * 
+	 * 
+	 * @param queryDto
+	 * @return
+	 */
+	public Long findStationIdByCainiaoStationId(Long cainiaoStationId);
 }

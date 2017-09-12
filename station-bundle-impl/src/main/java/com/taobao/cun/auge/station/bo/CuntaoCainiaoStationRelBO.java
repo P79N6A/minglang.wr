@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.station.dto.CuntaoCainiaoStationRelDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
@@ -33,7 +35,7 @@ public interface CuntaoCainiaoStationRelBO {
 	 * @return
 	 * @
 	 */
-	public void insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto) ;
+	public Long insertCuntaoCainiaoStationRel(CuntaoCainiaoStationRelDto relDto) ;
 	
 	
 	/**
@@ -44,4 +46,9 @@ public interface CuntaoCainiaoStationRelBO {
 	 * @
 	 */
 	public Long getCainiaoStationId(Long stationId) ;
+	
+	
+	public List<CuntaoCainiaoStationRel> findCainiaoStationRels(List<Long> stationId);
+	
+	public Boolean updateCainiaoStationRel(CuntaoCainiaoStationRel stationRel,String operator);
 }
