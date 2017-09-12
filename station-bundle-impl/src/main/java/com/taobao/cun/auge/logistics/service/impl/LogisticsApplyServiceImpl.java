@@ -384,6 +384,8 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
 		LogisticsStationApply record = new LogisticsStationApply();
 		record.setApplyStatus(isPass ? "pass" : "cainiao_refuse");
+		record.setGmtModified(new Date());
+		record.setModifer("system");
 		int count = logisticsStationApplyMapper.updateByExampleSelective(record, example);
 		return count == 1;
 	}

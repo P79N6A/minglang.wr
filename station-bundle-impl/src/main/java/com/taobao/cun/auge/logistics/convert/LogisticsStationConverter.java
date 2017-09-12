@@ -20,6 +20,7 @@ import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 import com.taobao.cun.auge.logistics.enums.LogisticsStationStateEnum;
 import com.taobao.cun.auge.logistics.util.LatitudeUtil;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 
 public final class LogisticsStationConverter {
 
@@ -32,6 +33,7 @@ public final class LogisticsStationConverter {
 	public static LogisticsStationDto convert(ApplyStationParam param,Address address,LogisticsStationStateEnum state){
 		LogisticsStationDto stationDto = new LogisticsStationDto();
 		stationDto.setOperator("system");
+		stationDto.setOperatorType(OperatorTypeEnum.SYSTEM);
 		stationDto.setParentId(param.getCountyDomainId());
 		stationDto.setName(param.getName());
 		stationDto.setContactName(param.getContact());
