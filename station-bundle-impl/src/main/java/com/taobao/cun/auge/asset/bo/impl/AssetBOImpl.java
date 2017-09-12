@@ -641,7 +641,6 @@ public class AssetBOImpl implements AssetBO {
         if (AssetStatusEnum.TRANSFER.getCode().equals(asset.getStatus()) && res) {
             //调集团接口转移责任人
             transferItAsset(signDto);
-            sendAppMessage(asset.getOwnerWorkno(), updateAsset, AssetStatusEnum.SIGN.getCode());
         } else {
             //调集团接口出库
             obtainItAsset(signDto);
@@ -682,34 +681,6 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "集团资产转移失败,请联系管理员！");
         }
-
-    }
-
-    @Override
-    public void sendAppMessage(String owner, Asset asset, String type) {
-        AssetSignEvent signEvent = new AssetSignEvent();
-        signEvent.setAppId("cuntaoCRM");
-        signEvent.setReceivers(Collections.singletonList(Long.valueOf(owner)));
-        signEvent.setReceiverType("EMPIDS");
-        signEvent.setMsgType("cuntaoCRMAsset");
-        signEvent.setMsgTypeDetail(type);
-        signEvent.setAction("all");
-        Content content = signEvent.new Content();
-        content.setBizId(asset.getId());
-        content.setPublishTime(new Date());
-        if (AssetStatusEnum.SIGN.getCode().equals(type)) {
-            content.setTitle("您转移的资产已被对方签收，请关注！");
-            content.setContent(
-                "您转移至" + cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName() + " " + emp360Adapter
-                    .getName(asset.getOwnerWorkno()) + "的资产已被对方签收，查看详情");
-        } else if (AssetStatusEnum.SCRAP.getCode().equals(type)) {
-            content.setTitle("您申报的资产遗失、损毁已完成赔付，请关注！");
-            content.setContent(cuntaoOrgServiceClient.getCuntaoOrg(asset.getOwnerOrgId()).getName() + " " + emp360Adapter
-                    .getName(asset.getOwnerWorkno()) + "的资产遗失、损毁已完成赔付，查看详情");
-
-        }
-        signEvent.setContent(content);
-        EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
     }
 
     @Override
@@ -1094,7 +1065,6 @@ public class AssetBOImpl implements AssetBO {
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
         assetMapper.updateByPrimaryKeySelective(asset);
-        sendAppMessage(asset.getOwnerWorkno(), asset, AssetStatusEnum.SCRAP.getCode());
     }
 
     private void scrapItAsset(Asset asset, AssetScrapDto scrapDto) {
@@ -1758,8 +1728,6 @@ public class AssetBOImpl implements AssetBO {
         assetMapper.updateByPrimaryKeySelective(record);
         //更新出库单
         assetRolloutBO.confirmScrapAsset(asset.getId(), assetDto.getOperator());
-        //发消息给手机
-        sendAppMessage(asset.getOwnerWorkno(), asset, AssetStatusEnum.SCRAP.getCode());
     }
 
     private Asset buildUpdateAsset(OperatorDto signDto, boolean changUser) {
