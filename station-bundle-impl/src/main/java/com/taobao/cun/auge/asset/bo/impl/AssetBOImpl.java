@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 import org.apache.commons.collections.CollectionUtils;
@@ -707,6 +708,24 @@ public class AssetBOImpl implements AssetBO {
                     .getName(asset.getOwnerWorkno()) + "的资产遗失、损毁已完成赔付，查看详情");
 
         }
+        signEvent.setContent(content);
+        EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
+    }
+
+    @Override
+    public void sendAppMessage(AssetAppMessageDto appMessageDto) {
+        AssetSignEvent signEvent = new AssetSignEvent();
+        signEvent.setAppId(appMessageDto.getAppId());
+        signEvent.setReceivers(appMessageDto.getReceiverList());
+        signEvent.setReceiverType(appMessageDto.getReceiverType());
+        signEvent.setMsgType(appMessageDto.getMsgType());
+        signEvent.setMsgTypeDetail(appMessageDto.getMsgTypeDetail());
+        signEvent.setAction(appMessageDto.getAction());
+        Content content = signEvent.new Content();
+        content.setBizId(appMessageDto.getBizId());
+        content.setPublishTime(new Date());
+        content.setTitle(appMessageDto.getTitle());
+        content.setContent(appMessageDto.getContent());
         signEvent.setContent(content);
         EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
     }

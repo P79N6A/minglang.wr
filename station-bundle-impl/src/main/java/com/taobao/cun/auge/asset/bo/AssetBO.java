@@ -6,6 +6,7 @@ import java.util.Map;
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.dto.AreaAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AreaAssetListDto;
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailQueryCondition;
@@ -244,4 +245,6 @@ public interface AssetBO {
     public void transferItAsset(AssetDto signDto);
 
     public void sendAppMessage(String owner, Asset asset, String type);
+
+    public void sendAppMessage(AssetAppMessageDto appMessageDto);
 }
