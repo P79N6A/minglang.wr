@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.CountyStationExample;
@@ -207,7 +208,7 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 		Assert.notNull(cainiaoStationModel.getData(), "cainiaoStationModel's data is null");
 
 		LogisticsStationDto updatedLogisticsStationDto = new LogisticsStationDto();
-		updatedLogisticsStationDto.setOperator("system");
+		updatedLogisticsStationDto.copyOperatorDto(OperatorDto.defaultOperator());
 		updatedLogisticsStationDto.setId(ids[0]);
 		updatedLogisticsStationDto.setCainiaoStationId(cainiaoStationModel.getData());
 		logisticsStationBO.updateLogisticsStation(updatedLogisticsStationDto);
