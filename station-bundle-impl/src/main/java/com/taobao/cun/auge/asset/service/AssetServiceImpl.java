@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -258,5 +259,10 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean syncAsset(List<Long> cuntaoAssetIds) {
 		return assetSynBO.syncAsset(cuntaoAssetIds);
 	}
+
+	@Override
+    public void sendAppMessage(AssetAppMessageDto appMessageDto) {
+	    assetBO.sendAppMessage(appMessageDto);
+    }
 
 }
