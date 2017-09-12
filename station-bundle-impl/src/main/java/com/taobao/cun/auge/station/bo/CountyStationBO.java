@@ -17,6 +17,8 @@ public interface CountyStationBO {
 	 * @
 	 */
 	public CountyStation getCountyStationByOrgId(Long orgId)  ;
+
+	public CountyStation getCountyStationById(Long id);
 	
 	public Long addCountyStation(CountyStation cs);
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -46,6 +47,8 @@ public class TPAClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
+	@Autowired
+	private AssetBO assetBO;
 	
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
@@ -85,7 +88,8 @@ public class TPAClosedLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		 
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		assetBO.setAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
 		
 	}
 

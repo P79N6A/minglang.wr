@@ -44,6 +44,9 @@ public class DiamondConfiguredProperties {
     @Value("${asset.acceptanceStandard}")
     private String acceptanceStandard;
 
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.category}')}")
+    private Map<String, String> categoryMap;
+
     @Value("#{'${asset.can.buy.station}'.split(',')}")
     private List<Long> canBuyStationList;
 
@@ -58,6 +61,9 @@ public class DiamondConfiguredProperties {
     
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${train.purchase.province}')}")
     private Map<String, String> purchaseProvinceMap;
+
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.transfer.error}')}")
+    private Map<String, String> assetTransferErrorMap;
 
     public String getApply() {
         return apply;
@@ -95,6 +101,10 @@ public class DiamondConfiguredProperties {
 		return acceptanceStandard;
 	}
 
+    public Map<String, String> getCategoryMap() {
+        return categoryMap;
+    }
+
     public List<Long> getCanBuyStationList() {
         return canBuyStationList;
     }
@@ -113,5 +123,9 @@ public class DiamondConfiguredProperties {
     
     public Map<Long, Long> getStationValueMap() {
         return stationValueMap;
+    }
+
+    public Map<String, String> getAssetTransferErrorMap() {
+        return assetTransferErrorMap;
     }
 }

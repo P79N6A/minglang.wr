@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -65,7 +66,6 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetFlowService")
 @HSFProvider(serviceInterface = AssetFlowService.class)
-
 public class AssetFlowServiceImpl implements AssetFlowService{
 
     private static final Logger logger = LoggerFactory.getLogger(AssetFlowServiceImpl.class);
@@ -664,6 +664,30 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 					sendQuitEvent(detailDo, operator);
 				}
 			}
+	}
+
+	@Override
+	public void createTransferFlow(Long businessId, String operator) {
+		Objects.requireNonNull(businessId, "流程id不能为空");
+		Objects.requireNonNull(operator, "操作人不能为空");
+		StartProcessInstanceDto startDto = new StartProcessInstanceDto();
+		startDto.setBusinessCode("assetTransfer");
+		startDto.setBusinessId(String.valueOf(businessId));
+		startDto.setApplierId(operator);
+		startDto.setApplierUserType(UserTypeEnum.BUC);
+		cuntaoWorkFlowService.startProcessInstance(startDto);
+	}
+
+	@Override
+	public void cancelTransferFlow(Long businessId, String operator) {
+		try {
+			Objects.requireNonNull(businessId, "流程id不能为空");
+			Objects.requireNonNull(operator, "操作人不能为空");
+			cuntaoWorkFlowService.teminateProcessInstance(String.valueOf(businessId), "assetTransfer", operator);
+		} catch (Exception e) {
+			logger.error("cancelFlow error!",e);
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"cancelTransferFlow error");
+		}
 	}
 
 	private void sendQuitEvent(CuntaoAssetFlowDetail detailDo, String operator) {

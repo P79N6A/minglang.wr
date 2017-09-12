@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -78,6 +79,10 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	private AssetBO assetBO;
+	
 	
 	private static final int DEFAULT_EVALUATE_INTERVAL = 6;
 	@Override
@@ -167,6 +172,9 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 	        // 删除停业申请单
 	        closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 		}else if(PartnerInstanceStateEnum.CLOSED.getCode().equals(context.getSourceState())){
+			//TDDO:资产回收 状态  设置为空
+			assetBO.cancelAssetRecycleIsY(partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId());
+			
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
 		}

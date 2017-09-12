@@ -33,11 +33,20 @@ public class CountyStationBOImpl implements CountyStationBO {
 	}
 
 	@Override
-    public Long addCountyStation(CountyStation cs){
+	public CountyStation getCountyStationById(Long id) throws AugeServiceException {
+		ValidateUtils.notNull(id);
+		CountyStationExample example = new CountyStationExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andIdEqualTo(id);
+		List<CountyStation> resList = countyStationMapper.selectByExample(example);
+		return ResultUtils.selectOne(resList);
+	}
+
+	@Override
+	public Long addCountyStation(CountyStation cs){
 		countyStationMapper.insert(cs);
 		return cs.getId();
 	}
-	
-
 
 }
