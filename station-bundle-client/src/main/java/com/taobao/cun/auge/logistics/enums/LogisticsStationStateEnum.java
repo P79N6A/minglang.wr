@@ -1,4 +1,4 @@
-package com.taobao.cun.auge.station.enums;
+package com.taobao.cun.auge.logistics.enums;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,11 +11,13 @@ public class LogisticsStationStateEnum implements Serializable {
 	public static final LogisticsStationStateEnum TO_AUDIT = new LogisticsStationStateEnum("TO_AUDIT", "待审核");
 	public static final LogisticsStationStateEnum SERVICING = new LogisticsStationStateEnum("SERVICING", "服务中");
 	public static final LogisticsStationStateEnum AUDIT_FAIL = new LogisticsStationStateEnum("AUDIT_FAIL", "审核不通过");
+	public static final LogisticsStationStateEnum QUIT = new LogisticsStationStateEnum("QUIT", "已退出");
 	private static final Map<String, LogisticsStationStateEnum> mappings = new HashMap<String, LogisticsStationStateEnum>();
 	static {
 		mappings.put("TO_AUDIT", TO_AUDIT);
 		mappings.put("SERVICING", SERVICING);
 		mappings.put("AUDIT_FAIL", AUDIT_FAIL);
+		mappings.put("QUIT", QUIT);
 	}
 
 	private String code;
