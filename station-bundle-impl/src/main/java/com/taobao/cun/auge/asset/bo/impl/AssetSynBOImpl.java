@@ -107,7 +107,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 	@Autowired
 	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
-	private final static String CREATOR = "syncNewAsset";
+	private final static String CREATOR = "syncNewAsset-wsh";
 	
 	@Autowired
 	private StationBO stationBO;
