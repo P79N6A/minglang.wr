@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.taobao.cun.auge.logistics.dto.LogisticsApplyRequest;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationApplyDTO;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
 public interface LogisticsApplyService {
 
@@ -13,23 +12,23 @@ public interface LogisticsApplyService {
 	 * @param request
 	 * @return
 	 */
-	public ResultModel<Boolean> applyLogisticStation(LogisticsApplyRequest request);
+	public Boolean applyLogisticStation(LogisticsApplyRequest request);
 	
 	/**
 	 * 获取待审核的物流申请单
 	 * @param stationId
 	 * @return
 	 */
-	public ResultModel<List<LogisticsStationApplyDTO>> getLogisticsStationApply(List<Long> stationIds, Long orgId);
+	public List<LogisticsStationApplyDTO> getLogisticsStationApply(List<Long> stationIds, Long orgId);
 	
-	public ResultModel<List<LogisticsStationApplyDTO>> getLogisticsStationApply(List<Long> stationIds, List<Long> orgIds);
+	public List<LogisticsStationApplyDTO> getLogisticsStationApply(List<Long> stationIds, List<Long> orgIds);
 	
-	public ResultModel<Boolean> auditLogistcsStationApply(Long applyId, Boolean isPass,String remark);
+	public Boolean auditLogistcsStationApply(Long applyId, Boolean isPass,String remark);
 	
-	public ResultModel<Boolean> finishLogisticStationApply(Long logisticsStationId, Boolean isPass);
+	public Boolean finishLogisticStationApply(Long logisticsStationId, Boolean isPass);
 	
 	
-	public ResultModel<LogisticsStationApplyDTO> getLogisticsStationApply(Long applyId);
+	public LogisticsStationApplyDTO getLogisticsStationApply(Long applyId);
 	
 	
 	

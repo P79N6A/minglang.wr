@@ -1,9 +1,10 @@
 package com.taobao.cun.auge.logistics.dto;
 
-import com.taobao.cun.auge.common.Address;
-import com.taobao.cun.crius.common.dto.PageDto;
+import java.io.Serializable;
 
-public class LogisticsStationQueryDto extends PageDto {
+import com.taobao.cun.auge.common.Address;
+
+public class LogisticsStationQueryDto implements Serializable{
 
 	private static final long serialVersionUID = -5327156834251636500L;
 

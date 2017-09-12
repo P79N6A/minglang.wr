@@ -20,12 +20,11 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCainiaoStationRelMapper;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationMapper;
 import com.taobao.cun.auge.logistics.convert.LogisticsStationConverter;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
+import com.taobao.cun.auge.logistics.dto.LogisticsStationPageQueryDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 import com.taobao.cun.auge.logistics.service.LogisticsStationService;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.common.exceptions.ServiceException;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
-import com.taobao.cun.crius.common.resultmodel.ResultModelUtil;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("logisticsStationService")
@@ -43,12 +42,12 @@ public class LogisticsStationServiceImpl implements LogisticsStationService {
 	@Resource
 	CuntaoCainiaoStationRelMapper cuntaoCainiaoStationRelMapper;
 	@Override
-	public ResultModel<Long> addLogisticsStation(LogisticsStationDto stationDto) {
-		return ResultModelUtil.success(logisticsStationBO.addLogisticsStation(stationDto));
+	public Long addLogisticsStation(LogisticsStationDto stationDto) {
+		return logisticsStationBO.addLogisticsStation(stationDto);
 	}
 
 	@Override
-	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationQueryDto condiDto) {
+	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationPageQueryDto condiDto) {
 		if (null == condiDto) {
 			logger.error("LogisticsStationQueryDto is null ");
 			throw new ServiceException("LogisticsStationQueryDto is null ");
@@ -57,88 +56,88 @@ public class LogisticsStationServiceImpl implements LogisticsStationService {
 	}
 
 	@Override
-	public ResultModel<LogisticsStationDto> findLogisticsStation(LogisticsStationQueryDto condiDto) {
+	public LogisticsStationDto findLogisticsStation(LogisticsStationQueryDto condiDto) {
 		if (null == condiDto) {
 			logger.error("LogisticsStationQueryDto is null ");
-			return ResultModelUtil.unSucceed(new ServiceException("LogisticsStationQueryDto is null "));
+			throw new ServiceException("LogisticsStationQueryDto is null ");
 		}
 
 		try {
-			LogisticsStationDto stationDto = logisticsStationBO.findLogisticsStation(condiDto);
-
-			return ResultModelUtil.success(stationDto);
+			return logisticsStationBO.findLogisticsStation(condiDto);
 		} catch (Exception e) {
 			String msg = "findLogisticsStation error,LogisticsStationQueryDto =" + JSONObject.toJSONString(condiDto);
 			logger.error(msg, e);
-			return ResultModelUtil.unSucceed(e);
+			throw new ServiceException(msg,e);
 		}
 	}
 
 	@Override
-	public ResultModel<Boolean> deleteLogisticsStation(Long cainiaoStationId, String modifier) {
+	public Boolean deleteLogisticsStation(Long cainiaoStationId, String modifier) {
 		if (cainiaoStationId == null) {
-			return ResultModelUtil.unSucceed(new ServiceException("cainiaoStationId is null"));
+			throw new ServiceException("cainiaoStationId is null");
 		}
 		if (StringUtils.isEmpty(modifier)) {
-			return ResultModelUtil.unSucceed(new ServiceException("modifier is null"));
+			throw new ServiceException("modifier is null");
 		}
 
 		try {
-			return ResultModelUtil.success(logisticsStationBO.deleteLogisticsStation(cainiaoStationId, modifier));
+			return logisticsStationBO.deleteLogisticsStation(cainiaoStationId, modifier);
 		} catch (Exception e) {
 			String msg = "findLogisticsStation error,cainiaoStationId =" + cainiaoStationId;
 			logger.error(msg, e);
-			return ResultModelUtil.unSucceed(e);
+			throw new ServiceException(msg,e);
 		}
 	}
 
 	@Override
-	public ResultModel<Boolean> updateLogisticsStation(LogisticsStationDto stationDto) {
+	public Boolean updateLogisticsStation(LogisticsStationDto stationDto) {
 		ValidateUtils.validateParam(stationDto);
 		try {
-			return ResultModelUtil.success(logisticsStationBO.updateLogisticsStation(stationDto));
+			return logisticsStationBO.updateLogisticsStation(stationDto);
 		} catch (Exception e) {
 			String msg = "findLogisticsStation error,LogisticsStationDto =" + JSONObject.toJSONString(stationDto);
 			logger.error(msg, e);
-			return ResultModelUtil.unSucceed(e);
+			throw new ServiceException(msg,e);
 		}
 	}
 
 	@Override
-	public ResultModel<LogisticsStationDto> findLogisticsStation(Long cainiaoStationId) {
+	public LogisticsStationDto findLogisticsStation(Long cainiaoStationId) {
 		LogisticsStationExample example = new LogisticsStationExample();
 		example.createCriteria().andCainiaoStationIdEqualTo(cainiaoStationId);
 		try {
 			List<LogisticsStation>  results = logisticsStationMapper.selectByExample(example);
 			if(results != null && !results.isEmpty()){
-				return ResultModelUtil.success(LogisticsStationConverter.convert(results.iterator().next()));
+				return LogisticsStationConverter.convert(results.iterator().next());
 			}
+			return null;
 		} catch (Exception e) {
-			logger.error("findLogisticsStation error cainiaoStationId["+cainiaoStationId+"]", e);
-			return ResultModelUtil.unSucceed(e);
+			String msg = "findLogisticsStation error cainiaoStationId["+cainiaoStationId+"]";
+			logger.error(msg, e);
+			throw new ServiceException(msg,e);
 		}
-		return ResultModelUtil.unSucceed("LogisticsStationDto not exist by cainiaoStationId["+cainiaoStationId+"]");
 	}
 
 	@Override
-	public ResultModel<LogisticsStationDto> findLogisticsStationByStationId(Long stationId) {
+	public LogisticsStationDto findLogisticsStationByStationId(Long stationId) {
 		CuntaoCainiaoStationRelExample example = new CuntaoCainiaoStationRelExample();
 		example.createCriteria().andObjectIdEqualTo(stationId).andTypeEqualTo("STATION").andIsDeletedEqualTo("n");
 		try {
 			List<CuntaoCainiaoStationRel> results = cuntaoCainiaoStationRelMapper.selectByExample(example);
 			if(results != null && !results.isEmpty()){
 				CuntaoCainiaoStationRel cainiaoStationRel = results.iterator().next();
-				return ResultModelUtil.success(LogisticsStationConverter.convert(logisticsStationMapper.selectByPrimaryKey(cainiaoStationRel.getLogisticsStationId())));
+				return LogisticsStationConverter.convert(logisticsStationMapper.selectByPrimaryKey(cainiaoStationRel.getLogisticsStationId()));
 			}
+			return null;
 		} catch (Exception e) {
-			logger.error("findLogisticsStationByStationId error stationId["+stationId+"]", e);
-			return ResultModelUtil.unSucceed(e);
+			String msg = "findLogisticsStationByStationId error stationId["+stationId+"]";
+			logger.error(msg, e);
+			throw new ServiceException(msg,e);
 		}
-		return ResultModelUtil.unSucceed("LogisticsStationDto not exist by stationId["+stationId+"]");
 	}
 
 	@Override
-	public ResultModel<Long> findStationIdByCainiaoStationId(Long cainiaoStationId) {
+	public Long findStationIdByCainiaoStationId(Long cainiaoStationId) {
 		LogisticsStationExample example = new LogisticsStationExample();
 		example.createCriteria().andCainiaoStationIdEqualTo(cainiaoStationId).andIsDeletedEqualTo("n");
 		try {
@@ -150,14 +149,15 @@ public class LogisticsStationServiceImpl implements LogisticsStationService {
 					relExample.createCriteria().andLogisticsStationIdEqualTo(logisticsStation.getId()).andIsDeletedEqualTo("n");
 					List<CuntaoCainiaoStationRel> cainiaoStationRels = cuntaoCainiaoStationRelMapper.selectByExample(relExample);
 					if(cainiaoStationRels != null && !cainiaoStationRels.isEmpty()){
-						return ResultModelUtil.success(cainiaoStationRels.iterator().next().getObjectId());
+						return cainiaoStationRels.iterator().next().getObjectId();
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.error("findStationIdByCainiaoStationId error cainiaoStationId["+cainiaoStationId+"]", e);
-			return ResultModelUtil.unSucceed(e);
+			String msg = "findStationIdByCainiaoStationId error cainiaoStationId["+cainiaoStationId+"]";
+			logger.error(msg, e);
+			throw new ServiceException(msg,e);
 		}
-		return ResultModelUtil.unSucceed("stationId not exist by cainiaoStationId["+cainiaoStationId+"]");
+		return null;
 	}
 }

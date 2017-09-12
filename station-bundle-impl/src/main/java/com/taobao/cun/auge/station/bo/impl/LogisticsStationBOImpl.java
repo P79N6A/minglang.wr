@@ -23,6 +23,7 @@ import com.taobao.cun.auge.dal.domain.LogisticsStationExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.LogisticsStationMapper;
 import com.taobao.cun.auge.logistics.convert.LogisticsStationConverter;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
+import com.taobao.cun.auge.logistics.dto.LogisticsStationPageQueryDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 import com.taobao.cun.auge.logistics.enums.LogisticsStationStateEnum;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
@@ -127,7 +128,7 @@ public class LogisticsStationBOImpl implements LogisticsStationBO {
 	}
 
 	@Override
-	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationQueryDto condiDto) {
+	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationPageQueryDto condiDto) {
 		if (null == condiDto) {
 			logger.error("LogisticsStationQueryDto is null ");
 			throw new ServiceException("LogisticsStationQueryDto is null ");
@@ -136,7 +137,7 @@ public class LogisticsStationBOImpl implements LogisticsStationBO {
 		LogisticsStationExample example = LogisticsStationConverter.convert2Example(condiDto);
 		example.setOrderByClause("gmt_create DESC");
 
-		PageHelper.startPage(condiDto.getPageIndex(), condiDto.getPageSize());
+		PageHelper.startPage(condiDto.getPageNum(), condiDto.getPageSize());
 		Page<LogisticsStation> stations = (Page<LogisticsStation>)logisticsStationMapper.selectByExample(example);
         PageDto<LogisticsStationDto> success = PageDtoUtil.success(stations, LogisticsStationConverter.convert(stations));
         return success;

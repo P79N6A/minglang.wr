@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
+import com.taobao.cun.auge.logistics.dto.LogisticsStationPageQueryDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 
 /**
@@ -61,7 +62,7 @@ public interface LogisticsStationBO {
 	 * @param queryDto
 	 * @return
 	 */
-	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationQueryDto queryDto);
+	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationPageQueryDto queryDto);
 	
 	/**
 	 * 查询带审核的LogisticStation

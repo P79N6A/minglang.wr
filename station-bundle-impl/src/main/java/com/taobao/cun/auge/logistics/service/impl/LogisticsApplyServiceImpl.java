@@ -60,8 +60,6 @@ import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.common.exceptions.ServiceException;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
-import com.taobao.cun.crius.common.resultmodel.ResultModelUtil;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("logisticsApplyService")
 @HSFProvider(serviceInterface= LogisticsApplyService.class)
@@ -223,7 +221,7 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public ResultModel<Boolean>  applyLogisticStation(LogisticsApplyRequest request) {
+	public Boolean  applyLogisticStation(LogisticsApplyRequest request) {
 		try {
 			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 			example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo("applyLogistics").andApplierStationIdEqualTo(request.getApplierStationId());
@@ -243,9 +241,9 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 			apply.setApplyStatus("init");
 			apply.setApplierOrgId(stationDto.getApplyOrg());
 			int insertValue = logisticsStationApplyMapper.insertSelective(apply);
-			return ResultModelUtil.success(insertValue==1);
+			return insertValue==1;
 		} catch (Exception e) {
-			return ResultModelUtil.unSucceed(new RuntimeException("applyLogisticStation error!",e));
+			throw new ServiceException("applyLogisticStation error!",e);
 		}
 	
 	}
@@ -268,16 +266,16 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 	}
 
 	@Override
-	public ResultModel<List<LogisticsStationApplyDTO>> getLogisticsStationApply(List<Long> stationIds, Long orgId){
+	public List<LogisticsStationApplyDTO> getLogisticsStationApply(List<Long> stationIds, Long orgId){
 		return getLogisticsStationApply(stationIds, Lists.newArrayList(orgId));
 	}
 
 	@Override
-	public ResultModel<List<LogisticsStationApplyDTO>> getLogisticsStationApply(List<Long> stationIds, List<Long> orgIds) {
+	public List<LogisticsStationApplyDTO> getLogisticsStationApply(List<Long> stationIds, List<Long> orgIds) {
 		stationIds =  ImmutableSet.copyOf(Iterables.filter(stationIds, Predicates.not(Predicates.isNull()))).asList();
 		List<LogisticsStationApplyDTO> results = Lists.newArrayList();
 		if(stationIds == null || stationIds.isEmpty()){
-			return ResultModelUtil.success(results);
+			return results;
 		}
 		
 		LogisticsStationApplyExample exmple = new LogisticsStationApplyExample();
@@ -342,7 +340,7 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 			results.add(dto);
 		}
 		
-		return ResultModelUtil.success(results);
+		return results;
 	}
 
 
@@ -359,7 +357,7 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public ResultModel<Boolean> auditLogistcsStationApply(Long applyId, Boolean isPass,String remark) {
+	public Boolean auditLogistcsStationApply(Long applyId, Boolean isPass,String remark) {
 		Assert.notNull(applyId,"auditLogistcsStationApply applyId is null");
 		LogisticsStationApply record = new LogisticsStationApply();
 		record.setId(applyId);
@@ -375,28 +373,28 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 			record.setLogisticsStationId(logisticStationId);
 		}
 		int count = logisticsStationApplyMapper.updateByPrimaryKeySelective(record);
-		return ResultModelUtil.success(count == 1);
+		return count == 1;
 	}
 
 
 	@Override
-	public ResultModel<Boolean> finishLogisticStationApply(Long logisticsStationId,Boolean isPass) {
+	public Boolean finishLogisticStationApply(Long logisticsStationId,Boolean isPass) {
 		Assert.notNull(logisticsStationId,"finishLogisticStationApply logisticsStationId is null");
 		LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andLogisticsStationIdEqualTo(logisticsStationId).andTypeEqualTo("applyLogistics");
 		LogisticsStationApply record = new LogisticsStationApply();
 		record.setApplyStatus(isPass ? "pass" : "cainiao_refuse");
 		int count = logisticsStationApplyMapper.updateByExampleSelective(record, example);
-		return ResultModelUtil.success(count == 1);
+		return count == 1;
 	}
 
 
 	@Override
-	public ResultModel<LogisticsStationApplyDTO> getLogisticsStationApply(Long applyId) {
+	public LogisticsStationApplyDTO getLogisticsStationApply(Long applyId) {
 		LogisticsStationApply apply = logisticsStationApplyMapper.selectByPrimaryKey(applyId);
 		LogisticsStationApplyDTO dto = new LogisticsStationApplyDTO();
 		BeanUtils.copyProperties(apply, dto);
-		return  ResultModelUtil.success(dto);
+		return  dto;
 	}
 
 

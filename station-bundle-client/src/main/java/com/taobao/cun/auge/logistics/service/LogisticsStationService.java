@@ -2,8 +2,8 @@ package com.taobao.cun.auge.logistics.service;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
+import com.taobao.cun.auge.logistics.dto.LogisticsStationPageQueryDto;
 import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
-import com.taobao.cun.crius.common.resultmodel.ResultModel;
 
 public interface LogisticsStationService {
 
@@ -12,7 +12,7 @@ public interface LogisticsStationService {
 	 * 
 	 * @param stationDto
 	 */
-	public ResultModel<Long> addLogisticsStation(LogisticsStationDto stationDto);
+	public Long addLogisticsStation(LogisticsStationDto stationDto);
 
 	/**
 	 * 删除菜鸟物流站点
@@ -21,7 +21,7 @@ public interface LogisticsStationService {
 	 * @param modifier
 	 * @return
 	 */
-	public ResultModel<Boolean> deleteLogisticsStation(Long cainiaoStationId, String modifier);
+	public Boolean deleteLogisticsStation(Long cainiaoStationId, String modifier);
 	
 	/**
 	 * 修改菜鸟物流站点
@@ -29,7 +29,7 @@ public interface LogisticsStationService {
 	 * @param stationDto
 	 * @return
 	 */
-	public ResultModel<Boolean> updateLogisticsStation(LogisticsStationDto stationDto);
+	public Boolean updateLogisticsStation(LogisticsStationDto stationDto);
 	
 	
 
@@ -39,7 +39,7 @@ public interface LogisticsStationService {
 	 * @param queryDto
 	 * @return
 	 */
-	public ResultModel<LogisticsStationDto> findLogisticsStation(LogisticsStationQueryDto queryDto);
+	public LogisticsStationDto findLogisticsStation(LogisticsStationQueryDto queryDto);
 
 	/**
 	 * 分页查询菜鸟物流站点
@@ -47,7 +47,7 @@ public interface LogisticsStationService {
 	 * @param queryDto
 	 * @return
 	 */
-	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationQueryDto queryDto);
+	public PageDto<LogisticsStationDto> findLogisticsStationByPage(LogisticsStationPageQueryDto queryDto);
 	
 	/**
 	 * 查询单个菜鸟物流站点
@@ -55,7 +55,7 @@ public interface LogisticsStationService {
 	 * @param queryDto
 	 * @return
 	 */
-	public ResultModel<LogisticsStationDto> findLogisticsStation(Long cainiaoStationId);
+	public LogisticsStationDto findLogisticsStation(Long cainiaoStationId);
 	
 	/**
 	 * 查询单个菜鸟物流站点
@@ -63,7 +63,7 @@ public interface LogisticsStationService {
 	 * @param queryDto
 	 * @return
 	 */
-	public  ResultModel<LogisticsStationDto> findLogisticsStationByStationId(Long stationId);
+	public  LogisticsStationDto findLogisticsStationByStationId(Long stationId);
 	
 	/**
 	 * 
@@ -71,5 +71,5 @@ public interface LogisticsStationService {
 	 * @param queryDto
 	 * @return
 	 */
-	public ResultModel<Long> findStationIdByCainiaoStationId(Long cainiaoStationId);
+	public Long findStationIdByCainiaoStationId(Long cainiaoStationId);
 }
