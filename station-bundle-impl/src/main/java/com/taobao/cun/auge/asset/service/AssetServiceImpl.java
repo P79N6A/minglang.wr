@@ -259,10 +259,4 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean syncAsset(List<Long> cuntaoAssetIds) {
 		return assetSynBO.syncAsset(cuntaoAssetIds);
 	}
-
-	@Override
-    public void sendAppMessage(AssetAppMessageDto appMessageDto) {
-	    assetBO.sendAppMessage(appMessageDto);
-    }
-
 }

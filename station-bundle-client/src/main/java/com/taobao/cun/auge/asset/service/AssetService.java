@@ -178,6 +178,4 @@ public interface AssetService {
      */
     public Boolean syncAsset(List<Long> cuntaoAssetIds);
 
-    public void sendAppMessage(AssetAppMessageDto appMessageDto);
-
 }
