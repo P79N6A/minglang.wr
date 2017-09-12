@@ -81,8 +81,18 @@ public interface AssetRolloutBO {
 	 * @return
 	 */
 	public Long  distributeAsset(AssetDistributeDto distributeDto,List<Asset> assetList);
-
+	/**
+	 * 创建报废出库单
+	 * @param scrapDto
+	 * @return
+	 */
 	public Long scrapAsset(AssetScrapDto scrapDto);
+	/**
+	 * 确认报废
+	 * @param assetId
+	 * @param operator
+	 */
+	public void  confirmScrapAsset(Long assetId,String operator);
 	
 	public List<AssetRollout> getDistributeAsset(Long stationId,Long taobaoUserId);
 	/**

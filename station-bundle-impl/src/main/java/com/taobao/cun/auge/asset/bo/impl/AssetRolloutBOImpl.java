@@ -25,6 +25,7 @@ import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetRolloutConverter;
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetDistributeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
@@ -50,6 +51,7 @@ import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample.Criteria;
@@ -461,6 +463,35 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		detail.copyOperatorDto(scrapDto);
 		assetRolloutIncomeDetailBO.addDetail(detail);
 		return rolloutId;
+	}
+	
+	@Override
+	public void  confirmScrapAsset(Long assetId,String operator) {
+		ValidateUtils.notNull(assetId);
+		ValidateUtils.notNull(operator);
+		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+		if (detail == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"赔付失败，当前资产不是待赔付资产，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		//签收资产
+		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);
+		//更新出入库单状态
+		Long rolloutId =detail.getRolloutId();
+		if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
+			updateStatus(rolloutId, AssetRolloutStatusEnum.COMPENSATE_DONE, operator);
+			AssetRollout ar = getRolloutById(rolloutId);
+			if (AssetRolloutTypeEnum.SCRAP.getCode().equals(ar.getType())) {
+				AssetAppMessageDto msgDto = new AssetAppMessageDto();
+				msgDto.setMsgTypeDetail("SIGN");
+				msgDto.setBizId(rolloutId);
+				msgDto.setTitle("您申报的资产遗失、损毁已完成赔付，请关注！");
+				msgDto.setContent(ar.getApplierOrgName() + " " +ar.getApplierName() + "的资产遗失、损毁已完成赔付，查看详情");
+				List<Long>  rList = new ArrayList<Long>();
+				rList.add(Long.parseLong(ar.getApplierWorkno()));
+				msgDto.setReceiverList(rList);
+				assetBO.sendAppMessage(msgDto);
+			}
+		}
 	}
 
 	@Override

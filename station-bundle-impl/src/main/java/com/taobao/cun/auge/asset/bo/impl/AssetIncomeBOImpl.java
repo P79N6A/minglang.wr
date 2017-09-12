@@ -3,9 +3,6 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.taobao.cun.auge.asset.bo.AssetBO;
-import com.taobao.cun.auge.dal.domain.Asset;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutIncomeDetailBO;
 import com.taobao.cun.auge.asset.convert.AssetIncomeConverter;
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.dto.AssetCategoryCountDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeDto;
 import com.taobao.cun.auge.asset.dto.AssetIncomeQueryCondition;
@@ -26,11 +25,14 @@ import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
+import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
+import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.Asset;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
@@ -38,6 +40,8 @@ import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
+import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component
@@ -53,6 +57,10 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 	private DiamondConfiguredProperties configuredProperties;
 	@Autowired
 	private AssetBO assetBO;
+    @Autowired
+    private Emp360Adapter emp360Adapter;
+    @Autowired
+    private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	
 	@Override
 	public PageDto<AssetIncomeDto> getIncomeList(AssetIncomeQueryCondition queryParam) {
@@ -160,6 +168,19 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 			updateStatus(incomeId, AssetIncomeStatusEnum.DONE, operator);
 			if (rolloutId != null) {
 				assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, operator);
+				AssetRollout ar = assetRolloutBO.getRolloutById(rolloutId);
+				if (AssetRolloutTypeEnum.TRANSFER.getCode().equals(ar.getType())) {
+					AssetAppMessageDto msgDto = new AssetAppMessageDto();
+					msgDto.setMsgTypeDetail("SIGN");
+					msgDto.setBizId(rolloutId);
+					msgDto.setTitle("您转移的资产已被对方签收，请关注!");
+					msgDto.setContent("您转移至" + ar.getReceiverAreaName() + " " +ar.getReceiverName() + "的资产已被对方签收，查看详情");
+					List<Long>  rList = new ArrayList<Long>();
+					rList.add(Long.parseLong(ar.getApplierWorkno()));
+					msgDto.setReceiverList(rList);
+					assetBO.sendAppMessage(msgDto);
+				}
+				
 			}
 		}else {
 			updateStatus(incomeId, AssetIncomeStatusEnum.DOING, operator);
@@ -168,6 +189,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 			}
 		}
 	}
+	
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override

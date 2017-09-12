@@ -1756,6 +1756,9 @@ public class AssetBOImpl implements AssetBO {
         record.setId(asset.getId());
         record.setStatus(AssetStatusEnum.SCRAP.getCode());
         assetMapper.updateByPrimaryKeySelective(record);
+        //更新出库单
+        assetRolloutBO.confirmScrapAsset(asset.getId(), assetDto.getOperator());
+        //发消息给手机
         sendAppMessage(asset.getOwnerWorkno(), asset, AssetStatusEnum.SCRAP.getCode());
     }
 
