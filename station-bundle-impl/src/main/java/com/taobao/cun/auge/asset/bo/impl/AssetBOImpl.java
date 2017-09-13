@@ -463,7 +463,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(operatorDto.getOperator(), "工号不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getOperator())
-            .andStatusIn(AssetStatusEnum.getValidStatusList());
+            .andOwnerOrgIdEqualTo(operatorDto.getOperatorOrgId()).andStatusIn(AssetStatusEnum.getValidStatusList());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         Map<String, List<Asset>> listMap = new HashMap<>();
         for (Asset asset : assetList) {
@@ -494,7 +494,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(operatorDto.getOperator(), "工号不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operatorDto.getOperator())
-            .andStatusIn(AssetStatusEnum.getValidStatusList());
+            .andOwnerOrgIdEqualTo(operatorDto.getOperatorOrgId()).andStatusIn(AssetStatusEnum.getValidStatusList());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         Map<Long, List<Asset>> listMap = new HashMap<>();
         for (Asset asset : assetList) {
@@ -531,7 +531,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).
-            andCategoryEqualTo(condition.getCategory()).andStatusIn(AssetStatusEnum.getValidStatusList());
+            andCategoryEqualTo(condition.getCategory()).andStatusIn(AssetStatusEnum.getValidStatusList()).andOwnerOrgIdEqualTo(condition.getOperatorOrgId());
         //组织头部
         List<Asset> preAssets = assetMapper.selectByExample(assetExample);
         if (CollectionUtils.isEmpty(preAssets)) {
@@ -583,8 +583,8 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(condition.getUseAreaType(), "区域类型不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType())
-            .andOwnerWorknoEqualTo(condition.getOperator()).andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(
-            AssetStatusEnum.getValidStatusList());
+            .andOwnerWorknoEqualTo(condition.getOperator()).andOwnerOrgIdEqualTo(condition.getOperatorOrgId())
+            .andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getValidStatusList());
         //组织头部
         List<Asset> preAssets = assetMapper.selectByExample(assetExample);
         if (CollectionUtils.isEmpty(preAssets)) {
