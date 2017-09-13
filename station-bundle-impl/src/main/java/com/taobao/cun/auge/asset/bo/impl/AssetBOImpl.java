@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
@@ -1763,5 +1765,104 @@ public class AssetBOImpl implements AssetBO {
 		if(!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))){
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，资产须为1台电视,1台显示器,1台主机" );
 		}
+	}
+
+	@Override
+	public Map<String, String> getHideThreeAsset(Long stationId,
+			Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "服务站id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		
+		Map<String, String> result = new HashMap<String, String>();
+	    result.put("success", "true");
+		List<Asset> rs = getStationThreeAsset(stationId,taobaoUserId);
+
+		if (!validateStationAssetNum(rs)) {
+			result.put("message",
+					"对不起该村点不符合自购资格，您名下的资产需为1主机1显示器1电视时方可进行自购，请将3个设备背面的编码提供给您对应的县运营小二处理");
+			result.put("success", "false");
+			return result;
+		}
+		for (Asset a : rs) {
+			result.put(a.getCategory(), hideAliNo(a.getAliNo()));
+		}
+		return result;
+	}
+	private  List<Asset> getStationThreeAsset(Long stationId,Long taobaoUserId){
+		List<String> cateList = new ArrayList<String>();
+		cateList.add("TV");
+		cateList.add("DISPLAY");
+		cateList.add("MAIN");
+
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n")
+				.andUseAreaIdEqualTo(stationId)
+				.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+				.andStatusEqualTo(AssetStatusEnum.USE.getCode())
+				.andCategoryIn(cateList)
+				.andUserIdEqualTo(String.valueOf(taobaoUserId));
+		return assetMapper.selectByExample(assetExample);
+	}
+	
+	private String hideAliNo(String aliNo) {
+		if (StringUtils.isEmpty(aliNo)) {
+			return aliNo;
+		}
+		int length = StringUtils.length(aliNo);
+		if (length<5) {
+			return aliNo;
+		}
+	    String num = StringUtils.left(aliNo, length- 5);  
+	    return StringUtils.rightPad(num, length, "*");
+	}
+
+	@Override
+	public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto) {
+		Objects.requireNonNull(vaDto, "参数不能为空");
+		Objects.requireNonNull(vaDto.getStationId(), "stationId不能为空");
+		Objects.requireNonNull(vaDto.getTaobaoUserId(), "taobaoUserId不能为空");
+		
+		Map<String, String> result = new HashMap<>();
+		 result.put("success", "true");
+		List<Asset> rs = getStationThreeAsset(vaDto.getStationId(),vaDto.getTaobaoUserId());
+		for (Asset a : rs) {
+			if ("TV".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getTvPostfix()) || !vaDto.getTvPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+								"对不起该村点不符合自购资格，您提供的电视机资产编号["+vaDto.getTvPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+					result.put("success", "false");
+					return result;
+				 }
+			}
+			if ("DISPLAY".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getDisplayPostfix()) || !vaDto.getDisplayPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+								"对不起该村点不符合自购资格，您提供的显示器资产编号["+vaDto.getDisplayPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+					result.put("success", "false");
+					return result;
+				 }
+			}
+			if ("MAIN".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getMainPostfix()) || !vaDto.getMainPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+								"对不起该村点不符合自购资格，您提供的主机资产编号["+vaDto.getMainPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+					result.put("success", "false");
+					return result;
+				 }
+			}
+		}
+		return result;
+	}
+	
+	private String getSubAliNo(String aliNo) {
+		if (StringUtils.isEmpty(aliNo)) {
+			return aliNo;
+		}
+		int length = StringUtils.length(aliNo);
+		if (length<5) {
+			return aliNo;
+		}
+	    return StringUtils.right(aliNo, 5);  
+	  
 	}
 }
