@@ -550,7 +550,7 @@ public class AssetBOImpl implements AssetBO {
         AssetExample conditionExample = new AssetExample();
         AssetExample.Criteria criteria = conditionExample.createCriteria();
         criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator()).
-            andCategoryEqualTo(condition.getCategory());
+            andCategoryEqualTo(condition.getCategory()).andOwnerOrgIdEqualTo(condition.getOperatorOrgId());
         //组织尾巴
         if (StringUtils.isNotEmpty(condition.getStatus())) {
             if ("Y".equals(condition.getStatus())) {
@@ -597,7 +597,7 @@ public class AssetBOImpl implements AssetBO {
         AssetExample conditionExample = new AssetExample();
         AssetExample.Criteria criteria = conditionExample.createCriteria();
         criteria.andIsDeletedEqualTo("n").andUseAreaTypeEqualTo(condition.getUseAreaType()).andOwnerWorknoEqualTo(
-            condition.getOperator()).andUseAreaIdEqualTo(condition.getUseAreaId());
+            condition.getOperator()).andUseAreaIdEqualTo(condition.getUseAreaId()).andOwnerOrgIdEqualTo(condition.getOperatorOrgId());
         //组织尾巴
         if (StringUtils.isNotEmpty(condition.getStatus())) {
             if ("Y".equals(condition.getStatus())) {
