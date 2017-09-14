@@ -76,6 +76,9 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		if (StringUtils.isNotEmpty(queryParam.getType())) {
 			criteria.andTypeEqualTo(queryParam.getType());
 		}
+		if (queryParam.getOperatorOrgId() != null) {
+			criteria.andReceiverOrgIdEqualTo(queryParam.getOperatorOrgId());
+		}
 		example.setOrderByClause("GMT_CREATE DESC");
 		PageHelper.startPage(queryParam.getPageNum(), queryParam.getPageSize());
 		Page<AssetIncome> incomeList = (Page<AssetIncome>)assetIncomeMapper.selectByExample(example);
