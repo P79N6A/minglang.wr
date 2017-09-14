@@ -68,13 +68,13 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
 				HSFGroup.HSF, version, 7000);
 	}
 
-	// cuntaocenter服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean cuntaoAssetMService(
-			@Value("${hsf.consumer.version.cuntaocenter.cuntaoAssetService}") String version) {
-		return getConsumerBean(CuntaoAssetService.class, HSFGroup.HSF, version,
-				3000);
-	}
+	// cuntaocenter服务  已下线
+//	@Bean(initMethod = "init")
+//	public HSFSpringConsumerBean cuntaoAssetMService(
+//			@Value("${hsf.consumer.version.cuntaocenter.cuntaoAssetService}") String version) {
+//		return getConsumerBean(CuntaoAssetService.class, HSFGroup.HSF, version,
+//				3000);
+//	}
 
 	@Bean(initMethod = "init")
 	public HSFSpringConsumerBean messageService(

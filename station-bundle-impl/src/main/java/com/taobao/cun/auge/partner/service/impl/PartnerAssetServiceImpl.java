@@ -22,8 +22,8 @@ public class PartnerAssetServiceImpl implements PartnerAssetService {
 	private static final Logger logger = LoggerFactory.getLogger(PartnerAssetService.class);
 	
 
-	@Autowired
-	CuntaoAssetService cuntaoAssetService;
+//	@Autowired
+//	CuntaoAssetService cuntaoAssetService;
 
 	@Autowired
 	PartnerInstanceBO partnerInstanceBO;
