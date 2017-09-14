@@ -85,11 +85,23 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 							String state = (String) modifiedRow.get("state");
 							if(modifiedRow.containsKey("is_deleted") && "y".equals(modifiedRow.get("is_deleted"))){
 								deleteUserRole(taobaoUserId, stationId, type);
-							}else if(!Strings.isNullOrEmpty(state)){
+								continue;
+							}
+							if(!Strings.isNullOrEmpty(state)){
 								if(isNeedSync(state)){
 									addUserRole(taobaoUserId, stationId, type);
 								}else{
 									deleteUserRole(taobaoUserId, stationId, type);
+								}
+								continue;
+							}
+							
+							if(modifiedRow.containsKey("type")){
+								if(isNeedSync((String) rowDataMap.get("state"))){
+									//删除老的
+									deleteUserRole(taobaoUserId, stationId, type);
+									//添加一个新的
+									addUserRole(taobaoUserId, stationId, (String) modifiedRow.get("type"));
 								}
 							}
 						}
