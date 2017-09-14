@@ -114,6 +114,9 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		AssetRolloutExample example = new AssetRolloutExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andIsDeletedEqualTo("n").andApplierWorknoEqualTo(condition.getWorkNo());
+		if (condition.getOperatorOrgId() != null) {
+			criteria.andApplierOrgIdEqualTo(condition.getOperatorOrgId());
+		}
 		example.setOrderByClause("GMT_CREATE DESC");
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		Page<AssetRollout>   roList = (Page<AssetRollout>)assetRolloutMapper.selectByExample(example);
