@@ -227,7 +227,10 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 			LogisticsStationApplyExample example = new LogisticsStationApplyExample();
 			example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo("applyLogistics").andApplierStationIdEqualTo(request.getApplierStationId());
 			List<LogisticsStationApply>  applies = logisticsStationApplyMapper.selectByExample(example);
-			if(!CollectionUtils.isEmpty(applies)) throw new RuntimeException("LogisticStation apply exists!stationId["+request.getApplierStationId()+"]");
+			if(!CollectionUtils.isEmpty(applies)) {
+                throw new RuntimeException(
+                    "LogisticStation apply exists!stationId[" + request.getApplierStationId() + "]");
+            }
 			BeanValidator.validateWithThrowable(request);
 			StationDto stationDto = stationQueryService.getStation(request.getApplierStationId());
 			Assert.notNull(stationDto, "can not find Station by  stationId[" + request.getApplierStationId() + "]");
@@ -311,7 +314,9 @@ public class LogisticsApplyServiceImpl implements LogisticsApplyService{
 		});
 		
 		for(Long stationId : stationIds){
-			if(stationId == null) continue;
+			if(stationId == null) {
+                continue;
+            }
 			LogisticsStationApplyDTO dto = new LogisticsStationApplyDTO();
 			if(relMappings.containsKey(stationId)){
 				CuntaoCainiaoStationRel rel = relMappings.get(stationId);

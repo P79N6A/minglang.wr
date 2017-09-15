@@ -32,8 +32,9 @@ public class AlipayRiskScanSignGenerator {
 	 * @return 计算好的签名值
 	 */
 	public static String sign(String path, Map<String, Object> params, String secretKey) {
-		if (path == null || params == null || secretKey == null)
-			throw new IllegalArgumentException("Arguments should not be null.");
+		if (path == null || params == null || secretKey == null) {
+            throw new IllegalArgumentException("Arguments should not be null.");
+        }
 		// path部分
 		StringBuilder sb = new StringBuilder(path);
 
@@ -48,8 +49,9 @@ public class AlipayRiskScanSignGenerator {
 				Arrays.sort(ss);
 				StringBuilder b = new StringBuilder();
 				b.append(e.getKey());
-				for (String str : ss)
-					b.append(str);
+				for (String str : ss) {
+                    b.append(str);
+                }
 				s.add(b.toString());
 			} else {
 				throw new IllegalArgumentException("Invalid signing value.");
@@ -57,8 +59,9 @@ public class AlipayRiskScanSignGenerator {
 		}
 
 		// 待签名串
-		for (String str : s)
-			sb.append(str);
+		for (String str : s) {
+            sb.append(str);
+        }
 		String data = sb.toString();
 		try {
 			byte[] ds = data.getBytes(UTF_8);
