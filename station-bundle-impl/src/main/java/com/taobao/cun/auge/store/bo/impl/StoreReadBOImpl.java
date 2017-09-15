@@ -168,7 +168,8 @@ public class StoreReadBOImpl implements StoreReadBO {
 		return null;
 	}
 
-	public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
+	@Override
+    public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
 		CuntaoStoreExample example = new CuntaoStoreExample();
 		example.createCriteria().andStatusEqualTo(status.getStatus()).andIsDeletedEqualTo("n");
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
