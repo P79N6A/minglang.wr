@@ -810,7 +810,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(operator.getOperator(), "工号不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(operator.getOperator())
-            .andStatusIn(AssetStatusEnum.getValidStatusList());
+            .andStatusIn(AssetStatusEnum.getValidStatusList()).andOwnerOrgIdEqualTo(operator.getOperatorOrgId());
         PageHelper.startPage(operator.getPageNum(), operator.getPageSize());
         PageHelper.orderBy("status asc");
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
@@ -830,7 +830,8 @@ public class AssetBOImpl implements AssetBO {
         }
         AssetExample assetExample = new AssetExample();
         AssetExample.Criteria criteria = assetExample.createCriteria();
-        criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andStatusIn(AssetStatusEnum.getValidStatusList());
+        criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator())
+            .andOwnerOrgIdEqualTo(transferDto.getOperatorOrgId()).andStatusIn(AssetStatusEnum.getValidStatusList());
         if (CollectionUtils.isNotEmpty(transferDto.getUnTransferAssetIdList())) {
             criteria.andIdNotIn(transferDto.getUnTransferAssetIdList());
         }
@@ -858,7 +859,7 @@ public class AssetBOImpl implements AssetBO {
         AssetExample assetExample = new AssetExample();
         AssetExample.Criteria criteria = assetExample.createCriteria();
         criteria.andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(transferDto.getOperator()).andIdIn(
-            transferDto.getTransferAssetIdList());
+            transferDto.getTransferAssetIdList()).andOwnerOrgIdEqualTo(transferDto.getOperatorOrgId());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         if (!assetList.stream().allMatch(asset -> AssetStatusEnum.USE.getCode().equals(asset.getStatus()))) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您转移的资产中包含待对方入库的资产");
@@ -907,6 +908,10 @@ public class AssetBOImpl implements AssetBO {
         if (!asset.getOwnerWorkno().equals(assetDto.getOperator())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "录入失败" + AssetBO.NOT_OPERATOR + getPromptInfo(asset));
+        }
+        if (!asset.getOwnerOrgId().equals(assetDto.getOperatorOrgId())) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "录入失败，该资产不属于你当前组织！" + getPromptInfo(asset));
         }
         if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
@@ -979,8 +984,8 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(condition.getUseAreaId(), "赔付地点不能为空");
         AssetExample assetExample = new AssetExample();
         assetExample.createCriteria().andIsDeletedEqualTo("n").andOwnerWorknoEqualTo(condition.getOperator())
-            .andUseAreaTypeEqualTo(condition.getUseAreaType()).andUseAreaIdEqualTo(condition.getUseAreaId())
-            .andStatusIn(AssetStatusEnum.getCanScrapStatusList());
+            .andOwnerOrgIdEqualTo(condition.getOperatorOrgId()).andUseAreaTypeEqualTo(condition.getUseAreaType())
+            .andUseAreaIdEqualTo(condition.getUseAreaId()).andStatusIn(AssetStatusEnum.getCanScrapStatusList());
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
         List<Asset> assetList = assetMapper.selectByExample(assetExample);
         Page<Asset> assetPage = (Page<Asset>)assetList;
@@ -994,6 +999,9 @@ public class AssetBOImpl implements AssetBO {
         Asset asset = assetMapper.selectByPrimaryKey(id);
         if (!("n".equals(asset.getIsDeleted()) && assetOperatorDto.getOperator().equals(asset.getOwnerWorkno()))) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于您名下");
+        }
+        if (!asset.getOwnerOrgId().equals(assetOperatorDto.getOperatorOrgId())) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "您赔付的资产不属于当前组织");
         }
         AssetDetailDto detailDto = buildAssetDetail(asset);
         AssetApiResultDO<AssetLostQueryResult> queryResult = cuntaoApiService.assetLostQuery(
@@ -1681,6 +1689,10 @@ public class AssetBOImpl implements AssetBO {
         if (!AssetStatusEnum.USE.getCode().equals(asset.getStatus())) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "录入失败,该资产正处于分发、转移中！" + getPromptInfo(asset));
+        }
+        if (!asset.getOwnerOrgId().equals(assetDto.getOperatorOrgId())) {
+            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+                "录入失败,该资产不属于当前组织！" + getPromptInfo(asset));
         }
         return buildAssetDetail(asset);
 	}
