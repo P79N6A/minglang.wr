@@ -53,6 +53,8 @@ public class UserTagServiceImpl implements UserTagService {
 	
 	private void assertTag(String tag) {
 		UserTag userTag = UserTag.valueOfTag(tag);
-		if(userTag == null)throw new IllegalArgumentException("illeage userTag["+tag+"]");
+		if(userTag == null) {
+            throw new IllegalArgumentException("illeage userTag[" + tag + "]");
+        }
 	}
 }

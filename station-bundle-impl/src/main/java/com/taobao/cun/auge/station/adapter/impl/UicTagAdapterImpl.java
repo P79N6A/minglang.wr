@@ -81,7 +81,8 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 		
 	}
 
-	public void removeUserTag(UserTagDto userTagDto) {
+	@Override
+    public void removeUserTag(UserTagDto userTagDto) {
 		BeanValidator.validateWithThrowable(userTagDto);
 		try {
 			Long taobaoUserId = userTagDto.getTaobaoUserId();

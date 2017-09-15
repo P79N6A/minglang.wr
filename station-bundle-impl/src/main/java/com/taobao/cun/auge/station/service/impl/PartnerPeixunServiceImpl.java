@@ -312,7 +312,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		return partnerPeixunBO.queryPeixunRecordById(id);
 	}
 	
-	public void sign(String ticketNo,String courseType,Long loginUserId,String poNo){
+	@Override
+    public void sign(String ticketNo, String courseType, Long loginUserId, String poNo){
 		String courseCode=validateSignAndGetCourseCode(ticketNo,courseType,loginUserId,poNo);
 		if(StringUtils.isEmpty(courseCode)){
 			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"未找到匹配的培训订单");
