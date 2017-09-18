@@ -3,7 +3,6 @@ package com.taobao.cun.auge.asset.service;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
