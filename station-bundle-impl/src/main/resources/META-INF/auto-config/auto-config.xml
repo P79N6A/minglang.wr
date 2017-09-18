@@ -28,10 +28,6 @@
 
 		<property name="hsf.consumer.version.cuntaocenter.alipayAccountTagService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
-			<property name="hsf.consumer.version.cuntaocenter.cuntaoAssetService" defaultValue="1.0.0.daily"
-			description="cuntaocenter-version" />
-		<property name="hsf.consumer.version.cuntaocenter.cuntaoAssetService" defaultValue="1.0.0.daily"
-			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.cuntaocenter.alipayStandardBailService" defaultValue="1.0.0.daily"
 			description="cuntaocenter-version" />
 		<property name="hsf.consumer.version.auge.busiWorkBaseInfoService" defaultValue="1.0.0.daily" description="hsf.consumer.version.auge.busiWorkBaseInfoService" />
