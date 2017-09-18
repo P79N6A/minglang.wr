@@ -335,7 +335,8 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 		return rolloutId;
 	}
 	
-	public void transferAssetOtherCounty(AssetRolloutDto rolloutDto) {
+	@Override
+    public void transferAssetOtherCounty(AssetRolloutDto rolloutDto) {
 		//创建入库单
 		AssetIncomeDto icDto = new AssetIncomeDto();
 		icDto.setApplierAreaId(rolloutDto.getApplierOrgId());

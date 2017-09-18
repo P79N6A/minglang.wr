@@ -91,7 +91,8 @@ public class CuntaoCainiaoStationRelBOImpl implements CuntaoCainiaoStationRelBO 
 		return rels;
 	}
 	
-	public Boolean updateCainiaoStationRel(CuntaoCainiaoStationRel stationRel,String operator) {
+	@Override
+    public Boolean updateCainiaoStationRel(CuntaoCainiaoStationRel stationRel, String operator) {
 		DomainUtils.beforeUpdate(stationRel, operator);
 		cuntaoCainiaoStationRelMapper.updateByPrimaryKeySelective(stationRel);
 		return true;
