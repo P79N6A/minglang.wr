@@ -1841,7 +1841,7 @@ public class AssetBOImpl implements AssetBO {
 			if ("TV".equals(a.getCategory())){
 				 if(StringUtils.isEmpty(vaDto.getTvPostfix()) || !vaDto.getTvPostfix().equals(getSubAliNo(a.getAliNo()))) {
 					result.put("message",
-								"对不起该村点不符合自购资格，您提供的电视机资产编号["+vaDto.getTvPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+							validateThreeAssetTips("电视机",vaDto.getTvPostfix()));
 					result.put("success", "false");
 					return result;
 				 }
@@ -1849,7 +1849,7 @@ public class AssetBOImpl implements AssetBO {
 			if ("DISPLAY".equals(a.getCategory())){
 				 if(StringUtils.isEmpty(vaDto.getDisplayPostfix()) || !vaDto.getDisplayPostfix().equals(getSubAliNo(a.getAliNo()))) {
 					result.put("message",
-								"对不起该村点不符合自购资格，您提供的显示器资产编号["+vaDto.getDisplayPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+							validateThreeAssetTips("显示器",vaDto.getDisplayPostfix()));
 					result.put("success", "false");
 					return result;
 				 }
@@ -1857,13 +1857,17 @@ public class AssetBOImpl implements AssetBO {
 			if ("MAIN".equals(a.getCategory())){
 				 if(StringUtils.isEmpty(vaDto.getMainPostfix()) || !vaDto.getMainPostfix().equals(getSubAliNo(a.getAliNo()))) {
 					result.put("message",
-								"对不起该村点不符合自购资格，您提供的主机资产编号["+vaDto.getMainPostfix()+"]匹配不到数据，请将编码提供给您对应的县运营小二处理");
+							validateThreeAssetTips("主机",vaDto.getMainPostfix()));
 					result.put("success", "false");
 					return result;
 				 }
 			}
 		}
 		return result;
+	}
+	
+	private String validateThreeAssetTips(String categoryName,String pos) {
+	    return "对不起,该村点不符合自购资格，您提供的"+categoryName+"资产编号["+pos+"]和您当初签收的不一致，请检查后重新输入；若仍提示错误，请将设备上的准确编码提供给您对应的县运营小二处理。";
 	}
 	
 	private String getSubAliNo(String aliNo) {
