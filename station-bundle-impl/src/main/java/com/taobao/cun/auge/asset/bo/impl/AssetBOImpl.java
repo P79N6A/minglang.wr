@@ -1616,10 +1616,10 @@ public class AssetBOImpl implements AssetBO {
         }
         
         Station s = stationBO.getStationById(stationId);
-        if (s != null && StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
-        	result.put("canBuy", Boolean.TRUE.toString());
-        }else {
-        	result.put("canBuy", Boolean.FALSE.toString());
+        if (s == null || !StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
+        	  result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+              result.put("success", "false");
+              return null;
         }
         
 //        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
