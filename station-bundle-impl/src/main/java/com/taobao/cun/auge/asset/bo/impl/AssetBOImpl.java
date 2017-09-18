@@ -189,8 +189,7 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
-
-
+    
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1549,7 +1548,14 @@ public class AssetBOImpl implements AssetBO {
     @Override
     public Map<String, String> getStationAssetState(Long stationId) {
         Map<String, String> result = new HashMap<>();
-        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        //result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        
+        Station s = stationBO.getStationById(stationId);
+        if (s != null && StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
+        	result.put("canBuy", Boolean.TRUE.toString());
+        }else {
+        	result.put("canBuy", Boolean.FALSE.toString());
+        }
         result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
         return result;
     }
@@ -1608,11 +1614,19 @@ public class AssetBOImpl implements AssetBO {
             result.put("success", "false");
             return null;
         }
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
-            result.put("success", "false");
-            return null;
+        
+        Station s = stationBO.getStationById(stationId);
+        if (s != null && StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
+        	result.put("canBuy", Boolean.TRUE.toString());
+        }else {
+        	result.put("canBuy", Boolean.FALSE.toString());
         }
+        
+//        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+//            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+//            result.put("success", "false");
+//            return null;
+//        }
         if (getBuyAssetRecord(stationId) != null) {
             result.put("message", "该村点已经提交过资产采购意向!");
             result.put("success", "false");
