@@ -89,13 +89,20 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 							}
 							if(!Strings.isNullOrEmpty(state)){
 								if(isNeedSync(state)){
-									addUserRole(taobaoUserId, stationId, type);
+									if(modifiedRow.containsKey("type")){//状态和类型同时发生了变更，那么要删除老的，添加新的
+										//删除老的
+										deleteUserRole(taobaoUserId, stationId, type);
+										//添加一个新的
+										addUserRole(taobaoUserId, stationId, (String) modifiedRow.get("type"));
+									}else{//类型没有变化，只是添加
+										addUserRole(taobaoUserId, stationId, type);
+									}
 								}else{
 									deleteUserRole(taobaoUserId, stationId, type);
 								}
 								continue;
 							}
-							
+							//状态没有变化的情况
 							if(modifiedRow.containsKey("type")){
 								//删除老的
 								deleteUserRole(taobaoUserId, stationId, type);
