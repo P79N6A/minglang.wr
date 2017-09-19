@@ -20,6 +20,7 @@ import com.taobao.cun.auge.asset.dto.AssetSignDto;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
 import com.taobao.cun.auge.asset.service.AssetQueryCondition;
 import com.taobao.cun.auge.asset.service.AssetScrapListCondition;
 import com.taobao.cun.auge.asset.service.CuntaoAssetDto;
@@ -226,6 +227,10 @@ public interface AssetBO {
     public Map<String, String> getStationAssetState(Long stationId);
 
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
+    
+	public Map<String, String> getHideThreeAsset(Long stationId,Long taobaoUserId);
+
+	public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto);
 
     public Asset getAssetByAliNo(String aliNo);
     
