@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetDetailDto;
 import com.taobao.cun.auge.asset.dto.CategoryAssetListDto;
+import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
 import com.taobao.cun.auge.asset.enums.AssetCheckStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeApplierAreaTypeEnum;
 import com.taobao.cun.auge.asset.enums.AssetIncomeSignTypeEnum;
@@ -187,8 +189,7 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
-
-
+    
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1547,7 +1548,14 @@ public class AssetBOImpl implements AssetBO {
     @Override
     public Map<String, String> getStationAssetState(Long stationId) {
         Map<String, String> result = new HashMap<>();
-        result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        //result.put("canBuy", String.valueOf(diamondConfiguredProperties.getCanBuyStationList().contains(stationId)));
+        
+        Station s = stationBO.getStationById(stationId);
+        if (s != null && StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
+        	result.put("canBuy", Boolean.TRUE.toString());
+        }else {
+        	result.put("canBuy", Boolean.FALSE.toString());
+        }
         result.put("hasBuy", String.valueOf(getBuyAssetRecord(stationId) != null));
         return result;
     }
@@ -1606,11 +1614,19 @@ public class AssetBOImpl implements AssetBO {
             result.put("success", "false");
             return null;
         }
-        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
-            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
-            result.put("success", "false");
-            return null;
+        
+        Station s = stationBO.getStationById(stationId);
+        if (s == null || !StationStatusEnum.CLOSED.getCode().equals(s.getStatus())) {
+        	  result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+              result.put("success", "false");
+              return null;
         }
+        
+//        if (!diamondConfiguredProperties.getCanBuyStationList().contains(stationId)) {
+//            result.put("message", "该村点不允许提交资产采购意向,请联系资产管理员!");
+//            result.put("success", "false");
+//            return null;
+//        }
         if (getBuyAssetRecord(stationId) != null) {
             result.put("message", "该村点已经提交过资产采购意向!");
             result.put("success", "false");
@@ -1775,5 +1791,108 @@ public class AssetBOImpl implements AssetBO {
 		if(!(categoryList.contains("TV") && categoryList.contains("MAIN") && categoryList.contains("DISPLAY"))){
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "检验开业失败，资产须为1台电视,1台显示器,1台主机" );
 		}
+	}
+
+	@Override
+	public Map<String, String> getHideThreeAsset(Long stationId,
+			Long taobaoUserId) {
+		Objects.requireNonNull(stationId, "服务站id不能为空");
+		Objects.requireNonNull(taobaoUserId, "taobaoUserId不能为空");
+		
+		Map<String, String> result = new HashMap<String, String>();
+	    result.put("success", "true");
+		List<Asset> rs = getStationThreeAsset(stationId,taobaoUserId);
+
+		if (!validateStationAssetNum(rs)) {
+			result.put("message",
+					"对不起该村点不符合自购资格，您名下的资产需为1主机1显示器1电视时方可进行自购，请将3个设备背面的编码提供给您对应的县运营小二处理");
+			result.put("success", "false");
+			return result;
+		}
+		for (Asset a : rs) {
+			result.put(a.getCategory(), hideAliNo(a.getAliNo()));
+		}
+		return result;
+	}
+	private  List<Asset> getStationThreeAsset(Long stationId,Long taobaoUserId){
+		List<String> cateList = new ArrayList<String>();
+		cateList.add("TV");
+		cateList.add("DISPLAY");
+		cateList.add("MAIN");
+
+		AssetExample assetExample = new AssetExample();
+		assetExample.createCriteria().andIsDeletedEqualTo("n")
+				.andUseAreaIdEqualTo(stationId)
+				.andUseAreaTypeEqualTo(AssetUseAreaTypeEnum.STATION.getCode())
+				.andStatusEqualTo(AssetStatusEnum.USE.getCode())
+				.andCategoryIn(cateList)
+				.andUserIdEqualTo(String.valueOf(taobaoUserId));
+		return assetMapper.selectByExample(assetExample);
+	}
+	
+	private String hideAliNo(String aliNo) {
+		if (StringUtils.isEmpty(aliNo)) {
+			return aliNo;
+		}
+		int length = StringUtils.length(aliNo);
+		if (length<5) {
+			return aliNo;
+		}
+	    String num = StringUtils.left(aliNo, length- 5);  
+	    return StringUtils.rightPad(num, length, "*");
+	}
+
+	@Override
+	public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto) {
+		Objects.requireNonNull(vaDto, "参数不能为空");
+		Objects.requireNonNull(vaDto.getStationId(), "stationId不能为空");
+		Objects.requireNonNull(vaDto.getTaobaoUserId(), "taobaoUserId不能为空");
+		
+		Map<String, String> result = new HashMap<>();
+		 result.put("success", "true");
+		List<Asset> rs = getStationThreeAsset(vaDto.getStationId(),vaDto.getTaobaoUserId());
+		for (Asset a : rs) {
+			if ("TV".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getTvPostfix()) || !vaDto.getTvPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+							validateThreeAssetTips("电视机",vaDto.getTvPostfix()));
+					result.put("success", "false");
+					return result;
+				 }
+			}
+			if ("DISPLAY".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getDisplayPostfix()) || !vaDto.getDisplayPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+							validateThreeAssetTips("显示器",vaDto.getDisplayPostfix()));
+					result.put("success", "false");
+					return result;
+				 }
+			}
+			if ("MAIN".equals(a.getCategory())){
+				 if(StringUtils.isEmpty(vaDto.getMainPostfix()) || !vaDto.getMainPostfix().equals(getSubAliNo(a.getAliNo()))) {
+					result.put("message",
+							validateThreeAssetTips("主机",vaDto.getMainPostfix()));
+					result.put("success", "false");
+					return result;
+				 }
+			}
+		}
+		return result;
+	}
+	
+	private String validateThreeAssetTips(String categoryName,String pos) {
+	    return "对不起,该村点不符合自购资格，您提供的"+categoryName+"资产编号["+pos+"]和您当初签收的不一致，请检查后重新输入；若仍提示错误，请将设备上的准确编码提供给您对应的县运营小二处理。";
+	}
+	
+	private String getSubAliNo(String aliNo) {
+		if (StringUtils.isEmpty(aliNo)) {
+			return aliNo;
+		}
+		int length = StringUtils.length(aliNo);
+		if (length<5) {
+			return aliNo;
+		}
+	    return StringUtils.right(aliNo, 5);  
+	  
 	}
 }

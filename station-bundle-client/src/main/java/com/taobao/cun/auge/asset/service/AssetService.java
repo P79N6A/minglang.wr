@@ -10,6 +10,7 @@ import com.taobao.cun.auge.asset.dto.AssetPurchaseDto;
 import com.taobao.cun.auge.asset.dto.AssetQueryPageCondition;
 import com.taobao.cun.auge.asset.dto.AssetRolloutDto;
 import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
+import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 
@@ -159,9 +160,31 @@ public interface AssetService {
      * @param operator
      */
     public void deleteAsset(Long assetId, String operator);
-
+    /**
+     * 资产自购 判断按钮是否展示
+     * @param stationId
+     * @return
+     */
     public Map<String, String> getStationAssetState(Long stationId);
-
+    
+    /**
+     * 检验是否是三个资产
+     * @param stationId
+     * @return 隐藏后5位的资产编号
+     */
+    public Map<String, String> getHideThreeAsset(Long stationId,Long taobaoUserId);
+    
+    /**
+     * 检验资产和org库里 是否匹配
+     * @param vaDto
+     * @return
+     */
+    public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto);
+    /**
+     * 购买资产
+     * @param assetDto
+     * @return
+     */
     public Map<String, String> buyAsset(CuntaoAssetDto assetDto);
     
     /**

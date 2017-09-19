@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import com.taobao.cun.auge.asset.dto.AssetRolloutIncomeDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent;
 import com.taobao.cun.auge.asset.dto.AssetSignEvent.Content;
 import com.taobao.cun.auge.asset.dto.AssetTransferDto;
+import com.taobao.cun.auge.asset.dto.ValidateThreeAssetDto;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -258,5 +260,16 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public Boolean syncAsset(List<Long> cuntaoAssetIds) {
 		return assetSynBO.syncAsset(cuntaoAssetIds);
+	}
+
+	@Override
+	public Map<String, String> getHideThreeAsset(Long stationId,
+			Long taobaoUserId) {
+		return assetBO.getHideThreeAsset(stationId, taobaoUserId);
+	}
+
+	@Override
+	public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto) {
+		return assetBO.validateThreeAsset(vaDto);
 	}
 }
