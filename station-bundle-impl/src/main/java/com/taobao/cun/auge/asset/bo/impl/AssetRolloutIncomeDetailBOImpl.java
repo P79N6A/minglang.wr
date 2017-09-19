@@ -272,7 +272,7 @@ public class AssetRolloutIncomeDetailBOImpl implements
         AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
         record.setId(detail.getId());
         DomainUtils.beforeDelete(record, operator);
-        assetRolloutIncomeDetailMapper.updateByPrimaryKey(record);
+        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(record);
 	}
 
 	@Override
