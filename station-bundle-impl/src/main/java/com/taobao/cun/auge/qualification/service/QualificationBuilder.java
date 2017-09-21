@@ -112,11 +112,11 @@ public class QualificationBuilder {
 		}
 		if(userQualiRecord.isPresent()){
 			int auditStatus = userQualiRecord.get().getStatus();
-			if(UserQualiRecordStatus.AUDIT_FAIL ==  auditStatus){
+			if(UserQualiRecordStatus.AUDIT_FAIL ==  auditStatus && !entityQuail.isPresent()){
 				qualification.setStatus(QualificationStatus.AUDIT_FAIL);
 				qualification.setErrorMessage(userQualiRecord.get().getReason());
 			}
-			if(UserQualiRecordStatus.TO_BE_AUDITED ==  auditStatus){
+			if(UserQualiRecordStatus.TO_BE_AUDITED ==  auditStatus && !entityQuail.isPresent()){
 				qualification.setStatus(QualificationStatus.SUBMIT_SUCESS);
 				qualification.setErrorCode("");
 				qualification.setErrorMessage("");
