@@ -145,4 +145,12 @@ public interface AssetRolloutIncomeDetailBO {
 	 */
 	public void  addIncomeIdByRolloutId(Long rolloutId, Long incomeId,String operator);
 	
+	/**
+	 *  审批失败 ，根据出库单id 撤销
+	 * @param rolloutId
+	 * @param operator
+	 * @return
+	 */
+	public void cancelByRolloutId(Long rolloutId, String operator);
+	
 }
