@@ -160,6 +160,7 @@ public class AssetServiceImpl implements AssetService{
 		transferDto.setReceiverWorkNo(rolloutDto.getReceiverId());
 		if (ProcessApproveResultEnum.APPROVE_REFUSE.equals(resultEnum)) {
 			assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.AUDIT_NOT_PASS, rolloutDto.getApplierWorkno());
+			assetRolloutIncomeDetailBO.cancelByRolloutId(rolloutId, rolloutDto.getApplierWorkno());
 			
 			assetBO.disagreeTransferAsset(transferDto);
 		} else if (ProcessApproveResultEnum.APPROVE_PASS.equals(resultEnum)) {

@@ -149,7 +149,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		ValidateUtils.notNull(operator);
 		Asset asset = assetBO.getAssetByAliNo(aliNo);
 		if (asset == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，待签收资产没有对应的入库单，请核对资产信息！如有疑问，请联系资产管理员。");
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "入库失败" + AssetBO.NO_EXIT_ASSET);
 		}
 		AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(asset.getId());
 		if (detail == null) {
