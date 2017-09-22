@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -299,5 +298,22 @@ public class AssetRolloutIncomeDetailBOImpl implements
         record.setStatus(AssetRolloutIncomeDetailStatusEnum.HAS_SIGN.getCode());
         assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
 		
+	}
+
+	@Override
+	public void cancelByRolloutId(Long rolloutId,
+		String operator) {
+	 	ValidateUtils.notNull(rolloutId);
+        AssetRolloutIncomeDetail record = new AssetRolloutIncomeDetail();
+        record.setStatus(AssetRolloutIncomeDetailStatusEnum.CANCEL.getCode());
+        record.setOperatorTime(new Date());
+        DomainUtils.beforeUpdate(record, operator);
+
+        AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andRolloutIdEqualTo(rolloutId);
+
+        assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
 	}
 }
