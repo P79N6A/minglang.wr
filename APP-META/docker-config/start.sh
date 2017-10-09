@@ -18,4 +18,7 @@ if [[ -n "$APP_NAME" && -d "/home/admin/app-script-templates" ]]; then
     mv /home/admin/app-script-templates /tmp/
 fi
 
+sed -i 's/MetaspaceSize=256m/MetaspaceSize=512m/g' /home/admin/${APP_NAME}/bin/setenv.sh
+sed -i 's/MaxMetaspaceSize=256m/MaxMetaspaceSize=512m/g' /home/admin/${APP_NAME}/bin/setenv.sh
+
 /home/admin/${APP_NAME}/bin/jbossctl pubstart
