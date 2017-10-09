@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.incentive.enums.IncentiveProgramRewardTypeEnum;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramAuditDto;
 import com.taobao.cun.auge.incentive.dto.IncentiveProgramDto;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramFundsSourcesEnum;
-import com.taobao.cun.auge.incentive.enums.IncentiveProgramIncentiveTypeEnum;
+import com.taobao.cun.auge.incentive.enums.IncentiveProgramRewardTypeEnum;
 import com.taobao.cun.auge.incentive.enums.IncentiveProgramStateEnum;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
@@ -135,10 +136,10 @@ public class IncentiveAuditFlowServiceImpl implements IncentiveAuditFlowService 
      * @param incentiveTypes
      * @return
      */
-    private String isFundIncentive(List<IncentiveProgramIncentiveTypeEnum> incentiveTypes) {
+    private String isFundIncentive(List<IncentiveProgramRewardTypeEnum> incentiveTypes) {
         if (incentiveTypes != null) {
-            for (IncentiveProgramIncentiveTypeEnum type : incentiveTypes) {
-                if (IncentiveProgramIncentiveTypeEnum.MONEY.getCode().equals(type.getCode())) {
+            for (IncentiveProgramRewardTypeEnum type : incentiveTypes) {
+                if (IncentiveProgramRewardTypeEnum.MONEY.getCode().equals(type.getCode())) {
                     return "TRUE";
                 }
             }
