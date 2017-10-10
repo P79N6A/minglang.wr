@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.asset.bo.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1122,7 +1122,8 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setInAccountUserId(inAccountUserId);
         bailDto.setOutAccountUserId(Long.valueOf(userId));
         bailDto.setUserTypeEnum(UserTypeEnum.PARTNER);
-        bailDto.setAmount(Long.valueOf(scrapDto.getPayment()) * 100);
+        BigDecimal money = new BigDecimal(scrapDto.getPayment()).multiply(new BigDecimal(100));
+        bailDto.setAmount(money.longValue());
         bailDto.setSource("org");
         bailDto.setReason("scrapAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
