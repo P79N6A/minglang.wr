@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.check.StationChecker;
 import com.taobao.cun.auge.station.convert.StationEventConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -128,4 +129,14 @@ public class StationServiceImpl implements StationService {
 		StationStatusChangeEvent event = StationEventConverter.convert(statusChangeEnum, station, operator);
 		EventDispatcherUtil.dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 	}
+
+	/**
+     * 修改服务站信息
+     * 
+     * @param stationDto
+     */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void updateStationInfo(StationDto stationDto) {
+	    stationBO.updateStation(stationDto);
+    }
 }
