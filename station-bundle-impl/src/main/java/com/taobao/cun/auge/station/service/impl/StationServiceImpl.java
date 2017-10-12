@@ -131,12 +131,13 @@ public class StationServiceImpl implements StationService {
 	}
 
 	/**
-     * 修改服务站信息
+     * 服务站物流能力信息维护
      * 
      * @param stationDto
+     * @param feature key:stMaxStorage,stMaxDoStorage,stStorageArea,stStaffNum
      */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-    public void updateStationInfo(StationDto stationDto) {
+    public void applyLogisticAbility(StationDto stationDto) {
 	    stationBO.updateStation(stationDto);
     }
 }

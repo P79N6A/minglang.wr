@@ -22,9 +22,9 @@ public interface StationService {
 	public void applyShutDownStationByManager(ShutDownStationApplyDto shutDownDto) ;
 	
 	/**
-     * 修改服务站信息
+     * 服务站物流能力信息维护
      * 
      * @param stationDto
      */
-    public void updateStationInfo(StationDto stationDto);
+    public void applyLogisticAbility(StationDto stationDto);
 }
