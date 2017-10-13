@@ -152,6 +152,8 @@ public class StationServiceImpl implements StationService {
 	       sb.append(res.get("stStorageArea"));
 	       sb.append("|");
 	       sb.append(res.get("stStaffNum"));
+	       sb.append("|");
+	       sb.append(res.get("stVAS"));
 	       appResourceService.configAppResource("station_logstic_ability", stationDto.getId().toString(), sb.toString(), false, stationDto.getOperator());
 	    }
     }
