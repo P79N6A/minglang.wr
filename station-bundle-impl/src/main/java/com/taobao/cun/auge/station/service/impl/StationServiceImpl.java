@@ -24,6 +24,7 @@ import com.taobao.cun.auge.station.check.StationChecker;
 import com.taobao.cun.auge.station.convert.StationEventConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -128,4 +129,15 @@ public class StationServiceImpl implements StationService {
 		StationStatusChangeEvent event = StationEventConverter.convert(statusChangeEnum, station, operator);
 		EventDispatcherUtil.dispatch(EventConstant.CUNTAO_STATION_STATUS_CHANGED_EVENT, event);
 	}
+
+	/**
+     * 服务站物流能力信息维护
+     * 
+     * @param stationDto
+     * @param feature key:stMaxStorage,stMaxDoStorage,stStorageArea,stStaffNum
+     */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void applyLogisticAbility(StationDto stationDto) {
+	    stationBO.updateStation(stationDto);
+    }
 }
