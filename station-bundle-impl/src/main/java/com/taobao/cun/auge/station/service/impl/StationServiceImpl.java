@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
@@ -54,6 +54,9 @@ public class StationServiceImpl implements StationService {
 	
 	@Autowired
 	StationChecker stationChecker;
+	
+    @Autowired
+    AppResourceService appResourceService;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -138,6 +141,20 @@ public class StationServiceImpl implements StationService {
      */
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void applyLogisticAbility(StationDto stationDto) {
-	    stationBO.updateStation(stationDto);
+	    if(stationDto != null && stationDto.getFeature() != null){
+	       stationBO.updateStation(stationDto);
+	       Map<String,String> res = stationDto.getFeature();
+	       StringBuffer sb  = new StringBuffer();
+	       sb.append(res.get("stMaxStorage"));
+	       sb.append("|");
+	       sb.append(res.get("stMaxDoStorage"));
+	       sb.append("|");
+	       sb.append(res.get("stStorageArea"));
+	       sb.append("|");
+	       sb.append(res.get("stStaffNum"));
+	       sb.append("|");
+	       sb.append(res.get("stVAS"));
+	       appResourceService.configAppResource("station_logstic_ability", stationDto.getId().toString(), sb.toString(), false, stationDto.getOperator());
+	    }
     }
 }
