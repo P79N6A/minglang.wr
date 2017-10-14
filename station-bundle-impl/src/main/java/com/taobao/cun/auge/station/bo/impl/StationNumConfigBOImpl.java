@@ -87,7 +87,7 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 	
 	private StringBuilder  getStationNumPre(StationNumConfig sc){
 		StringBuilder sb = new StringBuilder();
-		sb.append("NO.");
+		//sb.append("NO.");
 		sb.append(StringUtils.upperCase(sc.getProvinceAb()));
 		sb.append(StringUtils.upperCase(sc.getType()));
 		return sb;
