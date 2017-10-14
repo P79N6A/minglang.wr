@@ -4,10 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import org.apache.commons.lang.StringUtils;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.github.pagehelper.Page;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -15,14 +14,20 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StationNumConfig;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("stationQueryService")
 @HSFProvider(serviceInterface = StationQueryService.class)
@@ -37,6 +42,8 @@ public class StationQueryServiceImpl implements StationQueryService {
 	@Autowired
 	ShutDownStationApplyBO shutDownStationApplyBO;
 	
+	@Autowired
+	StationNumConfigBO stationNumConfigBO;
 	@Override
 	public StationDto getStation(Long stationId){
 		ValidateUtils.notNull(stationId);
@@ -96,5 +103,18 @@ public class StationQueryServiceImpl implements StationQueryService {
 				page.stream().map(StationConverter::toStationDto).collect(Collectors.toList()));
 
 		return result;
+	}
+
+	@Override
+	public String createStationNum(String provinceCode,
+			StationNumConfigTypeEnum typeEnum) {
+		return stationNumConfigBO.createStationNum(provinceCode, typeEnum);
+	}
+
+	@Override
+	public void updateSeqNumByStationNum(String provinceCode,
+			StationNumConfigTypeEnum typeEnum, String stationNum) {
+		stationNumConfigBO.updateSeqNumByStationNum(provinceCode, typeEnum, stationNum);
+		
 	}
 }

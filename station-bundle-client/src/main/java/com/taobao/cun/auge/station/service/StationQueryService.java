@@ -6,6 +6,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 
 /**
  * 服务站查询接口
@@ -67,4 +68,10 @@ public interface StationQueryService {
 	 * @return
 	 */
 	public ShutDownStationApplyDto findShutDownStationApplyById(Long applyId);
+	
+	
+	public  String  createStationNum(String provinceCode, StationNumConfigTypeEnum typeEnum);
+	
+	public void updateSeqNumByStationNum(String provinceCode,
+			StationNumConfigTypeEnum typeEnum, String stationNum);
 }
