@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
-import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailMapper;
-import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -191,13 +189,6 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
-
-    @Autowired
-    private AssetRolloutMapper assetRolloutMapper;
-
-    @Autowired
-    private AssetRolloutIncomeDetailMapper assetRolloutIncomeDetailMapper;
-    
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -708,23 +699,6 @@ public class AssetBOImpl implements AssetBO {
         content.setContent(appMessageDto.getContent());
         signEvent.setContent(content);
         EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
-    }
-
-    @Override
-    public void changeScrap() {
-        Asset record = new Asset();
-        record.setIsDeleted("n");
-        record.setStatus("USE");
-        record.setId(267487L);
-        assetMapper.updateByPrimaryKeySelective(record);
-        AssetRolloutIncomeDetail detail = new AssetRolloutIncomeDetail();
-        detail.setIsDeleted("y");
-        detail.setId(13968L);
-        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail);
-        AssetRollout assetRollout = new AssetRollout();
-        assetRollout.setIsDeleted("y");
-        assetRollout.setId(3915L);
-        assetRolloutMapper.updateByPrimaryKeySelective(assetRollout);
     }
 
     @Override

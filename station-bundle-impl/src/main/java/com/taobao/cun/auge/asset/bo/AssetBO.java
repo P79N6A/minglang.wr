@@ -250,6 +250,4 @@ public interface AssetBO {
     public void transferItAsset(AssetDto signDto);
 
     public void sendAppMessage(AssetAppMessageDto appMessageDto);
-
-    public void changeScrap();
 }

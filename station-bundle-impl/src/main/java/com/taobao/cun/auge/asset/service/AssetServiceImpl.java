@@ -264,11 +264,6 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public void changeScrap() {
-		assetBO.changeScrap();
-	}
-
-	@Override
 	public Map<String, String> getHideThreeAsset(Long stationId,
 			Long taobaoUserId) {
 		return assetBO.getHideThreeAsset(stationId, taobaoUserId);
