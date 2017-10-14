@@ -66,6 +66,7 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		String pre =getStationNumPre(sc).toString();
 		String seqNum = stationNum.replace(pre, "");
 		updateSeqNum(provinceCode,typeEnum,seqNum);
+		
 	}
 
 	@Override
