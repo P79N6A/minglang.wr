@@ -356,5 +356,108 @@
                 }
             ]
         }
+    ],
+    "TPS": [
+        {
+            "item": "SETTLING.settledProtocol",
+            "desc": "合伙人入驻协议",
+            "executedCondition": [
+                {
+                    "settledProtocol": "SIGNED"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "settledProtocol": "SIGNING"
+                }
+            ]
+        },
+        {
+            "item": "SETTLING.bond",
+            "desc": "合伙人保证金冻结",
+            "executedCondition": [
+                {
+                    "bond": "HAS_FROZEN"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "settledProtocol": "SIGNED",
+                    "bond": "WAIT_FROZEN"
+                }
+            ]
+        },
+        {
+            "item": "SETTLING.system",
+            "desc": "合伙人入驻系统处理环节",
+            "executedCondition": [
+                {
+                    "system": "HAS_PROCESS"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "bond": "HAS_FROZEN",
+                    "system": "WAIT_PROCESS"
+                }
+            ]
+        },
+        {
+            "item": "CLOSING.roleApprove",
+            "desc": "小儿发起合伙人停业，省长审批",
+            "executedCondition": [
+                {
+                    "roleApprove": "AUDIT_PASS"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "roleApprove": "TO_AUDIT"
+                }
+            ]
+        },
+        {
+            "item": "CLOSING.confirm",
+            "desc": "合伙人发起停业，小儿确认",
+            "executedCondition": [
+                {
+                    "confirm": "CONFIRM"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "confirm": "WAIT_CONFIRM"
+                }
+            ]
+        },
+        {
+            "item": "QUITING.roleApprove",
+            "desc": "小二撤点省长审批",
+            "executedCondition": [
+                {
+                    "roleApprove": "AUDIT_PASS"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "roleApprove": "TO_AUDIT"
+                }
+            ]
+        },
+        {
+            "item": "QUITING.bond",
+            "desc": "合伙人保证金解冻",
+            "executedCondition": [
+                {
+                    "bond": "HAS_THAW"
+                }
+            ],
+            "executableCondition": [
+                {
+                    "roleApprove": "AUDIT_PASS",
+                    "bond": "WAIT_THAW"
+                }
+            ]
+        }
     ]
 }

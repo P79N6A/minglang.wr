@@ -67,9 +67,6 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     private StationDecorateBO stationDecorateBO;
     
     @Autowired
-    private PartnerPeixunBO partnerPeixunBO;
-    
-    @Autowired
     private AppResourceService appResourceService;
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
@@ -179,16 +176,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
 		
-		//培训
-		PartnerCourseRecord record = partnerPeixunBO.queryOfflinePeixunRecord(
-				rel.getTaobaoUserId(), PartnerPeixunCourseTypeEnum.APPLY_IN,
-				appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-						"APPLY_IN"));
-		if(record!=null&&PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
-			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
-		}else{
-			partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
-		}
+	
 		
 		//装修
 		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());

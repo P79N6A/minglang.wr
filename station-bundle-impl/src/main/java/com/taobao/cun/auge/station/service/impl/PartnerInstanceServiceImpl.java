@@ -1751,7 +1751,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
         partnerLifecycleDto.setPartnerInstanceId(psl.getId());
         //初始化培训记录
-        PartnerCourseRecord record = partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
+       /** PartnerCourseRecord record = partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
                 PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
                         .queryAppResourceValue("PARTNER_PEIXUN_CODE",
                                 "APPLY_IN"));
@@ -1763,7 +1763,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
         } else {
             partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
-        }
+        }**/
         // 生成装修记录
         StationDecorateDto stationDecorateDto = new StationDecorateDto();
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
