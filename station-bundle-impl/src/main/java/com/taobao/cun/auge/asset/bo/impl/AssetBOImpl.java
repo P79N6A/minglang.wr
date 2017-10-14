@@ -713,17 +713,14 @@ public class AssetBOImpl implements AssetBO {
     @Override
     public void changeScrap() {
         Asset record = new Asset();
-        record.setIsDeleted("y");
+        record.setIsDeleted("n");
+        record.setStatus("USE");
         record.setId(267487L);
         assetMapper.updateByPrimaryKeySelective(record);
         AssetRolloutIncomeDetail detail = new AssetRolloutIncomeDetail();
         detail.setIsDeleted("y");
-        detail.setId(13146L);
-        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail);
-        AssetRolloutIncomeDetail detail2 = new AssetRolloutIncomeDetail();
-        detail.setIsDeleted("y");
         detail.setId(13968L);
-        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail2);
+        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail);
         AssetRollout assetRollout = new AssetRollout();
         assetRollout.setIsDeleted("y");
         assetRollout.setId(3915L);
