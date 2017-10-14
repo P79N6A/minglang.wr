@@ -189,7 +189,6 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
-    
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1069,7 +1068,11 @@ public class AssetBOImpl implements AssetBO {
         //保证金转移
         transferBail(scrapDto, asset.getUserId());
         //通知集团资产废弃
-        scrapItAsset(asset, scrapDto);
+        try {
+            scrapItAsset(asset, scrapDto);
+        } catch (Exception e){
+
+        }
         //村淘库资产状态变更
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
@@ -1089,8 +1092,8 @@ public class AssetBOImpl implements AssetBO {
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
         if (!result.isSuccess()) {
             logger.error("{bizType},{parameter} scrap it asset fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "集团资产赔付失败,请联系管理员！");
+            //throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+            //    "集团资产赔付失败,请联系管理员！");
         }
     }
 
