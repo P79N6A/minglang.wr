@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
+import com.taobao.cun.auge.dal.mapper.AssetRolloutIncomeDetailMapper;
+import com.taobao.cun.auge.dal.mapper.AssetRolloutMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -189,6 +191,12 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+
+    @Autowired
+    private AssetRolloutMapper assetRolloutMapper;
+
+    @Autowired
+    private AssetRolloutIncomeDetailMapper assetRolloutIncomeDetailMapper;
     
 
     @Override
@@ -703,6 +711,26 @@ public class AssetBOImpl implements AssetBO {
     }
 
     @Override
+    public void changeScrap() {
+        Asset record = new Asset();
+        record.setIsDeleted("y");
+        record.setId(267487L);
+        assetMapper.updateByPrimaryKeySelective(record);
+        AssetRolloutIncomeDetail detail = new AssetRolloutIncomeDetail();
+        detail.setIsDeleted("y");
+        detail.setId(13146L);
+        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail);
+        AssetRolloutIncomeDetail detail2 = new AssetRolloutIncomeDetail();
+        detail.setIsDeleted("y");
+        detail.setId(13968L);
+        assetRolloutIncomeDetailMapper.updateByPrimaryKeySelective(detail2);
+        AssetRollout assetRollout = new AssetRollout();
+        assetRollout.setIsDeleted("y");
+        assetRollout.setId(3915L);
+        assetRolloutMapper.updateByPrimaryKeySelective(assetRollout);
+    }
+
+    @Override
     public Boolean signAssetByStation(AssetDto signDto) {
         Objects.requireNonNull(signDto.getAliNo(), "编号不能为空");
         Objects.requireNonNull(signDto.getOperator(), "用户不能为空");
@@ -1069,7 +1097,11 @@ public class AssetBOImpl implements AssetBO {
         //保证金转移
         transferBail(scrapDto, asset.getUserId());
         //通知集团资产废弃
-        scrapItAsset(asset, scrapDto);
+        try {
+            scrapItAsset(asset, scrapDto);
+        } catch (Exception e){
+
+        }
         //村淘库资产状态变更
         asset.setStatus(AssetStatusEnum.SCRAP.getCode());
         DomainUtils.beforeUpdate(asset, scrapDto.getOperator());
@@ -1089,8 +1121,8 @@ public class AssetBOImpl implements AssetBO {
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
         if (!result.isSuccess()) {
             logger.error("{bizType},{parameter} scrap it asset fail " + result.getErrorMsg(), "assetError", JSON.toJSONString(requestDto));
-            throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
-                "集团资产赔付失败,请联系管理员！");
+            //throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
+            //    "集团资产赔付失败,请联系管理员！");
         }
     }
 
