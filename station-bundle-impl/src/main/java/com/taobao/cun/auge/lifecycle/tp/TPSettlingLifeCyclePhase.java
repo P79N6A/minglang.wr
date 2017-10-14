@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
+
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -56,6 +58,9 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
 	
+	@Autowired
+	private StationNumConfigBO stationNumConfigBO;
+	
 	@Override
 	@PhaseStepMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -64,6 +69,9 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
               stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
+              stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 
+            		  partnerInstanceDto.getStationDto().getStationNum());
+              
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();
               stationDto.setState(StationStateEnum.INVALID);
