@@ -35,6 +35,7 @@ import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
@@ -69,7 +70,7 @@ public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
-              stationId = addStation(partnerInstanceDto);
+              stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();
               stationDto.setState(StationStateEnum.INVALID);

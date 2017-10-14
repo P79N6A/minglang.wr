@@ -1461,7 +1461,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     	ValidateUtils.notNull(partnerInstanceDto);
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
     	StateMachineEvent sme = null;
-    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
+    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())||"TPS".equals(partnerInstanceDto.getType().getCode())){
     		sme = StateMachineEvent.DECORATING_EVENT;
     	}else{
     		sme = StateMachineEvent.SERVICING_EVENT;

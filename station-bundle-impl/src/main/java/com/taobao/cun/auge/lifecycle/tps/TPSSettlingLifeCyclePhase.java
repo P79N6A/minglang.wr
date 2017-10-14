@@ -1,9 +1,11 @@
-package com.taobao.cun.auge.lifecycle.tpa;
+package com.taobao.cun.auge.lifecycle.tps;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
@@ -17,110 +19,108 @@ import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.service.StoreException;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 
 /**
- * 淘帮手入驻中
+ * 村小二入驻中阶段组件
  * @author zhenhuan.zhangzh
  *
  */
 @Component
-@Phase(type="TPA",event=StateMachineEvent.SETTLING_EVENT,desc="淘帮手入驻中节点服务")
-public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPS",event=StateMachineEvent.SETTLING_EVENT,desc="村小二入驻中服务节点")
+public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 
-	
 	@Autowired
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
 	
+	
+	@Autowired
+	DiamondConfiguredProperties diamondConfiguredProperties;
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手站点")
+	@PhaseStepMeta(descr="创建村小二站点")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
 		  PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
-        if (stationId == null) {
-            stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
-        } else {
-            StationDto stationDto = partnerInstanceDto.getStationDto();
-            stationDto.setState(StationStateEnum.INVALID);
-            stationDto.setStatus(StationStatusEnum.NEW);
-            PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-            if (partnerDto != null) {
-                stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
-                stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
-                stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
-            }
-            updateStation(stationId, partnerInstanceDto);
-        }
+          if (stationId == null) {
+              stationId = addStation(partnerInstanceDto,StationType.STATION.getType()|StationType.STORE.getType());
+          } else {
+              StationDto stationDto = partnerInstanceDto.getStationDto();
+              stationDto.setState(StationStateEnum.INVALID);
+              stationDto.setStatus(StationStatusEnum.NEW);
+              PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
+              if (partnerDto != null) {
+                  stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
+                  stationDto.setAlipayAccount(partnerDto.getAlipayAccount());
+                  stationDto.setTaobaoUserId(partnerDto.getTaobaoUserId());
+              }
+              updateStation(stationId, partnerInstanceDto);
+          }
 	}
-
+    
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手")
+	@PhaseStepMeta(descr="创建村小二")
 	public void createOrUpdatePartner(LifeCyclePhaseContext context) {
 		 PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		 addPartner(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建淘帮手和站点关系")
+	@PhaseStepMeta(descr="创建人村关系")
 	public void createOrUpdatePartnerInstance(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		addPartnerInstanceRel(partnerInstanceDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="创建LifeCycleItems")
+	@PhaseStepMeta(descr="创建lifeCycleItems")
 	public void createOrUpdateLifeCycleItems(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		addPartnerLifeCycle(partnerInstanceDto);
+		addLifecycle(partnerInstanceDto);
 	}
 
-	private void addPartnerLifeCycle(PartnerInstanceDto partnerInstanceDto) {
+	private void addLifecycle(PartnerInstanceDto partnerInstanceDto) {
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPA);
+		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TPS);
 		partnerLifecycleDto.copyOperatorDto(partnerInstanceDto);
 		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.SETTLING);
+		partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
+		partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
+		partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
+		partnerLifecycleDto.setPosittionConfirm(PartnerLifecyclePositionConfirmEnum.N);
+		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
 		partnerLifecycleDto.setPartnerInstanceId(partnerInstanceDto.getId());
-
-		if (StringUtils.equals(OperatorTypeEnum.BUC.getCode(), partnerInstanceDto.getOperatorType().getCode())) {// 小二提交
-			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
-			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
-			partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
-			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
-		} else if (StringUtils.equals(OperatorTypeEnum.HAVANA.getCode(), partnerInstanceDto.getOperatorType().getCode())) {// 合伙人提交
-			partnerLifecycleDto.setSettledProtocol(PartnerLifecycleSettledProtocolEnum.SIGNING);
-			partnerLifecycleDto.setBond(PartnerLifecycleBondEnum.WAIT_FROZEN);
-			partnerLifecycleDto.setRoleApprove(PartnerLifecycleRoleApproveEnum.TO_AUDIT);
-			partnerLifecycleDto.setSystem(PartnerLifecycleSystemEnum.WAIT_PROCESS);
-			partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
-		}
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
 	}
 
 	@Override
-	@PhaseStepMeta(descr="无扩展业务")
+	@PhaseStepMeta(descr="创建培训装修记录")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		//donothing
+	
 	}
 
 	@Override
 	@PhaseStepMeta(descr="触发入驻中事件")
 	public void triggerStateChangeEvent(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
+		this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 	}
 
 	@Override
@@ -130,5 +130,9 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());
 	}
 
-	 
+	
+	
+	
+
+	
 }
