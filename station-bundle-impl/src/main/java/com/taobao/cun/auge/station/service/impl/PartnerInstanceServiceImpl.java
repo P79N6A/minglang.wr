@@ -830,9 +830,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 没有数据 认为是标准化项目之前的数据，直接可以开业
             return;
         }
-        if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人没有完成培训");
-        }
+      
         //判断装修是否未付款
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
