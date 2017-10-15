@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
 import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
-
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -68,9 +67,11 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
+        	  String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
+              partnerInstanceDto.getStationDto().setStationNum(stationNum);
               stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
               stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 
-            		  partnerInstanceDto.getStationDto().getStationNum());
+            		  stationNum);
               
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();

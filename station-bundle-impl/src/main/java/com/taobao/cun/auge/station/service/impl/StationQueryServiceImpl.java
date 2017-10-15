@@ -108,7 +108,7 @@ public class StationQueryServiceImpl implements StationQueryService {
 	@Override
 	public String createStationNum(String provinceCode,
 			StationNumConfigTypeEnum typeEnum) {
-		return stationNumConfigBO.createStationNum(provinceCode, typeEnum);
+		return stationNumConfigBO.createStationNum(provinceCode, typeEnum,0);
 	}
 
 	@Override

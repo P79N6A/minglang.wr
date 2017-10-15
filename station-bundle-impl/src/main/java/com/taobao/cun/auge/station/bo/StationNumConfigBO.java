@@ -33,5 +33,6 @@ public interface StationNumConfigBO {
 	 * @param typeEnum
 	 * @return
 	 */
-	public String createStationNum(String provinceCode,StationNumConfigTypeEnum typeEnum);
+	
+	public String createStationNum(String provinceCode,StationNumConfigTypeEnum typeEnum,int level);
 }
