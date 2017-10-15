@@ -67,6 +67,9 @@ public class DiamondConfiguredProperties {
     
     @Value("${store.categoryId}")
     private Integer storeCategoryId;
+    
+    @Value("${store.storeMainUserId}")
+    private Long storeMainUserId;
 
     public String getApply() {
         return apply;
@@ -138,5 +141,13 @@ public class DiamondConfiguredProperties {
 
 	public void setStoreCategoryId(Integer storeCategoryId) {
 		this.storeCategoryId = storeCategoryId;
+	}
+
+	public Long getStoreMainUserId() {
+		return storeMainUserId;
+	}
+
+	public void setStoreMainUserId(Long storeMainUserId) {
+		this.storeMainUserId = storeMainUserId;
 	}
 }

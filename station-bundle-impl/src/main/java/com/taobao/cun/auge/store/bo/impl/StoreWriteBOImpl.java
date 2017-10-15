@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.common.utils.POIUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
@@ -47,7 +48,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private UserTagService userTagService;
 	@Resource
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
-	
+	@Resource
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -108,7 +110,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
             storeDTO.setStoreId(result.getResult());
             // 更新
-            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, station.getTaobaoUserId(), StoreBizType.CUN_TAO.getValue());
+            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.CUN_TAO.getValue());
             if(updateResult.isFailured()){
             	throw new StoreException(updateResult.getFullErrorMsg());
             }
