@@ -23,6 +23,7 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -111,12 +112,12 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		StationDto station = partnerInstanceDto.getStationDto();
+		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
 		 try {
          	StoreCreateDto store = new StoreCreateDto();
-         	store.setStationId(station.getId());
+         	store.setStationId(partnerInstanceDto.getStationId());
          	store.setCreator(partnerInstanceDto.getOperator());
-         	store.setStoreCategory(StoreCategory.valueOf(partnerInstanceDto.getStationDto().getFeature().get("storeCategory")));
+         	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
          	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
          	store.setName(partnerInstanceDto.getStationDto().getName());
 			storeWriteService.create(store);
