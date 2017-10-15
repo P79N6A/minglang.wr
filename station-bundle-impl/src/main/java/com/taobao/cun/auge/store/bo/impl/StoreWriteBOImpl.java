@@ -55,10 +55,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if(station == null){
 			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
 		}
-		StationDto stationDto = StationConverter.toStationDto(station);
-		if(stationDto.isStore()){
-			throw new StoreException("该服务站已经存在门店,station_id=" + storeCreateDto.getStationId());
-		}
+		
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(storeCreateDto.getName());
 		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
@@ -140,16 +137,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setScmCode(scmCode);
 		cuntaoStoreMapper.insert(cuntaoStore);
 		
-		//更新station type
-		int stationType = 0;
-		if(station.getStationType() == null){
-			stationType = StationType.STATION.getType();
-		}else{
-			stationType = station.getStationType();
-		}
-		
-		station.setStationType(stationType | StationType.STORE.getType());
-		stationBO.updateStation(StationConverter.toStationDto(station));
 		return result.getResult();
 	}
 
