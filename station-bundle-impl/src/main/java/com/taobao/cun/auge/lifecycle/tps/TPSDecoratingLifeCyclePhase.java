@@ -119,7 +119,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
          	store.setCreator(partnerInstanceDto.getOperator());
          	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
          	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
-         	store.setName(partnerInstanceDto.getStationDto().getName());
+         	store.setName(station.getName());
 			storeWriteService.create(store);
 			} catch (StoreException e) {
 				throw new AugeSystemException(e);
