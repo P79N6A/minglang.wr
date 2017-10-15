@@ -10,7 +10,7 @@ import com.taobao.cun.auge.statemachine.StateMachineComponent;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
-@StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine","TPTStateMachine"},actionKey="stateMachineComponent")
+@StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine","TPTStateMachine","TPSStateMachine"},actionKey="stateMachineComponent")
 public class StateMachineComponentImpl {
 
 	@Autowired
