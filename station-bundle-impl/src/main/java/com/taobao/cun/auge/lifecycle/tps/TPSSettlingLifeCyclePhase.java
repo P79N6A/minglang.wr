@@ -58,7 +58,6 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
-              stationId = addStation(partnerInstanceDto,StationType.STATION.getType()|StationType.STORE.getType());
               String storeCategory= partnerInstanceDto.getStationDto().getFeature().get("storeCategory");
               Assert.notNull(storeCategory,"storeCategroy is  null");
               StationNumConfigTypeEnum typeEnum = null;
@@ -67,8 +66,11 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
               }else if (StoreCategory.MOMBABY.getCategory().equals(storeCategory)) {
             	  typeEnum = StationNumConfigTypeEnum.M;
               }
-              stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), typeEnum, 
-            		  partnerInstanceDto.getStationDto().getStationNum());
+              
+              String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), typeEnum, 0);
+              partnerInstanceDto.getStationDto().setStationNum(stationNum);
+              stationId = addStation(partnerInstanceDto,StationType.STATION.getType()|StationType.STORE.getType());
+              stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), typeEnum, stationNum);
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();
               stationDto.setState(StationStateEnum.INVALID);

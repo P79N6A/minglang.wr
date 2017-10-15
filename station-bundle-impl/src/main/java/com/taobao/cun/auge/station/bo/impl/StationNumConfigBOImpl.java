@@ -2,10 +2,13 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.bo.StationBO;
+
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import org.apache.commons.lang.StringUtils;
-
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -24,6 +27,9 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 	@Autowired
 	StationNumConfigMapper stationNumConfigMapper;
 	
+	@Autowired
+	private StationBO stationBO;
+	
 	@Override
 	public StationNumConfig getConfigByProvinceCode(String provinceCode,
 			StationNumConfigTypeEnum typeEnum) {
@@ -38,7 +44,8 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		List<StationNumConfig> res = stationNumConfigMapper.selectByExample(example);
 		return ResultUtils.selectOne(res);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateSeqNum(String provinceCode,
 			StationNumConfigTypeEnum typeEnum, String seqNum) {
@@ -58,7 +65,8 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		
 		stationNumConfigMapper.updateByExampleSelective(record, example);
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateSeqNumByStationNum(String provinceCode,
 			StationNumConfigTypeEnum typeEnum, String stationNum) {
@@ -68,10 +76,14 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		updateSeqNum(provinceCode,typeEnum,seqNum);
 		
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public String createStationNum(String provinceCode,
-			StationNumConfigTypeEnum typeEnum) {
+			StationNumConfigTypeEnum typeEnum,int level) {
+		if (level== 20) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点编号创建异常");
+		}
 		StationNumConfig sc = getConfigByProvinceCode(provinceCode,typeEnum);
 		if (sc==null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"村点编号配置信息不存在");
@@ -82,8 +94,16 @@ public class StationNumConfigBOImpl implements StationNumConfigBO {
 		
 		StringBuilder sb =getStationNumPre(sc);
 		sb.append(str);
-
-		return sb.toString();
+		String stationNum = sb.toString();
+		
+		
+		int count = stationBO.getStationCountByStationNum(stationNum);
+		if(count < 1){
+			return stationNum;
+		}
+		updateSeqNumByStationNum(provinceCode,typeEnum,stationNum);
+		createStationNum(provinceCode,typeEnum,++level);
+		return stationNum;
 	}
 	
 	private StringBuilder  getStationNumPre(StationNumConfig sc){
