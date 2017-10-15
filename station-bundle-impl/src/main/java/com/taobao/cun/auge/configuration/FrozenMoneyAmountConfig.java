@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 @Component
 public class FrozenMoneyAmountConfig {
 
-	@Value("${tp.frozenMoneyAmount:5000}")
+	@Value("${tp.frozenMoneyAmount:13000}")
 	Double TPFrozenMoneyAmount;
 	
 	@Value("${tpa.frozenMoneyAmount:1}")
@@ -23,6 +23,9 @@ public class FrozenMoneyAmountConfig {
 
 	@Value("${tpt.frozenMoneyAmount:30000}")
 	Double TPTFrozenMoneyAmount;
+	
+	@Value("${tps.frozenMoneyAmount:20000}")
+	Double TPSFrozenMoneyAmount;
 
 	public Double getTPFrozenMoneyAmount() {
 		return TPFrozenMoneyAmount;
@@ -57,6 +60,9 @@ public class FrozenMoneyAmountConfig {
 			return TPAFrozenMoneyAmount;
 		}
 		if(PartnerInstanceTypeEnum.TPT.getCode().equals(type)){
+			return TPTFrozenMoneyAmount;
+		}
+		if(PartnerInstanceTypeEnum.TPS.getCode().equals(type)){
 			return TPTFrozenMoneyAmount;
 		}
 		throw new IllegalArgumentException(type+" not defined frozenMoney");

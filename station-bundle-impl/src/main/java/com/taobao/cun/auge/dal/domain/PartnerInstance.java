@@ -420,7 +420,7 @@ public class PartnerInstance {
 	
 	private String flowerName;
 	
-	
+	private String mode;
 	
 	public String getFlowerName() {
 		return flowerName;
@@ -1652,5 +1652,13 @@ public class PartnerInstance {
 
 	public void setCourseStatus(String courseStatus) {
 		this.courseStatus = courseStatus;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 }

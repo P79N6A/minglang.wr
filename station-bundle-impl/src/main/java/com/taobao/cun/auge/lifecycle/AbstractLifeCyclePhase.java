@@ -183,6 +183,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
         partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
         partnerInstanceDto.setVersion(0L);
+        partnerInstanceDto.setMode("v4");
         // 当前partner_station_rel.isCurrent = n, 并添加新的当前partner_station_rel
         Long partnerInstanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
         partnerInstanceDto.setId(partnerInstanceId);
