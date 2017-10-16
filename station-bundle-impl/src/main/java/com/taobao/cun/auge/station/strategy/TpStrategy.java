@@ -175,7 +175,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 
 		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
 		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
-		// 生成启航班培训记录和成长营培训记录
+		/*// 生成启航班培训记录和成长营培训记录
 		partnerPeixunBO.initPeixunRecord(taobaoUserId,
 				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
 						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
@@ -187,7 +187,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		// 分发启航班试卷
 		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick,
 				appResourceService.queryAppResourceValue(
-						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));
+						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));*/
 		// 生成装修记录
 		StationDecorateDto stationDecorateDto = new StationDecorateDto();
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
