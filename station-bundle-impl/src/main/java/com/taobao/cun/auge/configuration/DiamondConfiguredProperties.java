@@ -64,6 +64,12 @@ public class DiamondConfiguredProperties {
 
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${asset.transfer.error}')}")
     private Map<String, String> assetTransferErrorMap;
+    
+    @Value("${store.categoryId}")
+    private Integer storeCategoryId;
+    
+    @Value("${store.storeMainUserId}")
+    private Long storeMainUserId;
 
     public String getApply() {
         return apply;
@@ -128,4 +134,20 @@ public class DiamondConfiguredProperties {
     public Map<String, String> getAssetTransferErrorMap() {
         return assetTransferErrorMap;
     }
+
+	public Integer getStoreCategoryId() {
+		return storeCategoryId;
+	}
+
+	public void setStoreCategoryId(Integer storeCategoryId) {
+		this.storeCategoryId = storeCategoryId;
+	}
+
+	public Long getStoreMainUserId() {
+		return storeMainUserId;
+	}
+
+	public void setStoreMainUserId(Long storeMainUserId) {
+		this.storeMainUserId = storeMainUserId;
+	}
 }

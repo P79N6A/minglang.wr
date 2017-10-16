@@ -162,7 +162,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	 */
 	private void setShopItemInfo(StationDecorateDto sdDto) {
 			if (sdDto != null && StringUtils.isNotEmpty(sdDto.getSellerTaobaoUserId())) {
-				AppResourceDto resource = appResourceService.queryAppResource("shop_Item_info", sdDto.getSellerTaobaoUserId());
+				AppResourceDto resource = appResourceService.queryAppResource("shop_Item_info_v4", sdDto.getSellerTaobaoUserId());
 				if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
 					sdDto.setTaobaoItemUrl(taobaoItemUrl+resource.getValue());
 				}

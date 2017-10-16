@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.common.utils.POIUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
@@ -47,7 +48,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private UserTagService userTagService;
 	@Resource
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
-	
+	@Resource
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -55,10 +57,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if(station == null){
 			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
 		}
-		StationDto stationDto = StationConverter.toStationDto(station);
-		if(stationDto.isStore()){
-			throw new StoreException("该服务站已经存在门店,station_id=" + storeCreateDto.getStationId());
-		}
+		
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(storeCreateDto.getName());
 		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
@@ -103,7 +102,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
-		ResultDO<Long> result = storeCreateService.create(storeDTO, station.getTaobaoUserId(), StoreBizType.CUN_TAO.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO, station.getTaobaoUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
 		}
@@ -111,7 +110,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
             storeDTO.setStoreId(result.getResult());
             // 更新
-            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, station.getTaobaoUserId(), StoreBizType.CUN_TAO.getValue());
+            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
             if(updateResult.isFailured()){
             	throw new StoreException(updateResult.getFullErrorMsg());
             }
@@ -140,16 +139,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setScmCode(scmCode);
 		cuntaoStoreMapper.insert(cuntaoStore);
 		
-		//更新station type
-		int stationType = 0;
-		if(station.getStationType() == null){
-			stationType = StationType.STATION.getType();
-		}else{
-			stationType = station.getStationType();
-		}
-		
-		station.setStationType(stationType | StationType.STORE.getType());
-		stationBO.updateStation(StationConverter.toStationDto(station));
 		return result.getResult();
 	}
 

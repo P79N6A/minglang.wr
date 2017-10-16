@@ -1,8 +1,9 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -35,6 +36,7 @@ import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
@@ -50,16 +52,13 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	private PartnerLifecycleBO partnerLifecycleBO;
 	
 	@Autowired
-	private PartnerPeixunBO partnerPeixunBO;
-	
-	@Autowired
-	private AppResourceService appResourceService;
-	
-	@Autowired
 	private StationDecorateBO stationDecorateBO;
 	
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
+	
+	@Autowired
+	private StationNumConfigBO stationNumConfigBO;
 	
 	@Override
 	@PhaseStepMeta(descr="创建村小二站点")
@@ -68,7 +67,12 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
-              stationId = addStation(partnerInstanceDto);
+        	  String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
+              partnerInstanceDto.getStationDto().setStationNum(stationNum);
+              stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
+              stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 
+            		  stationNum);
+              
           } else {
               StationDto stationDto = partnerInstanceDto.getStationDto();
               stationDto.setState(StationStateEnum.INVALID);
@@ -123,26 +127,12 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		validateDecorateAndPaymentType(partnerInstanceDto);
-		Long taobaoUserId = partnerInstanceDto.getTaobaoUserId();
-		String taobaoNick = partnerInstanceDto.getPartnerDto().getTaobaoNick();
-		// 生成启航班培训记录和成长营培训记录
-		partnerPeixunBO.initPeixunRecord(taobaoUserId,
-				PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
-						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-								"APPLY_IN"));
-		partnerPeixunBO.initPeixunRecord(taobaoUserId,
-				PartnerPeixunCourseTypeEnum.UPGRADE, appResourceService
-						.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-								"UPGRADE"));
-		// 分发启航班试卷
-		partnerPeixunBO.dispatchApplyInExamPaper(taobaoUserId, taobaoNick,
-				appResourceService.queryAppResourceValue(
-						"PARTNER_PEIXUN_ONLINE", "EXAM_ID"));
+	
 		// 生成装修记录
 		StationDecorateDto stationDecorateDto = new StationDecorateDto();
 		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		stationDecorateDto.setStationId(partnerInstanceDto.getStationId());
-		stationDecorateDto.setPartnerUserId(taobaoUserId);
+		stationDecorateDto.setPartnerUserId(partnerInstanceDto.getTaobaoUserId());
 		stationDecorateDto.setDecorateType(partnerInstanceDto.getStationDecorateTypeEnum());
 		stationDecorateDto.setPaymentType(partnerInstanceDto.getStationDecoratePaymentTypeEnum());
 		stationDecorateBO.addStationDecorate(stationDecorateDto);

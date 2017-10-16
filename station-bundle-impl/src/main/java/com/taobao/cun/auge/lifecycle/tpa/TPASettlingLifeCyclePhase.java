@@ -27,6 +27,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 
 /**
  * 淘帮手入驻中
@@ -51,7 +52,7 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
         if (stationId == null) {
-            stationId = addStation(partnerInstanceDto);
+            stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
         } else {
             StationDto stationDto = partnerInstanceDto.getStationDto();
             stationDto.setState(StationStateEnum.INVALID);

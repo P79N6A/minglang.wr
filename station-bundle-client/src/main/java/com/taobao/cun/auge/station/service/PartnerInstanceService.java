@@ -305,5 +305,6 @@ public interface PartnerInstanceService {
 	 */
 	public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto);
 	
+	public void quitApprove(Long instanceId);
 	
 }
