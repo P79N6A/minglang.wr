@@ -46,8 +46,10 @@ import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("caiNiaoService")
+@HSFProvider(serviceInterface= CaiNiaoService.class, clientTimeout = 8000)
 public class CaiNiaoServiceImpl implements CaiNiaoService {
 
 	public static final Log logger = LogFactory.getLog(CaiNiaoServiceImpl.class);
@@ -98,7 +100,7 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				caiNiaoStationDto.setTpTaobaoUserId(parentParner.getTaobaoUserId());
 
 				caiNiaoAdapter.addStationUserRel(caiNiaoStationDto, instanceDto.getType().getCode());
-			} else if (PartnerInstanceTypeEnum.TP.equals(instanceDto.getType())) {
+			} else if (PartnerInstanceTypeEnum.TP.equals(instanceDto.getType())||PartnerInstanceTypeEnum.TPS.equals(instanceDto.getType())) {
 				// 合伙人
 				Long caiNiaoStationId = null;
 				caiNiaoStationId = getCainiaoStationId(instanceDto.getStationDto().getId());

@@ -98,7 +98,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.valueof(instance.getIsCurrent()));
 		instanceDto.setCloseType(PartnerInstanceCloseTypeEnum.valueof(instance.getCloseType()));
 		instanceDto.setVersion(instance.getVersion());
-
+		instanceDto.setMode(instance.getMode());
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
 
@@ -183,7 +183,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		instanceDto.setVersion(psRel.getVersion());
-
+		instanceDto.setMode(psRel.getMode());
 		return instanceDto;
 	}
 
@@ -293,7 +293,7 @@ public final class PartnerInstanceConverter {
 		rel.setServiceBeginTime(partnerInstanceDto.getServiceBeginTime());
 		rel.setServiceEndTime(partnerInstanceDto.getServiceEndTime());
 		rel.setParentStationId(partnerInstanceDto.getParentStationId());
-
+		rel.setMode(partnerInstanceDto.getMode());
 		if (null != partnerInstanceDto.getState()) {
 			rel.setState(partnerInstanceDto.getState().getCode());
 		}

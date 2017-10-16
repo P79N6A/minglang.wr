@@ -34,7 +34,6 @@ import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
-import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -77,6 +76,7 @@ import com.taobao.cun.auge.station.bo.PartnerTypeChangeApplyBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
@@ -128,7 +128,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
@@ -138,22 +137,23 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
@@ -176,7 +176,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
  * @author quanzhu.wangqz
  */
 @Service("partnerInstanceService")
-@HSFProvider(serviceInterface = PartnerInstanceService.class)
+@HSFProvider(serviceInterface = PartnerInstanceService.class,clientTimeout=8000)
 public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     private static final Logger logger = LoggerFactory.getLogger(PartnerInstanceService.class);
@@ -268,6 +268,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
     @Autowired
 	private StateMachineService stateMachineService;
+    
+    @Autowired
+	private StationNumConfigBO stationNumConfigBO;
+    
+    @Autowired
+    private ProcessProcessor processProcessor;
     
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -830,9 +836,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 没有数据 认为是标准化项目之前的数据，直接可以开业
             return;
         }
-        if (!PartnerLifecycleCourseStatusEnum.Y.getCode().equals(items.getCourseStatus())) {
-            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人没有完成培训");
-        }
+      
         //判断装修是否未付款
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
@@ -1461,7 +1465,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     	ValidateUtils.notNull(partnerInstanceDto);
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
     	StateMachineEvent sme = null;
-    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())){
+    	if("TP".equals(partnerInstanceDto.getType().getCode())||"TPT".equals(partnerInstanceDto.getType().getCode())||"TPS".equals(partnerInstanceDto.getType().getCode())){
     		sme = StateMachineEvent.DECORATING_EVENT;
     	}else{
     		sme = StateMachineEvent.SERVICING_EVENT;
@@ -1751,7 +1755,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
         partnerLifecycleDto.setPartnerInstanceId(psl.getId());
         //初始化培训记录
-        PartnerCourseRecord record = partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
+       /** PartnerCourseRecord record = partnerPeixunBO.initPeixunRecord(psl.getTaobaoUserId(),
                 PartnerPeixunCourseTypeEnum.APPLY_IN, appResourceService
                         .queryAppResourceValue("PARTNER_PEIXUN_CODE",
                                 "APPLY_IN"));
@@ -1763,7 +1767,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.Y);
         } else {
             partnerLifecycleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.N);
-        }
+        }**/
         // 生成装修记录
         StationDecorateDto stationDecorateDto = new StationDecorateDto();
         stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
@@ -1827,10 +1831,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             //村点信息备份
             Map<String, String> feature = partnerTypeChangeApplyBO.backupStationInfo(stationId);
             // 更新村点信息
+            String stationNum = stationNumConfigBO.createStationNum(stationDto.getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
+            upgradeDto.getStationDto().setStationNum(stationNum);
+            stationDto.setStationNum(stationNum);
+            
             stationDto.setState(StationStateEnum.INVALID);
             stationDto.setStatus(StationStatusEnum.NEW);
             stationDto.copyOperatorDto(upgradeDto);
             updateStation(stationDto);
+            
+            stationNumConfigBO.updateSeqNumByStationNum(stationDto.getAddress().getProvince(), StationNumConfigTypeEnum.C, 
+          		  stationNum);
 
             // 更新合伙人信息
             partnerDto.copyOperatorDto(upgradeDto);
@@ -2139,4 +2150,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     public void closeCainiaoStationForTpa(Long partnerInstanceId, OperatorDto operatorDto){
         caiNiaoService.closeCainiaoStationForTpa(partnerInstanceId, operatorDto);
     }
+
+
+	@Override
+	public void quitApprove(Long instanceId) {
+		try {
+			processProcessor.quitApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }

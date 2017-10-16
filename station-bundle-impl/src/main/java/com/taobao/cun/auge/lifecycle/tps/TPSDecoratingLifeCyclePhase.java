@@ -1,18 +1,15 @@
-package com.taobao.cun.auge.lifecycle.tp;
+package com.taobao.cun.auge.lifecycle.tps;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.appResource.dto.AppResourceDto;
-import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -27,23 +24,22 @@ import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.store.dto.StoreCategory;
+import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.service.StoreException;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 
 /**
  * 村小二装修中阶段组件
@@ -51,8 +47,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  *
  */
 @Component
-@Phase(type="TP",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
-public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
+@Phase(type="TPS",event=StateMachineEvent.DECORATING_EVENT,desc="村小二装修中服务节点")
+public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
 	private StationBO stationBO;
@@ -64,10 +60,12 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     private PartnerLifecycleBO partnerLifecycleBO;
     
     @Autowired
-    private StationDecorateBO stationDecorateBO;
+    private StoreWriteService storeWriteService;
     
     @Autowired
-    private AppResourceService appResourceService;
+    private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    private static Logger logger = LoggerFactory.getLogger(TPSDecoratingLifeCyclePhase.class);
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -109,13 +107,25 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			param.copyOperatorDto(partnerInstanceDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		initPartnerLifeCycleForDecorating(partnerInstanceDto);
 	}
 
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		//donothing
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
+		 try {
+         	StoreCreateDto store = new StoreCreateDto();
+         	store.setStationId(partnerInstanceDto.getStationId());
+         	store.setCreator(partnerInstanceDto.getOperator());
+         	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
+         	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+         	store.setName(station.getName());
+			storeWriteService.create(store);
+			} catch (StoreException e) {
+				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
+				throw new AugeSystemException(e);
+			}
 	}
 
 	@Override
@@ -157,52 +167,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	
 	
-	/**
-	 * 构建装修中生命周期
-	 *
-	 * @param rel
-	 */
-	private void initPartnerLifeCycleForDecorating(PartnerInstanceDto rel) {
-		
-		Station s = stationBO.getStationById(rel.getStationId());
-		if(containCountyOrgId(s.getApplyOrg())) {
-			return;
-		}
-		
-		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
-		partnerLifecycleDto.setPartnerType(PartnerInstanceTypeEnum.TP);
-		partnerLifecycleDto.copyOperatorDto(OperatorDto.defaultOperator());
-		partnerLifecycleDto.setBusinessType(PartnerLifecycleBusinessTypeEnum.DECORATING);
-		partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
-		partnerLifecycleDto.setPartnerInstanceId(rel.getId());
-		
-	
-		
-		//装修
-		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
-		if (hasDecorateDone) {
-			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
-		}else {
-			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
-		}
-		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-	}
 
-	private Boolean containCountyOrgId(Long countyOrgId) {
 
-		if (countyOrgId != null) {
-			AppResourceDto resource = appResourceService.queryAppResource("gudian_county", "countyid");
-			if (resource != null && !StringUtils.isEmpty(resource.getValue())) {
-				List<Long> countyIdList = JSON.parseArray(resource.getValue(), Long.class);
-				return countyIdList.contains(countyOrgId);
-
-			} else {
-
-				return true;
-			}
-		}
-		return true;
-	}
 	
 	/**
 	 * 设置关系表为装修中

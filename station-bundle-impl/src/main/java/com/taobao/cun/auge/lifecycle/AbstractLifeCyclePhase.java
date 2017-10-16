@@ -63,12 +63,12 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	
 	@Autowired
 	private StationApplySyncBO syncStationApplyBO;
-	public Long addStation(PartnerInstanceDto partnerInstanceDto) {
+	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		stationDto.setState(StationStateEnum.INVALID);
 		stationDto.setStatus(StationStatusEnum.NEW);
 		stationDto.copyOperatorDto(partnerInstanceDto);
-		stationDto.setStationType(StationType.STATION.getType());
+		stationDto.setStationType(stationType);
 		PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
 		if (partnerDto != null) {
 			stationDto.setTaobaoNick(partnerDto.getTaobaoNick());
@@ -183,6 +183,7 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         partnerInstanceDto.setApplierType(partnerInstanceDto.getOperatorType().getCode());
         partnerInstanceDto.setIsCurrent(PartnerInstanceIsCurrentEnum.Y);
         partnerInstanceDto.setVersion(0L);
+        partnerInstanceDto.setMode("v4");
         // 当前partner_station_rel.isCurrent = n, 并添加新的当前partner_station_rel
         Long partnerInstanceId = partnerInstanceBO.addPartnerStationRel(partnerInstanceDto);
         partnerInstanceDto.setId(partnerInstanceId);
