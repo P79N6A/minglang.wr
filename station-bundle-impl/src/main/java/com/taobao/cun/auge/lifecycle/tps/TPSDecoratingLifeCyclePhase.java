@@ -3,6 +3,8 @@ package com.taobao.cun.auge.lifecycle.tps;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +36,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
@@ -64,7 +65,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
-    
+    private static Logger logger = LoggerFactory.getLogger(TPSDecoratingLifeCyclePhase.class);
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -122,6 +123,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
          	store.setName(station.getName());
 			storeWriteService.create(store);
 			} catch (StoreException e) {
+				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
 				throw new AugeSystemException(e);
 			}
 	}

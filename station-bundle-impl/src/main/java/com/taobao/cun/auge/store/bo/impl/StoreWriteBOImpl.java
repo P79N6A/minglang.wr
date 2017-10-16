@@ -102,7 +102,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
-		ResultDO<Long> result = storeCreateService.create(storeDTO, station.getTaobaoUserId(), StoreBizType.CUN_TAO.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO, station.getTaobaoUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
 		}
@@ -110,7 +110,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
             storeDTO.setStoreId(result.getResult());
             // 更新
-            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.CUN_TAO.getValue());
+            ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
             if(updateResult.isFailured()){
             	throw new StoreException(updateResult.getFullErrorMsg());
             }
