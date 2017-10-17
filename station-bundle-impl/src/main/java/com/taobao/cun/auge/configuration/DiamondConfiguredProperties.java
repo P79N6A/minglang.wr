@@ -71,6 +71,9 @@ public class DiamondConfiguredProperties {
     @Value("${store.storeMainUserId}")
     private Long storeMainUserId;
 
+    @Value("${store.cuntaoStoreTag}")
+    private Integer storeTag;
+    
     public String getApply() {
         return apply;
     }
@@ -149,5 +152,13 @@ public class DiamondConfiguredProperties {
 
 	public void setStoreMainUserId(Long storeMainUserId) {
 		this.storeMainUserId = storeMainUserId;
+	}
+
+	public Integer getStoreTag() {
+		return storeTag;
+	}
+
+	public void setStoreTag(Integer storeTag) {
+		this.storeTag = storeTag;
 	}
 }
