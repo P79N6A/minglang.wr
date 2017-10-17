@@ -164,6 +164,10 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	private  String getAddress(Address stationAddress) {
 		 StringBuilder address = new StringBuilder();
 		 if (stationAddress != null) {
+		     String villageDetail = "" ;
+		     if(!StringUtil.isBlank(stationAddress.getVillageDetail())){
+		         villageDetail = stationAddress.getVillageDetail();
+		      }
 			  address.append(stationAddress.getProvinceDetail()).append(ADDRESS_SPLIT)
               .append(StringUtil.isBlank(stationAddress.getCityDetail()) ? " " : stationAddress.getCityDetail())
               .append(ADDRESS_SPLIT)
@@ -171,7 +175,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
               .append(ADDRESS_SPLIT)
               .append(StringUtil.isBlank(stationAddress.getTownDetail()) ? " " : stationAddress.getTownDetail())
               .append(ADDRESS_SPLIT)
-              .append(StringUtil.isBlank(stationAddress.getAddressDetail()) ? " " : stationAddress.getAddressDetail());
+              .append(StringUtil.isBlank(stationAddress.getAddressDetail()) ? " " : villageDetail + stationAddress.getAddressDetail());
 		 }
          return address.toString();
 	}
