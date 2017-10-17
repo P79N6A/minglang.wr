@@ -63,7 +63,7 @@ public class FrozenMoneyAmountConfig {
 			return TPTFrozenMoneyAmount;
 		}
 		if(PartnerInstanceTypeEnum.TPS.getCode().equals(type)){
-			return TPTFrozenMoneyAmount;
+			return TPSFrozenMoneyAmount;
 		}
 		throw new IllegalArgumentException(type+" not defined frozenMoney");
 	}
