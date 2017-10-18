@@ -137,7 +137,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
 				String errorMsg = c2BErrorMessageConverter.convertErrorMsg(cuntaoQualification.getErrorCode(), cuntaoQualification.getErrorMessage());
 				qualification.setErrorMessage(errorMsg);
-				if(StringUtils.isNotEmpty(qualification.getQualiOss())){
+				if(StringUtils.isNotEmpty(qualification.getQualiOss()) && QualificationStatus.VALID==qualification.getStatus()){
 					Result<String> result = scPortalService.getMaskScImage(qualification.getQualiOss());
 					if(result.isSuccessful()){
 						qualification.setQualiImageUrl(result.getData());
