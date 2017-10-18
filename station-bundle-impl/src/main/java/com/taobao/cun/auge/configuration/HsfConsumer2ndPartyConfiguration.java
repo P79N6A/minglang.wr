@@ -32,6 +32,7 @@ import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
+import com.alibaba.pm.sc.portal.api.ScPortalService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
@@ -348,12 +349,19 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 	                .build();
 	}
+	
     @Bean
     public PolicyQueryService policyQueryService(HsfConsumerContext context, @Value("${alipay.insure.version}") String version) {
            return context.hsfConsumerBuilder(PolicyQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     
+    @Bean
+    public ScPortalService scPortalService(HsfConsumerContext context, @Value("${scPortalService.version}") String version) {
+           return context.hsfConsumerBuilder(ScPortalService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+     
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){
     	OpenSearchManager openSearchManager = new OpenSearchManager();

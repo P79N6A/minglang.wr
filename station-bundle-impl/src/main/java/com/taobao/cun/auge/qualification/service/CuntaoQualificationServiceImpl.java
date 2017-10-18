@@ -5,15 +5,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+import com.alibaba.pm.sc.portal.api.ScPortalService;
 import com.github.pagehelper.Page;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
@@ -61,6 +64,10 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	
 	@Autowired
 	private C2BErrorMessageConverter c2BErrorMessageConverter;
+	
+	
+	 @Autowired
+	private ScPortalService  scPortalService;
 	
 	@Override
 	public void syncCuntaoQulificationFromMetaq(Long taobaoUserId, Long qualiId, int eidType) {
@@ -130,6 +137,12 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 				cuntaoQualificationReverseCopier.copy(cuntaoQualification, qualification, null);
 				String errorMsg = c2BErrorMessageConverter.convertErrorMsg(cuntaoQualification.getErrorCode(), cuntaoQualification.getErrorMessage());
 				qualification.setErrorMessage(errorMsg);
+				if(StringUtils.isNotEmpty(qualification.getQualiOss())){
+					Result<String> result = scPortalService.getMaskScImage(qualification.getQualiOss());
+					if(result.isSuccessful()){
+						qualification.setQualiImageUrl(result.getData());
+					}
+				}
 				return qualification;
 			}
 		return null;
