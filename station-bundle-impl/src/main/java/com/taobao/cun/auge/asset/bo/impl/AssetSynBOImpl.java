@@ -508,6 +508,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 						Asset updateAsset = new Asset();
 						    DomainUtils.beforeUpdate(updateAsset, "sys");
 						    updateAsset.setId(a.getId());
+						    updateAsset.setAliNo(a.getAliNo());
 						    updateAsset.setOwnerName(ownerName);
 						    updateAsset.setOwnerWorkno(ownerWorkNo);
 						    if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
