@@ -136,8 +136,6 @@ public class ProcessProcessor {
 				// 合伙人退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-			} else if (isSmyProcess(businessCode)) {
-				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
 				//村点撤点
 			} else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
