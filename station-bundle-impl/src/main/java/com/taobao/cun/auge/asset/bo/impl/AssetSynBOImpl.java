@@ -492,8 +492,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId) {
 		
 		  AssetExample assetExample = new AssetExample();
-	        assetExample.createCriteria().andIsDeletedEqualTo("n")
-	            .andOwnerOrgIdEqualTo(orgId).andStatusIn(AssetStatusEnum.getValidStatusList());
 	        if (assetId != null) {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
 		            .andOwnerOrgIdEqualTo(orgId).andStatusIn(AssetStatusEnum.getValidStatusList()).andIdEqualTo(assetId);
