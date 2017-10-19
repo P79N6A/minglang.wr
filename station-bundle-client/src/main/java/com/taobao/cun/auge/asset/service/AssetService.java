@@ -199,5 +199,14 @@ public interface AssetService {
      * @return
      */
     public Boolean syncAsset(List<Long> cuntaoAssetIds);
+    /**
+     * 
+     * @param orgId
+     * @param ownerWorkNo
+     * @param ownerName
+     * @param assetId
+     * @return
+     */
+    public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId);
 
 }
