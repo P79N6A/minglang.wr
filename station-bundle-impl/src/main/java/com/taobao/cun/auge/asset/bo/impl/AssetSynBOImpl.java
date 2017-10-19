@@ -494,10 +494,10 @@ public class AssetSynBOImpl implements AssetSynBO {
 		  AssetExample assetExample = new AssetExample();
 	        if (assetId != null) {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusIn(AssetStatusEnum.getValidStatusList()).andIdEqualTo(assetId);
+		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdEqualTo(assetId);
 	        }else {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusIn(AssetStatusEnum.getValidStatusList());
+		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
 	        }
 	        List<Asset> assetList = assetMapper.selectByExample(assetExample);
 	        
@@ -527,5 +527,4 @@ public class AssetSynBOImpl implements AssetSynBO {
 	        
 		return Boolean.TRUE;
 	}
-
 }
