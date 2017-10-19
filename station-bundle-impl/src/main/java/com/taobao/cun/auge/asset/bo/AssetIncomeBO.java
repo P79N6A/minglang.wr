@@ -49,7 +49,7 @@ public interface AssetIncomeBO {
 	 * @param aliNo
 	 * @param operator
 	 */
-	public void signAssetByCounty(String aliNo,String operator);
+	public void signAssetByCounty(String aliNo,String operator,Long operatorOrgId);
 	
 	/**
 	 * 村点签收资产
