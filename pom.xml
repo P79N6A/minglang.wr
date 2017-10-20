@@ -680,6 +680,10 @@
 			    		<groupId>javax.validation</groupId>
  						<artifactId>validation-api</artifactId>
 			    	</exclusion>
+			    	<exclusion>
+			    	    <groupId>com.alibaba.external</groupId>  
+      					<artifactId>java.validation.api</artifactId> 
+			    	</exclusion>
 			    </exclusions>
 			</dependency>
 		</dependencies>
