@@ -675,6 +675,12 @@
 			    <groupId>com.taobao.payment</groupId>
 			    <artifactId>pmt-client</artifactId>
 			    <version>1.0.24.2-SNAPSHOT</version>
+			    <exclusions>
+			    	<exclusion>
+			    		<groupId>javax.validation</groupId>
+ 						<artifactId>validation-api</artifactId>
+			    	</exclusion>
+			    </exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
