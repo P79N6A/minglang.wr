@@ -49,6 +49,8 @@ import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
+import com.taobao.payment.account.service.AccountManageService;
+import com.taobao.payment.account.service.query.AccountQueryService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
@@ -361,7 +363,22 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
            return context.hsfConsumerBuilder(ScPortalService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
-     
+    
+    @Bean
+    public AccountManageService accountManageService(HsfConsumerContext context, @Value("${accountManageService.version}") String version) {
+           return context.hsfConsumerBuilder(AccountManageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public AccountQueryService accountQueryService(HsfConsumerContext context, @Value("${accountQueryService.version}") String version) {
+           return context.hsfConsumerBuilder(AccountQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    
+    
+    
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){
     	OpenSearchManager openSearchManager = new OpenSearchManager();
