@@ -80,7 +80,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 	}
 
 	@Override
-	public Result<Boolean> isAlipayAgreement(Long taobaoUserId) {
+	public Result<Boolean> isSignedAlipayAgreement(Long taobaoUserId) {
 		Result<Boolean> result = null;
 		try {
 			AccountQueryResult accountQueryResult = queryAccount(taobaoUserId);

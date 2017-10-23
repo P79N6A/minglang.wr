@@ -21,7 +21,7 @@ public interface AlipayAgreementService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<Boolean> isAlipayAgreement(Long taobaoUserId);
+	Result<Boolean> isSignedAlipayAgreement(Long taobaoUserId);
 	
 	/**
 	 * 签约支付回调
