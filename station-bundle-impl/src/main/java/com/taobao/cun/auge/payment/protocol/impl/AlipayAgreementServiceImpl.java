@@ -10,8 +10,12 @@ import org.springframework.stereotype.Service;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-import com.taobao.cun.auge.payment.protocol.PaymentProtocolService;
+import com.taobao.cun.auge.payment.protocol.AlipayAgreementService;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.payment.account.dto.CreateAccountDTO;
@@ -20,14 +24,15 @@ import com.taobao.payment.account.result.AccountQueryResult;
 import com.taobao.payment.account.result.CreateAccountResult;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
+import com.taobao.payment.common.constants.AccountConstants;
 import com.taobao.payment.common.domain.AccountBO;
 import com.taobao.payment.common.enums.AccountStatusEnum;
 import com.taobao.payment.common.enums.BizTypeEnum;
 import com.taobao.payment.common.enums.ChannelEnum;
 
-@Service("paymentProtocolService")
-@HSFProvider(serviceInterface = PaymentProtocolService.class)
-public class PaymentProtocolServiceImpl implements PaymentProtocolService {
+@Service("alipayAgreementService")
+@HSFProvider(serviceInterface = AlipayAgreementService.class)
+public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 
 	@Autowired
 	private AccountManageService accountManageService;
@@ -37,12 +42,14 @@ public class PaymentProtocolServiceImpl implements PaymentProtocolService {
 	@Autowired
 	private PartnerInstanceQueryService partnerInstanceQueryService;
 	
-	private static Logger logger = LoggerFactory.getLogger(PaymentProtocolServiceImpl.class);
+	private PartnerProtocolRelBO partnerProtocolRelBO;
+	
+	private static Logger logger = LoggerFactory.getLogger(AlipayAgreementServiceImpl.class);
 	
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Override
-	public Result<String> createPaymentProcotolSignUrl(Long taobaoUserId) {
+	public Result<String> createAlipayAgreementSignUrl(Long taobaoUserId) {
 		Result<String> result = null;
 		PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
 		if(partnerInstance == null){
@@ -51,10 +58,12 @@ public class PaymentProtocolServiceImpl implements PaymentProtocolService {
 		}
 		CreateAccountDTO createAccountDTO = new CreateAccountDTO();
 		try {
+			createAccountDTO.setUserId(taobaoUserId);
+			createAccountDTO.setNickName(partnerInstance.getPartnerDto().getTaobaoNick());
 			createAccountDTO.setBizType(BizTypeEnum.CUNTAO);
 			createAccountDTO.setChannel(ChannelEnum.ALIPAY_AGREEMENT);
 			createAccountDTO.setChannelAccount(partnerInstance.getPartnerDto().getAlipayAccount());
-			createAccountDTO.setAttribute("return_url", diamondConfiguredProperties.getPaymentSignReturnUrl());
+			createAccountDTO.setAttribute(AccountConstants.CREATE_ACCOUNT_SUCCESS_REDIRECT_URL, diamondConfiguredProperties.getPaymentSignReturnUrl());
 			CreateAccountResult createAccountResult = accountManageService.createPaymentAccount(taobaoUserId, createAccountDTO);
 			if(createAccountResult.isSuccess()){
 				result =  Result.of(createAccountResult.getSignUpURL());
@@ -71,13 +80,10 @@ public class PaymentProtocolServiceImpl implements PaymentProtocolService {
 	}
 
 	@Override
-	public Result<Boolean> isSignedPaymentProcotol(Long taobaoUserId) {
-		QueryAccountDTO queryAccountDTO = new  QueryAccountDTO();
-		queryAccountDTO.setBizType(BizTypeEnum.CUNTAO);
-		queryAccountDTO.setChannelEnum(ChannelEnum.ALIPAY_AGREEMENT);
+	public Result<Boolean> isAlipayAgreement(Long taobaoUserId) {
 		Result<Boolean> result = null;
 		try {
-			AccountQueryResult accountQueryResult = accountQueryService.queryUserAccount(taobaoUserId, queryAccountDTO);
+			AccountQueryResult accountQueryResult = queryAccount(taobaoUserId);
 			if(accountQueryResult.isSuccess()){
 				List<AccountBO> accounts = accountQueryResult.getAccountBOList();
 				if(accounts!=null && !accounts.isEmpty()){
@@ -93,4 +99,37 @@ public class PaymentProtocolServiceImpl implements PaymentProtocolService {
 		}
 	}
 
+	private AccountQueryResult queryAccount(Long taobaoUserId) throws Exception{
+		QueryAccountDTO queryAccountDTO = new  QueryAccountDTO();
+		queryAccountDTO.setUserId(taobaoUserId);
+		queryAccountDTO.setBizType(BizTypeEnum.CUNTAO);
+		queryAccountDTO.setChannelEnum(ChannelEnum.ALIPAY_AGREEMENT);
+		AccountQueryResult accountQueryResult = accountQueryService.queryUserAccount(taobaoUserId, queryAccountDTO);
+		return accountQueryResult;
+	}
+	
+	
+	public Result<Void> alipayAgreementCallBack(Long taobaoUserId){
+		Result<Void> result = null;
+		try {
+			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			if(partnerInstance == null){
+				result = Result.of(ErrorInfo.of("PARTNER_INSTANCE_NOT_EXITS", null, "合伙人不存在"));
+				return result;
+			}
+			PartnerProtocolRelDto protocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.ALIPAY_AGREEMENT, partnerInstance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			if(protocol != null){
+				return Result.of(true);
+			}
+			partnerProtocolRelBO.signProtocol(taobaoUserId, ProtocolTypeEnum.ALIPAY_AGREEMENT, partnerInstance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+			return Result.of(true);
+		} catch (Exception e) {
+			result = Result.of(ErrorInfo.of("ALIPAY_AGREEMENT_CALLBACK_ERROR", null, "协议支付回调异常"));
+			logger.error("ALIPAY_AGREEMENT_CALLBACK_ERROR",e);
+			return result;
+		}
+	}
+	
+	
+	
 }

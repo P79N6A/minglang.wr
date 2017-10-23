@@ -7,19 +7,26 @@ import com.taobao.cun.auge.common.result.Result;
  * @author zhenhuan.zhangzh
  *
  */
-public interface PaymentProtocolService {
+public interface AlipayAgreementService {
 
 	/**
 	 * 创建支付协议签约URL
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<String> createPaymentProcotolSignUrl(Long taobaoUserId);
+	Result<String> createAlipayAgreementSignUrl(Long taobaoUserId);
 	
 	/**
 	 * 返回用户是否签约接口
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<Boolean> isSignedPaymentProcotol(Long taobaoUserId);
+	Result<Boolean> isAlipayAgreement(Long taobaoUserId);
+	
+	/**
+	 * 签约支付回调
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Result<Void> alipayAgreementCallBack(Long taobaoUserId);
 }
