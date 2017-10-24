@@ -61,7 +61,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			createAccountDTO.setUserId(taobaoUserId);
 			createAccountDTO.setNickName(partnerInstance.getPartnerDto().getTaobaoNick());
 			createAccountDTO.setBizType(BizTypeEnum.CUNTAO);
-			createAccountDTO.setChannel(ChannelEnum.ALIPAY_AGREEMENT);
+			createAccountDTO.setChannel(ChannelEnum.ALIPAY_AGREEMENT_INSTANT);
 			createAccountDTO.setChannelAccount(partnerInstance.getPartnerDto().getAlipayAccount());
 			createAccountDTO.setAttribute(AccountConstants.CREATE_ACCOUNT_SUCCESS_REDIRECT_URL, diamondConfiguredProperties.getPaymentSignReturnUrl());
 			CreateAccountResult createAccountResult = accountManageService.createPaymentAccount(taobaoUserId, createAccountDTO);
@@ -103,7 +103,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 		QueryAccountDTO queryAccountDTO = new  QueryAccountDTO();
 		queryAccountDTO.setUserId(taobaoUserId);
 		queryAccountDTO.setBizType(BizTypeEnum.CUNTAO);
-		queryAccountDTO.setChannelEnum(ChannelEnum.ALIPAY_AGREEMENT);
+		queryAccountDTO.setChannelEnum(ChannelEnum.ALIPAY_AGREEMENT_INSTANT);
 		AccountQueryResult accountQueryResult = accountQueryService.queryUserAccount(taobaoUserId, queryAccountDTO);
 		return accountQueryResult;
 	}
