@@ -30,8 +30,8 @@ import com.taobao.payment.common.enums.AccountStatusEnum;
 import com.taobao.payment.common.enums.BizTypeEnum;
 import com.taobao.payment.common.enums.ChannelEnum;
 
-@Service("alipayAgreementService")
-@HSFProvider(serviceInterface = AlipayAgreementService.class)
+//@Service("alipayAgreementService")
+//@HSFProvider(serviceInterface = AlipayAgreementService.class)
 public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 
 	@Autowired
