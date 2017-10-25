@@ -126,6 +126,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
 				throw new AugeSystemException(e);
 			}
+		 //
 	}
 
 	@Override

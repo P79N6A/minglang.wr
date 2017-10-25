@@ -1460,8 +1460,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);*/
     	ValidateUtils.validateParam(settleSuccessDto);
     	Long instanceId = settleSuccessDto.getInstanceId();
-    	PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-    	PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(rel);
+    	PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
     	ValidateUtils.notNull(partnerInstanceDto);
     	partnerInstanceDto.copyOperatorDto(settleSuccessDto);
     	StateMachineEvent sme = null;
