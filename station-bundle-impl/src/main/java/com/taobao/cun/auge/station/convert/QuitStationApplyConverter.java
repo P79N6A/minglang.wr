@@ -20,7 +20,6 @@ public final class QuitStationApplyConverter {
 		quitStationApply.setIsRemoveBrand(StringUtils.isNotEmpty(quitDto.getRemoveBrandFileName())?"y":"n");
 		quitStationApply.setRemoveBrandUserType(quitDto.getRemoveBrandUserType()!=null?quitDto.getRemoveBrandUserType().getCode():"");
 		quitStationApply.setPartnerInstanceId(instance.getId());
-		quitStationApply.setStationApplyId(instance.getStationApplyId());
 
 		quitStationApply.setRevocationAppFormFileName(quitDto.getRevocationAppFormFileName());
 		quitStationApply.setOtherDescription(quitDto.getOtherDescription());

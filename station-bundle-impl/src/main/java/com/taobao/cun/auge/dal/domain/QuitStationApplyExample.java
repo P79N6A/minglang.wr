@@ -725,66 +725,6 @@ public class QuitStationApplyExample {
             return (Criteria) this;
         }
 
-        public Criteria andStationApplyIdIsNull() {
-            addCriterion("station_apply_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdIsNotNull() {
-            addCriterion("station_apply_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdEqualTo(Long value) {
-            addCriterion("station_apply_id =", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdNotEqualTo(Long value) {
-            addCriterion("station_apply_id <>", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdGreaterThan(Long value) {
-            addCriterion("station_apply_id >", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("station_apply_id >=", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdLessThan(Long value) {
-            addCriterion("station_apply_id <", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdLessThanOrEqualTo(Long value) {
-            addCriterion("station_apply_id <=", value, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdIn(List<Long> values) {
-            addCriterion("station_apply_id in", values, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdNotIn(List<Long> values) {
-            addCriterion("station_apply_id not in", values, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdBetween(Long value1, Long value2) {
-            addCriterion("station_apply_id between", value1, value2, "stationApplyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andStationApplyIdNotBetween(Long value1, Long value2) {
-            addCriterion("station_apply_id not between", value1, value2, "stationApplyId");
-            return (Criteria) this;
-        }
-
         public Criteria andRevocationAppFormFileNameIsNull() {
             addCriterion("revocation_app_form_file_name is null");
             return (Criteria) this;
