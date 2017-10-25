@@ -89,6 +89,11 @@ public class Qualification implements Serializable{
 		
 		private String qualiOss;
 		
+		/**
+		 * 认证图片链接
+		 */
+		private String qualiImageUrl;
+		
 		public String getCompanyName() {
 			return companyName;
 		}
@@ -315,6 +320,14 @@ public class Qualification implements Serializable{
 
 		public void setErrorCode(String errorCode) {
 			this.errorCode = errorCode;
+		}
+
+		public String getQualiImageUrl() {
+			return qualiImageUrl;
+		}
+
+		public void setQualiImageUrl(String qualiImageUrl) {
+			this.qualiImageUrl = qualiImageUrl;
 		}
 
 }

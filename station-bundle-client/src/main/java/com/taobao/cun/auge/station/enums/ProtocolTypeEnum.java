@@ -27,6 +27,8 @@ public class ProtocolTypeEnum implements Serializable {
     public static final ProtocolTypeEnum TRIPARTITE_FIXED = new ProtocolTypeEnum("TRIPARTITE_FIXED", "三方固点");
 
     public static final ProtocolTypeEnum COURSE_SCHEDULE = new ProtocolTypeEnum("COURSE_SCHEDULE", "公益课程协议");
+    
+    public static final ProtocolTypeEnum ALIPAY_AGREEMENT = new ProtocolTypeEnum("ALIPAY_AGREEMENT", "支付宝协议支付");
 
     static {
         mappings.put("SETTLE_PRO", SETTLE_PRO);
@@ -36,6 +38,7 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("TRIPARTITE_FIXED", TRIPARTITE_FIXED);
         mappings.put("COURSE_SCHEDULE", COURSE_SCHEDULE);
         mappings.put("C2B_SETTLE_PRO", C2B_SETTLE_PRO);
+        mappings.put("ALIPAY_AGREEMENT", ALIPAY_AGREEMENT);
     }
 
     public ProtocolTypeEnum(String code, String desc) {

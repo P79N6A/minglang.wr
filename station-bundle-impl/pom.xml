@@ -425,6 +425,10 @@
 				<groupId>com.taobao.search.client.config.helper</groupId>
 				<artifactId>search-client-config-helper</artifactId>
 			</dependency>
+			<dependency>
+			    <groupId>com.taobao.payment</groupId>
+			    <artifactId>pmt-client</artifactId>
+			</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>
