@@ -74,6 +74,9 @@ public class DiamondConfiguredProperties {
     @Value("${store.cuntaoStoreTag}")
     private Integer storeTag;
     
+    @Value("${paymentSignReturnUrl}")
+    private String paymentSignReturnUrl;
+    
     public String getApply() {
         return apply;
     }
@@ -160,5 +163,13 @@ public class DiamondConfiguredProperties {
 
 	public void setStoreTag(Integer storeTag) {
 		this.storeTag = storeTag;
+	}
+
+	public String getPaymentSignReturnUrl() {
+		return paymentSignReturnUrl;
+	}
+
+	public void setPaymentSignReturnUrl(String paymentSignReturnUrl) {
+		this.paymentSignReturnUrl = paymentSignReturnUrl;
 	}
 }

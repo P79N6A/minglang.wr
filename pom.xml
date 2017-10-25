@@ -28,7 +28,7 @@
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>3.5.7</ague.station.client.version>
+		<ague.station.client.version>3.5.8</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.2.10</alibaba-spring-boot.version>
 
 	</properties>
@@ -467,7 +467,7 @@
 			<dependency>
 				<groupId>com.alibaba.pm</groupId>
 				<artifactId>sc.portal.api</artifactId>
-				<version>0.2.9</version>
+				<version>0.3.2</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.cloud</groupId>
@@ -670,6 +670,21 @@
 				<groupId>com.taobao.search.client.config.helper</groupId>
 				<artifactId>search-client-config-helper</artifactId>
 				<version>2.1.0</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.taobao.payment</groupId>
+			    <artifactId>pmt-client</artifactId>
+			    <version>1.0.24.2-SNAPSHOT</version>
+			    <exclusions>
+			    	<exclusion>
+			    		<groupId>javax.validation</groupId>
+ 						<artifactId>validation-api</artifactId>
+			    	</exclusion>
+			    	<exclusion>
+			    	    <groupId>com.alibaba.external</groupId>  
+      					<artifactId>java.validation.api</artifactId> 
+			    	</exclusion>
+			    </exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
