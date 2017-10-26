@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.lang.StringUtils;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
+import com.alibaba.china.member.service.MemberReadService;
+import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.crm.finance.dataobject.BaseDto;
 import com.alibaba.crm.finance.dataobject.RefundShiftApplyType;
 import com.alibaba.crm.finance.dataobject.audit.AuditDto;
@@ -41,6 +44,10 @@ import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
+import com.alibaba.organization.api.orgstruct.enums.OrgStructStatus;
+import com.alibaba.organization.api.orgstruct.param.OrgStructBaseParam;
+import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
+import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
@@ -50,8 +57,10 @@ import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
@@ -94,6 +103,17 @@ public class DataTransferServiceImpl implements DataTransferService{
 	
 	@Value("${partner.peixun.client.key}")
 	private String peixunClientKey;
+	
+	@Autowired
+	OrgStructWriteService orgStructWriteService;
+	@Autowired
+	MemberReadService memberReadService;
+
+	@Value("${cbu.market.parent_code}")
+	private Long parentId;
+	
+	@Autowired
+	private PartnerInstanceBO partnerInstanceBO;
 	
 	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
@@ -398,41 +418,64 @@ public class DataTransferServiceImpl implements DataTransferService{
 //		return returnLong;
 		
 		//考试答卷初始化
-		if(id==null){
-			return null;
+//		if(id==null){
+//			return null;
+//		}
+//		try{
+//		Map<String,Object> param=new HashMap<String,Object>();
+//		param.put("idmin", id);
+//		param.put("idmax", id+500);
+//		param.put("detailId", detailId);
+//		List<ExamInstanceItemDto> instances=partnerCourseRecordMapper.queryExamInstanceItemList(param);
+//		if(instances.size()==0){
+//			return null;
+//		}else{
+//			Map<Long,List<ExamInstanceItemDto>> map=new HashMap<Long,List<ExamInstanceItemDto>>();
+//			for(ExamInstanceItemDto dto:instances){
+//				if(map.get(dto.getInstanceId())==null){
+//					map.put(dto.getInstanceId(), new ArrayList<ExamInstanceItemDto>());
+//				}
+//				map.get(dto.getInstanceId()).add(dto);
+//			}
+//			for(Long temp:map.keySet()){
+//				Map<String,Object> insertMap=new HashMap<String,Object>();
+//				insertMap.put("instanceId", temp);
+//				int count=partnerCourseRecordMapper.queryExamInstanceAnswer(insertMap);
+//				if(count>=1){
+//					continue;
+//				}
+//				String answer=JSON.toJSONString(map.get(temp));
+//				insertMap.put("answer", answer);
+//				partnerCourseRecordMapper.insertExamAnswer(insertMap);
+//			}
+//		}
+//		}catch(Exception e){
+//			return id;
+//		}
+//		return id+500;
+		PartnerInstanceDto partnerInstanceDto=partnerInstanceBO.getPartnerInstanceById(id);
+		String taobaoNick=partnerInstanceDto.getPartnerDto().getTaobaoNick();
+		MemberModel memberModel = memberReadService.findMemberByLoginId(taobaoNick);
+		if(memberModel==null||StringUtils.isEmpty(memberModel.getMemberId())){
+			throw new AugeBusinessException(AugeErrorCodes.MEMBER_ID_GET_ERROR,
+					"memberid获取失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
 		try{
-		Map<String,Object> param=new HashMap<String,Object>();
-		param.put("idmin", id);
-		param.put("idmax", id+500);
-		param.put("detailId", detailId);
-		List<ExamInstanceItemDto> instances=partnerCourseRecordMapper.queryExamInstanceItemList(param);
-		if(instances.size()==0){
-			return null;
-		}else{
-			Map<Long,List<ExamInstanceItemDto>> map=new HashMap<Long,List<ExamInstanceItemDto>>();
-			for(ExamInstanceItemDto dto:instances){
-				if(map.get(dto.getInstanceId())==null){
-					map.put(dto.getInstanceId(), new ArrayList<ExamInstanceItemDto>());
-				}
-				map.get(dto.getInstanceId()).add(dto);
-			}
-			for(Long temp:map.keySet()){
-				Map<String,Object> insertMap=new HashMap<String,Object>();
-				insertMap.put("instanceId", temp);
-				int count=partnerCourseRecordMapper.queryExamInstanceAnswer(insertMap);
-				if(count>=1){
-					continue;
-				}
-				String answer=JSON.toJSONString(map.get(temp));
-				insertMap.put("answer", answer);
-				partnerCourseRecordMapper.insertExamAnswer(insertMap);
-			}
-		}
+			String memberId=memberModel.getMemberId();
+			OrgStructPostParam param = new OrgStructPostParam();
+			param.setCreatorMemberId(memberId);
+			param.setCreatorUserId(partnerInstanceDto.getTaobaoUserId());
+			param.setMemberId(memberId);
+			param.setParentId(parentId);
+			Long structId=orgStructWriteService.postOrgStruct(param);
+			OrgStructBaseParam pa = new OrgStructBaseParam();
+			pa.setOrgStructId(structId);
+			pa.setNewStatus(OrgStructStatus.success.getValue());
+			orgStructWriteService.modifyBaseInfo(pa);
 		}catch(Exception e){
-			return id;
+			throw new AugeBusinessException(AugeErrorCodes.CBU_MARKET_ACCESS_ERROR,
+					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
-		return id+500;
 	}
 	
 }
