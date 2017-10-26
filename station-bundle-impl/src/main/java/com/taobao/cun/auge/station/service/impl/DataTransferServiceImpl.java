@@ -476,6 +476,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 			throw new AugeBusinessException(AugeErrorCodes.CBU_MARKET_ACCESS_ERROR,
 					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
+		return null;
 	}
 	
 }
