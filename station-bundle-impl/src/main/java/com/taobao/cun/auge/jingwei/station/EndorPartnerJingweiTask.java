@@ -166,7 +166,6 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 			private boolean isNeedSync(String state){
 				return PartnerInstanceStateEnum.SERVICING.getCode().equals(state) 
 						|| PartnerInstanceStateEnum.DECORATING.getCode().equals(state)
-						|| PartnerInstanceStateEnum.CLOSED.getCode().equals(state)
 						|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state)
 						|| PartnerInstanceStateEnum.QUITING.getCode().equals(state);
 						
