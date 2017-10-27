@@ -32,6 +32,7 @@ import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
+import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
@@ -380,6 +381,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
    	public HSFSpringConsumerBean orgStructWriteService(@Value("${cbu.org.struct.version}") String version) {
    		return getConsumerBean(OrgStructWriteService.class, HSFGroup.DUBBO, version, 30000);
    	}
+    @Bean(initMethod = "init")
+   	public HSFSpringConsumerBean orgStructReadService(@Value("${cbu.org.struct.version}") String version) {
+   		return getConsumerBean(OrgStructReadService.class, HSFGroup.DUBBO, version, 30000);
+   	}
+    
     
     @Bean(initMethod = "init")
    	public HSFSpringConsumerBean memberReadService(@Value("${cbu.member.service.version}") String version) {

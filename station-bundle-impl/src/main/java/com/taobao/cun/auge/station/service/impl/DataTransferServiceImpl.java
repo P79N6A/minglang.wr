@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +44,11 @@ import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.dto.TrainingTicketDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
 import com.alibaba.organization.api.orgstruct.enums.OrgStructStatus;
+import com.alibaba.organization.api.orgstruct.model.OrgStructModel;
 import com.alibaba.organization.api.orgstruct.param.OrgStructBaseParam;
 import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
+import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
+import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -67,7 +69,6 @@ import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
-import com.taobao.cun.crius.exam.dto.ExamInstanceItemDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
 @Service("dataTransferService")
@@ -111,7 +112,8 @@ public class DataTransferServiceImpl implements DataTransferService{
 
 	@Value("${cbu.market.parent_code}")
 	private Long parentId;
-	
+	@Autowired
+	OrgStructReadService orgStructReadService;
 	@Autowired
 	private PartnerInstanceBO partnerInstanceBO;
 	
@@ -461,7 +463,15 @@ public class DataTransferServiceImpl implements DataTransferService{
 					"memberid获取失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
 		try{
-			String memberId=memberModel.getMemberId();
+			String memberId = memberModel.getMemberId();
+			QueryOrgStructParam queryparam = new QueryOrgStructParam();
+			queryparam.setMemberId(memberModel.getMemberId());
+			queryparam.setStatuses(OrgStructStatus.getEffectiveStatus());
+			List<OrgStructModel> modelList = orgStructReadService
+					.queryOrgStructs(queryparam);
+			if (modelList != null && modelList.size() > 0) {
+				return null;
+			}
 			OrgStructPostParam param = new OrgStructPostParam();
 			param.setCreatorMemberId(memberId);
 			param.setCreatorUserId(partnerInstanceDto.getTaobaoUserId());
