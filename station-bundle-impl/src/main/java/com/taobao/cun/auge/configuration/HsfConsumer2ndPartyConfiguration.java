@@ -24,6 +24,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService
 import com.alibaba.ceres.commonservice.po.PoQueryService;
 import com.alibaba.ceres.service.category.CategoryService;
 import com.alibaba.ceres.service.pr.PrService;
+import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.crm.pacific.facade.refund.ApplyRefundService;
 import com.alibaba.crm.pacific.facade.refund.RefundBaseCommonService;
 import com.alibaba.crm.pacific.facade.refund.RefundForBizAuditService;
@@ -31,6 +32,8 @@ import com.alibaba.ivy.service.course.CourseServiceFacade;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.TrainingTicketServiceFacade;
 import com.alibaba.masterdata.client.service.Employee360Service;
+import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
+import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.portal.api.ScPortalService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
@@ -398,4 +401,19 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	public HSFSpringConsumerBean poQueryService(@Value("${alibaba.ceres.version}") String version) {
 		return getConsumerBean(PoQueryService.class, HSFGroup.HSF, version, 30000);
 	}
+    
+    @Bean(initMethod = "init")
+   	public HSFSpringConsumerBean orgStructWriteService(@Value("${cbu.org.struct.version}") String version) {
+   		return getConsumerBean(OrgStructWriteService.class, HSFGroup.DUBBO, version, 30000);
+   	}
+    @Bean(initMethod = "init")
+   	public HSFSpringConsumerBean orgStructReadService(@Value("${cbu.org.struct.version}") String version) {
+   		return getConsumerBean(OrgStructReadService.class, HSFGroup.DUBBO, version, 30000);
+   	}
+    
+    
+    @Bean(initMethod = "init")
+   	public HSFSpringConsumerBean memberReadService(@Value("${cbu.member.service.version}") String version) {
+   		return getConsumerBean(MemberReadService.class, HSFGroup.DUBBO, version, 30000);
+   	}
 }

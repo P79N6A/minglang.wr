@@ -9,8 +9,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
+import com.alibaba.china.member.service.MemberReadService;
+import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.organization.api.orgstruct.enums.OrgStructStatus;
+import com.alibaba.organization.api.orgstruct.model.OrgStructModel;
+import com.alibaba.organization.api.orgstruct.param.OrgStructBaseParam;
+import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
+import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
+import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
+import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -23,6 +33,7 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
@@ -85,6 +96,16 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	 */
 	@Value("${station.decorate.reflect.url}")
 	private String stationDecorateReflectUrl;
+	
+	@Autowired
+	OrgStructWriteService orgStructWriteService;
+	@Autowired
+	MemberReadService memberReadService;
+
+	@Value("${cbu.market.parent_code}")
+	private Long parentId;
+	@Autowired
+	OrgStructReadService orgStructReadService;
 	
 	@Override
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto){
@@ -337,5 +358,43 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 //						sdDto.getPartnerUserId());
 //			}
 //		}
+	}
+
+	@Override
+	public void openAccessCbuMarket(Long taobaoUserId) {
+		Assert.notNull(taobaoUserId);
+		PartnerStationRel rel=partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
+		Assert.notNull(rel);
+		PartnerInstanceDto partnerInstanceDto=partnerInstanceBO.getPartnerInstanceById(rel.getId());
+		String taobaoNick=partnerInstanceDto.getPartnerDto().getTaobaoNick();
+		MemberModel memberModel = memberReadService.findMemberByLoginId(taobaoNick);
+		if(memberModel==null||StringUtils.isEmpty(memberModel.getMemberId())){
+			throw new AugeBusinessException(AugeErrorCodes.MEMBER_ID_GET_ERROR,
+					"memberid获取失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
+		}
+		try{
+			String memberId = memberModel.getMemberId();
+			QueryOrgStructParam queryparam = new QueryOrgStructParam();
+			queryparam.setMemberId(memberModel.getMemberId());
+			queryparam.setStatuses(OrgStructStatus.getEffectiveStatus());
+			List<OrgStructModel> modelList = orgStructReadService
+					.queryOrgStructs(queryparam);
+			if (modelList != null && modelList.size() > 0) {
+				return;
+			}
+			OrgStructPostParam param = new OrgStructPostParam();
+			param.setCreatorMemberId(memberId);
+			param.setCreatorUserId(partnerInstanceDto.getTaobaoUserId());
+			param.setMemberId(memberId);
+			param.setParentId(parentId);
+			Long structId=orgStructWriteService.postOrgStruct(param);
+			OrgStructBaseParam pa = new OrgStructBaseParam();
+			pa.setOrgStructId(structId);
+			pa.setNewStatus(OrgStructStatus.success.getValue());
+			orgStructWriteService.modifyBaseInfo(pa);
+		}catch(Exception e){
+			throw new AugeBusinessException(AugeErrorCodes.CBU_MARKET_ACCESS_ERROR,
+					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
+		}
 	}
 }
