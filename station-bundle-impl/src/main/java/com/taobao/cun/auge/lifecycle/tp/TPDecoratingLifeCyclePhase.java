@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -27,7 +26,6 @@ import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -36,12 +34,9 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
@@ -56,7 +51,6 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 
 	@Autowired
 	private StationBO stationBO;
-	
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;
     
@@ -68,6 +62,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     
     @Autowired
     private AppResourceService appResourceService;
+    
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -115,7 +110,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		//donothing
+
 	}
 
 	@Override

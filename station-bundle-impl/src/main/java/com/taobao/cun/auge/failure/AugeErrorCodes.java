@@ -97,5 +97,15 @@ public interface AugeErrorCodes {
 	 * 签到失败不报警
 	 */
 	public static final String PEIXUN_SIGN_BUSINESS_CHECK_ERROR_CODE = "B-00018";
+	
+	/**
+	 * 调用1688获取memberid失败 需要报警
+	 */
+	public static final String MEMBER_ID_GET_ERROR = "B-00020";
+	
+	/**
+	 * 1688商城授权失败  需要报警
+	 */
+	public static final String CBU_MARKET_ACCESS_ERROR = "B-00021";
 
 }
