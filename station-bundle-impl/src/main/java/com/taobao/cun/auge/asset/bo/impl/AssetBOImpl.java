@@ -1157,7 +1157,8 @@ public class AssetBOImpl implements AssetBO {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public List<Asset> distributeAsset(AssetDistributeDto distributeDto) {
-        ValidateUtils.validateParam(distributeDto);
+    	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发功能不可用!");
+/*        ValidateUtils.validateParam(distributeDto);
         Objects.requireNonNull(distributeDto.getStationId(), "服务站id不能为空");
         
         if (CollectionUtils.isEmpty(distributeDto.getAssetIdList())) {
@@ -1184,7 +1185,7 @@ public class AssetBOImpl implements AssetBO {
         DomainUtils.beforeUpdate(asset, distributeDto.getOperator());
         asset.setStatus(AssetStatusEnum.DISTRIBUTE.getCode());
         assetMapper.updateByExampleSelective(asset, assetExample);
-        return assetList;
+        return assetList;*/
     }
     
     private  List<String> canDistributeList() {
@@ -1694,7 +1695,8 @@ public class AssetBOImpl implements AssetBO {
 
 	@Override
 	public AssetDetailDto judgeDistribute(AssetDto assetDto) {
-		Objects.requireNonNull(assetDto.getAliNo(), "编号不能为空");
+		throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发功能不可用!");
+		/*Objects.requireNonNull(assetDto.getAliNo(), "编号不能为空");
         Objects.requireNonNull(assetDto.getOperator(), "操作人不能为空");
         Asset asset = getAssetByAliNo(assetDto.getAliNo());
         if (asset == null) {
@@ -1712,7 +1714,7 @@ public class AssetBOImpl implements AssetBO {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,
                 "录入失败,该资产不属于当前组织！" + getPromptInfo(asset));
         }
-        return buildAssetDetail(asset);
+        return buildAssetDetail(asset);*/
 	}
 
     @Override

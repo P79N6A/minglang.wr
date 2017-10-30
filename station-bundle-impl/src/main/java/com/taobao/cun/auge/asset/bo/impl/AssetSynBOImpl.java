@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONObject;
+
+import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -486,5 +488,44 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 		return null;
 	}
-
+	@Override
+	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId) {
+		
+		  AssetExample assetExample = new AssetExample();
+	        if (assetId != null) {
+	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
+		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdEqualTo(assetId);
+	        }else {
+	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
+		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+	        }
+	        List<Asset> assetList = assetMapper.selectByExample(assetExample);
+	        
+	        if (CollectionUtils.isNotEmpty(assetList)) {
+	        	logger.info("sync asset begin,count={}", assetList.size());
+	        	for(Asset a :assetList) {
+	        		   try {
+						Asset updateAsset = new Asset();
+						    DomainUtils.beforeUpdate(updateAsset, "sys");
+						    updateAsset.setId(a.getId());
+						    updateAsset.setAliNo(a.getAliNo());
+						    updateAsset.setOwnerName(ownerName);
+						    updateAsset.setOwnerWorkno(ownerWorkNo);
+						    if (AssetUseAreaTypeEnum.COUNTY.getCode().equals(a.getUseAreaType())) {
+						    	updateAsset.setUseAreaId(a.getOwnerOrgId());
+						    	updateAsset.setUserId(ownerWorkNo);
+						    	updateAsset.setUserName(ownerName);
+						    }
+						    assetMapper.updateByPrimaryKeySelective(updateAsset);
+						    
+						  //集团资产变更责任人
+						 changeOwner(updateAsset);
+					} catch (Exception e) {
+						logger.error("sync asset error,asset="+JSONObject.toJSONString(a),e);
+					}
+	        	}
+	        }
+	        
+		return Boolean.TRUE;
+	}
 }

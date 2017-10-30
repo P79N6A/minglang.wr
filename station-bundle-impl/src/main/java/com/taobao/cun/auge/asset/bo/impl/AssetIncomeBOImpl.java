@@ -3,13 +3,6 @@ package com.taobao.cun.auge.asset.bo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -26,7 +19,6 @@ import com.taobao.cun.auge.asset.enums.AssetIncomeStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutIncomeDetailStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutStatusEnum;
 import com.taobao.cun.auge.asset.enums.AssetRolloutTypeEnum;
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
@@ -43,6 +35,12 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetIncomeBOImpl implements AssetIncomeBO {
@@ -143,7 +141,7 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void signAssetByCounty(String aliNo,String operator) {
+	public void signAssetByCounty(String aliNo,String operator,Long operatorOrgId) {
 
 		ValidateUtils.notNull(aliNo);
 		ValidateUtils.notNull(operator);
@@ -162,6 +160,10 @@ public class AssetIncomeBOImpl implements AssetIncomeBO {
 		AssetIncome ai = getIncomeById(incomeId);
 		if (!ai.getReceiverWorkno().equals(operator)) {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，该资产不属于您，请核对资产信息！如有疑问，请联系资产管理员。");
+		}
+		
+		if (!ai.getReceiverOrgId().equals(operatorOrgId)) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,"入库失败，接收地点与当前组织不匹配，请核对资产信息！如有疑问，请联系资产管理员。");
 		}
 		//签收资产
 		assetRolloutIncomeDetailBO.signAsset(detail.getId(), operator);
