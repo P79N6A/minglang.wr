@@ -35,6 +35,7 @@ import com.alibaba.masterdata.client.service.Employee360Service;
 import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
+import com.alibaba.pm.sc.portal.api.ScPortalService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
@@ -51,6 +52,8 @@ import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
+import com.taobao.payment.account.service.AccountManageService;
+import com.taobao.payment.account.service.query.AccountQueryService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
@@ -351,11 +354,33 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 	                .build();
 	}
+	
     @Bean
     public PolicyQueryService policyQueryService(HsfConsumerContext context, @Value("${alipay.insure.version}") String version) {
            return context.hsfConsumerBuilder(PolicyQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
+    
+    @Bean
+    public ScPortalService scPortalService(HsfConsumerContext context, @Value("${scPortalService.version}") String version) {
+           return context.hsfConsumerBuilder(ScPortalService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public AccountManageService accountManageService(HsfConsumerContext context, @Value("${accountManageService.version}") String version) {
+           return context.hsfConsumerBuilder(AccountManageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public AccountQueryService accountQueryService(HsfConsumerContext context, @Value("${accountQueryService.version}") String version) {
+           return context.hsfConsumerBuilder(AccountQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    
+    
     
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){

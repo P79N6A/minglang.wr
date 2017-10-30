@@ -7,7 +7,6 @@ import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 服务站装修记录 服务接口
@@ -108,4 +107,9 @@ public interface StationDecorateService {
 	 * 判断装修装状态是否允许合伙人退出
 	 */
 	public void judgeDecorateQuit(Long stationId);
+	
+	/**
+	 * 开通1688采购商城权限
+	 */
+	public void openAccessCbuMarket(Long taobaoUserId);
 }

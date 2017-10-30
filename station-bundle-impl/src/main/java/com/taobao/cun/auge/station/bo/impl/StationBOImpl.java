@@ -72,8 +72,7 @@ public class StationBOImpl implements StationBO {
 	}
 
 	@Override
-	public Station getStationByStationNum(String stationNum)
-			 {
+	public Station getStationByStationNum(String stationNum){
 		ValidateUtils.notNull(stationNum);
 		StationExample example = new StationExample();
 		Criteria criteria = example.createCriteria();

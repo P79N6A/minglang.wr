@@ -6,16 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.china.member.service.MemberReadService;
-import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.organization.api.orgstruct.enums.OrgStructStatus;
-import com.alibaba.organization.api.orgstruct.param.OrgStructBaseParam;
-import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
-import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -26,7 +19,6 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -47,7 +39,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 /**
  * 村小二装修中阶段组件
@@ -71,13 +62,6 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     
     @Autowired
     private AppResourceService appResourceService;
-    @Autowired
-    OrgStructWriteService orgStructWriteService;
-    @Autowired
-    MemberReadService memberReadService;
-    
-    @Value("${cbu.market.parent_code}")
-	private Long parentId;
     
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
@@ -126,30 +110,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-		//1688采购商城授权
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		String taobaoNick=partnerInstanceDto.getPartnerDto().getTaobaoNick();
-		MemberModel memberModel = memberReadService.findMemberByLoginId(taobaoNick);
-		if(memberModel==null||StringUtils.isEmpty(memberModel.getMemberId())){
-			throw new AugeBusinessException(AugeErrorCodes.MEMBER_ID_GET_ERROR,
-					"memberid获取失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
-		}
-		try{
-			String memberId=memberModel.getMemberId();
-			OrgStructPostParam param = new OrgStructPostParam();
-			param.setCreatorMemberId(memberId);
-			param.setCreatorUserId(partnerInstanceDto.getTaobaoUserId());
-			param.setMemberId(memberId);
-			param.setParentId(parentId);
-			Long structId=orgStructWriteService.postOrgStruct(param);
-			OrgStructBaseParam pa = new OrgStructBaseParam();
-			pa.setOrgStructId(structId);
-			pa.setNewStatus(OrgStructStatus.success.getValue());
-			orgStructWriteService.modifyBaseInfo(pa);
-		}catch(Exception e){
-			throw new AugeBusinessException(AugeErrorCodes.CBU_MARKET_ACCESS_ERROR,
-					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
-		}
+
 	}
 
 	@Override
