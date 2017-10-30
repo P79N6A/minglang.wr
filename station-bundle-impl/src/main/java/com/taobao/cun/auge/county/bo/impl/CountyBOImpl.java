@@ -297,7 +297,7 @@ public class CountyBOImpl implements CountyBO {
         param.put("fullIdPaths", queryCondition.getFullIdPaths());
         param.put("countyName", queryCondition.getCountyName());
         param.put("leaseProtocolEndTime", queryCondition.getLeaseProtocolEndTime());
-        if(queryCondition.getIsMobile()){
+        if(queryCondition.getIsMobile() != null && queryCondition.getIsMobile()){
         	//移动端组织id
         	dealWithMobileForQuery(queryCondition);
         	param.put("fullIdPaths", queryCondition.getFullIdPaths());

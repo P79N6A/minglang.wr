@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import java.util.Map;
 
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
@@ -272,5 +272,11 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public Map<String, String> validateThreeAsset(ValidateThreeAssetDto vaDto) {
 		return assetBO.validateThreeAsset(vaDto);
+	}
+
+	@Override
+	public Boolean changeOwner(Long orgId, String ownerWorkNo,
+			String ownerName, Long assetId) {
+		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, assetId);
 	}
 }

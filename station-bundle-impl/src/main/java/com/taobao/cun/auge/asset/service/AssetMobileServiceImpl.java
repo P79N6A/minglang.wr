@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -133,7 +135,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     @Transactional
     public AssetDetailDto signAssetByCounty(AssetDto signDto) {
         //签收的时候需要进行签收的资产人比对且在签收成功时需要更新出库单状态
-        assetIncomeBO.signAssetByCounty(signDto.getAliNo(), signDto.getOperator());
+        assetIncomeBO.signAssetByCounty(signDto.getAliNo(), signDto.getOperator(),signDto.getOperatorOrgId());
         return assetBO.signAssetByCounty(signDto);
     }
 
@@ -217,11 +219,12 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public Long distributeAsset(AssetDistributeDto distributeDto) {
-        //1.检验资产为县使用，操作人 和资产责任人一致 更新资产状态为分发中
+    	throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发功能不可用!");
+       /* //1.检验资产为县使用，操作人 和资产责任人一致 更新资产状态为分发中
         List<Asset> assetList = assetBO.distributeAsset(distributeDto);
         //2.创建出库单
         Long rolloutId = assetRolloutBO.distributeAsset(distributeDto, assetList);
-        return rolloutId;
+        return rolloutId;*/
     }
 
     @Override
@@ -317,6 +320,7 @@ public class AssetMobileServiceImpl implements AssetMobileService {
 
 	@Override
 	public AssetDetailDto judgeDistribute(AssetDto assetDto) {
-		 return assetBO.judgeDistribute(assetDto);
+		throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "分发功能不可用!");
+		// return assetBO.judgeDistribute(assetDto);
 	}
 }
