@@ -23,8 +23,11 @@ import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.PartnerService;
+import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.endor.dto.BizUserRole;
 import com.taobao.cun.endor.dto.User;
 import com.taobao.cun.endor.exception.UserNotExistRuntimeException;
@@ -51,6 +54,8 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 	private UserService userService;
 	@Resource
 	private PartnerService partnerService;
+	@Resource
+	private StationQueryService stationQueryService;
 	@Resource
 	private SyncLogBo syncLogBo;
 	@Resource
@@ -88,7 +93,7 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 								continue;
 							}
 							if(!Strings.isNullOrEmpty(state)){
-								if(isNeedSync(state)){
+								if(isNeedSync(stationId, state)){
 									if(modifiedRow.containsKey("type")){//状态和类型同时发生了变更，那么要删除老的，添加新的
 										//删除老的
 										deleteUserRole(taobaoUserId, stationId, type);
@@ -106,7 +111,7 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 							if(modifiedRow.containsKey("type")){
 								//删除老的
 								deleteUserRole(taobaoUserId, stationId, type);
-								if(isNeedSync((String) rowDataMap.get("state"))){
+								if(isNeedSync(stationId, (String) rowDataMap.get("state"))){
 									//添加一个新的
 									addUserRole(taobaoUserId, stationId, (String) modifiedRow.get("type"));
 								}
@@ -117,9 +122,9 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 						for(Map<String, Serializable> rowDataMap : rowDataMaps){
 							syncLog = syncLogBo.addLog(new JingweiMessage("UPDATE", "partner", rowDataMap, null).toSyncLog());
 							String state = (String) rowDataMap.get("state");
-							if(isNeedSync(state)){//无论是怎样插入的（数据订正、创建的...）只要不是QUIT状态，那么都同步到ENDOR
+							Long stationId = (Long)(rowDataMap.get("station_id"));
+							if(isNeedSync(stationId, state)){//无论是怎样插入的（数据订正、创建的...）只要不是QUIT状态，那么都同步到ENDOR
 								Long taobaoUserId = (Long)(rowDataMap.get("taobao_user_id"));
-								Long stationId = (Long)(rowDataMap.get("station_id"));
 								String type = (String) rowDataMap.get("type");
 								addUserRole(taobaoUserId, stationId, type);
 							}
@@ -163,11 +168,22 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 				userRoleService.addBizUserRole("cuntaostore", bizUserRole);
 			}
 			
-			private boolean isNeedSync(String state){
-				return PartnerInstanceStateEnum.SERVICING.getCode().equals(state) 
+			private boolean isNeedSync(Long stationId, String state){
+				StationDto station = stationQueryService.getStation(stationId);
+				if(station == null){
+					return false;
+				}
+				
+				if(StationStatusEnum.CLOSING.equals(station.getStatus()) ||
+						StationStatusEnum.DECORATING.equals(station.getStatus()) ||
+						StationStatusEnum.QUITING.equals(station.getStatus()) || StationStatusEnum.SERVICING.equals(station.getStatus())){
+					return PartnerInstanceStateEnum.SERVICING.getCode().equals(state) 
 						|| PartnerInstanceStateEnum.DECORATING.getCode().equals(state)
 						|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state)
 						|| PartnerInstanceStateEnum.QUITING.getCode().equals(state);
+				}else{
+					return false;
+				}
 						
 			}
 			
