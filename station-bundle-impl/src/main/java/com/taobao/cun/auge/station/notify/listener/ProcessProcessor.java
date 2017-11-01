@@ -136,8 +136,6 @@ public class ProcessProcessor {
 				// 合伙人退出
 			} else if (ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)) {
 				quitApprove(businessId, ProcessApproveResultEnum.valueof(resultCode));
-			} else if (isSmyProcess(businessCode)) {
-				monitorHomepageShowApprove(objectId, businessCode, ProcessApproveResultEnum.valueof(resultCode));
 				//村点撤点
 			} else if (ProcessBusinessEnum.SHUT_DOWN_STATION.getCode().equals(businessCode)) {
 				stationService.auditQuitStation(businessId, ProcessApproveResultEnum.valueof(resultCode));
@@ -328,35 +326,7 @@ public class ProcessProcessor {
 		}
 	}
 
-	private boolean isSmyProcess(String businessCode) {
-		return ProcessBusinessCodeEnum.noticeHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.activityHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.projectHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.trainingHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.activityLargeAreaHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.projectLargeAreaHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.trainingLargeAreaHomePage.name().equals(businessCode)
 
-			|| ProcessBusinessCodeEnum.audioHomePage.name().equals(businessCode)
-
-			|| ProcessBusinessCodeEnum.partnerNoticeHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerNoticeCunmiHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerActivityHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerActivityCunmiHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerActivityLargeAreaHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerActivityLargeAreaCunmiHomePage.name().equals(businessCode)
-
-			|| ProcessBusinessCodeEnum.partnerProjectHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerProjectCunmiHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerProjectLargeAreaHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerProjectLargeAreaCunmiHomePage.name().equals(businessCode)
-
-			|| ProcessBusinessCodeEnum.partnerTrainingHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerTrainingCunmiHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaHomePage.name().equals(businessCode)
-			|| ProcessBusinessCodeEnum.partnerTrainingLargeAreaCunmiHomePage.name().equals(businessCode)
-			|| "noticeHomePageLockScreen".equals(businessCode);
-	}
 
 	/**
 	 * 更新生命周期表，流程审批结果
