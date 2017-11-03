@@ -15,9 +15,6 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.convert.StationConverter;
-import com.taobao.cun.auge.station.dto.StationDto;
-import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
@@ -26,6 +23,8 @@ import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
+import com.taobao.cun.endor.dto.OrgDto;
+import com.taobao.cun.endor.service.OrgService;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
@@ -50,6 +49,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
 	@Resource
 	private DiamondConfiguredProperties diamondConfiguredProperties;
+	@Resource
+	private OrgService orgService;
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -139,6 +140,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setScmCode(scmCode);
 		cuntaoStoreMapper.insert(cuntaoStore);
 		
+		if (!ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())){
+			addOrg(cuntaoStore);
+		}
 		return result.getResult();
 	}
 
@@ -151,5 +155,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return inventoryStoreWriteBo.create(inventoryStoreCreateDto);
 	}
 
-	
+	private void addOrg(CuntaoStore cuntaoStore) {
+		OrgDto org = new OrgDto();
+		org.setBizOrgId(cuntaoStore.getStationId());
+		org.setBizParentId(3L);
+		org.setName(cuntaoStore.getName());
+		org.setCreator(cuntaoStore.getCreator());
+		org.setModifier(cuntaoStore.getCreator());
+		orgService.insert("cuntaostore", org);
+	}
 }
