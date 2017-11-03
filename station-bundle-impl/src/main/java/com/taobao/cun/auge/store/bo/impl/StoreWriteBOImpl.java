@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -12,6 +13,7 @@ import com.google.common.base.Strings;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
+import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -116,36 +118,45 @@ public class StoreWriteBOImpl implements StoreWriteBO {
             if(updateResult.isFailured()){
             	throw new StoreException(updateResult.getFullErrorMsg());
             }
-        }
-		
-		String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId(), areaId);
-		//打标
-		if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
-			userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
-		}
-		
-		//本地存储
-		CuntaoStore cuntaoStore = new CuntaoStore();
-		cuntaoStore.setShareStoreId(result.getResult());
-		cuntaoStore.setModifier(storeCreateDto.getCreator());
-		cuntaoStore.setCreator(storeCreateDto.getCreator());
-		cuntaoStore.setModifier(storeCreateDto.getCreator());
-		cuntaoStore.setName(storeCreateDto.getName());
-		cuntaoStore.setStationId(storeCreateDto.getStationId());
-		cuntaoStore.setGmtCreate(new Date());
-		cuntaoStore.setGmtModified(new Date());
-		cuntaoStore.setIsDeleted("n");
-		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
-		cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
-		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
-		cuntaoStore.setScmCode(scmCode);
-		cuntaoStoreMapper.insert(cuntaoStore);
-		
-		if (!ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())){
+            CuntaoStoreExample example = new CuntaoStoreExample();
+            example.createCriteria().andShareStoreIdEqualTo(result.getResult());
+            List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+            if(cuntaoStores == null || cuntaoStores.isEmpty()){
+            	throw new StoreException("共享门店已经创建，但本地无该门店信息。");
+            }
+            CuntaoStore cuntaoStore = cuntaoStores.get(0);
+            cuntaoStore.setShareStoreId(result.getResult());
+			cuntaoStore.setModifier(storeCreateDto.getCreator());
+			cuntaoStore.setName(storeCreateDto.getName());
+			cuntaoStore.setStationId(storeCreateDto.getStationId());
+			cuntaoStore.setGmtModified(new Date());
+			cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
+			cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+            cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
+            updateOrg(cuntaoStore);
+        }else{
+			String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId(), areaId);
+			//打标
+			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
+				userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
+			}
+			//本地存储
+			CuntaoStore cuntaoStore = new CuntaoStore();
+			cuntaoStore.setShareStoreId(result.getResult());
+			cuntaoStore.setModifier(storeCreateDto.getCreator());
+			cuntaoStore.setCreator(storeCreateDto.getCreator());
+			cuntaoStore.setName(storeCreateDto.getName());
+			cuntaoStore.setStationId(storeCreateDto.getStationId());
+			cuntaoStore.setGmtCreate(new Date());
+			cuntaoStore.setGmtModified(new Date());
+			cuntaoStore.setIsDeleted("n");
+			cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
+			cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
+			cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+			cuntaoStore.setScmCode(scmCode);
+			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
-		}else{
-			updateOrg(cuntaoStore);
-		}
+        }
 		return result.getResult();
 	}
 
