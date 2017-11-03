@@ -176,11 +176,10 @@ public class EndorPartnerJingweiTask implements InitializingBean{
 				
 				if(StationStatusEnum.CLOSING.equals(station.getStatus()) ||
 						StationStatusEnum.DECORATING.equals(station.getStatus()) ||
-						StationStatusEnum.QUITING.equals(station.getStatus()) || StationStatusEnum.SERVICING.equals(station.getStatus())){
+						StationStatusEnum.SERVICING.equals(station.getStatus())){
 					return PartnerInstanceStateEnum.SERVICING.getCode().equals(state) 
 						|| PartnerInstanceStateEnum.DECORATING.getCode().equals(state)
-						|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state)
-						|| PartnerInstanceStateEnum.QUITING.getCode().equals(state);
+						|| PartnerInstanceStateEnum.CLOSING.getCode().equals(state);
 				}else{
 					return false;
 				}
