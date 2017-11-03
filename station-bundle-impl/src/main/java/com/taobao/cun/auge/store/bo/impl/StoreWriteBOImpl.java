@@ -24,6 +24,7 @@ import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.dto.OrgDto;
+import com.taobao.cun.endor.dto.OrgUpdateDto;
 import com.taobao.cun.endor.service.OrgService;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
@@ -142,6 +143,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 		if (!ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())){
 			addOrg(cuntaoStore);
+		}else{
+			updateOrg(cuntaoStore);
 		}
 		return result.getResult();
 	}
@@ -163,5 +166,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		org.setCreator(cuntaoStore.getCreator());
 		org.setModifier(cuntaoStore.getCreator());
 		orgService.insert("cuntaostore", org);
+	}
+	
+	private void updateOrg(CuntaoStore cuntaoStore) {
+		OrgUpdateDto orgDto = new OrgUpdateDto();
+		orgDto.setAppName("cuntaostore");
+		orgDto.setBizOrgId(cuntaoStore.getStationId());
+		orgDto.setBizParentOrgId(3L);
+		orgDto.setDeleted("n");
+		orgDto.setModifier(cuntaoStore.getModifier());
+		orgDto.setName(cuntaoStore.getName());
+		orgService.update(orgDto);
 	}
 }
