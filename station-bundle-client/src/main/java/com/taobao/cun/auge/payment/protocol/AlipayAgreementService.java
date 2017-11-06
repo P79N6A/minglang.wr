@@ -21,7 +21,7 @@ public interface AlipayAgreementService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<Boolean> isSignedAlipayAgreement(Long taobaoUserId);
+	Result<Boolean> isAlipayAgreementSigned(Long taobaoUserId);
 	
 	/**
 	 * 签约支付回调
@@ -37,6 +37,8 @@ public interface AlipayAgreementService {
 	 */
 	Result<Boolean> caeSign(Long taobaoUserId);
 	
+	
+	Result<Boolean> isCaeSigned(Long taobaoUserId);
 	
 	/**
 	 * 查询协议支付签约账号

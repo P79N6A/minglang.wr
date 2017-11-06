@@ -104,7 +104,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 	}
 
 	@Override
-	public Result<Boolean> isSignedAlipayAgreement(Long taobaoUserId) {
+	public Result<Boolean> isAlipayAgreementSigned(Long taobaoUserId) {
 		Result<Boolean> result = null;
 		try {
 			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
@@ -119,7 +119,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 				if(accounts!=null && !accounts.isEmpty()){
 					AccountBO accountBO = accounts.iterator().next();
 					if(AccountStatusEnum.VALID.getCode().equals(accountBO.getAccountStatus().getCode())){
-						addPaymentAgreementInfo(partnerInstance.getId(),taobaoUserId,accountBO.getChannelAccount(),queryAlipayAccount(accountBO.getChannelAccount()));
+						addPaymentAgreementInfo(partnerInstance.getId(),taobaoUserId,queryAlipayAccountNo(accountBO.getChannelAccount()),queryAlipayAccount(accountBO.getChannelAccount()));
 						return Result.of(Boolean.TRUE);
 					}
 				}
@@ -158,7 +158,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 				result = Result.of(ErrorInfo.of("VALID_PAYMENT_ACCOUNT_NOT_EXITS", null, "协议支付签约账号不存在"));
 				return result;
 			}
-			addPaymentAgreementInfo(partnerInstance.getId(),taobaoUserId,account.getChannelAccount(),queryAlipayAccount(account.getChannelAccount()));
+			addPaymentAgreementInfo(partnerInstance.getId(),taobaoUserId,queryAlipayAccountNo(account.getChannelAccount()),queryAlipayAccount(account.getChannelAccount()));
 			return Result.of(true);
 		} catch (Exception e) {
 			result = Result.of(ErrorInfo.of("SYSTEM_ERROR", null, "协议支付回调异常"));
@@ -221,9 +221,37 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 	}
 
 	private String queryAlipayAccount(String accountNo){
-		ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByAccountNo(accountNo);
-		return resultDO.getModule().getOutUser();
+		if(!accountNo.endsWith("0156")){
+			accountNo = accountNo+"0156";
+		}
+		ResultDO<BasePaymentAccountDO> resultDO = queryAlipayAccountByAccountNo(accountNo);
+		if(resultDO.isSuccess() && resultDO.getModule() != null){
+			return resultDO.getModule().getOutUser();
+		}
+		return null;
 	}
+	
+	private String queryAlipayAccountNo(String accountNo){
+		if(!accountNo.endsWith("0156")){
+			accountNo = accountNo+"0156";
+		}
+		ResultDO<BasePaymentAccountDO> resultDO = queryAlipayAccountByAccountNo(accountNo);
+		if(resultDO.isSuccess() && resultDO.getModule() != null){
+			return resultDO.getModule().getAccountNo();
+		}
+		return null;
+	}
+	
+	
+	private ResultDO<BasePaymentAccountDO> queryAlipayAccountByAccountNo(String accountNo){
+		if(!accountNo.endsWith("0156")){
+			accountNo = accountNo+"0156";
+		}
+		ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByAccountNo(accountNo);
+		return resultDO;
+	}
+	
+	
 	@Override
 	public Result<Boolean> caeSign(Long taobaoUserId) {
 		Result<Boolean> result = null;
@@ -241,8 +269,8 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 				logger.info("caeSign:VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS ["+taobaoUserId+"]");
 				result = Result.of(ErrorInfo.of("VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "有效协议支付账户不存在"));
 			}
-			ResultDO<BasePaymentAccountDO> resultDO = uicPaymentAccountReadServiceClient.getAccountByAccountNo(account.getChannelAccount());
-			if(resultDO.isSuccess()){
+			ResultDO<BasePaymentAccountDO> resultDO = queryAlipayAccountByAccountNo(account.getChannelAccount());
+			if(resultDO.isSuccess() && resultDO.getModule()!= null){
 				Long userId = resultDO.getModule().getUserId();
 				AccountCaeSignDto signDto = new AccountCaeSignDto();
 				signDto.setUserId(userId);
@@ -276,13 +304,46 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			if(accountBO != null){
 				return Result.of(accountBO.getChannelAccount());
 			}
+			result = Result.of(ErrorInfo.of("VALID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "签约协议不存在"));
+			return result;
 		} catch (Exception e) {
 			result = Result.of(ErrorInfo.of("SYSTEM_ERROR", null, "查询支付协议异常"));
 			logger.error("queryPaymentAgreementAccount",e);
 			return result;
 		}
-		result = Result.of(ErrorInfo.of("VALID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "签约协议不存在"));
-		return result;
+	}
+
+	@Override
+	public Result<Boolean> isCaeSigned(Long taobaoUserId) {
+		AccountCaeSignDto signQueryDto = new AccountCaeSignDto();
+		Result<Boolean> result = null;
+		AccountBO account;
+		try {
+			account = queryValidAccount(taobaoUserId);
+			if(account == null){
+				logger.info("caeSign:VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS ["+taobaoUserId+"]");
+				result = Result.of(ErrorInfo.of("VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "有效协议支付账户不存在"));
+			}
+			ResultDO<BasePaymentAccountDO> resultDO = queryAlipayAccountByAccountNo(account.getChannelAccount());
+			if(resultDO.isSuccess()&& resultDO.getModule() !=null){
+				Long userId = resultDO.getModule().getUserId();
+				signQueryDto.setUserId(userId);
+				ResultModel<Boolean> resultModel = sellerSignService.queryAlipayUserSignInfo(signQueryDto);
+				if(resultModel.isSuccess()){
+					result = Result.of(resultModel.getResult());
+					return result;
+				}
+				result = Result.of(ErrorInfo.of("QUERY_ALIPAY_USE_ACCOUNT_ERROR", null, "查询支付宝账号异常"));
+				return result;
+			}
+			result = Result.of(ErrorInfo.of("VALID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "签约协议不存在"));
+			return result;
+			
+		} catch (Exception e) {
+			result = Result.of(ErrorInfo.of("SYSTEM_ERROR", null, "查询CAE协议异常"));
+			logger.error("isCaeSignedERROR",e);
+			return result;
+		}
 	}
 	
 	
