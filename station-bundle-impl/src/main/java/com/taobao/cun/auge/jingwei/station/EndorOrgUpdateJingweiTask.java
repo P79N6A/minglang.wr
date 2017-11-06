@@ -54,7 +54,7 @@ public class EndorOrgUpdateJingweiTask implements InitializingBean{
 						}else{
 							version = String.valueOf(Integer.parseInt(version) + 1);
 						}
-						Diamond.publishSingle("ENDOR_APP_ORG_" + appInfo.getAppName(), "ENDOR_ORG_GROUP", version);
+						Diamond.publishSingle("ENDOR_APP_ORG_" + appInfo.getAppName(), "ENDOR_ORG_GROUP", "endor", version);
 					} catch (IOException e) {
 						throw new RetryLaterException(e);
 					}
