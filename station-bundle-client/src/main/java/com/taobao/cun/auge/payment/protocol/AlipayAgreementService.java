@@ -28,5 +28,20 @@ public interface AlipayAgreementService {
 	 * @param taobaoUserId
 	 * @return
 	 */
-	Result<Void> alipayAgreementCallBack(Long taobaoUserId);
+	Result<Boolean> alipayAgreementCallBack(Long taobaoUserId);
+	
+	/**
+	 * cae签约
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Result<Boolean> caeSign(Long taobaoUserId);
+	
+	
+	/**
+	 * 查询协议支付签约账号
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Result<String>  queryPaymentAgreementAccount(Long taobaoUserId);
 }
