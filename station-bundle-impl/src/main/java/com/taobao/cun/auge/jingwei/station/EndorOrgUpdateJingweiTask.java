@@ -62,6 +62,7 @@ public class EndorOrgUpdateJingweiTask implements InitializingBean{
 				return Result.ACK_AND_NEXT;
 			}
 		});
+		client.startTask();
 	}
 	
 }
