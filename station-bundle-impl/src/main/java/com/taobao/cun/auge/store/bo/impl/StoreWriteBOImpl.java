@@ -211,7 +211,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		//storeDTO.addTag(3300);
 		switch (store.getStoreCategory()){
 		   case FMCG:
 			   storeDTO.addTag(3303);
@@ -223,7 +222,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			   storeDTO.addTag(3302);
 			   break;   
 		}
-	    ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
-		return updateResult.isSuccess();
+        ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+	    if(!updateResult.isSuccess()){
+	    	System.out.println(updateResult.getErrorMsg());
+	    }
+	    return updateResult.isSuccess();
 	}
 }
