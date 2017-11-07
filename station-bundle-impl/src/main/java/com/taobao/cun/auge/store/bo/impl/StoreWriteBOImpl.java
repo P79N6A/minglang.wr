@@ -21,6 +21,7 @@ import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
@@ -207,10 +208,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	@Override
-	public Boolean updateStoreTag(Long shareStoreId) {
+	public Boolean updateStoreTag(Long shareStoreId,StoreCategory category) {
 		StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
+		storeDTO.addTag(3300);
 		switch (store.getStoreCategory()){
 		   case FMCG:
 			   storeDTO.addTag(3303);
