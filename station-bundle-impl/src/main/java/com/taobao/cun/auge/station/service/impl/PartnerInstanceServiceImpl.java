@@ -1908,6 +1908,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerInstanceDto.copyOperatorDto(upgradeDto);
         partnerInstanceDto.setApplierId(upgradeDto.getOperator());
         partnerInstanceDto.setApplierType(upgradeDto.getOperatorType().getCode());
+        partnerInstanceDto.setMode("v4");
         // 新的合伙人实例
         Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
 

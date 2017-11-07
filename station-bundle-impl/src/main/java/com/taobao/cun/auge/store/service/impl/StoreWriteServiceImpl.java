@@ -18,4 +18,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteBO.create(dto);
 	}
 
+	@Override
+	public Boolean updateStoreTag(Long shareStoreId) {
+		return storeWriteBO.updateStoreTag(shareStoreId);
+	}
+
 }

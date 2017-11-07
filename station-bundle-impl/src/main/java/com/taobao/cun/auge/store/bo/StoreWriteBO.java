@@ -5,4 +5,6 @@ import com.taobao.cun.auge.store.service.StoreException;
 
 public interface StoreWriteBO {
 	Long create(StoreCreateDto dto) throws StoreException;
+	
+	Boolean updateStoreTag(Long shareStoreId);
 }
