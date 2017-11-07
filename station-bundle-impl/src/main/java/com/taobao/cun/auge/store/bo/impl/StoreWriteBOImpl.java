@@ -209,11 +209,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean updateStoreTag(Long shareStoreId,StoreCategory category) {
-		StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
+		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
 		storeDTO.addTag(3300);
-		switch (store.getStoreCategory()){
+		switch (category){
 		   case FMCG:
 			   storeDTO.addTag(3303);
 			   break;
