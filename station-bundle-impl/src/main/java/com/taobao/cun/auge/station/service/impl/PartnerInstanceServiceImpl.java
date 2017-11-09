@@ -2162,4 +2162,16 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 	}
+	
+	
+	@Override
+	public void closeApprove(Long instanceId) {
+		try {
+			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
