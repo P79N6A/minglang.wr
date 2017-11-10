@@ -86,7 +86,6 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			if(!"none".equals(diamondConfiguredProperties.getAlipayProvideHostName())){
 				createAccountDTO.setAttribute(AccountConstants.PROVIDER_HOSTNAME, diamondConfiguredProperties.getAlipayProvideHostName());
 			}
-			//createAccountDTO.setAttribute(AccountConstants.EXTERNAL_SIGN_NO, "zzh_test_002");
 			createAccountDTO.setAttribute(AccountConstants.CREATE_ACCOUNT_SUCCESS_REDIRECT_URL, diamondConfiguredProperties.getPaymentSignReturnUrl());
 			CreateAccountResult createAccountResult = accountManageService.createPaymentAccount(taobaoUserId, createAccountDTO);
 			if(createAccountResult.isSuccess()){
@@ -282,7 +281,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 					return result;
 				}else{
 					result = Result.of(ErrorInfo.of("CAE_SIGN_FAIL", resultModel.getMsgCode(), "CAE代扣签约失败"));
-					logger.info("CAE_SIGN_FAIL:"+resultModel.getMessage());
+					logger.info("CAE_SIGN_FAIL userID["+userId+"],aliAccountNo["+resultDO.getModule().getAccountNo()+"],aliOutUser["+resultDO.getModule().getOutUser()+"]"+resultModel.getMessage());
 					return result;
 				}
 			}
@@ -328,6 +327,8 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			if(resultDO.isSuccess()&& resultDO.getModule() !=null){
 				Long userId = resultDO.getModule().getUserId();
 				signQueryDto.setUserId(userId);
+				//signQueryDto.setAlipayEmail( resultDO.getModule().getOutUser());
+				//signQueryDto.setAlipayId( resultDO.getModule().getAccountNo());
 				ResultModel<Boolean> resultModel = sellerSignService.queryAlipayUserSignInfo(signQueryDto);
 				if(resultModel.isSuccess()){
 					result = Result.of(resultModel.getResult());
