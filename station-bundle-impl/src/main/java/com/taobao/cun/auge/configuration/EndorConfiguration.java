@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
+import com.taobao.cun.endor.service.AppService;
 import com.taobao.cun.endor.service.OrgService;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
@@ -32,6 +33,13 @@ public class EndorConfiguration {
 			HsfConsumerContext context,
 			@Value("${hsf.consumer.version.endor}") String version){
 		return context.hsfConsumerBuilder(UserService.class, HSFGroup.HSF.getName(), version).build();
+	}
+	
+	@Bean
+	public AppService appService(
+			HsfConsumerContext context,
+			@Value("${hsf.consumer.version.endor}") String version){
+		return context.hsfConsumerBuilder(AppService.class, HSFGroup.HSF.getName(), version).build();
 	}
 	
 }
