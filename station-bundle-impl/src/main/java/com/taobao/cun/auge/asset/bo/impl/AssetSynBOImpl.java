@@ -586,7 +586,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			PubResourceDto pDto = resDto.getResult();
 			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
 				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
-					logger.error("sign asset error,asset="+a.getAliNo()+" pDto="+JSONObject.toJSONString(pDto));
+					logger.error("sign.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+"statusDetail="+pDto.getStatusDetail());
 				}
 			}
 		}else {
