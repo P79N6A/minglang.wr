@@ -7,17 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.it.asset.api.CuntaoApiService;
+import com.alibaba.it.asset.api.dto.AssetApiResultDO;
+import com.alibaba.it.asset.api.dto.PubResourceDto;
 
-import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -47,6 +41,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
@@ -54,7 +49,6 @@ import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
@@ -69,6 +63,15 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
+import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.ecs.xhtml.s;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetSynBOImpl implements AssetSynBO {
@@ -116,6 +119,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
     @Autowired
     private CuntaoUserService cuntaoUserService;
+    
+    @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
+    private CuntaoApiService cuntaoApiService;
     
     public final static Map<String,String> catMap = new HashMap<String,String>();
     static {
@@ -528,4 +534,65 @@ public class AssetSynBOImpl implements AssetSynBO {
 	        
 		return Boolean.TRUE;
 	}
+	@Override
+	public void checkAssetInfo(List<Long> assetIds) {
+		List<Asset> assetList = new ArrayList<Asset>();
+		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo(AssetStatusEnum.SIGN.getCode())//.andCreatorNotEqualTo(CREATOR)
+					.andIdIn(assetIds);
+			assetList = assetMapper.selectByExample(cuntaoAssetExample);
+			batchCheck(assetList);
+		} else {
+			AssetExample cuntaoAssetExample = new AssetExample();
+			List<String> vaildStatus = Arrays.asList(AssetStatusEnum.SIGN.getCode());
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
+					.andStatusIn(vaildStatus);
+			cuntaoAssetExample.setOrderByClause("id asc");
+			int count = assetMapper.countByExample(cuntaoAssetExample);
+			logger.info("check asset begin,count={}", count);
+			int pageSize = 200;
+			int pageNum = 1;
+			int total = count % pageSize == 0 ? count / pageSize : count
+					/ pageSize + 1;
+			while (pageNum <= total) {
+				logger.info("check-asset-doing {},{}",pageNum,pageSize);
+				PageHelper.startPage(pageNum, pageSize);
+				assetList = assetMapper
+						.selectByExample(cuntaoAssetExample);
+				batchCheck(assetList);
+				pageNum++;
+			}
+		}
+		logger.info("check-asset-finish");
+	}
+	
+	private void batchCheck(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				logger.info("check asset,asset={}", JSONObject.toJSONString(ca));
+				try {
+					check(ca);
+				} catch (Exception e) {
+					logger.error("check asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	
+	private void check(Asset  a) {
+		AssetApiResultDO<PubResourceDto>  resDto = cuntaoApiService.getAssetInfo(a.getAliNo(), "36821");
+		if (resDto.isSuccess()) {
+			PubResourceDto pDto = resDto.getResult();
+			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
+				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
+					logger.error("sign asset error,asset="+a.getAliNo()+" pDto="+JSONObject.toJSONString(pDto));
+				}
+			}
+		}else {
+			logger.error("getAssetInfo error,asset="+JSONObject.toJSONString(a),resDto.getErrorMsg());
+		}
+	}
+	
+	
 }

@@ -279,4 +279,9 @@ public class AssetServiceImpl implements AssetService{
 			String ownerName, Long assetId) {
 		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, assetId);
 	}
+
+	@Override
+	public void checkAssetInfo(List<Long> assetIds) {
+		assetSynBO.checkAssetInfo(assetIds);
+	}
 }

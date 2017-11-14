@@ -209,4 +209,9 @@ public interface AssetService {
      */
     public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId);
 
+    /**
+     * 和集团资产状态对比
+     * @param assetIds
+     */
+    public void checkAssetInfo(List<Long> assetIds);
 }
