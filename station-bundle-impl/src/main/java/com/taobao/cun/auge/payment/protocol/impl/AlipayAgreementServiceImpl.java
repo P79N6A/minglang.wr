@@ -276,7 +276,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			//	signDto.setAlipayEmail( resultDO.getModule().getOutUser());
 			//	signDto.setAlipayId( resultDO.getModule().getAccountNo());
 				ResultModel<Boolean>  resultModel = sellerSignService.alipayUserSign(signDto);
-				if(resultModel.isSuccess()){
+				if(resultModel.isSuccess()&&resultModel.getResult()){
 					result = Result.of(true);
 					result.setModule(resultModel.getResult());
 					addCaeAgreementInfo(partnerInstance.getId(),taobaoUserId,resultDO.getModule().getAccountNo(),resultDO.getModule().getOutUser());
