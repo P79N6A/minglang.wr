@@ -273,10 +273,12 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 				Long userId = resultDO.getModule().getUserId();
 				AccountCaeSignDto signDto = new AccountCaeSignDto();
 				signDto.setUserId(userId);
+			//	signDto.setAlipayEmail( resultDO.getModule().getOutUser());
+			//	signDto.setAlipayId( resultDO.getModule().getAccountNo());
 				ResultModel<Boolean>  resultModel = sellerSignService.alipayUserSign(signDto);
 				if(resultModel.isSuccess()){
 					result = Result.of(true);
-					result.setModule(Boolean.TRUE);
+					result.setModule(resultModel.getResult());
 					addCaeAgreementInfo(partnerInstance.getId(),taobaoUserId,resultDO.getModule().getAccountNo(),resultDO.getModule().getOutUser());
 					return result;
 				}else{
@@ -327,7 +329,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			if(resultDO.isSuccess()&& resultDO.getModule() !=null){
 				Long userId = resultDO.getModule().getUserId();
 				signQueryDto.setUserId(userId);
-				//signQueryDto.setAlipayEmail( resultDO.getModule().getOutUser());
+				//.setAlipayEmail( resultDO.getModule().getOutUser());
 				//signQueryDto.setAlipayId( resultDO.getModule().getAccountNo());
 				ResultModel<Boolean> resultModel = sellerSignService.queryAlipayUserSignInfo(signQueryDto);
 				if(resultModel.isSuccess()){
