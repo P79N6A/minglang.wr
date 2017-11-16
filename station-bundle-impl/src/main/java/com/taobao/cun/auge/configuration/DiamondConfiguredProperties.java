@@ -77,6 +77,10 @@ public class DiamondConfiguredProperties {
     @Value("${paymentSignReturnUrl}")
     private String paymentSignReturnUrl;
     
+    
+    @Value("${alipay.provideHostName:none}")
+    private String alipayProvideHostName;
+    
     public String getApply() {
         return apply;
     }
@@ -171,5 +175,13 @@ public class DiamondConfiguredProperties {
 
 	public void setPaymentSignReturnUrl(String paymentSignReturnUrl) {
 		this.paymentSignReturnUrl = paymentSignReturnUrl;
+	}
+
+	public String getAlipayProvideHostName() {
+		return alipayProvideHostName;
+	}
+
+	public void setAlipayProvideHostName(String alipayProvideHostName) {
+		this.alipayProvideHostName = alipayProvideHostName;
 	}
 }

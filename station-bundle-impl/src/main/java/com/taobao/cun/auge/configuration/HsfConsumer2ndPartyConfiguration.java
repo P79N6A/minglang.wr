@@ -50,6 +50,7 @@ import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
+import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
@@ -376,6 +377,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     @Bean
     public AccountQueryService accountQueryService(HsfConsumerContext context, @Value("${accountQueryService.version}") String version) {
            return context.hsfConsumerBuilder(AccountQueryService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public SellerSignService sellerSignService(HsfConsumerContext context, @Value("${sellerSignService.version}") String version) {
+           return context.hsfConsumerBuilder(SellerSignService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     
