@@ -684,7 +684,7 @@
             <dependency>
 			    <groupId>com.taobao.payment</groupId>
 			    <artifactId>pmt-client</artifactId>
-			    <version>1.0.24.2-SNAPSHOT</version>
+			    <version>1.0.28.1</version>
 			    <exclusions>
 			    	<exclusion>
 			    		<groupId>javax.validation</groupId>
