@@ -19,10 +19,13 @@ public class AccountMoneyTypeEnum implements Serializable {
 
     //保证金
     public static final AccountMoneyTypeEnum PARTNER_BOND = new AccountMoneyTypeEnum("PARTNER_BOND", "保证金");
-
+    public static final AccountMoneyTypeEnum PAYMENT_AGREEMENT = new AccountMoneyTypeEnum("PAYMENT_AGREEMENT", "支付协议");
+    public static final AccountMoneyTypeEnum CAE_AGREEMENT = new AccountMoneyTypeEnum("CAE_AGREEMENT", "CAE代扣协议");
 
     static {
         mappings.put("PARTNER_BOND", PARTNER_BOND);
+        mappings.put("PAYMENT_AGREEMENT", PAYMENT_AGREEMENT);
+        mappings.put("CAE_AGREEMENT", CAE_AGREEMENT);
     }
 
     public AccountMoneyTypeEnum(String code, String desc) {
