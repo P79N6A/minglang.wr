@@ -281,7 +281,7 @@ public class AssetServiceImpl implements AssetService{
 	}
 
 	@Override
-	public void checkAssetInfo(List<Long> assetIds) {
-		assetSynBO.checkAssetInfo(assetIds);
+	public void checkAssetInfo(List<Long> assetIds,String status) {
+		assetSynBO.checkAssetInfo(assetIds,status);
 	}
 }

@@ -535,17 +535,17 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return Boolean.TRUE;
 	}
 	@Override
-	public void checkAssetInfo(List<Long> assetIds) {
+	public void checkAssetInfo(List<Long> assetIds,String status) {
 		List<Asset> assetList = new ArrayList<Asset>();
 		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
 			AssetExample cuntaoAssetExample = new AssetExample();
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo(AssetStatusEnum.SIGN.getCode())//.andCreatorNotEqualTo(CREATOR)
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo(status)//.andCreatorNotEqualTo(CREATOR)
 					.andIdIn(assetIds);
 			assetList = assetMapper.selectByExample(cuntaoAssetExample);
 			batchCheck(assetList);
 		} else {
 			AssetExample cuntaoAssetExample = new AssetExample();
-			List<String> vaildStatus = Arrays.asList(AssetStatusEnum.SIGN.getCode());
+			List<String> vaildStatus = Arrays.asList(status);
 			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
 					.andStatusIn(vaildStatus);
 			cuntaoAssetExample.setOrderByClause("id asc");
@@ -586,6 +586,12 @@ public class AssetSynBOImpl implements AssetSynBO {
 			PubResourceDto pDto = resDto.getResult();
 			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
 				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
+					logger.error("sign.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}
+			
+			if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
+				if (!(pDto.getStatus().equals("Scrapped"))) {
 					logger.error("sign.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
 				}
 			}
