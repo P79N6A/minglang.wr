@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.store.service;
 
+import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 
 /**
@@ -14,4 +15,6 @@ public interface StoreWriteService {
 	 * @return 返回店铺ID
 	 */
 	Long create(StoreCreateDto dto) throws StoreException;
+	
+	Boolean updateStoreTag(Long shareStoreId,StoreCategory category);
 }
