@@ -18,9 +18,12 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
@@ -54,6 +57,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Resource
 	private OrgService orgService;
+	@Resource
+	private StoreReadBO storeReadBO;
+	
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -102,6 +108,17 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		if(!Strings.isNullOrEmpty(station.getLng())){
 			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+		}
+		switch (storeCreateDto.getStoreCategory()){
+		   case FMCG:
+			   storeDTO.addTag(3303);
+			   break;
+		   case MOMBABY:
+			   storeDTO.addTag(3301);
+			   break;
+		   case ELEC:
+			   storeDTO.addTag(3302);
+			   break;   
 		}
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
@@ -188,5 +205,29 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		orgDto.setModifier(cuntaoStore.getModifier());
 		orgDto.setName(cuntaoStore.getName());
 		orgService.update(orgDto);
+	}
+
+	@Override
+	public Boolean updateStoreTag(Long shareStoreId,StoreCategory category) {
+		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setStoreId(shareStoreId);
+		storeDTO.addTag(3300);
+		switch (category){
+		   case FMCG:
+			   storeDTO.addTag(3303);
+			   break;
+		   case MOMBABY:
+			   storeDTO.addTag(3301);
+			   break;
+		   case ELEC:
+			   storeDTO.addTag(3302);
+			   break;   
+		}
+        ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+	    if(!updateResult.isSuccess()){
+	    	System.out.println(updateResult.getErrorMsg());
+	    }
+	    return updateResult.isSuccess();
 	}
 }

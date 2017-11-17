@@ -1908,6 +1908,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerInstanceDto.copyOperatorDto(upgradeDto);
         partnerInstanceDto.setApplierId(upgradeDto.getOperator());
         partnerInstanceDto.setApplierType(upgradeDto.getOperatorType().getCode());
+        partnerInstanceDto.setMode("v4");
         // 新的合伙人实例
         Long nextInstanceId = addPartnerInstanceRel(partnerInstanceDto, stationId, partnerId);
 
@@ -2155,6 +2156,18 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public void quitApprove(Long instanceId) {
 		try {
 			processProcessor.quitApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@Override
+	public void closeApprove(Long instanceId) {
+		try {
+			processProcessor.closeApprove(instanceId, ProcessApproveResultEnum.APPROVE_PASS);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

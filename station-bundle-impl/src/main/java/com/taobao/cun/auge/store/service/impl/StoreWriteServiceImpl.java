@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.service.impl;
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
+import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
@@ -16,6 +17,11 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Override
 	public Long create(StoreCreateDto dto) throws StoreException{
 		return storeWriteBO.create(dto);
+	}
+
+	@Override
+	public Boolean updateStoreTag(Long shareStoreId,StoreCategory category) {
+		return storeWriteBO.updateStoreTag(shareStoreId,category);
 	}
 
 }

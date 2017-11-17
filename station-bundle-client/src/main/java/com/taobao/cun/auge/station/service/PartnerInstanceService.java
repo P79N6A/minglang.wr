@@ -307,4 +307,6 @@ public interface PartnerInstanceService {
 	
 	public void quitApprove(Long instanceId);
 	
+	void closeApprove(Long instanceId);
+	
 }
