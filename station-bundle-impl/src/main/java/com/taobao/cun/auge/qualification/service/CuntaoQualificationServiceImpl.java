@@ -12,11 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.alibaba.pm.sc.portal.api.ScPortalService;
+import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
+import com.alibaba.pm.sc.portal.api.quali.dto.lifecycle.QLCAbnormalRequest;
+import com.alibaba.pm.sc.portal.api.quali.dto.lifecycle.QLCAbnormalResult;
 import com.github.pagehelper.Page;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
@@ -24,7 +28,6 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -34,7 +37,6 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationService")
@@ -65,7 +67,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	@Autowired
 	private C2BErrorMessageConverter c2BErrorMessageConverter;
 	
-	
+	@Autowired
+	private QLCAccessService qlcAccessService;
 	 @Autowired
 	private ScPortalService  scPortalService;
 	
@@ -235,4 +238,27 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	}
 
 
+	 public void syncInvalidQuali(int pageSize){
+		 CuntaoQualificationPageCondition condition = new CuntaoQualificationPageCondition();
+		 condition.setPageSize(pageSize);
+		 condition.setPageNum(1);
+		 condition.setStatusList(Lists.newArrayList(QualificationStatus.VALID));
+		 Page<CuntaoQualification> qualis = cuntaoQualificationBO.queryQualificationsByCondition(condition);	
+		 for(CuntaoQualification quali: qualis){
+			 Qualification havanaQuali = this.queryHavanaC2BQualification(quali.getTaobaoUserId());
+			 if(havanaQuali != null && !QualificationStatus.VALID.equals(havanaQuali.getStatus())){
+				 logger.info("invalid quali taobaoUserId["+quali.getTaobaoUserId()+"] havanaStatus["+havanaQuali.getStatus()+"]");
+				 QLCAbnormalRequest request = new QLCAbnormalRequest();
+				 request.setUserId(quali.getTaobaoUserId());
+				 request.setBizType(QLCAbnormalRequest.BIZ_CERT);
+				 Result<QLCAbnormalResult> result = qlcAccessService.getQLCAbnormal(request);
+				 if(result.isSuccessful()){
+					 logger.info("QLCAbnormalResult:"+JSON.toJSONString(result.getData().getAbnormalDetails()));
+				 }else{
+					 logger.info("query qlcAccessService error:"+result.getMessage()+" "+result.getCode());
+				 }
+			 }
+		 }
+		 
+	 }
 }
