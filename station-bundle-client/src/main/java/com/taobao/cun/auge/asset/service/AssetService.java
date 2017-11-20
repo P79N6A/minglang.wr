@@ -207,7 +207,7 @@ public interface AssetService {
      * @param assetId
      * @return
      */
-    public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId);
+    public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,List<Long> assetId);
 
     /**
      * 和集团资产状态对比

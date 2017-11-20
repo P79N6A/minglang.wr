@@ -495,12 +495,12 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return null;
 	}
 	@Override
-	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId) {
+	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,List<Long> assetId) {
 		
 		  AssetExample assetExample = new AssetExample();
 	        if (assetId != null) {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdEqualTo(assetId);
+		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdIn(assetId);
 	        }else {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
 		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
@@ -592,7 +592,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			
 			if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
 				if (!(pDto.getStatus().equals("Scrapped"))) {
-					logger.error("sign.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+					logger.error("scrap.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
 				}
 			}
 		}else {
