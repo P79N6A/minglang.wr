@@ -94,6 +94,22 @@ public class Qualification implements Serializable{
 		 */
 		private String qualiImageUrl;
 		
+		private String updateFlag;
+		
+		private String updateDesc;
+		
+		private String updateReason;
+		
+		private String updateDate;
+		
+		public String getUpdateDate() {
+			return updateDate;
+		}
+
+		public void setUpdateDate(String updateDate) {
+			this.updateDate = updateDate;
+		}
+		
 		public String getUpdateFlag() {
 			return updateFlag;
 		}
@@ -118,12 +134,6 @@ public class Qualification implements Serializable{
 			this.updateReason = updateReason;
 		}
 
-		private String updateFlag;
-		
-		private String updateDesc;
-		
-		private String updateReason;
-		
 		public String getCompanyName() {
 			return companyName;
 		}
