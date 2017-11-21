@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.ali.com.google.common.collect.HashBiMap;
 
+
 @ConfigurationProperties(prefix = "c2berror")
 public class ErrorMessageProperties {
 	

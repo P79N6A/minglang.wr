@@ -27,4 +27,8 @@ public interface CuntaoQualificationService {
     Qualification queryHavanaC2BQualification(Long taobaoUserId);
 
     public void syncInvalidQuali(int pageSize);
+    
+    public void invalidQualification(Long taobaoUserId);
+    
+    public void recoverQualification(Long taobaoUserId);
 }

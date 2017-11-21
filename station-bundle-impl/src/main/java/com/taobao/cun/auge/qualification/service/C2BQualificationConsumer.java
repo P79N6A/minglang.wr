@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
 import com.alibaba.pm.sc.portal.api.quali.dto.lifecycle.BizCertLifeCycleMessage;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -38,6 +39,11 @@ public class C2BQualificationConsumer {
 	
 	private MetaPushConsumer consumer;
 	 
+	@Autowired
+	private QualiAbnormalMessageProperties qualiAbnormalMessageProperties;
+	
+	@Autowired
+	private QLCAccessService qlcAccessService;
 	
 	@PostConstruct
 	public void init() throws MQClientException {
@@ -72,13 +78,22 @@ public class C2BQualificationConsumer {
 				logger.error("qualiLifeCycleMessage is null!");
 				return;
 			}
-			if(BizCertLifeCycleMessage.LIFE_CYCLE_ABNORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())
-			||BizCertLifeCycleMessage.LIFE_CYCLE_NEW.equals(qualiLifeCycleMessage.getLifeCycleType())
+			//认证通过，认证审核失败，认证更新重新同步
+			if(BizCertLifeCycleMessage.LIFE_CYCLE_NEW.equals(qualiLifeCycleMessage.getLifeCycleType())
 			||BizCertLifeCycleMessage.LIFE_CYCLE_AUDIT_FAIL.equals(qualiLifeCycleMessage.getLifeCycleType())
 			||BizCertLifeCycleMessage.LIFE_CYCLE_UPDATE.equals(qualiLifeCycleMessage.getLifeCycleType())
-			||BizCertLifeCycleMessage.LIFE_CYCLE_NORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())){
+			){
 				cuntaoQualificationService.syncCuntaoQulification(qualiLifeCycleMessage.getUserId());
 			}
+			//认证恢复正常恢复认证
+			else if(BizCertLifeCycleMessage.LIFE_CYCLE_NORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())){
+				cuntaoQualificationService.recoverQualification(qualiLifeCycleMessage.getUserId());
+				//删除变更失效原因
+			}//认证异常失效认证
+			else if(BizCertLifeCycleMessage.LIFE_CYCLE_ABNORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())){
+				cuntaoQualificationService.invalidQualification(qualiLifeCycleMessage.getUserId());
+			}
+			
      }
     
     

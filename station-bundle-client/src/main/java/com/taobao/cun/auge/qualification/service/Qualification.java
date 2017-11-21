@@ -94,6 +94,36 @@ public class Qualification implements Serializable{
 		 */
 		private String qualiImageUrl;
 		
+		public String getUpdateFlag() {
+			return updateFlag;
+		}
+
+		public void setUpdateFlag(String updateFlag) {
+			this.updateFlag = updateFlag;
+		}
+
+		public String getUpdateDesc() {
+			return updateDesc;
+		}
+
+		public void setUpdateDesc(String updateDesc) {
+			this.updateDesc = updateDesc;
+		}
+
+		public String getUpdateReason() {
+			return updateReason;
+		}
+
+		public void setUpdateReason(String updateReason) {
+			this.updateReason = updateReason;
+		}
+
+		private String updateFlag;
+		
+		private String updateDesc;
+		
+		private String updateReason;
+		
 		public String getCompanyName() {
 			return companyName;
 		}
