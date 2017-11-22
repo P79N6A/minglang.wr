@@ -248,7 +248,20 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 
 	@Override
 	public void submitHavanaQualification(Long taobaoUserId) {
-		cuntaoQualificationBO.submitHavanaQualification(taobaoUserId);
+		Qualification qualification = this.querEnterpriceC2BQualification(taobaoUserId);
+		if(qualification.getStatus() == 1){
+			CuntaoQualification cuntaoQualification = cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+			if(cuntaoQualification == null) {
+				return;
+			}
+			//最后提交时间大于我们这里的最后修改时间的话就更新
+			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
+			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
+			cuntaoQualificationBO.updateQualification(cuntaoQualification);
+		}else{
+			cuntaoQualificationBO.submitHavanaQualification(taobaoUserId);
+		}
+		
 	}
 
 
