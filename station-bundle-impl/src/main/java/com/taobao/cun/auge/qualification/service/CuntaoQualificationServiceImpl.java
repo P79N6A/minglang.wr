@@ -301,7 +301,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		 for(CuntaoQualification quali: qualis){
 			 Qualification havanaQuali = this.queryHavanaC2BQualification(quali.getTaobaoUserId());
 			 if(havanaQuali != null && !QualificationStatus.VALID.equals(havanaQuali.getStatus())){
-				 if(havanaQuali.getStatus() == QualificationStatus.IN_VALID){
+				 if(havanaQuali.getStatus() == QualificationStatus.IN_VALID && !"1".equals(quali.getUpdateFlag())){
 					 logger.info("invalid quali taobaoUserId["+quali.getTaobaoUserId()+"] havanaStatus["+havanaQuali.getStatus()+"]");
 					 QLCAbnormalRequest request = new QLCAbnormalRequest();
 					 request.setUserId(quali.getTaobaoUserId());
