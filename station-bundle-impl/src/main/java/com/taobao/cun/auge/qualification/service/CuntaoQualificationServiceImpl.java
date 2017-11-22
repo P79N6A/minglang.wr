@@ -254,7 +254,6 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}
 		Qualification qualification = this.querEnterpriceC2BQualification(taobaoUserId);
 		if(qualification.getStatus() == 1 && cuntaoQualification.getStatus() == -2){
-			//最后提交时间大于我们这里的最后修改时间的话就更新
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
