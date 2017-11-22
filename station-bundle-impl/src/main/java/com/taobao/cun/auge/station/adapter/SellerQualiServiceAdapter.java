@@ -34,4 +34,6 @@ public interface SellerQualiServiceAdapter {
 	public Optional<List<UserQualiRecord>> getUserQuailRecords(Long taobaoUserId);
 	
 	public void insertQualiRecord(CuntaoQualification qualification);
+	
+	public Optional<EntityQuali> queryEnterpriceQualiById(Long havanaId);
 }

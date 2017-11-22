@@ -181,6 +181,14 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			return qulification;
 	}
 	
+	@Override
+    public Qualification querEnterpriceC2BQualification(Long taobaoUserId){
+			Optional<EntityQuali> entityQuail = sellerQualiServiceAdapter.queryEnterpriceQualiById(taobaoUserId);
+			//Optional<UserQualiRecord> auditRecords = Optional.ofNullable(sellerQualiServiceAdapter.lastAuditQualiStatus(taobaoUserId));
+			Qualification qulification = qualificationBuilder.build(taobaoUserId,entityQuail,Optional.empty());
+			return qulification;
+	}
+	
 	
 	@Override
 	public Qualification queryC2BQualification(Long taobaoUserId) {
