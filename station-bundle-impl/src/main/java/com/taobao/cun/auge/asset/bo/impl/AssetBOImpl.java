@@ -732,7 +732,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
         Objects.requireNonNull(signDto.getOperatorOrgId(), "组织不能为空");
         AssetExample assetExample = new AssetExample();
-        assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo());
+        assetExample.createCriteria().andIsDeletedEqualTo("n").andAliNoEqualTo(signDto.getAliNo()).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
         Asset asset = ResultUtils.selectOne(assetMapper.selectByExample(assetExample));
         if (asset == null) {
             throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "回收失败" + AssetBO.NO_EXIT_ASSET);
