@@ -254,7 +254,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}
 		//有部分支付宝认证的数据不在集团，所以如果提交错误的话调用支付宝企业认证查询
 		Qualification qualification = this.querEnterpriceC2BQualification(taobaoUserId);
-		if(qualification.getStatus() == 1 && cuntaoQualification.getStatus() == -2){
+		if(qualification.getStatus() !=null && qualification.getStatus() == 1 && cuntaoQualification.getStatus() == -2){
 			cuntaoQualificationCopier.copy(qualification, cuntaoQualification, null);
 			DomainUtils.beforeUpdate(cuntaoQualification, "system"); 
 			cuntaoQualificationBO.updateQualification(cuntaoQualification);
