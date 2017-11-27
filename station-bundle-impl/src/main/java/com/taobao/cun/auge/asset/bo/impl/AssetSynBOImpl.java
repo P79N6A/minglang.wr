@@ -12,6 +12,8 @@ import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.PubResourceDto;
 
+import com.taobao.cun.auge.station.dto.StationDto;
+
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -597,6 +599,12 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}else {
 			logger.error("getAssetInfo error,asset="+JSONObject.toJSONString(a),resDto.getErrorMsg());
 		}
+	}
+	
+	@Override
+	public void tempUpdateStation(StationDto sDto) {
+		stationBO.updateStation(sDto);
+		
 	}
 	
 	

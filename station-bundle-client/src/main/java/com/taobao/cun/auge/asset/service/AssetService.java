@@ -3,6 +3,8 @@ package com.taobao.cun.auge.asset.service;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.dto.StationDto;
+
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
@@ -214,4 +216,10 @@ public interface AssetService {
      * @param assetIds
      */
     public void checkAssetInfo(List<Long> assetIds,String status);
+    
+    /**
+     * 临时使用
+     * @param sDto
+     */
+    public void tempUpdateStation(StationDto sDto);
 }

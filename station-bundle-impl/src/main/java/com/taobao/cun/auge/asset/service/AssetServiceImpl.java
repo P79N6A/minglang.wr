@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.station.dto.StationDto;
+
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
@@ -283,5 +285,11 @@ public class AssetServiceImpl implements AssetService{
 	@Override
 	public void checkAssetInfo(List<Long> assetIds,String status) {
 		assetSynBO.checkAssetInfo(assetIds,status);
+	}
+
+	@Override
+	public void tempUpdateStation(StationDto sDto) {
+		assetSynBO.tempUpdateStation(sDto);
+		
 	}
 }
