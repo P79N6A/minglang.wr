@@ -218,7 +218,7 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 		Integer value = tairCache.get(key1);
 		if (value != null
 				&& value > StationSearchConfig.SEARCH_VISIT_MONTH_TIME) {
-			logger.error("visit more than "
+			logger.info("visit more than "
 					+ StationSearchConfig.SEARCH_VISIT_MONTH_TIME);
 			result.setSuccess(false);
 			result.setMsgCode("FAIL_BIZ_BUSSINESS_ERROR");
@@ -229,7 +229,7 @@ public class StationOpenSearchServiceImpl implements StationOpenSearchService {
 
 		Integer dayValue = tairCache.get(key);
 		if (value != null && value > StationSearchConfig.SEARCH_VISIT_DAY_TIME) {
-			logger.error("visit more than "
+			logger.info("visit more than "
 					+ StationSearchConfig.SEARCH_VISIT_DAY_TIME);
 			result.setSuccess(false);
 			result.setMsgCode("FAIL_BIZ_BUSSINESS_ERROR");
