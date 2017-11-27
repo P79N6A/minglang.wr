@@ -536,17 +536,16 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return Boolean.TRUE;
 	}
 	@Override
-	public void checkAssetInfo(List<Long> assetIds,String status) {
+	public void checkAssetInfo(List<Long> assetIds,List<String> vaildStatus) {
 		List<Asset> assetList = new ArrayList<Asset>();
 		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
 			AssetExample cuntaoAssetExample = new AssetExample();
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo(status)//.andCreatorNotEqualTo(CREATOR)
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
 					.andIdIn(assetIds);
 			assetList = assetMapper.selectByExample(cuntaoAssetExample);
 			batchCheck(assetList);
 		} else {
 			AssetExample cuntaoAssetExample = new AssetExample();
-			List<String> vaildStatus = Arrays.asList(status);
 			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
 					.andStatusIn(vaildStatus);
 			cuntaoAssetExample.setOrderByClause("id asc");
@@ -594,6 +593,15 @@ public class AssetSynBOImpl implements AssetSynBO {
 			if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
 				if (!(pDto.getStatus().equals("Scrapped"))) {
 					logger.error("scrap.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}
+			
+			if (a.getStatus().equals(AssetStatusEnum.USE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.PEND.getCode())||
+					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+				if (!(pDto.getStatus().equals("Using"))) {
+					logger.error("use.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
 				}
 			}
 		}else {
