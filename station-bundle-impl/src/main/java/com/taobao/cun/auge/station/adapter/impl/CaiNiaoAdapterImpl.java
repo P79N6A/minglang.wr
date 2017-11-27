@@ -189,13 +189,13 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			AddStationParam addStationParam = buildAddStationParam(station);
 			Result<Long> res = stationWriteService.addStation(addStationParam,station.getParentId(), station.getTaobaoUserId(),Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(addStationParam));
 			}
 			// 设置菜鸟站点id;
 			station.setStationId(res.getData());
 			boolean userRel = this.addStationUserRel(station,CaiNiaoStationDto.USERTYPE_TP);
 			if (!userRel) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"addStationUserRel.res is false");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"addStationUserRel.res is false"+"|"+JSONObject.toJSONString(addStationParam));
 			}
 			return res.getData();
 	}
