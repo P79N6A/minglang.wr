@@ -324,6 +324,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			if(account == null){
 				logger.info("caeSign:VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS ["+taobaoUserId+"]");
 				result = Result.of(ErrorInfo.of("VAID_PAYMENT_AGREEMENT_ACCOUNT_NOT_EXISTS", null, "有效协议支付账户不存在"));
+				return result;
 			}
 			ResultDO<BasePaymentAccountDO> resultDO = queryAlipayAccountByAccountNo(account.getChannelAccount());
 			if(resultDO.isSuccess()&& resultDO.getModule() !=null){
