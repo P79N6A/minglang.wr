@@ -203,8 +203,7 @@ public class ProcessProcessor {
 			|| ProcessBusinessEnum.stationQuitRecord.getCode().equals(businessCode)
 			|| ProcessBusinessEnum.TPV_QUIT.getCode().equals(businessCode)) {
 			try {
-				PartnerStationRel partnerStationRel = partnerInstanceBO
-					.getPartnerStationRelByStationApplyId(businessId);
+				PartnerInstanceDto partnerStationRel = partnerInstanceBO.getPartnerInstanceById(businessId);
 
 				CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
 
