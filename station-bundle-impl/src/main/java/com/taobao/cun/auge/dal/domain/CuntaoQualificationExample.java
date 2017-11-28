@@ -2234,6 +2234,286 @@ public class CuntaoQualificationExample {
             addCriterion("error_code not between", value1, value2, "errorCode");
             return (Criteria) this;
         }
+
+        public Criteria andUpdateFlagIsNull() {
+            addCriterion("update_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagIsNotNull() {
+            addCriterion("update_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagEqualTo(String value) {
+            addCriterion("update_flag =", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotEqualTo(String value) {
+            addCriterion("update_flag <>", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagGreaterThan(String value) {
+            addCriterion("update_flag >", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagGreaterThanOrEqualTo(String value) {
+            addCriterion("update_flag >=", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagLessThan(String value) {
+            addCriterion("update_flag <", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagLessThanOrEqualTo(String value) {
+            addCriterion("update_flag <=", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagLike(String value) {
+            addCriterion("update_flag like", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotLike(String value) {
+            addCriterion("update_flag not like", value, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagIn(List<String> values) {
+            addCriterion("update_flag in", values, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotIn(List<String> values) {
+            addCriterion("update_flag not in", values, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagBetween(String value1, String value2) {
+            addCriterion("update_flag between", value1, value2, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateFlagNotBetween(String value1, String value2) {
+            addCriterion("update_flag not between", value1, value2, "updateFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonIsNull() {
+            addCriterion("update_reason is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonIsNotNull() {
+            addCriterion("update_reason is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonEqualTo(String value) {
+            addCriterion("update_reason =", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonNotEqualTo(String value) {
+            addCriterion("update_reason <>", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonGreaterThan(String value) {
+            addCriterion("update_reason >", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonGreaterThanOrEqualTo(String value) {
+            addCriterion("update_reason >=", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonLessThan(String value) {
+            addCriterion("update_reason <", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonLessThanOrEqualTo(String value) {
+            addCriterion("update_reason <=", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonLike(String value) {
+            addCriterion("update_reason like", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonNotLike(String value) {
+            addCriterion("update_reason not like", value, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonIn(List<String> values) {
+            addCriterion("update_reason in", values, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonNotIn(List<String> values) {
+            addCriterion("update_reason not in", values, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonBetween(String value1, String value2) {
+            addCriterion("update_reason between", value1, value2, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateReasonNotBetween(String value1, String value2) {
+            addCriterion("update_reason not between", value1, value2, "updateReason");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescIsNull() {
+            addCriterion("update_desc is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescIsNotNull() {
+            addCriterion("update_desc is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescEqualTo(String value) {
+            addCriterion("update_desc =", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescNotEqualTo(String value) {
+            addCriterion("update_desc <>", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescGreaterThan(String value) {
+            addCriterion("update_desc >", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescGreaterThanOrEqualTo(String value) {
+            addCriterion("update_desc >=", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescLessThan(String value) {
+            addCriterion("update_desc <", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescLessThanOrEqualTo(String value) {
+            addCriterion("update_desc <=", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescLike(String value) {
+            addCriterion("update_desc like", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescNotLike(String value) {
+            addCriterion("update_desc not like", value, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescIn(List<String> values) {
+            addCriterion("update_desc in", values, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescNotIn(List<String> values) {
+            addCriterion("update_desc not in", values, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescBetween(String value1, String value2) {
+            addCriterion("update_desc between", value1, value2, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDescNotBetween(String value1, String value2) {
+            addCriterion("update_desc not between", value1, value2, "updateDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIsNull() {
+            addCriterion("update_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIsNotNull() {
+            addCriterion("update_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateEqualTo(String value) {
+            addCriterion("update_date =", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotEqualTo(String value) {
+            addCriterion("update_date <>", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateGreaterThan(String value) {
+            addCriterion("update_date >", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateGreaterThanOrEqualTo(String value) {
+            addCriterion("update_date >=", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateLessThan(String value) {
+            addCriterion("update_date <", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateLessThanOrEqualTo(String value) {
+            addCriterion("update_date <=", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateLike(String value) {
+            addCriterion("update_date like", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotLike(String value) {
+            addCriterion("update_date not like", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIn(List<String> values) {
+            addCriterion("update_date in", values, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotIn(List<String> values) {
+            addCriterion("update_date not in", values, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateBetween(String value1, String value2) {
+            addCriterion("update_date between", value1, value2, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotBetween(String value1, String value2) {
+            addCriterion("update_date not between", value1, value2, "updateDate");
+            return (Criteria) this;
+        }
     }
 
     /**
