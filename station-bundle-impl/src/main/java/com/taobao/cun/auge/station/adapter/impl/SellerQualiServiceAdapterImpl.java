@@ -144,6 +144,16 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	}
 	
 	@Override
+	public Optional<EntityQuali> queryEnterpriceQualiById(Long havanaId) {
+		Result<EntityQuali> result = sellerQualiService.getEnterpriseQualiByHid(havanaId,QualiStatus.VALID);
+		if(!result.isSuccessful()){
+			logger.error("getEntityQualiByQid error havanaId["+havanaId+"]:"+result.toString());
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询企业资质异常");
+		}
+		return Optional.ofNullable(result.getData()); 
+	}
+	
+	@Override
 	public Optional<ListHidByEidAndEidTypeResponse> queryHavanaIdByQuali(String eid, int eidType){
 		Result<ListHidByEidAndEidTypeResponse> result = sellerQualiService.listHidByEidAndEidType(eid, eidType);
 		if(!result.isSuccessful()){

@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.qualification.service;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 
@@ -10,20 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
-import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
-import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
-import com.alibaba.pm.sc.api.quali.dto.QualiLifeCycleMessage;
+import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
+import com.alibaba.pm.sc.portal.api.quali.dto.lifecycle.BizCertLifeCycleMessage;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.message.MessageExt;
-import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.metaq.client.MetaPushConsumer;
 import com.taobao.tc.domain.util.JavaSerializationUtil;
-import com.taobao.vipserver.client.utils.CollectionUtils;
 
 @Component
 public class C2BQualificationConsumer {
@@ -45,12 +40,15 @@ public class C2BQualificationConsumer {
 	private MetaPushConsumer consumer;
 	 
 	@Autowired
-	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
+	private QualiAbnormalMessageProperties qualiAbnormalMessageProperties;
+	
+	@Autowired
+	private QLCAccessService qlcAccessService;
 	
 	@PostConstruct
 	public void init() throws MQClientException {
 		 consumer = new MetaPushConsumer(qualiCID);
-	        consumer.subscribe(qualiTopic, "*");
+	        consumer.subscribe(qualiTopic, "BIZ_CERT");
 	 
 	        consumer.registerMessageListener(new MessageListenerConcurrently() {
 	            @Override
@@ -69,18 +67,34 @@ public class C2BQualificationConsumer {
 
     public void receiveMessage(MessageExt ext) {
 			logger.info("recevieQualiMessage:["+ext.toString()+"]");
-			QualiLifeCycleMessage qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
-			EntityQuali quali = sellerQualiServiceAdapter.queryQualiById(qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()).get();
-			Assert.notNull(quali);
-			//不是营业执照的消息不处理
-			if(!Objects.equals(quali.getQuali().getQualiInfoId(), qualiInfoId)){
+			BizCertLifeCycleMessage qualiLifeCycleMessage = null;
+			try {
+				 qualiLifeCycleMessage = JavaSerializationUtil.deSerialize(ext.getBody());
+			} catch (Exception e) {
+				logger.error("deSerialize qualiLifeCycleMessage error!",e);
 				return;
 			}
-			ListHidByEidAndEidTypeResponse listHidByEidAndEidTypeResponse = sellerQualiServiceAdapter.queryHavanaIdByQuali(quali.getEid(), quali.getEidType()).get();
-			Assert.notNull(listHidByEidAndEidTypeResponse);
-			if(CollectionUtils.isNotEmpty(listHidByEidAndEidTypeResponse.getQualiBindHids())){
-				listHidByEidAndEidTypeResponse.getQualiBindHids().stream().forEach(taobaoUserId -> cuntaoQualificationService.syncCuntaoQulificationFromMetaq(taobaoUserId,qualiLifeCycleMessage.getQid(),qualiLifeCycleMessage.getEidType()));
+			if(qualiLifeCycleMessage == null){
+				logger.error("qualiLifeCycleMessage is null!");
+				return;
 			}
+			//认证通过，认证审核失败，认证更新重新同步
+			if(BizCertLifeCycleMessage.LIFE_CYCLE_NEW.equals(qualiLifeCycleMessage.getLifeCycleType())
+			||BizCertLifeCycleMessage.LIFE_CYCLE_AUDIT_FAIL.equals(qualiLifeCycleMessage.getLifeCycleType())
+			||BizCertLifeCycleMessage.LIFE_CYCLE_UPDATE.equals(qualiLifeCycleMessage.getLifeCycleType())
+			){
+				cuntaoQualificationService.syncCuntaoQulification(qualiLifeCycleMessage.getUserId());
+			}
+			//认证恢复正常恢复认证
+			else if(BizCertLifeCycleMessage.LIFE_CYCLE_NORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())){
+				cuntaoQualificationService.recoverQualification(qualiLifeCycleMessage.getUserId());
+				//删除变更失效原因
+			}//认证异常失效认证
+			else if(BizCertLifeCycleMessage.LIFE_CYCLE_ABNORMAL.equals(qualiLifeCycleMessage.getLifeCycleType())){
+				cuntaoQualificationService.invalidQualification(qualiLifeCycleMessage.getUserId());
+			}
+			
      }
+    
     
 }
