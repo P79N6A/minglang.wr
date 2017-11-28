@@ -12,7 +12,7 @@ public interface AssetSynBO {
 	public Boolean changeOwner(Long orgId,String ownerWorkNo,String ownerName,List<Long> assetId);
 	
 	
-	public void checkAssetInfo(List<Long> cuntaoAssetIds, List<String> vaildStatus);
+	public void checkAssetInfo(List<Long> cuntaoAssetIds);
 	
 	
 	public void tempUpdateStation(StationDto sDto);

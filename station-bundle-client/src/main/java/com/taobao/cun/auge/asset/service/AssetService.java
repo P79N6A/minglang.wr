@@ -214,7 +214,7 @@ public interface AssetService {
      * 和集团资产状态对比
      * @param assetIds
      */
-    public void checkAssetInfo(List<Long> assetIds,List<String> vaildStatus);
+    public void checkAssetInfo(List<Long> assetIds);
     
     /**
      * 临时使用

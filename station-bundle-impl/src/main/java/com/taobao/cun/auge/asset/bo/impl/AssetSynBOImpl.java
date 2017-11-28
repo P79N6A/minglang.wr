@@ -536,8 +536,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return Boolean.TRUE;
 	}
 	@Override
-	public void checkAssetInfo(List<Long> assetIds,List<String> vaildStatus) {
+	public void checkAssetInfo(List<Long> assetIds) {
 		List<Asset> assetList = new ArrayList<Asset>();
+		List<String> vaildStatus = AssetStatusEnum.getValidStatusList();
 		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
 			AssetExample cuntaoAssetExample = new AssetExample();
 			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
@@ -599,9 +600,10 @@ public class AssetSynBOImpl implements AssetSynBO {
 			if (a.getStatus().equals(AssetStatusEnum.USE.getCode())||
 					a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
 					a.getStatus().equals(AssetStatusEnum.PEND.getCode())||
-					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())||
+					a.getStatus().equals(AssetStatusEnum.SCRAPING.getCode())) {
 				if (!(pDto.getStatus().equals("Using"))) {
-					logger.error("use.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+					logger.error("use.check.asset.error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
 				}
 			}
 		}else {
