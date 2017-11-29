@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -1038,7 +1039,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setWorkId(asset.getUserId());
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
         requestDto.setVoucherId("scrapingAsset" + asset.getAliNo());
-        requestDto.setDeductible(scrapDto.getFree());
+        requestDto.setDeductible(scrapDto.getFree().toLowerCase(Locale.ENGLISH));
         requestDto.setApplicantWorkId(scrapDto.getOperator());
         requestDto.setReason(AssetScrapReasonEnum.valueOf(scrapDto.getReason()).getDesc());
         if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
