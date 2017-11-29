@@ -571,7 +571,6 @@ public class AssetSynBOImpl implements AssetSynBO {
 	private void batchCheck(List<Asset> assetList) {
 		if (CollectionUtils.isNotEmpty(assetList)) {
 			for (Asset ca :assetList) {
-				logger.info("check asset,asset={}", JSONObject.toJSONString(ca));
 				try {
 					check(ca);
 				} catch (Exception e) {
@@ -607,7 +606,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 				}
 			}
 		}else {
-			logger.error("getAssetInfo error,asset="+JSONObject.toJSONString(a),resDto.getErrorMsg());
+			logger.error("getAssetInfo error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus(),resDto.getErrorMsg());
 		}
 	}
 	
