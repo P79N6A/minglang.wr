@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.SyncAddCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncDeleteCainiaoStationDto;
@@ -101,4 +103,6 @@ public interface CaiNiaoService {
 	 * @
 	 */
 	public void modifyLngLatToCainiao(SyncModifyLngLatDto  syncModifyLngLatDto);
+	
+	public void updateCainiaoStationFeature(List<Long> cainiaoStationId);
 }

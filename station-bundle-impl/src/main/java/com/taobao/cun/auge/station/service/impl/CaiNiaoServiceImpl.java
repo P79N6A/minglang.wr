@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -595,5 +596,14 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 				syncModifyLngLatDto.setCainiaoStationId(rel.getCainiaoStationId());
 				caiNiaoAdapter.modifyLngLatToCainiao(syncModifyLngLatDto);
 			}
+	}
+
+	@Override
+	public void updateCainiaoStationFeature(List<Long> cainiaoStationIds) {
+		for(Long cainiaoStationId:cainiaoStationIds){
+			Set<String> featureKey = new HashSet<String>();
+			featureKey.add(CaiNiaoAdapter.CTP_TYPE);
+			caiNiaoAdapter.removeStationFeatures(cainiaoStationId, featureKey);
+		}
 	}
 }
