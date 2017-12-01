@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 import com.taobao.cun.auge.asset.enums.AssetScrapReasonEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,6 +34,14 @@ import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 import com.alibaba.it.asset.api.dto.AssetTransDto;
+
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
@@ -190,6 +197,9 @@ public class AssetBOImpl implements AssetBO {
 
     @Autowired
     private CuntaoFlowRecordBO cuntaoFlowRecordBO;
+    
+    @Autowired
+    AccountMoneyBO accountMoneyBO;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -1132,6 +1142,16 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setReason("scrapAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
         bailDto.setOutOrderId("scrap_asset" + scrapDto.getScrapAssetId());
+        
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(Long.valueOf(userId));
+        if (null != instance) {
+        	  AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                      AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+              String accountNo = accountMoney.getAccountNo();
+              if (StringUtils.isNotEmpty(accountNo)) {
+              	bailDto.setAlipayId(accountNo);
+              }
+        }
         return bailDto;
     }
 
@@ -1669,6 +1689,17 @@ public class AssetBOImpl implements AssetBO {
         bailDto.setReason("buyAsset");
         bailDto.setBailOperateTypeEnum(BailOperateTypeEnum.ACTIVE_TRANSFER);
         bailDto.setOutOrderId("buy_asset" + assetDto.getNewStationId());
+        
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(Long.valueOf(assetDto.getOperator()));
+        if (null != instance) {
+        	  AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                      AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+              String accountNo = accountMoney.getAccountNo();
+              if (StringUtils.isNotEmpty(accountNo)) {
+              	bailDto.setAlipayId(accountNo);
+              }
+        }
+        
         return bailDto;
     }
 
