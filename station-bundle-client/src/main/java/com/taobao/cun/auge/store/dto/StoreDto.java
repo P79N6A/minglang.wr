@@ -58,6 +58,11 @@ public class StoreDto implements Serializable{
 	private String mobile;
 	
 
+	/**
+	 * 合伙人姓名
+	 */
+	private String partnerName;
+	
 	public Long getId() {
 		return id;
 	}
@@ -137,6 +142,14 @@ public class StoreDto implements Serializable{
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public String getPartnerName() {
+		return partnerName;
+	}
+
+	public void setPartnerName(String partnerName) {
+		this.partnerName = partnerName;
 	}
 
 	
