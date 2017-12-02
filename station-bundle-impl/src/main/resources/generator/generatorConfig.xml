@@ -127,10 +127,19 @@
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
-		<table tableName="cuntao_qualification" enableCountByExample="true" enableUpdateByExample="true"
+		<table tableName="cuntao_company" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
 		
+		<table tableName="cuntao_company_employee" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
+		
+		<table tableName="cuntao_employee" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
+		</table>
 	</context>
 </generatorConfiguration>

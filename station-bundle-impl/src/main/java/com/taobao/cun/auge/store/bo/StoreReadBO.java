@@ -2,7 +2,9 @@ package com.taobao.cun.auge.store.bo;
 
 import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 
 public interface StoreReadBO {
@@ -22,4 +24,8 @@ public interface StoreReadBO {
     String[] getStationDistance(Long stationId,Double lng,Double lat);
     
     List<Long> getAllStoreIdsByStatus(StoreStatus status);
+    
+	PageDto<StoreDto> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition);
+	
+	List<StoreDto> getStoreByStationIds(List<Long> stationIds);
 }

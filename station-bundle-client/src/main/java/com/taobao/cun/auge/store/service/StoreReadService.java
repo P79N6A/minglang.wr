@@ -2,7 +2,10 @@ package com.taobao.cun.auge.store.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 
 public interface StoreReadService {
@@ -51,4 +54,17 @@ public interface StoreReadService {
 	  * @return
 	  */
 	 List<Long> getAllStoreIdsByStatus(StoreStatus status);
+	 
+	 /**
+	  * 分页查询名单列表
+	  */
+	 Result<PageDto<StoreDto>> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition);
+	 
+	 /**
+	  * 批量门店ID查询门店列表
+	  */
+	 List<StoreDto> getStoreByStationIds(List<Long> stationIds);
+	 
+	 
+	 
 }

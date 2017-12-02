@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -44,6 +47,18 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Override
 	public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
 		return storeReadBO.getAllStoreIdsByStatus(status);
+	}
+
+	@Override
+	public Result<PageDto<StoreDto>> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition) {
+		PageDto<StoreDto> stores = storeReadBO.queryStoreByPage(storeQueryPageCondition);
+		return Result.of(stores);
+	}
+
+	@Override
+	public List<StoreDto> getStoreByStationIds(List<Long> stationIds) {
+		// TODO Auto-generated method stub
+		return storeReadBO.getStoreByStationIds(stationIds);
 	}
 
 }
