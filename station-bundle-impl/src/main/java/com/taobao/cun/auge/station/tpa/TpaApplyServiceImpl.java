@@ -410,6 +410,9 @@ public class TpaApplyServiceImpl implements TpaApplyService {
 			instanceDto.setOperatorType(OperatorTypeEnum.HAVANA);
 			partnerInstanceService.updateByPartner(instanceDto);
 			response.setSuccess(true);
+		} catch (AugeBusinessException e) {
+			response.setSuccess(false);
+			response.setErrorMessage("修改淘帮手信息失败");
 		} catch (Exception e) {
 			response.setSuccess(false);
 			response.setErrorMessage("修改淘帮手信息失败");
