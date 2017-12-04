@@ -22,6 +22,7 @@ import com.taobao.cun.auge.company.dto.CuntaoCompanyState;
 import com.taobao.cun.auge.dal.domain.CuntaoCompany;
 import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployeeExample;
+import com.taobao.cun.auge.dal.domain.CuntaoCompanyExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.mapper.CuntaoCompanyEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoCompanyMapper;
@@ -29,6 +30,11 @@ import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.client.security.OperateControl;
+import com.taobao.cun.endor.base.dto.OrgAddDto;
+import com.taobao.cun.endor.base.dto.UserAddDto;
+import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.BaseUserDO;
@@ -57,6 +63,9 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	@Autowired
 	private CuntaoCompanyEmployeeMapper cuntaoCompanyEmployeeMapper;
 	
+	@Autowired
+	private EndorApiClient endorApiClient;
+	
 	private static final Logger logger = LoggerFactory.getLogger(CompanyWriteServiceImpl.class);
 	
 	@SuppressWarnings("static-access")
@@ -79,6 +88,7 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(companyUserDOresult.getModule().getUserId());
 			CompanyAndManagerInfo cuntaoCompanyAndManagerInfo = addCompanyAndManager(cuntaoCompanyDto, companyUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
 			//调用endor创建组织和管理员，分配管理员角色
+			createEndorOrgAndUser(cuntaoCompanyAndManagerInfo);
 			result = result.of(cuntaoCompanyDto.getId());
 			return result;
 		} catch (Exception e) {
@@ -87,6 +97,28 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 			return Result.of(errorInfo);
 		}
 		
+	}
+
+	private void createEndorOrgAndUser(CompanyAndManagerInfo cuntaoCompanyAndManagerInfo) {
+		OrgAddDto orgAddDto = new OrgAddDto();
+		orgAddDto.setCreator(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getCreator());
+		orgAddDto.setOrgId(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getId());
+		orgAddDto.setOrgName(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getCompanyName());
+		orgAddDto.setParentId(1l);
+		endorApiClient.getOrgServiceClient().insert(orgAddDto, null);
+		
+		UserAddDto userAddDto = new UserAddDto();
+		userAddDto.setCreator(cuntaoCompanyAndManagerInfo.getManager().getCreator());
+		userAddDto.setUserId(cuntaoCompanyAndManagerInfo.getManager().getTaobaoUserId()+"");
+		userAddDto.setUserName(cuntaoCompanyAndManagerInfo.getManager().getName());
+		endorApiClient.getUserServiceClient().addUser(userAddDto);
+		
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(cuntaoCompanyAndManagerInfo.getManager().getCreator());
+		userRoleAddDto.setOrgId(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getId());
+		userRoleAddDto.setRoleName(CuntaoCompanyEmployeeType.MANAGER.name());
+		userRoleAddDto.setUserId(cuntaoCompanyAndManagerInfo.getManager().getTaobaoUserId()+"");
+		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
@@ -157,6 +189,12 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 			BeanValidator.validateWithThrowable(cuntaoCompanyDto);
 		} catch (AugeBusinessException e) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());
+		}
+		CuntaoCompanyExample example = new CuntaoCompanyExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(cuntaoCompanyDto.getMobile());
+		List<CuntaoCompany> companys = cuntaoCompanyMapper.selectByExample(example);
+		if(companys != null && !companys.isEmpty()){
+			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "公司手机号已存在!");
 		}
 		return null;
 	}

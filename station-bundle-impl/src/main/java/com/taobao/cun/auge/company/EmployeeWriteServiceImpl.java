@@ -28,6 +28,9 @@ import com.taobao.cun.auge.dal.mapper.CuntaoCompanyMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.UserAddDto;
+import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -48,6 +51,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
+	
+	@Autowired
+	private EndorApiClient endorApiClient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteServiceImpl.class);
  
@@ -102,16 +108,32 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoCompanyEmployee.setState(CuntaoCompanyEmployeeState.SERVICING.name());
 			cuntaoCompanyEmployee.setType(type.name());
 			cuntaoCompanyEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
-			//TODO 添加Endor组织和人员，并分配角色
+			
+			createEndorUser(companyId,employee,type);
 			return Result.of(employeeId);
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
-		
 	}
 
+	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoCompanyEmployeeType type){
+		UserAddDto userAddDto = new UserAddDto();
+		userAddDto.setCreator(employee.getCreator());
+		userAddDto.setUserId(employee.getTaobaoUserId()+"");
+		userAddDto.setUserName(employee.getName());
+		endorApiClient.getUserServiceClient().addUser(userAddDto);
+		
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(employee.getCreator());
+		userRoleAddDto.setOrgId(companyId);
+		userRoleAddDto.setRoleName(type.MANAGER.name());
+		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
+		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+	}
+	
+	
 	private ErrorInfo checkTaobaoNick(ResultDO<BaseUserDO> baseUserDOresult,String errorMessage){
 		if (baseUserDOresult == null || !baseUserDOresult.isSuccess() || baseUserDOresult.getModule() == null) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE, null, errorMessage);

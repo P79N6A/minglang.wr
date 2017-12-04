@@ -700,7 +700,12 @@
 			      <groupId>com.alibaba.boot</groupId>  
 			      <artifactId>alimetrics-spring-boot-starter</artifactId>  
 			      <version>1.6.3-1</version> 
-   			</dependency> 
+   			</dependency>
+   			<dependency>
+				  <groupId>com.taobao.cun.endor</groupId>
+				  <artifactId>endor-base</artifactId>
+				  <version>1.0.7</version>
+		</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

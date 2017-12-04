@@ -50,6 +50,8 @@ import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -393,6 +395,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
                    .build();
     }
     
+    @Bean
+    public EndorApiClient endorApiClient(@Value("endor.servicevendor.appName")String appName,@Value("endor.servicevendor.accessKey")String accessKey,@Value("endor.servicevendor.version")String version){
+    	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
+    	client.init();
+    	return client;
+    }
     
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){
