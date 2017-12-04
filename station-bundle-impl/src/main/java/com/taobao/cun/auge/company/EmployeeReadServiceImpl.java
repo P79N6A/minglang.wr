@@ -31,7 +31,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 @Service("employeeReadServiceImpl")
-@HSFProvider(serviceInterface = EmployeeReadServiceImpl.class)
+@HSFProvider(serviceInterface = EmployeeReadService.class)
 public class EmployeeReadServiceImpl implements EmployeeReadService{
 
 	@Autowired
