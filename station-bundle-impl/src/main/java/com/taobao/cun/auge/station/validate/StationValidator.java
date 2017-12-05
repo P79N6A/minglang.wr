@@ -45,6 +45,9 @@ public final class StationValidator {
 		if (address == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
 		}
+		if (address.getAddressDetail().length() > 25) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
+        }
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
 			stationName += address.getCountyDetail();
@@ -81,6 +84,11 @@ public final class StationValidator {
 		if (address == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
 		}
+	
+        if (address.getAddressDetail().length() > 25) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
+        }
+       
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
 			stationName += address.getCountyDetail();
