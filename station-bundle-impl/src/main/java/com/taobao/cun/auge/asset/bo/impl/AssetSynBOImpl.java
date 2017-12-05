@@ -541,7 +541,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 		List<String> vaildStatus = AssetStatusEnum.getValidStatusList();
 		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
 			AssetExample cuntaoAssetExample = new AssetExample();
-			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n").andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
 					.andIdIn(assetIds);
 			assetList = assetMapper.selectByExample(cuntaoAssetExample);
 			batchCheck(assetList);
