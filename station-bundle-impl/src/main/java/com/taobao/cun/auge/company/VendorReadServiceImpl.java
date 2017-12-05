@@ -82,8 +82,8 @@ public class VendorReadServiceImpl implements VendorReadService{
 			CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
 			Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n");
 			criteria.andIdIn(ids);
-			List<CuntaoServiceVendor> companys = cuntaoServiceVendorMapper.selectByExample(example);
-			return Result.of(VendorConverter.convert2CuntaoVendorDtoList(companys));
+			List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(example);
+			return Result.of(VendorConverter.convert2CuntaoVendorDtoList(vendors));
 		} catch (Exception e) {
 			logger.error("queryVendorByIDS error!",e);
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");

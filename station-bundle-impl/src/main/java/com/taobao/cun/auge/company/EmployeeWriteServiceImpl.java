@@ -59,9 +59,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type) {
+	public Result<Long> addEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddCompanyEmployee(companyId,employeeDto,type);
+		errorInfo = checkAddVendorEmployee(companyId,employeeDto,type);
 		
 		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(companyId);
 		if(cuntaoServiceVendor == null){
@@ -98,16 +98,16 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 			cuntaoEmployeeMapper.insertSelective(employee);
 			Long employeeId = employee.getId();
-			CuntaoVendorEmployee cuntaoCompanyEmployee = new CuntaoVendorEmployee();
-			cuntaoCompanyEmployee.setCreator(employeeDto.getOperator());
-			cuntaoCompanyEmployee.setGmtCreate(new Date());
-			cuntaoCompanyEmployee.setModifier(employeeDto.getOperator());
-			cuntaoCompanyEmployee.setGmtModified(new Date());
-			cuntaoCompanyEmployee.setCompanyId(companyId);
-			cuntaoCompanyEmployee.setEmployeeId(employeeId);
-			cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-			cuntaoCompanyEmployee.setType(type.name());
-			cuntaoVendorEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
+			CuntaoVendorEmployee cuntaoVendorEmployee = new CuntaoVendorEmployee();
+			cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
+			cuntaoVendorEmployee.setGmtCreate(new Date());
+			cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
+			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setCompanyId(companyId);
+			cuntaoVendorEmployee.setEmployeeId(employeeId);
+			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+			cuntaoVendorEmployee.setType(type.name());
+			cuntaoVendorEmployeeMapper.insertSelective(cuntaoVendorEmployee);
 			
 			createEndorUser(companyId,employee,type);
 			return Result.of(employeeId);
@@ -179,7 +179,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 }
 	
 	
-	private ErrorInfo checkAddCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type){
+	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type){
 		try {
 			Assert.notNull(companyId,"公司ID不能为空");
 			Assert.notNull(type,"员工类型不能为空");
@@ -190,8 +190,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return null;
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	private ErrorInfo checkUpdateCompanyEmployee(CuntaoEmployeeDto employeeDto){
+
+	private ErrorInfo checkUpdateEmployee(CuntaoEmployeeDto employeeDto){
 		try {
 			Assert.notNull(employeeDto.getId(),"员工ID不能为空");
 			Assert.notNull(employeeDto.getOperator(),"操作人员不能为空");
@@ -203,9 +203,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	
 	@Override
-	public Result<Boolean> updateCompanyEmployee(CuntaoEmployeeDto updateCuntaoEmployeeDto) {
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+	public Result<Boolean> updateEmployee(CuntaoEmployeeDto updateCuntaoEmployeeDto) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkUpdateCompanyEmployee(updateCuntaoEmployeeDto);
+		errorInfo = checkUpdateEmployee(updateCuntaoEmployeeDto);
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
@@ -252,7 +253,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 
 	@Override
-	public Result<Boolean> removeCompanyEmployee(Long employeeId) {
+	public Result<Boolean> removeEmployee(Long employeeId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

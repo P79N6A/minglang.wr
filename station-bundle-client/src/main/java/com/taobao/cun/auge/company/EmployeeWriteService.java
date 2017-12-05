@@ -18,19 +18,19 @@ public interface EmployeeWriteService{
 	 * @param type
 	 * @return
 	 */
-	Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoVendorEmployeeType type);
+	Result<Long> addEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoVendorEmployeeType type);
 	
 	/**
 	 * 更新员工信息
 	 * @param employee
 	 * @return
 	 */
-	Result<Boolean> updateCompanyEmployee(CuntaoEmployeeDto employee);
+	Result<Boolean> updateEmployee(CuntaoEmployeeDto employee);
 	
 	/**
 	 * 删除员工
 	 * @param employeeId
 	 * @return
 	 */
-	Result<Boolean> removeCompanyEmployee(Long employeeId);
+	Result<Boolean> removeEmployee(Long employeeId);
 }

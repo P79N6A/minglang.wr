@@ -46,13 +46,13 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	public Result<PageDto<CuntaoEmployeeDto>> queryEmployeeByPage(
 			EmployeeQueryPageCondition employeeQueryPageCondition) {
 		try {
-			CuntaoVendorEmployeeExample cuntaoCompanyEmployeeExample = new CuntaoVendorEmployeeExample();
-			cuntaoCompanyEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
+			CuntaoVendorEmployeeExample cuntaoVendorEmployeeExample = new CuntaoVendorEmployeeExample();
+			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
 					.andCompanyIdEqualTo(employeeQueryPageCondition.getCompanyId());
-			List<CuntaoVendorEmployee> cuntaoCompanyEmployees = cuntaoVendorEmployeeMapper
-					.selectByExample(cuntaoCompanyEmployeeExample);
-			List<Long> employeeIds = cuntaoCompanyEmployees.stream()
-					.map(cuntaoCompanyEmployee -> cuntaoCompanyEmployee.getEmployeeId()).collect(Collectors.toList());
+			List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoVendorEmployeeMapper
+					.selectByExample(cuntaoVendorEmployeeExample);
+			List<Long> employeeIds = cuntaoVendorEmployees.stream()
+					.map(cuntaoVendorEmployee -> cuntaoVendorEmployee.getEmployeeId()).collect(Collectors.toList());
 			if (employeeIds != null && !employeeIds.isEmpty()) {
 				PageHelper.startPage(employeeQueryPageCondition.getPageNum(), employeeQueryPageCondition.getPageSize());
 				CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();

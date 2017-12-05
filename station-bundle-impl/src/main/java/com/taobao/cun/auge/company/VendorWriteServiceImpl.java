@@ -60,7 +60,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoVendorEmployeeMapper cuntaoCompanyEmployeeMapper;
+	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
 	
 	@Autowired
 	private EndorApiClient endorApiClient;
@@ -85,13 +85,13 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		try {
 			ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoServiceVendorDto.getTaobaoNick());
 			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
-			ServiceVendorAndManagerInfo cuntaoCompanyAndManagerInfo = addCompanyAndManager(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
+			ServiceVendorAndManagerInfo serviceVendorAndManagerInfo = addVendorAndManager(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
 			//调用endor创建组织和管理员，分配管理员角色
-			createEndorOrgAndUser(cuntaoCompanyAndManagerInfo);
+			createEndorOrgAndUser(serviceVendorAndManagerInfo);
 			result = result.of(cuntaoServiceVendorDto.getId());
 			return result;
 		} catch (Exception e) {
-			logger.error("add company error!",e);
+			logger.error("addVendor error!",e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
@@ -141,7 +141,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	}
 	
 	
-	private ServiceVendorAndManagerInfo addCompanyAndManager(CuntaoServiceVendorDto cuntaoServiceVendorDto, BaseUserDO baseUserDO,
+	private ServiceVendorAndManagerInfo addVendorAndManager(CuntaoServiceVendorDto cuntaoServiceVendorDto, BaseUserDO baseUserDO,
 			BasePaymentAccountDO basePaymentAccountDO) {
 		ServiceVendorAndManagerInfo cuntaoCompanyAndManagerInfo = new ServiceVendorAndManagerInfo();
 		CuntaoServiceVendor cuntaoServiceVendor = convert2CuntaoVendor(cuntaoServiceVendorDto, baseUserDO,basePaymentAccountDO);
@@ -159,7 +159,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoCompanyEmployee.setEmployeeId(manager.getId());
 		cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
 		cuntaoCompanyEmployee.setType(CuntaoVendorEmployeeType.MANAGER.name());
-		cuntaoCompanyEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
+		cuntaoVendorEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
 		cuntaoCompanyAndManagerInfo.setCuntaoServiceVendor(cuntaoServiceVendor);
 		cuntaoCompanyAndManagerInfo.setManager(manager);
 		cuntaoCompanyAndManagerInfo.setId(cuntaoCompanyEmployee.getId());
@@ -193,7 +193,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(cuntaoVendorDto.getMobile());
 		List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(example);
 		if(vendors != null && !vendors.isEmpty()){
-			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "公司手机号已存在!");
+			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "服务商手机号已存在!");
 		}
 		return null;
 	}
@@ -251,36 +251,36 @@ public class VendorWriteServiceImpl implements VendorWriteService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Result<Boolean> updateVendor(CuntaoServiceVendorDto cuntaoVendorDto) {
 		Result<Boolean> result = null;
-		ErrorInfo errorInfo = checkUpdateCuntaoCompanyDto(cuntaoVendorDto);
+		ErrorInfo errorInfo = checkUpdateCuntaoVendorDto(cuntaoVendorDto);
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
 		CuntaoServiceVendor vendor = cuntaoServiceVendorMapper.selectByPrimaryKey(cuntaoVendorDto.getId());
-		errorInfo = ErrorInfo.of(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, null, "指定ID公司不存在");
+		errorInfo = ErrorInfo.of(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, null, "指定ID服务商不存在");
 		if(vendor == null){
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
 		}
 		try {
-			CuntaoEmployee manager = getCompanyManager(cuntaoVendorDto.getId());
+			CuntaoEmployee manager = getVendorManager(cuntaoVendorDto.getId());
 			
 			if(StringUtils.isNotEmpty(cuntaoVendorDto.getTaobaoNick()) && !cuntaoVendorDto.getTaobaoNick().equals(vendor.getTaobaoNick())){
 				errorInfo = checkTaobaoAndAliPayInfo(cuntaoVendorDto.getTaobaoNick());
 				if(errorInfo != null){
 					return Result.of(errorInfo);
 				}
-				ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoVendorDto.getTaobaoNick());
-				ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(companyUserDOresult.getModule().getUserId());
-				vendor.setTaobaoNick(companyUserDOresult.getModule().getNick());
-				vendor.setTaobaoUserId(companyUserDOresult.getModule().getUserId());
+				ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoVendorDto.getTaobaoNick());
+				ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
+				vendor.setTaobaoNick(vendorUserDOresult.getModule().getNick());
+				vendor.setTaobaoUserId(vendorUserDOresult.getModule().getUserId());
 				vendor.setAlipayOutUser(basePaymentAccountDOResult.getModule().getOutUser());
 				vendor.setAlipayAccountNo(basePaymentAccountDOResult.getModule().getAccountNo());
 				
 				if(manager != null){
-					manager.setTaobaoNick(companyUserDOresult.getModule().getNick());
-					manager.setTaobaoUserId(companyUserDOresult.getModule().getUserId());
-					manager.setName(companyUserDOresult.getModule().getFullname());
+					manager.setTaobaoNick(vendorUserDOresult.getModule().getNick());
+					manager.setTaobaoUserId(vendorUserDOresult.getModule().getUserId());
+					manager.setName(vendorUserDOresult.getModule().getFullname());
 					manager.setGmtModified(new Date());
 					manager.setModifier(cuntaoVendorDto.getOperator());
 					if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
@@ -304,17 +304,17 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			 result = Result.of(Boolean.TRUE);
 			 return result;
 		} catch (Exception e) {
-			logger.error("update company error!",e);
+			logger.error("update vendor error!",e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
 		
 	}
 
-	private CuntaoEmployee getCompanyManager(Long companyId){
+	private CuntaoEmployee getVendorManager(Long companyId){
 		CuntaoVendorEmployeeExample example = new CuntaoVendorEmployeeExample();
 		example.createCriteria().andCompanyIdEqualTo(companyId).andTypeEqualTo(CuntaoVendorEmployeeType.MANAGER.name()).andIsDeletedEqualTo("n");
-		List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoCompanyEmployeeMapper.selectByExample(example);
+		List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoVendorEmployeeMapper.selectByExample(example);
 		if(CollectionUtils.isNotEmpty(cuntaoVendorEmployees)){
 			CuntaoVendorEmployee cuntaoVendorEmployee =  cuntaoVendorEmployees.iterator().next();
 			return cuntaoEmployeeMapper.selectByPrimaryKey(cuntaoVendorEmployee.getEmployeeId());
@@ -323,10 +323,10 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	} 
 	
 	
-	private ErrorInfo checkUpdateCuntaoCompanyDto(CuntaoServiceVendorDto cuntaoCompanyDto){
+	private ErrorInfo checkUpdateCuntaoVendorDto(CuntaoServiceVendorDto cuntaoServiceVendorDto){
 		try {
-			Assert.notNull(cuntaoCompanyDto.getId(),"公司ID不能为空");
-			Assert.notNull(cuntaoCompanyDto.getOperator(),"操作人员不能为空");
+			Assert.notNull(cuntaoServiceVendorDto.getId(),"服务商ID不能为空");
+			Assert.notNull(cuntaoServiceVendorDto.getOperator(),"操作人员不能为空");
 		} catch (Exception e) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());
 		}
