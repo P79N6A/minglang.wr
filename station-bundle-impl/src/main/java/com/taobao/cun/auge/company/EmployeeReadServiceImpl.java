@@ -17,14 +17,13 @@ import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample.Criteria;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyMapper;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -34,14 +33,12 @@ import jersey.repackaged.com.google.common.collect.Lists;
 @HSFProvider(serviceInterface = EmployeeReadService.class)
 public class EmployeeReadServiceImpl implements EmployeeReadService{
 
-	@Autowired
-	private CuntaoCompanyMapper cuntaoCompanyMapper;
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoCompanyEmployeeMapper cuntaoCompanyEmployeeMapper;
+	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeReadServiceImpl.class);
 
@@ -49,10 +46,10 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	public Result<PageDto<CuntaoEmployeeDto>> queryEmployeeByPage(
 			EmployeeQueryPageCondition employeeQueryPageCondition) {
 		try {
-			CuntaoCompanyEmployeeExample cuntaoCompanyEmployeeExample = new CuntaoCompanyEmployeeExample();
+			CuntaoVendorEmployeeExample cuntaoCompanyEmployeeExample = new CuntaoVendorEmployeeExample();
 			cuntaoCompanyEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
 					.andCompanyIdEqualTo(employeeQueryPageCondition.getCompanyId());
-			List<CuntaoCompanyEmployee> cuntaoCompanyEmployees = cuntaoCompanyEmployeeMapper
+			List<CuntaoVendorEmployee> cuntaoCompanyEmployees = cuntaoVendorEmployeeMapper
 					.selectByExample(cuntaoCompanyEmployeeExample);
 			List<Long> employeeIds = cuntaoCompanyEmployees.stream()
 					.map(cuntaoCompanyEmployee -> cuntaoCompanyEmployee.getEmployeeId()).collect(Collectors.toList());

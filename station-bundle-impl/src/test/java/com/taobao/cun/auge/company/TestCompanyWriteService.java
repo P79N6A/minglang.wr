@@ -9,7 +9,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.taobao.cun.auge.Application;
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyDto;
+import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.company.dto.CuntaoVendorType;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 
 @RunWith(SpringRunner.class)
@@ -18,18 +19,19 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 public class TestCompanyWriteService {
 
 	@Autowired
-	private CompanyWriteService companyWriteService;
+	private VendorWriteService companyWriteService;
 	
 	@Test
 	public void testAddCompany(){
-		CuntaoCompanyDto cuntaoCompanyDto = new CuntaoCompanyDto();
+		CuntaoServiceVendorDto cuntaoCompanyDto = new CuntaoServiceVendorDto();
 		cuntaoCompanyDto.setCompanyName("testCompany1111");
 		cuntaoCompanyDto.setMobile("11321123112");
 		cuntaoCompanyDto.setOperator("62333");
 		cuntaoCompanyDto.setOperatorType(OperatorTypeEnum.BUC);
 		cuntaoCompanyDto.setRemark("test123123");
 		cuntaoCompanyDto.setTaobaoNick("fangyutest013");
-	    Result<Long> result = companyWriteService.addCompany(cuntaoCompanyDto);
+		cuntaoCompanyDto.setType(CuntaoVendorType.SERVICE_VENDOR);
+	    Result<Long> result = companyWriteService.addVendor(cuntaoCompanyDto);
 	    System.out.println(result.toString());
 	}
 }

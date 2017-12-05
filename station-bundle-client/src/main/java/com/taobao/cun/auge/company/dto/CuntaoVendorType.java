@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.company.dto;
 
-public enum CuntaoCompanyType {
+public enum CuntaoVendorType {
 
 	SERVICE_VENDOR;
 }

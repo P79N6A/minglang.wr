@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.company;
 
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyEmployeeType;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 
 /**
@@ -18,7 +18,7 @@ public interface EmployeeWriteService{
 	 * @param type
 	 * @return
 	 */
-	Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoCompanyEmployeeType type);
+	Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoVendorEmployeeType type);
 	
 	/**
 	 * 更新员工信息

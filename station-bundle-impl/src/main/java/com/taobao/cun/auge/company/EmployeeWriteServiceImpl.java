@@ -15,17 +15,17 @@ import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
-import com.taobao.cun.auge.dal.domain.CuntaoCompany;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployeeExample;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyMapper;
+import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.endor.base.client.EndorApiClient;
@@ -41,13 +41,13 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 
 	@Autowired
-	private CuntaoCompanyMapper cuntaoCompanyMapper;
+	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoCompanyEmployeeMapper cuntaoCompanyEmployeeMapper;
+	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
 	
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
@@ -59,12 +59,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoCompanyEmployeeType type) {
+	public Result<Long> addCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type) {
 		ErrorInfo errorInfo = null;
 		errorInfo = checkAddCompanyEmployee(companyId,employeeDto,type);
 		
-		CuntaoCompany  cuntaoCompany = cuntaoCompanyMapper.selectByPrimaryKey(companyId);
-		if(cuntaoCompany == null){
+		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(companyId);
+		if(cuntaoServiceVendor == null){
 			errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
 			return Result.of(errorInfo);
 		}
@@ -98,16 +98,16 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 			cuntaoEmployeeMapper.insertSelective(employee);
 			Long employeeId = employee.getId();
-			CuntaoCompanyEmployee cuntaoCompanyEmployee = new CuntaoCompanyEmployee();
+			CuntaoVendorEmployee cuntaoCompanyEmployee = new CuntaoVendorEmployee();
 			cuntaoCompanyEmployee.setCreator(employeeDto.getOperator());
 			cuntaoCompanyEmployee.setGmtCreate(new Date());
 			cuntaoCompanyEmployee.setModifier(employeeDto.getOperator());
 			cuntaoCompanyEmployee.setGmtModified(new Date());
 			cuntaoCompanyEmployee.setCompanyId(companyId);
 			cuntaoCompanyEmployee.setEmployeeId(employeeId);
-			cuntaoCompanyEmployee.setState(CuntaoCompanyEmployeeState.SERVICING.name());
+			cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
 			cuntaoCompanyEmployee.setType(type.name());
-			cuntaoCompanyEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
+			cuntaoVendorEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
 			
 			createEndorUser(companyId,employee,type);
 			return Result.of(employeeId);
@@ -118,7 +118,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoCompanyEmployeeType type){
+	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoVendorEmployeeType type){
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(employee.getCreator());
 		userAddDto.setUserId(employee.getTaobaoUserId()+"");
@@ -143,9 +143,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	
 	private ErrorInfo checkTaobaoNickExists(Long companyId,String taobaoNick,String errorMessage){
-		CuntaoCompanyEmployeeExample example = new CuntaoCompanyEmployeeExample();
+		CuntaoVendorEmployeeExample example = new CuntaoVendorEmployeeExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andCompanyIdEqualTo(companyId);
-		List<CuntaoCompanyEmployee> cuntaoCompanyEmployees = cuntaoCompanyEmployeeMapper.selectByExample(example);
+		List<CuntaoVendorEmployee> cuntaoCompanyEmployees = cuntaoVendorEmployeeMapper.selectByExample(example);
 		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
 			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
@@ -179,7 +179,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 }
 	
 	
-	private ErrorInfo checkAddCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoCompanyEmployeeType type){
+	private ErrorInfo checkAddCompanyEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type){
 		try {
 			Assert.notNull(companyId,"公司ID不能为空");
 			Assert.notNull(type,"员工类型不能为空");

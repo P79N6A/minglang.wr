@@ -15,18 +15,18 @@ import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyDto;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyEmployeeType;
-import com.taobao.cun.auge.company.dto.CuntaoCompanyState;
-import com.taobao.cun.auge.dal.domain.CuntaoCompany;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyEmployeeExample;
-import com.taobao.cun.auge.dal.domain.CuntaoCompanyExample;
+import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
+import com.taobao.cun.auge.company.dto.CuntaoVendorState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoCompanyMapper;
+import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
+import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -41,9 +41,9 @@ import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
-@Service("companyWriteService")
-@HSFProvider(serviceInterface = CompanyWriteService.class)
-public class CompanyWriteServiceImpl implements CompanyWriteService {
+@Service("vendorWriteService")
+@HSFProvider(serviceInterface = VendorWriteService.class)
+public class VendorWriteServiceImpl implements VendorWriteService {
 
 	private static final int ALIPAY_ENTERPRICE_PROMOTED_TYPE = 4;
 	
@@ -54,41 +54,41 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	private UicReadServiceClient uicReadServiceClient;
 	
 	@Autowired
-	private CuntaoCompanyMapper cuntaoCompanyMapper;
+	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoCompanyEmployeeMapper cuntaoCompanyEmployeeMapper;
+	private CuntaoVendorEmployeeMapper cuntaoCompanyEmployeeMapper;
 	
 	@Autowired
 	private EndorApiClient endorApiClient;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CompanyWriteServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(VendorWriteServiceImpl.class);
 	
 	@SuppressWarnings("static-access")
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addCompany(CuntaoCompanyDto cuntaoCompanyDto) {
+	public Result<Long> addVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
 		Result<Long> result = null;
-		ErrorInfo errorInfo = checkAddCuntaoCompanyDto(cuntaoCompanyDto);
+		ErrorInfo errorInfo = checkAddCuntaoVendorDto(cuntaoServiceVendorDto);
 		//TODO 效验规则细化
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo = checkTaobaoAndAliPayInfo(cuntaoCompanyDto.getTaobaoNick());
+		errorInfo = checkTaobaoAndAliPayInfo(cuntaoServiceVendorDto.getTaobaoNick());
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
 		//TODO 检查手机号重复
 		try {
-			ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoCompanyDto.getTaobaoNick());
-			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(companyUserDOresult.getModule().getUserId());
-			CompanyAndManagerInfo cuntaoCompanyAndManagerInfo = addCompanyAndManager(cuntaoCompanyDto, companyUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
+			ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoServiceVendorDto.getTaobaoNick());
+			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
+			ServiceVendorAndManagerInfo cuntaoCompanyAndManagerInfo = addCompanyAndManager(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
 			//调用endor创建组织和管理员，分配管理员角色
 			createEndorOrgAndUser(cuntaoCompanyAndManagerInfo);
-			result = result.of(cuntaoCompanyDto.getId());
+			result = result.of(cuntaoServiceVendorDto.getId());
 			return result;
 		} catch (Exception e) {
 			logger.error("add company error!",e);
@@ -98,25 +98,25 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 		
 	}
 
-	private void createEndorOrgAndUser(CompanyAndManagerInfo cuntaoCompanyAndManagerInfo) {
+	private void createEndorOrgAndUser(ServiceVendorAndManagerInfo serviceVendorAndManagerInfo) {
 		OrgAddDto orgAddDto = new OrgAddDto();
-		orgAddDto.setCreator(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getCreator());
-		orgAddDto.setOrgId(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getId());
-		orgAddDto.setOrgName(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getCompanyName());
+		orgAddDto.setCreator(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCreator());
+		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
+		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
 		orgAddDto.setParentId(1l);
 		endorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 		
 		UserAddDto userAddDto = new UserAddDto();
-		userAddDto.setCreator(cuntaoCompanyAndManagerInfo.getManager().getCreator());
-		userAddDto.setUserId(cuntaoCompanyAndManagerInfo.getManager().getTaobaoUserId()+"");
-		userAddDto.setUserName(cuntaoCompanyAndManagerInfo.getManager().getName());
+		userAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
+		userAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
+		userAddDto.setUserName(serviceVendorAndManagerInfo.getManager().getName());
 		endorApiClient.getUserServiceClient().addUser(userAddDto);
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
-		userRoleAddDto.setCreator(cuntaoCompanyAndManagerInfo.getManager().getCreator());
-		userRoleAddDto.setOrgId(cuntaoCompanyAndManagerInfo.getCuntaoCompany().getId());
-		userRoleAddDto.setRoleName(CuntaoCompanyEmployeeType.MANAGER.name());
-		userRoleAddDto.setUserId(cuntaoCompanyAndManagerInfo.getManager().getTaobaoUserId()+"");
+		userRoleAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
+		userRoleAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
+		userRoleAddDto.setRoleName(CuntaoVendorEmployeeType.MANAGER.name());
+		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
 		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
@@ -141,34 +141,34 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	}
 	
 	
-	private CompanyAndManagerInfo addCompanyAndManager(CuntaoCompanyDto cuntaoCompanyDto, BaseUserDO baseUserDO,
+	private ServiceVendorAndManagerInfo addCompanyAndManager(CuntaoServiceVendorDto cuntaoServiceVendorDto, BaseUserDO baseUserDO,
 			BasePaymentAccountDO basePaymentAccountDO) {
-		CompanyAndManagerInfo cuntaoCompanyAndManagerInfo = new CompanyAndManagerInfo();
-		CuntaoCompany cuntaoCompany = convert2CuntaoCompany(cuntaoCompanyDto, baseUserDO,basePaymentAccountDO);
-		cuntaoCompanyMapper.insertSelective(cuntaoCompany);
-		cuntaoCompanyDto.setId(cuntaoCompany.getId());
-		CuntaoEmployee manager = convert2CuntaoCompanyEmployee(cuntaoCompanyDto,baseUserDO);
+		ServiceVendorAndManagerInfo cuntaoCompanyAndManagerInfo = new ServiceVendorAndManagerInfo();
+		CuntaoServiceVendor cuntaoServiceVendor = convert2CuntaoVendor(cuntaoServiceVendorDto, baseUserDO,basePaymentAccountDO);
+		cuntaoServiceVendorMapper.insertSelective(cuntaoServiceVendor);
+		cuntaoServiceVendorDto.setId(cuntaoServiceVendor.getId());
+		CuntaoEmployee manager = convert2CuntaoCompanyEmployee(cuntaoServiceVendorDto,baseUserDO);
 		cuntaoEmployeeMapper.insertSelective(manager);
-		CuntaoCompanyEmployee cuntaoCompanyEmployee = new CuntaoCompanyEmployee();
-		cuntaoCompanyEmployee.setCreator(cuntaoCompanyDto.getOperator());
+		CuntaoVendorEmployee cuntaoCompanyEmployee = new CuntaoVendorEmployee();
+		cuntaoCompanyEmployee.setCreator(cuntaoServiceVendorDto.getOperator());
 		cuntaoCompanyEmployee.setGmtCreate(new Date());
-		cuntaoCompanyEmployee.setModifier(cuntaoCompanyDto.getOperator());
+		cuntaoCompanyEmployee.setModifier(cuntaoServiceVendorDto.getOperator());
 		cuntaoCompanyEmployee.setGmtModified(new Date());
 		cuntaoCompanyEmployee.setIsDeleted("n");
-		cuntaoCompanyEmployee.setCompanyId(cuntaoCompany.getId());
+		cuntaoCompanyEmployee.setCompanyId(cuntaoServiceVendor.getId());
 		cuntaoCompanyEmployee.setEmployeeId(manager.getId());
-		cuntaoCompanyEmployee.setState(CuntaoCompanyEmployeeState.SERVICING.name());
-		cuntaoCompanyEmployee.setType(CuntaoCompanyEmployeeType.MANAGER.name());
+		cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+		cuntaoCompanyEmployee.setType(CuntaoVendorEmployeeType.MANAGER.name());
 		cuntaoCompanyEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
-		cuntaoCompanyAndManagerInfo.setCuntaoCompany(cuntaoCompany);
+		cuntaoCompanyAndManagerInfo.setCuntaoServiceVendor(cuntaoServiceVendor);
 		cuntaoCompanyAndManagerInfo.setManager(manager);
 		cuntaoCompanyAndManagerInfo.setId(cuntaoCompanyEmployee.getId());
-		cuntaoCompanyAndManagerInfo.setState(CuntaoCompanyEmployeeState.valueOf(cuntaoCompanyEmployee.getState()));
-		cuntaoCompanyAndManagerInfo.setType(CuntaoCompanyEmployeeType.valueOf(cuntaoCompanyEmployee.getType()));
+		cuntaoCompanyAndManagerInfo.setState(CuntaoVendorEmployeeState.valueOf(cuntaoCompanyEmployee.getState()));
+		cuntaoCompanyAndManagerInfo.setType(CuntaoVendorEmployeeType.valueOf(cuntaoCompanyEmployee.getType()));
 		return cuntaoCompanyAndManagerInfo;
 	}
 
-	private CuntaoEmployee convert2CuntaoCompanyEmployee(CuntaoCompanyDto cuntaoCompanyDto,BaseUserDO baseUserDO){
+	private CuntaoEmployee convert2CuntaoCompanyEmployee(CuntaoServiceVendorDto cuntaoCompanyDto,BaseUserDO baseUserDO){
 		CuntaoEmployee cuntaoEmployee = new CuntaoEmployee();
 		cuntaoEmployee.setCreator(baseUserDO.getUserId()+"");
 		cuntaoEmployee.setGmtCreate(new Date());
@@ -183,16 +183,16 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	}
 	
 	
-	private ErrorInfo checkAddCuntaoCompanyDto(CuntaoCompanyDto cuntaoCompanyDto){
+	private ErrorInfo checkAddCuntaoVendorDto(CuntaoServiceVendorDto cuntaoVendorDto){
 		try {
-			BeanValidator.validateWithThrowable(cuntaoCompanyDto);
+			BeanValidator.validateWithThrowable(cuntaoVendorDto);
 		} catch (AugeBusinessException e) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());
 		}
-		CuntaoCompanyExample example = new CuntaoCompanyExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(cuntaoCompanyDto.getMobile());
-		List<CuntaoCompany> companys = cuntaoCompanyMapper.selectByExample(example);
-		if(companys != null && !companys.isEmpty()){
+		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(cuntaoVendorDto.getMobile());
+		List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(example);
+		if(vendors != null && !vendors.isEmpty()){
 			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "公司手机号已存在!");
 		}
 		return null;
@@ -221,86 +221,86 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	}
 	
 	
-	private CuntaoCompany convert2CuntaoCompany(CuntaoCompanyDto cuntaoCompanyDto, BaseUserDO baseUserDO,BasePaymentAccountDO basePaymentAccountDO) {
-		CuntaoCompany cuntaoCompany = new CuntaoCompany();
-		cuntaoCompany.setCreator(baseUserDO.getUserId()+"");
-		cuntaoCompany.setGmtCreate(new Date());
-		cuntaoCompany.setModifier(baseUserDO.getUserId()+"");
-		cuntaoCompany.setGmtModified(new Date());
-		cuntaoCompany.setIsDeleted("n");
-		cuntaoCompany.setCompanyName(cuntaoCompanyDto.getCompanyName());
-		cuntaoCompany.setMobile(cuntaoCompany.getMobile());
-		cuntaoCompany.setAlipayAccountNo(basePaymentAccountDO.getAccountNo());
-		cuntaoCompany.setAlipayOutUser(basePaymentAccountDO.getOutUser());
-		cuntaoCompany.setTaobaoNick(baseUserDO.getNick());
-		cuntaoCompany.setTaobaoUserId(baseUserDO.getUserId());
-		cuntaoCompany.setType(cuntaoCompanyDto.getType().name());
-		cuntaoCompany.setState(CuntaoCompanyState.SERVICING.name());
-		cuntaoCompany.setRemark(cuntaoCompanyDto.getRemark());
-		return cuntaoCompany;
+	private CuntaoServiceVendor convert2CuntaoVendor(CuntaoServiceVendorDto cuntaoVendorDto, BaseUserDO baseUserDO,BasePaymentAccountDO basePaymentAccountDO) {
+		CuntaoServiceVendor cuntaoServiceVendor = new CuntaoServiceVendor();
+		cuntaoServiceVendor.setCreator(baseUserDO.getUserId()+"");
+		cuntaoServiceVendor.setGmtCreate(new Date());
+		cuntaoServiceVendor.setModifier(baseUserDO.getUserId()+"");
+		cuntaoServiceVendor.setGmtModified(new Date());
+		cuntaoServiceVendor.setIsDeleted("n");
+		cuntaoServiceVendor.setCompanyName(cuntaoVendorDto.getCompanyName());
+		cuntaoServiceVendor.setMobile(cuntaoVendorDto.getMobile());
+		cuntaoServiceVendor.setAlipayAccountNo(basePaymentAccountDO.getAccountNo());
+		cuntaoServiceVendor.setAlipayOutUser(basePaymentAccountDO.getOutUser());
+		cuntaoServiceVendor.setTaobaoNick(baseUserDO.getNick());
+		cuntaoServiceVendor.setTaobaoUserId(baseUserDO.getUserId());
+		cuntaoServiceVendor.setType(cuntaoVendorDto.getType().name());
+		cuntaoServiceVendor.setState(CuntaoVendorState.SERVICING.name());
+		cuntaoServiceVendor.setRemark(cuntaoVendorDto.getRemark());
+		return cuntaoServiceVendor;
 	}
 
 	
 	
 	@Override
-	public Result<Boolean> removeCompany(Long companyId) {
+	public Result<Boolean> removeVendor(Long companyId) {
 		return null;
 	}
 
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Boolean> updateCompany(CuntaoCompanyDto cuntaoCompanyDto) {
+	public Result<Boolean> updateVendor(CuntaoServiceVendorDto cuntaoVendorDto) {
 		Result<Boolean> result = null;
-		ErrorInfo errorInfo = checkUpdateCuntaoCompanyDto(cuntaoCompanyDto);
+		ErrorInfo errorInfo = checkUpdateCuntaoCompanyDto(cuntaoVendorDto);
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		CuntaoCompany company = cuntaoCompanyMapper.selectByPrimaryKey(cuntaoCompanyDto.getId());
+		CuntaoServiceVendor vendor = cuntaoServiceVendorMapper.selectByPrimaryKey(cuntaoVendorDto.getId());
 		errorInfo = ErrorInfo.of(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, null, "指定ID公司不存在");
-		if(company == null){
+		if(vendor == null){
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
 		}
 		try {
-			CuntaoEmployee manager = getCompanyManager(cuntaoCompanyDto.getId());
+			CuntaoEmployee manager = getCompanyManager(cuntaoVendorDto.getId());
 			
-			if(StringUtils.isNotEmpty(cuntaoCompanyDto.getTaobaoNick()) && !cuntaoCompanyDto.getTaobaoNick().equals(company.getTaobaoNick())){
-				errorInfo = checkTaobaoAndAliPayInfo(cuntaoCompanyDto.getTaobaoNick());
+			if(StringUtils.isNotEmpty(cuntaoVendorDto.getTaobaoNick()) && !cuntaoVendorDto.getTaobaoNick().equals(vendor.getTaobaoNick())){
+				errorInfo = checkTaobaoAndAliPayInfo(cuntaoVendorDto.getTaobaoNick());
 				if(errorInfo != null){
 					return Result.of(errorInfo);
 				}
-				ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoCompanyDto.getTaobaoNick());
+				ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoVendorDto.getTaobaoNick());
 				ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(companyUserDOresult.getModule().getUserId());
-				company.setTaobaoNick(companyUserDOresult.getModule().getNick());
-				company.setTaobaoUserId(companyUserDOresult.getModule().getUserId());
-				company.setAlipayOutUser(basePaymentAccountDOResult.getModule().getOutUser());
-				company.setAlipayAccountNo(basePaymentAccountDOResult.getModule().getAccountNo());
+				vendor.setTaobaoNick(companyUserDOresult.getModule().getNick());
+				vendor.setTaobaoUserId(companyUserDOresult.getModule().getUserId());
+				vendor.setAlipayOutUser(basePaymentAccountDOResult.getModule().getOutUser());
+				vendor.setAlipayAccountNo(basePaymentAccountDOResult.getModule().getAccountNo());
 				
 				if(manager != null){
 					manager.setTaobaoNick(companyUserDOresult.getModule().getNick());
 					manager.setTaobaoUserId(companyUserDOresult.getModule().getUserId());
 					manager.setName(companyUserDOresult.getModule().getFullname());
 					manager.setGmtModified(new Date());
-					manager.setModifier(cuntaoCompanyDto.getOperator());
-					if(StringUtils.isNotEmpty(cuntaoCompanyDto.getMobile())){
-						manager.setMobile(cuntaoCompanyDto.getMobile());
+					manager.setModifier(cuntaoVendorDto.getOperator());
+					if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
+						manager.setMobile(cuntaoVendorDto.getMobile());
 					}
 					cuntaoEmployeeMapper.updateByPrimaryKeySelective(manager);
 				}
 			}
-			if(StringUtils.isNotEmpty(cuntaoCompanyDto.getMobile())){
-				company.setMobile(cuntaoCompanyDto.getMobile());
+			if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
+				vendor.setMobile(cuntaoVendorDto.getMobile());
 			}
-			if(cuntaoCompanyDto.getType() != null){
-				company.setType(cuntaoCompanyDto.getType().name());
+			if(cuntaoVendorDto.getType() != null){
+				vendor.setType(cuntaoVendorDto.getType().name());
 			}
-			if(StringUtils.isNotEmpty(cuntaoCompanyDto.getRemark())){
-				company.setRemark(cuntaoCompanyDto.getRemark());
+			if(StringUtils.isNotEmpty(cuntaoVendorDto.getRemark())){
+				vendor.setRemark(cuntaoVendorDto.getRemark());
 			}
-			company.setGmtModified(new Date());
-			company.setModifier(cuntaoCompanyDto.getOperator());
-			cuntaoCompanyMapper.updateByPrimaryKeySelective(company);
+			vendor.setGmtModified(new Date());
+			vendor.setModifier(cuntaoVendorDto.getOperator());
+			cuntaoServiceVendorMapper.updateByPrimaryKeySelective(vendor);
 			 result = Result.of(Boolean.TRUE);
 			 return result;
 		} catch (Exception e) {
@@ -312,18 +312,18 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 	}
 
 	private CuntaoEmployee getCompanyManager(Long companyId){
-		CuntaoCompanyEmployeeExample example = new CuntaoCompanyEmployeeExample();
-		example.createCriteria().andCompanyIdEqualTo(companyId).andTypeEqualTo(CuntaoCompanyEmployeeType.MANAGER.name()).andIsDeletedEqualTo("n");
-		List<CuntaoCompanyEmployee> cuntaoCompanyEmployees = cuntaoCompanyEmployeeMapper.selectByExample(example);
-		if(CollectionUtils.isNotEmpty(cuntaoCompanyEmployees)){
-			CuntaoCompanyEmployee cuntaoCompanyEmployee =  cuntaoCompanyEmployees.iterator().next();
-			return cuntaoEmployeeMapper.selectByPrimaryKey(cuntaoCompanyEmployee.getEmployeeId());
+		CuntaoVendorEmployeeExample example = new CuntaoVendorEmployeeExample();
+		example.createCriteria().andCompanyIdEqualTo(companyId).andTypeEqualTo(CuntaoVendorEmployeeType.MANAGER.name()).andIsDeletedEqualTo("n");
+		List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoCompanyEmployeeMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(cuntaoVendorEmployees)){
+			CuntaoVendorEmployee cuntaoVendorEmployee =  cuntaoVendorEmployees.iterator().next();
+			return cuntaoEmployeeMapper.selectByPrimaryKey(cuntaoVendorEmployee.getEmployeeId());
 		}
 		return null;
 	} 
 	
 	
-	private ErrorInfo checkUpdateCuntaoCompanyDto(CuntaoCompanyDto cuntaoCompanyDto){
+	private ErrorInfo checkUpdateCuntaoCompanyDto(CuntaoServiceVendorDto cuntaoCompanyDto){
 		try {
 			Assert.notNull(cuntaoCompanyDto.getId(),"公司ID不能为空");
 			Assert.notNull(cuntaoCompanyDto.getOperator(),"操作人员不能为空");

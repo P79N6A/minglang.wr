@@ -2,7 +2,7 @@ package com.taobao.cun.auge.company.dto;
 
 import com.taobao.cun.auge.common.PageQuery;
 
-public class CompanyQueryPageCondition extends PageQuery{
+public class VendorQueryPageCondition extends PageQuery{
 
 	/**
 	 * 

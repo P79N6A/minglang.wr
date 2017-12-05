@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.taobao.cun.auge.common.OperatorDto;
 
-public class CuntaoCompanyDto extends OperatorDto{
+public class CuntaoServiceVendorDto extends OperatorDto{
 	/**
 	 * 
 	 */
@@ -23,7 +23,7 @@ public class CuntaoCompanyDto extends OperatorDto{
     private String remark;
 
 	@NotNull(message="公司类型不能为空")
-    private CuntaoCompanyType type;
+    private CuntaoVendorType type;
 
 	/**
 	 *支付宝账号
@@ -78,11 +78,11 @@ public class CuntaoCompanyDto extends OperatorDto{
 	}
 
 
-	public CuntaoCompanyType getType() {
+	public CuntaoVendorType getType() {
 		return type;
 	}
 
-	public void setType(CuntaoCompanyType type) {
+	public void setType(CuntaoVendorType type) {
 		this.type = type;
 	}
 
