@@ -46,6 +46,10 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	public Result<PageDto<CuntaoEmployeeDto>> queryEmployeeByPage(
 			EmployeeQueryPageCondition employeeQueryPageCondition) {
 		try {
+			if(employeeQueryPageCondition.getCompanyId() == null){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "服务商ID不存在");
+				return Result.of(errorInfo);
+			}
 			CuntaoVendorEmployeeExample cuntaoVendorEmployeeExample = new CuntaoVendorEmployeeExample();
 			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
 					.andCompanyIdEqualTo(employeeQueryPageCondition.getCompanyId());
