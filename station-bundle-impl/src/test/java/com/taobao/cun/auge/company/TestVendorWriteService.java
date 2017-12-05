@@ -16,22 +16,38 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
 @EnableAutoConfiguration
-public class TestCompanyWriteService {
+public class TestVendorWriteService {
 
 	@Autowired
 	private VendorWriteService companyWriteService;
 	
 	@Test
-	public void testAddCompany(){
+	public void testAddVendor(){
 		CuntaoServiceVendorDto cuntaoCompanyDto = new CuntaoServiceVendorDto();
 		cuntaoCompanyDto.setCompanyName("testCompany1111");
 		cuntaoCompanyDto.setMobile("11321123112");
 		cuntaoCompanyDto.setOperator("62333");
 		cuntaoCompanyDto.setOperatorType(OperatorTypeEnum.BUC);
 		cuntaoCompanyDto.setRemark("test123123");
-		cuntaoCompanyDto.setTaobaoNick("fangyutest013");
+		cuntaoCompanyDto.setTaobaoNick("esverdor1");
 		cuntaoCompanyDto.setType(CuntaoVendorType.SERVICE_VENDOR);
 	    Result<Long> result = companyWriteService.addVendor(cuntaoCompanyDto);
+	    System.out.println(result.toString());
+	}
+	
+	
+	@Test
+	public void testUpdateVendor(){
+		CuntaoServiceVendorDto cuntaoCompanyDto = new CuntaoServiceVendorDto();
+		cuntaoCompanyDto.setId(2l);
+		cuntaoCompanyDto.setCompanyName("testCompany111122222");
+		cuntaoCompanyDto.setMobile("11321123112");
+		cuntaoCompanyDto.setOperator("62333");
+		cuntaoCompanyDto.setOperatorType(OperatorTypeEnum.BUC);
+		cuntaoCompanyDto.setRemark("test1231232333");
+		cuntaoCompanyDto.setTaobaoNick("esverdor1");
+		cuntaoCompanyDto.setType(CuntaoVendorType.SERVICE_VENDOR);
+	    Result<Boolean> result = companyWriteService.updateVendor(cuntaoCompanyDto);
 	    System.out.println(result.toString());
 	}
 }

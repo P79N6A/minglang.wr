@@ -15,6 +15,7 @@ public class VendorConverter {
 			return null;
 		}
 		CuntaoServiceVendorDto cuntaoServiceVendorDto = new CuntaoServiceVendorDto();
+		cuntaoServiceVendorDto.setId(cuntaoServiceVendor.getId());
 		cuntaoServiceVendorDto.setCompanyName(cuntaoServiceVendor.getCompanyName());
 		cuntaoServiceVendorDto.setMobile(cuntaoServiceVendor.getMobile());
 		cuntaoServiceVendorDto.setAlipayOutUser(cuntaoServiceVendor.getAlipayOutUser());
