@@ -20,6 +20,7 @@ public class VendorConverter {
 		cuntaoServiceVendorDto.setMobile(cuntaoServiceVendor.getMobile());
 		cuntaoServiceVendorDto.setAlipayOutUser(cuntaoServiceVendor.getAlipayOutUser());
 		cuntaoServiceVendorDto.setTaobaoNick(cuntaoServiceVendor.getTaobaoNick());
+		cuntaoServiceVendorDto.setTaobaoUserId(cuntaoServiceVendor.getTaobaoUserId());
 		cuntaoServiceVendorDto.setType(CuntaoVendorType.valueOf(cuntaoServiceVendor.getType()));
 		cuntaoServiceVendorDto.setRemark(cuntaoServiceVendor.getRemark());
 		return cuntaoServiceVendorDto;

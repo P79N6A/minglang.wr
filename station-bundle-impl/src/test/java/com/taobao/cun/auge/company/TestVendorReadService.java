@@ -11,8 +11,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.beust.jcommander.internal.Lists;
 import com.taobao.cun.auge.Application;
+import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.company.dto.VendorQueryPageCondition;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)
@@ -34,6 +36,13 @@ public class TestVendorReadService {
 		List list = Lists.newArrayList();
 		list.add(2l);
 		Result<List<CuntaoServiceVendorDto>> result = vendorReadService.queryVendorByIDS(list);
+		System.out.println(result.getModule());
+	}
+	
+	@Test
+	public void testQueryVendorByPage(){
+		VendorQueryPageCondition companyQueryPageCondition = new VendorQueryPageCondition();
+		Result<PageDto<CuntaoServiceVendorDto>> result = vendorReadService.queryVendorByPage(companyQueryPageCondition);
 		System.out.println(result.getModule());
 	}
 }

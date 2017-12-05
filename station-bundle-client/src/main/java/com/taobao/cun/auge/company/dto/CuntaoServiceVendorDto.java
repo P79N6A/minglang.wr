@@ -33,7 +33,7 @@ public class CuntaoServiceVendorDto extends OperatorDto{
 	/**
 	 * 公司TaobaoNick账号对应的taobaoUserId
 	 */
-	private String taobaoUserId;
+	private Long taobaoUserId;
 	
 	private Long id;
 	
@@ -94,11 +94,11 @@ public class CuntaoServiceVendorDto extends OperatorDto{
 		this.alipayOutUser = alipayOutUser;
 	}
 
-	public String getTaobaoUserId() {
+	public Long getTaobaoUserId() {
 		return taobaoUserId;
 	}
 
-	public void setTaobaoUserId(String taobaoUserId) {
+	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
 	}
 
