@@ -14,7 +14,6 @@ public class CuntaoEmployeeDto extends OperatorDto{
 	@NotNull(message = "员工姓名为空")
 	private String name;
 	
-	@NotNull(message = "员工淘宝账号为空")
 	private String taobaoNick;
 
 	@NotNull(message = "员工手机号为空")

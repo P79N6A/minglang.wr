@@ -31,6 +31,7 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
+import com.taobao.cun.endor.base.dto.UserUpdateDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -83,7 +84,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 		if(StringUtils.isNotEmpty(employeeDto.getMobile())){
 			errorInfo =  checkMobileExists(employeeDto.getMobile(),"员工手机号已存在!");
-			return Result.of(errorInfo);
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
 		}
 		
 		try {
@@ -93,6 +96,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employee.setModifier(employeeDto.getOperator());
 			employee.setGmtModified(new Date());
 			employee.setMobile(employeeDto.getMobile());
+			employee.setIsDeleted("n");
 			employee.setName(employeeDto.getName());
 			employee.setTaobaoNick(employeeDto.getTaobaoNick());
 			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
@@ -103,6 +107,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoVendorEmployee.setGmtCreate(new Date());
 			cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
 			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setIsDeleted("n");
 			cuntaoVendorEmployee.setCompanyId(companyId);
 			cuntaoVendorEmployee.setEmployeeId(employeeId);
 			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
@@ -128,7 +133,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
 		userRoleAddDto.setOrgId(companyId);
-		userRoleAddDto.setRoleName(type.MANAGER.name());
+		userRoleAddDto.setRoleName(type.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
 		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
@@ -232,10 +237,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				employee.setId(updateCuntaoEmployeeDto.getId());
 				employee.setGmtModified(new Date());
 				employee.setModifier(updateCuntaoEmployeeDto.getOperator());
-			if(StringUtils.isNotEmpty(updateCuntaoEmployeeDto.getTaobaoNick())){
-				employee.setTaobaoNick(employeeUserDOresult.getModule().getNick());
-				employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
-			}
 			if(StringUtils.isNotEmpty(updateCuntaoEmployeeDto.getMobile())){
 				employee.setMobile(updateCuntaoEmployeeDto.getMobile());
 			}
@@ -243,6 +244,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				employee.setName(updateCuntaoEmployeeDto.getName());
 			}
 			cuntaoEmployeeMapper.updateByPrimaryKeySelective(employee);
+			
+			updateEndorUser(updateCuntaoEmployeeDto, employeeUserDOresult);
 		} catch (Exception e) {
 			logger.error("updateCompanyEmployee error!",e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
@@ -250,6 +253,14 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 		
 		return  Result.of(Boolean.TRUE);
+	}
+
+	private void updateEndorUser(CuntaoEmployeeDto updateCuntaoEmployeeDto, ResultDO<BaseUserDO> employeeUserDOresult) {
+		UserUpdateDto userUpdateDto = new UserUpdateDto();
+		userUpdateDto.setUserId(employeeUserDOresult.getModule().getUserId()+"");
+		userUpdateDto.setUserName(updateCuntaoEmployeeDto.getName());
+		userUpdateDto.setModifier(updateCuntaoEmployeeDto.getOperator());
+		endorApiClient.getUserServiceClient().updateUser(userUpdateDto, null);
 	}
 
 	@Override

@@ -263,32 +263,6 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			}
 		}
 		try {
-			CuntaoEmployee manager = getVendorManager(cuntaoVendorDto.getId());
-			
-			if(StringUtils.isNotEmpty(cuntaoVendorDto.getTaobaoNick()) && !cuntaoVendorDto.getTaobaoNick().equals(vendor.getTaobaoNick())){
-				errorInfo = checkTaobaoAndAliPayInfo(cuntaoVendorDto.getTaobaoNick());
-				if(errorInfo != null){
-					return Result.of(errorInfo);
-				}
-				ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoVendorDto.getTaobaoNick());
-				ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
-				vendor.setTaobaoNick(vendorUserDOresult.getModule().getNick());
-				vendor.setTaobaoUserId(vendorUserDOresult.getModule().getUserId());
-				vendor.setAlipayOutUser(basePaymentAccountDOResult.getModule().getOutUser());
-				vendor.setAlipayAccountNo(basePaymentAccountDOResult.getModule().getAccountNo());
-				
-				if(manager != null){
-					manager.setTaobaoNick(vendorUserDOresult.getModule().getNick());
-					manager.setTaobaoUserId(vendorUserDOresult.getModule().getUserId());
-					manager.setName(vendorUserDOresult.getModule().getFullname());
-					manager.setGmtModified(new Date());
-					manager.setModifier(cuntaoVendorDto.getOperator());
-					if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
-						manager.setMobile(cuntaoVendorDto.getMobile());
-					}
-					cuntaoEmployeeMapper.updateByPrimaryKeySelective(manager);
-				}
-			}
 			if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
 				vendor.setMobile(cuntaoVendorDto.getMobile());
 			}
@@ -311,16 +285,6 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		
 	}
 
-	private CuntaoEmployee getVendorManager(Long companyId){
-		CuntaoVendorEmployeeExample example = new CuntaoVendorEmployeeExample();
-		example.createCriteria().andCompanyIdEqualTo(companyId).andTypeEqualTo(CuntaoVendorEmployeeType.MANAGER.name()).andIsDeletedEqualTo("n");
-		List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoVendorEmployeeMapper.selectByExample(example);
-		if(CollectionUtils.isNotEmpty(cuntaoVendorEmployees)){
-			CuntaoVendorEmployee cuntaoVendorEmployee =  cuntaoVendorEmployees.iterator().next();
-			return cuntaoEmployeeMapper.selectByPrimaryKey(cuntaoVendorEmployee.getEmployeeId());
-		}
-		return null;
-	} 
 	
 	
 	private ErrorInfo checkUpdateCuntaoVendorDto(CuntaoServiceVendorDto cuntaoServiceVendorDto){
