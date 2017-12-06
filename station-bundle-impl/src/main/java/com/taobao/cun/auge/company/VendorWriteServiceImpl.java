@@ -32,6 +32,7 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
+import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -81,12 +82,16 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		//TODO 检查手机号重复
+		if(StringUtils.isNotEmpty(cuntaoServiceVendorDto.getMobile())){
+			errorInfo =  checkMobileExists(cuntaoServiceVendorDto.getMobile(),"公司手机号已存在!");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+		}
 		try {
 			ResultDO<BaseUserDO> vendorUserDOresult = uicReadServiceClient.getBaseUserByNick(cuntaoServiceVendorDto.getTaobaoNick());
 			ResultDO<BasePaymentAccountDO> basePaymentAccountDOResult = uicPaymentAccountReadServiceClient.getAccountByUserId(vendorUserDOresult.getModule().getUserId());
 			ServiceVendorAndManagerInfo serviceVendorAndManagerInfo = addVendorAndManager(cuntaoServiceVendorDto, vendorUserDOresult.getModule(), basePaymentAccountDOResult.getModule());
-			//调用endor创建组织和管理员，分配管理员角色
 			createEndorOrgAndUser(serviceVendorAndManagerInfo);
 			result = result.of(cuntaoServiceVendorDto.getId());
 			return result;
@@ -96,6 +101,16 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			return Result.of(errorInfo);
 		}
 		
+	}
+
+	private ErrorInfo checkMobileExists(String mobile, String errorMessage) {
+		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(mobile);
+		List<CuntaoServiceVendor> result = cuntaoServiceVendorMapper.selectByExample(example);
+		if(result != null && !result.isEmpty()){
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, errorMessage);
+		}
+		return null;
 	}
 
 	private void createEndorOrgAndUser(ServiceVendorAndManagerInfo serviceVendorAndManagerInfo) {
@@ -252,41 +267,51 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	public Result<Boolean> updateVendor(CuntaoServiceVendorDto cuntaoVendorDto) {
 		Result<Boolean> result = null;
 		ErrorInfo errorInfo = checkUpdateCuntaoVendorDto(cuntaoVendorDto);
-		if(errorInfo != null){
+		if (errorInfo != null) {
 			return Result.of(errorInfo);
 		}
 		CuntaoServiceVendor vendor = cuntaoServiceVendorMapper.selectByPrimaryKey(cuntaoVendorDto.getId());
 		errorInfo = ErrorInfo.of(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, null, "指定ID服务商不存在");
-		if(vendor == null){
-			if(errorInfo != null){
+		if (vendor == null) {
+			if (errorInfo != null) {
 				return Result.of(errorInfo);
 			}
 		}
 		try {
-			if(StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())){
+			if (StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())) {
 				vendor.setMobile(cuntaoVendorDto.getMobile());
 			}
-			if(cuntaoVendorDto.getType() != null){
+			if (cuntaoVendorDto.getType() != null) {
 				vendor.setType(cuntaoVendorDto.getType().name());
 			}
-			if(StringUtils.isNotEmpty(cuntaoVendorDto.getRemark())){
+			if (StringUtils.isNotEmpty(cuntaoVendorDto.getRemark())) {
 				vendor.setRemark(cuntaoVendorDto.getRemark());
 			}
 			vendor.setGmtModified(new Date());
 			vendor.setModifier(cuntaoVendorDto.getOperator());
 			cuntaoServiceVendorMapper.updateByPrimaryKeySelective(vendor);
-			 result = Result.of(Boolean.TRUE);
-			 return result;
+			updateEndorOrg(cuntaoVendorDto);
+			result = Result.of(Boolean.TRUE);
+			return result;
 		} catch (Exception e) {
-			logger.error("update vendor error!",e);
+			logger.error("update vendor error!", e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
-		
+
 	}
 
 	
 	
+	private void updateEndorOrg(CuntaoServiceVendorDto cuntaoVendorDto) {
+		OrgUpdateDto updatAddDto = new OrgUpdateDto();
+		updatAddDto.setOrgId(cuntaoVendorDto.getId());
+		updatAddDto.setOrgName(cuntaoVendorDto.getCompanyName());
+		updatAddDto.setParentId(1l);
+		endorApiClient.getOrgServiceClient().update(updatAddDto, null);
+		
+	}
+
 	private ErrorInfo checkUpdateCuntaoVendorDto(CuntaoServiceVendorDto cuntaoServiceVendorDto){
 		try {
 			Assert.notNull(cuntaoServiceVendorDto.getId(),"服务商ID不能为空");
