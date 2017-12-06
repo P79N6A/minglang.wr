@@ -43,6 +43,7 @@ public class TestEmployeeReadService {
 	@Test
 	public void testQueryEmployeeByPage(){
 		EmployeeQueryPageCondition employeeQueryPageCondition = new EmployeeQueryPageCondition();
+		employeeQueryPageCondition.setCompanyId(2l);
 		Result<PageDto<CuntaoEmployeeDto>> result = employeeReadService.queryEmployeeByPage(employeeQueryPageCondition);
 		Assert.notNull(result.getModule());
 	}
