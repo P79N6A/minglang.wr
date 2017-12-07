@@ -702,6 +702,7 @@ public class AssetSynBOImpl implements AssetSynBO {
 			}
 		}else {
 			logger.error("checkAssetToAmpForBcp.getAssetInfo.error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus(),resDto.getErrorMsg());
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】获取集团数据失败。");
 		}
 	}
 }
