@@ -33,6 +33,7 @@ import com.taobao.cun.endor.dto.OrgUpdateDto;
 import com.taobao.cun.endor.service.OrgService;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
+import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
 import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
@@ -123,6 +124,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
@@ -212,18 +214,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		storeDTO.addTag(3300);
-		switch (category){
-		   case FMCG:
-			   storeDTO.addTag(3303);
-			   break;
-		   case MOMBABY:
-			   storeDTO.addTag(3301);
-			   break;
-		   case ELEC:
-			   storeDTO.addTag(3302);
-			   break;   
-		}
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
         ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 	    if(!updateResult.isSuccess()){
 	    	System.out.println(updateResult.getErrorMsg());
