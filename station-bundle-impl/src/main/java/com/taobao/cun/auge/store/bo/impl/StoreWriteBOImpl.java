@@ -214,7 +214,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		//storeDTO.addTag(3300);
+		storeDTO.addTag(3000);
         ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 	    if(!updateResult.isSuccess()){
 	    	System.out.println(updateResult.getErrorMsg());
