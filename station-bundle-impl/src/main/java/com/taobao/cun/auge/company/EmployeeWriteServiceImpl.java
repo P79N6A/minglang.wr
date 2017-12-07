@@ -265,7 +265,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 
 	@Override
 	public Result<Boolean> removeEmployee(Long employeeId) {
-		// TODO Auto-generated method stub
+		//CuntaoEmployee employee = new CuntaoEmployee();
+		//employee.setId(employeeId);
+		//employee.setGmtCreate(new Date());
+		//employee.setModifier(modifier);
+		//employee.setIsDeleted("y");
+		//cuntaoEmployeeMapper.updateByPrimaryKeySelective(employee);
 		return null;
 	}
 
