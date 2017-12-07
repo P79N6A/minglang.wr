@@ -36,6 +36,7 @@ import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
 import com.alibaba.pm.sc.portal.api.ScPortalService;
+import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
@@ -50,6 +51,7 @@ import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
+import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
@@ -379,7 +381,17 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
                    .build();
     }
     
+    @Bean
+    public SellerSignService sellerSignService(HsfConsumerContext context, @Value("${sellerSignService.version}") String version) {
+           return context.hsfConsumerBuilder(SellerSignService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
     
+    @Bean
+    public QLCAccessService qlcAccessService(HsfConsumerContext context, @Value("${qlcAccessService.version}") String version) {
+           return context.hsfConsumerBuilder(QLCAccessService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
     
     
     @Bean

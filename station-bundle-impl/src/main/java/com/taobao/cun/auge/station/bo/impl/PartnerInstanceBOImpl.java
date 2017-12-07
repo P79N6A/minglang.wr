@@ -324,7 +324,7 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     public Long findPartnerInstanceIdByStationId(Long stationId) {
         PartnerStationRel rel = findPartnerInstanceByStationId(stationId);
         if (null == rel) {
-            logger.error("partner instance is not exist.stationId " + stationId);
+            logger.info("partner instance is not exist.stationId " + stationId);
             throw new AugeBusinessException(AugeErrorCodes.STATION_BUSINESS_CHECK_ERROR_CODE,"partner instance is not exist.stationId " + stationId);
         }
         return rel.getId();

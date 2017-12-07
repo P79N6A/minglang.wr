@@ -26,10 +26,14 @@ public class PartnerProtocolRelTargetTypeEnum  implements Serializable {
 	
 	public static final PartnerProtocolRelTargetTypeEnum PARTNER = new PartnerProtocolRelTargetTypeEnum(
 			"PARTNER", "合伙人");
+	
+	public static final PartnerProtocolRelTargetTypeEnum AGREEMENT_ACCOUNT = new PartnerProtocolRelTargetTypeEnum(
+			"ALIPAY_ID", "支付宝账号");
 	static {
 		mappings.put("CRIUS_STATION", CRIUS_STATION);
 		mappings.put("PARTNER_INSTANCE", PARTNER_INSTANCE);
 		mappings.put("PARTNER", PARTNER);
+		mappings.put("AGREEMENT_ACCOUNT", AGREEMENT_ACCOUNT);
 
 	}
 

@@ -280,7 +280,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 					station, userType);
 			Result<Boolean> res = stationUserWriteService.addStationUserRel(relParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(relParam));
 			} 
 			return res.getData();
 	}
@@ -298,14 +298,14 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			Result<Boolean> res = stationWriteService.updateStation(
 					updateStationParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(updateStationParam));
 			}
 			if (!res.getData()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"updateStation is false");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"updateStation is false"+"|"+JSONObject.toJSONString(updateStationParam));
 			}
 			boolean userRel = this.updateStationUserRel(station);
 			if (!userRel) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"updateStationUserRel.res is false");
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"updateStationUserRel.res is false"+"|"+JSONObject.toJSONString(updateStationParam));
 			}
 			LinkedHashMap<String, String> featureMap = new LinkedHashMap<String, String>();
 			featureMap.put(CaiNiaoAdapter.CUNTAO_CODE, station.getStationNum());
@@ -458,7 +458,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.info("updateStationFeatures.info stationId"+stationId+"featureMap"+features);
 			Result<Boolean> res = stationWriteService.putStationFeatures(stationId, features, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(features));
 			} 
 			return res.getData();
 	}
@@ -476,7 +476,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			logger.info("updateStationUserRelFeature.info userId"+userId+"featureMap"+featureMap);
 			Result<Boolean> res = stationUserWriteService.putStationUserRelFeature(userId, featureMap,Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(featureMap));
 			} 
 			return res.getData();
 	}
@@ -506,7 +506,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 			BindAdminParam bindParam = buildBindAdminParam(station);
 			Result<Boolean> res = stationWriteService.bindAdmin(bindParam, Modifier.newSystem());
 			if (!res.isSuccess()) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage());
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,res.getErrorCode()+"|"+res.getErrorMessage()+"|"+JSONObject.toJSONString(bindParam));
 			}
 			return res.getData();
 	}

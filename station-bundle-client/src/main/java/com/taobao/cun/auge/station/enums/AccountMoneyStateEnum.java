@@ -19,7 +19,8 @@ public class AccountMoneyStateEnum implements Serializable {
     
     public static final AccountMoneyStateEnum HAS_FROZEN = new AccountMoneyStateEnum("HAS_FROZEN", "已冻结");
     public static final AccountMoneyStateEnum HAS_THAW = new AccountMoneyStateEnum("HAS_THAW", "已解冻");
-
+    public static final AccountMoneyStateEnum CAE_SIGNED = new AccountMoneyStateEnum("CAE_SIGNED", "CAE已签约");
+    public static final AccountMoneyStateEnum PAYMENT_AGREEMENT_SIGNED = new AccountMoneyStateEnum("PAYMENT_AGREEMENT_SIGNED", "支付协议已签约");
 
     static {
     	mappings.put("WAIT_FROZEN", WAIT_FROZEN);

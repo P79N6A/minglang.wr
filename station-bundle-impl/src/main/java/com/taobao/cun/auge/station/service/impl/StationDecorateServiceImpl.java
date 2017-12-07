@@ -366,8 +366,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		PartnerStationRel rel=partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(taobaoUserId);
 		Assert.notNull(rel);
 		PartnerInstanceDto partnerInstanceDto=partnerInstanceBO.getPartnerInstanceById(rel.getId());
-		String taobaoNick=partnerInstanceDto.getPartnerDto().getTaobaoNick();
-		MemberModel memberModel = memberReadService.findMemberByLoginId(taobaoNick);
+		//Long taobaoUserId = partnerInstanceDto.getPartnerDto().getTaobaoUserId();
+		MemberModel memberModel = memberReadService.findMemberByUserId(taobaoUserId);
 		if(memberModel==null||StringUtils.isEmpty(memberModel.getMemberId())){
 			throw new AugeBusinessException(AugeErrorCodes.MEMBER_ID_GET_ERROR,
 					"memberid获取失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
