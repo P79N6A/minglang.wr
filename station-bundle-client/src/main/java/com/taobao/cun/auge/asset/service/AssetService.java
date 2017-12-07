@@ -218,4 +218,10 @@ public interface AssetService {
     
     
     public boolean scrapAssetByOrg(List<String> aliNoList);
+    /**
+     * bpc对账使用
+     * 和集团资产做对账    对比资产状态，和责任人
+     * @param assetIds
+     */
+    public void checkAssetToAmpForBcp(Long  assetIds);
 }

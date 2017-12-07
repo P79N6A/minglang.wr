@@ -289,4 +289,9 @@ public class AssetServiceImpl implements AssetService{
 	public boolean scrapAssetByOrg(List<String> aliNoList){
 		return assetSynBO.scrapAssetByOrg(aliNoList);
 	}
+
+	@Override
+	public void checkAssetToAmpForBcp(Long assetId) {
+		assetSynBO.checkAssetToAmpForBcp(assetId);
+	}
 }

@@ -15,4 +15,8 @@ public interface AssetSynBO {
 	public void checkAssetInfo(List<Long> cuntaoAssetIds);
 	
 	public boolean scrapAssetByOrg(List<String> aliNoList);
+	
+	
+	
+	public void checkAssetToAmpForBcp(Long assetId);
 }

@@ -13,7 +13,6 @@ import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.PubResourceDto;
 
 import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
-
 import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.github.pagehelper.PageHelper;
@@ -664,8 +663,45 @@ public class AssetSynBOImpl implements AssetSynBO {
         DomainUtils.beforeUpdate(a, "offlineScrap");
         assetMapper.updateByPrimaryKeySelective(a);
 	}
-	
-	
-	
-	
+	@Override
+	public void checkAssetToAmpForBcp(Long assetId) {
+		Asset a = assetBO.getAssetById(assetId);
+		if (a == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "查询失败" + AssetBO.NO_EXIT_ASSET);
+		}
+		AssetApiResultDO<PubResourceDto>  resDto = cuntaoApiService.getAssetInfo(a.getAliNo(), "36821");
+		if (resDto.isSuccess()) {
+			PubResourceDto pDto = resDto.getResult();
+			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
+				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
+					logger.error("checkAssetToAmpForBcp.sign.check.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+					throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】是待县签收资产，集团状态必须是库存-可用。");
+				}
+			}
+			
+			/*if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
+				if (!(pDto.getStatus().equals("Scrapped"))) {
+					logger.error("scrap.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}*/
+			
+			if (a.getStatus().equals(AssetStatusEnum.USE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.PEND.getCode())||
+					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+				if (pDto.getStatus().equals("Using")) {
+					if(!(a.getOwnerWorkno().equals(pDto.getOwner()))) {
+						logger.error("checkAssetToAmpForBcp.use.check.owner.error,aliNo="+a.getAliNo()+":orgOwner="+a.getOwnerWorkno()+":ampOwner="+pDto.getOwner());
+						throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】责任人不一致，org责任人是"+a.getOwnerWorkno()+":集团资产责任人="+pDto.getOwner());
+					}
+				}
+				
+				if (pDto.getStatus().equals("Scrapped") && pDto.getStatusDetail().equals("Sold")) {
+					scrap(a);
+				}
+			}
+		}else {
+			logger.error("checkAssetToAmpForBcp.getAssetInfo.error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus(),resDto.getErrorMsg());
+		}
+	}
 }
