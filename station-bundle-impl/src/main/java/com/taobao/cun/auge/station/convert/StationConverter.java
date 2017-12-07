@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.common.lang.StringUtil;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -42,7 +44,7 @@ public class StationConverter {
 		address.setTownDetail(station.getTownDetail());
 		address.setVillage(station.getVillage());
 		address.setVillageDetail(station.getVillageDetail());
-		address.setAddressDetail(station.getAddress());
+		address.setAddressDetail(StringUtil.trim(station.getAddress()));
 		address.setLat(station.getLat());
 		address.setLng(station.getLng());
 
@@ -83,7 +85,7 @@ public class StationConverter {
 			station.setTownDetail(address.getTownDetail());
 			station.setVillage(address.getVillage());
 			station.setVillageDetail(address.getVillageDetail());
-			station.setAddress(address.getAddressDetail());
+			station.setAddress(StringUtil.trim(address.getAddressDetail()));
 			station.setLat(address.getLat());
 			station.setLng(address.getLng());
 		}
