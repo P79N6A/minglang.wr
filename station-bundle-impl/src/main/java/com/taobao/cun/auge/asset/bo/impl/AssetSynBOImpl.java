@@ -12,8 +12,10 @@ import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.PubResourceDto;
 
-import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
 
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -610,11 +612,60 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 	}
 	
-	@Override
-	public void tempUpdateStation(StationDto sDto) {
-		stationBO.updateStation(sDto);
-		
+	public boolean scrapAssetByOrg(List<String> aliNoList) {
+		AssetExample cuntaoAssetExample = new AssetExample();
+		List<Asset> assetList = new ArrayList<Asset>();
+		cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")
+				.andAliNoIn(aliNoList);
+		assetList = assetMapper.selectByExample(cuntaoAssetExample);
+		logger.info("scrapAssetByOrg asset begin,count={}", assetList.size());
+		batchscrap(assetList);
+		logger.info("scrapAssetByOrg asset end");
+		return  true;
 	}
+	private void batchscrap(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				try {
+					scrap(ca);
+				} catch (Exception e) {
+					logger.error("scrap asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	private void scrap(Asset  a) {
+		Long  assetId  = a.getId();
+		//如果有入库单   检查 是否删除入库单
+        AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+        if (detail != null) {
+        	assetRolloutIncomeDetailBO.deleteWaitSignDetail(assetId, "offlineScrap");
+            Long incomeId = detail.getIncomeId();
+            Long rolloutId = detail.getRolloutId();
+            if (incomeId != null) {
+            	 //更新出入库单状态
+            	if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
+            		assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, "offlineScrap");
+        		}else {
+        			assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, "offlineScrap");
+        		}
+            }
+            if (rolloutId != null) {
+            	if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
+					assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, "offlineScrap");
+				}else{
+					assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, "offlineScrap");
+				}
+            }
+           
+        }
+        
+        a.setStatus(AssetStatusEnum.SCRAP.getCode());
+        DomainUtils.beforeUpdate(a, "offlineScrap");
+        assetMapper.updateByPrimaryKeySelective(a);
+	}
+	
+	
 	
 	
 }

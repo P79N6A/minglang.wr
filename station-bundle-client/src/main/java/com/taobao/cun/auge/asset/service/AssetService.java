@@ -216,9 +216,6 @@ public interface AssetService {
      */
     public void checkAssetInfo(List<Long> assetIds);
     
-    /**
-     * 临时使用
-     * @param sDto
-     */
-    public void tempUpdateStation(StationDto sDto);
+    
+    public boolean scrapAssetByOrg(List<String> aliNoList);
 }

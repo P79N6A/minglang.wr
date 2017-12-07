@@ -285,10 +285,8 @@ public class AssetServiceImpl implements AssetService{
 	public void checkAssetInfo(List<Long> assetIds) {
 		assetSynBO.checkAssetInfo(assetIds);
 	}
-
-	@Override
-	public void tempUpdateStation(StationDto sDto) {
-		assetSynBO.tempUpdateStation(sDto);
-		
+	
+	public boolean scrapAssetByOrg(List<String> aliNoList){
+		return assetSynBO.scrapAssetByOrg(aliNoList);
 	}
 }

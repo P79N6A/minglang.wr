@@ -14,6 +14,5 @@ public interface AssetSynBO {
 	
 	public void checkAssetInfo(List<Long> cuntaoAssetIds);
 	
-	
-	public void tempUpdateStation(StationDto sDto);
+	public boolean scrapAssetByOrg(List<String> aliNoList);
 }
