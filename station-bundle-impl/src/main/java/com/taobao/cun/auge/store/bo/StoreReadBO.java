@@ -28,4 +28,6 @@ public interface StoreReadBO {
 	PageDto<StoreDto> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition);
 	
 	List<StoreDto> getStoreByStationIds(List<Long> stationIds);
+	
+	List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreIds);
 }

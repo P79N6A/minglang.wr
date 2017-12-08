@@ -2,10 +2,14 @@ package com.taobao.cun.auge.store.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
@@ -19,6 +23,7 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Autowired
 	private StoreReadBO storeReadBO;
 	
+	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
 	public StoreDto getStoreByStationId(Long stationId) {
 		return storeReadBO.getStoreDtoByStationId(stationId);
@@ -51,14 +56,23 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Override
 	public Result<PageDto<StoreDto>> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition) {
-		PageDto<StoreDto> stores = storeReadBO.queryStoreByPage(storeQueryPageCondition);
-		return Result.of(stores);
+		try {
+			PageDto<StoreDto> stores = storeReadBO.queryStoreByPage(storeQueryPageCondition);
+			return Result.of(stores);
+		} catch (Exception e) {
+			logger.error("queryStoreByPage",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, "", "系统异常"));
+		}
 	}
 
 	@Override
 	public List<StoreDto> getStoreByStationIds(List<Long> stationIds) {
-		// TODO Auto-generated method stub
 		return storeReadBO.getStoreByStationIds(stationIds);
+	}
+
+	@Override
+	public List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreIds) {
+		return storeReadBO.getStoreBySharedStoreIds(sharedStoreIds);
 	}
 
 }

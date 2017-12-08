@@ -15,9 +15,6 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.POIUtils;
-import com.taobao.cun.auge.common.utils.PageDtoUtil;
-import com.taobao.cun.auge.company.VendorConverter;
-import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample.Criteria;
@@ -71,17 +68,19 @@ public class StoreReadBOImpl implements StoreReadBO {
 
 	private StoreDto toStoreDto(Station station, StationDto stationDto, CuntaoStore cuntaoStore,Partner partner) {
 		StoreDto storeDto = new StoreDto();
-		storeDto.setId(cuntaoStore.getId());
 		storeDto.setAddress(stationDto.getAddress());
+		storeDto.setTaobaoUserId(station.getTaobaoUserId());
+		storeDto.setStationId(station.getId());
+		storeDto.setId(cuntaoStore.getId());
 		storeDto.setName(cuntaoStore.getName());
 		storeDto.setShareStoreId(cuntaoStore.getShareStoreId());
 		storeDto.setScmCode(cuntaoStore.getScmCode());
 		storeDto.setStoreCategory(StoreCategory.valueOf(cuntaoStore.getStoreCategory()));
-		storeDto.setTaobaoUserId(station.getTaobaoUserId());
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
-		storeDto.setStationId(station.getId());
-		storeDto.setMobile(partner.getMobile());
-		storeDto.setPartnerName(partner.getName());
+		if(partner !=null){
+			storeDto.setMobile(partner.getMobile());
+			storeDto.setPartnerName(partner.getName());
+		}
 		return storeDto;
 	}
 
@@ -100,9 +99,6 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
-		if(partner == null){
-			return null;
-		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		
 		return storeDto;
@@ -123,9 +119,6 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
-		if(partner == null){
-			return null;
-		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
 	}
@@ -145,9 +138,6 @@ public class StoreReadBOImpl implements StoreReadBO {
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
-		if(partner == null){
-			return null;
-		}
 		StoreDto storeDto = toStoreDto(station, stationDto, cuntaoStore,partner);
 		return storeDto;
 	}
@@ -239,12 +229,25 @@ public class StoreReadBOImpl implements StoreReadBO {
 				List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 				CuntaoStore store = cuntaoStores.iterator().next();
 				Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
-				if(partner == null){
-					continue;
-				}
 				StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
 				stores.add(storeDto);
 			}
+		}
+		return stores;
+	}
+
+	@Override
+	public List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreIds) {
+		List<StoreDto> stores = Lists.newArrayList();
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andShareStoreIdIn(sharedStoreIds).andIsDeletedEqualTo("n");
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		for(CuntaoStore store :cuntaoStores){
+			Station station = stationBO.getStationById(store.getStationId());
+			StationDto stationDto = StationConverter.toStationDto(station);
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
+			StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
+			stores.add(storeDto);
 		}
 		return stores;
 	}

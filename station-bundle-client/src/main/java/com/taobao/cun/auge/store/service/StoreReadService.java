@@ -65,6 +65,11 @@ public interface StoreReadService {
 	  */
 	 List<StoreDto> getStoreByStationIds(List<Long> stationIds);
 	 
-	 
+	 /**
+	  * 共享门店ID批量查询门店
+	  * @param sharedStoreId
+	  * @return
+	  */
+	 List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreId);
 	 
 }
