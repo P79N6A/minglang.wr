@@ -16,6 +16,7 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
@@ -110,16 +111,40 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
 					.andIdIn(ids).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
 			List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
-			if(employees == null){
-				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "员工不存在");
-				return Result.of(errorInfo);
-			}
 			return Result.of(EmployeeConverter.convert2CuntaoEmployeeDtoList(employees));
 		} catch (Exception e) {
 			logger.error("queryEmployeeByIDS error!", e);
 			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
+	}
+
+	@Override
+	public Result<List<CuntaoEmployeeDto>> queryStoreEmployeeByIdentifier(Long stationId,
+			CuntaoEmployeeIdentifier identifier) {
+		try {
+			CuntaoEmployeeRelExample cuntaoVendorEmployeeExample = new CuntaoEmployeeRelExample();
+			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
+					.andOwnerIdEqualTo(stationId).andTypeEqualTo(CuntaoEmployeeType.store.name());
+			List<CuntaoEmployeeRel> cuntaoVendorEmployees = cuntaoEmployeeRelMapper
+					.selectByExample(cuntaoVendorEmployeeExample);
+			List<Long> employeeIds = cuntaoVendorEmployees.stream()
+					.map(cuntaoVendorEmployee -> cuntaoVendorEmployee.getEmployeeId()).collect(Collectors.toList());
+			if (employeeIds != null && !employeeIds.isEmpty()) {
+				CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
+				cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.store.name()).andIdIn(employeeIds);
+				List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
+				//TODO call endor检查角色
+				return Result.of(EmployeeConverter.convert2CuntaoEmployeeDtoList(employees));
+			}
+			return Result.of(true);
+		} catch (Exception e) {
+			logger.error("queryStoreEmployeeByIdentifier error!", e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+		
+		
 	}
 
 }

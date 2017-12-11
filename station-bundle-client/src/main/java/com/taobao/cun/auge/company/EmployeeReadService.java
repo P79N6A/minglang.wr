@@ -5,6 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
 
 /**
@@ -30,4 +31,12 @@ public interface EmployeeReadService {
 	 */
 	
 	Result<List<CuntaoEmployeeDto>> queryVendorEmployeeByIDS(List<Long> ids);
+	
+	/**
+	 * 根据stationId查询门店员工
+	 * @param stationId
+	 * @param identifier
+	 * @return
+	 */
+	Result<List<CuntaoEmployeeDto>> queryStoreEmployeeByIdentifier(Long stationId,CuntaoEmployeeIdentifier identifier);
 }
