@@ -30,4 +30,11 @@ public interface VendorReadService {
 	 */
 	
 	Result<List<CuntaoServiceVendorDto>> queryVendorByIDS(List<Long> ids);
+
+	/**
+	 * 根据淘宝UserId查询
+	 * @param taobaoUserId
+	 * @return
+	 */
+	Result<CuntaoServiceVendorDto> queryVendorByTaobaoUserID(Long taobaoUserId);
 }
