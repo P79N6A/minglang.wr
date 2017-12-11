@@ -63,11 +63,11 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
+	public Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddVendorEmployee(companyId,employeeDto,identifier);
+		errorInfo = checkAddVendorEmployee(vendorId,employeeDto,identifier);
 		
-		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(companyId);
+		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
 		if(cuntaoServiceVendor == null){
 			errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
 			return Result.of(errorInfo);
@@ -81,12 +81,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo = checkTaobaoNickExists(companyId,employeeDto.getTaobaoNick(),"员工淘宝账号已存在");
+		errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),"员工淘宝账号已存在");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
 		if(StringUtils.isNotEmpty(employeeDto.getMobile())){
-			errorInfo =  checkMobileExists(employeeDto.getMobile(),"员工手机号已存在!");
+			errorInfo =  checkMobileExists(employeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
@@ -112,14 +112,14 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
 			cuntaoVendorEmployee.setGmtModified(new Date());
 			cuntaoVendorEmployee.setIsDeleted("n");
-			cuntaoVendorEmployee.setOwnerId(companyId);
+			cuntaoVendorEmployee.setOwnerId(vendorId);
 			cuntaoVendorEmployee.setEmployeeId(employeeId);
 			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
 			cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
 			cuntaoVendorEmployee.setIdentifier(identifier.name());
 			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
 			
-			createEndorUser(companyId,employee,identifier);
+			createEndorUser(vendorId,employee,identifier);
 			return Result.of(employeeId);
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
@@ -152,14 +152,14 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 	
 	
-	private ErrorInfo checkTaobaoNickExists(Long companyId,String taobaoNick,String errorMessage){
+	private ErrorInfo checkTaobaoNickExists(Long vendorId,String taobaoNick,String type,String errorMessage){
 		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(companyId);
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type);
 		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
 		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
 			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
-			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(employeeIds).andTaobaoNickEqualTo(taobaoNick);
+			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(employeeIds).andTaobaoNickEqualTo(taobaoNick).andTypeEqualTo(type);
 			List<CuntaoEmployee> cuntaoEmployees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
 			if(cuntaoEmployees != null && !cuntaoEmployees.isEmpty()){
 				return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
@@ -168,9 +168,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return null;
 	}
 	
-	private ErrorInfo checkTaobaoNickExists(String taobaoNick,String errorMessage){
+	private ErrorInfo checkTaobaoNickExists(String taobaoNick,String type,String errorMessage){
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
-			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick);
+			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick).andTypeEqualTo(type);;
 			List<CuntaoEmployee> cuntaoEmployees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
 			if(cuntaoEmployees != null && !cuntaoEmployees.isEmpty()){
 				return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
@@ -178,9 +178,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return null;
 	}
 	
-	private ErrorInfo checkMobileExists(String mobile,String errorMessage){
+	private ErrorInfo checkMobileExists(String mobile,String type,String errorMessage){
 		CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
-		cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(mobile);
+		cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(mobile).andTypeEqualTo(type);
 		List<CuntaoEmployee> cuntaoEmployees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
 		if(cuntaoEmployees != null && !cuntaoEmployees.isEmpty()){
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
@@ -230,11 +230,11 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			return Result.of(errorInfo);
 		}
 		if(!employee.getTaobaoNick().equals(updateCuntaoEmployeeDto.getTaobaoNick())){
-			errorInfo = checkTaobaoNickExists(updateCuntaoEmployeeDto.getTaobaoNick(),"员工淘宝账号已存在!");
+			errorInfo = checkTaobaoNickExists(updateCuntaoEmployeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),"员工淘宝账号已存在!");
 			return Result.of(errorInfo);
 		}
 		if(StringUtils.isNotEmpty(updateCuntaoEmployeeDto.getMobile())){
-			errorInfo =  checkMobileExists(updateCuntaoEmployeeDto.getMobile(),"员工手机号已存在!");
+			errorInfo =  checkMobileExists(updateCuntaoEmployeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
 			return Result.of(errorInfo);
 		}
 		try {
