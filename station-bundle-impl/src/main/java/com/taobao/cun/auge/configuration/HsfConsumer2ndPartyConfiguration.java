@@ -396,11 +396,19 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     }
     
     @Bean
-    public EndorApiClient endorApiClient(@Value("${endor.servicevendor.appName}")String appName,@Value("${endor.servicevendor.accessKey}")String accessKey,@Value("${endor.servicevendor.version}")String version){
+    public EndorApiClient vendorEndorApiClient(@Value("${endor.servicevendor.appName}")String appName,@Value("${endor.servicevendor.accessKey}")String accessKey,@Value("${endor.service.version}")String version){
     	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
     	client.init();
     	return client;
     }
+    
+    @Bean
+    public EndorApiClient storeEndorApiClient(@Value("${endor.cuntaostore.appName}")String appName,@Value("${endor.cuntaostore.accessKey}")String accessKey,@Value("${endor.service.version}")String version){
+    	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
+    	client.init();
+    	return client;
+    }
+    
     
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){

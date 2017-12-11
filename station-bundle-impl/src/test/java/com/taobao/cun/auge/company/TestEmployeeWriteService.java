@@ -3,6 +3,7 @@ package com.taobao.cun.auge.company;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -11,7 +12,7 @@ import org.springframework.util.Assert;
 import com.taobao.cun.auge.Application;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
-import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 
@@ -24,7 +25,8 @@ public class TestEmployeeWriteService {
 	private EmployeeWriteService employeeWriteService;
 	
 	@Autowired
-	private EndorApiClient endorApiClient;
+	@Qualifier("vendorEndorApiClient")
+	private EndorApiClient vendorEndorApiClient;
 	@Test
 	public void testAddEmployee(){
 		CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
@@ -33,7 +35,7 @@ public class TestEmployeeWriteService {
 		employee.setMobile("12312312312");
 		employee.setOperator("62333");
 		employee.setOperatorType(OperatorTypeEnum.BUC);
-		Result<Long>  result = employeeWriteService.addEmployee(2l, employee, CuntaoVendorEmployeeType.DISTRIBUTOR);
+		Result<Long>  result = employeeWriteService.addVendorEmployee(2l, employee, CuntaoEmployeeIdentifier.DISTRIBUTOR);
 		Assert.notNull(result.getModule());
 	}
 	
@@ -46,7 +48,7 @@ public class TestEmployeeWriteService {
 		employee.setMobile("31231223312");
 		employee.setOperator("62333");
 		employee.setOperatorType(OperatorTypeEnum.BUC);
-		Result<Boolean>  result = employeeWriteService.updateEmployee(employee);
+		Result<Boolean>  result = employeeWriteService.updateVendorEmployee(employee);
 		Assert.notNull(result.getModule());
 	}
 	
@@ -54,7 +56,7 @@ public class TestEmployeeWriteService {
 	
 	@Test
 	public void testPermission(){
-		boolean result = endorApiClient.getUserPermissionServiceClient().check("3728411498", "servicevendor_manager");
+		boolean result = vendorEndorApiClient.getUserPermissionServiceClient().check("3728411498", "servicevendor_manager");
 		Assert.isTrue(result);
 	}
 }

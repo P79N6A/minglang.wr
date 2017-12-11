@@ -20,10 +20,10 @@ import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample.Criteria;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
@@ -38,7 +38,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
+	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeReadServiceImpl.class);
 
@@ -50,10 +50,10 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "服务商ID不存在");
 				return Result.of(errorInfo);
 			}
-			CuntaoVendorEmployeeExample cuntaoVendorEmployeeExample = new CuntaoVendorEmployeeExample();
+			CuntaoEmployeeRelExample cuntaoVendorEmployeeExample = new CuntaoEmployeeRelExample();
 			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
-					.andCompanyIdEqualTo(employeeQueryPageCondition.getCompanyId());
-			List<CuntaoVendorEmployee> cuntaoVendorEmployees = cuntaoVendorEmployeeMapper
+					.andOwnerIdEqualTo(employeeQueryPageCondition.getCompanyId());
+			List<CuntaoEmployeeRel> cuntaoVendorEmployees = cuntaoEmployeeRelMapper
 					.selectByExample(cuntaoVendorEmployeeExample);
 			List<Long> employeeIds = cuntaoVendorEmployees.stream()
 					.map(cuntaoVendorEmployee -> cuntaoVendorEmployee.getEmployeeId()).collect(Collectors.toList());

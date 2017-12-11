@@ -3,7 +3,7 @@ package com.taobao.cun.auge.company;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 
@@ -29,7 +29,7 @@ public class ServiceVendorAndManagerInfo implements Serializable{
 	
 	private CuntaoVendorEmployeeState state;
 	
-	private CuntaoVendorEmployeeType type;
+	private CuntaoEmployeeIdentifier type;
 
 	
 
@@ -49,11 +49,11 @@ public class ServiceVendorAndManagerInfo implements Serializable{
 		this.state = state;
 	}
 
-	public CuntaoVendorEmployeeType getType() {
+	public CuntaoEmployeeIdentifier getType() {
 		return type;
 	}
 
-	public void setType(CuntaoVendorEmployeeType type) {
+	public void setType(CuntaoEmployeeIdentifier type) {
 		this.type = type;
 	}
 

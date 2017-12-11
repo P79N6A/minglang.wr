@@ -3,11 +3,11 @@ package com.taobao.cun.auge.company;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,18 +15,18 @@ import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeRelType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoVendorState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.validator.BeanValidator;
@@ -61,10 +61,11 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
+	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
 	
 	@Autowired
-	private EndorApiClient endorApiClient;
+	@Qualifier("vendorEndorApiClient")
+	private EndorApiClient vendorEndorApiClient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorWriteServiceImpl.class);
 	
@@ -119,20 +120,20 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
 		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
 		orgAddDto.setParentId(1l);
-		endorApiClient.getOrgServiceClient().insert(orgAddDto, null);
+		vendorEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 		
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
 		userAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
 		userAddDto.setUserName(serviceVendorAndManagerInfo.getManager().getName());
-		endorApiClient.getUserServiceClient().addUser(userAddDto);
+		vendorEndorApiClient.getUserServiceClient().addUser(userAddDto);
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
 		userRoleAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
-		userRoleAddDto.setRoleName(CuntaoVendorEmployeeType.MANAGER.name());
+		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.MANAGER.name());
 		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
-		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
@@ -164,22 +165,23 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoServiceVendorDto.setId(cuntaoServiceVendor.getId());
 		CuntaoEmployee manager = convert2CuntaoCompanyEmployee(cuntaoServiceVendorDto,baseUserDO);
 		cuntaoEmployeeMapper.insertSelective(manager);
-		CuntaoVendorEmployee cuntaoCompanyEmployee = new CuntaoVendorEmployee();
+		CuntaoEmployeeRel cuntaoCompanyEmployee = new CuntaoEmployeeRel();
 		cuntaoCompanyEmployee.setCreator(cuntaoServiceVendorDto.getOperator());
 		cuntaoCompanyEmployee.setGmtCreate(new Date());
 		cuntaoCompanyEmployee.setModifier(cuntaoServiceVendorDto.getOperator());
 		cuntaoCompanyEmployee.setGmtModified(new Date());
 		cuntaoCompanyEmployee.setIsDeleted("n");
-		cuntaoCompanyEmployee.setCompanyId(cuntaoServiceVendor.getId());
+		cuntaoCompanyEmployee.setOwnerId(cuntaoServiceVendor.getId());
 		cuntaoCompanyEmployee.setEmployeeId(manager.getId());
 		cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-		cuntaoCompanyEmployee.setType(CuntaoVendorEmployeeType.MANAGER.name());
-		cuntaoVendorEmployeeMapper.insertSelective(cuntaoCompanyEmployee);
+		cuntaoCompanyEmployee.setType(CuntaoEmployeeRelType.vendor.name());
+		cuntaoCompanyEmployee.setIdentifier(CuntaoEmployeeIdentifier.MANAGER.name());
+		cuntaoEmployeeRelMapper.insertSelective(cuntaoCompanyEmployee);
 		cuntaoCompanyAndManagerInfo.setCuntaoServiceVendor(cuntaoServiceVendor);
 		cuntaoCompanyAndManagerInfo.setManager(manager);
 		cuntaoCompanyAndManagerInfo.setId(cuntaoCompanyEmployee.getId());
 		cuntaoCompanyAndManagerInfo.setState(CuntaoVendorEmployeeState.valueOf(cuntaoCompanyEmployee.getState()));
-		cuntaoCompanyAndManagerInfo.setType(CuntaoVendorEmployeeType.valueOf(cuntaoCompanyEmployee.getType()));
+		cuntaoCompanyAndManagerInfo.setType(CuntaoEmployeeIdentifier.valueOf(cuntaoCompanyEmployee.getType()));
 		return cuntaoCompanyAndManagerInfo;
 	}
 
@@ -308,7 +310,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		updatAddDto.setOrgId(cuntaoVendorDto.getId());
 		updatAddDto.setOrgName(cuntaoVendorDto.getCompanyName());
 		updatAddDto.setParentId(1l);
-		endorApiClient.getOrgServiceClient().update(updatAddDto, null);
+		vendorEndorApiClient.getOrgServiceClient().update(updatAddDto, null);
 		
 	}
 

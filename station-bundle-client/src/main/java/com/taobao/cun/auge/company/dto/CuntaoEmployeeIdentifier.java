@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.company.dto;
 
-public enum CuntaoVendorEmployeeType {
+public enum CuntaoEmployeeIdentifier {
 
 	MANAGER,//经理
 	DISTRIBUTOR,//配送员

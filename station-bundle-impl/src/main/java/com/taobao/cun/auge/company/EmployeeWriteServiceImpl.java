@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,16 +17,17 @@ import org.springframework.util.Assert;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeRelType;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeType;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployee;
-import com.taobao.cun.auge.dal.domain.CuntaoVendorEmployeeExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoVendorEmployeeMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.endor.base.client.EndorApiClient;
@@ -48,19 +50,20 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
 	
 	@Autowired
-	private CuntaoVendorEmployeeMapper cuntaoVendorEmployeeMapper;
+	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
 	
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
 	
 	@Autowired
-	private EndorApiClient endorApiClient;
+	@Qualifier("vendorEndorApiClient")
+	private EndorApiClient vendorEndorApiClient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteServiceImpl.class);
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type) {
+	public Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier type) {
 		ErrorInfo errorInfo = null;
 		errorInfo = checkAddVendorEmployee(companyId,employeeDto,type);
 		
@@ -100,19 +103,20 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employee.setName(employeeDto.getName());
 			employee.setTaobaoNick(employeeDto.getTaobaoNick());
 			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
+			employee.setType(CuntaoEmployeeRelType.vendor.name());
 			cuntaoEmployeeMapper.insertSelective(employee);
 			Long employeeId = employee.getId();
-			CuntaoVendorEmployee cuntaoVendorEmployee = new CuntaoVendorEmployee();
+			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 			cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
 			cuntaoVendorEmployee.setGmtCreate(new Date());
 			cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
 			cuntaoVendorEmployee.setGmtModified(new Date());
 			cuntaoVendorEmployee.setIsDeleted("n");
-			cuntaoVendorEmployee.setCompanyId(companyId);
+			cuntaoVendorEmployee.setOwnerId(companyId);
 			cuntaoVendorEmployee.setEmployeeId(employeeId);
 			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
 			cuntaoVendorEmployee.setType(type.name());
-			cuntaoVendorEmployeeMapper.insertSelective(cuntaoVendorEmployee);
+			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
 			
 			createEndorUser(companyId,employee,type);
 			return Result.of(employeeId);
@@ -123,19 +127,19 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoVendorEmployeeType type){
+	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoEmployeeIdentifier type){
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(employee.getCreator());
 		userAddDto.setUserId(employee.getTaobaoUserId()+"");
 		userAddDto.setUserName(employee.getName());
-		endorApiClient.getUserServiceClient().addUser(userAddDto);
+		vendorEndorApiClient.getUserServiceClient().addUser(userAddDto);
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
 		userRoleAddDto.setOrgId(companyId);
 		userRoleAddDto.setRoleName(type.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
-		endorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 	
 	
@@ -148,9 +152,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	
 	private ErrorInfo checkTaobaoNickExists(Long companyId,String taobaoNick,String errorMessage){
-		CuntaoVendorEmployeeExample example = new CuntaoVendorEmployeeExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andCompanyIdEqualTo(companyId);
-		List<CuntaoVendorEmployee> cuntaoCompanyEmployees = cuntaoVendorEmployeeMapper.selectByExample(example);
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(companyId);
+		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
 		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
 			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
@@ -184,7 +188,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 }
 	
 	
-	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoVendorEmployeeType type){
+	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier type){
 		try {
 			Assert.notNull(companyId,"公司ID不能为空");
 			Assert.notNull(type,"员工类型不能为空");
@@ -209,7 +213,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Boolean> updateEmployee(CuntaoEmployeeDto updateCuntaoEmployeeDto) {
+	public Result<Boolean> updateVendorEmployee(CuntaoEmployeeDto updateCuntaoEmployeeDto) {
 		ErrorInfo errorInfo = null;
 		errorInfo = checkUpdateEmployee(updateCuntaoEmployeeDto);
 		if(errorInfo != null){
@@ -260,17 +264,23 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		userUpdateDto.setUserId(employeeUserDOresult.getModule().getUserId()+"");
 		userUpdateDto.setUserName(updateCuntaoEmployeeDto.getName());
 		userUpdateDto.setModifier(updateCuntaoEmployeeDto.getOperator());
-		endorApiClient.getUserServiceClient().updateUser(userUpdateDto, null);
+		vendorEndorApiClient.getUserServiceClient().updateUser(userUpdateDto, null);
 	}
 
 	@Override
-	public Result<Boolean> removeEmployee(Long employeeId) {
+	public Result<Boolean> removeVendorEmployee(Long employeeId) {
 		//CuntaoEmployee employee = new CuntaoEmployee();
 		//employee.setId(employeeId);
 		//employee.setGmtCreate(new Date());
 		//employee.setModifier(modifier);
 		//employee.setIsDeleted("y");
 		//cuntaoEmployeeMapper.updateByPrimaryKeySelective(employee);
+		return null;
+	}
+
+	@Override
+	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto employee, CuntaoEmployeeIdentifier type) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
