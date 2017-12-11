@@ -27,7 +27,7 @@ public class TestEmployeeReadService {
 	
 	//@Test
 	public void testQueryEmployeeByID(){
-		Result<CuntaoEmployeeDto> empoloyee = employeeReadService.queryEmployeeByID(2l);
+		Result<CuntaoEmployeeDto> empoloyee = employeeReadService.queryVendorEmployeeByID(2l);
 		Assert.notNull(empoloyee.getModule());
 	}
 	
@@ -35,7 +35,7 @@ public class TestEmployeeReadService {
 	public void testQueryEmployeeByIDS(){
 		List<Long> ids = Lists.newArrayList();
 		ids.add(2L);
-		Result<List<CuntaoEmployeeDto>> empoloyees = employeeReadService.queryEmployeeByIDS(ids);
+		Result<List<CuntaoEmployeeDto>> empoloyees = employeeReadService.queryVendorEmployeeByIDS(ids);
 		Assert.notNull(empoloyees.getModule());
 	}
 	
@@ -44,7 +44,7 @@ public class TestEmployeeReadService {
 	public void testQueryEmployeeByPage(){
 		EmployeeQueryPageCondition employeeQueryPageCondition = new EmployeeQueryPageCondition();
 		employeeQueryPageCondition.setCompanyId(2l);
-		Result<PageDto<CuntaoEmployeeDto>> result = employeeReadService.queryEmployeeByPage(employeeQueryPageCondition);
+		Result<PageDto<CuntaoEmployeeDto>> result = employeeReadService.queryVendorEmployeeByPage(employeeQueryPageCondition);
 		Assert.notNull(result.getModule());
 	}
 }

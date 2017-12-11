@@ -16,6 +16,7 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.EmployeeQueryPageCondition;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
@@ -43,7 +44,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeReadServiceImpl.class);
 
 	@Override
-	public Result<PageDto<CuntaoEmployeeDto>> queryEmployeeByPage(
+	public Result<PageDto<CuntaoEmployeeDto>> queryVendorEmployeeByPage(
 			EmployeeQueryPageCondition employeeQueryPageCondition) {
 		try {
 			if(employeeQueryPageCondition.getCompanyId() == null){
@@ -52,7 +53,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 			}
 			CuntaoEmployeeRelExample cuntaoVendorEmployeeExample = new CuntaoEmployeeRelExample();
 			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
-					.andOwnerIdEqualTo(employeeQueryPageCondition.getCompanyId());
+					.andOwnerIdEqualTo(employeeQueryPageCondition.getCompanyId()).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
 			List<CuntaoEmployeeRel> cuntaoVendorEmployees = cuntaoEmployeeRelMapper
 					.selectByExample(cuntaoVendorEmployeeExample);
 			List<Long> employeeIds = cuntaoVendorEmployees.stream()
@@ -60,7 +61,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 			if (employeeIds != null && !employeeIds.isEmpty()) {
 				PageHelper.startPage(employeeQueryPageCondition.getPageNum(), employeeQueryPageCondition.getPageSize());
 				CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
-				Criteria criteria = cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
+				Criteria criteria = cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name())
 						.andIdIn(employeeIds);
 				if (StringUtils.isNotEmpty(employeeQueryPageCondition.getName())) {
 					criteria.andNameEqualTo(employeeQueryPageCondition.getName());
@@ -87,7 +88,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	}
 
 	@Override
-	public Result<CuntaoEmployeeDto> queryEmployeeByID(Long id) {
+	public Result<CuntaoEmployeeDto> queryVendorEmployeeByID(Long id) {
 		try {
 			CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(id);
 			if(employee == null){
@@ -103,11 +104,11 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	}
 
 	@Override
-	public Result<List<CuntaoEmployeeDto>> queryEmployeeByIDS(List<Long> ids) {
+	public Result<List<CuntaoEmployeeDto>> queryVendorEmployeeByIDS(List<Long> ids) {
 		try {
 			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
 			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
-					.andIdIn(ids);
+					.andIdIn(ids).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
 			List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
 			if(employees == null){
 				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "员工不存在");

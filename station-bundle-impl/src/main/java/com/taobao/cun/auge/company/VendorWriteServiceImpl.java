@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeRelType;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.company.dto.CuntaoVendorState;
@@ -174,7 +174,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoCompanyEmployee.setOwnerId(cuntaoServiceVendor.getId());
 		cuntaoCompanyEmployee.setEmployeeId(manager.getId());
 		cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-		cuntaoCompanyEmployee.setType(CuntaoEmployeeRelType.vendor.name());
+		cuntaoCompanyEmployee.setType(CuntaoEmployeeType.vendor.name());
 		cuntaoCompanyEmployee.setIdentifier(CuntaoEmployeeIdentifier.MANAGER.name());
 		cuntaoEmployeeRelMapper.insertSelective(cuntaoCompanyEmployee);
 		cuntaoCompanyAndManagerInfo.setCuntaoServiceVendor(cuntaoServiceVendor);
@@ -196,7 +196,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoEmployee.setMobile(cuntaoCompanyDto.getMobile());
 		cuntaoEmployee.setTaobaoNick(baseUserDO.getNick());
 		cuntaoEmployee.setTaobaoUserId(baseUserDO.getUserId());
-		cuntaoEmployee.setType(CuntaoEmployeeRelType.vendor.name());
+		cuntaoEmployee.setType(CuntaoEmployeeType.vendor.name());
 		return cuntaoEmployee;
 	}
 	

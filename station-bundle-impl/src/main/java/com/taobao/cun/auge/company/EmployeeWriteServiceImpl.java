@@ -18,7 +18,7 @@ import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeRelType;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
@@ -103,7 +103,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employee.setName(employeeDto.getName());
 			employee.setTaobaoNick(employeeDto.getTaobaoNick());
 			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
-			employee.setType(CuntaoEmployeeRelType.vendor.name());
+			employee.setType(CuntaoEmployeeType.vendor.name());
 			cuntaoEmployeeMapper.insertSelective(employee);
 			Long employeeId = employee.getId();
 			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
@@ -115,7 +115,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoVendorEmployee.setOwnerId(companyId);
 			cuntaoVendorEmployee.setEmployeeId(employeeId);
 			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-			cuntaoVendorEmployee.setType(CuntaoEmployeeRelType.vendor.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
 			cuntaoVendorEmployee.setIdentifier(identifier.name());
 			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
 			
