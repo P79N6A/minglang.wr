@@ -63,9 +63,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier type) {
+	public Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddVendorEmployee(companyId,employeeDto,type);
+		errorInfo = checkAddVendorEmployee(companyId,employeeDto,identifier);
 		
 		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(companyId);
 		if(cuntaoServiceVendor == null){
@@ -115,10 +115,11 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoVendorEmployee.setOwnerId(companyId);
 			cuntaoVendorEmployee.setEmployeeId(employeeId);
 			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-			cuntaoVendorEmployee.setType(type.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeRelType.vendor.name());
+			cuntaoVendorEmployee.setIdentifier(identifier.name());
 			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
 			
-			createEndorUser(companyId,employee,type);
+			createEndorUser(companyId,employee,identifier);
 			return Result.of(employeeId);
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
@@ -127,7 +128,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoEmployeeIdentifier type){
+	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoEmployeeIdentifier identifier){
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(employee.getCreator());
 		userAddDto.setUserId(employee.getTaobaoUserId()+"");
@@ -137,7 +138,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
 		userRoleAddDto.setOrgId(companyId);
-		userRoleAddDto.setRoleName(type.name());
+		userRoleAddDto.setRoleName(identifier.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
 		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
@@ -188,10 +189,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 }
 	
 	
-	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier type){
+	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier){
 		try {
 			Assert.notNull(companyId,"公司ID不能为空");
-			Assert.notNull(type,"员工类型不能为空");
+			Assert.notNull(identifier,"员工身份不能为空");
 			BeanValidator.validateWithThrowable(employeeDto);
 		} catch (Exception e) {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());

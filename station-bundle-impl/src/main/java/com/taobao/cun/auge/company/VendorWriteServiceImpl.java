@@ -196,6 +196,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoEmployee.setMobile(cuntaoCompanyDto.getMobile());
 		cuntaoEmployee.setTaobaoNick(baseUserDO.getNick());
 		cuntaoEmployee.setTaobaoUserId(baseUserDO.getUserId());
+		cuntaoEmployee.setType(CuntaoEmployeeRelType.vendor.name());
 		return cuntaoEmployee;
 	}
 	

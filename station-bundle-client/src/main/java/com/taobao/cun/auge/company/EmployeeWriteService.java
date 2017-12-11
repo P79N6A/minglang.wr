@@ -18,7 +18,7 @@ public interface EmployeeWriteService{
 	 * @param type
 	 * @return
 	 */
-	Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier type);
+	Result<Long> addVendorEmployee(Long companyId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier identifier);
 	
 	/**
 	 * 更新员工信息
