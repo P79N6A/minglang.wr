@@ -15,7 +15,7 @@ public class EmployeeQueryPageCondition extends PageQuery{
 	
 	private String mobile;
 	
-	private Long companyId;
+	private Long vendorId;
 	
 	public String getTaobaoNick() {
 		return taobaoNick;
@@ -41,12 +41,14 @@ public class EmployeeQueryPageCondition extends PageQuery{
 		this.name = name;
 	}
 
-	public Long getCompanyId() {
-		return companyId;
+	public Long getVendorId() {
+		return vendorId;
 	}
 
-	public void setCompanyId(Long companyId) {
-		this.companyId = companyId;
+	public void setVendorId(Long vendorId) {
+		this.vendorId = vendorId;
 	}
+
+
 
 }

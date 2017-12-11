@@ -47,13 +47,13 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	public Result<PageDto<CuntaoEmployeeDto>> queryVendorEmployeeByPage(
 			EmployeeQueryPageCondition employeeQueryPageCondition) {
 		try {
-			if(employeeQueryPageCondition.getCompanyId() == null){
+			if(employeeQueryPageCondition.getVendorId() == null){
 				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "服务商ID不存在");
 				return Result.of(errorInfo);
 			}
 			CuntaoEmployeeRelExample cuntaoVendorEmployeeExample = new CuntaoEmployeeRelExample();
 			cuntaoVendorEmployeeExample.createCriteria().andIsDeletedEqualTo("n")
-					.andOwnerIdEqualTo(employeeQueryPageCondition.getCompanyId()).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
+					.andOwnerIdEqualTo(employeeQueryPageCondition.getVendorId()).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
 			List<CuntaoEmployeeRel> cuntaoVendorEmployees = cuntaoEmployeeRelMapper
 					.selectByExample(cuntaoVendorEmployeeExample);
 			List<Long> employeeIds = cuntaoVendorEmployees.stream()

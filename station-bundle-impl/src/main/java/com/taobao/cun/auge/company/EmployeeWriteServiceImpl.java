@@ -59,23 +59,27 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Qualifier("vendorEndorApiClient")
 	private EndorApiClient vendorEndorApiClient;
 	
+	@Autowired
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
+	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteServiceImpl.class);
  
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddVendorEmployee(vendorId,employeeDto,identifier);
-		
+		errorInfo = checkAddEmployee(vendorId,employeeDto,identifier);
+		//TODO 效验规则细化
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
 		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
 		if(cuntaoServiceVendor == null){
 			errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
 			return Result.of(errorInfo);
 		}
-		//TODO 效验规则细化
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
+		
 		ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(employeeDto.getTaobaoNick());
 		errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
 		if(errorInfo != null){
@@ -119,7 +123,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			cuntaoVendorEmployee.setIdentifier(identifier.name());
 			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
 			
-			createEndorUser(vendorId,employee,identifier);
+			createVendorEndorUser(vendorId,employee,identifier);
 			return Result.of(employeeId);
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
@@ -128,7 +132,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private void createEndorUser(Long companyId,CuntaoEmployee employee,CuntaoEmployeeIdentifier identifier){
+	private void createVendorEndorUser(Long vendorId,CuntaoEmployee employee,CuntaoEmployeeIdentifier identifier){
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(employee.getCreator());
 		userAddDto.setUserId(employee.getTaobaoUserId()+"");
@@ -137,7 +141,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
-		userRoleAddDto.setOrgId(companyId);
+		userRoleAddDto.setOrgId(vendorId);
 		userRoleAddDto.setRoleName(identifier.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
 		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
@@ -189,9 +193,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 }
 	
 	
-	private ErrorInfo checkAddVendorEmployee(Long companyId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier){
+	private ErrorInfo checkAddEmployee(Long ownerId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier){
 		try {
-			Assert.notNull(companyId,"公司ID不能为空");
+			Assert.notNull(ownerId,"公司ID不能为空");
 			Assert.notNull(identifier,"员工身份不能为空");
 			BeanValidator.validateWithThrowable(employeeDto);
 		} catch (Exception e) {
@@ -280,9 +284,68 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 
 	@Override
-	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto employee, CuntaoEmployeeIdentifier type) {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
+		ErrorInfo errorInfo = null;
+		errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
+		//TODO 效验规则细化
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		
+		ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(storeEmployee.getTaobaoNick());
+		errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		try {
+			CuntaoEmployee employee = new CuntaoEmployee();
+			employee.setCreator(storeEmployee.getOperator());
+			employee.setGmtCreate(new Date());
+			employee.setModifier(storeEmployee.getOperator());
+			employee.setGmtModified(new Date());
+			employee.setMobile(storeEmployee.getMobile());
+			employee.setIsDeleted("n");
+			employee.setName(storeEmployee.getName());
+			employee.setTaobaoNick(storeEmployee.getTaobaoNick());
+			employee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
+			employee.setType(CuntaoEmployeeType.store.name());
+			cuntaoEmployeeMapper.insertSelective(employee);
+			Long employeeId = employee.getId();
+			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
+			cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
+			cuntaoVendorEmployee.setGmtCreate(new Date());
+			cuntaoVendorEmployee.setModifier(storeEmployee.getOperator());
+			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setIsDeleted("n");
+			cuntaoVendorEmployee.setOwnerId(stationId);
+			cuntaoVendorEmployee.setEmployeeId(employeeId);
+			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeType.store.name());
+			cuntaoVendorEmployee.setIdentifier(identifier.name());
+			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
+			
+			createStoreEndorUser(stationId,employee,identifier);
+			return Result.of(employeeId);
+		} catch (Exception e) {
+			logger.error("addCompanyEmployee company error!",e);
+			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
 	}
 
+	
+	private void createStoreEndorUser(Long stationId,CuntaoEmployee employee,CuntaoEmployeeIdentifier identifier){
+		UserAddDto userAddDto = new UserAddDto();
+		userAddDto.setCreator(employee.getCreator());
+		userAddDto.setUserId(employee.getTaobaoUserId()+"");
+		userAddDto.setUserName(employee.getName());
+		storeEndorApiClient.getUserServiceClient().addUser(userAddDto);
+		
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator(employee.getCreator());
+		userRoleAddDto.setOrgId(stationId);
+		userRoleAddDto.setRoleName(identifier.name());
+		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+	}
 }
