@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.Page;
@@ -27,6 +28,8 @@ import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.UserRoleDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 import jersey.repackaged.com.google.common.collect.Lists;
@@ -41,6 +44,10 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 	
 	@Autowired
 	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
+	
+	@Autowired
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
 	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeReadServiceImpl.class);
 
@@ -134,8 +141,16 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 				CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
 				cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.store.name()).andIdIn(employeeIds);
 				List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
-				//TODO call endor检查角色
-				return Result.of(EmployeeConverter.convert2CuntaoEmployeeDtoList(employees));
+				List<CuntaoEmployee> employeeList = Lists.newArrayList();
+				if(employees !=null){
+					for(CuntaoEmployee employee : employees){
+						UserRoleDto userRole = storeEndorApiClient.getUserRoleServiceClient().getUserRole(employee.getTaobaoUserId());
+						if(userRole != null && userRole.getRoleName().equals(identifier.name())){
+							employeeList.add(employee);
+						}
+					}
+				}
+				return Result.of(EmployeeConverter.convert2CuntaoEmployeeDtoList(employeeList));
 			}
 			return Result.of(true);
 		} catch (Exception e) {
