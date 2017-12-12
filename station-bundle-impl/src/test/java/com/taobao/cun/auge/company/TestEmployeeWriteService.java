@@ -52,7 +52,16 @@ public class TestEmployeeWriteService {
 		Assert.notNull(result.getModule());
 	}
 	
-	
+	@Test
+	public void testAddStoreEmployee(){
+		CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+		employee.setTaobaoNick("fangyutest013");
+		employee.setName("测试配货员");
+		employee.setMobile("12312312312");
+		employee.setOperator("62333");
+		employee.setOperatorType(OperatorTypeEnum.BUC);
+		employeeWriteService.addStoreEmployee(3733361l, employee, CuntaoEmployeeIdentifier.PICKER);
+	}
 	
 	@Test
 	public void testPermission(){

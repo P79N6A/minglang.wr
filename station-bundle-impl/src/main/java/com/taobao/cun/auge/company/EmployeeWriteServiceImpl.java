@@ -284,6 +284,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
 		errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
@@ -296,6 +297,16 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
+		}
+		errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),"员工淘宝账号已存在");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		if(StringUtils.isNotEmpty(storeEmployee.getMobile())){
+			errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
 		}
 		try {
 			CuntaoEmployee employee = new CuntaoEmployee();
