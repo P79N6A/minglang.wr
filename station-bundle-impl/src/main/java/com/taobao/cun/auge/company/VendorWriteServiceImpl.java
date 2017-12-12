@@ -3,6 +3,8 @@ package com.taobao.cun.auge.company;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.company.dto.CuntaoVendorState;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
@@ -66,6 +69,9 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	@Autowired
 	@Qualifier("vendorEndorApiClient")
 	private EndorApiClient vendorEndorApiClient;
+	
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorWriteServiceImpl.class);
 	
@@ -131,7 +137,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
 		userRoleAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
-		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.MANAGER.name());
+		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
 		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
 		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
@@ -148,10 +154,11 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(errorInfo != null){
 			return errorInfo;
 		}
-		
-		errorInfo = checkPromotedType(baseUserDO.getPromotedType(),"服务商淘宝账号绑定的支付宝账号未做企业实名认证;请联系申请人,在支付宝平台完成企业实名认证操作!");
-		if(errorInfo != null){
-			return errorInfo;
+		if(diamondConfiguredProperties.isCheckVendorAlipayAccount()){
+			errorInfo = checkPromotedType(baseUserDO.getPromotedType(),"服务商淘宝账号绑定的支付宝账号未做企业实名认证;请联系申请人,在支付宝平台完成企业实名认证操作!");
+			if(errorInfo != null){
+				return errorInfo;
+			}
 		}
 		return null;
 	}
@@ -175,7 +182,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		cuntaoCompanyEmployee.setEmployeeId(manager.getId());
 		cuntaoCompanyEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
 		cuntaoCompanyEmployee.setType(CuntaoEmployeeType.vendor.name());
-		cuntaoCompanyEmployee.setIdentifier(CuntaoEmployeeIdentifier.MANAGER.name());
+		cuntaoCompanyEmployee.setIdentifier(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
 		cuntaoEmployeeRelMapper.insertSelective(cuntaoCompanyEmployee);
 		cuntaoCompanyAndManagerInfo.setCuntaoServiceVendor(cuntaoServiceVendor);
 		cuntaoCompanyAndManagerInfo.setManager(manager);
