@@ -16,6 +16,7 @@ public class EmployeeConverter {
 		cuntaoEmployeeDto.setId(cuntaoEmployee.getId());
 		cuntaoEmployeeDto.setMobile(cuntaoEmployee.getMobile());
 		cuntaoEmployeeDto.setName(cuntaoEmployee.getName());
+		cuntaoEmployeeDto.setTaobaoUserId(cuntaoEmployee.getTaobaoUserId());
 		cuntaoEmployeeDto.setTaobaoNick(cuntaoEmployee.getTaobaoNick());
 		return cuntaoEmployeeDto;
 	}

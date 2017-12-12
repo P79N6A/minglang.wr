@@ -68,7 +68,7 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 					.map(cuntaoVendorEmployee -> cuntaoVendorEmployee.getEmployeeId()).collect(Collectors.toList());
 			if (employeeIds != null && !employeeIds.isEmpty()) {
 				PageHelper.startPage(employeeQueryPageCondition.getPageNum(), employeeQueryPageCondition.getPageSize());
-				CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
+					CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
 				Criteria criteria = cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name())
 						.andIdIn(employeeIds);
 				if (StringUtils.isNotEmpty(employeeQueryPageCondition.getName())) {

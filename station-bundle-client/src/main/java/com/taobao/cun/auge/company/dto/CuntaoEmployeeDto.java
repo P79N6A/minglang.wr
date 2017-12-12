@@ -19,6 +19,8 @@ public class CuntaoEmployeeDto extends OperatorDto{
 	@NotNull(message = "员工手机号为空")
 	private String mobile;
 	
+	private Long taobaoUserId;
+	
 	private Long id;
 	
 	public String getName() {
@@ -51,6 +53,14 @@ public class CuntaoEmployeeDto extends OperatorDto{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getTaobaoUserId() {
+		return taobaoUserId;
+	}
+
+	public void setTaobaoUserId(Long taobaoUserId) {
+		this.taobaoUserId = taobaoUserId;
 	}
 	
 }
