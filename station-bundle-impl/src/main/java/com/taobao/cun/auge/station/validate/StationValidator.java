@@ -18,7 +18,7 @@ public final class StationValidator {
 	
 	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
 	
-	public static final String RULE_REGEX = "^[0-9A-Z]+$";
+	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
 	
 	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】‘；：”“’。，、？]";
 	
@@ -76,7 +76,7 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum,RULE_REGEX)) {
+		if (isSpecialStr(stationNum,RULE_REGEX_STATIONMUN)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
@@ -121,7 +121,7 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum,RULE_REGEX)) {
+		if (isSpecialStr(stationNum,RULE_REGEX_STATIONMUN)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
