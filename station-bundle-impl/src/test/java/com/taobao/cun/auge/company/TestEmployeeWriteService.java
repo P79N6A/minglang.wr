@@ -30,9 +30,9 @@ public class TestEmployeeWriteService {
 	@Test
 	public void testAddEmployee(){
 		CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
-		employee.setTaobaoNick("fangyutest013");
+		employee.setTaobaoNick("zhuzi102");
 		employee.setName("测试配送员");
-		employee.setMobile("12312312312");
+		employee.setMobile("12312312310");
 		employee.setOperator("62333");
 		employee.setOperatorType(OperatorTypeEnum.BUC);
 		Result<Long>  result = employeeWriteService.addVendorEmployee(2l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
