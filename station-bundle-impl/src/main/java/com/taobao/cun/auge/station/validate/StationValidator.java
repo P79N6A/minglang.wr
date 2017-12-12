@@ -50,7 +50,7 @@ public final class StationValidator {
 		if (address.getAddressDetail().length() > 25) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
         }
-		if (isSpecialStrForAddress(address.getAddressDetail())) {
+		if (isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符");
         }
 		String stationName = "";
@@ -76,7 +76,7 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum)) {
+		if (isSpecialStr(stationNum,RULE_REGEX)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
@@ -94,7 +94,7 @@ public final class StationValidator {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
         }
         
-        if (isSpecialStrForAddress(address.getAddressDetail())) {
+        if (isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符");
         }
         
@@ -121,13 +121,13 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum)) {
+		if (isSpecialStr(stationNum,RULE_REGEX)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
 	
-	private static boolean isSpecialStr(String str) {
-		Pattern pat = Pattern.compile(RULE_REGEX);
+	private static boolean isSpecialStr(String str,String rule) {
+		Pattern pat = Pattern.compile(rule);
 		Matcher mat = pat.matcher(str);
 		if (mat.find()) {
 			return false;
@@ -135,15 +135,5 @@ public final class StationValidator {
 			return true;
 		}
 	}
-	
-   private static boolean isSpecialStrForAddress(String str) {
-        Pattern pat = Pattern.compile(RULE_REGEX_ADDRESS);
-        Matcher mat = pat.matcher(str);
-        if (mat.find()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
 }
