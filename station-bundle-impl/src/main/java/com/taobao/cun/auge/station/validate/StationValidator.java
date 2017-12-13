@@ -18,7 +18,9 @@ public final class StationValidator {
 	
 	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
 	
-	public static final String RULE_REGEX = "^[0-9A-Z]+$";
+	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
+	
+	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】‘；：”“’。，、？]";
 	
 	private StationValidator(){
 		
@@ -45,6 +47,12 @@ public final class StationValidator {
 		if (address == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
 		}
+		if (address.getAddressDetail().length() > 25) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
+        }
+		if (isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符");
+        }
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
 			stationName += address.getCountyDetail();
@@ -68,7 +76,7 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum)) {
+		if (isSpecialStr(stationNum,RULE_REGEX_STATIONMUN)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
@@ -81,6 +89,15 @@ public final class StationValidator {
 		if (address == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
 		}
+	
+        if (address.getAddressDetail().length() > 25) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度不超过25位");
+        }
+        
+        if (isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符");
+        }
+        
 		String stationName = "";
 		if (StringUtils.isNotBlank(address.getCountyDetail())) {
 			stationName += address.getCountyDetail();
@@ -104,13 +121,13 @@ public final class StationValidator {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号长度0-16位");
 		}
 
-		if (isSpecialStr(stationNum)) {
+		if (isSpecialStr(stationNum,RULE_REGEX_STATIONMUN)) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站编号不能含有特殊字符");
 		}
 	}
 	
-	private static boolean isSpecialStr(String str) {
-		Pattern pat = Pattern.compile(RULE_REGEX);
+	private static boolean isSpecialStr(String str,String rule) {
+		Pattern pat = Pattern.compile(rule);
 		Matcher mat = pat.matcher(str);
 		if (mat.find()) {
 			return false;

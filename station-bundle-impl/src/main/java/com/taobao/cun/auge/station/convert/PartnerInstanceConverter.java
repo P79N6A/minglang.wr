@@ -315,7 +315,7 @@ public final class PartnerInstanceConverter {
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());
-
+		rel.setSellerId(partnerInstanceDto.getSellerId());
 		return rel;
 	}
 
