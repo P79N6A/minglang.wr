@@ -54,7 +54,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	public void checkAllWithCainiao(List<Long> stationIds) {
 		List<Station> stationList = new ArrayList<Station>();
 		
-		if (CollectionUtils.isNotEmpty(stationList)) {//指定参数
+		if (CollectionUtils.isNotEmpty(stationIds)) {//指定参数
 			StationExample example = new StationExample();
 			example.createCriteria().andIsDeletedEqualTo("n")//.andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
 					.andIdIn(stationIds);
@@ -138,28 +138,33 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	private void checkAddress(Station a, Long stationId,
 			CuntaoCainiaoStationRel cRel, StationDTO stationDTO) {
 		if (a.getProvince() != null) {
-		if (!a.getProvince().equals(stationDTO.getProvinceId())) {
+			Long province = Long.parseLong(a.getProvince());
+		if (!province.equals(stationDTO.getProvinceId())) {
 			logger.error("check.cainiao.ProvinceId.error:"+stationId+":orgProvinceId="+a.getProvince()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoProviderId="+stationDTO.getProvinceId());
 		}
 		}
 		if (a.getCity() != null) {
-		if (!a.getCity().equals(stationDTO.getCityId())) {
+			Long city = Long.parseLong(a.getCity());
+		if (!city.equals(stationDTO.getCityId())) {
 			logger.error("check.cainiao.city.error:"+stationId+":orgCity="+a.getProviderId()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoCity="+stationDTO.getCityId());
 		}
 		}
 		if (a.getCounty() != null) {
-			if (!a.getCounty().equals(stationDTO.getCountyId())) {
+			Long county = Long.parseLong(a.getCounty());
+			if (!county.equals(stationDTO.getCountyId())) {
 				logger.error("check.cainiao.county.error:"+stationId+":orgCounty="+a.getCounty()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoCounty="+stationDTO.getCountyId());
 			}
 		}
 		if (a.getTown() != null) {
-			if (!a.getTown().equals(stationDTO.getTownId())) {
+			Long town = Long.parseLong(a.getTown());
+			if (!town.equals(stationDTO.getTownId())) {
 				logger.error("check.cainiao.town.error:"+stationId+":orgTown="+a.getTown()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoTown="+stationDTO.getTownId());
 			}
 		}
 		
 		if (a.getVillage() != null) {
-			if (!a.getVillage().equals(stationDTO.getCountryId())) {
+			 Long village = Long.parseLong(a.getVillage());
+			if (!village.equals(stationDTO.getCountryId())) {
 				logger.error("check.cainiao.village.error:"+stationId+":orgVillage="+a.getVillage()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoVillage="+stationDTO.getCountryId());
 			}
 		}
