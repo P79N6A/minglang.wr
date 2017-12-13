@@ -32,6 +32,18 @@ public interface EmployeeReadService {
 	
 	Result<List<CuntaoEmployeeDto>> queryVendorEmployeeByIDS(List<Long> ids);
 	
+	
+	/**
+	 * 根据taobaoUserId单个查找工人
+	 */
+	Result<CuntaoEmployeeDto> queryVendorEmployeeByTaobaoUserID(Long taobaoUserId);
+	
+	/**
+	 * 根据taobaoUserId批量查找工人
+	 */
+	
+	Result<List<CuntaoEmployeeDto>> queryVendorEmployeeByTaobaoUserIDS(List<Long> taobaoUserIds);
+	
 	/**
 	 * 根据stationId查询门店员工
 	 * @param stationId

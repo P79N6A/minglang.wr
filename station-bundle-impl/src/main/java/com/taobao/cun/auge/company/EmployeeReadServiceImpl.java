@@ -162,4 +162,40 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 		
 	}
 
+	@Override
+	public Result<CuntaoEmployeeDto> queryVendorEmployeeByTaobaoUserID(Long taobaoUserId) {
+		try {
+			CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
+			List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(example);
+			if(employees != null && !employees.isEmpty()){
+				return Result.of(EmployeeConverter.convert2CuntaoEmployeeDto(employees.iterator().next()));
+			}else{
+				return Result.of(true);
+			}
+		} catch (Exception e) {
+			logger.error("queryVendorEmployeeByTaobaoUserID error!", e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+	@Override
+	public Result<List<CuntaoEmployeeDto>> queryVendorEmployeeByTaobaoUserIDS(List<Long> taobaoUserIds) {
+		try {
+			CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdIn(taobaoUserIds).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
+			List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(example);
+			if(employees != null && !employees.isEmpty()){
+				return Result.of(EmployeeConverter.convert2CuntaoEmployeeDtoList(employees));
+			}else{
+				return Result.of(true);
+			}
+		} catch (Exception e) {
+			logger.error("queryVendorEmployeeByTaobaoUserIDS error!", e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
 }
