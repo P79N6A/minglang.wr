@@ -142,7 +142,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 		}
 		if (p.getName() != null) {
 			if (!p.getName().equals(stationDTO.getContact())) {
-				logger.error("check.cainiao.mobile.error:" + stationId
+				logger.error("check.cainiao.name.error:" + stationId
 						+ ":orgContact=" + p.getName() + ":cainiaoStationId="
 						+ cRel.getCainiaoStationId() + ":cainiaoContact="
 						+ stationDTO.getContact());
@@ -293,10 +293,9 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	private void checkLatLng(Station a, Long stationId,
 			CuntaoCainiaoStationRel cRel, StationDTO stationDTO) {
 		if (a.getLat() != null) {
-			String lat = StringUtil.isEmpty(a.getLat()) ? "0" : PositionUtil
-					.converDown(a.getLat());
-			if (!lat.equals(stationDTO.getLat())
-					&& !(lat + "0").equals(stationDTO.getLat())) {
+			Double lat = Double.parseDouble(StringUtil.isEmpty(a.getLat()) ? "0" : PositionUtil
+					.converDown(a.getLat()));
+			if (stationDTO.getLat() == null || !lat.equals(Double.parseDouble(stationDTO.getLat()))) {
 				logger.error("check.cainiao.Lat.error:" + stationId
 						+ ":orgLat=" + lat + ":cainiaoStationId="
 						+ cRel.getCainiaoStationId() + ":cainiaoLat="
@@ -304,10 +303,9 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 			}
 		}
 		if (a.getLng() != null) {
-			String lng = StringUtil.isEmpty(a.getLng()) ? "0" : PositionUtil
-					.converDown(a.getLng());
-			if (!lng.equals(stationDTO.getLng())
-					&& !(lng + "0").equals(stationDTO.getLng())) {
+			Double lng = Double.parseDouble(StringUtil.isEmpty(a.getLng()) ? "0" : PositionUtil
+					.converDown(a.getLng()));
+			if (stationDTO.getLng() == null || !lng.equals(Double.parseDouble(stationDTO.getLng()))) {
 				logger.error("check.cainiao.Lng.error:" + stationId
 						+ ":orgLng=" + lng + ":cainiaoStationId="
 						+ cRel.getCainiaoStationId() + ":cainiaoLng="
