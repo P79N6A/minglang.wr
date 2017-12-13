@@ -10,6 +10,8 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 
+import com.taobao.cun.auge.common.utils.PositionUtil;
+
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -213,13 +215,15 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 	private void checkLatLng(Station a, Long stationId,
 			CuntaoCainiaoStationRel cRel, StationDTO stationDTO) {
 		if (a.getLat() != null) {
-		if (!a.getLat().equals(stationDTO.getLat())) {
-			logger.error("check.cainiao.Lat.error:"+stationId+":orgLat="+a.getLat()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoLat="+stationDTO.getLat());
+			String   lat = StringUtil.isEmpty(a.getLat()) ? "0" : PositionUtil.converDown(a.getLat());
+		if (!lat.equals(stationDTO.getLat())) {
+			logger.error("check.cainiao.Lat.error:"+stationId+":orgLat="+lat+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoLat="+stationDTO.getLat());
 		}
 		}
 		if (a.getLng() != null) {
-		if (!a.getLng().equals(stationDTO.getLng())) {
-			logger.error("check.cainiao.Lng.error:"+stationId+":orgLng="+a.getLng()+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoLng="+stationDTO.getLng());
+			String  lng   = StringUtil.isEmpty(a.getLng()) ? "0" : PositionUtil.converDown(a.getLng());
+		if (!lng.equals(stationDTO.getLng())) {
+			logger.error("check.cainiao.Lng.error:"+stationId+":orgLng="+lng+":cainiaoStationId="+cRel.getCainiaoStationId()+":cainiaoLng="+stationDTO.getLng());
 		}
 		}
 	}
