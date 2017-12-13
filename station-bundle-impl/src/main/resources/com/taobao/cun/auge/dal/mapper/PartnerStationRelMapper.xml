@@ -106,7 +106,7 @@
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, station_id, apply_time, 
     service_begin_time, service_end_time, partner_id, parent_station_id, state, applier_id, 
     bit, type, open_date, is_current, applier_type, close_type, station_apply_id, version, 
-    taobao_user_id, mode,seller_id
+    taobao_user_id, mode, seller_id
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRelExample" resultMap="BaseResultMap">
     <!--
@@ -170,7 +170,8 @@
       applier_id, bit, type, 
       open_date, is_current, applier_type, 
       close_type, station_apply_id, version, 
-      taobao_user_id, mode,seller_id)
+      taobao_user_id, mode, seller_id
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, #{stationId,jdbcType=BIGINT}, 
       #{applyTime,jdbcType=TIMESTAMP}, #{serviceBeginTime,jdbcType=TIMESTAMP}, #{serviceEndTime,jdbcType=TIMESTAMP}, 
@@ -178,7 +179,8 @@
       #{applierId,jdbcType=VARCHAR}, #{bit,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
       #{openDate,jdbcType=TIMESTAMP}, #{isCurrent,jdbcType=CHAR}, #{applierType,jdbcType=VARCHAR}, 
       #{closeType,jdbcType=VARCHAR}, #{stationApplyId,jdbcType=BIGINT}, #{version,jdbcType=BIGINT}, 
-      #{taobaoUserId,jdbcType=BIGINT}, #{mode,jdbcType=VARCHAR},#{sellerId,jdbcType=BIGINT})
+      #{taobaoUserId,jdbcType=BIGINT}, #{mode,jdbcType=VARCHAR}, #{sellerId,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerStationRel">
     <!--
