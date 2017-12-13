@@ -55,12 +55,12 @@ public class TestEmployeeWriteService {
 	@Test
 	public void testAddStoreEmployee(){
 		CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
-		employee.setTaobaoNick("fangyutest013");
-		employee.setName("测试配货员");
-		employee.setMobile("12312312312");
+		employee.setTaobaoNick("gyprotocol02");
+		employee.setName("测试配货员2");
+		employee.setMobile("12312312319");
 		employee.setOperator("62333");
 		employee.setOperatorType(OperatorTypeEnum.BUC);
-		employeeWriteService.addStoreEmployee(3733361l, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
+		employeeWriteService.addStoreEmployee(3732591l, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
 	}
 	
 	@Test

@@ -220,6 +220,13 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(vendors != null && !vendors.isEmpty()){
 			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "服务商手机号已存在!");
 		}
+		example = new CuntaoServiceVendorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andCompanyNameEqualTo(cuntaoVendorDto.getCompanyName());
+		vendors = cuntaoServiceVendorMapper.selectByExample(example);
+		if(vendors != null && !vendors.isEmpty()){
+			return  ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, "服务商公司名称已存在!");
+		}
+		
 		return null;
 	}
 	
