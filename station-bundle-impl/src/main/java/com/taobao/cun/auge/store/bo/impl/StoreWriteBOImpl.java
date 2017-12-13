@@ -16,14 +16,15 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
-import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
@@ -60,6 +61,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private OrgService orgService;
 	@Resource
 	private StoreReadBO storeReadBO;
+	@Resource
+    private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 	
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -175,6 +178,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setScmCode(scmCode);
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
+			partnerRoleChangeNotifyBo.sendAddRoleMsg(station.getTaobaoUserId(), PartnerInstanceTypeEnum.PartnerInstanceType.TPS);
         }
 		return result.getResult();
 	}
