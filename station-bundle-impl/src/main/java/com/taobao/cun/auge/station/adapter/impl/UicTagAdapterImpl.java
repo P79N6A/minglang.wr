@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.UicTagAdapter;
-import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -30,8 +29,6 @@ public class UicTagAdapterImpl implements UicTagAdapter {
     private UicTagWriteServiceClient uicTagWriteServiceClient;
     @Resource
     private UicExtraReadServiceClient uicExtraReadServiceClient;
-    @Resource
-    private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 
     private Long DEFAULT_TAG = new Double(Math.pow(2, 12)).longValue();
 
@@ -66,7 +63,6 @@ public class UicTagAdapterImpl implements UicTagAdapter {
                     addTptUserTag(taobaoUserId);
                     break;
             }
-            partnerRoleChangeNotifyBo.sendAddRoleMsg(taobaoUserId, type);
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [addUserTag]  parameter = {}, {}", JSON.toJSONString(userTagDto), e);
             throw new AugeUicTagException("addUserTag  error!", e);
@@ -110,7 +106,6 @@ public class UicTagAdapterImpl implements UicTagAdapter {
                     removeTptUserTag(taobaoUserId);
                     break;
             }
-            partnerRoleChangeNotifyBo.sendRemoveRoleMsg(taobaoUserId, type);
         } catch (Exception e) {
             logger.error(UIC_TAG_ERROR_MSG + " [removeUserTag] parameter = {}, {}", JSON.toJSONString(userTagDto), e);
             throw new AugeUicTagException("addUserTag  error!", e);
