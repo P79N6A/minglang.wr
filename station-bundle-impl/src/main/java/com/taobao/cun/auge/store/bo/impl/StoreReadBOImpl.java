@@ -5,17 +5,16 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -24,6 +23,9 @@ import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.place.util.DistanceUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
@@ -34,6 +36,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 	
 	@Resource
 	private PartnerBO partnerBO;
+	
+	@Resource
+    private PartnerInstanceBO partnerInstanceBO;
 	
 	@Override
 	public StoreDto getStoreDtoByStationId(Long stationId) {
@@ -71,6 +76,10 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
 		storeDto.setStationId(station.getId());
 		storeDto.setMobile(partner.getMobile());
+		storeDto.setSellerShareStoreId(cuntaoStore.getSellerShareStoreId());
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(station.getTaobaoUserId());
+        Assert.notNull(partnerStationRel, "partner instance not exists");
+        storeDto.setSellerId(partnerStationRel.getSellerId());
 		return storeDto;
 	}
 
