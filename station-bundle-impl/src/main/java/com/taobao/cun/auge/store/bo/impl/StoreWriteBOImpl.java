@@ -16,9 +16,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
-import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
@@ -60,8 +58,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private OrgService orgService;
 	@Resource
 	private StoreReadBO storeReadBO;
-	@Resource
-    private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 	
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -176,7 +172,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setScmCode(scmCode);
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
-			partnerRoleChangeNotifyBo.sendAddRoleMsg(station.getTaobaoUserId(), PartnerInstanceTypeEnum.PartnerInstanceType.TPS);
         }
 		return result.getResult();
 	}
