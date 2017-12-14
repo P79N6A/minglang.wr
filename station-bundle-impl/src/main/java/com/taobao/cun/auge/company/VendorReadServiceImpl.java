@@ -14,11 +14,18 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.VendorQueryPageCondition;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample.Criteria;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -29,6 +36,13 @@ public class VendorReadServiceImpl implements VendorReadService{
 
 	@Autowired
 	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
+	
+	@Autowired
+	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
+	
+	@Autowired
+	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
+	
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorReadServiceImpl.class);
 	@Override
@@ -101,7 +115,7 @@ public class VendorReadServiceImpl implements VendorReadService{
 			if(vendors != null && !vendors.isEmpty()){
 				return Result.of(VendorConverter.convert2CuntaoVendorDto(vendors.iterator().next()));
 			}
-			Result	result =  Result.of(true);
+			Result<CuntaoServiceVendorDto>	result =  Result.of(true);
 			result.setModule(null);
 			return result;
 		} catch (Exception e) {
@@ -110,6 +124,26 @@ public class VendorReadServiceImpl implements VendorReadService{
 			return Result.of(errorInfo);
 		}
 		
+	}
+
+	@Override
+	public Result<CuntaoServiceVendorDto> queryVendorByEmployeeTaobaoUserID(Long taobaoUserId) {
+		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andTaobaoUserIdEqualTo(taobaoUserId);
+		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
+		if(employees != null && !employees.isEmpty()){
+			CuntaoEmployee employee = employees.iterator().next();
+			CuntaoEmployeeRelExample relExample = new CuntaoEmployeeRelExample(); 
+			relExample.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andEmployeeIdEqualTo(employee.getId());
+			 List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(relExample);
+			 if(rels != null && !rels.isEmpty()){
+				 CuntaoEmployeeRel rel = rels.iterator().next();
+				 return this.queryVendorByID(rel.getOwnerId());
+			 }
+		}
+		Result<CuntaoServiceVendorDto>	result =  Result.of(true);
+		result.setModule(null);
+		return result;
 	}
 
 }
