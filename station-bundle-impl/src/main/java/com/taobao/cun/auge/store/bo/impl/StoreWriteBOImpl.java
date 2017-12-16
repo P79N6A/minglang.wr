@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +20,16 @@ import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
@@ -64,6 +69,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Resource
     private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 	
+	@Resource
+	private PartnerInstanceQueryService PartnerInstanceQueryService;
+	
+	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -225,5 +234,72 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	    	System.out.println(updateResult.getErrorMsg());
 	    }
 	    return updateResult.isSuccess();
+	}
+
+	@Override
+	public Boolean createSampleStore(Long stationId) throws StoreException {
+		Station station = stationBO.getStationById(stationId);
+		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
+			return false; 
+		}
+		
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setName(station.getName());
+		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+		storeDTO.setAddress(station.getAddress());
+		storeDTO.setOuterId(String.valueOf(stationId));
+		//仓库的区域CODE，取叶子节点
+		String areaId = null;
+		//省
+		if(!Strings.isNullOrEmpty(station.getProvince())){
+			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			storeDTO.setProvName(station.getProvinceDetail());
+			areaId = station.getProvince();
+		}
+		//市
+		if(!Strings.isNullOrEmpty(station.getCity())){
+			storeDTO.setCity(Integer.parseInt(station.getCity()));
+			storeDTO.setCityName(station.getCityDetail());
+			areaId = station.getCity();
+		}
+		//区/县
+		if(!Strings.isNullOrEmpty(station.getCounty())){
+			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			storeDTO.setDistrictName(station.getCountyDetail());
+			areaId = station.getCounty();
+		}
+		if(!Strings.isNullOrEmpty(station.getTown())){
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
+			storeDTO.setTownName(station.getTownDetail());
+			areaId = station.getTown();
+		}
+		
+		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if(Strings.isNullOrEmpty(areaId)){
+			throw new StoreException("缺少行政地址CODE，无法创建仓库");
+		}
+		if(!Strings.isNullOrEmpty(station.getLat())){
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+		}
+		if(!Strings.isNullOrEmpty(station.getLng())){
+			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+		}
+		
+		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
+		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO, partnerInstance.getSellerId(), StoreBizType.CUN_TAO.getValue());
+		if(result.isFailured()){
+			logger.error("createSampleStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}
+		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+		CuntaoStore record = new CuntaoStore();
+		record.setId(storeDto.getId());
+		record.setSellerShareStoreId(result.getResult());
+		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
+		return true;
 	}
 }

@@ -24,4 +24,10 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteBO.updateStoreTag(shareStoreId,category);
 	}
 
+	@Override
+	public Boolean createSampleStore(Long stationId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

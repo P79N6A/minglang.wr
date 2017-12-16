@@ -28,7 +28,7 @@
     <result column="station_apply_id" jdbcType="BIGINT" property="stationApplyId" />
     <result column="version" jdbcType="BIGINT" property="version" />
     <result column="mode" jdbcType="VARCHAR" property="mode" />
-    
+     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
     <!-- 合伙人层级 -->
     <result column="level" jdbcType="VARCHAR" property="level" />
     <result column="expected_level" jdbcType="VARCHAR" property="expectedLevel" />
