@@ -26,8 +26,7 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 
 	@Override
 	public Boolean createSampleStore(Long stationId) {
-		// TODO Auto-generated method stub
-		return null;
+		return storeWriteBO.createSampleStore(stationId);
 	}
 
 }

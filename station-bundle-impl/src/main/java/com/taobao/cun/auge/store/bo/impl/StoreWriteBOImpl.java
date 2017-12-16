@@ -235,7 +235,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	@Override
-	public Boolean createSampleStore(Long stationId) throws StoreException {
+	public Boolean createSampleStore(Long stationId){
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
@@ -275,7 +275,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
 		if(Strings.isNullOrEmpty(areaId)){
-			throw new StoreException("缺少行政地址CODE，无法创建仓库");
+			logger.error("createSampleStore error["+stationId+"]: areaId is null");
+			return false;
 		}
 		if(!Strings.isNullOrEmpty(station.getLat())){
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
