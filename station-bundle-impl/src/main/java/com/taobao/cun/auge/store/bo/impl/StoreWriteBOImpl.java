@@ -21,7 +21,6 @@ import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
@@ -187,7 +186,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setScmCode(scmCode);
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
-			partnerRoleChangeNotifyBo.sendAddRoleMsg(station.getTaobaoUserId(), PartnerInstanceTypeEnum.PartnerInstanceType.TPS);
         }
 		return result.getResult();
 	}
