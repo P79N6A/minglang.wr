@@ -326,6 +326,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		updatAddDto.setOrgId(cuntaoVendorDto.getId());
 		updatAddDto.setOrgName(cuntaoVendorDto.getCompanyName());
 		updatAddDto.setParentId(5l);
+		updatAddDto.setModifier(cuntaoVendorDto.getOperator());
 		storeEndorApiClient.getOrgServiceClient().update(updatAddDto, null);
 		
 	}
