@@ -125,7 +125,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		orgAddDto.setCreator(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCreator());
 		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
 		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
-		orgAddDto.setParentId(1l);
+		orgAddDto.setParentId(5l);
 		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 		
 		UserAddDto userAddDto = new UserAddDto();
