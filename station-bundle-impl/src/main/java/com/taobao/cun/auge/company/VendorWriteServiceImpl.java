@@ -67,8 +67,8 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
 	
 	@Autowired
-	@Qualifier("vendorEndorApiClient")
-	private EndorApiClient vendorEndorApiClient;
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
 	
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -126,20 +126,20 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
 		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
 		orgAddDto.setParentId(1l);
-		vendorEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
+		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 		
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
 		userAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
 		userAddDto.setUserName(serviceVendorAndManagerInfo.getManager().getName());
-		vendorEndorApiClient.getUserServiceClient().addUser(userAddDto);
+		storeEndorApiClient.getUserServiceClient().addUser(userAddDto);
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
 		userRoleAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
 		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
 		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
-		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
@@ -325,7 +325,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		updatAddDto.setOrgId(cuntaoVendorDto.getId());
 		updatAddDto.setOrgName(cuntaoVendorDto.getCompanyName());
 		updatAddDto.setParentId(1l);
-		vendorEndorApiClient.getOrgServiceClient().update(updatAddDto, null);
+		storeEndorApiClient.getOrgServiceClient().update(updatAddDto, null);
 		
 	}
 

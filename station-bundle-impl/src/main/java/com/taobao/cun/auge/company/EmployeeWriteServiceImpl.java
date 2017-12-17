@@ -56,10 +56,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	private UicReadServiceClient uicReadServiceClient;
 	
 	@Autowired
-	@Qualifier("vendorEndorApiClient")
-	private EndorApiClient vendorEndorApiClient;
-	
-	@Autowired
 	@Qualifier("storeEndorApiClient")
 	private EndorApiClient storeEndorApiClient;
 	
@@ -137,14 +133,14 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		userAddDto.setCreator(employee.getCreator());
 		userAddDto.setUserId(employee.getTaobaoUserId()+"");
 		userAddDto.setUserName(employee.getName());
-		vendorEndorApiClient.getUserServiceClient().addUser(userAddDto);
+		storeEndorApiClient.getUserServiceClient().addUser(userAddDto);
 		
 		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
 		userRoleAddDto.setCreator(employee.getCreator());
 		userRoleAddDto.setOrgId(vendorId);
 		userRoleAddDto.setRoleName(identifier.name());
 		userRoleAddDto.setUserId(employee.getTaobaoUserId()+"");
-		vendorEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 	
 	
@@ -269,7 +265,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		userUpdateDto.setUserId(employeeUserDOresult.getModule().getUserId()+"");
 		userUpdateDto.setUserName(updateCuntaoEmployeeDto.getName());
 		userUpdateDto.setModifier(updateCuntaoEmployeeDto.getOperator());
-		vendorEndorApiClient.getUserServiceClient().updateUser(userUpdateDto, null);
+		storeEndorApiClient.getUserServiceClient().updateUser(userUpdateDto, null);
 	}
 
 	@Override
