@@ -111,7 +111,6 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 		cuntaoCompanyAndManagerInfo.setManager(manager);
 		cuntaoCompanyAndManagerInfo.setId(cuntaoCompanyEmployee.getId());
 		cuntaoCompanyAndManagerInfo.setState(CuntaoVendorEmployeeState.valueOf(cuntaoCompanyEmployee.getState()));
-		cuntaoCompanyAndManagerInfo.setType(CuntaoEmployeeIdentifier.valueOf(cuntaoCompanyEmployee.getType()));
 		return cuntaoCompanyAndManagerInfo;
 	}
 	

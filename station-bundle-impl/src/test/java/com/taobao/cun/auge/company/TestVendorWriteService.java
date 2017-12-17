@@ -37,7 +37,6 @@ public class TestVendorWriteService {
 		cuntaoCompanyDto.setCompanyName("testCompany1111");
 		cuntaoCompanyDto.setMobile("11321123112");
 		cuntaoCompanyDto.setOperator("62333");
-		cuntaoCompanyDto.setOperatorType(OperatorTypeEnum.BUC);
 		cuntaoCompanyDto.setRemark("test123123");
 		cuntaoCompanyDto.setTaobaoNick("esverdor1");
 		cuntaoCompanyDto.setType(CuntaoVendorType.SERVICE_VENDOR);
@@ -75,7 +74,6 @@ public class TestVendorWriteService {
 		cuntaoCompanyDto.setCompanyName("testCompany111122222");
 		cuntaoCompanyDto.setMobile("11321123112");
 		cuntaoCompanyDto.setOperator("62333");
-		cuntaoCompanyDto.setOperatorType(OperatorTypeEnum.BUC);
 		cuntaoCompanyDto.setRemark("test1231232333");
 		cuntaoCompanyDto.setTaobaoNick("esverdor1");
 		cuntaoCompanyDto.setType(CuntaoVendorType.SERVICE_VENDOR);

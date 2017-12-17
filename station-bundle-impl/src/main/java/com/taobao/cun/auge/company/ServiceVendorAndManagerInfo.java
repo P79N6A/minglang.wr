@@ -29,7 +29,6 @@ public class ServiceVendorAndManagerInfo implements Serializable{
 	
 	private CuntaoVendorEmployeeState state;
 	
-	private CuntaoEmployeeIdentifier type;
 
 	
 
@@ -49,13 +48,7 @@ public class ServiceVendorAndManagerInfo implements Serializable{
 		this.state = state;
 	}
 
-	public CuntaoEmployeeIdentifier getType() {
-		return type;
-	}
-
-	public void setType(CuntaoEmployeeIdentifier type) {
-		this.type = type;
-	}
+	
 
 	public CuntaoEmployee getManager() {
 		return manager;

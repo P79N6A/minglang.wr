@@ -34,7 +34,6 @@ public class TestEmployeeWriteService {
 		employee.setName("测试配送员");
 		employee.setMobile("12312312310");
 		employee.setOperator("62333");
-		employee.setOperatorType(OperatorTypeEnum.BUC);
 		Result<Long>  result = employeeWriteService.addVendorEmployee(2l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
 		Assert.notNull(result.getModule());
 	}
@@ -47,7 +46,6 @@ public class TestEmployeeWriteService {
 		employee.setName("测试配送员2");
 		employee.setMobile("31231223312");
 		employee.setOperator("62333");
-		employee.setOperatorType(OperatorTypeEnum.BUC);
 		Result<Boolean>  result = employeeWriteService.updateVendorEmployee(employee);
 		Assert.notNull(result.getModule());
 	}
@@ -59,7 +57,6 @@ public class TestEmployeeWriteService {
 		employee.setName("测试配货员2");
 		employee.setMobile("12312312319");
 		employee.setOperator("62333");
-		employee.setOperatorType(OperatorTypeEnum.BUC);
 		employeeWriteService.addStoreEmployee(3732591l, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
 	}
 	
