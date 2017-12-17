@@ -155,28 +155,14 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 		if (StringUtils.isNotEmpty(cuntaoVendorDto.getMobile())) {
 			vendor.setMobile(cuntaoVendorDto.getMobile());
 		}
-		if (cuntaoVendorDto.getType() != null) {
-			vendor.setType(cuntaoVendorDto.getType().name());
-		}
-		if (StringUtils.isNotEmpty(cuntaoVendorDto.getRemark())) {
-			vendor.setRemark(cuntaoVendorDto.getRemark());
-		}
+		vendor.setRemark(cuntaoVendorDto.getRemark());
 		vendor.setGmtModified(new Date());
 		vendor.setModifier(cuntaoVendorDto.getOperator());
-		cuntaoServiceVendorMapper.updateByPrimaryKeySelective(vendor);
-		updateEndorOrg(cuntaoVendorDto);
-		return null;
+		cuntaoServiceVendorMapper.updateByPrimaryKey(vendor);
+		return Boolean.TRUE;
 	}
 
-	private void updateEndorOrg(CuntaoServiceVendorDto cuntaoVendorDto) {
-		OrgUpdateDto updatAddDto = new OrgUpdateDto();
-		updatAddDto.setOrgId(cuntaoVendorDto.getId());
-		updatAddDto.setOrgName(cuntaoVendorDto.getCompanyName());
-		updatAddDto.setParentId(5l);
-		updatAddDto.setModifier(cuntaoVendorDto.getOperator());
-		storeEndorApiClient.getOrgServiceClient().update(updatAddDto, null);
-		
-	}
+	
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
