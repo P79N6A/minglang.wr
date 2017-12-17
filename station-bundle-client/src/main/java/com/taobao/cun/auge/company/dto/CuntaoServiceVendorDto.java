@@ -1,10 +1,10 @@
 package com.taobao.cun.auge.company.dto;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotNull;
 
-import com.taobao.cun.auge.common.OperatorDto;
-
-public class CuntaoServiceVendorDto extends OperatorDto{
+public class CuntaoServiceVendorDto implements Serializable{
 	/**
 	 * 
 	 */
@@ -34,6 +34,8 @@ public class CuntaoServiceVendorDto extends OperatorDto{
 	 * 公司TaobaoNick账号对应的taobaoUserId
 	 */
 	private Long taobaoUserId;
+	
+	private String operator;
 	
 	private Long id;
 	
@@ -100,6 +102,14 @@ public class CuntaoServiceVendorDto extends OperatorDto{
 
 	public void setTaobaoUserId(Long taobaoUserId) {
 		this.taobaoUserId = taobaoUserId;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
 	}
 
 

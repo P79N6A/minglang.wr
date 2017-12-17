@@ -1,8 +1,10 @@
 package com.taobao.cun.auge.company.dto;
 
-import com.taobao.cun.auge.common.PageQuery;
+import java.io.Serializable;
 
-public class VendorQueryPageCondition extends PageQuery{
+import javax.validation.constraints.NotNull;
+
+public class VendorQueryPageCondition implements Serializable{
 
 	/**
 	 * 
@@ -17,6 +19,29 @@ public class VendorQueryPageCondition extends PageQuery{
 	
 	private String state;
 
+	@NotNull(message="pageNum is null")
+	private int pageNum = 1;
+	
+	@NotNull(message="pageSize is null")
+	private int pageSize = 10;
+
+	public int getPageNum() {
+		return pageNum;
+	}
+
+	public void setPageNum(int pageNum) {
+		this.pageNum = pageNum;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	
 	public String getCompanyName() {
 		return companyName;
 	}
