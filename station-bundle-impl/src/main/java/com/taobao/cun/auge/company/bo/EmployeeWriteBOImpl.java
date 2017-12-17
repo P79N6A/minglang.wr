@@ -17,7 +17,6 @@ import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
-import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
@@ -29,8 +28,6 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Component
 public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 
-	@Autowired
-	private CuntaoServiceVendorMapper cuntaoServiceVendorMapper;
 	
 	@Autowired
 	private CuntaoEmployeeMapper cuntaoEmployeeMapper;

@@ -3,8 +3,6 @@ package com.taobao.cun.auge.company.bo;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -12,13 +10,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.company.ServiceVendorAndManagerInfo;
-import com.taobao.cun.auge.company.VendorWriteServiceImpl;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.company.dto.CuntaoVendorState;
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
@@ -39,7 +35,6 @@ import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 @Component
 public class VendorWriteBOImpl implements VendorWriteBO{
 
-	private static final int ALIPAY_ENTERPRICE_PROMOTED_TYPE = 4;
 	
 	@Autowired
 	private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
@@ -59,12 +54,6 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	@Autowired
 	@Qualifier("storeEndorApiClient")
 	private EndorApiClient storeEndorApiClient;
-	
-	@Autowired
-	private DiamondConfiguredProperties diamondConfiguredProperties;
-	
-	private static final Logger logger = LoggerFactory.getLogger(VendorWriteBOImpl.class);
-	
 	
 	@Override
 	 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
