@@ -142,6 +142,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 
+	
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
 		ResultDO<BaseUserDO> companyUserDOresult = uicReadServiceClient.getBaseUserByNick(taobaoNick);
 		ErrorInfo errorInfo = checkTaobaoNick(companyUserDOresult,"服务商淘宝账号不存在或状态异常!");
