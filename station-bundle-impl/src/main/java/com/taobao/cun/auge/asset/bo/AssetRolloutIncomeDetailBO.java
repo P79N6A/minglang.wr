@@ -77,6 +77,15 @@ public interface AssetRolloutIncomeDetailBO {
 	 * @return
 	 */
 	public List<AssetRolloutIncomeDetail> queryListByIncomeId(Long incomeId);
+	
+	
+	/**
+	 * 根据入库单id 查询
+	 * @param incomeId
+	 * @return
+	 */
+	public List<AssetRolloutIncomeDetail> queryWaitSignListByIncomeId(Long incomeId);
+	
 	/**
 	 * 查询待签收资产
 	 * @param assetId

@@ -1754,7 +1754,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(signDto.getIncomeId(), "入库id不能为空");
         Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
         Objects.requireNonNull(signDto.getOperatorOrgId(), "操作人组织不能为空");
-        List<Long> idList = assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(
+        List<Long> idList = assetRolloutIncomeDetailBO.queryWaitSignListByIncomeId(signDto.getIncomeId()).stream().map(
             AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
         if(CollectionUtils.isNotEmpty(idList)) {
 
