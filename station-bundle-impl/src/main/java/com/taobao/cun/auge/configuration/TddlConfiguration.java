@@ -27,4 +27,12 @@ public class TddlConfiguration {
 		sequence.setName("inventory_store_code");
 		return sequence;
 	}
+	
+	@Bean
+	public GroupSequence orgEndorOrgIdSequence(SequenceDao sequenceDao){
+		GroupSequence sequence = new GroupSequence();
+		sequence.setSequenceDao(sequenceDao);
+		sequence.setName("store_endor_org_id");
+		return sequence;
+	}
 }
