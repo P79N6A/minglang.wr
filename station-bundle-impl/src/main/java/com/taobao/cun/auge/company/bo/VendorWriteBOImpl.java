@@ -26,6 +26,7 @@ import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
+import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -55,6 +56,10 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	@Qualifier("storeEndorApiClient")
 	private EndorApiClient storeEndorApiClient;
 	
+	@Autowired
+	@Qualifier("storeEndorOrgIdSequence")
+	private GroupSequence groupSequence;
+	
 	@Override
 	 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addVendor(CuntaoServiceVendorDto cuntaoServiceVendorDto) {
@@ -68,7 +73,7 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	private void createEndorOrgAndUser(ServiceVendorAndManagerInfo serviceVendorAndManagerInfo) {
 		OrgAddDto orgAddDto = new OrgAddDto();
 		orgAddDto.setCreator(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCreator());
-		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getId());
+		orgAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getEndorOrgId());
 		orgAddDto.setOrgName(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getCompanyName());
 		orgAddDto.setParentId(5l);
 		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
@@ -145,6 +150,7 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 		cuntaoServiceVendor.setType(cuntaoVendorDto.getType().name());
 		cuntaoServiceVendor.setState(CuntaoVendorState.SERVICING.name());
 		cuntaoServiceVendor.setRemark(cuntaoVendorDto.getRemark());
+		cuntaoServiceVendor.setEndorOrgId(groupSequence.nextValue());
 		return cuntaoServiceVendor;
 	}
 	

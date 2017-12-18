@@ -21,6 +21,16 @@ public interface EmployeeWriteService{
 	Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier identifier);
 	
 	/**
+	 * 新增公司员工
+	 * @param companyId
+	 * @param employee
+	 * @param type
+	 * @return
+	 */
+	Result<Long> addVendorEmployeeByEmployeeId(Long vendorId,Long employeeId,CuntaoEmployeeIdentifier identifier);
+	
+	
+	/**
 	 * 更新员工信息
 	 * @param employee
 	 * @return

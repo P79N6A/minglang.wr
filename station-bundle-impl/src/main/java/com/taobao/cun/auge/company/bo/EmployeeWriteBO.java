@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.company.bo;
 
-import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 
@@ -15,6 +14,14 @@ public interface EmployeeWriteBO {
 	 */
 	Long addVendorEmployee(Long vendorId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier identifier);
 	
+	/**
+	 * 新增公司员工
+	 * @param vendorId
+	 * @param employeeId
+	 * @param identifier
+	 * @return
+	 */
+	Long addVendorEmployeeByEmployeeId(Long vendorId,Long employeeId,CuntaoEmployeeIdentifier identifier);
 	/**
 	 * 更新员工信息
 	 * @param employee

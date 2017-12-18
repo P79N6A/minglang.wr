@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
 import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreUpdateService;
+import com.taobao.tddl.client.sequence.impl.GroupSequence;
 
 @Component
 public class StoreWriteBOImpl implements StoreWriteBO {
@@ -63,6 +66,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Resource
     private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 	
+	@Autowired
+	@Qualifier("storeEndorOrgIdSequence")
+	private GroupSequence groupSequence;
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -174,6 +180,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
 			cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 			cuntaoStore.setScmCode(scmCode);
+			cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
 			partnerRoleChangeNotifyBo.sendAddRoleMsg(station.getTaobaoUserId(), PartnerInstanceTypeEnum.PartnerInstanceType.TPS);

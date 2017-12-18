@@ -1044,6 +1044,126 @@ public class CuntaoStoreExample {
             addCriterion("taobao_user_id not between", value1, value2, "taobaoUserId");
             return (Criteria) this;
         }
+
+        public Criteria andSellerShareStoreIdIsNull() {
+            addCriterion("seller_share_store_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdIsNotNull() {
+            addCriterion("seller_share_store_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdEqualTo(Long value) {
+            addCriterion("seller_share_store_id =", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdNotEqualTo(Long value) {
+            addCriterion("seller_share_store_id <>", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdGreaterThan(Long value) {
+            addCriterion("seller_share_store_id >", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("seller_share_store_id >=", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdLessThan(Long value) {
+            addCriterion("seller_share_store_id <", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdLessThanOrEqualTo(Long value) {
+            addCriterion("seller_share_store_id <=", value, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdIn(List<Long> values) {
+            addCriterion("seller_share_store_id in", values, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdNotIn(List<Long> values) {
+            addCriterion("seller_share_store_id not in", values, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdBetween(Long value1, Long value2) {
+            addCriterion("seller_share_store_id between", value1, value2, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerShareStoreIdNotBetween(Long value1, Long value2) {
+            addCriterion("seller_share_store_id not between", value1, value2, "sellerShareStoreId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdIsNull() {
+            addCriterion("endor_org_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdIsNotNull() {
+            addCriterion("endor_org_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdEqualTo(Long value) {
+            addCriterion("endor_org_id =", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdNotEqualTo(Long value) {
+            addCriterion("endor_org_id <>", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdGreaterThan(Long value) {
+            addCriterion("endor_org_id >", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("endor_org_id >=", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdLessThan(Long value) {
+            addCriterion("endor_org_id <", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdLessThanOrEqualTo(Long value) {
+            addCriterion("endor_org_id <=", value, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdIn(List<Long> values) {
+            addCriterion("endor_org_id in", values, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdNotIn(List<Long> values) {
+            addCriterion("endor_org_id not in", values, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdBetween(Long value1, Long value2) {
+            addCriterion("endor_org_id between", value1, value2, "endorOrgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndorOrgIdNotBetween(Long value1, Long value2) {
+            addCriterion("endor_org_id not between", value1, value2, "endorOrgId");
+            return (Criteria) this;
+        }
     }
 
     /**

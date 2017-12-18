@@ -72,7 +72,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),"员工淘宝账号已存在");
+		errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),identifier,"员工淘宝账号已存在");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
@@ -102,9 +102,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 	
 	
-	private ErrorInfo checkTaobaoNickExists(Long vendorId,String taobaoNick,String type,String errorMessage){
+	private ErrorInfo checkTaobaoNickExists(Long vendorId,String taobaoNick,String type,CuntaoEmployeeIdentifier identifier,String errorMessage){
 		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type);
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type).andIdentifierEqualTo(identifier.name());
 		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
 		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
 			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
@@ -224,7 +224,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),"员工淘宝账号已存在");
+		errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),identifier,"员工淘宝账号已存在");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
@@ -244,6 +244,57 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	
+
+	private ErrorInfo checkAddEmployeeByEmployeeId(Long ownerId,Long  employeeId,CuntaoEmployeeIdentifier identifier){
+		try {
+			Assert.notNull(ownerId,"公司ID不能为空");
+			Assert.notNull(identifier,"员工身份不能为空");
+			Assert.notNull(employeeId,"员工ID不能为空");
+		} catch (Exception e) {
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public Result<Long> addVendorEmployeeByEmployeeId(Long vendorId, Long employeeId,
+			CuntaoEmployeeIdentifier identifier) {
+		ErrorInfo errorInfo = null;
+		errorInfo = checkAddEmployeeByEmployeeId(vendorId,employeeId,identifier);
+		//TODO 效验规则细化
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
+		if(cuntaoServiceVendor == null){
+			errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
+			return Result.of(errorInfo);
+		}
+		
+		errorInfo = checkEmployeeExists(vendorId,employeeId,CuntaoEmployeeType.vendor.name(),identifier,"员工已存在");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		try {
+			return Result.of(employeeWriteBO.addVendorEmployeeByEmployeeId(vendorId,employeeId,identifier));
+		} catch (Exception e) {
+			logger.error("addVendorEmployeeByEmployeeId  error!",e);
+			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+	private ErrorInfo checkEmployeeExists(Long vendorId,Long employeeId,String type,CuntaoEmployeeIdentifier identifier,String errorMessage){
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type).andIdentifierEqualTo(identifier.name());
+		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
+			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
+			if(employeeIds.contains(employeeId)){
+				return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
+			}
+		}
+		return null;
+	}
 
 }
