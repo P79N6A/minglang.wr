@@ -29,7 +29,7 @@ public class TddlConfiguration {
 	}
 	
 	@Bean
-	public GroupSequence orgEndorOrgIdSequence(SequenceDao sequenceDao){
+	public GroupSequence storeEndorOrgIdSequence(SequenceDao sequenceDao){
 		GroupSequence sequence = new GroupSequence();
 		sequence.setSequenceDao(sequenceDao);
 		sequence.setName("store_endor_org_id");
