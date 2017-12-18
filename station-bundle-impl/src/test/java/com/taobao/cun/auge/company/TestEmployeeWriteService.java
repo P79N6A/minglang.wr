@@ -16,6 +16,7 @@ import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 
@@ -55,12 +56,7 @@ public class TestEmployeeWriteService {
 	
 	@Test
 	public void test2(){
-		CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
-		employee.setTaobaoNick("esverdor1");
-		employee.setName("测试管理配送员");
-		employee.setMobile("12312312310");
-		employee.setOperator("62333");
-		Result<Long>  result = employeeWriteService.addVendorEmployee(50000130l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
+		Result<Long>  result = employeeWriteService.addVendorEmployeeByEmployeeId(50000130l, 2l, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
 		Assert.notNull(result.getModule());
 	}
 	
@@ -125,9 +121,64 @@ public class TestEmployeeWriteService {
 		employeeWriteService.addStoreEmployee(3732591l, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
 	}
 	
+	
+	@Test
+	public void test3(){
+		{
+			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+			employee.setTaobaoNick("baozhengjin");
+			employee.setName("测试配送员1");
+			employee.setMobile("11111111111");
+			employee.setOperator("62333");
+			Result<Long>  result = employeeWriteService.addVendorEmployee(50000004l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
+			Assert.notNull(result.getModule());
+		}
+		
+		{
+			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+			employee.setTaobaoNick("zhanlingtest02");
+			employee.setName("测试配送员2");
+			employee.setMobile("11111111112");
+			employee.setOperator("62333");
+			Result<Long>  result = employeeWriteService.addVendorEmployee(50000004l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
+			Assert.notNull(result.getModule());
+		}
+		
+		{
+			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+			employee.setTaobaoNick("zhanlingtest01");
+			employee.setName("测试配送员3");
+			employee.setMobile("11111111113");
+			employee.setOperator("62333");
+			Result<Long>  result = employeeWriteService.addVendorEmployee(50000004l, employee, CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR);
+			Assert.notNull(result.getModule());
+		}
+	}
+	
+	
+	
+	
+	
 	@Test
 	public void testPermission(){
-		//boolean result = vendorEndorApiClient.getUserPermissionServiceClient().check("3728411498", "servicevendor_manager");
-		//Assert.isTrue(result);
+		OrgAddDto orgAddDto = new OrgAddDto();
+		orgAddDto.setCreator("62333");
+		orgAddDto.setOrgId(50000004l);
+		orgAddDto.setOrgName("esvendor102服务商");
+		orgAddDto.setParentId(5l);
+		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
+		
+		UserAddDto userAddDto = new UserAddDto();
+		userAddDto.setCreator("62333");
+		userAddDto.setUserId(3728471526l+"");
+		userAddDto.setUserName("14ded4509a");
+		storeEndorApiClient.getUserServiceClient().addUser(userAddDto);
+		
+		UserRoleAddDto userRoleAddDto = new UserRoleAddDto();
+		userRoleAddDto.setCreator("62333");
+		userRoleAddDto.setOrgId(50000004l);
+		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
+		userRoleAddDto.setUserId(3728471526l+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
 	}
 }

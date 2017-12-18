@@ -3,6 +3,7 @@ package com.taobao.cun.auge.asset.service;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.asset.dto.AssetCheckDto;
 import com.taobao.cun.auge.asset.dto.AssetDetailDto;
 import com.taobao.cun.auge.asset.dto.AssetDto;
@@ -207,6 +208,20 @@ public interface AssetService {
      * @param assetId
      * @return
      */
-    public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId);
+    public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,List<Long> assetId);
 
+    /**
+     * 和集团资产状态对比
+     * @param assetIds
+     */
+    public void checkAssetInfo(List<Long> assetIds);
+    
+    
+    public boolean scrapAssetByOrg(List<String> aliNoList);
+    /**
+     * bpc对账使用
+     * 和集团资产做对账    对比资产状态，和责任人
+     * @param assetIds
+     */
+    public void checkAssetToAmpForBcp(Long  assetIds);
 }

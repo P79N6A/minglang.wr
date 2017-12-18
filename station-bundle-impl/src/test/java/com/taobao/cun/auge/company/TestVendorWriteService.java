@@ -13,7 +13,6 @@ import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
 import com.taobao.cun.auge.company.dto.CuntaoVendorType;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
@@ -80,4 +79,6 @@ public class TestVendorWriteService {
 	    Result<Boolean> result = companyWriteService.updateVendor(cuntaoCompanyDto);
 	    System.out.println(result.toString());
 	}
+	
+	
 }
