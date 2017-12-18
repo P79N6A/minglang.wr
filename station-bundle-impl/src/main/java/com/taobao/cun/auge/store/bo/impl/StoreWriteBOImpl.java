@@ -31,6 +31,8 @@ import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.dto.OrgDto;
 import com.taobao.cun.endor.dto.OrgUpdateDto;
 import com.taobao.cun.endor.service.OrgService;
@@ -69,6 +71,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	@Qualifier("storeEndorOrgIdSequence")
 	private GroupSequence groupSequence;
+	
+	@Autowired
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
+	
+	
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -198,13 +206,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	private void addOrg(CuntaoStore cuntaoStore) {
-		OrgDto org = new OrgDto();
-		org.setBizOrgId(cuntaoStore.getStationId());
-		org.setBizParentId(3L);
-		org.setName(cuntaoStore.getName());
-		org.setCreator(cuntaoStore.getCreator());
-		org.setModifier(cuntaoStore.getCreator());
-		orgService.insert("cuntaostore", org);
+		OrgAddDto orgAddDto = new OrgAddDto();
+		orgAddDto.setOrgId(cuntaoStore.getEndorOrgId());
+		orgAddDto.setParentId(3L);
+		orgAddDto.setOrgName(cuntaoStore.getName());
+		orgAddDto.setCreator(cuntaoStore.getCreator());
+		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 	}
 	
 	private void updateOrg(CuntaoStore cuntaoStore) {
@@ -241,4 +248,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	    }
 	    return updateResult.isSuccess();
 	}
+
+	
 }

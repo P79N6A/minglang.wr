@@ -17,4 +17,5 @@ public interface StoreWriteService {
 	Long create(StoreCreateDto dto) throws StoreException;
 	
 	Boolean updateStoreTag(Long shareStoreId,StoreCategory category);
+	
 }

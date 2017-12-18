@@ -24,4 +24,6 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteBO.updateStoreTag(shareStoreId,category);
 	}
 
+	
+
 }
