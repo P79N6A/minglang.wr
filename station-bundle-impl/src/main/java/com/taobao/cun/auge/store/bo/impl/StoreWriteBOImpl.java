@@ -65,8 +65,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private OrgService orgService;
 	@Resource
 	private StoreReadBO storeReadBO;
-	@Resource
-    private PartnerRoleChangeNotifyBo partnerRoleChangeNotifyBo;
 	
 	@Autowired
 	@Qualifier("storeEndorOrgIdSequence")
@@ -191,7 +189,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
-			partnerRoleChangeNotifyBo.sendAddRoleMsg(station.getTaobaoUserId(), PartnerInstanceTypeEnum.PartnerInstanceType.TPS);
         }
 		return result.getResult();
 	}
