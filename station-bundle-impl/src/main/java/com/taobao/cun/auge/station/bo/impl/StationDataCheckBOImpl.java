@@ -142,7 +142,7 @@ public class StationDataCheckBOImpl implements StationDataCheckBO {
 		}
 		if (p.getName() != null) {
 			if (!p.getName().equals(stationDTO.getContact())) {
-				logger.error("check.cainiao.name.error:" + stationId
+				logger.error("check.cainiao.partnerName.error:" + stationId
 						+ ":orgContact=" + p.getName() + ":cainiaoStationId="
 						+ cRel.getCainiaoStationId() + ":cainiaoContact="
 						+ stationDTO.getContact());
