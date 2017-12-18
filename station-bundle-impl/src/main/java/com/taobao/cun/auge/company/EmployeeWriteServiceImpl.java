@@ -83,6 +83,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 		}
 		try {
+			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 			return Result.of(employeeWriteBO.addVendorEmployee(vendorId,employeeDto,identifier));
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
