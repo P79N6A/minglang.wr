@@ -16,10 +16,10 @@ public class PartnerInstanceTypeEnum implements Serializable {
 
 	private static final long serialVersionUID = 7138576667532117709L;
 
-	public static final PartnerInstanceTypeEnum TP = new PartnerInstanceTypeEnum("TP", "合伙人", PartnerInstanceType.TP);
+	public static final PartnerInstanceTypeEnum TP = new PartnerInstanceTypeEnum("TP", "村小二", PartnerInstanceType.TP);
 	public static final PartnerInstanceTypeEnum TPA = new PartnerInstanceTypeEnum("TPA", "淘帮手", PartnerInstanceType.TPA);
 	public static final PartnerInstanceTypeEnum TPV = new PartnerInstanceTypeEnum("TPV", "村拍档", PartnerInstanceType.TPV);
-	public static final PartnerInstanceTypeEnum TPT = new PartnerInstanceTypeEnum("TPT", "县小二", PartnerInstanceType.TPT);
+	public static final PartnerInstanceTypeEnum TPT = new PartnerInstanceTypeEnum("TPT", "镇小二", PartnerInstanceType.TPT);
 	public static final PartnerInstanceTypeEnum TPS = new PartnerInstanceTypeEnum("TPS", "店小二", PartnerInstanceType.TPS);
 
 
