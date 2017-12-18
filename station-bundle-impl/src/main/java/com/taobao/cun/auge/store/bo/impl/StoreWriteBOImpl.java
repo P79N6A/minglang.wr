@@ -18,9 +18,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
-import com.taobao.cun.auge.station.bo.PartnerRoleChangeNotifyBo;
 import com.taobao.cun.auge.station.bo.StationBO;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
@@ -33,11 +31,10 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
-import com.taobao.cun.endor.dto.OrgDto;
-import com.taobao.cun.endor.dto.OrgUpdateDto;
-import com.taobao.cun.endor.service.OrgService;
+import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
+import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
 import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
@@ -61,8 +58,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
 	@Resource
 	private DiamondConfiguredProperties diamondConfiguredProperties;
-	@Resource
-	private OrgService orgService;
+	
 	@Resource
 	private StoreReadBO storeReadBO;
 	
@@ -138,6 +134,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
@@ -212,14 +209,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 	
 	private void updateOrg(CuntaoStore cuntaoStore) {
-		OrgUpdateDto orgDto = new OrgUpdateDto();
-		orgDto.setAppName("cuntaostore");
-		orgDto.setBizOrgId(cuntaoStore.getStationId());
-		orgDto.setBizParentOrgId(3L);
-		orgDto.setDeleted("n");
-		orgDto.setModifier(cuntaoStore.getModifier());
-		orgDto.setName(cuntaoStore.getName());
-		orgService.update(orgDto);
+		OrgUpdateDto orgDtoUpdate = new OrgUpdateDto();
+		orgDtoUpdate.setModifier(cuntaoStore.getModifier());
+		orgDtoUpdate.setOrgId(cuntaoStore.getEndorOrgId());
+		orgDtoUpdate.setParentId(3L);
+		orgDtoUpdate.setOrgName(cuntaoStore.getName());
+		storeEndorApiClient.getOrgServiceClient().update(orgDtoUpdate, null);
 	}
 
 	@Override
