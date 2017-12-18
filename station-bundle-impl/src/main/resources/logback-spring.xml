@@ -47,6 +47,23 @@
         <appender-ref ref="ASSETSYNC"/>
     </logger>
     
+    
+     <appender name="CAINIAOCHECK" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/cainiaoCheck.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/cainiaoCheck.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>50</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    <logger name="com.taobao.cun.auge.station.bo.StationDataCheckBO" level="INFO" additivity="false">
+        <appender-ref ref="CAINIAOCHECK"/>
+    </logger>
+    
     <logger name="com.taobao.cun.auge.qualification.service.CuntaoQualificationServiceImpl" level="INFO" additivity="false">
         <appender-ref ref="QUALIINFO"/>
     </logger>
