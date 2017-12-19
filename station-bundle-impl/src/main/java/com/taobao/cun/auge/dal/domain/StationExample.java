@@ -2914,6 +2914,76 @@ public class StationExample {
             addCriterion("station_type not between", value1, value2, "stationType");
             return (Criteria) this;
         }
+
+        public Criteria andModeIsNull() {
+            addCriterion("mode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeIsNotNull() {
+            addCriterion("mode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeEqualTo(String value) {
+            addCriterion("mode =", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeNotEqualTo(String value) {
+            addCriterion("mode <>", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeGreaterThan(String value) {
+            addCriterion("mode >", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeGreaterThanOrEqualTo(String value) {
+            addCriterion("mode >=", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeLessThan(String value) {
+            addCriterion("mode <", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeLessThanOrEqualTo(String value) {
+            addCriterion("mode <=", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeLike(String value) {
+            addCriterion("mode like", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeNotLike(String value) {
+            addCriterion("mode not like", value, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeIn(List<String> values) {
+            addCriterion("mode in", values, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeNotIn(List<String> values) {
+            addCriterion("mode not in", values, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeBetween(String value1, String value2) {
+            addCriterion("mode between", value1, value2, "mode");
+            return (Criteria) this;
+        }
+
+        public Criteria andModeNotBetween(String value1, String value2) {
+            addCriterion("mode not between", value1, value2, "mode");
+            return (Criteria) this;
+        }
     }
 
     /**
