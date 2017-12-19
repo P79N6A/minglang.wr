@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetRolloutBO;
@@ -276,7 +277,21 @@ public class AssetServiceImpl implements AssetService{
 
 	@Override
 	public Boolean changeOwner(Long orgId, String ownerWorkNo,
-			String ownerName, Long assetId) {
+			String ownerName, List<Long> assetId) {
 		return assetSynBO.changeOwner(orgId, ownerWorkNo, ownerName, assetId);
+	}
+
+	@Override
+	public void checkAssetInfo(List<Long> assetIds) {
+		assetSynBO.checkAssetInfo(assetIds);
+	}
+	
+	public boolean scrapAssetByOrg(List<String> aliNoList){
+		return assetSynBO.scrapAssetByOrg(aliNoList);
+	}
+
+	@Override
+	public void checkAssetToAmpForBcp(Long assetId) {
+		assetSynBO.checkAssetToAmpForBcp(assetId);
 	}
 }
