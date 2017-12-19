@@ -144,9 +144,13 @@ public class EmployeeReadServiceImpl implements EmployeeReadService{
 				List<CuntaoEmployee> employeeList = Lists.newArrayList();
 				if(employees !=null){
 					for(CuntaoEmployee employee : employees){
-						UserRoleDto userRole = storeEndorApiClient.getUserRoleServiceClient().getUserRole(employee.getTaobaoUserId());
-						if(userRole != null && userRole.getRoleName().equals(identifier.name())){
-							employeeList.add(employee);
+						List<UserRoleDto>  userRoles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(employee.getTaobaoUserId()+"");
+						if(userRoles != null && !userRoles.isEmpty()){
+							for(UserRoleDto userRole : userRoles){
+								if(userRole != null && userRole.getRoleName().equals(identifier.name())){
+									employeeList.add(employee);
+								}
+							}
 						}
 					}
 				}
