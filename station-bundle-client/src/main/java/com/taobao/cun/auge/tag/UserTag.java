@@ -8,6 +8,8 @@ public enum UserTag {
 	
 	TPT_USER_TAG("usertag19#36028797018963968"),
 	
+	SAMPLE_SELLER_TAG("cuntao_sample_seller"),
+	
 	TPS_USER_TAG("cuntao_store");
 	
 	 
