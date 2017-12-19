@@ -72,4 +72,11 @@ public interface StoreReadService {
 	  */
 	 List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreId);
 	 
+	 /**
+	  * 根据门店员工查询门店
+	  * @param taobaoUserId
+	  * @return
+	  */
+	 StoreDto getStoreByStoreEmployeeTaobaoUserId(Long taobaoUserId);
+	 
 }

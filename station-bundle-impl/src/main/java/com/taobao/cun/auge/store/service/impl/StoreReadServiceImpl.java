@@ -9,6 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
+import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
@@ -22,6 +30,12 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Autowired
 	private StoreReadBO storeReadBO;
+	
+	@Autowired
+	private CuntaoEmployeeMapper cuntaoEmployeeMapper;
+	
+	@Autowired
+	private CuntaoEmployeeRelMapper cuntaoEmployeeRelMapper;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreReadServiceImpl.class);
 	@Override
@@ -73,6 +87,27 @@ public class StoreReadServiceImpl implements StoreReadService {
 	@Override
 	public List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreIds) {
 		return storeReadBO.getStoreBySharedStoreIds(sharedStoreIds);
+	}
+
+	@Override
+	public StoreDto getStoreByStoreEmployeeTaobaoUserId(Long employeeTaobaoUserId) {
+		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(employeeTaobaoUserId).andTypeEqualTo(CuntaoEmployeeType.store.name());
+		List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(example);
+		if(employees != null && !employees.isEmpty()){
+			CuntaoEmployee employee = employees.iterator().next();
+			CuntaoEmployeeRelExample relExample  = new CuntaoEmployeeRelExample();
+			relExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employee.getId()).andTypeEqualTo(CuntaoEmployeeType.store.name())
+			.andStateEqualTo(CuntaoVendorEmployeeState.SERVICING.name());
+			 List<CuntaoEmployeeRel>  cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(relExample);
+			 if(cuntaoEmployeeRels != null  && !cuntaoEmployeeRels.isEmpty()){
+				 CuntaoEmployeeRel rel = cuntaoEmployeeRels.iterator().next();
+				 Long stationId =  rel.getOwnerId();
+				 return this.getStoreByStationId(stationId);
+				 
+			 }
+		}
+		return null;
 	}
 
 }
