@@ -3,18 +3,15 @@ package com.taobao.cun.auge.station.notify.listener;
 import java.util.Date;
 import java.util.Map;
 
-import com.taobao.cun.auge.asset.service.AssetService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.ali.com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
+
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
+import com.ali.com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
+import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -27,7 +24,6 @@ import com.taobao.cun.auge.flowRecord.enums.CuntaoFlowRecordTargetTypeEnum;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
-import com.taobao.cun.auge.platform.enums.ProcessBusinessCodeEnum;
 import com.taobao.cun.auge.platform.service.BusiWorkBaseInfoService;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.statemachine.StateMachineService;
@@ -57,7 +53,14 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.notify.message.StringMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -113,6 +116,9 @@ public class ProcessProcessor {
 
 	@Autowired
 	private StateMachineService stateMachineService;
+	
+	@Autowired
+	private PartnerQualifyApplyService partnerQualifyApplyService;
 
 	@Autowired
 	AssetService assetService;
@@ -165,6 +171,16 @@ public class ProcessProcessor {
 				incentiveAuditFlowService.processFinishAuditMessage(processInstanceId, businessId, ProcessApproveResultEnum.valueof(resultCode), financeRemarks);
 			} else if (ProcessBusinessEnum.assetTransfer.getCode().equals(businessCode)) {
 				assetService.processAuditAssetTransfer(businessId, ProcessApproveResultEnum.valueof(resultCode));
+			}else if (ProcessBusinessEnum.partner_qulification.getCode().equals(businessCode)) {
+				PartnerQualifyApplyAuditDto pqaDto =new PartnerQualifyApplyAuditDto();
+				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+					pqaDto.setStatus(PartnerQualifyApplyStatus.AUDIT_PASS);
+				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					pqaDto.setStatus(PartnerQualifyApplyStatus.AUDIT_NOT_PASS);
+				}
+				pqaDto.setId(businessId);
+				pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+				partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
