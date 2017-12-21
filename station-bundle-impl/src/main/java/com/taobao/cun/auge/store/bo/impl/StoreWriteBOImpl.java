@@ -67,6 +67,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Resource
 	private StoreReadBO storeReadBO;
 	
+	@Resource
+	private PartnerInstanceQueryService PartnerInstanceQueryService;
+	
 	@Autowired
 	@Qualifier("storeEndorOrgIdSequence")
 	private GroupSequence groupSequence;
@@ -74,10 +77,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	@Qualifier("storeEndorApiClient")
 	private EndorApiClient storeEndorApiClient;
-	
-	
-	@Resource
-	private PartnerInstanceQueryService PartnerInstanceQueryService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
@@ -242,7 +241,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	@Override
-	public Boolean createSampleStore(Long stationId){
+	public Boolean createSampleStore(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
@@ -309,4 +308,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		//TODO 创建库存
 		return true;
 	}
+
+	
 }
