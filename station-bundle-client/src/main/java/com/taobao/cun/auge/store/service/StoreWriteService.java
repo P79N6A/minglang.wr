@@ -16,5 +16,18 @@ public interface StoreWriteService {
 	 */
 	Long create(StoreCreateDto dto) throws StoreException;
 	
+	/**
+	 * 测试接口不要调用
+	 * @param shareStoreId
+	 * @param category
+	 * @return
+	 */
 	Boolean updateStoreTag(Long shareStoreId,StoreCategory category);
+	
+	/**
+	 * 创建拍样门店
+	 * @param stationId
+	 * @return
+	 */
+	Boolean createSampleStore(Long stationId);
 }

@@ -2174,4 +2174,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 	}
+
+    /**
+     * 为村站或门店申请卖家账号
+     * @param taobaoUserId
+     */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void applySellerAccount(Long taobaoUserId) {
+        // TODO 调用UIC生成卖家账号
+        Long sellerId = 0L;
+        
+        PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        Assert.notNull(partnerStationRel, "partner instance not exists");
+        PartnerInstanceDto instance = new PartnerInstanceDto();
+        instance.setId(partnerStationRel.getId());
+        instance.setSellerId(sellerId);
+        instance.setOperator(String.valueOf(taobaoUserId));
+        instance.setOperatorType(OperatorTypeEnum.HAVANA);
+        partnerInstanceBO.updatePartnerStationRel(instance);
+        
+    }
 }

@@ -422,6 +422,9 @@ public class PartnerInstance {
 	
 	private String mode;
 	
+	@Column(name = "seller_id")
+	private Long sellerId;
+	
 	public String getFlowerName() {
 		return flowerName;
 	}
@@ -1661,4 +1664,12 @@ public class PartnerInstance {
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
 }

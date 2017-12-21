@@ -137,6 +137,8 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	private String mode;
 	
+	private Long sellerId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -344,5 +346,13 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
+
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
 
 }
