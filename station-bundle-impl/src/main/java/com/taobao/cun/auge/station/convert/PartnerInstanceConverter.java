@@ -101,10 +101,10 @@ public final class PartnerInstanceConverter {
 		instanceDto.setMode(instance.getMode());
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
-
+		instanceDto.setSellerId(instance.getSellerId());
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
-
+		
 		PartnerLifecycleDto convertLifecycleDto = convertLifecycleDto(instance);
 		instanceDto.setPartnerLifecycleDto(convertLifecycleDto);
 
@@ -183,6 +183,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationId(psRel.getStationId());
 		instanceDto.setPartnerId(psRel.getPartnerId());
 		instanceDto.setVersion(psRel.getVersion());
+		instanceDto.setSellerId(psRel.getSellerId());
 		instanceDto.setMode(psRel.getMode());
 		return instanceDto;
 	}
@@ -315,7 +316,7 @@ public final class PartnerInstanceConverter {
 		rel.setStationId(partnerInstanceDto.getStationId());
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());
-
+		rel.setSellerId(partnerInstanceDto.getSellerId());
 		return rel;
 	}
 
