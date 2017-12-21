@@ -1,10 +1,15 @@
 package com.taobao.cun.auge.tag.service;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.ResultDO;
@@ -19,7 +24,8 @@ public class UserTagServiceImpl implements UserTagService {
 	@Autowired
 	private UicTagServiceClient uicTagServiceClient;
 	
-	
+	@Autowired
+	private PartnerStationRelMapper partnerStationRelMapper;
 	@Override
 	public boolean addTag(Long taobaoUserId, String tag) {
 		assertTag(tag);
@@ -56,5 +62,22 @@ public class UserTagServiceImpl implements UserTagService {
 		if(userTag == null) {
             throw new IllegalArgumentException("illeage userTag[" + tag + "]");
         }
+	}
+
+	@Override
+	public boolean initTPTag() {
+		PartnerStationRelExample example = new PartnerStationRelExample();
+		example.createCriteria().andIsCurrentEqualTo("y").andTypeEqualTo("TP").andIsDeletedEqualTo("n");
+		List<PartnerStationRel> rels = partnerStationRelMapper.selectByExample(example);
+		for(PartnerStationRel rel : rels){
+			try {
+				if(this.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG.getTag()) && !this.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag())){
+					this.addTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag());
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		return true;
 	}
 }

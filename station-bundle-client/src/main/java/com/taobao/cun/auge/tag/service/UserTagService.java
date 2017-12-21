@@ -7,4 +7,6 @@ public interface UserTagService {
 	 boolean removeTag(Long taobaoUserId,String userTag);
 	 
 	 boolean hasTag(Long taobaoUserId,String userTag);
+	 
+	 boolean initTPTag();
 }
