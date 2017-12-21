@@ -65,6 +65,10 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
+		errorInfo = checkTaobaoNickExists(cuntaoServiceVendorDto.getTaobaoNick(),"淘宝账号已存在!");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
 		if(StringUtils.isNotEmpty(cuntaoServiceVendorDto.getMobile())){
 			errorInfo =  checkMobileExists(cuntaoServiceVendorDto.getMobile(),"公司手机号已存在!");
 			if(errorInfo != null){
@@ -92,6 +96,16 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		return null;
 	}
 
+	private ErrorInfo checkTaobaoNickExists(String taobaoNick, String errorMessage) {
+		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick);
+		List<CuntaoServiceVendor> result = cuntaoServiceVendorMapper.selectByExample(example);
+		if(result != null && !result.isEmpty()){
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, errorMessage);
+		}
+		return null;
+	}
+	
 	
 	
 	private ErrorInfo checkTaobaoAndAliPayInfo(String taobaoNick){
