@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -19,9 +20,11 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample.Criteria;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.station.bo.PartnerBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -41,6 +44,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 	
 	@Resource
 	private PartnerBO partnerBO;
+	
+	@Resource
+    private PartnerInstanceBO partnerInstanceBO;
 	
 	@Override
 	public StoreDto getStoreDtoByStationId(Long stationId) {
@@ -81,6 +87,10 @@ public class StoreReadBOImpl implements StoreReadBO {
 			storeDto.setMobile(partner.getMobile());
 			storeDto.setPartnerName(partner.getName());
 		}
+		storeDto.setSellerShareStoreId(cuntaoStore.getSellerShareStoreId());
+		PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(station.getTaobaoUserId());
+        Assert.notNull(partnerStationRel, "partner instance not exists");
+        storeDto.setSellerId(partnerStationRel.getSellerId());
 		return storeDto;
 	}
 

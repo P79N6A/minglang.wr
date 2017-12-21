@@ -3,7 +3,6 @@ package com.taobao.cun.auge.store.dto;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.common.Address;
-import com.taobao.cun.auge.station.dto.PartnerDto;
 
 /**
  * 村淘门店
@@ -57,6 +56,15 @@ public class StoreDto implements Serializable{
 	 */
 	private String mobile;
 	
+	/**
+     * 门店卖家ID
+     */
+    private Long sellerId;
+    
+    /**
+     * 卖家共享门店ID
+     */
+    private Long sellerShareStoreId;
 
 	/**
 	 * 合伙人姓名
@@ -153,5 +161,20 @@ public class StoreDto implements Serializable{
 	}
 
 	
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public Long getSellerShareStoreId() {
+        return sellerShareStoreId;
+    }
+
+    public void setSellerShareStoreId(Long sellerShareStoreId) {
+        this.sellerShareStoreId = sellerShareStoreId;
+    }
 
 }
