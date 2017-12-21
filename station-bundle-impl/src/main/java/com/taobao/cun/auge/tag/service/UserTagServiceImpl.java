@@ -73,11 +73,13 @@ public class UserTagServiceImpl implements UserTagService {
 			try {
 				if(this.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG.getTag()) && !this.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag())){
 					this.addTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag());
+					logger.info("add UserTag["+rel.getTaobaoUserId()+"]");
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
+				logger.error("initTPTag error",e);
 			}
 		}
+		logger.info("finish add UserTag");
 		return true;
 	}
 }
