@@ -1554,6 +1554,146 @@ public class PartnerLifecycleItemsExample {
             addCriterion("confirm_position not between", value1, value2, "confirmPosition");
             return (Criteria) this;
         }
+
+        public Criteria andReplenishMoneyIsNull() {
+            addCriterion("replenish_money is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyIsNotNull() {
+            addCriterion("replenish_money is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyEqualTo(String value) {
+            addCriterion("replenish_money =", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyNotEqualTo(String value) {
+            addCriterion("replenish_money <>", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyGreaterThan(String value) {
+            addCriterion("replenish_money >", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyGreaterThanOrEqualTo(String value) {
+            addCriterion("replenish_money >=", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyLessThan(String value) {
+            addCriterion("replenish_money <", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyLessThanOrEqualTo(String value) {
+            addCriterion("replenish_money <=", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyLike(String value) {
+            addCriterion("replenish_money like", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyNotLike(String value) {
+            addCriterion("replenish_money not like", value, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyIn(List<String> values) {
+            addCriterion("replenish_money in", values, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyNotIn(List<String> values) {
+            addCriterion("replenish_money not in", values, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyBetween(String value1, String value2) {
+            addCriterion("replenish_money between", value1, value2, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andReplenishMoneyNotBetween(String value1, String value2) {
+            addCriterion("replenish_money not between", value1, value2, "replenishMoney");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptIsNull() {
+            addCriterion("goods_receipt is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptIsNotNull() {
+            addCriterion("goods_receipt is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptEqualTo(String value) {
+            addCriterion("goods_receipt =", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptNotEqualTo(String value) {
+            addCriterion("goods_receipt <>", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptGreaterThan(String value) {
+            addCriterion("goods_receipt >", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptGreaterThanOrEqualTo(String value) {
+            addCriterion("goods_receipt >=", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptLessThan(String value) {
+            addCriterion("goods_receipt <", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptLessThanOrEqualTo(String value) {
+            addCriterion("goods_receipt <=", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptLike(String value) {
+            addCriterion("goods_receipt like", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptNotLike(String value) {
+            addCriterion("goods_receipt not like", value, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptIn(List<String> values) {
+            addCriterion("goods_receipt in", values, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptNotIn(List<String> values) {
+            addCriterion("goods_receipt not in", values, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptBetween(String value1, String value2) {
+            addCriterion("goods_receipt between", value1, value2, "goodsReceipt");
+            return (Criteria) this;
+        }
+
+        public Criteria andGoodsReceiptNotBetween(String value1, String value2) {
+            addCriterion("goods_receipt not between", value1, value2, "goodsReceipt");
+            return (Criteria) this;
+        }
     }
 
     /**

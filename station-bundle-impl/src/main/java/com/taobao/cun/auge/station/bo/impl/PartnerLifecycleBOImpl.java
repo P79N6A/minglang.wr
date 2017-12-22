@@ -1,10 +1,12 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.StringUtil;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -197,5 +199,49 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		param.setPosittionConfirm(positionConfirm);
 		param.setLifecycleId(items.getId());
 		this.updateLifecycle(param);
+	}
+
+	@Override
+	public void updateReplenishMoney(Long instanceId,
+			PartnerLifecycleReplenishMoneyEnum replenishMoneyEnum,
+			OperatorDto operatorDto) {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operatorDto);
+		ValidateUtils.notNull(replenishMoneyEnum);
+		
+		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
+		}
+		
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setReplenishMoney(replenishMoneyEnum);
+		param.setLifecycleId(items.getId());
+		param.copyOperatorDto(operatorDto);
+		this.updateLifecycle(param);
+		
+	}
+
+	@Override
+	public void updateGoodsReceipt(Long instanceId,
+			PartnerLifecycleGoodsReceiptEnum goodsReceiptEnum,
+			OperatorDto operatorDto) {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(operatorDto);
+		ValidateUtils.notNull(goodsReceiptEnum);
+		
+		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+				PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
+		}
+		
+		PartnerLifecycleDto param = new PartnerLifecycleDto();
+		param.setGoodsReceipt(goodsReceiptEnum);
+		param.setLifecycleId(items.getId());
+		param.copyOperatorDto(operatorDto);
+		this.updateLifecycle(param);
+		
 	}
 }

@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.station.bo;
 
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -98,4 +101,22 @@ public interface PartnerLifecycleBO {
 	 * @param partnerLifecyclePositionConfrimEnum
 	 */
 	public void updateConfirmPosition(Long instanceId, PartnerLifecyclePositionConfirmEnum partnerLifecyclePositionConfrimEnum);
+	
+	/**
+	 * 更新补货金
+	 * @param instanceId
+	 * @param courseStatusEnum
+	 * @param operator
+	 * @
+	 */
+	public void updateReplenishMoney(Long instanceId, PartnerLifecycleReplenishMoneyEnum replenishMoneyEnum,OperatorDto operatorDto) ;
+	
+	/**
+	 * 更新开业包收货状态
+	 * @param instanceId
+	 * @param courseStatusEnum
+	 * @param operator
+	 * @
+	 */
+	public void updateGoodsReceipt(Long instanceId, PartnerLifecycleGoodsReceiptEnum goodsReceiptEnum,OperatorDto operatorDto) ;
 }

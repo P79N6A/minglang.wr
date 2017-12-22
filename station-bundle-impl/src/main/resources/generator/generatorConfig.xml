@@ -127,10 +127,9 @@
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
-		<table tableName="station" enableCountByExample="true" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+		<table tableName="partner_lifecycle_items" enableCountByExample="true" enableUpdateByExample="true"
+			enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table>
-		
 	</context>
 </generatorConfiguration>
