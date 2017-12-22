@@ -13,6 +13,8 @@ import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeUicTagException;
+import com.taobao.cun.auge.tag.UserTag;
+import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.uic.common.domain.ExtraUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -27,9 +29,12 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 
     @Resource
     private UicTagWriteServiceClient uicTagWriteServiceClient;
+    
     @Resource
     private UicExtraReadServiceClient uicExtraReadServiceClient;
 
+    @Resource
+    private UserTagService userTagService;
     private Long DEFAULT_TAG = new Double(Math.pow(2, 12)).longValue();
 
     private Long TPA_TAG = new Double(Math.pow(2, 13)).longValue();
@@ -47,8 +52,11 @@ public class UicTagAdapterImpl implements UicTagAdapter {
             PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();
             switch (type) {
                 case TPS:
+                	addTpUserTag(taobaoUserId);
+                    break;
                 case TP:
                     addTpUserTag(taobaoUserId);
+                    addTpUserTag2(taobaoUserId);
                     break;
                 case TPA:
                     addTpUserTag(taobaoUserId);
@@ -90,8 +98,11 @@ public class UicTagAdapterImpl implements UicTagAdapter {
             PartnerInstanceTypeEnum.PartnerInstanceType type = userTagDto.getPartnerType().getType();
             switch (type) {
                 case TPS:
+                	 removeTpUserTag(taobaoUserId);
+                     break;
                 case TP:
                     removeTpUserTag(taobaoUserId);
+                    removeTpUserTag2(taobaoUserId);
                     break;
                 case TPA:
                     removeTpUserTag(taobaoUserId);
@@ -130,6 +141,18 @@ public class UicTagAdapterImpl implements UicTagAdapter {
 
     }
 
+    private void addTpUserTag2(Long taobaoUserId){
+    	if(userTagService.hasTag(taobaoUserId, UserTag.TP_USER_TAG2.getTag())){
+    		userTagService.addTag(taobaoUserId,UserTag.TP_USER_TAG2.getTag());
+    	}
+    }
+    
+    
+    private void removeTpUserTag2(Long taobaoUserId){
+    	if(userTagService.hasTag(taobaoUserId, UserTag.TP_USER_TAG2.getTag())){
+    		userTagService.removeTag(taobaoUserId,UserTag.TP_USER_TAG2.getTag());
+    	}
+    }
     /**
      * 打合伙人标
      *
