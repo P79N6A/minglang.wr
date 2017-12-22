@@ -47,7 +47,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Autowired
 	private UicReadServiceClient uicReadServiceClient;
 	
-	
+	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
+
 	@Autowired
 	private EmployeeWriteBO employeeWriteBO;
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteServiceImpl.class);
@@ -72,6 +73,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
+		
+		errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		
 		errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),identifier,"员工淘宝账号已存在");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
@@ -102,6 +109,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return null;
 	}
 	
+	private ErrorInfo checkPromotedType(int promotedType,String errorMessage){
+		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)) {
+			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
+		}
+		return null;
+	}
 	
 	private ErrorInfo checkTaobaoNickExists(Long vendorId,String taobaoNick,String type,CuntaoEmployeeIdentifier identifier,String errorMessage){
 		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
