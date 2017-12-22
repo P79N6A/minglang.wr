@@ -69,6 +69,10 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
+		errorInfo = checkCompanyExists(cuntaoServiceVendorDto.getCompanyName(),"公司名称已存在!");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
 		if(StringUtils.isNotEmpty(cuntaoServiceVendorDto.getMobile())){
 			errorInfo =  checkMobileExists(cuntaoServiceVendorDto.getMobile(),"公司手机号已存在!");
 			if(errorInfo != null){
@@ -86,6 +90,7 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		
 	}
 
+	
 	private ErrorInfo checkMobileExists(String mobile, String errorMessage) {
 		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andMobileEqualTo(mobile);
@@ -96,6 +101,17 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		return null;
 	}
 
+	private ErrorInfo checkCompanyExists(String companyName, String errorMessage) {
+		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andCompanyNameEqualTo(companyName);
+		List<CuntaoServiceVendor> result = cuntaoServiceVendorMapper.selectByExample(example);
+		if(result != null && !result.isEmpty()){
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, errorMessage);
+		}
+		return null;
+	}
+	
+	
 	private ErrorInfo checkTaobaoNickExists(String taobaoNick, String errorMessage) {
 		CuntaoServiceVendorExample example = new CuntaoServiceVendorExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick);
