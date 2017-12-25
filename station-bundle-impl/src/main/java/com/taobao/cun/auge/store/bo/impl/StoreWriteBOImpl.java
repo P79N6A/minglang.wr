@@ -310,5 +310,70 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return true;
 	}
 
+	@Override
+	public Boolean createSupplyStore(Long stationId) {
+		Station station = stationBO.getStationById(stationId);
+		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(station == null || partnerInstance == null){
+			logger.error("createSupplyStore error station or partnerInstance is Null");
+			return false; 
+		}
+		
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setName(station.getName());
+		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+		storeDTO.setAddress(station.getAddress());
+		storeDTO.setOuterId(String.valueOf(stationId));
+		//仓库的区域CODE，取叶子节点
+		String areaId = null;
+		//省
+		if(!Strings.isNullOrEmpty(station.getProvince())){
+			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			storeDTO.setProvName(station.getProvinceDetail());
+			areaId = station.getProvince();
+		}
+		//市
+		if(!Strings.isNullOrEmpty(station.getCity())){
+			storeDTO.setCity(Integer.parseInt(station.getCity()));
+			storeDTO.setCityName(station.getCityDetail());
+			areaId = station.getCity();
+		}
+		//区/县
+		if(!Strings.isNullOrEmpty(station.getCounty())){
+			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			storeDTO.setDistrictName(station.getCountyDetail());
+			areaId = station.getCounty();
+		}
+		if(!Strings.isNullOrEmpty(station.getTown())){
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
+			storeDTO.setTownName(station.getTownDetail());
+			areaId = station.getTown();
+		}
+		
+		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if(Strings.isNullOrEmpty(areaId)){
+			logger.error("createSampleStore error["+stationId+"]: areaId is null");
+			return false;
+		}
+		if(!Strings.isNullOrEmpty(station.getLat())){
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+		}
+		if(!Strings.isNullOrEmpty(station.getLng())){
+			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+		}
+		
+		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
+		storeDTO.addTag(3304);
+		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO,diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+		if(result.isFailured()){
+			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}
+		return true;
+	}
+
 	
 }

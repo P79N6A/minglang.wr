@@ -35,6 +35,9 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 
 	private static final int ALIPAY_ENTERPRICE_PROMOTED_TYPE = 4;
 	
+	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
+
+	
 	@Autowired
 	private UicPaymentAccountReadServiceClient uicPaymentAccountReadServiceClient;
 	
@@ -137,11 +140,18 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			return errorInfo;
 		}
 		if(diamondConfiguredProperties.isCheckVendorAlipayAccount()){
-			errorInfo = checkPromotedType(baseUserDO.getPromotedType(),"服务商淘宝账号绑定的支付宝账号未做企业实名认证;请联系申请人,在支付宝平台完成企业实名认证操作!");
+			errorInfo = checkEnterprisePromotedType(baseUserDO.getPromotedType(),"服务商淘宝账号绑定的支付宝账号未做企业实名认证;请联系申请人,在支付宝平台完成企业实名认证操作!");
 			if(errorInfo != null){
 				return errorInfo;
 			}
 		}
+		else{
+			errorInfo = checkPersonOrEnterprisePromotedType(baseUserDO.getPromotedType(),"账号未做实名认证");
+			if(errorInfo != null){
+				return errorInfo;
+			}
+		}
+		
 		return null;
 	}
 	
@@ -182,12 +192,20 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		return null;
 	}
 	
-	private ErrorInfo checkPromotedType(int promotedType,String errorMessage){
+	private ErrorInfo checkEnterprisePromotedType(int promotedType,String errorMessage){
 		if (((promotedType & ALIPAY_ENTERPRICE_PROMOTED_TYPE) != ALIPAY_ENTERPRICE_PROMOTED_TYPE)) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
+	
+	private ErrorInfo checkPersonOrEnterprisePromotedType(int promotedType,String errorMessage){
+		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)||((promotedType & ALIPAY_ENTERPRICE_PROMOTED_TYPE) != ALIPAY_ENTERPRICE_PROMOTED_TYPE)) {
+			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
+		}
+		return null;
+	}
+	
 	
 	
 	@Override
