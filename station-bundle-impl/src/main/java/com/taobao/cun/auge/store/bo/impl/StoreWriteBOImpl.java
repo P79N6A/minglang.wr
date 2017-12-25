@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -20,6 +21,8 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
@@ -78,6 +81,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	@Qualifier("storeEndorApiClient")
 	private EndorApiClient storeEndorApiClient;
+	
+	@Autowired
+	CaiNiaoAdapter caiNiaoAdapter;
+	
+	@Autowired
+	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
@@ -388,6 +397,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 		cuntaoStoreMapper.insert(cuntaoStore);
+		
+		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
+		if(cainiaoStationId != null){
+			 LinkedHashMap<String, String> features = new  LinkedHashMap<String, String>();
+			 features.put("goodsSupply", "y");
+			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
+		}
 		return true;
 	}
 
