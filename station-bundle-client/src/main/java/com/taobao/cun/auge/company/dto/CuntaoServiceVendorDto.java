@@ -19,7 +19,6 @@ public class CuntaoServiceVendorDto implements Serializable{
 	@NotNull(message="联系电话不能为空")
 	private String mobile;
 
-	@NotNull
     private String remark;
 
 	@NotNull(message="公司类型不能为空")
