@@ -467,39 +467,67 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     public BondFreezingInfoDto getBondFreezingInfoDto(Long taobaoUserId) {
         BondFreezingInfoDto info = new BondFreezingInfoDto();
         PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-        if (null == rel || !PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState())) {
+        if (null == rel ) {
             logger.info("no active partner instance for user : {}", taobaoUserId);
             return null;
         }
-        PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
-        condition.setInstanceId(rel.getId());
-        condition.setOperator(String.valueOf(taobaoUserId));
-        condition.setOperatorType(OperatorTypeEnum.HAVANA);
-        PartnerInstanceDto instance = queryInfo(condition);
-        AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
-                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-        PartnerProtocolRelDto settleProtocol = null;
-        settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
-                instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-        if (settleProtocol == null) {
-            settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
-                    instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+        if (PartnerInstanceStateEnum.SETTLING.getCode().equals(rel.getState())) {//冻结入驻保证金
+        	 PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
+             condition.setInstanceId(rel.getId());
+             condition.setOperator(String.valueOf(taobaoUserId));
+             condition.setOperatorType(OperatorTypeEnum.HAVANA);
+             PartnerInstanceDto instance = queryInfo(condition);
+             AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                     AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+             PartnerProtocolRelDto settleProtocol = null;
+             settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
+                     instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+             if (settleProtocol == null) {
+                 settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.SETTLE_PRO,
+                         instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+             }
+             if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
+                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "bond money or settle protocol not exist");
+             }
+             info.setPartnerInstance(instance);
+             info.setAcountMoney(bondMoney);
+             info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
+             if (AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
+                 info.setHasFrozen(false);
+             } else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
+                 info.setHasFrozen(true);
+             } else {
+                 throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
+             }
+        }else if ((PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) ) {//补货金冻结金额
+	       	 getReplenishMoney(taobaoUserId, info, rel);
         }
-        if (null == instance || null == bondMoney || null == settleProtocol || null == settleProtocol.getConfirmTime()) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "bond money or settle protocol not exist");
-        }
-        info.setPartnerInstance(instance);
-        info.setAcountMoney(bondMoney);
-        info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
-        if (AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
-            info.setHasFrozen(false);
-        } else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
-            info.setHasFrozen(true);
-        } else {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
-        }
+       
         return info;
     }
+
+	private void getReplenishMoney(Long taobaoUserId, BondFreezingInfoDto info,
+			PartnerStationRel rel) {
+		PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
+		 condition.setInstanceId(rel.getId());
+		 condition.setOperator(String.valueOf(taobaoUserId));
+		 condition.setOperatorType(OperatorTypeEnum.HAVANA);
+		 PartnerInstanceDto instance = queryInfo(condition);
+		 AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+		         AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+		 if (null == instance || null == bondMoney) {
+		     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "replenish_money not exist");
+		 }
+		 info.setPartnerInstance(instance);
+		 info.setAcountMoney(bondMoney);
+		 if (AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
+		     info.setHasFrozen(false);
+		 } else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
+		     info.setHasFrozen(true);
+		 } else {
+		     throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
+		 }
+	}
 
     @Override
     public Long getStationApplyId(Long instanceId) {
