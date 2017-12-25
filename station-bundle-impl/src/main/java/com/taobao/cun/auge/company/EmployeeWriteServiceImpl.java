@@ -232,6 +232,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
+		errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
 		errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),identifier,"员工淘宝账号已存在");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
