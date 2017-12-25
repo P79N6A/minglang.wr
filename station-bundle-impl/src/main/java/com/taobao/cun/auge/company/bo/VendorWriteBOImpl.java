@@ -90,6 +90,13 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_MANAGER.name());
 		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
 		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto, null);
+		
+		UserRoleAddDto userRoleAddDto2 = new UserRoleAddDto();
+		userRoleAddDto.setCreator(serviceVendorAndManagerInfo.getManager().getCreator());
+		userRoleAddDto.setOrgId(serviceVendorAndManagerInfo.getCuntaoServiceVendor().getEndorOrgId());
+		userRoleAddDto.setRoleName(CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR.name());
+		userRoleAddDto.setUserId(serviceVendorAndManagerInfo.getManager().getTaobaoUserId()+"");
+		storeEndorApiClient.getUserRoleServiceClient().addUserRole(userRoleAddDto2, null);
 	}
 	
 	private ServiceVendorAndManagerInfo addVendorAndManager(CuntaoServiceVendorDto cuntaoServiceVendorDto, BaseUserDO baseUserDO,

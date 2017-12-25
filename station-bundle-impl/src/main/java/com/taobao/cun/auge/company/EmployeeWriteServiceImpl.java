@@ -117,17 +117,11 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 	
 	private ErrorInfo checkTaobaoNickExists(Long vendorId,String taobaoNick,String type,CuntaoEmployeeIdentifier identifier,String errorMessage){
-		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type).andIdentifierEqualTo(identifier.name());
-		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
-		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
-			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
-			CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
-			cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(employeeIds).andTaobaoNickEqualTo(taobaoNick).andTypeEqualTo(type);
-			List<CuntaoEmployee> cuntaoEmployees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
-			if(cuntaoEmployees != null && !cuntaoEmployees.isEmpty()){
-				return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
-			}
+		CuntaoEmployeeExample cuntaoEmployeeExample = new CuntaoEmployeeExample();
+		cuntaoEmployeeExample.createCriteria().andIsDeletedEqualTo("n").andTaobaoNickEqualTo(taobaoNick).andTypeEqualTo(type);
+		List<CuntaoEmployee> cuntaoEmployees = cuntaoEmployeeMapper.selectByExample(cuntaoEmployeeExample);
+		if(cuntaoEmployees != null && !cuntaoEmployees.isEmpty()){
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
 		}
 		return null;
 	}
