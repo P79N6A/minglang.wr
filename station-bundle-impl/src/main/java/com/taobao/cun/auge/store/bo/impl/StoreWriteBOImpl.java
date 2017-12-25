@@ -130,13 +130,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		switch (storeCreateDto.getStoreCategory()){
 		   case FMCG:
-			   storeDTO.addTag(3303);
+			   storeDTO.addTag(StoreTags.FMCG_TAG);
 			   break;
 		   case MOMBABY:
-			   storeDTO.addTag(3301);
+			   storeDTO.addTag(StoreTags.MOMBABY_TAG);
 			   break;
 		   case ELEC:
-			   storeDTO.addTag(3302);
+			   storeDTO.addTag(StoreTags.ELEC_TAG);
 			   break;   
 		}
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
@@ -352,7 +352,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		
 		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
 		if(Strings.isNullOrEmpty(areaId)){
-			logger.error("createSampleStore error["+stationId+"]: areaId is null");
+			logger.error("createSupplyStore error["+stationId+"]: areaId is null");
 			return false;
 		}
 		if(!Strings.isNullOrEmpty(station.getLat())){
@@ -363,7 +363,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
-		storeDTO.addTag(3304);
+		storeDTO.addTag(StoreTags.SUPPLY_STATION_TAG);//村点补货
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
@@ -372,6 +372,21 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
 			return false;
 		}
+		//本地存储
+		CuntaoStore cuntaoStore = new CuntaoStore();
+		cuntaoStore.setShareStoreId(result.getResult());
+		cuntaoStore.setModifier("system");
+		cuntaoStore.setCreator("system");
+		cuntaoStore.setName(station.getName());
+		cuntaoStore.setStationId(station.getId());
+		cuntaoStore.setGmtCreate(new Date());
+		cuntaoStore.setGmtModified(new Date());
+		cuntaoStore.setIsDeleted("n");
+		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
+		cuntaoStore.setStoreCategory(StoreCategory.SUPPLY.getCategory());
+		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
+		cuntaoStoreMapper.insert(cuntaoStore);
 		return true;
 	}
 
