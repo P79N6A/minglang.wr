@@ -224,4 +224,14 @@ public interface AssetService {
      * @param assetIds
      */
     public void checkAssetToAmpForBcp(Long  assetIds);
+    
+    /**
+     * 全量 更新 责任人   编号补0
+     * @param orgId
+     * @param ownerWorkNo
+     * @param ownerName
+     * @param assetId
+     * @return
+     */
+    public Boolean changeOwner(List<Long> assetId);
 }

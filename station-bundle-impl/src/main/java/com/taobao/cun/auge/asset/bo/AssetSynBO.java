@@ -2,8 +2,6 @@ package com.taobao.cun.auge.asset.bo;
 
 import java.util.List;
 
-import com.taobao.cun.auge.station.dto.StationDto;
-
 public interface AssetSynBO {
 
 	public Boolean syncAsset(List<Long> cuntaoAssetIds);
@@ -19,4 +17,6 @@ public interface AssetSynBO {
 	
 	
 	public void checkAssetToAmpForBcp(Long assetId);
+	
+	public Boolean changeOwner(List<Long> assetId);
 }
