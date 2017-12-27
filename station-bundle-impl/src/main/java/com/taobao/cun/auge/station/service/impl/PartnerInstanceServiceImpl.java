@@ -838,19 +838,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
       
         //判断装修是否未付款
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
-		if (decorate != null
-				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-						decorate.getPaymentType())
-				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-						decorate.getStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,
-					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY.getDesc());
-		}
-//        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-//            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
-//        }
+//		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+//		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+//		if (decorate != null
+//				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+//						decorate.getPaymentType())
+//				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+//						decorate.getStatus())) {
+//			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,
+//					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY.getDesc());
+//		}
+        //装修完成才可以开业 咨询过邵毅此处代码判断装修是否完成 add in 2017-12-27 业务：（梁子、李靖）产品：艳芳
+        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
+        }
 
         PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
         partnerLifecycleDto.setLifecycleId(items.getId());
