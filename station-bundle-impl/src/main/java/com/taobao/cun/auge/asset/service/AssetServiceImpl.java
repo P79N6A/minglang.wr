@@ -294,4 +294,9 @@ public class AssetServiceImpl implements AssetService{
 	public void checkAssetToAmpForBcp(Long assetId) {
 		assetSynBO.checkAssetToAmpForBcp(assetId);
 	}
+
+	@Override
+	public Boolean changeOwner(List<Long> assetId) {
+		return assetSynBO.changeOwner(assetId);
+	}
 }

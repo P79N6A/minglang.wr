@@ -705,4 +705,57 @@ public class AssetSynBOImpl implements AssetSynBO {
 			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】获取集团数据失败。");
 		}
 	}
+	@Override
+	public Boolean changeOwner(List<Long> assetIds) {
+		List<Asset> assetList = new ArrayList<Asset>();
+		//List<String> vaildStatus = AssetStatusEnum.getValidStatusList();
+		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
+					.andIdIn(assetIds);
+			assetList = assetMapper.selectByExample(cuntaoAssetExample);
+			batchChange(assetList);
+		} else {
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
+					.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+			cuntaoAssetExample.setOrderByClause("id asc");
+			int count = assetMapper.countByExample(cuntaoAssetExample);
+			logger.info("changeOwner asset begin,count={}", count);
+			int pageSize = 200;
+			int pageNum = 1;
+			int total = count % pageSize == 0 ? count / pageSize : count
+					/ pageSize + 1;
+			while (pageNum <= total) {
+				logger.info("changeOwner-asset-doing {},{}",pageNum,pageSize);
+				PageHelper.startPage(pageNum, pageSize);
+				assetList = assetMapper
+						.selectByExample(cuntaoAssetExample);
+				batchChange(assetList);
+				pageNum++;
+			}
+		}
+		logger.info("changeOwner-asset-finish");
+		return true;
+	}
+	
+	private void batchChange(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				try {
+					change(ca);
+				} catch (Exception e) {
+					logger.error("changeOwner asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	
+	private void change(Asset  a) {
+		if (a.getOwnerWorkno() == null || a.getOwnerWorkno().length()==6) {
+			logger.info(a.getAliNo()+"is.pass");
+			return;
+		}
+		changeOwner(a);
+	}
 }
