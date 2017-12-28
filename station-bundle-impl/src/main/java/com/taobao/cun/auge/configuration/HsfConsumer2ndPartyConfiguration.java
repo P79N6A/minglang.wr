@@ -400,7 +400,6 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     @Bean
     public EndorApiClient storeEndorApiClient(@Value("${endor.cuntaostore.appName}")String appName,@Value("${endor.cuntaostore.accessKey}")String accessKey,@Value("${endor.service.version}")String version){
     	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
-    	client.init();
     	return client;
     }
     
