@@ -433,9 +433,13 @@
 					<groupId>com.alibaba.china.shared</groupId>
 					<artifactId>member.service.api</artifactId>
 			</dependency>
-				<dependency>
-				    <groupId>com.taobao.payment</groupId>
-				    <artifactId>pmt-client</artifactId>
+			<dependency>
+				   <groupId>com.taobao.payment</groupId>
+				   <artifactId>pmt-client</artifactId>
+			</dependency>
+			<dependency>
+				 <groupId>com.taobao.cun.endor</groupId>
+				 <artifactId>endor-base</artifactId>
 			</dependency>
 	</dependencies>
 	<build>

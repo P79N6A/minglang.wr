@@ -263,7 +263,8 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}
 		
 	}
-
+	
+	
 
 	@Override
 	public C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId) {

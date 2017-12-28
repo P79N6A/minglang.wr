@@ -30,4 +30,11 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	Boolean createSampleStore(Long stationId);
+	
+	/**
+	 * 创建补货村点门店
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean createSupplyStore(Long stationId);
 }

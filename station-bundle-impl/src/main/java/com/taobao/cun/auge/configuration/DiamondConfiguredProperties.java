@@ -81,6 +81,9 @@ public class DiamondConfiguredProperties {
     @Value("${alipay.provideHostName:none}")
     private String alipayProvideHostName;
     
+    @Value("${isCheckVendorAlipayAccount}")
+    private boolean isCheckVendorAlipayAccount;
+    
     public String getApply() {
         return apply;
     }
@@ -183,5 +186,13 @@ public class DiamondConfiguredProperties {
 
 	public void setAlipayProvideHostName(String alipayProvideHostName) {
 		this.alipayProvideHostName = alipayProvideHostName;
+	}
+
+	public boolean isCheckVendorAlipayAccount() {
+		return isCheckVendorAlipayAccount;
+	}
+
+	public void setCheckVendorAlipayAccount(boolean isCheckVendorAlipayAccount) {
+		this.isCheckVendorAlipayAccount = isCheckVendorAlipayAccount;
 	}
 }
