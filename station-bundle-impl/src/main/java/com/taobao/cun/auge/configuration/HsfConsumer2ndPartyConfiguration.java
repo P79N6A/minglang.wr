@@ -50,6 +50,8 @@ import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -391,6 +393,14 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     public QLCAccessService qlcAccessService(HsfConsumerContext context, @Value("${qlcAccessService.version}") String version) {
            return context.hsfConsumerBuilder(QLCAccessService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
+    }
+    
+   
+    
+    @Bean
+    public EndorApiClient storeEndorApiClient(@Value("${endor.cuntaostore.appName}")String appName,@Value("${endor.cuntaostore.accessKey}")String accessKey,@Value("${endor.service.version}")String version){
+    	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
+    	return client;
     }
     
     
