@@ -466,6 +466,6 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if(!result.isSuccess()){
 			logger.error("initCtMdJxcWarehouse error["+storeId+"]:"+result.getMessage());
 		}
-		return result.getData();
+		return result.isSuccess();
 	}
 }
