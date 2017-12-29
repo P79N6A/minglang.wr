@@ -76,7 +76,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private StoreReadBO storeReadBO;
 	
 	@Resource
-	private PartnerInstanceQueryService PartnerInstanceQueryService;
+	private PartnerInstanceQueryService partnerInstanceQueryService;
 	
 	@Autowired
 	@Qualifier("storeEndorOrgIdSequence")
@@ -262,7 +262,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public Boolean createSampleStore(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
-		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
 			return false; 
 		}
@@ -332,7 +332,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public Boolean createSupplyStore(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
-		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null){
 			logger.error("createSupplyStore error station or partnerInstance is Null");
 			return false; 
@@ -421,7 +421,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	public Boolean initSampleWarehouse(Long stationId){
 		try {
 		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
-		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(storeDto == null || partnerInstance == null){
 			logger.error("initSampleWarehouse error storeDto or partnerInstance is Null");
 			return false; 

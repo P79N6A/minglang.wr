@@ -52,7 +52,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	public StoreDto getStoreDtoByStationId(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(station == null||!stationDto.isStore()){
+		if(station == null){
 			return null;
 		}
 		
@@ -105,7 +105,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
 		Station station = stationBO.getStationById(cuntaoStore.getStationId());
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(station == null||!stationDto.isStore()){
+		if(station == null){
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
@@ -125,7 +125,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
 		Station station = stationBO.getStationById(cuntaoStore.getStationId());
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(station == null||!stationDto.isStore()){
+		if(station == null){
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
@@ -144,7 +144,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		CuntaoStore cuntaoStore = cuntaoStores.iterator().next();
 		Station station = stationBO.getStationById(cuntaoStore.getStationId());
 		StationDto stationDto = StationConverter.toStationDto(station);
-		if(station == null||!stationDto.isStore()){
+		if(station == null){
 			return null;
 		}
 		Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(cuntaoStore.getTaobaoUserId());
@@ -233,15 +233,15 @@ public class StoreReadBOImpl implements StoreReadBO {
 		List<StoreDto> stores = Lists.newArrayList();
 		for(Station station : stations){
 			StationDto stationDto = StationConverter.toStationDto(station);
-			if(stationDto.isStore()){
 				CuntaoStoreExample example = new CuntaoStoreExample();
 				example.createCriteria().andStationIdEqualTo(station.getId()).andIsDeletedEqualTo("n");
 				List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
-				CuntaoStore store = cuntaoStores.iterator().next();
-				Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
-				StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
-				stores.add(storeDto);
-			}
+				if(cuntaoStores != null && !cuntaoStores.isEmpty()){
+					CuntaoStore store = cuntaoStores.iterator().next();
+					Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
+					StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
+					stores.add(storeDto);
+				}
 		}
 		return stores;
 	}
