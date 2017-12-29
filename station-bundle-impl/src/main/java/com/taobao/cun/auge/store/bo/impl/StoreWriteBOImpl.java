@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +42,7 @@ import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
+import com.taobao.cun.mdjxc.common.result.DataResult;
 import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
 import com.taobao.cun.mdjxc.model.CtMdJxcWarehouseDTO;
 import com.taobao.place.client.domain.ResultDO;
@@ -431,12 +431,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			return false;
 		}
 		
-			initCtMdJxcWarehouse(BooleanStatusEnum.NO,storeDto.getSellerShareStoreId()+"",partnerInstance.getSellerId());
+			return initCtMdJxcWarehouse(BooleanStatusEnum.NO,storeDto.getSellerShareStoreId()+"",partnerInstance.getSellerId());
 		} catch (Exception e) {
 			logger.error("initSampleWarehouse error["+stationId+"]",e);
 			return false; 
 		}
-		return true;
 	}
 	
 	public Boolean initStoreWarehouse(Long stationId){
@@ -446,12 +445,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 				logger.error("initStoreWarehouse error storeDto or sharedStoreId is Null");
 				return false; 
 			}
-			initCtMdJxcWarehouse(BooleanStatusEnum.YES,storeDto.getShareStoreId()+"",storeDto.getTaobaoUserId());
+			return initCtMdJxcWarehouse(BooleanStatusEnum.YES,storeDto.getShareStoreId()+"",storeDto.getTaobaoUserId());
 		} catch (Exception e) {
 			logger.error("initStoreWarehouse error["+stationId+"]",e);
 			return false; 
 		}
-		return true;
 	}
 	
 	
@@ -459,11 +457,15 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	/**
 	 * 初始化门店库存
 	 */
-	public void initCtMdJxcWarehouse(BooleanStatusEnum buyerIden,String storeId,Long userId){
+	public boolean initCtMdJxcWarehouse(BooleanStatusEnum buyerIden,String storeId,Long userId){
 		CtMdJxcWarehouseDTO ctMdJxcWarehouseDTO = new CtMdJxcWarehouseDTO();
 		ctMdJxcWarehouseDTO.setBuyerIden(buyerIden);
 		ctMdJxcWarehouseDTO.setStoreId(storeId);
 		ctMdJxcWarehouseDTO.setUserId(userId);
-		ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
+		DataResult<Boolean> result = ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
+		if(!result.isSuccess()){
+			logger.error("initCtMdJxcWarehouse error["+storeId+"]:"+result.getMessage());
+		}
+		return result.getData();
 	}
 }
