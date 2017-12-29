@@ -142,8 +142,9 @@ public class AssetMobileServiceImpl implements AssetMobileService {
     @Override
     @Transactional
     public Boolean signAllAssetByCounty(AssetSignDto signDto) {
-    	assetIncomeBO.signAllAssetByCounty(signDto);
-        return assetBO.signAllAssetByCounty(signDto);
+       assetBO.signAllAssetByCounty(signDto);
+        assetIncomeBO.signAllAssetByCounty(signDto);
+        return true;
     }
 
     @Override
