@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
+import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
+import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
+import com.taobao.cun.mdjxc.model.CtMdJxcWarehouseDTO;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
 import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
@@ -87,6 +91,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	
 	@Autowired
 	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	
+	@Autowired
+	CtMdJxcWarehouseApi ctMdJxcWarehouseApi;
 	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
@@ -205,6 +212,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
         }
+		initStoreWarehouse(station.getId());
 		//TODO 创建库存
 		return result.getResult();
 	}
@@ -316,7 +324,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		record.setId(storeDto.getId());
 		record.setSellerShareStoreId(result.getResult());
 		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
-		//TODO 创建库存
+		
+		initSampleWarehouse(stationId);
 		return true;
 	}
 
@@ -409,4 +418,52 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	
+	public Boolean initSampleWarehouse(Long stationId){
+		try {
+		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+		PartnerInstanceDto partnerInstance  = PartnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(storeDto == null || partnerInstance == null){
+			logger.error("initSampleWarehouse error storeDto or partnerInstance is Null");
+			return false; 
+		}
+		if(storeDto.getSellerShareStoreId()==null||partnerInstance.getSellerId() == null){
+			logger.error("initSampleWarehouse error SellerShareStoreId or SellerId is Null");
+			return false;
+		}
+		
+			initCtMdJxcWarehouse(BooleanStatusEnum.NO,storeDto.getSellerShareStoreId()+"",partnerInstance.getSellerId());
+		} catch (Exception e) {
+			logger.error("initSampleWarehouse error["+stationId+"]",e);
+			return false; 
+		}
+		return true;
+	}
+	
+	public Boolean initStoreWarehouse(Long stationId){
+		try {
+			StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+			if(storeDto == null|| storeDto.getShareStoreId() == null){
+				logger.error("initStoreWarehouse error storeDto or sharedStoreId is Null");
+				return false; 
+			}
+			initCtMdJxcWarehouse(BooleanStatusEnum.YES,storeDto.getShareStoreId()+"",storeDto.getTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("initStoreWarehouse error["+stationId+"]",e);
+			return false; 
+		}
+		return true;
+	}
+	
+	
+	
+	/**
+	 * 初始化门店库存
+	 */
+	public void initCtMdJxcWarehouse(BooleanStatusEnum buyerIden,String storeId,Long userId){
+		CtMdJxcWarehouseDTO ctMdJxcWarehouseDTO = new CtMdJxcWarehouseDTO();
+		ctMdJxcWarehouseDTO.setBuyerIden(buyerIden);
+		ctMdJxcWarehouseDTO.setStoreId(storeId);
+		ctMdJxcWarehouseDTO.setUserId(userId);
+		ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
+	}
 }

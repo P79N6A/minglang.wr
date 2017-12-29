@@ -37,4 +37,18 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean createSupplyStore(Long stationId);
+	
+	/**
+	 * 创建拍样库存
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean initSampleWarehouse(Long stationId);
+	
+	/**
+	 * 构建门店库存
+	 * @param stationId
+	 * @return
+	 */
+	public Boolean initStoreWarehouse(Long stationId);
 }
