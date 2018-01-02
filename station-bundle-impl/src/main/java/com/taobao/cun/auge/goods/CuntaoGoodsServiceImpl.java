@@ -119,6 +119,66 @@ public class CuntaoGoodsServiceImpl implements CuntaoGoodsService {
 		}
 		return false;
 	}
+
+	@Override
+	public Result<Boolean> confirmStoreSupplyGoodsProtocol(Long taobaoUserId) {
+		try {
+			Result<Boolean> isConfirmResult = isConfirmStoreSupplyGoodsProtocol(taobaoUserId);
+			if(isConfirmResult.isSuccess() && isConfirmResult.getModule()){
+				return isConfirmResult;
+			}
+			boolean comfirmResult = confirmProtocol(taobaoUserId,ProtocolTypeEnum.STORE_SUPPLY_GOODS_AGREEMENT);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(comfirmResult);
+			return result;
+		} catch (Exception e) {
+			logger.error("confirmStoreSupplyGoodsProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+	@Override
+	public Result<Boolean> isConfirmStoreSupplyGoodsProtocol(Long taobaoUserId) {
+		try {
+			boolean isConfirmed = isConfirmProtocol(taobaoUserId,ProtocolTypeEnum.STORE_SUPPLY_GOODS_AGREEMENT);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(isConfirmed);
+			return result;
+		} catch (Exception e) {
+			logger.error("isConfirmStoreSupplyGoodsProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+	@Override
+	public Result<Boolean> confirmStationOpeningProtocol(Long taobaoUserId) {
+		try {
+			Result<Boolean> isConfirmResult = isConfirmStoreSupplyGoodsProtocol(taobaoUserId);
+			if(isConfirmResult.isSuccess() && isConfirmResult.getModule()){
+				return isConfirmResult;
+			}
+			boolean comfirmResult = confirmProtocol(taobaoUserId,ProtocolTypeEnum.STATION_OPENING_AGREEMENT);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(comfirmResult);
+			return result;
+		} catch (Exception e) {
+			logger.error("confirmStoreSupplyGoodsProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+	@Override
+	public Result<Boolean> isConfirmStationOpeningProtocol(Long taobaoUserId) {
+		try {
+			boolean isConfirmed = isConfirmProtocol(taobaoUserId,ProtocolTypeEnum.STATION_OPENING_AGREEMENT);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(isConfirmed);
+			return result;
+		} catch (Exception e) {
+			logger.error("isConfirmStationOpeningProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
 	
 
 }
