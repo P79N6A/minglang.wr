@@ -82,4 +82,18 @@ public class UserTagServiceImpl implements UserTagService {
 		logger.info("finish add UserTag");
 		return true;
 	}
+
+	@Override
+	public boolean batchAddTag(List<Long> taobaoUserIds, String userTag) {
+		for (Long taobaoUserId : taobaoUserIds) {
+			try {
+				if (!this.hasTag(taobaoUserId, userTag)) {
+					this.addTag(taobaoUserId, userTag);
+				}
+			} catch (Exception e) {
+				logger.error("batchAddTag error[" + taobaoUserId + "]", e);
+			}
+		}
+		return true;
+	}
 }
