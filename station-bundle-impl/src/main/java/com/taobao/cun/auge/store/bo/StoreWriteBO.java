@@ -12,4 +12,8 @@ public interface StoreWriteBO {
 	public Boolean createSampleStore(Long stationId);
 	
 	public Boolean createSupplyStore(Long stationId);
+	
+	public Boolean initSampleWarehouse(Long stationId);
+	
+	public Boolean initStoreWarehouse(Long stationId);
 }
