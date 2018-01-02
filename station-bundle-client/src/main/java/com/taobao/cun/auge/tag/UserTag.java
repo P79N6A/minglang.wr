@@ -12,6 +12,8 @@ public enum UserTag {
 	
 	SAMPLE_SELLER_TAG("cuntao_sample_seller"),
 	
+	CUNTAO_YEAR_TAG("cuntao_year2018"),
+	
 	TPS_USER_TAG("cuntao_store");
 	
 	 
