@@ -28,7 +28,7 @@ public class OpenStationGoodsReceiptConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenStationGoodsReceiptConsumer.class);
 
-    @Value("${openStation.goodsReceipt.Topic}")
+   /* @Value("${openStation.goodsReceipt.Topic}")
     private String topic;
 
     @Value("${openStation.goodsReceipt.tag}")
@@ -79,5 +79,5 @@ public class OpenStationGoodsReceiptConsumer {
         
         partnerLifecycleBO.updateGoodsReceipt(psr.getId(),PartnerLifecycleGoodsReceiptEnum.Y, OperatorDto.defaultOperator());
     }
-
+*/
 }
