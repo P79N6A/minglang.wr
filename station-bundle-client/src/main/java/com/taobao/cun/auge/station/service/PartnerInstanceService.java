@@ -309,4 +309,9 @@ public interface PartnerInstanceService {
 	
 	void closeApprove(Long instanceId);
 	
+	/**
+     * 为村站或门店申请卖家账号
+     * @param taobaoUserId
+	 */
+	public void applySellerAccount(Long taobaoUserId);
 }

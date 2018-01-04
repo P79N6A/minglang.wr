@@ -35,9 +35,10 @@ import com.alibaba.it.asset.api.dto.AssetLostQueryResult;
 import com.alibaba.it.asset.api.dto.AssetLostRequestDto;
 import com.alibaba.it.asset.api.dto.AssetTransDto;
 
+import com.taobao.cun.auge.common.utils.LoginIdConverter;
+
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
-
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -662,10 +663,10 @@ public class AssetBOImpl implements AssetBO {
     private void obtainItAsset(AssetDto signDto) {
         AssetTransDto transDto = new AssetTransDto();
         transDto.setAssetCode(signDto.getAliNo());
-        transDto.setOwner(signDto.getOperator());
-        transDto.setUser(signDto.getOperator());
+        transDto.setOwner(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
+        transDto.setUser(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
         transDto.setVoucherId("obtainAsset" + signDto.getAliNo());
-        transDto.setWorkId(signDto.getOperator());
+        transDto.setWorkId(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
         transDto.setGroupCode(GROUP_CODE);
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetObtain(
             Collections.singletonList(transDto));
@@ -681,10 +682,10 @@ public class AssetBOImpl implements AssetBO {
         AssetTransDto transDto = new AssetTransDto();
         transDto.setAssetCode(signDto.getAliNo());
         transDto.setVoucherId("transferAsset" + signDto.getAliNo());
-        transDto.setOwner(signDto.getOperator());
+        transDto.setOwner(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
         transDto.setGroupCode(GROUP_CODE);
-        transDto.setWorkId(signDto.getOperator());
-        transDto.setUser(signDto.getOperator());
+        transDto.setWorkId(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
+        transDto.setUser(LoginIdConverter.convertTo6Bit(signDto.getOperator()));
         AssetApiResultDO<Boolean> result = cuntaoApiService.transferOwner(
             Collections.singletonList(transDto));
         if (!result.isSuccess()) {
@@ -1050,7 +1051,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
         requestDto.setVoucherId("scrapingAsset" + asset.getAliNo());
         requestDto.setDeductible(scrapDto.getFree().toLowerCase(Locale.ENGLISH));
-        requestDto.setApplicantWorkId(scrapDto.getOperator());
+        requestDto.setApplicantWorkId(LoginIdConverter.convertTo6Bit(scrapDto.getOperator()));
         requestDto.setReason(AssetScrapReasonEnum.valueOf(scrapDto.getReason()).getDesc());
         if (CollectionUtils.isNotEmpty(scrapDto.getAttachmentList())) {
             requestDto.setAttachments(scrapDto.getAttachmentList().stream().map(attachment -> {
@@ -1097,7 +1098,7 @@ public class AssetBOImpl implements AssetBO {
         requestDto.setCurrentCost(Double.parseDouble(scrapDto.getPayment()));
         requestDto.setVoucherId("scrapAsset" + asset.getAliNo());
         requestDto.setDeductible("n");
-        requestDto.setApplicantWorkId(scrapDto.getOperator());
+        requestDto.setApplicantWorkId(LoginIdConverter.convertTo6Bit(scrapDto.getOperator()));
         requestDto.setGroupCode(GROUP_CODE);
         requestDto.setReason(AssetScrapReasonEnum.valueOf(scrapDto.getReason()).getDesc());
         AssetApiResultDO<Boolean> result = cuntaoApiService.assetLostScrapping(requestDto);
@@ -1754,7 +1755,7 @@ public class AssetBOImpl implements AssetBO {
         Objects.requireNonNull(signDto.getIncomeId(), "入库id不能为空");
         Objects.requireNonNull(signDto.getOperator(), "操作人不能为空");
         Objects.requireNonNull(signDto.getOperatorOrgId(), "操作人组织不能为空");
-        List<Long> idList = assetRolloutIncomeDetailBO.queryListByIncomeId(signDto.getIncomeId()).stream().map(
+        List<Long> idList = assetRolloutIncomeDetailBO.queryWaitSignListByIncomeId(signDto.getIncomeId()).stream().map(
             AssetRolloutIncomeDetail::getAssetId).collect(Collectors.toList());
         if(CollectionUtils.isNotEmpty(idList)) {
 

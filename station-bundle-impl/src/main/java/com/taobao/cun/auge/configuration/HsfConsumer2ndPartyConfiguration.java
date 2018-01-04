@@ -50,6 +50,9 @@ import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.opensearch.OpenSearchManager;
 import com.taobao.cun.auge.opensearch.OpenSearchParser;
 import com.taobao.cun.auge.opensearch.StationQueryOpenSearchParser;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
+import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
@@ -393,6 +396,14 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
                    .build();
     }
     
+   
+    
+    @Bean
+    public EndorApiClient storeEndorApiClient(@Value("${endor.cuntaostore.appName}")String appName,@Value("${endor.cuntaostore.accessKey}")String accessKey,@Value("${endor.service.version}")String version){
+    	EndorApiClient client = new EndorApiClientImpl(appName, accessKey, version);
+    	return client;
+    }
+    
     
     @Bean
 	public OpenSearchManager openSearchManager(@Value("${cuntao.station.search.host}") String host,@Value("${cuntao.station.search.index}") String index){
@@ -428,4 +439,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
    	public HSFSpringConsumerBean memberReadService(@Value("${cbu.member.service.version}") String version) {
    		return getConsumerBean(MemberReadService.class, HSFGroup.DUBBO, version, 30000);
    	}
+    
+    @Bean
+    public CtMdJxcWarehouseApi ctMdJxcWarehouseApi(HsfConsumerContext context, @Value("${ctMdJxcWarehouseApi.version}") String version) {
+           return context.hsfConsumerBuilder(CtMdJxcWarehouseApi.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
 }

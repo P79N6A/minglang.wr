@@ -7,17 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.it.asset.api.CuntaoApiService;
+import com.alibaba.it.asset.api.dto.AssetApiResultDO;
+import com.alibaba.it.asset.api.dto.PubResourceDto;
 
-import com.taobao.cun.auge.dal.domain.AssetExample;
+import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
+import com.taobao.cun.auge.station.dto.StationDto;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -47,6 +44,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.Asset;
+import com.taobao.cun.auge.dal.domain.AssetExample;
 import com.taobao.cun.auge.dal.domain.AssetIncome;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
@@ -54,7 +52,6 @@ import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
-import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.AssetIncomeMapper;
@@ -69,6 +66,15 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
+import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.ecs.xhtml.s;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AssetSynBOImpl implements AssetSynBO {
@@ -116,6 +122,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
     @Autowired
     private CuntaoUserService cuntaoUserService;
+    
+    @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
+    private CuntaoApiService cuntaoApiService;
     
     public final static Map<String,String> catMap = new HashMap<String,String>();
     static {
@@ -489,12 +498,11 @@ public class AssetSynBOImpl implements AssetSynBO {
 		return null;
 	}
 	@Override
-	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,Long assetId) {
+	public Boolean changeOwner(Long orgId, String ownerWorkNo, String ownerName,List<Long> assetId) {
 		
 		  AssetExample assetExample = new AssetExample();
 	        if (assetId != null) {
-	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdEqualTo(assetId);
+	        	 assetExample.createCriteria().andIsDeletedEqualTo("n").andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdIn(assetId);
 	        }else {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
 		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
@@ -527,5 +535,227 @@ public class AssetSynBOImpl implements AssetSynBO {
 	        }
 	        
 		return Boolean.TRUE;
+	}
+	@Override
+	public void checkAssetInfo(List<Long> assetIds) {
+		List<Asset> assetList = new ArrayList<Asset>();
+		List<String> vaildStatus = AssetStatusEnum.getValidStatusList();
+		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
+					.andIdIn(assetIds);
+			assetList = assetMapper.selectByExample(cuntaoAssetExample);
+			batchCheck(assetList);
+		} else {
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
+					.andStatusIn(vaildStatus);
+			cuntaoAssetExample.setOrderByClause("id asc");
+			int count = assetMapper.countByExample(cuntaoAssetExample);
+			logger.info("check asset begin,count={}", count);
+			int pageSize = 200;
+			int pageNum = 1;
+			int total = count % pageSize == 0 ? count / pageSize : count
+					/ pageSize + 1;
+			while (pageNum <= total) {
+				logger.info("check-asset-doing {},{}",pageNum,pageSize);
+				PageHelper.startPage(pageNum, pageSize);
+				assetList = assetMapper
+						.selectByExample(cuntaoAssetExample);
+				batchCheck(assetList);
+				pageNum++;
+			}
+		}
+		logger.info("check-asset-finish");
+	}
+	
+	private void batchCheck(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				try {
+					check(ca);
+				} catch (Exception e) {
+					logger.error("check asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	
+	private void check(Asset  a) {
+		AssetApiResultDO<PubResourceDto>  resDto = cuntaoApiService.getAssetInfo(a.getAliNo(), "36821");
+		if (resDto.isSuccess()) {
+			PubResourceDto pDto = resDto.getResult();
+			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
+				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
+					logger.error("sign.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}
+			
+			if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
+				if (!(pDto.getStatus().equals("Scrapped"))) {
+					logger.error("scrap.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}
+			
+			if (a.getStatus().equals(AssetStatusEnum.USE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.PEND.getCode())||
+					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())||
+					a.getStatus().equals(AssetStatusEnum.SCRAPING.getCode())) {
+				if (!(pDto.getStatus().equals("Using"))) {
+					logger.error("use.check.asset.error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}
+		}else {
+			logger.error("getAssetInfo error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus(),resDto.getErrorMsg());
+		}
+	}
+	
+	public boolean scrapAssetByOrg(List<String> aliNoList) {
+		AssetExample cuntaoAssetExample = new AssetExample();
+		List<Asset> assetList = new ArrayList<Asset>();
+		cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")
+				.andAliNoIn(aliNoList);
+		assetList = assetMapper.selectByExample(cuntaoAssetExample);
+		logger.info("scrapAssetByOrg asset begin,count={}", assetList.size());
+		batchscrap(assetList);
+		logger.info("scrapAssetByOrg asset end");
+		return  true;
+	}
+	private void batchscrap(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				try {
+					scrap(ca);
+				} catch (Exception e) {
+					logger.error("scrap asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	private void scrap(Asset  a) {
+		Long  assetId  = a.getId();
+		//如果有入库单   检查 是否删除入库单
+        AssetRolloutIncomeDetail detail = assetRolloutIncomeDetailBO.queryWaitSignByAssetId(assetId);
+        if (detail != null) {
+        	assetRolloutIncomeDetailBO.deleteWaitSignDetail(assetId, "offlineScrap");
+            Long incomeId = detail.getIncomeId();
+            Long rolloutId = detail.getRolloutId();
+            if (incomeId != null) {
+            	 //更新出入库单状态
+            	if (assetRolloutIncomeDetailBO.isAllSignByIncomeId(incomeId)) {
+            		assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DONE, "offlineScrap");
+        		}else {
+        			assetIncomeBO.updateStatus(incomeId, AssetIncomeStatusEnum.DOING, "offlineScrap");
+        		}
+            }
+            if (rolloutId != null) {
+            	if (assetRolloutIncomeDetailBO.isAllSignByRolloutId(rolloutId)) {
+					assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_DONE, "offlineScrap");
+				}else{
+					assetRolloutBO.updateStatus(rolloutId, AssetRolloutStatusEnum.ROLLOUT_ING, "offlineScrap");
+				}
+            }
+           
+        }
+        
+        a.setStatus(AssetStatusEnum.SCRAP.getCode());
+        DomainUtils.beforeUpdate(a, "offlineScrap");
+        assetMapper.updateByPrimaryKeySelective(a);
+	}
+	@Override
+	public void checkAssetToAmpForBcp(Long assetId) {
+		Asset a = assetBO.getAssetById(assetId);
+		if (a == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE, "查询失败" + AssetBO.NO_EXIT_ASSET);
+		}
+		AssetApiResultDO<PubResourceDto>  resDto = cuntaoApiService.getAssetInfo(a.getAliNo(), "36821");
+		if (resDto.isSuccess()) {
+			PubResourceDto pDto = resDto.getResult();
+			if (a.getStatus().equals(AssetStatusEnum.SIGN.getCode())) {
+				if (!(pDto.getStatus().equals("Stocking")) || !(pDto.getStatusDetail().equals("Available"))) {
+					logger.error("checkAssetToAmpForBcp.sign.check.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+					throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】是待县签收资产，集团状态必须是库存-可用。");
+				}
+			}
+			
+			/*if (a.getStatus().equals(AssetStatusEnum.SCRAP.getCode())) {
+				if (!(pDto.getStatus().equals("Scrapped"))) {
+					logger.error("scrap.check.asset.error,aliNo="+a.getAliNo()+":status="+pDto.getStatus()+":statusDetail="+pDto.getStatusDetail());
+				}
+			}*/
+			
+			if (a.getStatus().equals(AssetStatusEnum.USE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.DISTRIBUTE.getCode())||
+					a.getStatus().equals(AssetStatusEnum.PEND.getCode())||
+					a.getStatus().equals(AssetStatusEnum.TRANSFER.getCode())) {
+				if (pDto.getStatus().equals("Using")) {
+					if(!(a.getOwnerWorkno().equals(pDto.getOwner()))) {
+						logger.error("checkAssetToAmpForBcp.use.check.owner.error,aliNo="+a.getAliNo()+":orgOwner="+a.getOwnerWorkno()+":ampOwner="+pDto.getOwner());
+						throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】责任人不一致，org责任人是"+a.getOwnerWorkno()+":集团资产责任人="+pDto.getOwner());
+					}
+				}
+				
+				if (pDto.getStatus().equals("Scrapped") && pDto.getStatusDetail().equals("Sold")) {
+					scrap(a);
+				}
+			}
+		}else {
+			logger.error("checkAssetToAmpForBcp.getAssetInfo.error,aliNo="+a.getAliNo()+":orgstatus="+a.getStatus(),resDto.getErrorMsg());
+			throw new AugeBusinessException(AugeErrorCodes.ASSET_BUSINESS_ERROR_CODE,  "【"+a.getAliNo()+"】获取集团数据失败。");
+		}
+	}
+	@Override
+	public Boolean changeOwner(List<Long> assetIds) {
+		List<Asset> assetList = new ArrayList<Asset>();
+		//List<String> vaildStatus = AssetStatusEnum.getValidStatusList();
+		if (CollectionUtils.isNotEmpty(assetIds)) {//指定参数
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andStatusIn(vaildStatus)//.andCreatorNotEqualTo(CREATOR)
+					.andIdIn(assetIds);
+			assetList = assetMapper.selectByExample(cuntaoAssetExample);
+			batchChange(assetList);
+		} else {
+			AssetExample cuntaoAssetExample = new AssetExample();
+			cuntaoAssetExample.createCriteria().andIsDeletedEqualTo("n")//.andCreatorNotEqualTo(CREATOR)
+					.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+			cuntaoAssetExample.setOrderByClause("id asc");
+			int count = assetMapper.countByExample(cuntaoAssetExample);
+			logger.info("changeOwner asset begin,count={}", count);
+			int pageSize = 200;
+			int pageNum = 1;
+			int total = count % pageSize == 0 ? count / pageSize : count
+					/ pageSize + 1;
+			while (pageNum <= total) {
+				logger.info("changeOwner-asset-doing {},{}",pageNum,pageSize);
+				PageHelper.startPage(pageNum, pageSize);
+				assetList = assetMapper
+						.selectByExample(cuntaoAssetExample);
+				batchChange(assetList);
+				pageNum++;
+			}
+		}
+		logger.info("changeOwner-asset-finish");
+		return true;
+	}
+	
+	private void batchChange(List<Asset> assetList) {
+		if (CollectionUtils.isNotEmpty(assetList)) {
+			for (Asset ca :assetList) {
+				try {
+					change(ca);
+				} catch (Exception e) {
+					logger.error("changeOwner asset error,asset="+JSONObject.toJSONString(ca),e);
+				}
+			}
+		}
+	}
+	
+	private void change(Asset  a) {
+		if (a.getOwnerWorkno() == null || a.getOwnerWorkno().length()==6) {
+			logger.info(a.getAliNo()+"is.pass");
+			return;
+		}
+		changeOwner(a);
 	}
 }

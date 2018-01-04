@@ -1734,6 +1734,66 @@ public class PartnerStationRelExample {
             addCriterion("mode not between", value1, value2, "mode");
             return (Criteria) this;
         }
+
+        public Criteria andSellerIdIsNull() {
+            addCriterion("seller_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdIsNotNull() {
+            addCriterion("seller_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdEqualTo(Long value) {
+            addCriterion("seller_id =", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdNotEqualTo(Long value) {
+            addCriterion("seller_id <>", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdGreaterThan(Long value) {
+            addCriterion("seller_id >", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("seller_id >=", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdLessThan(Long value) {
+            addCriterion("seller_id <", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdLessThanOrEqualTo(Long value) {
+            addCriterion("seller_id <=", value, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdIn(List<Long> values) {
+            addCriterion("seller_id in", values, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdNotIn(List<Long> values) {
+            addCriterion("seller_id not in", values, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdBetween(Long value1, Long value2) {
+            addCriterion("seller_id between", value1, value2, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerIdNotBetween(Long value1, Long value2) {
+            addCriterion("seller_id not between", value1, value2, "sellerId");
+            return (Criteria) this;
+        }
     }
 
     /**

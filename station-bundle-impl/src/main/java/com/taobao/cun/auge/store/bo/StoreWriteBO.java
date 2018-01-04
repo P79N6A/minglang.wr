@@ -8,4 +8,12 @@ public interface StoreWriteBO {
 	Long create(StoreCreateDto dto) throws StoreException;
 	
 	Boolean updateStoreTag(Long shareStoreId,StoreCategory category);
+	
+	public Boolean createSampleStore(Long stationId);
+	
+	public Boolean createSupplyStore(Long stationId);
+	
+	public Boolean initSampleWarehouse(Long stationId);
+	
+	public Boolean initStoreWarehouse(Long stationId);
 }

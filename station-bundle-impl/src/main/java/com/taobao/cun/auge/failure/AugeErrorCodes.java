@@ -3,6 +3,10 @@ package com.taobao.cun.auge.failure;
 public interface AugeErrorCodes {
 
 	/**
+	 * 系统异常
+	 */
+	public static final  String SYSTEM_ERROR_CODE = "B-00000";
+	/**
 	 * 非法参数异常码
 	 */
 	public static final  String ILLEGAL_PARAM_ERROR_CODE = "B-00001";
@@ -107,5 +111,11 @@ public interface AugeErrorCodes {
 	 * 1688商城授权失败  需要报警
 	 */
 	public static final String CBU_MARKET_ACCESS_ERROR = "B-00021";
+	
+	
+	/**
+	 * 公司数据不存在，不需要报警
+	 */
+	public static final  String COMPANY_DATA_NOT_EXISTS_ERROR_CODE = "B-00022";
 
 }

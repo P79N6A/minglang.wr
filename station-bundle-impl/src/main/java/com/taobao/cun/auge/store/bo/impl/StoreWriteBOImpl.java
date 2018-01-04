@@ -1,10 +1,15 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,27 +21,39 @@ import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
+import com.taobao.cun.auge.store.dto.StoreTags;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
-import com.taobao.cun.endor.dto.OrgDto;
-import com.taobao.cun.endor.dto.OrgUpdateDto;
-import com.taobao.cun.endor.service.OrgService;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.OrgAddDto;
+import com.taobao.cun.endor.base.dto.OrgUpdateDto;
+import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
+import com.taobao.cun.mdjxc.common.result.DataResult;
+import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
+import com.taobao.cun.mdjxc.model.CtMdJxcWarehouseDTO;
 import com.taobao.place.client.domain.ResultDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
+import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
 import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
 import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreUpdateService;
+import com.taobao.tddl.client.sequence.impl.GroupSequence;
 
 @Component
 public class StoreWriteBOImpl implements StoreWriteBO {
@@ -54,11 +71,31 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private InventoryStoreWriteBo inventoryStoreWriteBo;
 	@Resource
 	private DiamondConfiguredProperties diamondConfiguredProperties;
-	@Resource
-	private OrgService orgService;
+	
 	@Resource
 	private StoreReadBO storeReadBO;
 	
+	@Resource
+	private PartnerInstanceQueryService partnerInstanceQueryService;
+	
+	@Autowired
+	@Qualifier("storeEndorOrgIdSequence")
+	private GroupSequence groupSequence;
+	
+	@Autowired
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
+	
+	@Autowired
+	CaiNiaoAdapter caiNiaoAdapter;
+	
+	@Autowired
+	CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
+	
+	@Autowired
+	CtMdJxcWarehouseApi ctMdJxcWarehouseApi;
+	
+	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
@@ -110,18 +147,19 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		switch (storeCreateDto.getStoreCategory()){
 		   case FMCG:
-			   storeDTO.addTag(3303);
+			   storeDTO.addTag(StoreTags.FMCG_TAG);
 			   break;
 		   case MOMBABY:
-			   storeDTO.addTag(3301);
+			   storeDTO.addTag(StoreTags.MOMBABY_TAG);
 			   break;
 		   case ELEC:
-			   storeDTO.addTag(3302);
+			   storeDTO.addTag(StoreTags.ELEC_TAG);
 			   break;   
 		}
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
 			throw new StoreException(result.getFullErrorMsg());
@@ -170,9 +208,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStore.setStoreCategory(storeCreateDto.getStoreCategory().getCategory());
 			cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 			cuntaoStore.setScmCode(scmCode);
+			cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
         }
+		//initStoreWarehouse(station.getId());
+		//TODO 创建库存
 		return result.getResult();
 	}
 
@@ -186,24 +227,21 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	private void addOrg(CuntaoStore cuntaoStore) {
-		OrgDto org = new OrgDto();
-		org.setBizOrgId(cuntaoStore.getStationId());
-		org.setBizParentId(3L);
-		org.setName(cuntaoStore.getName());
-		org.setCreator(cuntaoStore.getCreator());
-		org.setModifier(cuntaoStore.getCreator());
-		orgService.insert("cuntaostore", org);
+		OrgAddDto orgAddDto = new OrgAddDto();
+		orgAddDto.setOrgId(cuntaoStore.getEndorOrgId());
+		orgAddDto.setParentId(3L);
+		orgAddDto.setOrgName(cuntaoStore.getName());
+		orgAddDto.setCreator(cuntaoStore.getCreator());
+		storeEndorApiClient.getOrgServiceClient().insert(orgAddDto, null);
 	}
 	
 	private void updateOrg(CuntaoStore cuntaoStore) {
-		OrgUpdateDto orgDto = new OrgUpdateDto();
-		orgDto.setAppName("cuntaostore");
-		orgDto.setBizOrgId(cuntaoStore.getStationId());
-		orgDto.setBizParentOrgId(3L);
-		orgDto.setDeleted("n");
-		orgDto.setModifier(cuntaoStore.getModifier());
-		orgDto.setName(cuntaoStore.getName());
-		orgService.update(orgDto);
+		OrgUpdateDto orgDtoUpdate = new OrgUpdateDto();
+		orgDtoUpdate.setModifier(cuntaoStore.getModifier());
+		orgDtoUpdate.setOrgId(cuntaoStore.getEndorOrgId());
+		orgDtoUpdate.setParentId(3L);
+		orgDtoUpdate.setOrgName(cuntaoStore.getName());
+		storeEndorApiClient.getOrgServiceClient().update(orgDtoUpdate, null);
 	}
 
 	@Override
@@ -211,22 +249,223 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		storeDTO.addTag(3300);
-		switch (category){
-		   case FMCG:
-			   storeDTO.addTag(3303);
-			   break;
-		   case MOMBABY:
-			   storeDTO.addTag(3301);
-			   break;
-		   case ELEC:
-			   storeDTO.addTag(3302);
-			   break;   
-		}
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		//storeDTO.addTag(3300);
+		//storeDTO.addTag(3000);
         ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 	    if(!updateResult.isSuccess()){
 	    	System.out.println(updateResult.getErrorMsg());
 	    }
 	    return updateResult.isSuccess();
+	}
+
+	@Override
+	public Boolean createSampleStore(Long stationId) {
+		Station station = stationBO.getStationById(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
+			return false; 
+		}
+		
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setName(station.getName());
+		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+		storeDTO.setAddress(station.getAddress());
+		storeDTO.setOuterId(String.valueOf(stationId));
+		//仓库的区域CODE，取叶子节点
+		String areaId = null;
+		//省
+		if(!Strings.isNullOrEmpty(station.getProvince())){
+			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			storeDTO.setProvName(station.getProvinceDetail());
+			areaId = station.getProvince();
+		}
+		//市
+		if(!Strings.isNullOrEmpty(station.getCity())){
+			storeDTO.setCity(Integer.parseInt(station.getCity()));
+			storeDTO.setCityName(station.getCityDetail());
+			areaId = station.getCity();
+		}
+		//区/县
+		if(!Strings.isNullOrEmpty(station.getCounty())){
+			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			storeDTO.setDistrictName(station.getCountyDetail());
+			areaId = station.getCounty();
+		}
+		if(!Strings.isNullOrEmpty(station.getTown())){
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
+			storeDTO.setTownName(station.getTownDetail());
+			areaId = station.getTown();
+		}
+		
+		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if(Strings.isNullOrEmpty(areaId)){
+			logger.error("createSampleStore error["+stationId+"]: areaId is null");
+			return false;
+		}
+		if(!Strings.isNullOrEmpty(station.getLat())){
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+		}
+		if(!Strings.isNullOrEmpty(station.getLng())){
+			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+		}
+		
+		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
+		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO, partnerInstance.getSellerId(), StoreBizType.CUN_TAO.getValue());
+		if(result.isFailured()){
+			logger.error("createSampleStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}
+		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+		CuntaoStore record = new CuntaoStore();
+		record.setId(storeDto.getId());
+		record.setSellerShareStoreId(result.getResult());
+		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
+		
+		//initSampleWarehouse(stationId);
+		return true;
+	}
+
+	@Override
+	public Boolean createSupplyStore(Long stationId) {
+		Station station = stationBO.getStationById(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(station == null || partnerInstance == null){
+			logger.error("createSupplyStore error station or partnerInstance is Null");
+			return false; 
+		}
+		
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setName(station.getName());
+		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+		storeDTO.setAddress(station.getAddress());
+		storeDTO.setOuterId(String.valueOf(stationId));
+		//仓库的区域CODE，取叶子节点
+		String areaId = null;
+		//省
+		if(!Strings.isNullOrEmpty(station.getProvince())){
+			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			storeDTO.setProvName(station.getProvinceDetail());
+			areaId = station.getProvince();
+		}
+		//市
+		if(!Strings.isNullOrEmpty(station.getCity())){
+			storeDTO.setCity(Integer.parseInt(station.getCity()));
+			storeDTO.setCityName(station.getCityDetail());
+			areaId = station.getCity();
+		}
+		//区/县
+		if(!Strings.isNullOrEmpty(station.getCounty())){
+			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			storeDTO.setDistrictName(station.getCountyDetail());
+			areaId = station.getCounty();
+		}
+		if(!Strings.isNullOrEmpty(station.getTown())){
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
+			storeDTO.setTownName(station.getTownDetail());
+			areaId = station.getTown();
+		}
+		
+		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if(Strings.isNullOrEmpty(areaId)){
+			logger.error("createSupplyStore error["+stationId+"]: areaId is null");
+			return false;
+		}
+		if(!Strings.isNullOrEmpty(station.getLat())){
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+		}
+		if(!Strings.isNullOrEmpty(station.getLng())){
+			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+		}
+		
+		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
+		storeDTO.addTag(StoreTags.SUPPLY_STATION_TAG);//村点补货
+		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
+		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
+		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		ResultDO<Long> result = storeCreateService.create(storeDTO,diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+		if(result.isFailured()){
+			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}
+		//本地存储
+		CuntaoStore cuntaoStore = new CuntaoStore();
+		cuntaoStore.setShareStoreId(result.getResult());
+		cuntaoStore.setModifier("system");
+		cuntaoStore.setCreator("system");
+		cuntaoStore.setName(station.getName());
+		cuntaoStore.setStationId(station.getId());
+		cuntaoStore.setGmtCreate(new Date());
+		cuntaoStore.setGmtModified(new Date());
+		cuntaoStore.setIsDeleted("n");
+		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
+		cuntaoStore.setStoreCategory(StoreCategory.SUPPLY.getCategory());
+		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
+		cuntaoStore.setScmCode("");
+		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
+		cuntaoStoreMapper.insert(cuntaoStore);
+		
+		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
+		if(cainiaoStationId != null){
+			 LinkedHashMap<String, String> features = new  LinkedHashMap<String, String>();
+			 features.put("goodsSupply", "y");
+			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
+		}
+		return true;
+	}
+
+	
+	public Boolean initSampleWarehouse(Long stationId){
+		try {
+		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(storeDto == null || partnerInstance == null){
+			logger.error("initSampleWarehouse error storeDto or partnerInstance is Null");
+			return false; 
+		}
+		if(storeDto.getSellerShareStoreId()==null||partnerInstance.getSellerId() == null){
+			logger.error("initSampleWarehouse error SellerShareStoreId or SellerId is Null");
+			return false;
+		}
+		
+			return initCtMdJxcWarehouse(BooleanStatusEnum.NO,storeDto.getSellerShareStoreId()+"",partnerInstance.getSellerId());
+		} catch (Exception e) {
+			logger.error("initSampleWarehouse error["+stationId+"]",e);
+			return false; 
+		}
+	}
+	
+	public Boolean initStoreWarehouse(Long stationId){
+		try {
+			StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
+			if(storeDto == null|| storeDto.getShareStoreId() == null){
+				logger.error("initStoreWarehouse error storeDto or sharedStoreId is Null");
+				return false; 
+			}
+			return initCtMdJxcWarehouse(BooleanStatusEnum.YES,storeDto.getShareStoreId()+"",storeDto.getTaobaoUserId());
+		} catch (Exception e) {
+			logger.error("initStoreWarehouse error["+stationId+"]",e);
+			return false; 
+		}
+	}
+	
+	
+	
+	/**
+	 * 初始化门店库存
+	 */
+	public boolean initCtMdJxcWarehouse(BooleanStatusEnum buyerIden,String storeId,Long userId){
+		CtMdJxcWarehouseDTO ctMdJxcWarehouseDTO = new CtMdJxcWarehouseDTO();
+		ctMdJxcWarehouseDTO.setBuyerIden(buyerIden);
+		ctMdJxcWarehouseDTO.setStoreId(storeId);
+		ctMdJxcWarehouseDTO.setUserId(userId);
+		DataResult<Boolean> result = ctMdJxcWarehouseApi.createWarehouse(ctMdJxcWarehouseDTO);
+		if(!result.isSuccess()){
+			logger.error("initCtMdJxcWarehouse error["+storeId+"]:"+result.getMessage());
+		}
+		return result.isSuccess();
 	}
 }

@@ -4,9 +4,15 @@ public enum UserTag {
 
 	TP_USER_TAG("usertag11#4096"),
 	
+	TP_USER_TAG2("cuntao_village"),
+	
 	TPA_USER_TAG("usertag17#8192"),
 	
 	TPT_USER_TAG("usertag19#36028797018963968"),
+	
+	SAMPLE_SELLER_TAG("cuntao_sample_seller"),
+	
+	CUNTAO_YEAR_TAG("cuntao_year2018"),
 	
 	TPS_USER_TAG("cuntao_store");
 	

@@ -316,4 +316,12 @@ public class AssetRolloutIncomeDetailBOImpl implements
 
         assetRolloutIncomeDetailMapper.updateByExampleSelective(record, example);
 	}
+
+	@Override
+	public List<AssetRolloutIncomeDetail> queryWaitSignListByIncomeId(
+			Long incomeId) {
+		 AssetRolloutIncomeDetailExample example = new AssetRolloutIncomeDetailExample();
+	     example.createCriteria().andIsDeletedEqualTo("n").andIncomeIdEqualTo(incomeId).andStatusEqualTo(AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode());
+	     return assetRolloutIncomeDetailMapper.selectByExample(example);
+	}
 }

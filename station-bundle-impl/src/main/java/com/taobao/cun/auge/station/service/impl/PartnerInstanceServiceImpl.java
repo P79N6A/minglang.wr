@@ -949,21 +949,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 没有数据 认为是标准化项目之前的数据，直接可以开业
             return;
         }
-      
-        //判断装修是否未付款
-		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
-		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
-		if (decorate != null
-				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-						decorate.getPaymentType())
-				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
-						decorate.getStatus())) {
-			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,
-					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY.getDesc());
-		}
-//        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
-//            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
-//        }
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
@@ -973,6 +959,20 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}
 		}
+//		
+//		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
+//		if (decorate != null
+//				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(
+//						decorate.getPaymentType())
+//				&& StationDecorateStatusEnum.UNDECORATE.getCode().equals(
+//						decorate.getStatus())) {
+//			throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,
+//					PartnerExceptionEnum.PARTNER_DECORATE_NOT_PAY.getDesc());
+//		}
+        //装修完成才可以开业 咨询过邵毅此处代码判断装修是否完成 add in 2017-12-27 业务：（梁子、李靖）产品：艳芳
+        if (!PartnerLifecycleDecorateStatusEnum.Y.getCode().equals(items.getDecorateStatus())) {
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站没有完成装修");
+        }
 
         PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
         partnerLifecycleDto.setLifecycleId(items.getId());
@@ -2296,4 +2296,24 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		
 	}
+
+    /**
+     * 为村站或门店申请卖家账号
+     * @param taobaoUserId
+     */
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void applySellerAccount(Long taobaoUserId) {
+        // TODO 调用UIC生成卖家账号
+        Long sellerId = 0L;
+        
+        PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        Assert.notNull(partnerStationRel, "partner instance not exists");
+        PartnerInstanceDto instance = new PartnerInstanceDto();
+        instance.setId(partnerStationRel.getId());
+        instance.setSellerId(sellerId);
+        instance.setOperator(String.valueOf(taobaoUserId));
+        instance.setOperatorType(OperatorTypeEnum.HAVANA);
+        partnerInstanceBO.updatePartnerStationRel(instance);
+        
+    }
 }

@@ -24,4 +24,23 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		return storeWriteBO.updateStoreTag(shareStoreId,category);
 	}
 
+	@Override
+	public Boolean createSampleStore(Long stationId) {
+		return storeWriteBO.createSampleStore(stationId);
+	}
+
+	@Override
+	public Boolean createSupplyStore(Long stationId){
+		return storeWriteBO.createSupplyStore(stationId);
+	}
+
+	@Override
+	public Boolean initSampleWarehouse(Long stationId) {
+		return storeWriteBO.initSampleWarehouse(stationId);
+	}
+
+	@Override
+	public Boolean initStoreWarehouse(Long stationId) {
+		return storeWriteBO.initStoreWarehouse(stationId);
+	}
 }
