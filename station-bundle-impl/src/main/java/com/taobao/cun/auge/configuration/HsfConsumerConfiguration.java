@@ -1,16 +1,12 @@
 package com.taobao.cun.auge.configuration;
 
-import com.taobao.cun.auge.data.PartnerInstanceLevelDataService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.data.PartnerInstanceLevelDataService;
 import com.taobao.cun.auge.msg.service.MessageService;
 import com.taobao.cun.auge.org.service.CuntaoOrgService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
@@ -23,8 +19,12 @@ import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
@@ -153,6 +153,13 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
     public HSFSpringConsumerBean cuntaoUserRoleService(
             @Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
         return getConsumerBean(CuntaoUserRoleService.class, HSFGroup.HSF,
+                version, 5000);
+    }
+	
+	@Bean(initMethod = "init")
+    public HSFSpringConsumerBean partnerQualifyApplyService(
+            @Value("${hsf.consumer.version.auge.partnerQualifyApplyService}") String version) {
+        return getConsumerBean(PartnerQualifyApplyService.class, HSFGroup.HSF,
                 version, 5000);
     }
 
