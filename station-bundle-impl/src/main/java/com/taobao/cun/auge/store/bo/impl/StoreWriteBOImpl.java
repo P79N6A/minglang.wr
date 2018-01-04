@@ -277,10 +277,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean createSampleStore(Long stationId) {
-		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
-		if(store != null ){
-			return true;
-		}
+		
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
