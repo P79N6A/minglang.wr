@@ -532,7 +532,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		for(Long taobaoUserId : taobaoUserIds){
 			try {
 				PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
-				this.createSupplyStore(partnerInstance.getStationId());
+				if(partnerInstance != null){
+					this.createSupplyStore(partnerInstance.getStationId());
+				}else{
+					logger.error("batchCreateSupplyStore error partnerInstance is null taobaoUserId:["+taobaoUserId+"]");
+				}
 			} catch (Exception e) {
 				logger.error("batchCreateSupplyStore error["+taobaoUserId+"]",e);
 			}
