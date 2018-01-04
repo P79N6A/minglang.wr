@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,9 +173,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
+			addStoreCreateError(station.getId(), result);
 			throw new StoreException(result.getFullErrorMsg());
+		}else{
+			fixStoreCreateError(station.getId());
 		}
-		
 		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
             storeDTO.setStoreId(result.getResult());
             // 更新
@@ -333,6 +336,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			logger.error("createSampleStore error["+stationId+"]:"+result.getFullErrorMsg());
 			return false;
 		}
+		if(result.isFailured()){
+			addStoreCreateError(stationId, result);
+			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}else{
+			fixStoreCreateError(stationId);
+		}
 		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
 		CuntaoStore record = new CuntaoStore();
 		record.setId(storeDto.getId());
@@ -447,16 +457,21 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	private void addStoreCreateError(Long stationId, ResultDO<Long> result) {
-		StoreCreateError error = new StoreCreateError();
-		error.setIsDeleted("n");
-		error.setCreator("system");
-		error.setModifier("system");
-		error.setGmtCreate(new Date());
-		error.setGmtModified(new Date());
-		error.setStationId(stationId);
-		error.setErrorInfo(result.getErrorMsg());
-		error.setErrorCode(result.getResultCode());
-		storeCreateErrorMapper.insertSelective(error);
+		StoreCreateErrorExample example = new StoreCreateErrorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+		List<StoreCreateError> errors = storeCreateErrorMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(errors)){
+			StoreCreateError error = new StoreCreateError();
+			error.setIsDeleted("n");
+			error.setCreator("system");
+			error.setModifier("system");
+			error.setGmtCreate(new Date());
+			error.setGmtModified(new Date());
+			error.setStationId(stationId);
+			error.setErrorInfo(result.getErrorMsg());
+			error.setErrorCode(result.getResultCode());
+			storeCreateErrorMapper.insertSelective(error);
+		}
 	}
 
 	
