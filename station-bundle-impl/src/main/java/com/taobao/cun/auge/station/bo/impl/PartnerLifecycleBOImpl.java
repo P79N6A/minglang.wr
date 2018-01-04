@@ -233,10 +233,16 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		
 		PartnerLifecycleItems items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
 				PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (items == null) {//兼容老的 服务中的4.0村点
+			 items = this.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
+						PartnerLifecycleCurrentStepEnum.END);
+		}
 		if (items == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
 		}
-		
+		if (PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
+			return;
+		}
 		PartnerLifecycleDto param = new PartnerLifecycleDto();
 		param.setGoodsReceipt(goodsReceiptEnum);
 		param.setLifecycleId(items.getId());

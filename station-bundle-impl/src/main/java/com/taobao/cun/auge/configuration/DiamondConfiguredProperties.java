@@ -81,7 +81,18 @@ public class DiamondConfiguredProperties {
     @Value("${alipay.provideHostName:none}")
     private String alipayProvideHostName;
     
-    public String getApply() {
+    @Value("${replenishOrderUrl}")
+    private String replenishOrderUrl;
+    
+    public String getReplenishOrderUrl() {
+		return replenishOrderUrl;
+	}
+
+	public void setReplenishOrderUrl(String replenishOrderUrl) {
+		this.replenishOrderUrl = replenishOrderUrl;
+	}
+
+	public String getApply() {
         return apply;
     }
 

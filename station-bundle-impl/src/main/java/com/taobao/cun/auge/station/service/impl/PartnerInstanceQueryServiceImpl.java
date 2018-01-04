@@ -4,16 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import com.alibaba.common.lang.StringUtil;
+
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 
 import com.ali.com.google.common.collect.Lists;
-import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -74,6 +69,7 @@ import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.ReplenishDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -83,10 +79,15 @@ import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.ReplenishStatusEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
@@ -101,6 +102,13 @@ import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.RandomUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("partnerInstanceQueryService")
 @HSFProvider(serviceInterface = PartnerInstanceQueryService.class, clientTimeout = 7000)
@@ -164,6 +172,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     private StoreReadBO storeReadBO;
 
     private List<ProcessedStationStatusExecutor> processedStationStatusExecutorList;
+    
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
 
 
     private boolean isC2BTestUser(Long taobaoUserId) {
@@ -764,4 +775,42 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         return instances;
     }
+
+	@Override
+	public ReplenishDto getReplenishDtoByTaobaoUserId(Long taobaoUserId) {
+		ValidateUtils.notNull(taobaoUserId);
+		PartnerStationRel  rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+		if (rel == null) {
+			String error = getErrorMessage("getInfoByTaobaoUserId",String.valueOf(taobaoUserId), "rel is null");
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
+		}
+		if (!StationModeEnum.V4.getCode().equals(rel.getMode())) {
+			return null;
+		}
+		PartnerLifecycleItems decoItems = partnerLifecycleBO.getLifecycleItems(rel.getId(),
+		        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		if (null == decoItems ) {
+			decoItems = partnerLifecycleBO.getLifecycleItems(rel.getId(),
+			        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.END);
+        }
+	  if (null == decoItems ) {
+          throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
+      }
+	  ReplenishDto rDto =new ReplenishDto();
+	  rDto.setPartnerInstanceId(rel.getId());
+	  rDto.setStationId(rel.getStationId());
+	  rDto.setTaobaoUserId(taobaoUserId);
+	  
+	  if (PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
+		  rDto.setStatus(ReplenishStatusEnum.WAIT_FROZEN);
+	  }
+	  if (PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
+		  rDto.setStatus(ReplenishStatusEnum.HAS_FROZEN);
+		  rDto.setOrderUrl(diamondConfiguredProperties.getReplenishOrderUrl());
+	  }
+	  if (PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(decoItems.getGoodsReceipt())) {
+		  rDto.setStatus(ReplenishStatusEnum.GOODS_RECEIVE);
+	  }
+		return rDto;
+	}
 }
