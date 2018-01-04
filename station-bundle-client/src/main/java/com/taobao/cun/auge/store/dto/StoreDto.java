@@ -31,15 +31,26 @@ public class StoreDto implements Serializable{
 	 * 所属服务站ID
 	 */
 	private Long stationId;
+	
 	/**
 	 * 店铺分类
 	 */
 	private StoreCategory storeCategory;
 	
 	/**
+	 * 店铺类型
+	 */
+	private String category;
+	
+	/**
 	 * 营业状态
 	 */
 	private StoreStatus storeStatus;
+	
+	/**
+	 * 状态
+	 */
+	private String status;
 	
 	/**
 	 * 淘宝用户ID
@@ -176,5 +187,21 @@ public class StoreDto implements Serializable{
     public void setSellerShareStoreId(Long sellerShareStoreId) {
         this.sellerShareStoreId = sellerShareStoreId;
     }
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 }
