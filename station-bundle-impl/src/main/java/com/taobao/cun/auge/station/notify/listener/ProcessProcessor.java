@@ -171,7 +171,7 @@ public class ProcessProcessor {
 				incentiveAuditFlowService.processFinishAuditMessage(processInstanceId, businessId, ProcessApproveResultEnum.valueof(resultCode), financeRemarks);
 			} else if (ProcessBusinessEnum.assetTransfer.getCode().equals(businessCode)) {
 				assetService.processAuditAssetTransfer(businessId, ProcessApproveResultEnum.valueof(resultCode));
-			}else if (ProcessBusinessEnum.partner_qulification.getCode().equals(businessCode)) {
+			}else if (ProcessBusinessEnum.partnerQualifyAudit.getCode().equals(businessCode)) {
 				PartnerQualifyApplyAuditDto pqaDto =new PartnerQualifyApplyAuditDto();
 				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
 					pqaDto.setStatus(PartnerQualifyApplyStatus.AUDIT_PASS);
