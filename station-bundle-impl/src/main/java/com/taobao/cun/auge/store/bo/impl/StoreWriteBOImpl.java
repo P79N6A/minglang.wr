@@ -105,11 +105,15 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
+		
 		Station station = stationBO.getStationById(storeCreateDto.getStationId());
 		if(station == null){
 			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
 		}
-		
+		StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
+		if(store != null ){
+			return store.getId();
+		}
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(storeCreateDto.getName());
 		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
@@ -267,6 +271,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean createSampleStore(Long stationId) {
+		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+		if(store != null ){
+			return true;
+		}
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
@@ -337,6 +345,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean createSupplyStore(Long stationId) {
+		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+		if(store != null ){
+			return true;
+		}
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null){
