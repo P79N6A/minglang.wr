@@ -207,6 +207,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
 				userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
 			}
+			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.SAMPLE_SELLER_TAG.getTag())){
+				userTagService.addTag(station.getTaobaoUserId(), UserTag.SAMPLE_SELLER_TAG.getTag());
+			}
 			//本地存储
 			CuntaoStore cuntaoStore = new CuntaoStore();
 			cuntaoStore.setShareStoreId(result.getResult());
