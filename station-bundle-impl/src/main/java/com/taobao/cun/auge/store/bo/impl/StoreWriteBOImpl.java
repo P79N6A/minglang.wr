@@ -35,6 +35,7 @@ import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCategory;
+import com.taobao.cun.auge.store.dto.StoreCategoryConstants;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
@@ -433,7 +434,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setGmtModified(new Date());
 		cuntaoStore.setIsDeleted("n");
 		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
-		cuntaoStore.setStoreCategory(StoreCategory.SUPPLY.getCategory());
+		cuntaoStore.setStoreCategory(StoreCategoryConstants.FMCG);
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 		cuntaoStore.setScmCode("");
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
