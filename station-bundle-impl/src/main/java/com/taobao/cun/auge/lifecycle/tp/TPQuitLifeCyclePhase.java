@@ -2,9 +2,8 @@ package com.taobao.cun.auge.lifecycle.tp;
 
 import java.util.Date;
 
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -40,6 +39,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -167,6 +167,8 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
 			}else {
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+				PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
+				partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
 			}
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
