@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,10 @@ import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.dal.domain.StoreCreateError;
+import com.taobao.cun.auge.dal.domain.StoreCreateErrorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.dal.mapper.StoreCreateErrorMapper;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -31,6 +35,7 @@ import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreCategory;
+import com.taobao.cun.auge.store.dto.StoreCategoryConstants;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreStatus;
@@ -95,15 +100,22 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	CtMdJxcWarehouseApi ctMdJxcWarehouseApi;
 	
+	@Autowired
+	private StoreCreateErrorMapper storeCreateErrorMapper;
+	
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException{
+		
 		Station station = stationBO.getStationById(storeCreateDto.getStationId());
 		if(station == null){
 			throw new StoreException("服务站不存在,station_id=" + storeCreateDto.getStationId());
 		}
-		
+		StoreDto store = storeReadBO.getStoreDtoByStationId(station.getId());
+		if(store != null ){
+			return store.getId();
+		}
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(storeCreateDto.getName());
 		storeDTO.setCategoryId(storeCreateDto.getCategoryId());
@@ -162,9 +174,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
+			addStoreCreateError(station.getId(), result);
 			throw new StoreException(result.getFullErrorMsg());
+		}else{
+			fixStoreCreateError(station.getId());
 		}
-		
 		if (ResultCode.STORE_REPEAT.getCode().equals(result.getResultCode())) {
             storeDTO.setStoreId(result.getResult());
             // 更新
@@ -189,10 +203,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
             cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
             updateOrg(cuntaoStore);
         }else{
-			String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId(), areaId);
+			String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId());
 			//打标
 			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
 				userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
+			}
+			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.SAMPLE_SELLER_TAG.getTag())){
+				userTagService.addTag(station.getTaobaoUserId(), UserTag.SAMPLE_SELLER_TAG.getTag());
 			}
 			//本地存储
 			CuntaoStore cuntaoStore = new CuntaoStore();
@@ -212,17 +229,15 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
         }
-		//initStoreWarehouse(station.getId());
-		//TODO 创建库存
+		initStoreWarehouse(station.getId());
 		return result.getResult();
 	}
 
-	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId, String areaId) throws StoreException {
+	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId) throws StoreException {
 		InventoryStoreCreateDto inventoryStoreCreateDto = new InventoryStoreCreateDto();
 		inventoryStoreCreateDto.setName(storeCreateDto.getName());
 		inventoryStoreCreateDto.setAlias(storeCreateDto.getName());
 		inventoryStoreCreateDto.setUserId(userId);
-		inventoryStoreCreateDto.setAreaId(Long.parseLong(areaId));
 		return inventoryStoreWriteBo.create(inventoryStoreCreateDto);
 	}
 
@@ -261,6 +276,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean createSampleStore(Long stationId) {
+		
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
@@ -319,18 +335,29 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			logger.error("createSampleStore error["+stationId+"]:"+result.getFullErrorMsg());
 			return false;
 		}
+		if(result.isFailured()){
+			addStoreCreateError(stationId, result);
+			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			return false;
+		}else{
+			fixStoreCreateError(stationId);
+		}
 		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
 		CuntaoStore record = new CuntaoStore();
 		record.setId(storeDto.getId());
 		record.setSellerShareStoreId(result.getResult());
 		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
 		
-		//initSampleWarehouse(stationId);
+		initSampleWarehouse(stationId);
 		return true;
 	}
 
 	@Override
 	public Boolean createSupplyStore(Long stationId) {
+		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+		if(store != null ){
+			return true;
+		}
 		Station station = stationBO.getStationById(stationId);
 		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(station == null || partnerInstance == null){
@@ -388,8 +415,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		ResultDO<Long> result = storeCreateService.create(storeDTO,diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 		if(result.isFailured()){
+			addStoreCreateError(stationId, result);
 			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
 			return false;
+		}else{
+			fixStoreCreateError(stationId);
 		}
 		//本地存储
 		CuntaoStore cuntaoStore = new CuntaoStore();
@@ -402,7 +432,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setGmtModified(new Date());
 		cuntaoStore.setIsDeleted("n");
 		cuntaoStore.setStatus(StoreStatus.NORMAL.getStatus());
-		cuntaoStore.setStoreCategory(StoreCategory.SUPPLY.getCategory());
+		cuntaoStore.setStoreCategory(StoreCategoryConstants.FMCG);
 		cuntaoStore.setTaobaoUserId(station.getTaobaoUserId());
 		cuntaoStore.setScmCode("");
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
@@ -415,6 +445,32 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
 		}
 		return true;
+	}
+
+	private void fixStoreCreateError(Long stationId) {
+		StoreCreateErrorExample example = new StoreCreateErrorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+		StoreCreateError error = new StoreCreateError();
+		error.setIsFixed("y");
+		storeCreateErrorMapper.updateByExampleSelective(error, example);
+	}
+
+	private void addStoreCreateError(Long stationId, ResultDO<Long> result) {
+		StoreCreateErrorExample example = new StoreCreateErrorExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+		List<StoreCreateError> errors = storeCreateErrorMapper.selectByExample(example);
+		if(CollectionUtils.isEmpty(errors)){
+			StoreCreateError error = new StoreCreateError();
+			error.setIsDeleted("n");
+			error.setCreator("system");
+			error.setModifier("system");
+			error.setGmtCreate(new Date());
+			error.setGmtModified(new Date());
+			error.setStationId(stationId);
+			error.setErrorInfo(result.getErrorMsg());
+			error.setErrorCode(result.getResultCode());
+			storeCreateErrorMapper.insertSelective(error);
+		}
 	}
 
 	
@@ -467,5 +523,23 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			logger.error("initCtMdJxcWarehouse error["+storeId+"]:"+result.getMessage());
 		}
 		return result.isSuccess();
+	}
+
+	@Override
+	public Boolean batchCreateSupplyStore(List<Long> taobaoUserIds) {
+		for(Long taobaoUserId : taobaoUserIds){
+			try {
+				PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+				if(partnerInstance != null){
+					this.createSupplyStore(partnerInstance.getStationId());
+				}else{
+					logger.error("batchCreateSupplyStore error partnerInstance is null taobaoUserId:["+taobaoUserId+"]");
+				}
+			} catch (Exception e) {
+				logger.error("batchCreateSupplyStore error["+taobaoUserId+"]",e);
+			}
+			
+		}
+		return true;
 	}
 }
