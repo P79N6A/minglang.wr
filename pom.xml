@@ -713,7 +713,7 @@
 			<dependency>
 	      		<groupId>com.taobao.cun</groupId>
 	      		<artifactId>ct-mdjxc-api.api</artifactId>
-	      		<version>1.0.8-SNAPSHOT</version>
+	      		<version>1.0.9</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
