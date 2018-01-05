@@ -229,8 +229,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			cuntaoStoreMapper.insert(cuntaoStore);
 			addOrg(cuntaoStore);
         }
-		//initStoreWarehouse(station.getId());
-		//TODO 创建库存
+		initStoreWarehouse(station.getId());
 		return result.getResult();
 	}
 
@@ -349,7 +348,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		record.setSellerShareStoreId(result.getResult());
 		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
 		
-		//initSampleWarehouse(stationId);
+		initSampleWarehouse(stationId);
 		return true;
 	}
 

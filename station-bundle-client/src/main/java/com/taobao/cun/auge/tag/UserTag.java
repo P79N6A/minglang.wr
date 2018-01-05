@@ -14,6 +14,8 @@ public enum UserTag {
 	
 	CUNTAO_YEAR_TAG("cuntao_year2018"),
 	
+	CUNTAO_MER_TAG("usertag15#4"),
+	
 	TPS_USER_TAG("cuntao_store");
 	
 	 
