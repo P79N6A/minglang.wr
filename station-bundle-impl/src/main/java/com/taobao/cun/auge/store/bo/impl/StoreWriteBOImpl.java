@@ -203,7 +203,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
             cuntaoStoreMapper.updateByPrimaryKey(cuntaoStore);
             updateOrg(cuntaoStore);
         }else{
-			String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId());
+			String scmCode = createInventoryStore(storeCreateDto, station.getTaobaoUserId(),areaId);
 			//打标
 			if(!userTagService.hasTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag())){
 				userTagService.addTag(station.getTaobaoUserId(), UserTag.TPS_USER_TAG.getTag());
@@ -233,11 +233,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return result.getResult();
 	}
 
-	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId) throws StoreException {
+	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId,String areaId) throws StoreException {
 		InventoryStoreCreateDto inventoryStoreCreateDto = new InventoryStoreCreateDto();
 		inventoryStoreCreateDto.setName(storeCreateDto.getName());
 		inventoryStoreCreateDto.setAlias(storeCreateDto.getName());
 		inventoryStoreCreateDto.setUserId(userId);
+		inventoryStoreCreateDto.setAreaId(Long.parseLong(areaId));
 		return inventoryStoreWriteBo.create(inventoryStoreCreateDto);
 	}
 
