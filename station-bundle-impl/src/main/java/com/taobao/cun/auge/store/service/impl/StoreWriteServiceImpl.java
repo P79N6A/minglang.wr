@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.store.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
@@ -42,5 +44,10 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Override
 	public Boolean initStoreWarehouse(Long stationId) {
 		return storeWriteBO.initStoreWarehouse(stationId);
+	}
+
+	@Override
+	public Boolean batchCreateSupplyStore(List<Long> stationIds) {
+		return storeWriteBO.batchCreateSupplyStore(stationIds);
 	}
 }

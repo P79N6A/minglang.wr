@@ -527,20 +527,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	@Override
-	public Boolean batchCreateSupplyStore(List<Long> taobaoUserIds) {
-		for(Long taobaoUserId : taobaoUserIds){
+	public Boolean batchCreateSupplyStore(List<Long> stationIds) {
+		for (Long stationId : stationIds) {
 			try {
-				PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
-				if(partnerInstance != null){
-					this.createSupplyStore(partnerInstance.getStationId());
-				}else{
-					logger.error("batchCreateSupplyStore error partnerInstance is null taobaoUserId:["+taobaoUserId+"]");
-				}
+				createSupplyStore(stationId);
+				logger.info("create supply store success["+stationId+"]");
 			} catch (Exception e) {
-				logger.error("batchCreateSupplyStore error["+taobaoUserId+"]",e);
+				logger.error("batchCreateSupplyStore error[" + stationId + "]", e);
 			}
-			
 		}
+		logger.info("finish create supply store!");
 		return true;
 	}
 }
