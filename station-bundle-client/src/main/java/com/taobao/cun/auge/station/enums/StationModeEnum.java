@@ -15,10 +15,10 @@ public class StationModeEnum implements Serializable {
     private String code;
     private String desc;
     
-    public static final StationModeEnum V4  = new StationModeEnum("V4", "4.0");
-    public static final StationModeEnum V3  = new StationModeEnum("V3", "3.0");
-    public static final StationModeEnum V2  = new StationModeEnum("V2", "2.0");
-    public static final StationModeEnum V1  = new StationModeEnum("V1", "1.0");
+    public static final StationModeEnum V4  = new StationModeEnum("v4", "4.0");
+    public static final StationModeEnum V3  = new StationModeEnum("v3", "3.0");
+    public static final StationModeEnum V2  = new StationModeEnum("v2", "2.0");
+    public static final StationModeEnum V1  = new StationModeEnum("v1", "1.0");
     
 
     static {
