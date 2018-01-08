@@ -314,15 +314,15 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 	private List<TrainingRecordDTO> getRecordFromPeixun(AppAuthDTO auth,List<String> codes, Long userId) {
 		TrainingRecordQueryDTO query = new TrainingRecordQueryDTO();
 		query.setCourseCodes(codes);
-		query.addTrainee(String.valueOf(userId));
-			ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
-					.find(auth, query, 100, 1);
-			if (result.isSuccess()) {
-				return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
-			} else {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
-						+ result.getMsg());
-			}
+		query.setTrainee(String.valueOf(userId));
+		ResultDTO<PageDTO<TrainingRecordDTO>> result = trainingRecordServiceFacade
+				.find(auth, query, 100, 1);
+		if (result.isSuccess()) {
+			return result.getData().getRows()==null?Lists.newArrayList():result.getData().getRows();
+		} else {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"query record error,"
+					+ result.getMsg());
+		}
 	}
 
 
