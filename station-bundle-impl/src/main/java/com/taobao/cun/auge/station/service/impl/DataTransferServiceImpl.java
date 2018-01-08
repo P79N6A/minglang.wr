@@ -527,7 +527,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Override
 	public Boolean initSatationAndPartnerMod() {
 		PartnerStationRelExample example = new PartnerStationRelExample();
-        example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(PartnerInstanceTypeEnum.TP.getCode());
+        example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(PartnerInstanceTypeEnum.TP.getCode()).andModeIsNull();
         int pageCount = partnerStationRelMapper.countByExample(example);
         
         for(int i=1;i<=pageCount;i++) {
