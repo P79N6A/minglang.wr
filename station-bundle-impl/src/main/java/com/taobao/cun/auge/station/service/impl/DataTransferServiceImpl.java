@@ -21,6 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
 import org.esb.finance.service.contract.EsbFinanceContractAdapter;
 import org.mule.esb.model.tcc.result.EsbResultModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -73,6 +75,7 @@ import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
+import com.taobao.cun.auge.payment.protocol.impl.AlipayAgreementServiceImpl;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
@@ -151,6 +154,9 @@ public class DataTransferServiceImpl implements DataTransferService{
     
     @Autowired
     StationMapper stationMapper;
+    
+    private static Logger logger = LoggerFactory.getLogger(AlipayAgreementServiceImpl.class);
+    
     
 	@Override
 	public List<PartnerCourseRecordDto> getAllRecords(String status,String courseCode) {
@@ -526,6 +532,7 @@ public class DataTransferServiceImpl implements DataTransferService{
 	 */
 	@Override
 	public Boolean initSatationAndPartnerMod() {
+		logger.info("start mode init");
 		PartnerStationRelExample example = new PartnerStationRelExample();
         example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(PartnerInstanceTypeEnum.TP.getCode()).andModeIsNull();
         int pageCount = partnerStationRelMapper.countByExample(example);
@@ -535,10 +542,16 @@ public class DataTransferServiceImpl implements DataTransferService{
         	List<PartnerStationRel> partnerStationRelList = partnerStationRelMapper.selectByExample(example);
         	
         	for(PartnerStationRel partnerStationRel:partnerStationRelList) {
-        		initMod(partnerStationRel);
+        		logger.info("start mode init partner_station_rel's ID:" + partnerStationRel.getId());
+        		
+        		try {
+					initMod(partnerStationRel);
+				} catch (Exception e) {
+	        	logger.error("error mode init partner_station_rel's ID:" + partnerStationRel.getId(),e);
+				}
         	}
         }
-
+		logger.info("end mode init");
 		return true;
 	}
 	
