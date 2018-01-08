@@ -137,25 +137,31 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
-				storeDTO.setCityName(station.getCityDetail());
+			}else{
+				storeDTO.setCity(Integer.parseInt(station.getCity()));
 			}
+			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
 		//区/县
 		if(!Strings.isNullOrEmpty(station.getCounty())){
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
-			if(gbCode != null){
+			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
-				storeDTO.setDistrictName(station.getCountyDetail());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
 			}
+			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
 		if(!Strings.isNullOrEmpty(station.getTown())){
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
-			if(gbCode != null){
+			if (gbCode != null) {
+				storeDTO.setTown(gbCode.intValue());
+			}else{
 				storeDTO.setTown(Integer.parseInt(station.getTown()));
-				storeDTO.setTownName(station.getTownDetail());
 			}
+			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
 		
@@ -315,8 +321,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
-				storeDTO.setCityName(station.getCityDetail());
+			}else{
+				storeDTO.setCity(Integer.parseInt(station.getCity()));
 			}
+			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
 		// 区/县
@@ -325,16 +333,20 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
 			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
-				storeDTO.setDistrictName(station.getCountyDetail());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
 			}
+			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
 		if (!Strings.isNullOrEmpty(station.getTown())) {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
 			if (gbCode != null) {
+				storeDTO.setTown(gbCode.intValue());
+			}else{
 				storeDTO.setTown(Integer.parseInt(station.getTown()));
-				storeDTO.setTownName(station.getTownDetail());
 			}
+			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
 
@@ -409,8 +421,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
-				storeDTO.setCityName(station.getCityDetail());
+			}else{
+				storeDTO.setCity(Integer.parseInt(station.getCity()));
 			}
+			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
 		// 区/县
@@ -419,16 +433,20 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
 			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
-				storeDTO.setDistrictName(station.getCountyDetail());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
 			}
+			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
 		if (!Strings.isNullOrEmpty(station.getTown())) {
 			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
 			if (gbCode != null) {
+				storeDTO.setTown(gbCode.intValue());
+			}else{
 				storeDTO.setTown(Integer.parseInt(station.getTown()));
-				storeDTO.setTownName(station.getTownDetail());
 			}
+			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
 
