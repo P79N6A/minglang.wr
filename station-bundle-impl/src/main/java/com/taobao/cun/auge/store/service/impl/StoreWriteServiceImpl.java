@@ -50,4 +50,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Boolean batchCreateSupplyStore(List<Long> stationIds) {
 		return storeWriteBO.batchCreateSupplyStore(stationIds);
 	}
+
+	@Override
+	public Long tb2gbCode(Long taobaocode) {
+		return storeWriteBO.tb2gbCode(taobaocode);
+	}
 }

@@ -20,4 +20,6 @@ public interface StoreWriteBO {
 	public Boolean initSampleWarehouse(Long stationId);
 	
 	public Boolean initStoreWarehouse(Long stationId);
+	
+	public Long tb2gbCode(Long taobaocode);
 }

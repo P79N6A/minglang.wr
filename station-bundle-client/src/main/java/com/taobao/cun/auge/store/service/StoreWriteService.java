@@ -60,4 +60,11 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean batchCreateSupplyStore(List<Long> stationIds);
+	
+	/**
+	 * 淘标国标地址转换
+	 * @param taobaocode
+	 * @return
+	 */
+	public Long tb2gbCode(Long taobaocode);
 }

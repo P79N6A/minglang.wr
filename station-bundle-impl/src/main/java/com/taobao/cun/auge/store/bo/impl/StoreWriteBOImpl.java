@@ -552,7 +552,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 	
-	
+	public Long tb2gbCode(Long taobaocode){
+		if(taobaocode != null){
+			return defaultDivisionAdapterManager.tbCodeToGbCode(taobaocode);
+		}
+		return null;
+	}
 	
 	/**
 	 * 初始化门店库存
