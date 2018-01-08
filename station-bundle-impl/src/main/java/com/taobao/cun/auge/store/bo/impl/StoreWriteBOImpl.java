@@ -471,6 +471,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			error.setErrorInfo(result.getErrorMsg());
 			error.setErrorCode(result.getResultCode());
 			storeCreateErrorMapper.insertSelective(error);
+		}else{
+			StoreCreateError error = new StoreCreateError();
+			error.setId(errors.iterator().next().getId());
+			error.setErrorCode(result.getErrorMsg());
+			error.setErrorCode(result.getResultCode());
+			storeCreateErrorMapper.updateByPrimaryKeySelective(error);
 		}
 	}
 
