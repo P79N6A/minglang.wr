@@ -39,4 +39,10 @@ public interface DataTransferService {
 	 * 获取招募考试列表
 	 */
 	public Long queryInstances(Long id,Long detailId);
+	
+	/**
+	 * 天猫优品服务站项目
+	 * 用于初始化站点和村小二的模式版本
+	 */
+	public Boolean initSatationAndPartnerMod();
 }

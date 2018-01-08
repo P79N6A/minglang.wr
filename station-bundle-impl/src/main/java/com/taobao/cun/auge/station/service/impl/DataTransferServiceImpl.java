@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -50,12 +52,24 @@ import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
 import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
 import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
+import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
+import com.taobao.cun.auge.dal.domain.PartnerProtocolRel;
+import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExample;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerProtocolRelMapper;
+import com.taobao.cun.auge.dal.mapper.ProtocolMapper;
+import com.taobao.cun.auge.dal.mapper.StationMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
@@ -64,6 +78,7 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
@@ -71,6 +86,14 @@ import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
+
+
+
+/**
+ * 
+ * 此类为项目数据初始化临时类，在预发环境执行
+ *
+ */
 @Service("dataTransferService")
 @HSFProvider(serviceInterface = DataTransferService.class)
 public class DataTransferServiceImpl implements DataTransferService{
@@ -120,7 +143,15 @@ public class DataTransferServiceImpl implements DataTransferService{
 	@Autowired 
 	TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
+    @Autowired
+    PartnerStationRelMapper partnerStationRelMapper;
 	
+    @Autowired
+    PartnerProtocolRelMapper partnerProtocolRelMapper;
+    
+    @Autowired
+    StationMapper stationMapper;
+    
 	@Override
 	public List<PartnerCourseRecordDto> getAllRecords(String status,String courseCode) {
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
@@ -488,5 +519,89 @@ public class DataTransferServiceImpl implements DataTransferService{
 		}
 		return null;
 	}
+
+	/*
+	 * 初始化站点和人村关系的模式类型
+	 * 
+	 */
+	@Override
+	public Boolean initSatationAndPartnerMod() {
+		PartnerStationRelExample example = new PartnerStationRelExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo(PartnerInstanceTypeEnum.TP.getCode());
+        int pageCount = partnerStationRelMapper.countByExample(example);
+        
+        for(int i=1;i<=pageCount;i++) {
+        	PageHelper.startPage(i, 500);
+        	List<PartnerStationRel> partnerStationRelList = partnerStationRelMapper.selectByExample(example);
+        	
+        	for(PartnerStationRel partnerStationRel:partnerStationRelList) {
+        		initMod(partnerStationRel);
+        	}
+        }
+
+		return null;
+	}
 	
+	private void initMod(PartnerStationRel partnerStationRel) {
+		PartnerProtocolRelExample nomalExample = new PartnerProtocolRelExample();
+		PartnerProtocolRelExample c2bExample = new PartnerProtocolRelExample();
+		//以下是几个历史版本的入驻协议，理论上一个合伙人实例对应一个入驻协议数据，代码按照这个逻辑写，发现29条异常数据需要根锁解决
+		Long[] protocolIdArrayNomal = new Long[] {6L,9L,10L,13L};
+		//查询普通入驻协议的example
+		nomalExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo("PARTNER_INSTANCE")
+				.andObjectIdEqualTo(partnerStationRel.getId()).andProtocolIdIn(Arrays.asList(protocolIdArrayNomal));
+		//查询C2B协议的example
+		c2bExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo("PARTNER_INSTANCE")
+		.andObjectIdEqualTo(partnerStationRel.getId()).andProtocolIdEqualTo(12l);
+		
+		List<PartnerProtocolRel> nomalList = partnerProtocolRelMapper.selectByExample(nomalExample);
+		//如果仅仅签约过C2B，认为是V3
+		if(CollectionUtils.isEmpty(nomalList)) {
+			List c2bList = partnerProtocolRelMapper.selectByExample(c2bExample);
+			if(CollectionUtils.isNotEmpty(c2bList)) {
+				updateMode(partnerStationRel,"v3");
+			}
+			return;
+		}
+		
+		PartnerProtocolRel partnerProtocolRel = nomalList.get(0);
+		updateMode(partnerStationRel,modeMatch(partnerProtocolRel.getProtocolId()));
+	}
+	
+	private void updateMode(PartnerStationRel partnerStationRel,String version) {
+		//先更新rel
+        PartnerStationRel updateInstance = new PartnerStationRel();
+        updateInstance.setId(partnerStationRel.getId());
+        updateInstance.setMode(version);
+        DomainUtils.beforeUpdate(updateInstance, "4.0init");
+        partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+        
+		//再更新station
+        if("y".equals(partnerStationRel.getIsCurrent())) {
+    		Station station = new Station();
+    		station.setId(partnerStationRel.getParentStationId());
+    		station.setMode(version);
+            DomainUtils.beforeUpdate(station, "4.0init");
+            stationMapper.updateByPrimaryKeySelective(station);
+        }
+	}
+	
+	private String modeMatch(Long protocolId) {
+		String mode= null;
+		switch(protocolId.toString()) {
+		case "6":	
+			mode = "v1";
+			break;
+		case "9":	
+			mode = "v2";
+			break;
+		case "10":	
+			mode = "v3";
+			break;
+		case "13":	
+			mode = "v4";
+		}
+		
+		return mode;
+	}
 }
