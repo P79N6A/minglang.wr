@@ -170,20 +170,26 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
-
-		CuntaoEmployee employee = new CuntaoEmployee();
-		employee.setCreator(storeEmployee.getOperator());
-		employee.setGmtCreate(new Date());
-		employee.setModifier(storeEmployee.getOperator());
-		employee.setGmtModified(new Date());
-		employee.setMobile(storeEmployee.getMobile());
-		employee.setIsDeleted("n");
-		employee.setName(storeEmployee.getName());
-		employee.setTaobaoNick(storeEmployee.getTaobaoNick());
-		employee.setTaobaoUserId(storeEmployee.getTaobaoUserId());
-		employee.setType(CuntaoEmployeeType.store.name());
-		cuntaoEmployeeMapper.insertSelective(employee);
-		Long employeeId = employee.getId();
+		Long employeeId = null;
+		CuntaoEmployee employee=null;
+		if(storeEmployee.getId() == null){
+			employee = new CuntaoEmployee();
+			employee.setCreator(storeEmployee.getOperator());
+			employee.setGmtCreate(new Date());
+			employee.setModifier(storeEmployee.getOperator());
+			employee.setGmtModified(new Date());
+			employee.setMobile(storeEmployee.getMobile());
+			employee.setIsDeleted("n");
+			employee.setName(storeEmployee.getName());
+			employee.setTaobaoNick(storeEmployee.getTaobaoNick());
+			employee.setTaobaoUserId(storeEmployee.getTaobaoUserId());
+			employee.setType(CuntaoEmployeeType.store.name());
+			cuntaoEmployeeMapper.insertSelective(employee);
+			employeeId = employee.getId();
+		}else{
+			employeeId = storeEmployee.getId();
+			employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
+		}
 		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 		cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
 		cuntaoVendorEmployee.setGmtCreate(new Date());

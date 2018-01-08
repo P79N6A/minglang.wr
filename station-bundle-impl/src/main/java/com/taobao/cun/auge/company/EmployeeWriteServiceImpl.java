@@ -221,33 +221,35 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Override
 	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
-		//TODO 效验规则细化
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		
-		ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(storeEmployee.getTaobaoNick());
-		errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),identifier,"员工淘宝账号已存在");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		if(StringUtils.isNotEmpty(storeEmployee.getMobile())){
-			errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
+		if(storeEmployee.getId() == null){
+			errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
+			//TODO 效验规则细化
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
+			
+			ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(storeEmployee.getTaobaoNick());
+			errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			errorInfo = checkTaobaoNickExists(stationId,storeEmployee.getTaobaoNick(),CuntaoEmployeeType.store.name(),identifier,"员工淘宝账号已存在");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			if(StringUtils.isNotEmpty(storeEmployee.getMobile())){
+				errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
+				if(errorInfo != null){
+					return Result.of(errorInfo);
+				}
+			}
+			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}
 		try {
-			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 			return Result.of(employeeWriteBO.addStoreEmployee(stationId, storeEmployee, identifier));
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
