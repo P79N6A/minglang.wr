@@ -186,9 +186,10 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 			employee.setType(CuntaoEmployeeType.store.name());
 			cuntaoEmployeeMapper.insertSelective(employee);
 			employeeId = employee.getId();
+		}else{
+			employeeId = storeEmployee.getId();
+			employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
 		}
-		employeeId = storeEmployee.getId();
-		employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
 		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 		cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
 		cuntaoVendorEmployee.setGmtCreate(new Date());
