@@ -52,6 +52,7 @@ import com.taobao.cun.mdjxc.common.result.DataResult;
 import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
 import com.taobao.cun.mdjxc.model.CtMdJxcWarehouseDTO;
 import com.taobao.place.client.domain.ResultDO;
+import com.taobao.place.client.domain.dataobject.StandardAreaDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
 import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
@@ -59,6 +60,7 @@ import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
 import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreUpdateService;
+import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
 
 @Component
@@ -106,6 +108,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	
 	@Autowired
 	private DefaultDivisionAdapterManager defaultDivisionAdapterManager;
+	
+	@Autowired
+	private StandardAreaService standardAreaService;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -128,7 +133,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		//省
 		if(!Strings.isNullOrEmpty(station.getProvince())){
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
@@ -312,7 +326,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		// 省
 		if (!Strings.isNullOrEmpty(station.getProvince())) {
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
@@ -412,7 +435,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		// 省
 		if (!Strings.isNullOrEmpty(station.getProvince())) {
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
