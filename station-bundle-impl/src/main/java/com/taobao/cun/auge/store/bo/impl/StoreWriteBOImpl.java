@@ -155,12 +155,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			areaId = station.getCounty();
 		}
 		if(!Strings.isNullOrEmpty(station.getTown())){
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
-			if (gbCode != null) {
-				storeDTO.setTown(gbCode.intValue());
-			}else{
-				storeDTO.setTown(Integer.parseInt(station.getTown()));
-			}
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
@@ -340,12 +335,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			areaId = station.getCounty();
 		}
 		if (!Strings.isNullOrEmpty(station.getTown())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
-			if (gbCode != null) {
-				storeDTO.setTown(gbCode.intValue());
-			}else{
-				storeDTO.setTown(Integer.parseInt(station.getTown()));
-			}
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
@@ -440,12 +430,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			areaId = station.getCounty();
 		}
 		if (!Strings.isNullOrEmpty(station.getTown())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getTown()));
-			if (gbCode != null) {
-				storeDTO.setTown(gbCode.intValue());
-			}else{
-				storeDTO.setTown(Integer.parseInt(station.getTown()));
-			}
+			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
