@@ -539,33 +539,35 @@ public class DataTransferServiceImpl implements DataTransferService{
         	}
         }
 
-		return null;
+		return true;
 	}
 	
 	private void initMod(PartnerStationRel partnerStationRel) {
 		PartnerProtocolRelExample nomalExample = new PartnerProtocolRelExample();
 		PartnerProtocolRelExample c2bExample = new PartnerProtocolRelExample();
-		//以下是几个历史版本的入驻协议，理论上一个合伙人实例对应一个入驻协议数据，代码按照这个逻辑写，发现29条异常数据需要根锁解决
-		Long[] protocolIdArrayNomal = new Long[] {6L,9L,10L,13L};
+		//普通入驻协议的ID
+		Long[] protocolIdArrayNomal = new Long[] {6L,9L,10L};
+		//两个C2B协议的ID
+		Long[] protocolIdArrayC2b = new Long[] {12L,13L};
 		//查询普通入驻协议的example
 		nomalExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo("PARTNER_INSTANCE")
 				.andObjectIdEqualTo(partnerStationRel.getId()).andProtocolIdIn(Arrays.asList(protocolIdArrayNomal));
 		//查询C2B协议的example
 		c2bExample.createCriteria().andIsDeletedEqualTo("n").andTargetTypeEqualTo("PARTNER_INSTANCE")
-		.andObjectIdEqualTo(partnerStationRel.getId()).andProtocolIdEqualTo(12l);
+		.andObjectIdEqualTo(partnerStationRel.getId()).andProtocolIdIn(Arrays.asList(protocolIdArrayC2b));
 		
 		List<PartnerProtocolRel> nomalList = partnerProtocolRelMapper.selectByExample(nomalExample);
-		//如果仅仅签约过C2B，认为是V3
+		
 		if(CollectionUtils.isEmpty(nomalList)) {
-			List c2bList = partnerProtocolRelMapper.selectByExample(c2bExample);
-			if(CollectionUtils.isNotEmpty(c2bList)) {
-				updateMode(partnerStationRel,"v3");
-			}
+			List<PartnerProtocolRel> c2bList = partnerProtocolRelMapper.selectByExample(c2bExample);
+			PartnerProtocolRel partnerProtocolRelC2b = c2bList.get(0);
+			updateMode(partnerStationRel,modeMatch(partnerProtocolRelC2b.getProtocolId()));
+			
 			return;
 		}
 		
-		PartnerProtocolRel partnerProtocolRel = nomalList.get(0);
-		updateMode(partnerStationRel,modeMatch(partnerProtocolRel.getProtocolId()));
+		PartnerProtocolRel partnerProtocolRelNomal = nomalList.get(0);
+		updateMode(partnerStationRel,modeMatch(partnerProtocolRelNomal.getProtocolId()));
 	}
 	
 	private void updateMode(PartnerStationRel partnerStationRel,String version) {
@@ -596,6 +598,9 @@ public class DataTransferServiceImpl implements DataTransferService{
 			mode = "v2";
 			break;
 		case "10":	
+			mode = "v3";
+			break;
+		case "12":	
 			mode = "v3";
 			break;
 		case "13":	
