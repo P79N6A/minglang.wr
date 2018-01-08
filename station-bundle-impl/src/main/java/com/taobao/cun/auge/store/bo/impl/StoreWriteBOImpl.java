@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
@@ -51,6 +52,7 @@ import com.taobao.cun.mdjxc.common.result.DataResult;
 import com.taobao.cun.mdjxc.enums.BooleanStatusEnum;
 import com.taobao.cun.mdjxc.model.CtMdJxcWarehouseDTO;
 import com.taobao.place.client.domain.ResultDO;
+import com.taobao.place.client.domain.dataobject.StandardAreaDO;
 import com.taobao.place.client.domain.dto.StoreDTO;
 import com.taobao.place.client.domain.enumtype.StoreAuthenStatus;
 import com.taobao.place.client.domain.enumtype.StoreBizType;
@@ -58,6 +60,7 @@ import com.taobao.place.client.domain.enumtype.StoreCheckStatus;
 import com.taobao.place.client.domain.result.ResultCode;
 import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreUpdateService;
+import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
 
 @Component
@@ -103,6 +106,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	private StoreCreateErrorMapper storeCreateErrorMapper;
 	
+	@Autowired
+	private DefaultDivisionAdapterManager defaultDivisionAdapterManager;
+	
+	@Autowired
+	private StandardAreaService standardAreaService;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 	@Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -125,19 +133,43 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		//省
 		if(!Strings.isNullOrEmpty(station.getProvince())){
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
 		//市
 		if(!Strings.isNullOrEmpty(station.getCity())){
-			storeDTO.setCity(Integer.parseInt(station.getCity()));
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (gbCode != null) {
+				storeDTO.setCity(gbCode.intValue());
+			}else{
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
+			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
 		//区/县
 		if(!Strings.isNullOrEmpty(station.getCounty())){
-			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			if (gbCode != null) {
+				storeDTO.setDistrict(gbCode.intValue());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			}
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
@@ -277,70 +309,97 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Override
 	public Boolean createSampleStore(Long stationId) {
-		
+
 		Station station = stationBO.getStationById(stationId);
-		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
-		if(station == null || partnerInstance == null || partnerInstance.getSellerId() == null){
-			return false; 
+		PartnerInstanceDto partnerInstance = partnerInstanceQueryService
+				.getCurrentPartnerInstanceByStationId(stationId);
+		if (station == null || partnerInstance == null || partnerInstance.getSellerId() == null) {
+			return false;
 		}
-		
+
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(station.getName());
 		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
 		storeDTO.setAddress(station.getAddress());
 		storeDTO.setOuterId(String.valueOf(stationId));
-		//仓库的区域CODE，取叶子节点
+		// 仓库的区域CODE，取叶子节点
 		String areaId = null;
-		//省
-		if(!Strings.isNullOrEmpty(station.getProvince())){
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+		// 省
+		if (!Strings.isNullOrEmpty(station.getProvince())) {
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
-		//市
-		if(!Strings.isNullOrEmpty(station.getCity())){
-			storeDTO.setCity(Integer.parseInt(station.getCity()));
+		// 市
+		if (!Strings.isNullOrEmpty(station.getCity())) {
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (gbCode != null) {
+				storeDTO.setCity(gbCode.intValue());
+			}else{
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
+			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
-		//区/县
-		if(!Strings.isNullOrEmpty(station.getCounty())){
-			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+		// 区/县
+		// 区/县
+		if (!Strings.isNullOrEmpty(station.getCounty())) {
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			if (gbCode != null) {
+				storeDTO.setDistrict(gbCode.intValue());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			}
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if(!Strings.isNullOrEmpty(station.getTown())){
+		if (!Strings.isNullOrEmpty(station.getTown())) {
 			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
-		
-		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
-		if(Strings.isNullOrEmpty(areaId)){
-			logger.error("createSampleStore error["+stationId+"]: areaId is null");
+
+		// 如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if (Strings.isNullOrEmpty(areaId)) {
+			logger.error("createSampleStore error[" + stationId + "]: areaId is null");
 			return false;
 		}
-		if(!Strings.isNullOrEmpty(station.getLat())){
+		if (!Strings.isNullOrEmpty(station.getLat())) {
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
-		if(!Strings.isNullOrEmpty(station.getLng())){
+		if (!Strings.isNullOrEmpty(station.getLng())) {
 			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
 		}
-		
+
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
-		ResultDO<Long> result = storeCreateService.create(storeDTO, partnerInstance.getSellerId(), StoreBizType.CUN_TAO.getValue());
-		if(result.isFailured()){
-			logger.error("createSampleStore error["+stationId+"]:"+result.getFullErrorMsg());
+		ResultDO<Long> result = storeCreateService.create(storeDTO, partnerInstance.getSellerId(),
+				StoreBizType.CUN_TAO.getValue());
+		if (result.isFailured()) {
+			logger.error("createSampleStore error[" + stationId + "]:" + result.getFullErrorMsg());
 			return false;
 		}
-		if(result.isFailured()){
+		if (result.isFailured()) {
 			addStoreCreateError(stationId, result);
-			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			logger.error("createSupplyStore error[" + stationId + "]:" + result.getFullErrorMsg());
 			return false;
-		}else{
+		} else {
 			fixStoreCreateError(stationId);
 		}
 		StoreDto storeDto = storeReadBO.getStoreDtoByStationId(stationId);
@@ -348,7 +407,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		record.setId(storeDto.getId());
 		record.setSellerShareStoreId(result.getResult());
 		cuntaoStoreMapper.updateByPrimaryKeySelective(record);
-		
+
 		initSampleWarehouse(stationId);
 		return true;
 	}
@@ -356,73 +415,100 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public Boolean createSupplyStore(Long stationId) {
 		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
-		if(store != null ){
+		if (store != null) {
 			return true;
 		}
 		Station station = stationBO.getStationById(stationId);
-		PartnerInstanceDto partnerInstance  = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
-		if(station == null || partnerInstance == null){
+		PartnerInstanceDto partnerInstance = partnerInstanceQueryService
+				.getCurrentPartnerInstanceByStationId(stationId);
+		if (station == null || partnerInstance == null) {
 			logger.error("createSupplyStore error station or partnerInstance is Null");
-			return false; 
+			return false;
 		}
-		
+
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setName(station.getName());
 		storeDTO.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
 		storeDTO.setAddress(station.getAddress());
 		storeDTO.setOuterId(String.valueOf(stationId));
-		//仓库的区域CODE，取叶子节点
+		// 仓库的区域CODE，取叶子节点
 		String areaId = null;
-		//省
-		if(!Strings.isNullOrEmpty(station.getProvince())){
-			storeDTO.setProv(Integer.parseInt(station.getProvince()));
+		// 省
+		if (!Strings.isNullOrEmpty(station.getProvince())) {
+			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if(standardAreaDO != null && standardAreaDO.getParentId()!=null){
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			}else{
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
 			storeDTO.setProvName(station.getProvinceDetail());
 			areaId = station.getProvince();
 		}
-		//市
-		if(!Strings.isNullOrEmpty(station.getCity())){
-			storeDTO.setCity(Integer.parseInt(station.getCity()));
+		// 市
+		if (!Strings.isNullOrEmpty(station.getCity())) {
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			if (gbCode != null) {
+				storeDTO.setCity(gbCode.intValue());
+			}else{
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
+			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
 		}
-		//区/县
-		if(!Strings.isNullOrEmpty(station.getCounty())){
-			storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+		// 区/县
+		// 区/县
+		if (!Strings.isNullOrEmpty(station.getCounty())) {
+			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			if (gbCode != null) {
+				storeDTO.setDistrict(gbCode.intValue());
+			}else{
+				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
+			}
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if(!Strings.isNullOrEmpty(station.getTown())){
+		if (!Strings.isNullOrEmpty(station.getTown())) {
 			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();
 		}
-		
-		//如果areaId为空，则无法创建仓库，这里直接终止以下流程
-		if(Strings.isNullOrEmpty(areaId)){
-			logger.error("createSupplyStore error["+stationId+"]: areaId is null");
+
+		// 如果areaId为空，则无法创建仓库，这里直接终止以下流程
+		if (Strings.isNullOrEmpty(areaId)) {
+			logger.error("createSupplyStore error[" + stationId + "]: areaId is null");
 			return false;
 		}
-		if(!Strings.isNullOrEmpty(station.getLat())){
+		if (!Strings.isNullOrEmpty(station.getLat())) {
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
-		if(!Strings.isNullOrEmpty(station.getLng())){
+		if (!Strings.isNullOrEmpty(station.getLng())) {
 			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
 		}
-		
+
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
-		storeDTO.addTag(StoreTags.SUPPLY_STATION_TAG);//村点补货
+		storeDTO.addTag(StoreTags.SUPPLY_STATION_TAG);// 村点补货
 		storeDTO.setStatus(com.taobao.place.client.domain.enumtype.StoreStatus.NORMAL.getValue());
 		storeDTO.setCheckStatus(StoreCheckStatus.CHECKED.getValue());
 		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
-		ResultDO<Long> result = storeCreateService.create(storeDTO,diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
-		if(result.isFailured()){
+		ResultDO<Long> result = storeCreateService.create(storeDTO, diamondConfiguredProperties.getStoreMainUserId(),
+				StoreBizType.STORE_ITEM_BIZ.getValue());
+		if (result.isFailured()) {
 			addStoreCreateError(stationId, result);
-			logger.error("createSupplyStore error["+stationId+"]:"+result.getFullErrorMsg());
+			logger.error("createSupplyStore error[" + stationId + "]:" + result.getFullErrorMsg());
 			return false;
-		}else{
+		} else {
 			fixStoreCreateError(stationId);
 		}
-		//本地存储
+		// 本地存储
 		CuntaoStore cuntaoStore = new CuntaoStore();
 		cuntaoStore.setShareStoreId(result.getResult());
 		cuntaoStore.setModifier("system");
@@ -438,11 +524,11 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setScmCode("");
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 		cuntaoStoreMapper.insert(cuntaoStore);
-		
+
 		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
-		if(cainiaoStationId != null){
-			 LinkedHashMap<String, String> features = new  LinkedHashMap<String, String>();
-			 features.put("goodsSupply", "y");
+		if (cainiaoStationId != null) {
+			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+			features.put("goodsSupply", "y");
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
 		}
 		return true;
@@ -471,6 +557,13 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			error.setErrorInfo(result.getErrorMsg());
 			error.setErrorCode(result.getResultCode());
 			storeCreateErrorMapper.insertSelective(error);
+		}else{
+			StoreCreateError error = new StoreCreateError();
+			error.setId(errors.iterator().next().getId());
+			error.setGmtModified(new Date());
+			error.setErrorInfo(result.getErrorMsg());
+			error.setErrorCode(result.getResultCode());
+			storeCreateErrorMapper.updateByPrimaryKeySelective(error);
 		}
 	}
 
@@ -509,7 +602,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	}
 	
-	
+	public Long tb2gbCode(Long taobaocode){
+		if(taobaocode != null){
+			return defaultDivisionAdapterManager.tbCodeToGbCode(taobaocode);
+		}
+		return null;
+	}
 	
 	/**
 	 * 初始化门店库存
@@ -527,20 +625,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 
 	@Override
-	public Boolean batchCreateSupplyStore(List<Long> taobaoUserIds) {
-		for(Long taobaoUserId : taobaoUserIds){
+	public Boolean batchCreateSupplyStore(List<Long> stationIds) {
+		for (Long stationId : stationIds) {
 			try {
-				PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
-				if(partnerInstance != null){
-					this.createSupplyStore(partnerInstance.getStationId());
-				}else{
-					logger.error("batchCreateSupplyStore error partnerInstance is null taobaoUserId:["+taobaoUserId+"]");
-				}
+				createSupplyStore(stationId);
+				logger.info("create supply store success["+stationId+"]");
 			} catch (Exception e) {
-				logger.error("batchCreateSupplyStore error["+taobaoUserId+"]",e);
+				logger.error("batchCreateSupplyStore error[" + stationId + "]", e);
 			}
-			
 		}
+		logger.info("finish create supply store!");
 		return true;
 	}
 }
