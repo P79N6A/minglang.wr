@@ -138,7 +138,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
-				storeDTO.setCity(Integer.parseInt(station.getCity()));
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
 			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
@@ -317,7 +322,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
-				storeDTO.setCity(Integer.parseInt(station.getCity()));
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
 			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
@@ -412,7 +422,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
-				storeDTO.setCity(Integer.parseInt(station.getCity()));
+				//重庆市特殊处理，共享需要500200标准code
+				if("500100".equals(station.getCity())){
+					storeDTO.setCity(500200);
+				}else{
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
 			}
 			storeDTO.setCityName(station.getCityDetail());
 			areaId = station.getCity();
