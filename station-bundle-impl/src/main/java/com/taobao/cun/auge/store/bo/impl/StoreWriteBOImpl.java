@@ -529,7 +529,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			StoreCreateError error = new StoreCreateError();
 			error.setId(errors.iterator().next().getId());
 			error.setGmtModified(new Date());
-			error.setErrorCode(result.getErrorMsg());
+			error.setErrorInfo(result.getErrorMsg());
 			error.setErrorCode(result.getResultCode());
 			storeCreateErrorMapper.updateByPrimaryKeySelective(error);
 		}
