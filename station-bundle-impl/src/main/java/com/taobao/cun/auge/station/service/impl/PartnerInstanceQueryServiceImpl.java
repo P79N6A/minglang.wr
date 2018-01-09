@@ -801,7 +801,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	  rDto.setStationId(rel.getStationId());
 	  rDto.setTaobaoUserId(taobaoUserId);
 	  
-	  if (PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
+	  if (decoItems.getReplenishMoney() == null || PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
 		  rDto.setStatus(ReplenishStatusEnum.WAIT_FROZEN);
 		  rDto.setOrderUrl(diamondConfiguredProperties.getReplenishFrozenUrl());
 	  }
