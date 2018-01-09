@@ -445,6 +445,10 @@
       			<groupId>com.taobao.cun</groupId>
       			<artifactId>ct-mdjxc-api.api</artifactId>
     		</dependency>
+    		<dependency>
+				<groupId>com.taobao.common.division</groupId>
+				<artifactId>common-division</artifactId>
+			</dependency>
 	</dependencies>
 	<build>
 		<finalName>auge</finalName>

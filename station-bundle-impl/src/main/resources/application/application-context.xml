@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
- <!--jmonitor-->
-    <import resource="classpath*:/application/beans-jmonitor.xml"/>
+	<!--jmonitor -->
+	<import resource="classpath*:/application/beans-jmonitor.xml" />
 
 
-    <!--event-client-->
-    <import resource="classpath*:/application/beans-event-client-context.xml"/>
-  
-	<bean id="cuntaoOrgServiceClient" class="com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl" init-method="init">
-	  <property name="augeCuntaoOrgService" ref="augeCuntaoOrgService"></property>
-	  <property name="augeCuntaoUserService" ref="augeCuntaoUserService"></property>
+	<!--event-client -->
+	<import resource="classpath*:/application/beans-event-client-context.xml" />
+
+	<bean id="cuntaoOrgServiceClient"
+		class="com.taobao.cun.auge.org.service.impl.CuntaoOrgServiceClientImpl"
+		init-method="init">
+		<property name="augeCuntaoOrgService" ref="augeCuntaoOrgService"></property>
+		<property name="augeCuntaoUserService" ref="augeCuntaoUserService"></property>
 	</bean>
+
+
+	<bean id="sync" class="com.taobao.sync.DataSync" init-method="init">
+		<!-- local cache location 本地缓存文件路径, 注意请使用绝对路径！！ -->
+		<property name="localCachePath" value="${dataSync.localCachePath}" />
+
+		<property name="chinaDivisionManager" ref="chinaDivisionManager" />
+		<!-- 不使用可以不设置该属性 -->
+		<property name="divisionAdapterManager" ref="divisionAdapterManager" />
+	</bean>
+
+	<!-- 国内地址库服务类 -->
+	<bean id="chinaDivisionManager"
+		class="com.taobao.biz.common.division.impl.DefaultChinaDivisionManager"
+		depends-on="sync">
+		<!-- 3.0.11及以后版本，支持该属性。如果需要使chinaDivisionManager能够识别最新的区划id，配置该属性 -->
+		<property name="divisionAdapterManager" ref="divisionAdapterManager" />
+
+	</bean>
+
+	<!-- 淘标与国标转换工具类 -->
+	<bean id="divisionAdapterManager"
+		class="com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager"
+		depends-on="sync">
+	</bean>
+
 	
 </beans>
