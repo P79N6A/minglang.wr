@@ -59,6 +59,7 @@ import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
+import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
@@ -443,6 +444,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     @Bean
     public CtMdJxcWarehouseApi ctMdJxcWarehouseApi(HsfConsumerContext context, @Value("${ctMdJxcWarehouseApi.version}") String version) {
            return context.hsfConsumerBuilder(CtMdJxcWarehouseApi.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public StandardAreaService standardAreaService(HsfConsumerContext context, @Value("${standardAreaService.version}") String version) {
+           return context.hsfConsumerBuilder(StandardAreaService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     

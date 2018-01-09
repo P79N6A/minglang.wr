@@ -15,9 +15,11 @@ public interface StoreWriteBO {
 	
 	public Boolean createSupplyStore(Long stationId);
 	
-	public Boolean batchCreateSupplyStore(List<Long> taobaoUserIds);
+	public Boolean batchCreateSupplyStore(List<Long> stationIds);
 	
 	public Boolean initSampleWarehouse(Long stationId);
 	
 	public Boolean initStoreWarehouse(Long stationId);
+	
+	public Long tb2gbCode(Long taobaocode);
 }

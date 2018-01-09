@@ -175,9 +175,9 @@
 				<version>1.2.41</version>
 			</dependency>
 			<dependency>
-				  <groupId>com.alibaba.platform.shared</groupId>
-				  <artifactId>fastjson</artifactId>
-				  <version>999-not-exist-v3</version>
+				<groupId>com.alibaba.platform.shared</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>999-not-exist-v3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
@@ -264,7 +264,7 @@
 			<dependency>
 				<groupId>com.alibaba.intl.sourcing.shared</groupId>
 				<artifactId>ivy.services</artifactId>
-				<version>1.0.13</version>
+				<version>1.0.33</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.intl.base.fileserver</groupId>
@@ -529,7 +529,7 @@
 				<artifactId>tax.api</artifactId>
 				<version>1.0.27</version>
 			</dependency>
-		
+
 			<dependency>
 				<groupId>org.aspectj</groupId>
 				<artifactId>aspectjweaver</artifactId>
@@ -678,42 +678,47 @@
 			<dependency>
 				<groupId>com.alibaba.china.shared</groupId>
 				<artifactId>orgstruct.api</artifactId>
-			<version>1.0.1</version>
+				<version>1.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.china.shared</groupId>
 				<artifactId>member.service.api</artifactId>
 				<version>1.2.13</version>
-            </dependency>
-            <dependency>
-			    <groupId>com.taobao.payment</groupId>
-			    <artifactId>pmt-client</artifactId>
-			    <version>1.0.28.1</version>
-			    <exclusions>
-			    	<exclusion>
-			    		<groupId>javax.validation</groupId>
- 						<artifactId>validation-api</artifactId>
-			    	</exclusion>
-			    	<exclusion>
-			    	    <groupId>com.alibaba.external</groupId>  
-      					<artifactId>java.validation.api</artifactId> 
-			    	</exclusion>
-			    </exclusions>
 			</dependency>
-			 <dependency> 
-			      <groupId>com.alibaba.boot</groupId>  
-			      <artifactId>alimetrics-spring-boot-starter</artifactId>  
-			      <version>1.6.3-1</version> 
-   			</dependency>
-   			<dependency>
-				  <groupId>com.taobao.cun.endor</groupId>
-				  <artifactId>endor-base</artifactId>
-				  <version>1.0.7</version>
-		</dependency>
 			<dependency>
-	      		<groupId>com.taobao.cun</groupId>
-	      		<artifactId>ct-mdjxc-api.api</artifactId>
-	      		<version>1.0.9</version>
+				<groupId>com.taobao.payment</groupId>
+				<artifactId>pmt-client</artifactId>
+				<version>1.0.28.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.validation</groupId>
+						<artifactId>validation-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.alibaba.external</groupId>
+						<artifactId>java.validation.api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.boot</groupId>
+				<artifactId>alimetrics-spring-boot-starter</artifactId>
+				<version>1.6.3-1</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun.endor</groupId>
+				<artifactId>endor-base</artifactId>
+				<version>1.0.7</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.cun</groupId>
+				<artifactId>ct-mdjxc-api.api</artifactId>
+				<version>1.0.9</version>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.common.division</groupId>
+				<artifactId>common-division</artifactId>
+				<version>3.0.26</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.store.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 
@@ -51,4 +53,18 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean initStoreWarehouse(Long stationId);
+	
+	/**
+	 * 批量初始化补货村点门店
+	 * @param stationIds
+	 * @return
+	 */
+	public Boolean batchCreateSupplyStore(List<Long> stationIds);
+	
+	/**
+	 * 淘标国标地址转换
+	 * @param taobaocode
+	 * @return
+	 */
+	public Long tb2gbCode(Long taobaocode);
 }
