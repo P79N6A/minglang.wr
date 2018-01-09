@@ -200,7 +200,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}
 		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
-		if(StationModeEnum.V4.getCode().equals(s.getMode())) {
+		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
 			partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
 			Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
