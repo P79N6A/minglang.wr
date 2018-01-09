@@ -22,4 +22,6 @@ public interface StoreWriteBO {
 	public Boolean initStoreWarehouse(Long stationId);
 	
 	public Long tb2gbCode(Long taobaocode);
+	
+	public Boolean batchUpdateStore(List<Long> sharedStoreIds);
 }

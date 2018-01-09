@@ -297,16 +297,26 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		//StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
+		storeDTO.setUserId(diamondConfiguredProperties.getStoreMainUserId());
+		//storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
 		//storeDTO.addTag(3300);
 		//storeDTO.addTag(3000);
         ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 	    if(!updateResult.isSuccess()){
-	    	System.out.println(updateResult.getErrorMsg());
+	    	logger.error("updateStore error "+updateResult.getErrorMsg());
 	    }
 	    return updateResult.isSuccess();
 	}
 
+	
+	public Boolean batchUpdateStore(List<Long> sharedStoreIds){
+		for(Long shareStoreId:sharedStoreIds){
+			this.updateStoreTag(shareStoreId, null);
+		}
+		return true;
+	}
+	
+	
 	@Override
 	public Boolean createSampleStore(Long stationId) {
 
