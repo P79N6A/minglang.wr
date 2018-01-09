@@ -1,7 +1,8 @@
 package com.taobao.cun.auge.station.convert;
 
-import org.apache.ecs.xhtml.li;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
 
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -75,6 +76,13 @@ public class PartnerLifecycleConverter {
 		if(partnerLifecycleDto.getPositionConfirm() != null){
 			items.setConfirmPosition(partnerLifecycleDto.getPositionConfirm().getCode());
 		}
+		if(partnerLifecycleDto.getReplenishMoney() != null){
+			items.setReplenishMoney(partnerLifecycleDto.getReplenishMoney().getCode());
+		}
+		
+		if(partnerLifecycleDto.getGoodsReceipt() != null){
+			items.setGoodsReceipt(partnerLifecycleDto.getGoodsReceipt().getCode());
+		}
 		
 		return items;
 	}
@@ -101,6 +109,10 @@ public class PartnerLifecycleConverter {
 		lifecleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.valueof(items.getDecorateStatus()));
 		lifecleDto.setCourseStatus(PartnerLifecycleCourseStatusEnum.valueof(items.getCourseStatus()));
 		lifecleDto.setPosittionConfirm(PartnerLifecyclePositionConfirmEnum.valueof(items.getConfirmPosition()));
+		
+		lifecleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.valueof(items.getReplenishMoney()));
+		lifecleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.valueof(items.getGoodsReceipt()));
+
 		return lifecleDto;
 	}
 }

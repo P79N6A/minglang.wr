@@ -27,6 +27,13 @@ public class PartnerApplyStateEnum implements Serializable {
     public static final PartnerApplyStateEnum STATE_APPLY_SUCC = new PartnerApplyStateEnum("STATE_APPLY_SUCC", "面试通过");// V2.5以前审核通过在Ｖ2.5开始要当成面试通过
     public static final PartnerApplyStateEnum STATE_APPLY_COOPERATION = new PartnerApplyStateEnum(
             "STATE_APPLY_COOPERATION", "已合作"); // 已签约
+    
+    public static final PartnerApplyStateEnum STATE__QUALIFY_AUDITING = new PartnerApplyStateEnum(
+            "STATE__QUALIFY_AUDITING", "资格认证审批中"); 
+    public static final PartnerApplyStateEnum STATE__QUALIFY_AUDIT_PASS = new PartnerApplyStateEnum(
+            "STATE__QUALIFY_AUDIT_PASS", "资格认证已通过"); 
+    public static final PartnerApplyStateEnum STATE__QUALIFY_AUDIT_NOT_PASS = new PartnerApplyStateEnum(
+            "STATE__QUALIFY_AUDIT_NOT_PASS", "资格认证未通过"); 
 
     private static final Map<String, PartnerApplyStateEnum> mappings = new HashMap<String, PartnerApplyStateEnum>();
 
@@ -40,6 +47,10 @@ public class PartnerApplyStateEnum implements Serializable {
         mappings.put("STATE_APPLY_SUCC", STATE_APPLY_SUCC);
         mappings.put("STATE_APPLY_REFUSE_INTERVIEW", STATE_APPLY_REFUSE_INTERVIEW);
         mappings.put("STATE_APPLY_COOPERATION", STATE_APPLY_COOPERATION);
+        
+        mappings.put("STATE__QUALIFY_AUDITING", STATE__QUALIFY_AUDITING);
+        mappings.put("STATE__QUALIFY_AUDIT_PASS", STATE__QUALIFY_AUDIT_PASS);
+        mappings.put("STATE__QUALIFY_AUDIT_NOT_PASS", STATE__QUALIFY_AUDIT_NOT_PASS);
     }
 
     public static List<PartnerApplyStateEnum> enums() {

@@ -84,6 +84,28 @@ public class DiamondConfiguredProperties {
     @Value("${isCheckVendorAlipayAccount}")
     private boolean isCheckVendorAlipayAccount;
     
+    @Value("${replenishOrderUrl}")
+    private String replenishOrderUrl;
+    
+    @Value("${replenishFrozenUrl}")
+    private String replenishFrozenUrl;
+    
+    
+    public String getReplenishFrozenUrl() {
+		return replenishFrozenUrl;
+	}
+
+	public void setReplenishFrozenUrl(String replenishFrozenUrl) {
+		this.replenishFrozenUrl = replenishFrozenUrl;
+	}
+
+	public String getReplenishOrderUrl() {
+		return replenishOrderUrl;
+	}
+
+	public void setReplenishOrderUrl(String replenishOrderUrl) {
+		this.replenishOrderUrl = replenishOrderUrl;
+	}
     public String getApply() {
         return apply;
     }

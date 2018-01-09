@@ -20,6 +20,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelGrowthTrendDtoV2;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
+import com.taobao.cun.auge.station.dto.ReplenishDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
@@ -336,4 +337,10 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceDto> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state);
+    /**
+     * 获得铺货信息
+     * @param taobaoUserId
+     * @return
+     */
+    public ReplenishDto getReplenishDtoByTaobaoUserId(Long taobaoUserId);
 }

@@ -2,11 +2,15 @@ package com.taobao.cun.auge.lifecycle.tpa;
 
 import java.util.Date;
 
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+
+import com.taobao.cun.auge.dal.domain.PartnerApply;
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -74,6 +78,9 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private GeneralTaskSubmitService generalTaskSubmitService;
+	
+	@Autowired
+	private PartnerQualifyApplyService partnerQualifyApplyService;
 	
 	@Override
 	@PhaseStepMeta(descr="更新淘帮手站点状态到已停业")
@@ -157,16 +164,28 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 		//审批流触发，恢复合伙人申请单状态
 		Boolean fromAuditflow = (Boolean)context.getExtensionWithDefault("fromAuditflow",false);
 		if(fromAuditflow){
-			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceDto.getId());
+			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+			//如果资格认证通过，招募信息改成  资格认证通过，否则改成面试通过
+			PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
+			
+			if(PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_PASS);
+			}else  if (PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
+			}else {
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+				PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
+				partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
+			}
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
 			
 			QuitStationApply quitApply = quitStationApplyBO.findQuitStationApply(partnerInstanceDto.getId());
 			generalTaskSubmitService.submitQuitApprovedTask(partnerInstanceDto.getId(), partnerInstanceDto.getStationId(), partnerInstanceDto.getTaobaoUserId(),
 					quitApply.getIsQuitStation());
+			
 		}
 		
 	}
