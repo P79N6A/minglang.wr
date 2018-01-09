@@ -55,4 +55,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Long tb2gbCode(Long taobaocode) {
 		return storeWriteBO.tb2gbCode(taobaocode);
 	}
+
+	@Override
+	public Boolean batchUpdateStore(List<Long> sharedStoreIds) {
+		return storeWriteBO.batchUpdateStore(sharedStoreIds);
+	}
 }
