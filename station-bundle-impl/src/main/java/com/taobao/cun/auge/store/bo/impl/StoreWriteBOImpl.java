@@ -313,6 +313,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		for(Long shareStoreId:sharedStoreIds){
 			this.updateStoreTag(shareStoreId, null);
 		}
+		logger.info("batchUpdateStore finish");
 		return true;
 	}
 	
