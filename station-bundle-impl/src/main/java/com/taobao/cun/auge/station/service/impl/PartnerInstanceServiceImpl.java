@@ -747,10 +747,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
             generalTaskSubmitService.submitSettlingSysProcessTasks(PartnerInstanceConverter.convert(instance, null, partner), operator);
         }else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
-        		frozenReplenishMoneyForDecorate(taobaoUserId, accountNo, alipayAccount,
+        		return frozenReplenishMoneyForDecorate(taobaoUserId, accountNo, alipayAccount,
     					instance,money);
         }else if ( PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
-        	   frozenReplenishMoneyForService(taobaoUserId, accountNo, alipayAccount,
+        	   return frozenReplenishMoneyForService(taobaoUserId, accountNo, alipayAccount,
 					instance,money);
         }
         // 流转日志, 合伙人入驻
@@ -782,7 +782,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
     }
     
-    private void frozenReplenishMoneyForService(Long taobaoUserId, String accountNo,
+    private boolean frozenReplenishMoneyForService(Long taobaoUserId, String accountNo,
 			String alipayAccount, PartnerStationRel instance,Double waitFrozenMoney) {
 		String operator = String.valueOf(taobaoUserId);
 		AccountMoneyDto baseMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
@@ -801,10 +801,11 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		addHasFrozenReplienishMoney(instance.getId(),taobaoUserId,waitFrozenMoney,alipayAccount,accountNo);
 		updateRelenishMoneyIsHasFrozen(operator, decoItems);
+		return true;
 	}
 
 
-	private void frozenReplenishMoneyForDecorate(Long taobaoUserId, String accountNo,
+	private boolean frozenReplenishMoneyForDecorate(Long taobaoUserId, String accountNo,
 			String alipayAccount, PartnerStationRel instance,Double waitFrozenMoney) {
 		String operator = String.valueOf(taobaoUserId);
 		AccountMoneyDto baseMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
@@ -817,7 +818,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
 			if (null == decoItems || null == bondMoney
 			        || !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
-			    throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前合伙人的状态不允许开展该业务");
+			    return false;
 			}
 			
 			// 修改生命周期表
@@ -846,6 +847,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			addHasFrozenReplienishMoney(instance.getId(),taobaoUserId,waitFrozenMoney,alipayAccount,accountNo);
 			updateRelenishMoneyIsHasFrozen(operator, decoItems);
 		}
+		return true;
 	}
 
 
