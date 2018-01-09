@@ -240,7 +240,8 @@ public class PartnerLifecycleBOImpl implements PartnerLifecycleBO {
 		if (items == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"PartnerLifecycleItems not exists");
 		}
-		if (PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
+		if (PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN.getCode().equals(items.getReplenishMoney())
+				|| PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 			return;
 		}
 		PartnerLifecycleDto param = new PartnerLifecycleDto();
