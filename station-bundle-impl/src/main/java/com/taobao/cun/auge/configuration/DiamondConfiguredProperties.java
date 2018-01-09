@@ -87,7 +87,19 @@ public class DiamondConfiguredProperties {
     @Value("${replenishOrderUrl}")
     private String replenishOrderUrl;
     
-    public String getReplenishOrderUrl() {
+    @Value("${replenishFrozenUrl}")
+    private String replenishFrozenUrl;
+    
+    
+    public String getReplenishFrozenUrl() {
+		return replenishFrozenUrl;
+	}
+
+	public void setReplenishFrozenUrl(String replenishFrozenUrl) {
+		this.replenishFrozenUrl = replenishFrozenUrl;
+	}
+
+	public String getReplenishOrderUrl() {
 		return replenishOrderUrl;
 	}
 

@@ -803,6 +803,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	  
 	  if (PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
 		  rDto.setStatus(ReplenishStatusEnum.WAIT_FROZEN);
+		  rDto.setOrderUrl(diamondConfiguredProperties.getReplenishFrozenUrl());
 	  }
 	  if (PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(decoItems.getReplenishMoney())) {
 		  rDto.setStatus(ReplenishStatusEnum.HAS_FROZEN);
