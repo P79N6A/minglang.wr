@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -23,11 +26,13 @@ import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
+import com.taobao.cun.auge.lifecycle.tps.TPSDecoratingLifeCyclePhase;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -39,6 +44,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeSystemException;
+import com.taobao.cun.auge.store.dto.StoreCategory;
+import com.taobao.cun.auge.store.dto.StoreCreateDto;
+import com.taobao.cun.auge.store.service.StoreException;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 
 /**
  * 村小二装修中阶段组件
@@ -63,6 +73,14 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     @Autowired
     private AppResourceService appResourceService;
     
+    @Autowired
+    private StoreWriteService storeWriteService;
+    
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    private static Logger logger = LoggerFactory.getLogger(TPDecoratingLifeCyclePhase.class);
+
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -110,7 +128,20 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		StationDto station = StationConverter.toStationDto(stationBO.getStationById(partnerInstanceDto.getStationId()));
+		 try {
+        	StoreCreateDto store = new StoreCreateDto();
+        	store.setStationId(partnerInstanceDto.getStationId());
+        	store.setCreator(partnerInstanceDto.getOperator());
+        	store.setStoreCategory(StoreCategory.valueOf(station.getFeature().get("storeCategory")));
+        	store.setCategoryId(diamondConfiguredProperties.getStoreCategoryId());
+        	store.setName(station.getName());
+			storeWriteService.create(store);
+			} catch (StoreException e) {
+				logger.error("createStoreError e!instanceId["+partnerInstanceDto.getId()+"]",e);
+				throw new AugeSystemException(e);
+			}
 	}
 
 	@Override
