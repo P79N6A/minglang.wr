@@ -2,6 +2,7 @@ package com.taobao.cun.auge.company;
 
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 
 /**
  * 公司管理服务接口
@@ -31,5 +32,21 @@ public interface VendorWriteService {
 	 */
 	Result<Boolean> removeVendor(Long companyId);
 	
+	/**
+	 * 确认服务商协议
+	 * @param taobaoUserId
+	 * @param protocol
+	 * @return
+	 */
+	Result<Boolean> confirmVendorProtocol(Long taobaoUserId,ProtocolTypeEnum protocol);
+	
+	
+	/**
+	 * 是否确认服务商协议
+	 * @param taobaoUserId
+	 * @param protocol
+	 * @return
+	 */
+	Result<Boolean> isConfirmVendorProtocol(Long taobaoUserId,ProtocolTypeEnum protocol);
 	
 }
