@@ -16,13 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-
 import com.ali.com.google.common.collect.Maps;
+
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -701,9 +705,12 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         Long taobaoUserId = freezeBondDto.getTaobaoUserId();
         String accountNo = freezeBondDto.getAccountNo();
         String alipayAccount = freezeBondDto.getAlipayAccount();
+        Double money = freezeBondDto.getMoney();
 
-            PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-            PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        
+        if(PartnerInstanceStateEnum.SETTLING.getCode().equals(instance.getState())) {
+        	PartnerLifecycleItems settleItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
                     PartnerLifecycleBusinessTypeEnum.SETTLING, PartnerLifecycleCurrentStepEnum.PROCESSING);
             AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
                     AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
@@ -739,12 +746,120 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
             Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
             generalTaskSubmitService.submitSettlingSysProcessTasks(PartnerInstanceConverter.convert(instance, null, partner), operator);
-
-            // 流转日志, 合伙人入驻
-            // bulidRecordEventForPartnerEnter(stationApplyDetailDto);
-
-            return true;
+        }else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
+        		return frozenReplenishMoneyForDecorate(taobaoUserId, accountNo, alipayAccount,
+    					instance,money);
+        }else if ( PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
+        	   return frozenReplenishMoneyForService(taobaoUserId, accountNo, alipayAccount,
+					instance,money);
+        }
+        // 流转日志, 合伙人入驻
+        // bulidRecordEventForPartnerEnter(stationApplyDetailDto);
+        return true;
     }
+    
+    private void addHasFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney,String alipayAccount,String accountNo) {
+        ValidateUtils.notNull(instanceId);
+        AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
+        accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
+        accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
+        accountMoneyDto.setOperatorType(OperatorTypeEnum.HAVANA);
+        accountMoneyDto.setObjectId(instanceId);
+        accountMoneyDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+        accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
+        accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+        accountMoneyDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+        accountMoneyDto.setFrozenTime(new Date());
+        accountMoneyDto.setAlipayAccount(alipayAccount);
+        accountMoneyDto.setAccountNo(accountNo);
+        
+        AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+        if (dupRecord != null) {
+            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyDto);
+        } else {
+            accountMoneyBO.addAccountMoney(accountMoneyDto);
+        }
+    }
+    
+    private boolean frozenReplenishMoneyForService(Long taobaoUserId, String accountNo,
+			String alipayAccount, PartnerStationRel instance,Double waitFrozenMoney) {
+		String operator = String.valueOf(taobaoUserId);
+		AccountMoneyDto baseMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+		        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+		PartnerLifecycleItems decoItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+		        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.END);
+		
+		if (new BigDecimal("13000.00").compareTo(baseMoney.getMoney())== 0) {//兼容老逻辑，冻结了13000 要拆分冻结10000和3000
+			baseMoney.setMoney(new BigDecimal("10000.00"));
+			baseMoney.setOperator(operator);
+			baseMoney.setOperatorType(OperatorTypeEnum.HAVANA);
+			accountMoneyBO.updateAccountMoneyByObjectId(baseMoney);
+		}
+		if (waitFrozenMoney == null) {
+			waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+		}
+		addHasFrozenReplienishMoney(instance.getId(),taobaoUserId,waitFrozenMoney,alipayAccount,accountNo);
+		updateRelenishMoneyIsHasFrozen(operator, decoItems);
+		return true;
+	}
+
+
+	private boolean frozenReplenishMoneyForDecorate(Long taobaoUserId, String accountNo,
+			String alipayAccount, PartnerStationRel instance,Double waitFrozenMoney) {
+		String operator = String.valueOf(taobaoUserId);
+		AccountMoneyDto baseMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+		        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+		PartnerLifecycleItems decoItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+		        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+		
+		if (new BigDecimal("10000.00").compareTo(baseMoney.getMoney())== 0) {//新增v4
+			AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+			        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+			if (null == decoItems || null == bondMoney
+			        || !AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
+			    return false;
+			}
+			
+			// 修改生命周期表
+			updateRelenishMoneyIsHasFrozen(operator, decoItems);
+
+			// 修改保证金冻结状态
+			AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+			accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
+			accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+			accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+			accountMoneyUpdateDto.setFrozenTime(new Date());
+			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+			accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
+			accountMoneyUpdateDto.setAccountNo(accountNo);
+			accountMoneyUpdateDto.setOperator(operator);
+			accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
+			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+		}else if (new BigDecimal("13000.00").compareTo(baseMoney.getMoney())== 0) {//兼容老逻辑，冻结了13000 要拆分冻结10000和3000
+			baseMoney.setMoney(new BigDecimal("10000.00"));
+			baseMoney.setOperator(operator);
+			baseMoney.setOperatorType(OperatorTypeEnum.HAVANA);
+			accountMoneyBO.updateAccountMoneyByObjectId(baseMoney);
+			if (waitFrozenMoney == null) {
+				waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+			}
+			addHasFrozenReplienishMoney(instance.getId(),taobaoUserId,waitFrozenMoney,alipayAccount,accountNo);
+			updateRelenishMoneyIsHasFrozen(operator, decoItems);
+		}
+		return true;
+	}
+
+
+	private void updateRelenishMoneyIsHasFrozen(String operator,
+			PartnerLifecycleItems decoItems) {
+		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
+		lifecycleUpdateDto.setLifecycleId(decoItems.getId());
+		lifecycleUpdateDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
+		lifecycleUpdateDto.setOperator(operator);
+		lifecycleUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
+	}
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -836,9 +951,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             // 没有数据 认为是标准化项目之前的数据，直接可以开业
             return;
         }
-      
-        //判断装修是否未付款
-//		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+        PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+		//4.0 检查补货金和 开业包收货状态
+		/*if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
+				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
+			}
+			if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
+				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
+			}
+		}*/
+//		
 //		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
 //		if (decorate != null
 //				&& StationDecoratePaymentTypeEnum.SELF.getCode().equals(

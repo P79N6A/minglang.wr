@@ -4,6 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+
+import com.taobao.cun.auge.dal.domain.PartnerApply;
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
@@ -127,6 +131,9 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 	
 	@Autowired
 	TpaGmvCheckConfiguration tpaGmvCheckConfiguration;
+	
+	@Autowired
+	private PartnerQualifyApplyService partnerQualifyApplyService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -280,11 +287,22 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		// 同步station_apply
 		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
 
-		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 		try{
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
+			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 			partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());
-			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+			//如果资格认证通过，招募信息改成  资格认证通过，否则改成面试通过
+			PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
+			
+			if(PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_PASS);
+			}else  if (PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
+			}else {
+				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
+				PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
+				partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
+			}
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
 		} catch(Exception e){

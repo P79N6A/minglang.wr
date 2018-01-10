@@ -46,6 +46,7 @@
     <result column="version" jdbcType="BIGINT" property="version" />
     <result column="is_on_town" jdbcType="CHAR" property="isOnTown" />
     <result column="station_type" jdbcType="INTEGER" property="stationType" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -122,7 +123,8 @@
     taobao_nick, state, is_deleted, province, city, county, town, province_detail, city_detail, 
     county_detail, town_detail, address, apply_org, taobao_user_id, station_num, lng, 
     lat, village, village_detail, covered, products, logistics_state, format, area_type, 
-    manager_id, provider_id, feature, status, fixed_type, version, is_on_town, station_type
+    manager_id, provider_id, feature, status, fixed_type, version, is_on_town, station_type, 
+    mode
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.StationExample" resultMap="BaseResultMap">
     <!--
@@ -191,8 +193,8 @@
       products, logistics_state, format, 
       area_type, manager_id, provider_id, 
       feature, status, fixed_type, 
-      version, is_on_town, station_type
-      )
+      version, is_on_town, station_type, 
+      mode)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
       #{alipayAccount,jdbcType=VARCHAR}, #{taobaoNick,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, 
@@ -205,8 +207,8 @@
       #{products,jdbcType=VARCHAR}, #{logisticsState,jdbcType=VARCHAR}, #{format,jdbcType=VARCHAR}, 
       #{areaType,jdbcType=VARCHAR}, #{managerId,jdbcType=VARCHAR}, #{providerId,jdbcType=BIGINT}, 
       #{feature,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{fixedType,jdbcType=VARCHAR}, 
-      #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{stationType,jdbcType=INTEGER}
-      )
+      #{version,jdbcType=BIGINT}, #{isOnTown,jdbcType=CHAR}, #{stationType,jdbcType=INTEGER}, 
+      #{mode,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.Station">
     <!--
@@ -335,6 +337,9 @@
       <if test="stationType != null">
         station_type,
       </if>
+      <if test="mode != null">
+        mode,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -453,6 +458,9 @@
       </if>
       <if test="stationType != null">
         #{stationType,jdbcType=INTEGER},
+      </if>
+      <if test="mode != null">
+        #{mode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -593,6 +601,9 @@
       <if test="record.stationType != null">
         station_type = #{record.stationType,jdbcType=INTEGER},
       </if>
+      <if test="record.mode != null">
+        mode = #{record.mode,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -643,7 +654,8 @@
       fixed_type = #{record.fixedType,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=BIGINT},
       is_on_town = #{record.isOnTown,jdbcType=CHAR},
-      station_type = #{record.stationType,jdbcType=INTEGER}
+      station_type = #{record.stationType,jdbcType=INTEGER},
+      mode = #{record.mode,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -772,6 +784,9 @@
       <if test="stationType != null">
         station_type = #{stationType,jdbcType=INTEGER},
       </if>
+      <if test="mode != null">
+        mode = #{mode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -819,7 +834,8 @@
       fixed_type = #{fixedType,jdbcType=VARCHAR},
       version = #{version,jdbcType=BIGINT},
       is_on_town = #{isOnTown,jdbcType=CHAR},
-      station_type = #{stationType,jdbcType=INTEGER}
+      station_type = #{stationType,jdbcType=INTEGER},
+      mode = #{mode,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

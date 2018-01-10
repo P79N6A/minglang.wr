@@ -4,41 +4,36 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by haihu.fhh on 2016/5/4.
- */
-public class AccountMoneyTypeEnum implements Serializable {
 
-    private static final Map<String, AccountMoneyTypeEnum> mappings = new HashMap<String, AccountMoneyTypeEnum>();
+public class StationModeEnum implements Serializable {
+
+    private static final Map<String, StationModeEnum> mappings = new HashMap<String, StationModeEnum>();
 
 
     private static final long serialVersionUID = -2325045809951918493L;
 
     private String code;
     private String desc;
-
-    //保证金
-    public static final AccountMoneyTypeEnum PARTNER_BOND = new AccountMoneyTypeEnum("PARTNER_BOND", "保证金");
-    public static final AccountMoneyTypeEnum PAYMENT_AGREEMENT = new AccountMoneyTypeEnum("PAYMENT_AGREEMENT", "支付协议");
-    public static final AccountMoneyTypeEnum CAE_AGREEMENT = new AccountMoneyTypeEnum("CAE_AGREEMENT", "CAE代扣协议");
     
-    //补货金
-    public static final AccountMoneyTypeEnum REPLENISH_MONEY = new AccountMoneyTypeEnum("REPLENISH_MONEY", "补货金");
-
+    public static final StationModeEnum V4  = new StationModeEnum("v4", "4.0");
+    public static final StationModeEnum V3  = new StationModeEnum("v3", "3.0");
+    public static final StationModeEnum V2  = new StationModeEnum("v2", "2.0");
+    public static final StationModeEnum V1  = new StationModeEnum("v1", "1.0");
+    
 
     static {
-        mappings.put("PARTNER_BOND", PARTNER_BOND);
-        mappings.put("PAYMENT_AGREEMENT", PAYMENT_AGREEMENT);
-        mappings.put("CAE_AGREEMENT", CAE_AGREEMENT);
-        mappings.put("REPLENISH_MONEY", REPLENISH_MONEY);
+    	mappings.put("V4", V4);
+        mappings.put("V3", V3);
+        mappings.put("V2", V2);
+        mappings.put("V1", V1);
     }
 
-    public AccountMoneyTypeEnum(String code, String desc) {
+    public StationModeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public AccountMoneyTypeEnum() {
+    public StationModeEnum() {
 
     }
 
@@ -58,7 +53,7 @@ public class AccountMoneyTypeEnum implements Serializable {
         this.desc = desc;
     }
 
-    public static AccountMoneyTypeEnum valueof(String code) {
+    public static StationModeEnum valueof(String code) {
         if (code == null) {
             return null;
         }
@@ -84,7 +79,7 @@ public class AccountMoneyTypeEnum implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AccountMoneyTypeEnum other = (AccountMoneyTypeEnum) obj;
+        StationModeEnum other = (StationModeEnum) obj;
         if (code == null) {
             if (other.code != null) {
                 return false;
