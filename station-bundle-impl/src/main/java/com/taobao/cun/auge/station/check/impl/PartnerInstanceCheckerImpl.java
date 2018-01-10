@@ -1,8 +1,13 @@
 package com.taobao.cun.auge.station.check.impl;
 
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -36,7 +41,10 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
 	@Autowired
 	TradeAdapter tradeAdapter;
-
+	
+	@Autowired
+	AccountMoneyBO accountMoneyBO;
+	 
 	@Override
 	public void checkCloseApply(Long instanceId) {
 		// 查询实例是否存在，不存在会抛异常
@@ -71,5 +79,13 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 
 		// 校验资产是否归还
 		partnerInstanceHandler.validateAssetBack(instanceType, instanceId);
+		
+		//冻结了铺货金  不能退出  临时止血
+		AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+		        AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		if (null != bondMoney && AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE,"您已经冻结了铺货金，暂不能退出");
+		}
+		
 	}
 }
