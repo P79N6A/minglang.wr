@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -19,10 +18,14 @@ import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import com.taobao.tddl.client.sequence.impl.GroupSequence;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -49,6 +52,12 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 	
 	@Autowired
 	private DiamondConfiguredProperties diamondConfiguredProperties;
+	
+	@Autowired
+	private PartnerProtocolRelBO partnerProtocolRelBO;
+	
+	@Autowired
+	private VendorReadService vendorReadService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(VendorWriteServiceImpl.class);
 	
@@ -246,6 +255,70 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, null, e.getMessage());
 		}
 		return null;
+	}
+
+
+	@Override
+	public Result<Boolean> confirmVendorProtocol(Long taobaoUserId, ProtocolTypeEnum protocol) {
+		try {
+			Result<Boolean> isConfirmResult = isConfirmVendorProtocol(taobaoUserId,protocol);
+			if(isConfirmResult.isSuccess() && isConfirmResult.getModule()){
+				return isConfirmResult;
+			}
+			boolean comfirmResult = confirmProtocol(taobaoUserId,protocol);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(comfirmResult);
+			return result;
+		} catch (Exception e) {
+			logger.error("confirmVendorProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+
+	@Override
+	public Result<Boolean> isConfirmVendorProtocol(Long taobaoUserId, ProtocolTypeEnum protocol) {
+		try {
+			boolean isConfirmed = isConfirmProtocol(taobaoUserId,protocol);
+			Result<Boolean> result = Result.of(true);
+			result.setModule(isConfirmed);
+			return result;
+		} catch (Exception e) {
+			logger.error("isConfirmVendorProtocol["+taobaoUserId+"]",e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+	
+	private Boolean isConfirmProtocol(Long taobaoUserId,ProtocolTypeEnum protcolType){
+		Assert.notNull(taobaoUserId);
+		Assert.notNull(protcolType);
+		Result<CuntaoServiceVendorDto> result = vendorReadService.queryVendorByTaobaoUserID(taobaoUserId);
+		if(result.getModule() == null){
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+		}
+		PartnerProtocolRelDto partnerProtocolRelDto = partnerProtocolRelBO.getPartnerProtocolRelDto(protcolType, result.getModule().getId(), PartnerProtocolRelTargetTypeEnum.VENDOR);
+		if(partnerProtocolRelDto != null){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	private Boolean confirmProtocol(Long taobaoUserId,ProtocolTypeEnum protcolType){
+		try {
+			Assert.notNull(taobaoUserId);
+			Assert.notNull(protcolType);
+			Result<CuntaoServiceVendorDto> result = vendorReadService.queryVendorByTaobaoUserID(taobaoUserId);
+			if(result.getModule() == null){
+				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+			}
+			partnerProtocolRelBO.signProtocol(taobaoUserId,protcolType, result.getModule().getId(), PartnerProtocolRelTargetTypeEnum.VENDOR);
+			return true;
+		} catch (Exception e) {
+			logger.error("confirmProtocol["+taobaoUserId+"]",e);
+			throw new AugeBusinessException(e);
+		}
+		
 	}
 	
 }
