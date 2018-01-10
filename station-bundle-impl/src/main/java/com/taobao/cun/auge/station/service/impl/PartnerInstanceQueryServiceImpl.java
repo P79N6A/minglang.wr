@@ -296,6 +296,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             buildLifecycleItems(page);
         }
         PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+        buildStoreInfo(success.getItems());
         return success;
     }
 
@@ -309,9 +310,23 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         Page<PartnerInstance> page = partnerStationRelExtMapper.selectPartnerInstancesByStationExample(stationExtExample);
 
         PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
+        buildStoreInfo(success.getItems());
         return success;
     }
 
+    private void buildStoreInfo(List<PartnerInstanceDto> partnerInstances){
+    	if(CollectionUtils.isNotEmpty(partnerInstances)){
+    		 for (PartnerInstanceDto instance : partnerInstances) {
+    			 if(instance.getStationId()!=null){
+    				 StoreDto storeDto = storeReadBO.getStoreDtoByStationId(instance.getStationId());
+    	         		if(storeDto != null){
+    	         			instance.getStationDto().setStoreDto(storeDto);
+    	         		} 
+    			 }
+        	 }
+    	}
+    }
+    
     private void buildLifecycleItems(Page<PartnerInstance> page) {
         for (PartnerInstance instance : page) {
             PartnerLifecycleItems lifecycle = getLifecycleItem(instance.getId(), instance.getState());
