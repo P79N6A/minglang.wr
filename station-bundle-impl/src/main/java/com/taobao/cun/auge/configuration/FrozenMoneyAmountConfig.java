@@ -15,7 +15,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 @Component
 public class FrozenMoneyAmountConfig {
 
-	@Value("${tp.frozenMoneyAmount:13000}")
+	@Value("${tp.frozenMoneyAmount:10000}")
 	Double TPFrozenMoneyAmount;
 	
 	@Value("${tpa.frozenMoneyAmount:1}")
@@ -26,6 +26,17 @@ public class FrozenMoneyAmountConfig {
 	
 	@Value("${tps.frozenMoneyAmount:20000}")
 	Double TPSFrozenMoneyAmount;
+	
+	@Value("${tp.replenishMoneyAmount:3000}")
+	Double TPReplenishMoneyAmount;
+
+	public Double getTPReplenishMoneyAmount() {
+		return TPReplenishMoneyAmount;
+	}
+
+	public void setTPReplenishMoneyAmount(Double tPReplenishMoneyAmount) {
+		TPReplenishMoneyAmount = tPReplenishMoneyAmount;
+	}
 
 	public Double getTPFrozenMoneyAmount() {
 		return TPFrozenMoneyAmount;

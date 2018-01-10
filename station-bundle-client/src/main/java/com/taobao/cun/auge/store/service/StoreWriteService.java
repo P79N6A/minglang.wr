@@ -67,4 +67,7 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Long tb2gbCode(Long taobaocode);
+	
+	
+	public Boolean batchUpdateStore(List<Long> sharedStoreIds);
 }

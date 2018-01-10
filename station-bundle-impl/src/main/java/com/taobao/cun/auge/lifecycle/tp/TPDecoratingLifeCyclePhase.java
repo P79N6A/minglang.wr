@@ -1,10 +1,13 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,8 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -24,21 +29,31 @@ import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
 import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
+import com.taobao.cun.auge.store.service.StoreWriteService;
 
 /**
  * 村小二装修中阶段组件
@@ -63,6 +78,18 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
     @Autowired
     private AppResourceService appResourceService;
     
+    @Autowired
+    AccountMoneyBO accountMoneyBO;
+    
+    @Autowired
+    private FrozenMoneyAmountConfig frozenMoneyConfig;
+    
+    @Autowired
+    private StoreWriteService storeWriteService;
+    
+    
+    private static Logger logger = LoggerFactory.getLogger(TPDecoratingLifeCyclePhase.class);
+
 	@Override
 	@PhaseStepMeta(descr="更新村点信息")
 	public void createOrUpdateStation(LifeCyclePhaseContext context) {
@@ -110,7 +137,11 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@Override
 	@PhaseStepMeta(descr="更新装修中扩展业务信息")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
-
+		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
+		boolean result = storeWriteService.createSupplyStore(partnerInstanceDto.getStationId());
+		if(!result){
+			logger.error("createStationSupplyStore error["+partnerInstanceDto.getStationId()+"]");
+		}
 	}
 
 	@Override
@@ -180,8 +211,39 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		}else {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}
+		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
+		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+			partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
+			partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
+			Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+			addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney);
+		}
+		
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
+		
+		
 	}
+	
+	 private void addWaitFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
+	        ValidateUtils.notNull(instanceId);
+	        AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
+	        accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
+	        accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
+	        accountMoneyDto.setOperatorType(OperatorTypeEnum.HAVANA);
+	        accountMoneyDto.setObjectId(instanceId);
+	        accountMoneyDto.setState(AccountMoneyStateEnum.WAIT_FROZEN);
+	        accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
+	        accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+	        accountMoneyDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+
+	        AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+	                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+	        if (dupRecord != null) {
+	            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyDto);
+	        } else {
+	            accountMoneyBO.addAccountMoney(accountMoneyDto);
+	        }
+	    }
 
 	private Boolean containCountyOrgId(Long countyOrgId) {
 

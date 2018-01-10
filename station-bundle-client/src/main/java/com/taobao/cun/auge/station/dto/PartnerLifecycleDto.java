@@ -10,9 +10,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
@@ -100,6 +102,36 @@ public class PartnerLifecycleDto  extends OperatorDto implements Serializable {
      * 确认经纬度位置 
      */
     private PartnerLifecyclePositionConfirmEnum positionConfirm;
+    
+    
+    /**
+     * 补货金
+     */
+    private PartnerLifecycleReplenishMoneyEnum replenishMoney;
+    
+    /**
+     * 开业包货品已收货
+     */
+    private PartnerLifecycleGoodsReceiptEnum goodsReceipt;
+    
+    
+    
+	public PartnerLifecycleReplenishMoneyEnum getReplenishMoney() {
+		return replenishMoney;
+	}
+
+	public void setReplenishMoney(PartnerLifecycleReplenishMoneyEnum replenishMoney) {
+		this.replenishMoney = replenishMoney;
+	}
+
+	public PartnerLifecycleGoodsReceiptEnum getGoodsReceipt() {
+		return goodsReceipt;
+	}
+
+	public void setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum goodsReceipt) {
+		this.goodsReceipt = goodsReceipt;
+	}
+
 	public PartnerInstanceTypeEnum getPartnerType() {
 		return partnerType;
 	}

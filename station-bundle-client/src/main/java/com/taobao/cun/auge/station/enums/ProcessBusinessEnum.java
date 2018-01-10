@@ -25,6 +25,8 @@ public class ProcessBusinessEnum implements Serializable {
 	public static final ProcessBusinessEnum incentiveProgramAudit = new ProcessBusinessEnum("incentive_program_audit", "激励方案审批");
 	public static final ProcessBusinessEnum assetTransfer = new ProcessBusinessEnum("assetTransfer", "资产转移审批");
 	public static final ProcessBusinessEnum peixunRefund = new ProcessBusinessEnum("peixun_refund", "培训退款");
+	
+	public static final ProcessBusinessEnum partnerQualifyAudit = new ProcessBusinessEnum("partnerQualifyAudit", "招募资格认证");
 
 	static {
 		mappings.put("stationForcedClosure", stationForcedClosure);
@@ -38,6 +40,7 @@ public class ProcessBusinessEnum implements Serializable {
 		mappings.put("incentiveProgramAudit", incentiveProgramAudit);
 		mappings.put("assetTransfer", assetTransfer);
 		mappings.put("peixunRefund", peixunRefund);
+		mappings.put("partnerQualifyAudit", partnerQualifyAudit);
 
 	}
 

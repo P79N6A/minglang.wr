@@ -26,6 +26,8 @@
     <result column="course_status" jdbcType="VARCHAR" property="courseStatus" />
     <result column="decorate_status" jdbcType="VARCHAR" property="decorateStatus" />
     <result column="confirm_position" jdbcType="VARCHAR" property="confirmPosition" />
+    <result column="replenish_money" jdbcType="VARCHAR" property="replenishMoney" />
+    <result column="goods_receipt" jdbcType="VARCHAR" property="goodsReceipt" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -100,7 +102,8 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, partner_type, business_type, settled_protocol, 
     bond, quit_protocol, logistics_approve, partner_instance_id, is_deleted, current_step, 
-    role_approve, confirm, system, course_status, decorate_status, confirm_position
+    role_approve, confirm, system, course_status, decorate_status, confirm_position, 
+    replenish_money, goods_receipt
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.PartnerLifecycleItemsExample" resultMap="BaseResultMap">
     <!--
@@ -163,14 +166,16 @@
       logistics_approve, partner_instance_id, is_deleted, 
       current_step, role_approve, confirm, 
       system, course_status, decorate_status, 
-      confirm_position)
+      confirm_position, replenish_money, goods_receipt
+      )
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{partnerType,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR}, 
       #{settledProtocol,jdbcType=VARCHAR}, #{bond,jdbcType=VARCHAR}, #{quitProtocol,jdbcType=VARCHAR}, 
       #{logisticsApprove,jdbcType=VARCHAR}, #{partnerInstanceId,jdbcType=BIGINT}, #{isDeleted,jdbcType=CHAR}, 
       #{currentStep,jdbcType=VARCHAR}, #{roleApprove,jdbcType=VARCHAR}, #{confirm,jdbcType=VARCHAR}, 
       #{system,jdbcType=VARCHAR}, #{courseStatus,jdbcType=VARCHAR}, #{decorateStatus,jdbcType=VARCHAR}, 
-      #{confirmPosition,jdbcType=VARCHAR})
+      #{confirmPosition,jdbcType=VARCHAR}, #{replenishMoney,jdbcType=VARCHAR}, #{goodsReceipt,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.PartnerLifecycleItems">
     <!--
@@ -239,6 +244,12 @@
       <if test="confirmPosition != null">
         confirm_position,
       </if>
+      <if test="replenishMoney != null">
+        replenish_money,
+      </if>
+      <if test="goodsReceipt != null">
+        goods_receipt,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -297,6 +308,12 @@
       </if>
       <if test="confirmPosition != null">
         #{confirmPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="replenishMoney != null">
+        #{replenishMoney,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsReceipt != null">
+        #{goodsReceipt,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -377,6 +394,12 @@
       <if test="record.confirmPosition != null">
         confirm_position = #{record.confirmPosition,jdbcType=VARCHAR},
       </if>
+      <if test="record.replenishMoney != null">
+        replenish_money = #{record.replenishMoney,jdbcType=VARCHAR},
+      </if>
+      <if test="record.goodsReceipt != null">
+        goods_receipt = #{record.goodsReceipt,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -407,7 +430,9 @@
       system = #{record.system,jdbcType=VARCHAR},
       course_status = #{record.courseStatus,jdbcType=VARCHAR},
       decorate_status = #{record.decorateStatus,jdbcType=VARCHAR},
-      confirm_position = #{record.confirmPosition,jdbcType=VARCHAR}
+      confirm_position = #{record.confirmPosition,jdbcType=VARCHAR},
+      replenish_money = #{record.replenishMoney,jdbcType=VARCHAR},
+      goods_receipt = #{record.goodsReceipt,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -476,6 +501,12 @@
       <if test="confirmPosition != null">
         confirm_position = #{confirmPosition,jdbcType=VARCHAR},
       </if>
+      <if test="replenishMoney != null">
+        replenish_money = #{replenishMoney,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsReceipt != null">
+        goods_receipt = #{goodsReceipt,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -503,7 +534,9 @@
       system = #{system,jdbcType=VARCHAR},
       course_status = #{courseStatus,jdbcType=VARCHAR},
       decorate_status = #{decorateStatus,jdbcType=VARCHAR},
-      confirm_position = #{confirmPosition,jdbcType=VARCHAR}
+      confirm_position = #{confirmPosition,jdbcType=VARCHAR},
+      replenish_money = #{replenishMoney,jdbcType=VARCHAR},
+      goods_receipt = #{goodsReceipt,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
