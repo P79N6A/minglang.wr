@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.common.lang.StringUtil;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.station.enums.StationFixedTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
+import com.taobao.cun.auge.station.validate.StationValidator;
 
 /**
  * 服务站表dto转换
@@ -85,7 +87,7 @@ public class StationConverter {
 			station.setTownDetail(address.getTownDetail());
 			station.setVillage(address.getVillage());
 			station.setVillageDetail(address.getVillageDetail());
-			station.setAddress(StringUtil.trim(address.getAddressDetail()));
+			station.setAddress(StationValidator.doublebyte2singlebyte(StringUtils.trim(address.getAddressDetail())));
 			station.setLat(address.getLat());
 			station.setLng(address.getLng());
 		}
@@ -98,7 +100,7 @@ public class StationConverter {
 		station.setId(stationDto.getId());
 		station.setLogisticsState(stationDto.getLogisticsState() ==null? null:stationDto.getLogisticsState().getCode());
 		station.setManagerId(stationDto.getManagerId());
-		station.setName(stationDto.getName());
+		station.setName(StationValidator.doublebyte2singlebyte(StringUtils.trim(stationDto.getName())));
 		station.setProducts(stationDto.getProducts());
 		station.setProviderId(station.getProviderId());
 		station.setState(stationDto.getState() ==null? null: stationDto.getState().getCode());
