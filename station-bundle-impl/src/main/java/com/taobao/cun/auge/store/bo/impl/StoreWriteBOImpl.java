@@ -487,7 +487,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if (!Strings.isNullOrEmpty(station.getTown())) {
+		if (!Strings.isNullOrEmpty(station.getTown()) && !diamondConfiguredProperties.getIgnoreSupplyStoreTownList().contains(stationId)) {
 			storeDTO.setTown(Integer.parseInt(station.getTown()));
 			storeDTO.setTownName(station.getTownDetail());
 			areaId = station.getTown();

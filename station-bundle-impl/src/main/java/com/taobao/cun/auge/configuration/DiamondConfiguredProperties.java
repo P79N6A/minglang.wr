@@ -90,6 +90,8 @@ public class DiamondConfiguredProperties {
     @Value("${replenishFrozenUrl}")
     private String replenishFrozenUrl;
     
+    @Value("#{'${ignoreSupplyStoreTownList.whitelist}'.split(',')}")
+    private List<Long> ignoreSupplyStoreTownList;
     
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
@@ -216,5 +218,13 @@ public class DiamondConfiguredProperties {
 
 	public void setCheckVendorAlipayAccount(boolean isCheckVendorAlipayAccount) {
 		this.isCheckVendorAlipayAccount = isCheckVendorAlipayAccount;
+	}
+
+	public List<Long> getIgnoreSupplyStoreTownList() {
+		return ignoreSupplyStoreTownList;
+	}
+
+	public void setIgnoreSupplyStoreTownList(List<Long> ignoreSupplyStoreTownList) {
+		this.ignoreSupplyStoreTownList = ignoreSupplyStoreTownList;
 	}
 }
