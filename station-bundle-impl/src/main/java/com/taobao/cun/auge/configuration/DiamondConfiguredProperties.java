@@ -93,6 +93,7 @@ public class DiamondConfiguredProperties {
     @Value("#{'${ignoreSupplyStoreTownList.whitelist}'.split(',')}")
     private List<Long> ignoreSupplyStoreTownList;
     
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}

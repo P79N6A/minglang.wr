@@ -57,7 +57,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		}
 		
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andStationIdEqualTo(stationId).andIsDeletedEqualTo("n");
+		example.createCriteria().andStationIdEqualTo(stationId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoStores)){
 			return null;
@@ -99,7 +99,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Override
 	public StoreDto getStoreDtoByTaobaoUserId(Long taobaoUserId) {
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andTaobaoUserIdEqualTo(taobaoUserId).andIsDeletedEqualTo("n");
+		example.createCriteria().andTaobaoUserIdEqualTo(taobaoUserId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoStores)){
 			return null;
@@ -119,7 +119,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Override
 	public StoreDto getStoreByScmCode(String scmCode) {
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andScmCodeEqualTo(scmCode).andIsDeletedEqualTo("n");
+		example.createCriteria().andScmCodeEqualTo(scmCode).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoStores)){
 			return null;
@@ -138,7 +138,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Override
 	public StoreDto getStoreBySharedStoreId(Long sharedStoreId) {
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andShareStoreIdEqualTo(sharedStoreId).andIsDeletedEqualTo("n");
+		example.createCriteria().andShareStoreIdEqualTo(sharedStoreId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		if(CollectionUtils.isEmpty(cuntaoStores)){
 			return null;
@@ -184,7 +184,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Override
     public List<Long> getAllStoreIdsByStatus(StoreStatus status) {
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andStatusEqualTo(status.getStatus()).andIsDeletedEqualTo("n");
+		example.createCriteria().andStatusEqualTo(status.getStatus()).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		if(cuntaoStores != null){
 			return cuntaoStores.stream().map(store -> store.getShareStoreId()).collect(Collectors.toList());
@@ -196,7 +196,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	public PageDto<StoreDto> queryStoreByPage(StoreQueryPageCondition storeQueryPageCondition) {
 		PageHelper.startPage(storeQueryPageCondition.getPageNum(), storeQueryPageCondition.getPageSize());
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n");
+		Criteria criteria = example.createCriteria().andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		if(StringUtils.isNotEmpty(storeQueryPageCondition.getName())){
 			criteria.andNameLike("%"+storeQueryPageCondition.getName()+"%");
 		}
@@ -236,7 +236,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		for(Station station : stations){
 			StationDto stationDto = StationConverter.toStationDto(station);
 				CuntaoStoreExample example = new CuntaoStoreExample();
-				example.createCriteria().andStationIdEqualTo(station.getId()).andIsDeletedEqualTo("n");
+				example.createCriteria().andStationIdEqualTo(station.getId()).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 				List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 				if(cuntaoStores != null && !cuntaoStores.isEmpty()){
 					CuntaoStore store = cuntaoStores.iterator().next();
@@ -252,7 +252,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 	public List<StoreDto> getStoreBySharedStoreIds(List<Long> sharedStoreIds) {
 		List<StoreDto> stores = Lists.newArrayList();
 		CuntaoStoreExample example = new CuntaoStoreExample();
-		example.createCriteria().andShareStoreIdIn(sharedStoreIds).andIsDeletedEqualTo("n");
+		example.createCriteria().andShareStoreIdIn(sharedStoreIds).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		for(CuntaoStore store :cuntaoStores){
 			Station station = stationBO.getStationById(store.getStationId());
