@@ -133,7 +133,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		//省
 		if(!Strings.isNullOrEmpty(station.getProvince())){
-			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long cityCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (cityCode == null) {
 				cityCode = Long.parseLong(station.getCity());
 			}
@@ -148,13 +148,18 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		//市
 		if(!Strings.isNullOrEmpty(station.getCity())){
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
 				//重庆市特殊处理，共享需要500200标准code
 				if("500100".equals(station.getCity())){
-					storeDTO.setCity(500200);
+					Long countyCode = tb2gbCode(Long.parseLong(station.getCounty()));
+					if(countyCode == null){
+						countyCode = Long.parseLong(station.getCounty());
+					}
+					StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(countyCode);
+					storeDTO.setCity(standardAreaDO.getParentId().intValue());
 				}else{
 					storeDTO.setCity(Integer.parseInt(station.getCity()));
 				}
@@ -164,7 +169,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		//区/县
 		if(!Strings.isNullOrEmpty(station.getCounty())){
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
 			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
 			}else{
@@ -337,7 +342,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		// 省
 		if (!Strings.isNullOrEmpty(station.getProvince())) {
-			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long cityCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (cityCode == null) {
 				cityCode = Long.parseLong(station.getCity());
 			}
@@ -352,13 +357,18 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		// 市
 		if (!Strings.isNullOrEmpty(station.getCity())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
 				//重庆市特殊处理，共享需要500200标准code
 				if("500100".equals(station.getCity())){
-					storeDTO.setCity(500200);
+					Long countyCode = tb2gbCode(Long.parseLong(station.getCounty()));
+					if(countyCode == null){
+						countyCode = Long.parseLong(station.getCounty());
+					}
+					StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(countyCode);
+					storeDTO.setCity(standardAreaDO.getParentId().intValue());
 				}else{
 					storeDTO.setCity(Integer.parseInt(station.getCity()));
 				}
@@ -369,7 +379,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		// 区/县
 		// 区/县
 		if (!Strings.isNullOrEmpty(station.getCounty())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
 			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
 			}else{
@@ -446,7 +456,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		String areaId = null;
 		// 省
 		if (!Strings.isNullOrEmpty(station.getProvince())) {
-			Long cityCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long cityCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (cityCode == null) {
 				cityCode = Long.parseLong(station.getCity());
 			}
@@ -461,13 +471,18 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		// 市
 		if (!Strings.isNullOrEmpty(station.getCity())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCity()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCity()));
 			if (gbCode != null) {
 				storeDTO.setCity(gbCode.intValue());
 			}else{
 				//重庆市特殊处理，共享需要500200标准code
 				if("500100".equals(station.getCity())){
-					storeDTO.setCity(500200);
+					Long countyCode = tb2gbCode(Long.parseLong(station.getCounty()));
+					if(countyCode == null){
+						countyCode = Long.parseLong(station.getCounty());
+					}
+					StandardAreaDO  standardAreaDO = standardAreaService.getStandardAreaDOById(countyCode);
+					storeDTO.setCity(standardAreaDO.getParentId().intValue());
 				}else{
 					storeDTO.setCity(Integer.parseInt(station.getCity()));
 				}
@@ -478,7 +493,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		// 区/县
 		// 区/县
 		if (!Strings.isNullOrEmpty(station.getCounty())) {
-			Long gbCode = defaultDivisionAdapterManager.tbCodeToGbCode(Long.parseLong(station.getCounty()));
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
 			if (gbCode != null) {
 				storeDTO.setDistrict(gbCode.intValue());
 			}else{
@@ -614,6 +629,18 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 	
 	public Long tb2gbCode(Long taobaocode){
+		if(taobaocode == null){
+			return null;
+		}
+		//地址库接口转不出来，人工转一下
+		//江苏淮安清江浦
+		if(taobaocode == 320802l){
+			return 320812l;
+		}
+		//江西九江庐山
+		if(taobaocode == 360427l){
+			return 360483l;
+		}
 		if(taobaocode != null){
 			return defaultDivisionAdapterManager.tbCodeToGbCode(taobaocode);
 		}
