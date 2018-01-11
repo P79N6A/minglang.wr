@@ -42,7 +42,7 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 	public void signProtocol(Long taobaoUserId, ProtocolTypeEnum type, Long businessId, PartnerProtocolRelTargetTypeEnum targetType) {
 		Date now = new Date();
 		signProtocol(businessId, taobaoUserId, type, now, now, null, String.valueOf(taobaoUserId),
-				PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+				targetType);
 	}
 	
 	@Override
