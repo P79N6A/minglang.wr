@@ -161,9 +161,9 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			//如果资格认证通过，招募信息改成  资格认证通过，否则改成面试通过
 			PartnerQualifyApplyDto pqaDto = partnerQualifyApplyService.getPartnerQualifyApplyByTaobaoUserId(instance.getTaobaoUserId());
 			
-			if(PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
+			if(pqaDto != null && PartnerQualifyApplyStatus.AUDIT_PASS.equals(pqaDto.getStatus())) {
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_PASS);
-			}else  if (PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
+			}else  if (pqaDto != null && PartnerQualifyApplyStatus.AUDIT_NOT_PASS.equals(pqaDto.getStatus())){
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
 			}else {
 				partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
