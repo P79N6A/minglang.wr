@@ -12,16 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
-import com.ali.com.google.common.collect.Maps;
 import com.alibaba.ceres.service.Result;
 import com.alibaba.ceres.service.catalog.ProductService;
 import com.alibaba.ceres.service.catalog.model.CatalogProductDto;
@@ -33,6 +23,10 @@ import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import com.ali.com.google.common.collect.Maps;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.common.collect.Lists;
@@ -63,6 +57,14 @@ import com.taobao.cun.crius.bpm.enums.NodeTypeEnum;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("assetFlowService")
 @HSFProvider(serviceInterface = AssetFlowService.class)
@@ -353,7 +355,8 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			}
 			return res;
 	}
-
+	
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void updateFlow(CuntaoAssetFlowDto cuntaoAssetFlowDto, String operator) {
 			Assert.notNull(cuntaoAssetFlowDto);
@@ -375,7 +378,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 				syncAsset(operator, flow, flow.getId());
 			}
 	}
-
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	private void syncAsset(String operator, CuntaoAssetFlow cuntaoAssetFlow, Long assetFlowId) {
 		List<CuntaoAssetFlowDetail> detailList = getDetailList(cuntaoAssetFlow);
 		CuntaoAssetFlowDto assetFlowDto = this.getFlowById(assetFlowId);
@@ -390,12 +393,14 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			return ;
 		}
 		prDto.setPrLineList(prLineList);
-		
+		logger.info("prService.submit.param:",JSONObject.toJSONString(prDto));
 		Result<?> result = prService.submitPr(prDto);
 		//this.updateAssetFlow(flowDto, contextDto);
 		if(!result.isSuccess()) {
+			logger.error("prService.submit.error.param:"+JSONObject.toJSONString(prDto)+":error="+result.getMessage());
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"提交pr失败，失败原因：" + result.getMessage());
 		}
+		logger.info("prService.submit.prId:"+result.getValue());
 	}
 	
 	private List<PrLineDto> preparePrLineList(String operator,List<CuntaoAssetFlowDetail> detailList, CuntaoAssetFlowDto assetFlowDto) {
