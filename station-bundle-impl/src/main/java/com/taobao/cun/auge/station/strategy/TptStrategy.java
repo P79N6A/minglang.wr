@@ -394,8 +394,10 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 			partnerApplyDto.setState(PartnerApplyStateEnum.STATE__QUALIFY_AUDIT_NOT_PASS);
 		}else {
 			partnerApplyDto.setState(PartnerApplyStateEnum.STATE_APPLY_SUCC);
-			PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(partnerApplyDto.getTaobaoUserId());
-			partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
+			PartnerApply partnerApply = partnerApplyBO.getPartnerApplyByUserId(instance.getTaobaoUserId());
+			if(partnerApply != null) {
+				partnerQualifyApplyService.initPartnerQualifyApply(partnerApply.getId(),"system");
+			}
 		}
 			partnerApplyDto.setOperator("system");
 			partnerApplyBO.restartPartnerApplyByUserId(partnerApplyDto);
