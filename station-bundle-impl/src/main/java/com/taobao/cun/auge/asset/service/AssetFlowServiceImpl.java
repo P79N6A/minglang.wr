@@ -208,7 +208,7 @@ public class AssetFlowServiceImpl implements AssetFlowService{
 			Assert.notNull(assetFlowId);
 			CuntaoAssetFlow flow= cuntaoAssetFlowMapper.selectByPrimaryKey(assetFlowId);
 			CuntaoAssetFlowDetailExample example = new CuntaoAssetFlowDetailExample();
-			example.createCriteria().andApplyIdEqualTo(assetFlowId);
+			example.createCriteria().andApplyIdEqualTo(assetFlowId).andIsDeletedEqualTo("n");;
 			List<CuntaoAssetFlowDetail> details= cuntaoAssetFlowDetailMapper.selectByExample(example);
 			
 			CuntaoAssetFlowDto convertToflowDto =this.convertToflowDto(flow);
