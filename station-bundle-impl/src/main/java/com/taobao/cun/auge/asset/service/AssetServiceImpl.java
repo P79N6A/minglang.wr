@@ -303,6 +303,6 @@ public class AssetServiceImpl implements AssetService{
     @Override
     public void xxxxxx(List<Long> uids) {
         // TODO Auto-generated method stub
-        
+        assetSynBO.xxxxx(uids);
     }
 }
