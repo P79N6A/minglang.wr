@@ -267,7 +267,7 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	  }
 	 
 	@Bean(initMethod = "init")
-	  public HSFSpringConsumerBean mmpAuthReadService(@Value("${hsf.consumer.version.cainiao.countyDomainWriteService}") String version) {
+	  public HSFSpringConsumerBean mmpAuthReadService(@Value("1.0.0") String version) {
 	    return getConsumerBean(MmpAuthReadService.class, HSFGroup.HSF, version, 3000);
 	  }
 	
