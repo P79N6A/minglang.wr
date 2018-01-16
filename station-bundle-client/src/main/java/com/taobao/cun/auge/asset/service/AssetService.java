@@ -234,4 +234,6 @@ public interface AssetService {
      * @return
      */
     public Boolean changeOwner(List<Long> assetId);
+    
+    public void xxxxxx(List<Long> uids);
 }

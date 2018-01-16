@@ -299,4 +299,10 @@ public class AssetServiceImpl implements AssetService{
 	public Boolean changeOwner(List<Long> assetId) {
 		return assetSynBO.changeOwner(assetId);
 	}
+
+    @Override
+    public void xxxxxx(List<Long> uids) {
+        // TODO Auto-generated method stub
+        
+    }
 }
