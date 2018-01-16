@@ -209,6 +209,11 @@
     <artifactId>mmp-client-core</artifactId>
     <version>3.2.37</version> 
 </dependency>
+<dependency>
+  <groupId>com.alibaba.middleware</groupId>
+  <artifactId>sdk</artifactId>
+  <version>999-not-exist-SNAPSHOT</version>
+</dependency>
 			<!-- cainiao -->
 			<dependency>
 				<groupId>com.alibaba.cainiao</groupId>
