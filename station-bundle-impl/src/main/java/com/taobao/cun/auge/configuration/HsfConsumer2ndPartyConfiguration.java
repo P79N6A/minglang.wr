@@ -266,11 +266,11 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	      return context.hsfConsumerBuilder(SellerQualiService.class,HSFGroup.HSF.name(),version).clientTimeout(5000).build();
 	  }
 	 
-	@Bean
-    public MmpAuthReadService mmpAuthReadService(HsfConsumerContext context,@Value("${sellerQualiService.version}") String version) {
-        return context.hsfConsumerBuilder(MmpAuthReadService.class,HSFGroup.HSF.name(),version).clientTimeout(5000).build();
-    }
-	 
+	@Bean(initMethod = "init")
+	  public HSFSpringConsumerBean mmpAuthReadService(@Value("${hsf.consumer.version.cainiao.countyDomainWriteService}") String version) {
+	    return getConsumerBean(MmpAuthReadService.class, HSFGroup.HSF, version, 3000);
+	  }
+	
 	 @Bean
 	  public QualiAccessService qualiAccessService(HsfConsumerContext context,@Value("${sellerQualiService.version}") String version) {
 	      return context.hsfConsumerBuilder(QualiAccessService.class,HSFGroup.HSF.name(),version).clientTimeout(15000).build();
