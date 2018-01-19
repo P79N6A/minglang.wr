@@ -20,6 +20,8 @@ public class StationExtExample {
     
     //合伙人类型
     private String type;
+  //合伙人类型列表
+    private List<String> types;
     
     private Integer pageStart; // 分页参数
 
@@ -87,5 +89,13 @@ public class StationExtExample {
 
 	public void setStatuses(List<String> statuses) {
 		this.statuses = statuses;
+	}
+
+	public List<String> getTypes() {
+		return types;
+	}
+
+	public void setTypes(List<String> types) {
+		this.types = types;
 	}
 }

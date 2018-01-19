@@ -724,6 +724,12 @@
 	    <if test="status != null and status != ''" >
 	      and s.status = #{status,jdbcType=VARCHAR}
 	    </if>
+	    <if test="types != null" >
+			and instance.type in
+			<foreach item="item" collection="types" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		<if test="type != null and type != ''">
 			and instance.type = #{type,jdbcType=VARCHAR}
 		</if>
