@@ -46,6 +46,10 @@ public class StationCondition extends OperatorDto implements Serializable {
 	 * 村点状态列表
 	 */
 	private List<StationStatusEnum> stationStatuses;
+	/**
+	 * 合伙人类型列表
+	 */
+	private List<PartnerInstanceTypeEnum> types;
 
 	private Integer pageStart; // 分页参数
 
@@ -129,5 +133,13 @@ public class StationCondition extends OperatorDto implements Serializable {
 
 	public void setType(PartnerInstanceTypeEnum type) {
 		this.type = type;
+	}
+
+	public List<PartnerInstanceTypeEnum> getTypes() {
+		return types;
+	}
+
+	public void setTypes(List<PartnerInstanceTypeEnum> types) {
+		this.types = types;
 	}
 }

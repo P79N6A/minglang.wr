@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.common.lang.StringUtil;
+
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.station.condition.StationCondition;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.util.CollectionUtil;
 
@@ -24,6 +26,10 @@ public final class StationExtExampleConverter {
 
 		if (CollectionUtil.isNotEmpty(stationCondition.getStationStatuses())) {
 			stationExtExample.setStatuses(extractStationStatuses(stationCondition.getStationStatuses()));
+		}
+		
+		if (CollectionUtil.isNotEmpty(stationCondition.getTypes())) {
+			stationExtExample.setTypes(extractTypes(stationCondition.getTypes()));
 		}
 
 		if (null != stationCondition.getStationStatusEnum()) {
@@ -47,6 +53,20 @@ public final class StationExtExampleConverter {
 		}
 		List<String> statuses = new ArrayList<String>(statusEnums.size());
 		for (StationStatusEnum statusEnum : statusEnums) {
+			if (null == statusEnum) {
+				continue;
+			}
+			statuses.add(statusEnum.getCode());
+		}
+		return statuses;
+	}
+	
+	private static List<String> extractTypes(List<PartnerInstanceTypeEnum> typeEnums) {
+		if (CollectionUtil.isEmpty(typeEnums)) {
+			return Collections.<String> emptyList();
+		}
+		List<String> statuses = new ArrayList<String>(typeEnums.size());
+		for (PartnerInstanceTypeEnum statusEnum : typeEnums) {
 			if (null == statusEnum) {
 				continue;
 			}
