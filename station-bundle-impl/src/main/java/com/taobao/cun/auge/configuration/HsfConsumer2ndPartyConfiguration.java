@@ -51,6 +51,7 @@ import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.kfc.core.search.Searcher;
 import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
@@ -359,6 +360,12 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return context.hsfConsumerBuilder(NamelistMatchService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 				.build();
 	}
+	
+	@Bean
+    public Searcher kfcSearchService(HsfConsumerContext context, @Value("${namelistMatchService.version}") String version) {
+        return context.hsfConsumerBuilder(Searcher.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                .build();
+    }
 	
 	@Bean
 	public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
