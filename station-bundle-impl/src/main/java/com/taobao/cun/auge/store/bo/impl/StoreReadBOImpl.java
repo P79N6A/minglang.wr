@@ -200,15 +200,15 @@ public class StoreReadBOImpl implements StoreReadBO {
 		if(StringUtils.isNotEmpty(storeQueryPageCondition.getName())){
 			criteria.andNameLike("%"+storeQueryPageCondition.getName()+"%");
 		}
+		if(CollectionUtils.isNotEmpty(storeQueryPageCondition.getStoreCategorys())){
+			criteria.andStoreCategoryIn(storeQueryPageCondition.getStoreCategorys());
+		}
 		Page<CuntaoStore> cuntaoStores = (Page<CuntaoStore>) cuntaoStoreMapper.selectByExample(example);
 		List<StoreDto> stores = Lists.newArrayList();
 		for(CuntaoStore store : cuntaoStores){
 			Station station = stationBO.getStationById(store.getStationId());
 			StationDto stationDto = StationConverter.toStationDto(station);
 			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
-			if(partner == null){
-				continue;
-			}
 			StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
 			stores.add(storeDto);
 		}
