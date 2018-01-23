@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -35,6 +36,9 @@ public class LifeCycleValidator {
 	@Autowired
     StationBO stationBO;
 	
+	@Autowired
+	private KFCServiceConfig kfcServiceConfig;
+	
 	public void validateSettling(PartnerInstanceDto partnerInstanceDto) throws AugeBusinessException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
@@ -45,7 +49,7 @@ public class LifeCycleValidator {
 		ValidateUtils.notNull(stationDto);
 		StationValidator.validateStationInfo(stationDto);
 		PartnerValidator.validatePartnerInfo(partnerDto);
-
+		stationModelBusCheck(partnerInstanceDto);
 		OperatorDto operator = new OperatorDto();
 		operator.copyOperatorDto(partnerInstanceDto);
 		PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(),
@@ -80,6 +84,16 @@ public class LifeCycleValidator {
 		}
 	}
 	
-	
+	//名称与地址的业务校验KFC、村小二名称
+	private void stationModelBusCheck(PartnerInstanceDto ins){
+	    StringBuffer sb = new StringBuffer();
+	    sb.append(ins.getStationDto().getName());
+	    sb.append(ins.getStationDto().getAddress().getAddressDetail());
+	    if(kfcServiceConfig.isProhibitedWord(sb.toString())){
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "KFC检测有异常："+kfcServiceConfig.kfcCheck(sb.toString()).get("word"));
+	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址不可以包含村小二名称");
+	    }
+	}
 	
 }

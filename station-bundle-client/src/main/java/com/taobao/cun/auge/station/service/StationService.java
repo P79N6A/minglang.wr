@@ -27,4 +27,11 @@ public interface StationService {
      * @param stationDto
      */
     public void applyLogisticAbility(StationDto stationDto);
+    
+    /**
+     * 根据站点模式获取站点名称后缀
+     * 
+     * @param stationDto
+     */
+    public String getStationNameSuffix(Long stationId,String key);
 }

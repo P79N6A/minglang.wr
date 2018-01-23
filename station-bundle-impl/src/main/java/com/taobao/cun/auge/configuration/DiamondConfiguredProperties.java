@@ -93,6 +93,8 @@ public class DiamondConfiguredProperties {
     @Value("#{'${ignoreSupplyStoreTownList.whitelist}'.split(',')}")
     private List<Long> ignoreSupplyStoreTownList;
     
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${station.name.map}')}")
+    private Map<String, String> stationNameMap;
     
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
@@ -228,4 +230,12 @@ public class DiamondConfiguredProperties {
 	public void setIgnoreSupplyStoreTownList(List<Long> ignoreSupplyStoreTownList) {
 		this.ignoreSupplyStoreTownList = ignoreSupplyStoreTownList;
 	}
+
+    public Map<String, String> getStationNameMap() {
+        return stationNameMap;
+    }
+
+    public void setStationNameMap(Map<String, String> stationNameMap) {
+        this.stationNameMap = stationNameMap;
+    }
 }

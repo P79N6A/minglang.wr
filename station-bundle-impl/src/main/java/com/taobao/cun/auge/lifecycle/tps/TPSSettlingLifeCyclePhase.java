@@ -26,6 +26,7 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class TPSSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
+              StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
               String storeCategory= partnerInstanceDto.getStationDto().getFeature().get("storeCategory");
               Assert.notNull(storeCategory,"storeCategroy is  null");
               StationNumConfigTypeEnum typeEnum = null;

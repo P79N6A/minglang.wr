@@ -38,6 +38,7 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.validate.StationValidator;
 
 /**
  * 村小二入驻中阶段组件
@@ -67,7 +68,9 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
-        	  String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
+              //村名基础校验
+              StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
+              String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
               partnerInstanceDto.getStationDto().setStationNum(stationNum);
               stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
               stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 

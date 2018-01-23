@@ -3,14 +3,10 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -25,14 +21,22 @@ import com.taobao.cun.auge.station.convert.StationEventConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("stationService")
 @HSFProvider(serviceInterface = StationService.class)
@@ -57,6 +61,9 @@ public class StationServiceImpl implements StationService {
 	
     @Autowired
     AppResourceService appResourceService;
+    
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -156,5 +163,25 @@ public class StationServiceImpl implements StationService {
 	       sb.append(res.get("stVAS"));
 	       appResourceService.configAppResource("station_logstic_ability", stationDto.getId().toString(), sb.toString(), false, stationDto.getOperator());
 	    }
+    }
+
+	//根据站点模式获取站点名称后缀
+    public String getStationNameSuffix(Long stationId,String key) {
+        //stationId为空代表新增的场景，由外围参数决定返回类型TPS:门店   v4:优品服务站  v3:农村淘宝服务站
+        if(stationId == null || stationId == 0L){
+            return diamondConfiguredProperties.getStationNameMap().get(key);
+        }else{
+            PartnerStationRel partnerStationRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
+            if(partnerStationRel == null){
+                return null;
+            } 
+            if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TPS.getCode())){
+               return diamondConfiguredProperties.getStationNameMap().get(PartnerInstanceTypeEnum.TPS.getCode());
+            }else if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TP.getCode()) && StationModeEnum.V4.getCode().equals(partnerStationRel.getMode())){
+               return diamondConfiguredProperties.getStationNameMap().get(StationModeEnum.V4.getCode());
+            }else{
+               return diamondConfiguredProperties.getStationNameMap().get(StationModeEnum.V3.getCode());
+            }
+        }
     }
 }

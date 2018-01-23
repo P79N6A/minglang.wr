@@ -100,7 +100,8 @@ public class StationConverter {
 		station.setId(stationDto.getId());
 		station.setLogisticsState(stationDto.getLogisticsState() ==null? null:stationDto.getLogisticsState().getCode());
 		station.setManagerId(stationDto.getManagerId());
-		station.setName(StationValidator.doublebyte2singlebyte(StringUtils.trim(stationDto.getName())));
+		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
+		station.setName(StationValidator.doublebyte2singlebyte(StringUtils.trim(stationDto.getName()))+nameSuffix);
 		station.setProducts(stationDto.getProducts());
 		station.setProviderId(station.getProviderId());
 		station.setState(stationDto.getState() ==null? null: stationDto.getState().getCode());
@@ -149,5 +150,5 @@ public class StationConverter {
 
 		return list;
 	}
-
+	
 }
