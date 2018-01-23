@@ -42,9 +42,8 @@ public class ProcessServiceImpl implements ProcessService {
 	IncentiveAuditFlowService incentiveAuditFlowService;
 
 	/**
-	 * 启动停业、退出流程审批流程
+	 * 启动村站相关审批流程
 	 */
-	@Override
 	public void startApproveProcess(StartProcessDto startProcessDto) {
 		ProcessBusinessEnum business = startProcessDto.getBusiness();
 		String businessCode = business.getCode();
@@ -52,7 +51,6 @@ public class ProcessServiceImpl implements ProcessService {
 		String applierId = startProcessDto.getOperator();
 		OperatorTypeEnum operatorType = startProcessDto.getOperatorType();
 
-		// 创建退出村点任务流程
 		Map<String, String> initData = new HashMap<String, String>(FeatureUtil.toMap(startProcessDto.getJsonParams()));
 		Long orgId = null != startProcessDto.getBusinessOrgId() ? startProcessDto.getBusinessOrgId()
 				: startProcessDto.getOperatorOrgId();
