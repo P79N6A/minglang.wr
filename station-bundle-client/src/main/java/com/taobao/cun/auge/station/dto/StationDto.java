@@ -141,7 +141,7 @@ public class StationDto extends OperatorDto implements Serializable{
 	
 	private String nameSuffix;
 	
-	private boolean correctName;
+	private String invalidNameMsg;
 	
 	public Long getId() {
 		return id;
@@ -374,11 +374,11 @@ public class StationDto extends OperatorDto implements Serializable{
         this.nameSuffix = nameSuffix;
     }
 
-    public boolean isCorrectName() {
-        return correctName;
+    public String getInvalidNameMsg() {
+        return invalidNameMsg;
     }
 
-    public void setCorrectName(boolean correctName) {
-        this.correctName = correctName;
+    public void setInvalidNameMsg(String invalidNameMsg) {
+        this.invalidNameMsg = invalidNameMsg;
     }
 }

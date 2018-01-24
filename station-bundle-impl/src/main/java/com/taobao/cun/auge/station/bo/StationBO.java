@@ -100,4 +100,13 @@ public interface StationBO {
 	 * @
 	 */
 	public Page<Station> getStations(StationCondition stationCondition);
+	
+	/**
+     * 同一个省村站名称不能相同
+     * 
+     * @param stationName、province
+     * @return
+     * @
+     */
+    public int getSameNameInProvinceCnt(String stationName,String province);
 }

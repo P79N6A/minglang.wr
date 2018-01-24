@@ -76,6 +76,7 @@ public final class StationValidator {
         nameInvalidWord.add("体验店");
         nameInvalidWord.add("电器");
         nameInvalidWord.add("母婴");
+        nameInvalidWord.add("招商中");
         addressInvalidWord.addAll(generalInvalidWord);
         addressInvalidWord.add("地址");
     }

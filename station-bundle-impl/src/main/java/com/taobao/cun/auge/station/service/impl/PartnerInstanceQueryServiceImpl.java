@@ -95,6 +95,7 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
 import com.taobao.cun.auge.station.util.PartnerInstanceStateEnumUtil;
 import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.testuser.TestUserService;
@@ -308,6 +309,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
         buildStoreInfo(success.getItems());
+        buildNameRuleFlag(success.getItems());
         return success;
     }
 
@@ -336,6 +338,21 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     			 }
         	 }
     	}
+    }
+    
+    private void buildNameRuleFlag(List<PartnerInstanceDto> partnerInstances){
+        if(CollectionUtils.isNotEmpty(partnerInstances)){
+             for (PartnerInstanceDto instance : partnerInstances) {
+                     try {
+                        //符合规格的没有异常标识，否则信息塞入DTO供前台使用
+                        if(StationValidator.nameFormatCheck(instance.getStationDto().getName())){
+                             instance.getStationDto().setInvalidNameMsg("");
+                         }
+                    } catch (AugeBusinessException e) {
+                        instance.getStationDto().setInvalidNameMsg(e.getMessage());;
+                    }
+             }
+        }
     }
     
     private void buildLifecycleItems(Page<PartnerInstance> page) {

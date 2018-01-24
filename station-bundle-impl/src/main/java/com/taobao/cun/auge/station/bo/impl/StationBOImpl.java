@@ -193,4 +193,16 @@ public class StationBOImpl implements StationBO {
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
 		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
 	}
+
+    public int getSameNameInProvinceCnt(String stationName, String province) {
+        ValidateUtils.notNull(stationName);
+        ValidateUtils.notNull(province);
+        StationExample example = new StationExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andStationNumEqualTo(stationName);
+        criteria.andProvinceEqualTo(province);
+        criteria.andStatusNotIn(Lists.newArrayList(StationStatusEnum.QUIT.getCode(),StationStatusEnum.INVALID.getCode()));
+        return ResultUtils.selectCount(stationMapper.selectByExample(example));
+    }
 }
