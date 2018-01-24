@@ -2,6 +2,11 @@ package com.taobao.cun.auge.station.convert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 
 import com.taobao.cun.auge.dal.domain.StationModifyApply;
 import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
@@ -19,7 +24,7 @@ public class StationModifyApplyConverter {
 		
 		StationModifyApplyDto.setId(stationModifyApply.getId());
 		StationModifyApplyDto.setBusiType(StationModifyApplyBusitypeEnum.valueof(stationModifyApply.getBusiType()));
-		StationModifyApplyDto.setInfo(stationModifyApply.getInfo());
+		StationModifyApplyDto.setInfoMap(JSON.parseObject(stationModifyApply.getInfo(), new TypeReference<Map<String,String>>(){}));
 		StationModifyApplyDto.setStationId(stationModifyApply.getStationId());
 		StationModifyApplyDto.setStatus(StationModifyApplyStatusEnum.valueof(stationModifyApply.getStatus()));
 		return StationModifyApplyDto;
@@ -33,7 +38,7 @@ public class StationModifyApplyConverter {
 		StationModifyApply stationModifyApply = new StationModifyApply();
 		stationModifyApply.setId(stationModifyApplyDto.getId());
 		stationModifyApply.setBusiType(stationModifyApplyDto.getBusiType()== null? null:stationModifyApplyDto.getBusiType().getCode());
-		stationModifyApply.setInfo(stationModifyApplyDto.getInfo());
+		stationModifyApply.setInfo(JSONObject.toJSONString(stationModifyApplyDto.getInfoMap()));
 		stationModifyApply.setStationId(stationModifyApplyDto.getStationId());
 		stationModifyApply.setStatus(stationModifyApplyDto.getStatus()== null? null:stationModifyApplyDto.getStatus().getCode());
 		

@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.station.dto;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import com.taobao.cun.auge.common.OperatorDto;
-
 import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 
@@ -28,9 +28,9 @@ public class StationModifyApplyDto  extends OperatorDto implements Serializable 
     private Long stationId;
 
     /**
-     * 申请的信息 json格式
+     * 申请的信息 
      */
-    private String info;
+    private Map<String,String> infoMap;
 
     /**
      *  状态
@@ -61,12 +61,12 @@ public class StationModifyApplyDto  extends OperatorDto implements Serializable 
 		this.stationId = stationId;
 	}
 
-	public String getInfo() {
-		return info;
+	public Map<String, String> getInfoMap() {
+		return infoMap;
 	}
 
-	public void setInfo(String info) {
-		this.info = info;
+	public void setInfoMap(Map<String, String> infoMap) {
+		this.infoMap = infoMap;
 	}
 
 	public StationModifyApplyStatusEnum getStatus() {

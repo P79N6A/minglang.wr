@@ -1,7 +1,8 @@
 package com.taobao.cun.auge.station.bo;
 
-import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
+import com.taobao.cun.auge.dal.domain.StationModifyApply;
 
+import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 
@@ -19,7 +20,8 @@ public interface StationModifyApplyBO {
   /**
    * 审批,监听工作流使用
    */
-  public void audit(Long id,StationModifyApplyStatusEnum status);
+  public void auditForName(Long id,StationModifyApplyStatusEnum status);
+  
   
   /**
    * 查询
@@ -27,10 +29,16 @@ public interface StationModifyApplyBO {
    * @param stationId
    * @return
    */
-  public StationModifyApplyDto getApplyInfoByType(StationModifyApplyBusitypeEnum type,Long stationId);
+  public StationModifyApplyDto getApplyInfoByStationId(StationModifyApplyBusitypeEnum type,Long stationId,StationModifyApplyStatusEnum status);
   /**
    * 查询
    * @return
    */
-  public StationModifyApplyDto getApplyInfoById(Long Id);
+  public StationModifyApplyDto getApplyInfoById(Long id);
+  
+  /**
+   * 查询
+   * @return
+   */
+  public StationModifyApply getStationModifyApplyById(Long id);
 }

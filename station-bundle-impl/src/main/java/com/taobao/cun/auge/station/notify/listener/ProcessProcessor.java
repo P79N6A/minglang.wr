@@ -6,8 +6,10 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
+import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 
+import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
@@ -119,6 +121,9 @@ public class ProcessProcessor {
 	
 	@Autowired
 	private PartnerQualifyApplyService partnerQualifyApplyService;
+	
+	@Autowired
+	private StationModifyApplyBO stationModifyApplyBO;
 
 	@Autowired
 	AssetService assetService;
@@ -181,6 +186,12 @@ public class ProcessProcessor {
 				pqaDto.setId(businessId);
 				pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
 				partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
+			}else if (ProcessBusinessEnum.stationInfoApply.getCode().equals(businessCode)) {
+				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+					stationModifyApplyBO.auditForName(businessId, StationModifyApplyStatusEnum.AUDIT_PASS);
+				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					stationModifyApplyBO.auditForName(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
+				}
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
