@@ -29,6 +29,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.slf4j.Logger;
@@ -64,6 +66,9 @@ public class StationServiceImpl implements StationService {
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+    private StoreReadBO storeReadBO;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -167,7 +172,7 @@ public class StationServiceImpl implements StationService {
 
 	//根据站点模式获取站点名称后缀
     public String getStationNameSuffix(Long stationId,String key) {
-        //stationId为空代表新增的场景，由外围参数决定返回类型TPS:门店   v4:优品服务站  v3:农村淘宝服务站
+        //stationId为空代表新增的场景，由外围参数决定返回类型MOMBABY|ELEC|FMCG:门店   v4:优品服务站  v3:农村淘宝服务站
         if(stationId == null || stationId == 0L){
             return diamondConfiguredProperties.getStationNameMap().get(key);
         }else{
@@ -176,7 +181,11 @@ public class StationServiceImpl implements StationService {
                 return null;
             } 
             if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TPS.getCode())){
-               return diamondConfiguredProperties.getStationNameMap().get(PartnerInstanceTypeEnum.TPS.getCode());
+                StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+                if(store == null){
+                    return "";
+                }
+                return diamondConfiguredProperties.getStationNameMap().get(store.getCategory());
             }else if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TP.getCode()) && StationModeEnum.V4.getCode().equals(partnerStationRel.getMode())){
                return diamondConfiguredProperties.getStationNameMap().get(StationModeEnum.V4.getCode());
             }else{
