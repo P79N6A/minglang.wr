@@ -34,4 +34,11 @@ public interface StationService {
      * @param stationDto
      */
     public String getStationNameSuffix(Long stationId,String key);
+    
+    /**
+     * 村站名称是否符合标准
+     * 
+     * @param instanceId、name
+     */
+    public boolean getStationNameValidateRule(Long instanceId,String name);
 }
