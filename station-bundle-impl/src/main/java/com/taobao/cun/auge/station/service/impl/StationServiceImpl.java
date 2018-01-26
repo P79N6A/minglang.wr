@@ -6,6 +6,7 @@ import java.util.Map;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
@@ -13,12 +14,14 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationStatusChangeEvent;
 import com.taobao.cun.auge.event.enums.StationStatusChangeEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.check.StationChecker;
 import com.taobao.cun.auge.station.convert.StationEventConverter;
 import com.taobao.cun.auge.station.dto.ApproveProcessTask;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -29,6 +32,9 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
+import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.store.bo.StoreReadBO;
+import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.slf4j.Logger;
@@ -64,6 +70,15 @@ public class StationServiceImpl implements StationService {
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+    private StoreReadBO storeReadBO;
+    
+    @Autowired
+    private LifeCycleValidator lifeCycleValidator;
+    
+    @Autowired
+    private KFCServiceConfig kfcServiceConfig;
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -167,7 +182,7 @@ public class StationServiceImpl implements StationService {
 
 	//根据站点模式获取站点名称后缀
     public String getStationNameSuffix(Long stationId,String key) {
-        //stationId为空代表新增的场景，由外围参数决定返回类型TPS:门店   v4:优品服务站  v3:农村淘宝服务站
+        //stationId为空代表新增的场景，由外围参数决定返回类型MOMBABY|ELEC|FMCG:门店   v4:优品服务站  v3:农村淘宝服务站
         if(stationId == null || stationId == 0L){
             return diamondConfiguredProperties.getStationNameMap().get(key);
         }else{
@@ -176,12 +191,27 @@ public class StationServiceImpl implements StationService {
                 return null;
             } 
             if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TPS.getCode())){
-               return diamondConfiguredProperties.getStationNameMap().get(PartnerInstanceTypeEnum.TPS.getCode());
+                StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+                if(store == null){
+                    return "";
+                }
+                return diamondConfiguredProperties.getStationNameMap().get(store.getCategory());
             }else if(partnerStationRel.getType().equals(PartnerInstanceTypeEnum.TP.getCode()) && StationModeEnum.V4.getCode().equals(partnerStationRel.getMode())){
                return diamondConfiguredProperties.getStationNameMap().get(StationModeEnum.V4.getCode());
             }else{
                return diamondConfiguredProperties.getStationNameMap().get(StationModeEnum.V3.getCode());
             }
         }
+    }
+
+    public boolean getStationNameValidateRule(Long instanceId,String name) {
+        StationValidator.nameFormatCheck(name);
+        PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        if(kfcServiceConfig.isProhibitedWord(name)){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "KFC检测有异常："+kfcServiceConfig.kfcCheck(name).get("word"));
+        }if(name.contains(ins.getPartnerDto().getName())){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称不可以包含村小二名称");
+        }
+        return true;
     }
 }

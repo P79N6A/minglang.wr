@@ -85,7 +85,7 @@ public class LifeCycleValidator {
 	}
 	
 	//名称与地址的业务校验KFC、村小二名称
-	private void stationModelBusCheck(PartnerInstanceDto ins){
+	public void stationModelBusCheck(PartnerInstanceDto ins){
 	    StringBuffer sb = new StringBuffer();
 	    sb.append(ins.getStationDto().getName());
 	    sb.append(ins.getStationDto().getAddress().getAddressDetail());

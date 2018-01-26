@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.station.validate;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,12 +10,8 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class StationValidator {
-	
-	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
 	
 	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
 	
