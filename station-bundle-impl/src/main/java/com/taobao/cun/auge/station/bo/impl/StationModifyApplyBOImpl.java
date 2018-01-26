@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.client.exception.DefaultServiceException;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -47,6 +49,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
     @Autowired
     private  PartnerInstanceBO partnerInstanceBO;
 	
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addStationModifyApply(StationModifyApplyDto dto) {
 		StationModifyApply s = StationModifyApplyConverter.toStationModifyApply(dto);
@@ -66,7 +69,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 		
 		return s.getId();
 	}
-
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void auditForName(Long id, StationModifyApplyStatusEnum status) {
 		ValidateUtils.notNull(id);
