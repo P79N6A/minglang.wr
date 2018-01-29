@@ -73,7 +73,6 @@ public final class StationValidator {
         nameInvalidWord.add("母婴");
         nameInvalidWord.add("招商中");
         addressInvalidWord.addAll(generalInvalidWord);
-        addressInvalidWord.add("地址");
     }
     
 	private StationValidator(){
