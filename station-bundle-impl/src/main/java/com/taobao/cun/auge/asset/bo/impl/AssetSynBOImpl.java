@@ -505,10 +505,10 @@ public class AssetSynBOImpl implements AssetSynBO {
 		
 		  AssetExample assetExample = new AssetExample();
 	        if (assetId != null) {
-	        	 assetExample.createCriteria().andIsDeletedEqualTo("n").andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdIn(assetId);
+	        	 assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetId);//.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode())
 	        }else {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		            .andOwnerOrgIdEqualTo(orgId);//.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
 	        }
 	        List<Asset> assetList = assetMapper.selectByExample(assetExample);
 	        
