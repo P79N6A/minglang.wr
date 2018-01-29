@@ -157,7 +157,7 @@ public final class StationValidator {
         }
         for (String vw : nameInvalidWord) {
             if (name.indexOf(vw) >= 0) {
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"名称不能含有特殊关键字(优品、服务站、农村淘宝、村淘、天猫、体验店、电器、母婴、附近、旁边)");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"名称不能含有特殊关键字"+vw);
             }
         }
         if(!isAllChinese(name)){
@@ -187,7 +187,7 @@ public final class StationValidator {
         String loweraddr = address.getAddressDetail();
         for(String vm : addressInvalidWord){
             if(loweraddr.indexOf(vm) >= 0){
-                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能含有特殊关键字http、www、com等");
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能含有特殊关键字"+vm);
             }
         }
         return true;
