@@ -101,7 +101,7 @@ public class StationConverter {
 		station.setLogisticsState(stationDto.getLogisticsState() ==null? null:stationDto.getLogisticsState().getCode());
 		station.setManagerId(stationDto.getManagerId());
 		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
-		station.setName(StationValidator.doublebyte2singlebyte(StringUtils.trim(stationDto.getName()))+nameSuffix);
+		station.setName(stationDto.getName() == null?null :StationValidator.doublebyte2singlebyte(StringUtils.trim(stationDto.getName()))+nameSuffix);
 		station.setProducts(stationDto.getProducts());
 		station.setProviderId(station.getProviderId());
 		station.setState(stationDto.getState() ==null? null: stationDto.getState().getCode());
