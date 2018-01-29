@@ -96,6 +96,9 @@ public class DiamondConfiguredProperties {
     @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${station.name.map}')}")
     private Map<String, String> stationNameMap;
     
+    @Value("#{'${stationNameSuffix}'.split(',')}")
+    private List<String> stationNameSuffix;
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -237,5 +240,13 @@ public class DiamondConfiguredProperties {
 
     public void setStationNameMap(Map<String, String> stationNameMap) {
         this.stationNameMap = stationNameMap;
+    }
+
+    public List<String> getStationNameSuffix() {
+        return stationNameSuffix;
+    }
+
+    public void setStationNameSuffix(List<String> stationNameSuffix) {
+        this.stationNameSuffix = stationNameSuffix;
     }
 }

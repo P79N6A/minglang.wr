@@ -176,7 +176,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
-
+    
 
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -342,12 +342,26 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     private void buildNameRuleFlag(List<PartnerInstanceDto> partnerInstances){
         if(CollectionUtils.isNotEmpty(partnerInstances)){
+             List<String> stationNameSuffix =  diamondConfiguredProperties.getStationNameSuffix();
+             boolean isRule = false;
              for (PartnerInstanceDto instance : partnerInstances) {
                      try {
-                        //符合规格的没有异常标识，否则信息塞入DTO供前台使用
-                        if(StationValidator.nameFormatCheck(instance.getStationDto().getName())){
-                             instance.getStationDto().setInvalidNameMsg("");
+                         //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
+                         String checkName = instance.getStationDto().getName();
+                         for(String rs : stationNameSuffix){
+                             if(checkName.lastIndexOf(rs) >= 0){
+                                 isRule = true;
+                                 break;
+                             }
                          }
+                         if(isRule){
+                             instance.getStationDto().setInvalidNameMsg("");
+                         }else{
+                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
+                            if(StationValidator.nameFormatCheck(checkName)){
+                                 instance.getStationDto().setInvalidNameMsg("");
+                             }
+                        }
                     } catch (AugeBusinessException e) {
                         instance.getStationDto().setInvalidNameMsg(e.getMessage());;
                     }
