@@ -52,6 +52,9 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addStationModifyApply(StationModifyApplyDto dto) {
+    	if (getApplyInfoByStationId(dto.getBusiType(),  dto.getStationId(), StationModifyApplyStatusEnum.AUDITING) != null) {
+    		throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前村点修改审批已提交");
+    	}
 		StationModifyApply s = StationModifyApplyConverter.toStationModifyApply(dto);
 		DomainUtils.beforeInsert(s, dto.getOperator());
 		stationModifyApplyMapper.insert(s);
