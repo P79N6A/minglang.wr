@@ -56,6 +56,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
     		throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前村点修改审批已提交");
     	}
 		StationModifyApply s = StationModifyApplyConverter.toStationModifyApply(dto);
+		s.setStatus(StationModifyApplyStatusEnum.AUDITING.getCode());
 		DomainUtils.beforeInsert(s, dto.getOperator());
 		stationModifyApplyMapper.insert(s);
 		
