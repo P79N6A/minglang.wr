@@ -6,8 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.alibaba.common.lang.StringUtil;
 
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-
 import com.ali.com.google.common.collect.Lists;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -19,6 +17,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
@@ -42,6 +41,7 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.condition.PartnerInstanceCondition;
 import com.taobao.cun.auge.station.condition.PartnerInstancePageCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
@@ -71,6 +71,7 @@ import com.taobao.cun.auge.station.dto.ProtocolSigningInfoDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.dto.ReplenishDto;
 import com.taobao.cun.auge.station.dto.StationDto;
+import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
 import com.taobao.cun.auge.station.dto.StationStatisticDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -88,6 +89,8 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.ReplenishStatusEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.enums.StationModeEnum;
+import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
+import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
@@ -176,6 +179,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+    private StationModifyApplyBO stationModifyApplyBO;
     
 
     private boolean isC2BTestUser(Long taobaoUserId) {
@@ -346,6 +352,12 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              boolean isRule = false;
              for (PartnerInstanceDto instance : partnerInstances) {
                      try {
+                    	 //如果提交了审批流程中， 设置信息为auditing
+                    	 StationModifyApplyDto smaDto = stationModifyApplyBO.getApplyInfoByStationId(StationModifyApplyBusitypeEnum.NAME_MODIFY, instance.getStationId(), StationModifyApplyStatusEnum.AUDITING);
+                    	 if (smaDto != null) {
+                    		 instance.getStationDto().setInvalidNameMsg("auditing");
+                    		 continue;
+                    	 }
                          //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
                          String checkName = instance.getStationDto().getName();
                          for(String rs : stationNameSuffix){
