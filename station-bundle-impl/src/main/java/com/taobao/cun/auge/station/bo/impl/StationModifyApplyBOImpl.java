@@ -1,12 +1,13 @@
 package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import com.taobao.cun.auge.client.exception.DefaultServiceException;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.StationModifyApply;
 import com.taobao.cun.auge.dal.domain.StationModifyApplyExample;
 import com.taobao.cun.auge.dal.mapper.StationModifyApplyMapper;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.station.convert.StationModifyApplyConverter;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
@@ -28,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Component("stationModifyApplyBO")
@@ -60,12 +64,12 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 		DomainUtils.beforeInsert(s, dto.getOperator());
 		stationModifyApplyMapper.insert(s);
 		
-		if (StationModifyApplyBusitypeEnum.NAME_MODIFY.equals(dto.getBusiType())) {
+		if (StationModifyApplyBusitypeEnum.NAME_ADDRESS_MODIFY.equals(dto.getBusiType())) {
 			//启动流程
 			StartProcessDto startProcessDto =new StartProcessDto();
 			startProcessDto.setBusiness(ProcessBusinessEnum.stationInfoApply);
 			startProcessDto.setBusinessId(s.getId());
-			startProcessDto.setBusinessName("村点名称修改");
+			startProcessDto.setBusinessName("村点名称和地址修改");
 			startProcessDto.setBusinessOrgId(dto.getOperatorOrgId());
 			startProcessDto.copyOperatorDto(dto);
 			processService.startApproveProcess(startProcessDto);
@@ -75,7 +79,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 	}
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
-	public void auditForName(Long id, StationModifyApplyStatusEnum status) {
+	public void auditForNameAndAddress(Long id, StationModifyApplyStatusEnum status) {
 		ValidateUtils.notNull(id);
 		ValidateUtils.notNull(status);
 		if ((!status.equals(StationModifyApplyStatusEnum.AUDIT_PASS)) && (!status.equals(StationModifyApplyStatusEnum.AUDIT_NOT_PASS))) {
@@ -91,22 +95,31 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 		//更新station表名称
 		if (status.equals(StationModifyApplyStatusEnum.AUDIT_PASS)) {
 			StationModifyApplyDto sma = getApplyInfoById(id);
-			if (sma != null) {
-				if (sma.getInfoMap() != null && sma.getInfoMap().get("name") != null) {
-					StationDto stationDto = new StationDto();
+			if (sma != null && sma.getInfoMap() != null) {
+				Map<String,String> infoMap = sma.getInfoMap();
+				StationDto stationDto = new StationDto();
+				if (infoMap.get("name") != null) {
 					stationDto.setName(sma.getInfoMap().get("name"));
-					stationDto.setId(sma.getStationId());
-					stationDto.copyOperatorDto(OperatorDto.defaultOperator());
-					stationBO.updateStation(stationDto);
-					
-					Long insId = partnerInstanceBO.findPartnerInstanceIdByStationId(sma.getStationId());
-					if (insId != null) {
-						//同步菜鸟
-					    generalTaskSubmitService.submitUpdateCainiaoStation(insId, OperatorDto.DEFAULT_OPERATOR);
-					}else {
-						 logger.error("StationModifyApplyBO.updateStationName error: insId is null stationId=" + sma.getStationId());
-					}
-					
+				}
+				Address  address  = new  Address();
+				if (infoMap.get("address") != null) {
+					address.setAddressDetail(sma.getInfoMap().get("address"));
+				}
+				if (infoMap.get("village") != null && infoMap.get("villageDetail") != null) {
+					address.setVillage(sma.getInfoMap().get("village"));
+					address.setVillageDetail(sma.getInfoMap().get("villageDetail"));
+				}
+				stationDto.setAddress(address);
+				stationDto.setId(sma.getStationId());
+				stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+				stationBO.updateStation(stationDto);
+				
+				Long insId = partnerInstanceBO.findPartnerInstanceIdByStationId(sma.getStationId());
+				if (insId != null) {
+					//同步菜鸟
+				    generalTaskSubmitService.submitUpdateCainiaoStation(insId, OperatorDto.DEFAULT_OPERATOR);
+				}else {
+					 logger.error("StationModifyApplyBO.auditForNameAndAddress error: insId is null stationId=" + sma.getStationId());
 				}
 			}
 		}
@@ -136,6 +149,25 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 	public StationModifyApply getStationModifyApplyById(Long id) {
 		ValidateUtils.notNull(id);
 		return stationModifyApplyMapper.selectByPrimaryKey(id);
+	}
+	@Override
+	public void updateName(StationModifyApplyDto dto) {
+		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(dto.getStationId());
+		if (rel == null) {
+			logger.error("StationModifyApplyBO.updateStationName error: insId is null stationId=" + dto.getStationId());
+			 throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "合伙人实例不存在");
+		}
+		if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(rel.getState())) {
+			 throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前状态不能编辑村点名称");
+		}
+		StationDto stationDto = new StationDto();
+		stationDto.setName(dto.getInfoMap().get("name"));
+		stationDto.setId(dto.getStationId());
+		stationDto.copyOperatorDto(OperatorDto.defaultOperator());
+		stationBO.updateStation(stationDto);
+		//同步菜鸟
+	    generalTaskSubmitService.submitUpdateCainiaoStation(rel.getId(), OperatorDto.DEFAULT_OPERATOR);
+		
 	}
 
 }

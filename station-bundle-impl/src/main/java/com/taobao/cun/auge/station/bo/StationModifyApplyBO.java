@@ -20,7 +20,7 @@ public interface StationModifyApplyBO {
   /**
    * 审批,监听工作流使用
    */
-  public void auditForName(Long id,StationModifyApplyStatusEnum status);
+  public void auditForNameAndAddress(Long id,StationModifyApplyStatusEnum status);
   
   
   /**
@@ -41,4 +41,7 @@ public interface StationModifyApplyBO {
    * @return
    */
   public StationModifyApply getStationModifyApplyById(Long id);
+  
+  
+  public void updateName(StationModifyApplyDto dto);
 }

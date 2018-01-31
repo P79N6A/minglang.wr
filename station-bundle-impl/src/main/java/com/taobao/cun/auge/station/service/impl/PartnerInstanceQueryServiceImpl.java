@@ -353,7 +353,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              for (PartnerInstanceDto instance : partnerInstances) {
                      try {
                     	 //如果提交了审批流程中， 设置信息为auditing
-                    	 StationModifyApplyDto smaDto = stationModifyApplyBO.getApplyInfoByStationId(StationModifyApplyBusitypeEnum.NAME_MODIFY, instance.getStationId(), StationModifyApplyStatusEnum.AUDITING);
+                    	 StationModifyApplyDto smaDto = stationModifyApplyBO.getApplyInfoByStationId(StationModifyApplyBusitypeEnum.NAME_ADDRESS_MODIFY, instance.getStationId(), StationModifyApplyStatusEnum.AUDITING);
                     	 if (smaDto != null) {
                     		 instance.getStationDto().setInvalidNameMsg("auditing");
                     		 continue;

@@ -188,9 +188,9 @@ public class ProcessProcessor {
 				partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
 			}else if (ProcessBusinessEnum.stationInfoApply.getCode().equals(businessCode)) {
 				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
-					stationModifyApplyBO.auditForName(businessId, StationModifyApplyStatusEnum.AUDIT_PASS);
+					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_PASS);
 				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
-					stationModifyApplyBO.auditForName(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
+					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
 				}
 			}
 			// 节点被激活

@@ -27,5 +27,11 @@ public interface StationModifyApplyService {
 	 * @return
 	 */
 	public StationModifyApplyDto getApplyInfoById(Long id);
+	
+	/**
+	 * 直接修改村点名称
+	 * @param dto
+	 */
+	public void updateName(StationModifyApplyDto dto);
 
 }

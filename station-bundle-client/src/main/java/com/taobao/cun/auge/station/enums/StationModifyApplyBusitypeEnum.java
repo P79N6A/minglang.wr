@@ -7,11 +7,11 @@ import java.util.Map;
 public class StationModifyApplyBusitypeEnum implements Serializable{
 	 private static final long serialVersionUID = 1409002910681385324L;
 
-	    public static final StationModifyApplyBusitypeEnum NAME_MODIFY = new StationModifyApplyBusitypeEnum("NAME_MODIFY","村点名称修改");
+	    public static final StationModifyApplyBusitypeEnum NAME_ADDRESS_MODIFY = new StationModifyApplyBusitypeEnum("NAME_ADDRESS_MODIFY","村点名称修改");
 
 	    private static final Map<String, StationModifyApplyBusitypeEnum> mappings = new HashMap<String, StationModifyApplyBusitypeEnum>();
 	    static {
-	        mappings.put("NAME_MODIFY", NAME_MODIFY);
+	        mappings.put("NAME_ADDRESS_MODIFY", NAME_ADDRESS_MODIFY);
 	    }
 
 	    private String code;

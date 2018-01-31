@@ -1,13 +1,11 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import com.taobao.cun.auge.station.service.PartnerPeixunService;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
 import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
 import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 import com.taobao.cun.auge.station.service.StationModifyApplyService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,4 +32,8 @@ public class StationModifyApplyServiceImpl implements StationModifyApplyService 
 		return stationModifyApplyBO.getApplyInfoById(id);
 	}
 
+	@Override
+	public void updateName(StationModifyApplyDto dto) {
+		stationModifyApplyBO.updateName(dto);
+	}
 }
