@@ -3,6 +3,8 @@ package com.taobao.cun.auge.lifecycle.validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.common.lang.StringUtil;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.KFCServiceConfig;
@@ -88,7 +90,10 @@ public class LifeCycleValidator {
 	public void stationModelBusCheck(PartnerInstanceDto ins){
 	    StringBuffer sb = new StringBuffer();
 	    sb.append(ins.getStationDto().getName());
-	    sb.append(ins.getStationDto().getAddress().getAddressDetail());
+        if (ins.getStationDto().getAddress() != null
+                && !StringUtil.isEmpty(ins.getStationDto().getAddress().getAddressDetail())) {
+            sb.append(ins.getStationDto().getAddress().getAddressDetail());
+        }
 	    if(kfcServiceConfig.isProhibitedWord(sb.toString())){
 	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+kfcServiceConfig.kfcCheck(sb.toString()).get("word"));
 	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
