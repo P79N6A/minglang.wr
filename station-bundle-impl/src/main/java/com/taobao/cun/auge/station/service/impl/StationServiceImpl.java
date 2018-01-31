@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -211,7 +212,9 @@ public class StationServiceImpl implements StationService {
         if(station.getAddress() != null){
             StationValidator.addressFormatCheck(station.getAddress());
         }else{
-            station.setAddress(ins.getStationDto().getAddress());
+            Address add = new Address();
+            add.setProvince(ins.getStationDto().getAddress().getProvince());
+            station.setAddress(add);
         }
         station.setId(ins.getStationId());
         String nameSuffix = station.getNameSuffix()==null?"":station.getNameSuffix();
