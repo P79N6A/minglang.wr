@@ -38,7 +38,7 @@ public interface StationService {
     /**
      * 村站名称是否符合标准
      * 
-     * @param instanceId、name
+     * @param instanceId、stationDto
      */
-    public boolean getStationNameValidateRule(Long instanceId,String name);
+    public boolean getStationInfoValidateRule(Long instanceId,StationDto station);
 }

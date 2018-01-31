@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Service("stationService")
 @HSFProvider(serviceInterface = StationService.class)
@@ -204,14 +205,16 @@ public class StationServiceImpl implements StationService {
         }
     }
 
-    public boolean getStationNameValidateRule(Long instanceId,String name) {
-        StationValidator.nameFormatCheck(name);
+    public boolean getStationInfoValidateRule(Long instanceId, StationDto station) {
+        Assert.notNull(instanceId);
+        BeanValidator.validateWithThrowable(station);
+        //name && address base validate 
+        StationValidator.nameFormatCheck(station.getName());
+        StationValidator.addressFormatCheck(station.getAddress());
+        //param reset need validate station contain name and address
         PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);
-        if(kfcServiceConfig.isProhibitedWord(name)){
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "KFC检测有异常："+kfcServiceConfig.kfcCheck(name).get("word"));
-        }if(name.contains(ins.getPartnerDto().getName())){
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称不可以包含村小二名称");
-        }
+        ins.setStationDto(station);
+        lifeCycleValidator.stationModelBusCheck(ins);
         return true;
     }
 }
