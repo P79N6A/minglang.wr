@@ -214,6 +214,8 @@ public class StationServiceImpl implements StationService {
             station.setAddress(ins.getStationDto().getAddress());
         }
         station.setId(ins.getStationId());
+        String nameSuffix = station.getNameSuffix()==null?"":station.getNameSuffix();
+        station.setName(station.getName()+nameSuffix);
         ins.setStationDto(station);
         lifeCycleValidator.stationModelBusCheck(ins);
         return true;
