@@ -24,4 +24,6 @@ public interface StoreWriteBO {
 	public Long tb2gbCode(Long taobaocode);
 	
 	public Boolean batchUpdateStore(List<Long> sharedStoreIds);
+	
+	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds);
 }

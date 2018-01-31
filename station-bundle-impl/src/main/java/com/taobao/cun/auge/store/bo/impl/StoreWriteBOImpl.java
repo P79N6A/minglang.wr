@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.bo.impl;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ali.com.google.common.collect.Sets;
 import com.google.common.base.Strings;
 import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.utils.POIUtils;
@@ -670,6 +672,26 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 				logger.info("create supply store success["+stationId+"]");
 			} catch (Exception e) {
 				logger.error("batchCreateSupplyStore error[" + stationId + "]", e);
+			}
+		}
+		logger.info("finish create supply store!");
+		return true;
+	}
+
+	@Override
+	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds) {
+		for(Long stationId : stationIds){
+			try {
+				Set<String> keys = Sets.newHashSet("goodsSupply");
+				Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
+				if(cainiaoStationId != null){
+					boolean result = caiNiaoAdapter.removeStationFeatures(cainiaoStationId, keys);
+					if(!result){
+						logger.info("batchRemoveCainiaoFeature failed[" + stationId + "]");
+					}
+				}
+			} catch (Exception e) {
+				logger.error("batchRemoveCainiaoFeature error[" + stationId + "]", e);
 			}
 		}
 		logger.info("finish create supply store!");
