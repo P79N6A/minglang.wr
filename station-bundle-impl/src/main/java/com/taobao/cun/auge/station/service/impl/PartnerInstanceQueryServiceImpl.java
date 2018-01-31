@@ -180,10 +180,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
-    @Autowired
-    private StationModifyApplyBO stationModifyApplyBO;
-    
-
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
     }
@@ -352,12 +348,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              for (PartnerInstanceDto instance : partnerInstances) {
                  boolean isRule = false;
                      try {
-                    	 //如果提交了审批流程中， 设置信息为auditing
-                    	 StationModifyApplyDto smaDto = stationModifyApplyBO.getApplyInfoByStationId(StationModifyApplyBusitypeEnum.NAME_ADDRESS_MODIFY, instance.getStationId(), StationModifyApplyStatusEnum.AUDITING);
-                    	 if (smaDto != null) {
-                    		 instance.getStationDto().setInvalidNameMsg("auditing");
-                    		 continue;
-                    	 }
                          //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
                          String checkName = instance.getStationDto().getName();
                          for(String rs : stationNameSuffix){
