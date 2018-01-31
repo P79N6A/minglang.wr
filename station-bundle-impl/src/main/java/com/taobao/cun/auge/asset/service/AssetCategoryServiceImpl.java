@@ -6,22 +6,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import com.taobao.cun.auge.asset.service.CuntaoAssetCategoryDto.Sku;
+import com.taobao.cun.auge.dal.domain.CuntaoAssetCategory;
+import com.taobao.cun.auge.dal.domain.CuntaoAssetCategoryExample;
+import com.taobao.cun.auge.dal.mapper.CuntaoAssetCategoryMapper;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.cun.auge.asset.service.CuntaoAssetCategoryDto.Sku;
-import com.taobao.cun.auge.dal.domain.CuntaoAssetCategory;
-import com.taobao.cun.auge.dal.domain.CuntaoAssetCategoryExample;
-import com.taobao.cun.auge.dal.mapper.CuntaoAssetCategoryMapper;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("assetCategoryService")
 @HSFProvider(serviceInterface = AssetCategoryService.class)

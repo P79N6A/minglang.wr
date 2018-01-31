@@ -7,24 +7,24 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.masterdata.client.exception.MasterdataClientException;
 import com.alibaba.masterdata.client.model.dataobj.Emp360Info;
 import com.alibaba.masterdata.client.model.query.EmpQuery;
 import com.alibaba.masterdata.client.model.result.ResultSupport;
 import com.alibaba.masterdata.client.service.Employee360Service;
+
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.EmpInfoDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.util.CollectionUtil;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component("emp360Adapter")
 public class Emp360AdapterImpl implements Emp360Adapter {

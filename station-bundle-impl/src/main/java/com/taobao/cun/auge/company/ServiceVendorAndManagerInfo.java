@@ -3,7 +3,6 @@ package com.taobao.cun.auge.company;
 import java.io.Serializable;
 
 import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 

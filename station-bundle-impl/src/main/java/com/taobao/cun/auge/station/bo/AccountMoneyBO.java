@@ -3,7 +3,6 @@ package com.taobao.cun.auge.station.bo;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 账户基础服务

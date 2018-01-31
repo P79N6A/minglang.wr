@@ -206,11 +206,14 @@ public class StationServiceImpl implements StationService {
         BeanValidator.validateWithThrowable(station);
         //name && address base validate 
         StationValidator.nameFormatCheck(station.getName());
-        if(station.getAddress() != null){
-            StationValidator.addressFormatCheck(station.getAddress());
-        }
         //param reset need validate station contain name and address
         PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);
+        if(station.getAddress() != null){
+            StationValidator.addressFormatCheck(station.getAddress());
+        }else{
+            station.setAddress(ins.getStationDto().getAddress());
+        }
+        station.setId(ins.getStationId());
         ins.setStationDto(station);
         lifeCycleValidator.stationModelBusCheck(ins);
         return true;

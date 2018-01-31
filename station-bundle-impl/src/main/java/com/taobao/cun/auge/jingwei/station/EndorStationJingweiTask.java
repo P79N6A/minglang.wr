@@ -6,9 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.DeleteEvent;
@@ -16,11 +13,14 @@ import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.InsertEvent;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
+
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.endor.dto.OrgDto;
 import com.taobao.cun.endor.service.OrgService;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Station状态为NEW的时候将他同步到ENDOR，作为一个组织

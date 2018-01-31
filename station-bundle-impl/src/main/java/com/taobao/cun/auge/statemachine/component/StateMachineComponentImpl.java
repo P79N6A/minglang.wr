@@ -1,14 +1,14 @@
 package com.taobao.cun.auge.statemachine.component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.alibaba.shared.xfsm.core.annotation.Inject;
 import com.alibaba.shared.xfsm.core.context.RequestContext;
+
 import com.taobao.cun.auge.lifecycle.LifeCycleManager;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.statemachine.StateMachineComponent;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine","TPTStateMachine","TPSStateMachine"},actionKey="stateMachineComponent")
 public class StateMachineComponentImpl {

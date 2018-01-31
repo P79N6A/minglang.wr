@@ -4,12 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.alilang.jingwei.PartnerMessage;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
 import com.taobao.cun.auge.dal.domain.AccountMoneyExample;
@@ -24,6 +20,10 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
 import com.taobao.notify.remotingclient.SendResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @HSFProvider(serviceInterface = AlilangUserInitService.class)
 public class AlilangUserInitServiceImpl implements AlilangUserInitService {

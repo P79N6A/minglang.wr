@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.common.result;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.taobao.cun.auge.common.exception.AugeBizException;
 import com.taobao.eagleeye.EagleEye;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ResultExecutor<T> {
 

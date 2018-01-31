@@ -1,9 +1,8 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.dal.domain.StationModifyApply;
-
-import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.dto.StationModifyApplyDto;
+import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 
 /**

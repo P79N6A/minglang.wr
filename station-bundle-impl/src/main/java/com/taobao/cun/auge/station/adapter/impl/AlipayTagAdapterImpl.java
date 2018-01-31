@@ -1,11 +1,10 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
+import com.taobao.cun.auge.station.adapter.AlipayTagAdapter;
+import com.taobao.cun.auge.station.dto.AlipayTagDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.station.adapter.AlipayTagAdapter;
-import com.taobao.cun.auge.station.dto.AlipayTagDto;
 
 @Component("alipayTagAdapter")
 public class AlipayTagAdapterImpl implements AlipayTagAdapter {

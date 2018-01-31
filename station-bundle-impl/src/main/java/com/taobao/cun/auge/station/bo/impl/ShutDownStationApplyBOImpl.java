@@ -2,9 +2,6 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.ShutDownStationApply;
 import com.taobao.cun.auge.dal.domain.ShutDownStationApplyExample;
@@ -14,6 +11,8 @@ import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.convert.ShutDownStationApplyConverter;
 import com.taobao.cun.auge.station.dto.ShutDownStationApplyDto;
 import com.taobao.vipserver.client.utils.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("shutDownStationApplyBO")
 public class ShutDownStationApplyBOImpl implements ShutDownStationApplyBO{

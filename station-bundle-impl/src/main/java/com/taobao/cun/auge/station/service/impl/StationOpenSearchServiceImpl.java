@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.opensearch.javasdk.CloudsearchSearch;
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
@@ -29,6 +23,11 @@ import com.taobao.cun.auge.station.service.PartnerTpgService;
 import com.taobao.cun.auge.station.service.StationOpenSearchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.mtop.common.Result;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 @Service("stationOpenSearchService")
 @HSFProvider(serviceInterface = StationOpenSearchService.class)
 public class StationOpenSearchServiceImpl implements StationOpenSearchService {

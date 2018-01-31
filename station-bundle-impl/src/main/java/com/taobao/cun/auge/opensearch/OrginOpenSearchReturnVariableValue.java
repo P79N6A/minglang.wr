@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.opensearch;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.util.List;
+
+import com.alibaba.fastjson.annotation.JSONField;
 
 public class OrginOpenSearchReturnVariableValue {
     @JSONField(name="extinfo")

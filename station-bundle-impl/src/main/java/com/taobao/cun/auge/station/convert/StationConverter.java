@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.common.lang.StringUtil;
 
 import com.taobao.cun.auge.common.Address;
@@ -20,6 +17,8 @@ import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationlLogisticsStateEnum;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 服务站表dto转换

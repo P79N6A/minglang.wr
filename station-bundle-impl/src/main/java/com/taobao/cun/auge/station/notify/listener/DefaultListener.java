@@ -2,15 +2,10 @@ package com.taobao.cun.auge.station.notify.listener;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.station.bo.PartnerExamBO;
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.alilang.AlilangUserRegister;
+import com.taobao.cun.auge.station.bo.PartnerExamBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.enums.NotifyContents;
 import com.taobao.notify.message.Message;
@@ -18,6 +13,11 @@ import com.taobao.notify.message.ObjectMessage;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.MessageListener;
 import com.taobao.notify.remotingclient.MessageStatus;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("defaultListener")
 public class DefaultListener implements MessageListener {

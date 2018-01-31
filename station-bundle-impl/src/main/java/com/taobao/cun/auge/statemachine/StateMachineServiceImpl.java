@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.statemachine;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.metrics.MetricLevel;
 import com.alibaba.metrics.MetricManager;
 import com.alibaba.metrics.MetricName;
@@ -10,10 +7,13 @@ import com.alibaba.metrics.Timer;
 import com.alibaba.shared.xfsm.core.XFSMEvent;
 import com.alibaba.shared.xfsm.core.context.RequestContext;
 import com.alibaba.shared.xfsm.support.spring.engine.XFSMEngine;
+
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("stateMachineService")
 @HSFProvider(serviceInterface = StateMachineService.class)

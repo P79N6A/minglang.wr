@@ -10,10 +10,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -39,6 +35,9 @@ import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.BeanCopy;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("CuntaoUserOrgService")
 @HSFProvider(serviceInterface = CuntaoUserOrgService.class)

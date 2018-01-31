@@ -1,12 +1,11 @@
 package com.taobao.cun.auge.station.convert;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 import com.taobao.cun.auge.station.enums.RemoveBrandUserTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 
 public final class QuitStationApplyConverter {
 

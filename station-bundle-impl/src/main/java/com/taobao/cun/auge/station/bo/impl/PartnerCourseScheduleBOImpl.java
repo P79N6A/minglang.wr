@@ -7,14 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import com.alibaba.ivy.common.AppAuthDTO;
 import com.alibaba.ivy.common.PageDTO;
 import com.alibaba.ivy.common.ResultDTO;
@@ -24,6 +16,7 @@ import com.alibaba.ivy.service.course.query.CourseQueryDTO;
 import com.alibaba.ivy.service.user.TrainingRecordServiceFacade;
 import com.alibaba.ivy.service.user.dto.TrainingRecordDTO;
 import com.alibaba.ivy.service.user.query.TrainingRecordQueryDTO;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
@@ -40,6 +33,13 @@ import com.taobao.cun.auge.station.dto.PartnerCourseScheduleReflectDto;
 import com.taobao.cun.auge.station.dto.PartnerCourseScheduleShowDto;
 import com.taobao.cun.auge.station.enums.PartnerScheduleStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 @Component("partnerCourseScheduleBO")
 public class PartnerCourseScheduleBOImpl implements PartnerCourseScheduleBO{
 

@@ -2,14 +2,8 @@ package com.taobao.cun.auge.alipay.service.impl;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.alipay.dto.AlipayRiskScanResult;
 import com.taobao.cun.auge.alipay.service.AlipayRiskScanService;
@@ -20,6 +14,12 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Service("alipayRiskScanService")
 @HSFProvider(serviceInterface= AlipayRiskScanService.class)

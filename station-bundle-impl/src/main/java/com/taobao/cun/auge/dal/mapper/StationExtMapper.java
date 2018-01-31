@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.StationExtExample;
-
-import java.util.List;
 
 /**
  * Created by xiao on 16/8/26.

@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.county.dto.CountyDto;
+import com.taobao.cun.auge.county.dto.CountyPOI;
 import com.taobao.cun.auge.county.dto.CountyQueryCondition;
 import com.taobao.cun.auge.county.dto.CountyStationQueryCondition;
-import com.taobao.cun.auge.county.dto.CountyPOI;
 /**
  * 从center迁移至auge
  * 供org、motion、无线端调用

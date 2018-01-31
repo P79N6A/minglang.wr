@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.lifecycle.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.common.lang.StringUtil;
 
 import com.taobao.cun.auge.common.OperatorDto;
@@ -22,6 +19,9 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 /**
  * 
  * @author zhenhuan.zhangzh
@@ -99,6 +99,21 @@ public class LifeCycleValidator {
 	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
 	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址不可以包含村小二名称");
 	    }
+	    checkStationNameDuplicate(ins.getStationDto().getId(),ins.getStationDto().getName(),ins.getStationDto().getAddress().getProvince());
 	}
 	
+	public void checkStationNameDuplicate(Long stationId, String newStationName,String province) {
+        // 判断服务站名同一省内是否存在
+        String oldName = null;
+        if (stationId != null) {
+            Station oldStation = stationBO.getStationById(stationId);
+            oldName = oldStation.getName();
+        }
+        if (!StringUtils.equals(oldName, newStationName)) {
+            int count = stationBO.getSameNameInProvinceCnt(newStationName,province);
+            if (count > 0) {
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "村站名称同一省域不能重复");
+            }
+        }
+    }
 }

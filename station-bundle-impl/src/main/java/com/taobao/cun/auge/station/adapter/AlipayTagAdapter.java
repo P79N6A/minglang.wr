@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.adapter;
 
 import com.taobao.cun.auge.station.dto.AlipayTagDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface AlipayTagAdapter {
 	

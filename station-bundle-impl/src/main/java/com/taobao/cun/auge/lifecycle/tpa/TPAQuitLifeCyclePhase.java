@@ -2,16 +2,8 @@ package com.taobao.cun.auge.lifecycle.tpa;
 
 import java.util.Date;
 
-import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-
-import com.taobao.cun.auge.dal.domain.PartnerApply;
-import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -46,6 +38,13 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 淘帮手已退出阶段组件

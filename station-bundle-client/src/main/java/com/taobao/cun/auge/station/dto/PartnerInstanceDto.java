@@ -1,10 +1,16 @@
 package com.taobao.cun.auge.station.dto;
 
-import com.taobao.cun.auge.common.OperatorDto;
-import com.taobao.cun.auge.station.enums.*;
-
 import java.io.Serializable;
 import java.util.Date;
+
+import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 
 public class PartnerInstanceDto extends OperatorDto implements Serializable {
 

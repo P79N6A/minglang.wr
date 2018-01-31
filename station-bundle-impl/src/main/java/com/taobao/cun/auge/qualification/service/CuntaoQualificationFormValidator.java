@@ -4,6 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.alibaba.pm.sc.api.Result;
+import com.alibaba.pm.sc.portal.api.constants.ResultCode;
+import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
+import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
+
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,12 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
-
-import com.alibaba.pm.sc.api.Result;
-import com.alibaba.pm.sc.portal.api.constants.ResultCode;
-import com.alibaba.pm.sc.portal.api.quali.spi.FormValidator;
-import com.alibaba.pm.sc.portal.api.quali.spi.dto.FormValidateRequest;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoQualificationFormValidator")
 @RefreshScope

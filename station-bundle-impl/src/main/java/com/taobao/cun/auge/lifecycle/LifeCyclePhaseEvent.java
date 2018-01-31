@@ -2,10 +2,9 @@ package com.taobao.cun.auge.lifecycle;
 
 import java.util.Map;
 
-import org.springframework.util.Assert;
-
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import org.springframework.util.Assert;
 
 /**
  * 

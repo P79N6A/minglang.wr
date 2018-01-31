@@ -3,13 +3,12 @@ package com.taobao.cun.auge.station.validate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.apache.commons.lang.StringUtils;
 
 public final class PartnerValidator {
 
