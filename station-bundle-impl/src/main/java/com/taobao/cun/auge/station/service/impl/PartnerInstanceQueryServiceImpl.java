@@ -349,8 +349,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     private void buildNameRuleFlag(List<PartnerInstanceDto> partnerInstances){
         if(CollectionUtils.isNotEmpty(partnerInstances)){
              List<String> stationNameSuffix =  diamondConfiguredProperties.getStationNameSuffix();
-             boolean isRule = false;
              for (PartnerInstanceDto instance : partnerInstances) {
+                 boolean isRule = false;
                      try {
                     	 //如果提交了审批流程中， 设置信息为auditing
                     	 StationModifyApplyDto smaDto = stationModifyApplyBO.getApplyInfoByStationId(StationModifyApplyBusitypeEnum.NAME_ADDRESS_MODIFY, instance.getStationId(), StationModifyApplyStatusEnum.AUDITING);
