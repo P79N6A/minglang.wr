@@ -60,4 +60,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Boolean batchUpdateStore(List<Long> sharedStoreIds) {
 		return storeWriteBO.batchUpdateStore(sharedStoreIds);
 	}
+
+	@Override
+	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds) {
+		return storeWriteBO.batchRemoveCainiaoFeature(stationIds);
+	}
 }
