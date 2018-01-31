@@ -94,7 +94,7 @@ public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{
 	
 	@Override
 	public Optional<EntityQuali> queryQuali(Long taobaoUserId){
-		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId,QualiStatus.VALID,QualiStatus.INVALID);
+		Result<List<EntityQuali>> result = sellerQualiService.listEntityQualiByHid(taobaoUserId,qualiInfoId,QualiStatus.VALID);
 		if(!result.isSuccessful()){
 			logger.error("listEntityQualiByHid error["+taobaoUserId+"]:"+result.toString());
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_EXT_RESULT_ERROR_CODE,"查询企业资质异常");
