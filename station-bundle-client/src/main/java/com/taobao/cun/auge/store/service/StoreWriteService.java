@@ -70,4 +70,11 @@ public interface StoreWriteService {
 	
 	
 	public Boolean batchUpdateStore(List<Long> sharedStoreIds);
+	
+	/**
+	 * 批量删除菜鸟标
+	 * @param stationIds
+	 * @return
+	 */
+	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds);
 }

@@ -91,8 +91,9 @@ public class StoreReadBOImpl implements StoreReadBO {
 		}
 		storeDto.setSellerShareStoreId(cuntaoStore.getSellerShareStoreId());
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(station.getTaobaoUserId());
-        Assert.notNull(partnerStationRel, "partner instance not exists");
-        storeDto.setSellerId(partnerStationRel.getSellerId());
+		if(partnerStationRel != null){
+			 storeDto.setSellerId(partnerStationRel.getSellerId());
+		}
 		return storeDto;
 	}
 
