@@ -953,14 +953,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		//4.0 检查补货金和 开业包收货状态
-		/*if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
 			}
 			if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}
-		}*/
+		}
 //		
 //		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
 //		if (decorate != null

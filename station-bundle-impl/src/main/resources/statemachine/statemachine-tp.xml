@@ -54,6 +54,7 @@
         </onentry>
         <transition event="CLOSED_EVENT" target="CLOSED"/>
         <transition event="SERVICING_EVENT" target="SERVICING"/>
+        <transition event="DECORATING_EVENT" target="DECORATING"/>
     </state>
 
     <state id="CLOSED">
