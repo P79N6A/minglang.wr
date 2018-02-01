@@ -3,13 +3,16 @@ package com.taobao.cun.auge.station.notify.listener;
 import java.util.Date;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ali.com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-
-import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
-import com.ali.com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -38,9 +41,11 @@ import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -53,14 +58,10 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.notify.message.StringMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -329,11 +330,20 @@ public class ProcessProcessor {
 
 				// 记录村点状态变化
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);*/
+				CloseStationApplyDto closeStationApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
+				PartnerInstanceStateEnum sourceInstanceState = closeStationApplyDto.getInstanceState();
 
 				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
 				partnerInstanceDto.copyOperatorDto(operatorDto);
-				LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
-				stateMachineService.executePhase(phaseEvent);
+				if (PartnerInstanceStateEnum.SERVICING.equals(sourceInstanceState)) {
+					LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+					stateMachineService.executePhase(phaseEvent);
+				}else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
+					LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT);
+					stateMachineService.executePhase(phaseEvent);
+				}
+				
+				
 			}
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + "monitorCloseApprove", e);
