@@ -177,8 +177,8 @@ public final class StationValidator {
         if (address == null) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
         }
-        if (address.getAddressDetail().length() > 30 || address.getAddressDetail().length() < 4) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度控制在4-30位");
+        if (address.getAddressDetail().length() > 30 || address.getAddressDetail().length() < 3) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度控制在3-30位");
         }
         if (!isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS) || !isContainChinese(address.getAddressDetail())) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符,并且最少一个汉字");
