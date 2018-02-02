@@ -121,6 +121,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
@@ -142,6 +143,7 @@ import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
 import com.taobao.cun.auge.station.exception.enums.PartnerInstanceExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
@@ -891,14 +893,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
 		//4.0 检查补货金和 开业包收货状态
-		/*if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.REPLENISHMONEY_NOT_FROZEN.getDesc());
 			}
 			if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}
-		}*/
+		}
 //		
 //		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());
 //		if (decorate != null

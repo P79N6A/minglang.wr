@@ -36,9 +36,11 @@ import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
+import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
@@ -339,11 +341,20 @@ public class ProcessProcessor {
 
 				// 记录村点状态变化
 				dispatchInstStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, operatorDto);*/
+				CloseStationApplyDto closeStationApplyDto = closeStationApplyBO.getCloseStationApply(instanceId);
+				PartnerInstanceStateEnum sourceInstanceState = closeStationApplyDto.getInstanceState();
 
 				PartnerInstanceDto partnerInstanceDto = PartnerInstanceConverter.convert(partnerStationRel);
 				partnerInstanceDto.copyOperatorDto(operatorDto);
-				LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
-				stateMachineService.executePhase(phaseEvent);
+				if (PartnerInstanceStateEnum.SERVICING.equals(sourceInstanceState)) {
+					LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.SERVICING_EVENT);
+					stateMachineService.executePhase(phaseEvent);
+				}else if (PartnerInstanceStateEnum.DECORATING.equals(sourceInstanceState)) {
+					LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto, StateMachineEvent.DECORATING_EVENT);
+					stateMachineService.executePhase(phaseEvent);
+				}
+				
+				
 			}
 		} catch (Exception e) {
 			logger.error(ERROR_MSG + "monitorCloseApprove", e);
