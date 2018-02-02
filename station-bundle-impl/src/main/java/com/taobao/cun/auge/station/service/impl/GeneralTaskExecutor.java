@@ -41,8 +41,8 @@ public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAwar
 			method.invoke(targetObject, arguments);
 		} catch (Exception e) {
 			logger.error("GeneralTaskExecutorError, parameter = {}, {}", JSON.toJSON(taskExecute), e);
-			if (e instanceof AugeBusinessException) {
-				AugeBusinessException bizException = (AugeBusinessException)e;
+			if ((e.getCause()!=null && e.getCause() instanceof AugeBusinessException)) {
+				AugeBusinessException bizException = (AugeBusinessException)e.getCause();
 				throw new AugeBusinessException(bizException.getExceptionCode(), bizException.getMessage(), bizException.getCause());
 			}else {
 				throw new AugeSystemException(e.getCause().getMessage(), e.getCause());
