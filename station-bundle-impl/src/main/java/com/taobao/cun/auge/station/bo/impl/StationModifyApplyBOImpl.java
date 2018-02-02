@@ -3,7 +3,6 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.client.exception.DefaultServiceException;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -23,6 +22,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyBusitypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.common.util.ValidateUtils;
@@ -57,7 +57,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 	@Override
 	public Long addStationModifyApply(StationModifyApplyDto dto) {
     	if (getApplyInfoByStationId(dto.getBusiType(),  dto.getStationId(), StationModifyApplyStatusEnum.AUDITING) != null) {
-    		throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前村点修改审批已提交");
+    		throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前村点修改审批已提交");
     	}
 		StationModifyApply s = StationModifyApplyConverter.toStationModifyApply(dto);
 		s.setStatus(StationModifyApplyStatusEnum.AUDITING.getCode());
@@ -83,7 +83,7 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 		ValidateUtils.notNull(id);
 		ValidateUtils.notNull(status);
 		if ((!status.equals(StationModifyApplyStatusEnum.AUDIT_PASS)) && (!status.equals(StationModifyApplyStatusEnum.AUDIT_NOT_PASS))) {
-            throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "审批状态必须为通过或不通过");
+            throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "审批状态必须为通过或不通过");
 
 		}
 		StationModifyApply s = new StationModifyApply();
@@ -155,10 +155,10 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 		PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(dto.getStationId());
 		if (rel == null) {
 			logger.error("StationModifyApplyBO.updateStationName error: insId is null stationId=" + dto.getStationId());
-			 throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "合伙人实例不存在");
+			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "合伙人实例不存在");
 		}
 		if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(rel.getState())) {
-			 throw new DefaultServiceException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前状态不能编辑村点名称");
+			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_BUSINESS_CHECK_ERROR_CODE, "当前状态不能编辑村点名称");
 		}
 		StationDto stationDto = new StationDto();
 		stationDto.setName(dto.getInfoMap().get("name"));
