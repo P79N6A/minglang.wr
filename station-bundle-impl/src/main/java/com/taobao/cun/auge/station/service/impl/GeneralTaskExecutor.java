@@ -40,12 +40,11 @@ public class GeneralTaskExecutor implements TaskExecutor, ApplicationContextAwar
 		try {
 			method.invoke(targetObject, arguments);
 		} catch (Exception e) {
+			logger.error("GeneralTaskExecutorError, parameter = {}, {}", JSON.toJSON(taskExecute), e);
 			if ((e.getCause()!=null && e.getCause() instanceof AugeBusinessException)) {
-				logger.warn("GeneralTaskExecutorError, parameter = {}, {}", JSON.toJSON(taskExecute), e);
 				AugeBusinessException bizException = (AugeBusinessException)e.getCause();
 				throw new AugeBusinessException(bizException.getExceptionCode(), bizException.getMessage(), bizException.getCause());
 			}else {
-				logger.error("GeneralTaskExecutorError, parameter = {}, {}", JSON.toJSON(taskExecute), e);
 				throw new AugeSystemException(e.getCause().getMessage(), e.getCause());
 			}
 		}
