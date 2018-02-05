@@ -237,25 +237,27 @@ public class PartnerPeixunBOImpl implements PartnerPeixunBO{
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"not find peixunRecord "+userId.toString());
 		}
 		PartnerCourseRecord record=records.get(0);
-		if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
-			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训状态异常，无法签到 "+userId.toString());
-		}
-        record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
-        record.setGmtDone(new Date());
-        record.setPoNo(poNo);
-        DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
-        partnerCourseRecordMapper.updateByPrimaryKey(record);
-        //更新lifecycle
-        if(code.equals(appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
-				"APPLY_IN"))){
-			try {
-				partnerInstanceBO.finishCourse(userId);
-			} catch (Exception e) {
-				logger.error(
-						"finish partnerInstance peixun error,"
-								+ ob.getLong("buyerAliId"), e);
+		if(!PartnerPeixunStatusEnum.DONE.getCode().equals(record.getStatus())){
+			if(!PartnerPeixunStatusEnum.PAY.getCode().equals(record.getStatus())){
+				throw new AugeBusinessException(AugeErrorCodes.PEIXUN_BUSINESS_CHECK_ERROR_CODE,"培训状态异常，无法签到 "+userId.toString());
 			}
-        }
+	        record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
+	        record.setGmtDone(new Date());
+	        record.setPoNo(poNo);
+	        DomainUtils.beforeUpdate(record, DomainUtils.DEFAULT_OPERATOR);
+	        partnerCourseRecordMapper.updateByPrimaryKey(record);
+	        //更新lifecycle
+	        if(code.equals(appResourceService.queryAppResourceValue("PARTNER_PEIXUN_CODE",
+					"APPLY_IN"))){
+				try {
+					partnerInstanceBO.finishCourse(userId);
+				} catch (Exception e) {
+					logger.error(
+							"finish partnerInstance peixun error,"
+									+ ob.getLong("buyerAliId"), e);
+				}
+	        }
+		}
         return record;
 	}
 
