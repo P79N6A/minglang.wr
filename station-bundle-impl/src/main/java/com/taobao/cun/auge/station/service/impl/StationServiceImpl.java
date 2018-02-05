@@ -211,8 +211,9 @@ public class StationServiceImpl implements StationService {
         PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);
         if(station.getAddress() != null){
         	Address add = station.getAddress();
+        	add.setProvince(ins.getStationDto().getAddress().getProvince());
             StationValidator.addressFormatCheck(add);
-            add.setProvince(ins.getStationDto().getAddress().getProvince());
+          
         }else{
             Address add = new Address();
             add.setProvince(ins.getStationDto().getAddress().getProvince());
