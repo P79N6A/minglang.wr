@@ -344,6 +344,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              for (PartnerInstanceDto instance : partnerInstances) {
                  boolean isRule = false;
                      try {
+                    	 if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState())) {
+                    		 instance.getStationDto().setInvalidNameMsg("");
+                    		 continue;
+                    	 }
                          //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
                          String checkName = instance.getStationDto().getName();
                          for(String rs : stationNameSuffix){
