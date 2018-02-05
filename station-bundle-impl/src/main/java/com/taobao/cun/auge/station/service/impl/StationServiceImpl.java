@@ -210,7 +210,9 @@ public class StationServiceImpl implements StationService {
         //param reset need validate station contain name and address
         PartnerInstanceDto ins = partnerInstanceBO.getPartnerInstanceById(instanceId);
         if(station.getAddress() != null){
-            StationValidator.addressFormatCheck(station.getAddress());
+        	Address add = station.getAddress();
+            StationValidator.addressFormatCheck(add);
+            add.setProvince(ins.getStationDto().getAddress().getProvince());
         }else{
             Address add = new Address();
             add.setProvince(ins.getStationDto().getAddress().getProvince());
