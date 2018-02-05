@@ -344,7 +344,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              for (PartnerInstanceDto instance : partnerInstances) {
                  boolean isRule = false;
                      try {
-                    	 if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState())) {
+                    	 if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState().getCode())) {
                     		 instance.getStationDto().setInvalidNameMsg("");
                     		 continue;
                     	 }
