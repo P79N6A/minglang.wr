@@ -297,9 +297,4 @@ public class AssetServiceImpl implements AssetService{
 		return assetSynBO.changeOwner(assetId);
 	}
 
-    @Override
-    public void xxxxxx(List<Long> uids) {
-        // TODO Auto-generated method stub
-        assetSynBO.xxxxx(uids);
-    }
 }

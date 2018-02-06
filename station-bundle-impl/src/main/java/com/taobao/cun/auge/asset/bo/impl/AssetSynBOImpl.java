@@ -761,16 +761,4 @@ public class AssetSynBOImpl implements AssetSynBO {
 		}
 		changeOwner(a);
 	}
-    @Override
-    public void xxxxx(List<Long> uids) {
-        for(Long a : uids){
-            ResultTO<List<MmpPermissionDO>> rm =  mmpAuthReadService.getPermissionsByAccountId(a) ;
-            for(MmpPermissionDO mmp : rm.getModule()){
-                System.out.println();
-                logger.info("yejinwang:"+a+":"+mmp.getPermissionName());
-            }
-        }
-        
-        
-    }
 }
