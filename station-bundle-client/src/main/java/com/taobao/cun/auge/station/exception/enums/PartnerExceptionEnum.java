@@ -54,7 +54,7 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 			"MOBILE_HAS_USED", "该手机号已被使用");
 	
 	public static final PartnerExceptionEnum REPLENISHMONEY_NOT_FROZEN = new PartnerExceptionEnum(
-			"REPLENISHMONEY_NOT_FROZEN", "村小二未缴纳补货金");
+			"REPLENISHMONEY_NOT_FROZEN", "村小二补货保证金未冻结");
 	
 	public static final PartnerExceptionEnum GOODSRECEIPT_NOT_DONE = new PartnerExceptionEnum(
 			"GOODSRECEIPT_NOT_DONE", "开业包货品收货未完成");

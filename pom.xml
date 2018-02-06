@@ -22,14 +22,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-boot-starter-bom.version>1.0.0-SNAPSHOT</spring-boot-starter-bom.version>
-		<spring-boot.version>1.4.2.RELEASE</spring-boot.version>
+		<spring-boot.version>1.4.7.RELEASE</spring-boot.version>
 		<spring-platform-bom.version>2.0.1.RELEASE</spring-platform-bom.version>
 		<spring-cloud.version>Camden.SR3</spring-cloud.version>
-		<spring.version>4.3.3.RELEASE</spring.version>
+		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>3.7.1-SNAPSHOT</ague.station.client.version>
-		<alibaba-spring-boot.version>1.4.2.10</alibaba-spring-boot.version>
+		<ague.station.client.version>3.7.2</ague.station.client.version>
+		<alibaba-spring-boot.version>1.4.7.3</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>

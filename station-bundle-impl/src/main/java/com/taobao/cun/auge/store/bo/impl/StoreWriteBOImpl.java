@@ -552,12 +552,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 		cuntaoStoreMapper.insert(cuntaoStore);
 
-		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
+		/*Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
 		if (cainiaoStationId != null) {
 			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
 			features.put("goodsSupply", "y");
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
-		}
+		}*/
 		return true;
 	}
 

@@ -20,7 +20,7 @@
 
 	<bean id="sync" class="com.taobao.sync.DataSync" init-method="init">
 		<!-- local cache location 本地缓存文件路径, 注意请使用绝对路径！！ -->
-		<property name="localCachePath" value="${dataSync.localCachePath}" />
+		<property name="localCachePath" value="#{systemProperties['user.home']}/auge/liaoyaun" />
 
 		<property name="chinaDivisionManager" ref="chinaDivisionManager" />
 		<!-- 不使用可以不设置该属性 -->

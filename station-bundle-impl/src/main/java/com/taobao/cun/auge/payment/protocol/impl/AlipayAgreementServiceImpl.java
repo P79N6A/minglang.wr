@@ -315,7 +315,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 
 	@Override
 	public Result<Boolean> isCaeSigned(Long taobaoUserId) {
-		AccountCaeSignDto signQueryDto = new AccountCaeSignDto();
+		/**AccountCaeSignDto signQueryDto = new AccountCaeSignDto();
 		Result<Boolean> result = null;
 		AccountBO account;
 		try {
@@ -346,7 +346,11 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			result = Result.of(ErrorInfo.of("SYSTEM_ERROR", null, "查询CAE协议异常"));
 			logger.error("isCaeSignedERROR",e);
 			return result;
-		}
+		}**/
+		Result<Boolean> result = null;
+		result = Result.of(ErrorInfo.of("SYSTEM_NOT_SUPPORT", null, "CAE暂时不支持"));
+		return result;
+		
 	}
 	
 	
