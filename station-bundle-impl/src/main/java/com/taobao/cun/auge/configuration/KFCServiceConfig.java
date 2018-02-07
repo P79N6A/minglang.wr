@@ -31,8 +31,8 @@ public class KFCServiceConfig {
     @Resource
     private MergeSearchService searcher;
     
-    private static String firstApply = "kfccommon";
-    private static String secondApply = "kfccommonapply";
+    private static String firstApply = "xinxianquanpingbi";
+    private static String secondApply = "pingbiciku";
 
     public Map<String, String> kfcCheck(String str) {
         Map<String, String> kfcErrorMap = null;
