@@ -60,7 +60,8 @@
         </property>
     </bean>
 
-    <bean id="searcher" class="com.taobao.kfc.client.merge.MergeSearchService" destroy-method="close"
-          depends-on="kfcClient"/>
+		<bean id="searcher" class="com.taobao.kfc.core.search.SearcherService" destroy-method="close"
+          depends-on="kfcClient" />
+</beans>
 	
 </beans>

@@ -9,9 +9,9 @@ import javax.annotation.Resource;
 
 import com.alibaba.common.lang.diagnostic.Profiler;
 
-import com.taobao.kfc.client.merge.MergeSearchService;
 import com.taobao.kfc.core.match.Match;
 import com.taobao.kfc.core.search.SearchResult;
+import com.taobao.kfc.core.search.SearcherService;
 import com.taobao.kfc.core.search.query.FuzzyIndexOf;
 import com.taobao.kfc.core.search.query.Query;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ public class KFCServiceConfig {
 //    private Searcher kfcSearchService;
     
     @Resource
-    private MergeSearchService searcher;
+    private SearcherService searcher;
     
     private static String firstApply = "xinxianquanpingbi";
     private static String secondApply = "pingbiciku";
