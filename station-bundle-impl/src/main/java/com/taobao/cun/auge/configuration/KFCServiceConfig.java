@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import com.alibaba.common.lang.diagnostic.Profiler;
 
+import com.taobao.kfc.client.merge.MergeSearchService;
 import com.taobao.kfc.core.match.Match;
 import com.taobao.kfc.core.search.SearchResult;
-import com.taobao.kfc.core.search.Searcher;
 import com.taobao.kfc.core.search.query.FuzzyIndexOf;
 import com.taobao.kfc.core.search.query.Query;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,14 +25,14 @@ import org.springframework.stereotype.Component;
 public class KFCServiceConfig {
     private final static Logger logger = Logger.getLogger(KFCServiceConfig.class);
     
-    @Autowired
-    private Searcher kfcSearchService;
+//    @Autowired
+//    private Searcher kfcSearchService;
+    
+    @Resource
+    private MergeSearchService searcher;
+    
     private static String firstApply = "kfccommon";
     private static String secondApply = "kfccommonapply";
-
-    public void setKfcSearchService(Searcher kfcSearchService) {
-        this.kfcSearchService = kfcSearchService;
-    }
 
     public Map<String, String> kfcCheck(String str) {
         Map<String, String> kfcErrorMap = null;
@@ -43,7 +44,7 @@ public class KFCServiceConfig {
             query.setSecondApply(new String[] { secondApply });
             List<String> words = null;
             try {
-                SearchResult searchResult = kfcSearchService.search(query);
+                SearchResult searchResult = searcher.search(query);
                 if (null != searchResult && searchResult.getMatch() != null) {
                     words = new ArrayList<String>();
                     List<Match> matches = searchResult.getMatch();

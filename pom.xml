@@ -729,11 +729,16 @@
 				<artifactId>common-division</artifactId>
 				<version>3.0.26</version>
 			</dependency>
-			<dependency>
+<!-- 			<dependency>
 				<groupId>com.taobao.kfc</groupId>
 				<artifactId>core</artifactId>
 				<version>3.0.3</version>
-		    </dependency>
+		    </dependency> -->
+		    <dependency>
+			    <groupId>com.taobao.kfc</groupId>
+			    <artifactId>kfc-client</artifactId>
+			    <version>1.7.7</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
