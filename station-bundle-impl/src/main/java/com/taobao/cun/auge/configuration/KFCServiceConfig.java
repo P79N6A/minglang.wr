@@ -45,8 +45,8 @@ public class KFCServiceConfig {
             List<String> words = null;
             try {
                 SearchResult searchResult = searcher.search(query);
+                logger.info("kfc.query.param:" + query+":result is:"+searchResult);
                 if (null != searchResult && searchResult.getMatch() != null) {
-                    logger.info("kfc.query.param:" + query+":result is:"+searchResult);
                     words = new ArrayList<String>();
                     List<Match> matches = searchResult.getMatch();
                     for (Match match : matches) {

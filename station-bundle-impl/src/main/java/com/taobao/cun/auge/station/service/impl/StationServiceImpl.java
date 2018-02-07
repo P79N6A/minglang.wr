@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.taobao.cun.appResource.service.AppResourceService;
-import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventConstant;
@@ -78,6 +79,8 @@ public class StationServiceImpl implements StationService {
     @Autowired
     private LifeCycleValidator lifeCycleValidator;
     
+    @Autowired
+    KFCServiceConfig kfcServiceConfig;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void auditQuitStation(Long stationId, ProcessApproveResultEnum approveResult){
@@ -225,5 +228,10 @@ public class StationServiceImpl implements StationService {
         ins.setStationDto(station);
         lifeCycleValidator.stationModelBusCheck(ins);
         return true;
+    }
+
+    @Override
+    public boolean checkKfc(String word) {
+        return kfcServiceConfig.isProhibitedWord(word);
     }
 }

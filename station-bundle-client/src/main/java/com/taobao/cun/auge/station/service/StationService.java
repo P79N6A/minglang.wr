@@ -41,4 +41,7 @@ public interface StationService {
      * @param instanceId、stationDto
      */
     public boolean getStationInfoValidateRule(Long instanceId,StationDto station);
+    
+    
+    public boolean checkKfc(String word);
 }
