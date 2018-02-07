@@ -49,14 +49,14 @@
                     <list>
                         <bean class="com.taobao.kfc.client.Config">
                             <!-- 一级应用点信息 -->
-                            <property name="app" value="kfccommon"/>
+                            <property name="app" value="xinxianquanpingbi"/>
                             <!--密钥信息，这个找相关运营同学要，日常和预发环境的密钥不同 -->
                             <!--日常kfccommon应用点密钥: 9ebe8e77a487d8d6dbd443696c192427-->
-                            <property name="decryptKey" value="9ebe8e77a487d8d6dbd443696c192427"/>
+                            <property name="decryptKey" value="69dc1918deaf9bb4e6dc858df3dfa95f"/>
                         </bean>
                         <bean class="com.taobao.kfc.client.Config">
-                            <property name="app" value="AErussiaban" />
-                            <property name="decryptKey" value="017c909ab8ed61bb6fabfb3d8ab51eea"/>
+                            <property name="app" value="pingbiciku" />
+                            <property name="decryptKey" value="69dc1918deaf9bb4e6dc858df3dfa95f"/>
                         </bean>
                     </list>
                 </constructor-arg>

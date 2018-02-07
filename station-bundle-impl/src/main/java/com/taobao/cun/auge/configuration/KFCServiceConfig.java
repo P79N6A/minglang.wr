@@ -31,8 +31,8 @@ public class KFCServiceConfig {
     @Resource
     private MergeSearchService searcher;
     
-    private static String firstApply = "kfccommon";
-    private static String secondApply = "kfccommonapply";
+    private static String firstApply = "xinxianquanpingbi";
+    private static String secondApply = "pingbiciku";
 
     public Map<String, String> kfcCheck(String str) {
         Map<String, String> kfcErrorMap = null;
@@ -46,6 +46,7 @@ public class KFCServiceConfig {
             try {
                 SearchResult searchResult = searcher.search(query);
                 if (null != searchResult && searchResult.getMatch() != null) {
+                    logger.info("kfc query param:" + query+":result is:"+searchResult);
                     words = new ArrayList<String>();
                     List<Match> matches = searchResult.getMatch();
                     for (Match match : matches) {
