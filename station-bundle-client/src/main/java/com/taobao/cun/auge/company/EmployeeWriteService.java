@@ -42,7 +42,7 @@ public interface EmployeeWriteService{
 	 * @param employeeId
 	 * @return
 	 */
-	Result<Boolean> removeVendorEmployee(Long employeeId);
+	Result<Boolean> removeVendorEmployee(Long employeeId,String operator);
 	
 	
 	/**

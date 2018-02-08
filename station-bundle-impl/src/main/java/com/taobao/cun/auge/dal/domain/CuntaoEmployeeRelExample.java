@@ -154,7 +154,7 @@ public class CuntaoEmployeeRelExample {
      *
      * @mbggenerated
      */
-    protected abstract static class GeneratedCriteria {
+    public abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
         protected GeneratedCriteria() {

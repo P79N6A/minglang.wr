@@ -208,14 +208,14 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 
 	@Override
-	public Result<Boolean> removeVendorEmployee(Long employeeId) {
-		//CuntaoEmployee employee = new CuntaoEmployee();
-		//employee.setId(employeeId);
-		//employee.setGmtCreate(new Date());
-		//employee.setModifier(modifier);
-		//employee.setIsDeleted("y");
-		//cuntaoEmployeeMapper.updateByPrimaryKeySelective(employee);
-		return null;
+	public Result<Boolean> removeVendorEmployee(Long employeeId,String operator) {
+		try {
+			return Result.of(employeeWriteBO.removeVendorEmployee(employeeId,operator));
+		} catch (Exception e) {
+			logger.error("removeVendorEmployee error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
 	}
 
 	@Override

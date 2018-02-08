@@ -2,6 +2,7 @@ package com.taobao.cun.auge.company.bo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
@@ -29,6 +31,7 @@ import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
+import com.taobao.cun.endor.base.dto.UserRoleDto;
 import com.taobao.cun.endor.base.dto.UserUpdateDto;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
@@ -162,9 +165,39 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Boolean removeVendorEmployee(Long employeeId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean removeVendorEmployee(Long employeeId,String operator) {
+		CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
+		
+		removeEmployee(employeeId,CuntaoEmployeeType.vendor,operator);
+		//删除关系
+		List<UserRoleDto> userRoles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(employee.getTaobaoUserId()+"");
+		if(userRoles != null){
+			userRoles = userRoles.stream().filter(role -> (CuntaoEmployeeIdentifier.VENDOR_MANAGER.name().equals(role.getRoleName())
+					||CuntaoEmployeeIdentifier.VENDOR_DISTRIBUTOR.name().equals(role.getRoleName()))).collect(Collectors.toList());
+			for(UserRoleDto useRole : userRoles){
+				storeEndorApiClient.getUserRoleServiceClient().deleteUserRole(useRole.getId(), null);
+			}
+		}
+		//删除用户角色
+		return true;
+	}
+
+	private void removeEmployee(Long employeeId,CuntaoEmployeeType type,String operator) {
+		CuntaoEmployee record = new CuntaoEmployee();
+		record.setId(employeeId);
+		record.setGmtModified(new Date());
+		record.setModifier(operator);
+		record.setIsDeleted("y");
+		cuntaoEmployeeMapper.updateByPrimaryKeySelective(record);
+		//删除员工
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andEmployeeIdEqualTo(employeeId).andIsDeletedEqualTo("n").andTypeEqualTo(type.name());
+		CuntaoEmployeeRel relRecord = new CuntaoEmployeeRel();
+		relRecord.setIsDeleted("y");
+		relRecord.setModifier(operator);
+		relRecord.setGmtModified(new Date());
+		cuntaoEmployeeRelMapper.updateByExampleSelective(relRecord, example);
+		//删除关系
 	}
 
 	@Override
@@ -233,5 +266,20 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 	public Long addVendorEmployeeByEmployeeId(Long vendorId, Long employeeId, CuntaoEmployeeIdentifier identifier) {
 		CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
 		return addVendorEmployee(vendorId,employee,identifier);
+	}
+
+	@Override
+	public Boolean removeStoreEmployee(Long employeeId,String operator) {
+		CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
+		
+		removeEmployee(employeeId,CuntaoEmployeeType.store,operator);
+		
+		List<UserRoleDto> userRoles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(employee.getTaobaoUserId()+"");
+		if(userRoles != null){
+			for(UserRoleDto useRole : userRoles){
+				storeEndorApiClient.getUserRoleServiceClient().deleteUserRole(useRole.getId(), null);
+			}
+		}
+		return true;
 	}
 }

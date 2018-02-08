@@ -34,7 +34,7 @@ public interface EmployeeWriteBO {
 	 * @param employeeId
 	 * @return
 	 */
-	Boolean removeVendorEmployee(Long employeeId);
+	Boolean removeVendorEmployee(Long employeeId,String operator);
 	
 	
 	/**
@@ -45,4 +45,7 @@ public interface EmployeeWriteBO {
 	 * @return
 	 */
 	Long addStoreEmployee(Long stationId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier type);
+	
+	
+	Boolean removeStoreEmployee(Long employeeId,String operator);
 }
