@@ -1,10 +1,6 @@
 package com.taobao.cun.auge.lifecycle.tps;
 
-import java.util.Calendar;
 import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -30,12 +26,10 @@ import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
@@ -46,6 +40,8 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 村小二服务中阶段组件

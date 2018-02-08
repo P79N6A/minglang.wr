@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;

@@ -10,10 +10,8 @@ import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 
-import org.apache.commons.lang3.StringUtils;
-
-import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.github.pagehelper.PageHelper;
+import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -27,6 +25,7 @@ import com.taobao.cun.auge.station.bo.StationDataCheckBO;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,11 +5,10 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.dal.mapper.SyncLogMapper;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SyncLogBoImpl implements SyncLogBo {

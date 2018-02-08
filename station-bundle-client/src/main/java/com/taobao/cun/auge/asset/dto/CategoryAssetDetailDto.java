@@ -1,10 +1,7 @@
 package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
-import java.util.Map;
 
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
-import com.taobao.cun.auge.client.page.DefaultPageResult;
 import com.taobao.cun.auge.common.PageDto;
 
 /**

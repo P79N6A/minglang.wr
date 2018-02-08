@@ -1,10 +1,10 @@
 package com.taobao.cun.auge.dal.mapper;
 
-import com.taobao.cun.auge.dal.domain.PeixunPurchase;
-import com.taobao.cun.auge.dal.domain.PeixunPurchaseExample;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.dal.domain.PeixunPurchase;
+import com.taobao.cun.auge.dal.domain.PeixunPurchaseExample;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
 import org.apache.ibatis.annotations.Param;
 

@@ -4,9 +4,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
@@ -19,6 +18,7 @@ import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.crius.event.ExtEvent;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PartnerRoleChangeNotifyBoImpl implements PartnerRoleChangeNotifyBo {

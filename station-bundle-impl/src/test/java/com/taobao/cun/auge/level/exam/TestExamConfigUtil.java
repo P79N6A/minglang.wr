@@ -6,15 +6,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.CourseLevelInfo;
 import com.taobao.cun.auge.station.convert.LevelCourseConfigUtil.ResourceValueUpdateResult;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class TestExamConfigUtil {
 

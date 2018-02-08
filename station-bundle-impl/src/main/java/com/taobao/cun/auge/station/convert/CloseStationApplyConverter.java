@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.convert;
 
 import com.alibaba.common.lang.StringUtil;
+
 import com.taobao.cun.auge.dal.domain.CloseStationApply;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;

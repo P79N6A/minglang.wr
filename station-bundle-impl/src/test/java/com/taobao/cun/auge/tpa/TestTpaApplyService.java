@@ -2,6 +2,14 @@ package com.taobao.cun.auge.tpa;
 
 import java.io.IOException;
 
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.Application;
+import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
+import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
+import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
+import com.taobao.cun.auge.station.response.TpaApplyResponse;
+import com.taobao.cun.auge.station.tpa.TpaApplyService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,14 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.Application;
-import com.taobao.cun.auge.station.dto.TpaApplyInfoDto;
-import com.taobao.cun.auge.station.request.CheckTpaApplyRequest;
-import com.taobao.cun.auge.station.response.CheckTpaApplyResponse;
-import com.taobao.cun.auge.station.response.TpaApplyResponse;
-import com.taobao.cun.auge.station.tpa.TpaApplyService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)

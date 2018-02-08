@@ -2,15 +2,6 @@ package com.taobao.cun.auge.station.bo.impl;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
@@ -28,6 +19,14 @@ import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 import com.taobao.cun.auge.logistics.enums.LogisticsStationStateEnum;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.common.exceptions.ServiceException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("logisticsStationBO")
 public class LogisticsStationBOImpl implements LogisticsStationBO {

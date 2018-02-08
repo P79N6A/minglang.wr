@@ -1,28 +1,25 @@
 package com.taobao.cun.auge.station.check.impl;
 
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-
-import com.taobao.cun.auge.station.bo.AccountMoneyBO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("partnerInstanceChecker")
 public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {

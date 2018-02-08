@@ -8,14 +8,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.alibaba.common.lang.StringUtil;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.attachment.dto.AttachmentDto;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -69,6 +63,12 @@ import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("tpaApplyService")
 @HSFProvider(serviceInterface = TpaApplyService.class, clientTimeout = 7000)

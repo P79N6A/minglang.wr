@@ -3,12 +3,6 @@ package com.taobao.cun.auge.station.service.impl.levelaudit;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -23,6 +17,11 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * Created by xujianhui on 17/4/20.

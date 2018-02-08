@@ -2,10 +2,8 @@ package com.taobao.cun.auge.alilang;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 
 //@Service("alilangHomePageManageService")
 @HSFProvider(serviceInterface= AlilangHomePageManageService.class)

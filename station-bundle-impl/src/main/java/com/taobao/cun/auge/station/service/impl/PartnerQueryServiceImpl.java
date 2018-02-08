@@ -1,12 +1,7 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.alibaba.common.lang.StringUtil;
+
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
@@ -19,6 +14,11 @@ import com.taobao.cun.auge.station.convert.PartnerConverter;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.security.util.SensitiveDataUtil;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * Created by jingxiao.gjx on 2016/8/31.

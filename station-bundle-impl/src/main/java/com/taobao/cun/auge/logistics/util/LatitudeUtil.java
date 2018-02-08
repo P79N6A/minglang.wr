@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
+import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -18,8 +20,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSON;
 
 public final class LatitudeUtil {
 

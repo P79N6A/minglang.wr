@@ -139,6 +139,10 @@ public class StationDto extends OperatorDto implements Serializable{
 	 */
 	private StoreDto storeDto;
 	
+	private String nameSuffix;
+	
+	private String invalidNameMsg;
+	
 	public Long getId() {
 		return id;
 	}
@@ -361,6 +365,20 @@ public class StationDto extends OperatorDto implements Serializable{
 	public void setStoreDto(StoreDto storeDto) {
 		this.storeDto = storeDto;
 	}
-	
-	
+
+    public String getNameSuffix() {
+        return nameSuffix;
+    }
+
+    public void setNameSuffix(String nameSuffix) {
+        this.nameSuffix = nameSuffix;
+    }
+
+    public String getInvalidNameMsg() {
+        return invalidNameMsg;
+    }
+
+    public void setInvalidNameMsg(String invalidNameMsg) {
+        this.invalidNameMsg = invalidNameMsg;
+    }
 }

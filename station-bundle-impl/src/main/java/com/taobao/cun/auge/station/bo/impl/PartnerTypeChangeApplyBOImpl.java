@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
@@ -24,6 +21,8 @@ import com.taobao.cun.auge.station.convert.PartnerTypeChangeApplyDtoConverter;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.validator.BeanValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("partnerTypeChangeApplyBO")
 public class PartnerTypeChangeApplyBOImpl implements PartnerTypeChangeApplyBO {

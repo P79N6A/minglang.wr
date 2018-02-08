@@ -1,12 +1,12 @@
 package com.taobao.cun.auge.bail.dto;
 
+import java.math.BigDecimal;
+
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoUnFreezeBailDto;
 import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
-
-import java.math.BigDecimal;
 
 /**
  * Created by xujianhui on 16/12/27.

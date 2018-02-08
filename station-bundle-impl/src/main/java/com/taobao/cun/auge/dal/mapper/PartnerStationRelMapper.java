@@ -3,11 +3,10 @@ package com.taobao.cun.auge.dal.mapper;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
+import org.apache.ibatis.annotations.Param;
 
 public interface PartnerStationRelMapper {
     /**

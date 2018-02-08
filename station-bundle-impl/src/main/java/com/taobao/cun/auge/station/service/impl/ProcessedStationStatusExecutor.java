@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.station.condition.StationStatisticsCondition;
-
-import java.util.List;
 
 /**
  * Created by linjianke on 2017/8/17.

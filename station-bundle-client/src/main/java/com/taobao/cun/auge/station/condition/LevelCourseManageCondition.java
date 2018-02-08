@@ -1,8 +1,7 @@
 package com.taobao.cun.auge.station.condition;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 内部课程管理查询对象

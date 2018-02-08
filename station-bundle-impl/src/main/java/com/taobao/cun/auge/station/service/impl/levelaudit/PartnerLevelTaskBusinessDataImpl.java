@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.station.service.impl.levelaudit;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import com.ali.com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.PartnerLevelTaskBusinessData;
 import com.taobao.cun.auge.dal.domain.PartnerLevelTaskBusinessDataExample;
@@ -10,15 +14,10 @@ import com.taobao.cun.auge.evaluate.service.PartnerLevelTaskBusinessDataService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by xujianhui on 16/12/13.

@@ -3,11 +3,6 @@ package com.taobao.cun.auge.lifecycle.tps;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -40,6 +35,10 @@ import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
 import com.taobao.cun.auge.store.service.StoreWriteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 村小二装修中阶段组件

@@ -6,16 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.ceres.commonservice.po.PoQueryService;
-import com.alibaba.ceres.commonservice.po.model.PoResultDto;
 import com.alibaba.ceres.service.Result;
 import com.alibaba.ceres.service.pr.model.PrPoDto;
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
@@ -29,6 +24,10 @@ import com.taobao.cun.auge.station.enums.PeixunPurchaseStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PeixunPurchaseService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 @Service("peixunPurchaseService")
 @HSFProvider(serviceInterface = PeixunPurchaseService.class)

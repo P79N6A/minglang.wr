@@ -4,12 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
@@ -26,6 +22,10 @@ import com.taobao.cun.auge.logistics.service.LogisticsStationService;
 import com.taobao.cun.auge.station.bo.LogisticsStationBO;
 import com.taobao.cun.common.exceptions.ServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service("logisticsStationService")
 @HSFProvider(serviceInterface= LogisticsStationService.class)

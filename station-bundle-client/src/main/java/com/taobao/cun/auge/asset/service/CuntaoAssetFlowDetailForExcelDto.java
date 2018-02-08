@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.asset.service;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class CuntaoAssetFlowDetailForExcelDto implements Serializable  {
 

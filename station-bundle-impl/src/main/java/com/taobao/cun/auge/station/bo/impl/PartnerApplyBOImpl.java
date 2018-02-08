@@ -1,18 +1,18 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerApplyExample;
+import com.taobao.cun.auge.dal.domain.PartnerApplyExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.PartnerApplyMapper;
 import com.taobao.cun.auge.station.bo.PartnerApplyBO;
-import com.taobao.cun.auge.dal.domain.PartnerApplyExample.Criteria;
 import com.taobao.cun.auge.station.dto.PartnerApplyDto;
 import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component("partnerApplyBO")
 public class PartnerApplyBOImpl implements PartnerApplyBO{

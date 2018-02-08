@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
+
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
-import com.taobao.cun.common.exception.ServiceException;
 
 public interface CaiNiaoAdapter {
 	/**

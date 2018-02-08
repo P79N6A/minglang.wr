@@ -2,13 +2,8 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.event.AssetChangeEvent;
 import com.taobao.cun.auge.event.ChangeTPEvent;
@@ -37,6 +32,11 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("cuntaoFlowRecordListener")
 @EventSub({ EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT,

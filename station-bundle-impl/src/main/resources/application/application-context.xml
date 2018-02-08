@@ -42,5 +42,24 @@
 		depends-on="sync">
 	</bean>
 
-	
+    <bean id="kfcClient" class="com.taobao.kfc.client.init.Initialization" init-method="initMerge" destroy-method="close">
+        <property name="configs">
+            <bean class="java.util.ArrayList">
+                <constructor-arg>
+                    <list>
+                        <bean class="com.taobao.kfc.client.Config">
+                            <!-- 一级应用点信息 -->
+                            <property name="app" value="xinxianquanpingbi"/>
+                            <!--密钥信息，这个找相关运营同学要，日常和预发环境的密钥不同 -->
+                            <!--日常kfccommon应用点密钥: 9ebe8e77a487d8d6dbd443696c192427-->
+                            <property name="decryptKey" value="69dc1918deaf9bb4e6dc858df3dfa95f"/>
+                        </bean>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+		<bean id="searcher" class="com.taobao.kfc.core.search.SearcherService" destroy-method="close"
+          depends-on="kfcClient" />
 </beans>

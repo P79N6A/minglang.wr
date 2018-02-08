@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.company;
 
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 
 /**
  * 村淘员工管理服务

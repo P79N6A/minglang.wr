@@ -3,19 +3,9 @@ package com.taobao.cun.auge.statemachine;
 import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.Application;
-import com.taobao.cun.auge.dal.domain.PartnerStationRel;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEvent;
-import com.taobao.cun.auge.lifecycle.LifeCyclePhaseEventBuilder;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.ConfirmCloseDto;
 import com.taobao.cun.auge.station.dto.ForcedCloseDto;
@@ -27,13 +17,18 @@ import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.AssertUseStateEnum;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.RemoveBrandUserTypeEnum;
 import com.taobao.cun.auge.station.notify.listener.ProcessProcessor;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.tpa.TestTpaApplyService;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)

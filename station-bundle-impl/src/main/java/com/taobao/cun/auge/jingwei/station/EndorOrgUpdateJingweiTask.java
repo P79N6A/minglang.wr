@@ -8,19 +8,19 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.common.exception.RetryLaterException;
+
 import com.google.common.collect.Sets;
 import com.taobao.cun.endor.dto.AppInfo;
 import com.taobao.cun.endor.service.AppService;
 import com.taobao.diamond.client.Diamond;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class EndorOrgUpdateJingweiTask implements InitializingBean{

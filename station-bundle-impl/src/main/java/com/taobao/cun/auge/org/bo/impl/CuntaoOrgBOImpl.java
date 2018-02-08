@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.cache.TairCache;
 import com.taobao.cun.auge.dal.domain.CuntaoOrg;
 import com.taobao.cun.auge.dal.domain.CuntaoOrgExample;
@@ -15,6 +12,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoOrgMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.org.bo.CuntaoOrgBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 @Component("cuntaoOrgBO")
 public class CuntaoOrgBOImpl implements CuntaoOrgBO {
 	@Autowired

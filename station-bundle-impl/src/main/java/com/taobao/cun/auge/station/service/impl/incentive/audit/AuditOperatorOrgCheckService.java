@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.station.service.impl.incentive.audit;
 
-import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
-
 import java.util.List;
+
+import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 
 /**
  * Created by xujianhui on 17/2/23.

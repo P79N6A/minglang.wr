@@ -1,9 +1,5 @@
 package com.taobao.cun.auge.station.sync;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
@@ -13,6 +9,9 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.StationApplySyncService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @HSFProvider(serviceInterface = StationApplySyncService.class)
 public class StationApplySyncServiceImpl implements StationApplySyncService {

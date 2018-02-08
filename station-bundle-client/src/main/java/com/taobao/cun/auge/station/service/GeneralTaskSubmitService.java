@@ -7,7 +7,6 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface GeneralTaskSubmitService {
 	/**

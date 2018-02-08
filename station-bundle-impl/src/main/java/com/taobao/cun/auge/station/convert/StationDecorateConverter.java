@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * 服务站装修记录转换

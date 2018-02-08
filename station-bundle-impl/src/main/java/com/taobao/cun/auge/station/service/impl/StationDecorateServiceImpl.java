@@ -3,14 +3,6 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.alibaba.china.member.service.MemberReadService;
 import com.alibaba.china.member.service.models.MemberModel;
 import com.alibaba.fastjson.JSONObject;
@@ -21,6 +13,7 @@ import com.alibaba.organization.api.orgstruct.param.OrgStructPostParam;
 import com.alibaba.organization.api.orgstruct.param.QueryOrgStructParam;
 import com.alibaba.organization.api.orgstruct.service.OrgStructReadService;
 import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
+
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
@@ -48,6 +41,13 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("stationDecorateService")
 @HSFProvider(serviceInterface = StationDecorateService.class)

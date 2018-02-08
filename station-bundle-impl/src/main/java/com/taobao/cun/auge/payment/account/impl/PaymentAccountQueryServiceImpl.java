@@ -1,9 +1,5 @@
 package com.taobao.cun.auge.payment.account.impl;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.payment.account.PaymentAccountQueryService;
 import com.taobao.cun.auge.payment.account.dto.AliPaymentAccountDto;
@@ -16,6 +12,9 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 @Service("paymentAccountQueryService")
 @HSFProvider(serviceInterface = PaymentAccountQueryService.class)
 public class PaymentAccountQueryServiceImpl implements PaymentAccountQueryService{

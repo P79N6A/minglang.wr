@@ -6,10 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.alibaba.cainiao.cuntaonetwork.param.station.ApplyStationParam;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.LogisticsStation;
@@ -21,6 +19,8 @@ import com.taobao.cun.auge.logistics.dto.LogisticsStationQueryDto;
 import com.taobao.cun.auge.logistics.enums.LogisticsStationStateEnum;
 import com.taobao.cun.auge.logistics.util.LatitudeUtil;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 public final class LogisticsStationConverter {
 

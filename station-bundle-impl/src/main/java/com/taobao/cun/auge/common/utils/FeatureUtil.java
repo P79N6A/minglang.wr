@@ -8,11 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 
 public final class FeatureUtil {
 

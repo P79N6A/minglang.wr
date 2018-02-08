@@ -1,9 +1,10 @@
 package com.taobao.cun.auge.station.condition;
 
-import com.taobao.cun.auge.common.OperatorDto;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+
+import com.taobao.cun.auge.common.OperatorDto;
 
 /**
  * 查询实例条件

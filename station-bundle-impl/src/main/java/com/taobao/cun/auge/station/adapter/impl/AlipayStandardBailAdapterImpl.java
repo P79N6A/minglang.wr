@@ -1,12 +1,7 @@
 package com.taobao.cun.auge.station.adapter.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.bail.dto.BaiDtoBuilder;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -16,6 +11,11 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.AlipayStandardBailDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.settle.common.model.ResultModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component("alipayStandardBailAdapter")
 public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter {

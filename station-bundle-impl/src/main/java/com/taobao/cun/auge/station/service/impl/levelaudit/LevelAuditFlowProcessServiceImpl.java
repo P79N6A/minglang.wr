@@ -4,14 +4,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
 import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
 import com.taobao.cun.auge.evaluate.enums.TaskNodeAuditStatus;
@@ -40,6 +35,11 @@ import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CalendarUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * 晋升流程处理服务:S6 S7 S8需要人工流程审核

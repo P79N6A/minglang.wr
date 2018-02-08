@@ -1,12 +1,11 @@
 package com.taobao.cun.auge.station.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.station.adapter.UicTagAdapter;
 import com.taobao.cun.auge.station.dto.UserTagDto;
 import com.taobao.cun.auge.station.service.UicTagService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 @Service("uicTagService")
 @HSFProvider(serviceInterface= UicTagService.class)
 public class UicTagServiceImpl implements UicTagService {

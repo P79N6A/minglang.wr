@@ -1,17 +1,16 @@
 package com.taobao.cun.auge.station.service.impl.levelaudit;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.station.bo.PartnerInstanceLevelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditMessageService;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * S7 S8需要省长和大区经理审批

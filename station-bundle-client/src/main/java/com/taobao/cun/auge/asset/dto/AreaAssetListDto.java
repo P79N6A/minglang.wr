@@ -2,9 +2,6 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-
-import com.taobao.cun.auge.asset.enums.AssetStatusEnum;
 
 /**
  * Created by xiao on 17/5/17.

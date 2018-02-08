@@ -1,8 +1,9 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.CuntaoAssetFlowDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetFlowDetailExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface CuntaoAssetFlowDetailMapper {

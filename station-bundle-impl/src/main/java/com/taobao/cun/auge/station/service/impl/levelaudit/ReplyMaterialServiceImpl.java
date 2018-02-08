@@ -3,15 +3,8 @@ package com.taobao.cun.auge.station.service.impl.levelaudit;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
 import com.taobao.cun.auge.evaluate.dto.ReplyMaterialDTO;
@@ -22,6 +15,13 @@ import com.taobao.cun.auge.evaluate.service.ReplyMaterialService;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Created by xujianhui on 16/12/9.
