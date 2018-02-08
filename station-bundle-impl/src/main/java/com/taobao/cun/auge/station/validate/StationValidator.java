@@ -151,8 +151,8 @@ public final class StationValidator {
         if (StringUtils.isEmpty(name)) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称不能为空");
         }
-        if (name.length() > 20 || name.length() < 4) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称长度4-20");
+        if (name.length() > 20 || name.length() < 2) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称长度2-20");
         }
         for (String vw : nameInvalidWord) {
             if (name.indexOf(vw) >= 0) {
