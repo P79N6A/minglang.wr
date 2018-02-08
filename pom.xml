@@ -737,7 +737,7 @@
 		    <dependency>
 			    <groupId>com.taobao.kfc</groupId>
 			    <artifactId>kfc-client</artifactId>
-			    <version>1.7.7</version>
+			    <version>1.7.8-SNAPSHOT</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
