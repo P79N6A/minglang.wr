@@ -6,8 +6,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.alibaba.common.lang.StringUtil;
 
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
-
 import com.ali.com.google.common.collect.Lists;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -19,6 +17,7 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
@@ -95,6 +94,7 @@ import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.interfaces.PartnerInstanceLevelDataQueryService;
 import com.taobao.cun.auge.station.util.PartnerInstanceStateEnumUtil;
 import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
+import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.testuser.TestUserService;
@@ -175,8 +175,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
-
-
+    
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
     }
@@ -308,6 +307,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         PageDto<PartnerInstanceDto> success = PageDtoUtil.success(page, PartnerInstanceConverter.convert(page));
         buildStoreInfo(success.getItems());
+        buildNameRuleFlag(success.getItems());
         return success;
     }
 
@@ -336,6 +336,39 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     			 }
         	 }
     	}
+    }
+    
+    private void buildNameRuleFlag(List<PartnerInstanceDto> partnerInstances){
+        if(CollectionUtils.isNotEmpty(partnerInstances)){
+             List<String> stationNameSuffix =  diamondConfiguredProperties.getStationNameSuffix();
+             for (PartnerInstanceDto instance : partnerInstances) {
+                 boolean isRule = false;
+                     try {
+                    	 if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState().getCode())) {
+                    		 instance.getStationDto().setInvalidNameMsg("");
+                    		 continue;
+                    	 }
+                         //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
+                         String checkName = instance.getStationDto().getName();
+                         for(String rs : stationNameSuffix){
+                             if(checkName.lastIndexOf(rs) >= 0){
+                                 isRule = true;
+                                 break;
+                             }
+                         }
+                         if(isRule){
+                             instance.getStationDto().setInvalidNameMsg("");
+                         }else{
+                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
+                            if(StationValidator.nameFormatCheck(checkName)){
+                                 instance.getStationDto().setInvalidNameMsg("");
+                             }
+                        }
+                    } catch (AugeBusinessException e) {
+                        instance.getStationDto().setInvalidNameMsg(e.getMessage());;
+                    }
+             }
+        }
     }
     
     private void buildLifecycleItems(Page<PartnerInstance> page) {

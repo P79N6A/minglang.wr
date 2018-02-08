@@ -8,14 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.attachment.enums.AttachmentTypeIdEnum;
@@ -61,11 +55,15 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationCategoryEnum;
 import com.taobao.cun.auge.station.enums.TargetTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.rule.PartnerLifecycleRuleParser;
 import com.taobao.util.CollectionUtil;
 import com.taobao.vipserver.client.utils.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 @Component("syncStationApplyBO")
 public class StationApplySyncBOImpl implements StationApplySyncBO {

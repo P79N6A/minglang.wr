@@ -2,17 +2,17 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.List;
 
+import com.alibaba.common.lang.StringUtil;
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.adapter.WangwangAdapter;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.adapter.WangwangAdapter;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 @Component("wangwangAdapter")
 public class WangwangAdapterImpl implements WangwangAdapter {

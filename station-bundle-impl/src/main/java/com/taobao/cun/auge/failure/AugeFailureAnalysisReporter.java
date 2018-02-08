@@ -1,12 +1,10 @@
 package com.taobao.cun.auge.failure;
 
+import com.taobao.hsf.util.RequestCtxUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 import org.springframework.boot.diagnostics.FailureAnalysisReporter;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
-import com.taobao.hsf.util.RequestCtxUtil;
 
 public class AugeFailureAnalysisReporter implements FailureAnalysisReporter{
 

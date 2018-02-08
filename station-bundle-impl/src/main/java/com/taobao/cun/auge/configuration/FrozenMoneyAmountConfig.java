@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.configuration;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 
 /**
  * 合作伙伴保证金冻结金额配置

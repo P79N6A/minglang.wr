@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.station.convert;
 
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
@@ -12,9 +9,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCourseStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleLogisticsApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;

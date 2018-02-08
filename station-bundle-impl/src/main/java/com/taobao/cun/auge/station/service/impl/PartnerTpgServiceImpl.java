@@ -5,17 +5,13 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.station.StationDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
+
 import com.taobao.cun.auge.dal.domain.PartnerTpg;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -28,6 +24,10 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.PartnerTpgService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("partnerTpgService")
 @HSFProvider(serviceInterface = PartnerTpgService.class)

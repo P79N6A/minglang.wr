@@ -7,12 +7,11 @@ import javax.annotation.PostConstruct;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 采用JSR-303规范对Bean校验

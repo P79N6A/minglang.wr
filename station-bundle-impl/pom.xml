@@ -138,6 +138,10 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 		</dependency>
+				<dependency>
+    <groupId>com.taobao.mmp</groupId>
+    <artifactId>mmp-client-core</artifactId>
+</dependency>
 		<dependency>
 			<groupId>com.taobao.crius</groupId>
 			<artifactId>event-client</artifactId>
@@ -448,6 +452,14 @@
     		<dependency>
 				<groupId>com.taobao.common.division</groupId>
 				<artifactId>common-division</artifactId>
+			</dependency>
+<!-- 			<dependency>
+			  <groupId>com.taobao.kfc</groupId>
+			  <artifactId>core</artifactId>
+			</dependency> -->
+			<dependency>
+			    <groupId>com.taobao.kfc</groupId>
+			    <artifactId>kfc-client</artifactId>
 			</dependency>
 	</dependencies>
 	<build>

@@ -3,7 +3,6 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 定时任务调用服务

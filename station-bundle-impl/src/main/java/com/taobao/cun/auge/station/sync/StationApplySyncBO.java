@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.sync;
 
 import com.taobao.cun.auge.dal.domain.StationApply;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface StationApplySyncBO {
 

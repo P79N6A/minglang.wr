@@ -2,6 +2,7 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 import java.util.List;
+
 import com.taobao.cun.auge.common.PageDto;
 
 /**

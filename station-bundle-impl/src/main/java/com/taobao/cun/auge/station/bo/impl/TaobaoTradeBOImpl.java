@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.station.bo.TaobaoTradeBO;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.trade.dto.TaobaoNoEndTradeDto;
@@ -20,6 +17,8 @@ import com.taobao.tc.domain.query.QueryBizOrderDO;
 import com.taobao.tc.domain.result.BatchQueryOrderInfoResultDO;
 import com.taobao.tc.refund.domain.RefundDO;
 import com.taobao.trade.platform.api.query.BuyerQueryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("taobaoTradeBO")
 public class TaobaoTradeBOImpl implements TaobaoTradeBO{

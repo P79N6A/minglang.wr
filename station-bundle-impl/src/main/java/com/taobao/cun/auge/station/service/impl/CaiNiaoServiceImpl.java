@@ -6,15 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.CountyStation;
@@ -48,6 +42,12 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("caiNiaoService")
 @HSFProvider(serviceInterface= CaiNiaoService.class, clientTimeout = 8000)

@@ -12,9 +12,6 @@ import com.alibaba.it.asset.api.CuntaoApiService;
 import com.alibaba.it.asset.api.dto.AssetApiResultDO;
 import com.alibaba.it.asset.api.dto.PubResourceDto;
 
-import com.taobao.cun.auge.asset.dto.AssetAppMessageDto;
-import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
-import com.taobao.cun.auge.station.dto.StationDto;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.asset.bo.AssetIncomeBO;
@@ -50,6 +47,7 @@ import com.taobao.cun.auge.dal.domain.AssetIncomeExample;
 import com.taobao.cun.auge.dal.domain.AssetIncomeExample.Criteria;
 import com.taobao.cun.auge.dal.domain.AssetRollout;
 import com.taobao.cun.auge.dal.domain.AssetRolloutExample;
+import com.taobao.cun.auge.dal.domain.AssetRolloutIncomeDetail;
 import com.taobao.cun.auge.dal.domain.CuntaoAsset;
 import com.taobao.cun.auge.dal.domain.CuntaoAssetExample;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -67,8 +65,10 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+import com.taobao.mmp.client.cuic.transferobject.ResultTO;
+import com.taobao.mmp.client.permission.domainobject.MmpPermissionDO;
+import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.ecs.xhtml.s;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +122,9 @@ public class AssetSynBOImpl implements AssetSynBO {
 	
     @Autowired
     private CuntaoUserService cuntaoUserService;
+    
+    @Autowired
+    private MmpAuthReadService mmpAuthReadService;
     
     @HSFConsumer(serviceGroup = "${it.service.group}", serviceVersion = "${it.service.version}")
     private CuntaoApiService cuntaoApiService;
@@ -502,10 +505,10 @@ public class AssetSynBOImpl implements AssetSynBO {
 		
 		  AssetExample assetExample = new AssetExample();
 	        if (assetId != null) {
-	        	 assetExample.createCriteria().andIsDeletedEqualTo("n").andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode()).andIdIn(assetId);
+	        	 assetExample.createCriteria().andIsDeletedEqualTo("n").andIdIn(assetId);//.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode())
 	        }else {
 	        	 assetExample.createCriteria().andIsDeletedEqualTo("n")
-		            .andOwnerOrgIdEqualTo(orgId).andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
+		            .andOwnerOrgIdEqualTo(orgId);//.andStatusNotEqualTo(AssetStatusEnum.SCRAP.getCode());
 	        }
 	        List<Asset> assetList = assetMapper.selectByExample(assetExample);
 	        

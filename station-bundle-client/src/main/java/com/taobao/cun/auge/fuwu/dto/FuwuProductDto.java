@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.fuwu.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @author yi.shaoy

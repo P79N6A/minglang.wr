@@ -8,21 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import com.alibaba.ceres.service.Result;
 import com.alibaba.ceres.service.pr.PrService;
 import com.alibaba.ceres.service.pr.model.PrDto;
 import com.alibaba.ceres.service.pr.model.PrLineDto;
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.PeixunPurchase;
@@ -41,6 +32,15 @@ import com.taobao.cun.crius.bpm.dto.StartProcessInstanceDto;
 import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 @Component("peixunPurchaseBO")
 public class PeixunPurchaseBOImpl implements PeixunPurchaseBO{
 

@@ -7,17 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import com.alibaba.cainiao.cuntaonetwork.constants.apply.UserTypeEnum;
 import com.alibaba.cainiao.cuntaonetwork.constants.common.ModifierType;
 import com.alibaba.cainiao.cuntaonetwork.constants.station.StationConst.StationTypeConstant;
@@ -26,6 +15,7 @@ import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
 import com.alibaba.cainiao.cuntaonetwork.param.station.ApplyStationParam;
 import com.alibaba.cainiao.cuntaonetwork.result.Result;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationWriteService;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
@@ -62,6 +52,16 @@ import com.taobao.cun.auge.station.service.StationQueryService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.cun.common.exceptions.ServiceException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 @Service("logisticsApplyService")
 @HSFProvider(serviceInterface= LogisticsApplyService.class)
 public class LogisticsApplyServiceImpl implements LogisticsApplyService{

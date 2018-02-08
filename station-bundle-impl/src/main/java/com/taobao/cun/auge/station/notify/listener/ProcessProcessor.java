@@ -3,16 +3,10 @@ package com.taobao.cun.auge.station.notify.listener;
 import java.util.Date;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.ali.com.google.common.collect.Maps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+
+import com.ali.com.google.common.collect.Maps;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.auge.asset.service.AssetService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -39,6 +33,7 @@ import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.PeixunPurchaseBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
@@ -53,6 +48,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
+import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationService;
@@ -62,6 +58,12 @@ import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.notify.message.StringMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("processProcessor")
 public class ProcessProcessor {
@@ -120,6 +122,9 @@ public class ProcessProcessor {
 	
 	@Autowired
 	private PartnerQualifyApplyService partnerQualifyApplyService;
+	
+	@Autowired
+	private StationModifyApplyBO stationModifyApplyBO;
 
 	@Autowired
 	AssetService assetService;
@@ -182,6 +187,12 @@ public class ProcessProcessor {
 				pqaDto.setId(businessId);
 				pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
 				partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
+			}else if (ProcessBusinessEnum.stationInfoApply.getCode().equals(businessCode)) {
+				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_PASS);
+				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
+				}
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {

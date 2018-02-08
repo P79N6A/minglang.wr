@@ -5,15 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.taobao.cun.auge.incentive.enums.IncentiveProgramRewardTypeEnum;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.IncentiveAuditFlowService;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
@@ -41,6 +34,12 @@ import com.taobao.cun.crius.bpm.enums.UserTypeEnum;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * Created by xujianhui on 17/2/22.

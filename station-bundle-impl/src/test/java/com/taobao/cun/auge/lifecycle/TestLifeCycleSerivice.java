@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.lifecycle;
 
+import com.taobao.cun.auge.lifecycle.tp.TPDecoratingLifeCyclePhase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.taobao.cun.auge.lifecycle.tp.TPDecoratingLifeCyclePhase;
 
 @RunWith(SpringRunner.class)
 public class TestLifeCycleSerivice {

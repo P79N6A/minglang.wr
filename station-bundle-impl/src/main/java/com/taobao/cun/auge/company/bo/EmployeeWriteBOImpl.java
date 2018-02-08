@@ -3,15 +3,6 @@ package com.taobao.cun.auge.company.bo;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
@@ -33,6 +24,14 @@ import com.taobao.cun.endor.base.dto.UserUpdateDto;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class EmployeeWriteBOImpl implements EmployeeWriteBO{

@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.alilang;
 
-import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
-
 import java.util.List;
+
+import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 
 public interface AlilangHomePageService {
 

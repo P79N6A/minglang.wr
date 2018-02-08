@@ -3,10 +3,9 @@ package com.taobao.cun.auge.dal.mapper;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.dal.domain.StationDecorateExample;
+import org.apache.ibatis.annotations.Param;
 
 public interface StationDecorateMapper {
     /**

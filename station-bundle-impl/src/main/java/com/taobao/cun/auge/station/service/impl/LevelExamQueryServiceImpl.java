@@ -6,14 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.google.common.collect.Lists;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -30,6 +22,13 @@ import com.taobao.cun.crius.exam.enums.ExamDispatchSourceEnum;
 import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("levelExamQueryService")
 @HSFProvider(serviceInterface = LevelExamQueryService.class, clientTimeout=10000)

@@ -4,10 +4,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -28,6 +24,9 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service("partnerService")
 @HSFProvider(serviceInterface = PartnerService.class)

@@ -1,10 +1,5 @@
 package com.taobao.cun.auge.lifecycle.tp;
 
-import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
-import com.taobao.cun.auge.station.bo.StationNumConfigBO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
@@ -17,8 +12,8 @@ import com.taobao.cun.auge.lifecycle.PhaseStepMeta;
 import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
-import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
+import com.taobao.cun.auge.station.bo.StationNumConfigBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -31,13 +26,16 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSystemEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.validate.StationValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 村小二入驻中阶段组件
@@ -67,7 +65,9 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  lifeCycleValidator.validateSettling(partnerInstanceDto);
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
-        	  String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
+              //村名基础校验
+              StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
+              String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
               partnerInstanceDto.getStationDto().setStationNum(stationNum);
               stationId = addStation(partnerInstanceDto,StationType.STATION.getType());
               stationNumConfigBO.updateSeqNumByStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C, 

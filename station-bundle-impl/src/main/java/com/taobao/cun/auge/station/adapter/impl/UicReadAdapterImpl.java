@@ -2,13 +2,12 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
 
 @Component("uicReadAdapter")
 public class UicReadAdapterImpl implements UicReadAdapter{

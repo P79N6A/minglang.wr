@@ -1,10 +1,10 @@
 package com.taobao.cun.auge.lifecycle.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.alibaba.common.lang.StringUtil;
 
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.KFCServiceConfig;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -19,6 +19,9 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 /**
  * 
  * @author zhenhuan.zhangzh
@@ -35,6 +38,9 @@ public class LifeCycleValidator {
 	@Autowired
     StationBO stationBO;
 	
+	@Autowired
+	private KFCServiceConfig kfcServiceConfig;
+	
 	public void validateSettling(PartnerInstanceDto partnerInstanceDto) throws AugeBusinessException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());
@@ -45,7 +51,7 @@ public class LifeCycleValidator {
 		ValidateUtils.notNull(stationDto);
 		StationValidator.validateStationInfo(stationDto);
 		PartnerValidator.validatePartnerInfo(partnerDto);
-
+		stationModelBusCheck(partnerInstanceDto);
 		OperatorDto operator = new OperatorDto();
 		operator.copyOperatorDto(partnerInstanceDto);
 		PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(),
@@ -80,6 +86,34 @@ public class LifeCycleValidator {
 		}
 	}
 	
+	//名称与地址的业务校验KFC、村小二名称
+	public void stationModelBusCheck(PartnerInstanceDto ins){
+	    StringBuffer sb = new StringBuffer();
+	    sb.append(ins.getStationDto().getName());
+        if (ins.getStationDto().getAddress() != null
+                && !StringUtil.isEmpty(ins.getStationDto().getAddress().getAddressDetail())) {
+            sb.append(ins.getStationDto().getAddress().getAddressDetail());
+        }
+	    if(kfcServiceConfig.isProhibitedWord(sb.toString())){
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址包含违禁词汇："+kfcServiceConfig.kfcCheck(sb.toString()).get("word"));
+	    }if(sb.toString().contains(ins.getPartnerDto().getName())){
+	        throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE, "村站名称或地址不可以包含村小二名称");
+	    }
+	    checkStationNameDuplicate(ins.getStationDto().getId(),ins.getStationDto().getName(),ins.getStationDto().getAddress().getProvince());
+	}
 	
-	
+	public void checkStationNameDuplicate(Long stationId, String newStationName,String province) {
+        // 判断服务站名同一省内是否存在
+        String oldName = null;
+        if (stationId != null) {
+            Station oldStation = stationBO.getStationById(stationId);
+            oldName = oldStation.getName();
+        }
+        if (!StringUtils.equals(oldName, newStationName)) {
+            int count = stationBO.getSameNameInProvinceCnt(newStationName,province);
+            if (count > 0) {
+                throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE, "村站名称同一省域不能重复");
+            }
+        }
+    }
 }

@@ -4,13 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.taobao.cun.auge.common.exception.AugeServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.ali.dowjones.service.constants.OrderItemSiteType;
 import com.ali.dowjones.service.dto.CustomerDto;
 import com.ali.dowjones.service.dto.OrderDto;
@@ -28,8 +21,12 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 /**
  * 
  * @author yi.shaoy

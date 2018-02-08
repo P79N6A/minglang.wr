@@ -27,4 +27,19 @@ public interface StationService {
      * @param stationDto
      */
     public void applyLogisticAbility(StationDto stationDto);
+    
+    /**
+     * 根据站点模式获取站点名称后缀
+     * 
+     * @param stationDto
+     */
+    public String getStationNameSuffix(Long stationId,String key);
+    
+    /**
+     * 村站名称是否符合标准
+     * 
+     * @param instanceId、stationDto
+     */
+    public boolean getStationInfoValidateRule(Long instanceId,StationDto station);
+    
 }

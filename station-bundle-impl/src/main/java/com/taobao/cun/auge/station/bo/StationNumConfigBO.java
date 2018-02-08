@@ -1,7 +1,7 @@
 package com.taobao.cun.auge.station.bo;
 
-import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.dal.domain.StationNumConfig;
+import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 
 public interface StationNumConfigBO {
 	/**

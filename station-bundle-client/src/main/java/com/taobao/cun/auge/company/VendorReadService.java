@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.VendorQueryPageCondition;
 import com.taobao.cun.auge.company.dto.CuntaoServiceVendorDto;
+import com.taobao.cun.auge.company.dto.VendorQueryPageCondition;
 
 /**
  * 服务商查询接口

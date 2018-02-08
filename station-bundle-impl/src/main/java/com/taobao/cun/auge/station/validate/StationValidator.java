@@ -1,27 +1,21 @@
 package com.taobao.cun.auge.station.validate;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.apache.commons.lang.StringUtils;
 
 public final class StationValidator {
 	
-	private static final Logger logger = LoggerFactory.getLogger(StationValidator.class);
-	
 	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
 	
-	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】‘；：”“’。，、？]";
+	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】《》‘；：”“’。，、？]";
 	
 	/**
      * 全角对应于ASCII表的可见字符从！开始，偏移值为65281
@@ -60,19 +54,25 @@ public final class StationValidator {
     public static HashSet<String> nameInvalidWord = new HashSet<String>();
 	
     static {
-        generalInvalidWord.add("www.");
-        generalInvalidWord.add("http:");
-        generalInvalidWord.add(".com");
+        generalInvalidWord.add("www");
+        generalInvalidWord.add("http");
+        generalInvalidWord.add("com");
         generalInvalidWord.add(".cn");
         generalInvalidWord.add(".net");
         generalInvalidWord.add(".org");
         nameInvalidWord.addAll(generalInvalidWord);
-        nameInvalidWord.add("?");
         nameInvalidWord.add("附近");
         nameInvalidWord.add("旁边");
-        nameInvalidWord.add("套餐");
+        nameInvalidWord.add("优品");
+        nameInvalidWord.add("服务站");
+        nameInvalidWord.add("农村淘宝");
+        nameInvalidWord.add("村淘");
+        nameInvalidWord.add("天猫");
+        nameInvalidWord.add("体验店");
+        nameInvalidWord.add("电器");
+        nameInvalidWord.add("母婴");
+        nameInvalidWord.add("招商中");
         addressInvalidWord.addAll(generalInvalidWord);
-        addressInvalidWord.add("地址");
     }
     
 	private StationValidator(){
@@ -84,40 +84,16 @@ public final class StationValidator {
 			return;
 		}
 		Address address = stationDto.getAddress();
-		if (address == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
-		}
+		addressFormatCheck(address);
 	}
 	
 	public static void validateStationCanUpdateInfo(StationUpdateServicingDto stationDto) {
 		if (stationDto == null) {
 			return;
 		}
-		if (StringUtils.isEmpty(stationDto.getName())) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称不能为空");
-		}
 		Address address = stationDto.getAddress();
-		if (address == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
-		}
-		if (address.getAddressDetail().length() > 25 || address.getAddressDetail().length() < 5) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度控制在5-25位");
-        }
-		if (!isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS) || !addressFormatCheck(address.getAddressDetail())) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符,并且最少一个汉字");
-        }
-		String stationName = "";
-		if (StringUtils.isNotBlank(address.getCountyDetail())) {
-			stationName += address.getCountyDetail();
-		}
-		stationName += stationDto.getName();
-		try {
-			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务点名称超过了菜鸟驿站要求的长度");
-			}
-		} catch (UnsupportedEncodingException e) {
-			logger.error("validate:", e);
-		}
+		//村地址基础校验
+		addressFormatCheck(address);
 
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
@@ -135,35 +111,10 @@ public final class StationValidator {
 	}
 	
 	public static void validateStationInfo(StationDto stationDto) {
-		if (StringUtils.isBlank(stationDto.getName())) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称不能为空");
-		}
 		Address address = stationDto.getAddress();
-		if (address == null) {
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
-		}
-	
-        if (address.getAddressDetail().length() > 25 || address.getAddressDetail().length() < 5) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度控制在5-25位");
-        }
+		//村地址基础校验
+        addressFormatCheck(address);
         
-        if (!isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS) || !addressFormatCheck(address.getAddressDetail())) {
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符");
-        }
-        
-		String stationName = "";
-		if (StringUtils.isNotBlank(address.getCountyDetail())) {
-			stationName += address.getCountyDetail();
-		}
-		stationName += stationDto.getName();
-		try {
-			if (stationName.getBytes("UTF-8").length > 64) {
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务点名称超过了菜鸟驿站要求的长度");
-			}
-		} catch (UnsupportedEncodingException e) {
-			logger.error("validate:", e);
-		}
-
 		String stationNum = stationDto.getStationNum();
 		if (StringUtils.isEmpty(stationNum)) {
 
@@ -190,26 +141,26 @@ public final class StationValidator {
 	}
 	
 	/**
-     * 通用店名格式校验
-     * 1.不含有：{www. .com .cn .org. net ? 附近 旁边 套餐}
-     * 2.不能全是特殊字符
-     * 3.首尾特殊字符，不包括《》
-     * 
+     * 服务站名称校验
+     * 1.不含有：{ 附近 旁边 套餐}
+     * 2.全是中文汉字
      * @param name 必填
      * @return true 通过
      */
     public static boolean nameFormatCheck(String name) {
-        String lowername = name.toLowerCase();
+        if (StringUtils.isEmpty(name)) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称不能为空");
+        }
+        if (name.length() > 20 || name.length() < 2) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务点名称长度2-20");
+        }
         for (String vw : nameInvalidWord) {
-            if (lowername.indexOf(vw) >= 0) {
-                return false;
+            if (name.indexOf(vw) >= 0) {
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"名称不能含有特殊关键字:"+vw);
             }
         }
-        if (isFullSpecial(name)) {
-            return false;
-        }
-        if (lowername.startsWith("《") && lowername.endsWith("》")) {
-            return false;
+        if(!isAllChinese(name)){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"名称只允许中文汉字");
         }
         return true;
     }
@@ -222,15 +173,21 @@ public final class StationValidator {
      * @param address 必填
      * @return
      */
-    public static boolean addressFormatCheck(String address){
-        String loweraddr = address.toLowerCase();
+    public static boolean addressFormatCheck(Address address){
+        if (address == null) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"服务站地址不能为空");
+        }
+        if (address.getAddressDetail().length() > 30 || address.getAddressDetail().length() < 3) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址长度控制在3-30位");
+        }
+        if (!isSpecialStr(address.getAddressDetail(),RULE_REGEX_ADDRESS) || !isContainChinese(address.getAddressDetail())) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"村服务站地址不可含有特殊字符,并且最少一个汉字");
+        }
+        String loweraddr = address.getAddressDetail();
         for(String vm : addressInvalidWord){
             if(loweraddr.indexOf(vm) >= 0){
-                return false;
+                throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"地址不能含有特殊关键字:"+vm);
             }
-        }
-        if (!isContainChinese(address)) { // 至少包含一个汉字
-            return false;
         }
         return true;
     }
@@ -250,6 +207,24 @@ public final class StationValidator {
             }
         }
         return false;
+    }
+    
+    /**
+     * 全为中文
+     * 
+     * @param name
+     * @return
+     */
+    public static boolean isAllChinese(String name) {
+        char[] cs = name.toCharArray();
+        for (char c : cs) {
+            int num = (int) c;
+            if ((mix <= num && num <= max)) {
+            }else{
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

@@ -6,18 +6,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
+
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -27,6 +22,11 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.notify.message.StringMessage;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
 import com.taobao.notify.remotingclient.SendResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * 合伙人冻结保证金，同步到阿里郎

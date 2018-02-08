@@ -2,13 +2,6 @@ package com.taobao.cun.auge.company.bo;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.taobao.cun.auge.company.ServiceVendorAndManagerInfo;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeType;
@@ -23,7 +16,6 @@ import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
-import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
@@ -32,6 +24,12 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class VendorWriteBOImpl implements VendorWriteBO{

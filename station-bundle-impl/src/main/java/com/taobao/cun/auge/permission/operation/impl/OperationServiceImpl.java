@@ -5,19 +5,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.ali.com.google.common.collect.Lists;
 import com.alibaba.buc.acl.api.input.check.CheckPermissionsParam;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult;
 import com.alibaba.buc.acl.api.output.check.CheckPermissionsResult.CheckPermissionResultInner;
 import com.alibaba.buc.acl.api.service.AccessControlService;
 import com.alibaba.fastjson.JSON;
+
+import com.ali.com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -28,6 +22,12 @@ import com.taobao.cun.auge.permission.operation.OperationService;
 import com.taobao.cun.auge.permission.operation.PagedOperationData;
 import com.taobao.cun.auge.permission.service.EndorUserPermissionService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @HSFProvider(serviceInterface = OperationService.class)
 public class OperationServiceImpl implements OperationService {

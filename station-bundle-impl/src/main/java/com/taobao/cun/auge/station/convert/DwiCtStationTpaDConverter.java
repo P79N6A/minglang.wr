@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.cglib.beans.BeanCopier;
-
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaD;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaDDto;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.cglib.beans.BeanCopier;
 
 public final class DwiCtStationTpaDConverter {
 	

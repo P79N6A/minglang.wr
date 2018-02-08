@@ -3,14 +3,10 @@ package com.taobao.cun.auge.event.listener;
 import java.util.Collections;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
@@ -28,11 +24,14 @@ import com.taobao.cun.auge.station.enums.DingtalkTemplateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.WisdomCountyStateEnum;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("smsListener")
 @EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.WISDOM_COUNTY_APPLY_EVENT,EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT})

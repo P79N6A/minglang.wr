@@ -2,10 +2,6 @@ package com.taobao.cun.auge.store.service.impl;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -24,6 +20,9 @@ import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
 import com.taobao.cun.auge.store.service.StoreReadService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @HSFProvider(serviceInterface = StoreReadService.class)
 public class StoreReadServiceImpl implements StoreReadService {

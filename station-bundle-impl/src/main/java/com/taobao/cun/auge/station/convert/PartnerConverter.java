@@ -1,17 +1,15 @@
 package com.taobao.cun.auge.station.convert;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.enums.PartnerBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 合伙人dto转换

@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.taobao.cun.auge.dal.domain.DwiCtStationTpaIncomeM;
 import com.taobao.cun.auge.station.dto.DwiCtStationTpaIncomeMDto;
+import org.apache.commons.collections.CollectionUtils;
 
 public final class DwiCtStationTpaIncomeMConverter {
 

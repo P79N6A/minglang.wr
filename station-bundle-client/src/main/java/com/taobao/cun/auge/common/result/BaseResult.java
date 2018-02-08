@@ -3,13 +3,12 @@ package com.taobao.cun.auge.common.result;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.google.common.collect.Lists;
 
 public abstract class BaseResult<T> implements Serializable {
 

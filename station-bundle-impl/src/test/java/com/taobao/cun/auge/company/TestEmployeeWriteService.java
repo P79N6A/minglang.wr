@@ -1,5 +1,13 @@
 package com.taobao.cun.auge.company;
 
+import com.taobao.cun.auge.Application;
+import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.OrgAddDto;
+import com.taobao.cun.endor.base.dto.UserAddDto;
+import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,17 +16,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
-
-import com.taobao.cun.auge.Application;
-import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
-import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
-import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
-import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
-import com.taobao.cun.endor.base.client.EndorApiClient;
-import com.taobao.cun.endor.base.dto.OrgAddDto;
-import com.taobao.cun.endor.base.dto.UserAddDto;
-import com.taobao.cun.endor.base.dto.UserRoleAddDto;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=Application.class)

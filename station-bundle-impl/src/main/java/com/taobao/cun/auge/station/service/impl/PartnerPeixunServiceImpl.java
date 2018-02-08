@@ -10,21 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import com.alibaba.fastjson.JSON;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
-import com.alibaba.fastjson.JSON;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
@@ -58,6 +46,18 @@ import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * 

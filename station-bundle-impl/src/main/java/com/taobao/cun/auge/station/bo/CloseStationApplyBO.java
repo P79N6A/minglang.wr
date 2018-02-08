@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.station.bo;
 
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 /**
  * 停业申请单

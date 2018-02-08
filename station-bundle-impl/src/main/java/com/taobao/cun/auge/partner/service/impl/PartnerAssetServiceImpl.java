@@ -1,8 +1,5 @@
 package com.taobao.cun.auge.partner.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
@@ -11,6 +8,8 @@ import com.taobao.cun.auge.station.exception.AugeServiceException;
 import com.taobao.cun.dto.ContextDto;
 import com.taobao.cun.dto.SystemTypeEnum;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("partnerAssetService")
 @HSFProvider(serviceInterface = PartnerAssetService.class)

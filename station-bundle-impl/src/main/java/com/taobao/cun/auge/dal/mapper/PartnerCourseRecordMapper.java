@@ -3,8 +3,6 @@ package com.taobao.cun.auge.dal.mapper;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.station.dto.PartnerDto;
@@ -12,6 +10,7 @@ import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceItemDto;
+import org.apache.ibatis.annotations.Param;
 
 public interface PartnerCourseRecordMapper {
     /**

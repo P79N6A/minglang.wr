@@ -3,8 +3,6 @@ package com.taobao.cun.auge.station.condition;
 import java.util.List;
 
 import com.taobao.cun.auge.common.PageQuery;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 
 public class PartnerPeixunQueryCondition extends PageQuery {
 

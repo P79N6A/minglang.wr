@@ -2,8 +2,6 @@ package com.taobao.cun.auge.store.bo.impl;
 
 import javax.annotation.Resource;
 
-import org.springframework.stereotype.Component;
-
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.store.bo.InventoryStoreWriteBo;
 import com.taobao.cun.auge.store.dto.InventoryStoreCreateDto;
@@ -16,6 +14,7 @@ import com.taobao.inventory.sic.model.dto.response.BaseResult;
 import com.taobao.inventory.sic.model.dto.store.StoreInfoDTO;
 import com.taobao.inventory.sic.service.client.store.StoreInfoServiceClient;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
+import org.springframework.stereotype.Component;
 
 @Component
 public class InventoryStoreWriteBoImpl implements InventoryStoreWriteBo {

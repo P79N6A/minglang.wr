@@ -3,9 +3,6 @@ package com.taobao.cun.auge.lifecycle.tp;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -46,6 +43,8 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 村小二服务中阶段组件

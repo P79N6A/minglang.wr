@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.CollectionUtils;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -24,6 +21,8 @@ import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 public class LevelCourseConvertor {
 

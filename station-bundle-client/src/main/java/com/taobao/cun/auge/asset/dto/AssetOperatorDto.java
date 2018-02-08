@@ -2,7 +2,6 @@ package com.taobao.cun.auge.asset.dto;
 
 import java.io.Serializable;
 
-import com.taobao.cun.auge.client.operator.DefaultOperator;
 import com.taobao.cun.auge.common.PageQuery;
 
 /**

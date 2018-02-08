@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.level.exam;
 
+import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
+import com.taobao.cun.auge.station.service.LevelExamManageService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-
-import com.taobao.cun.auge.station.dto.LevelExamConfigurationDto;
-import com.taobao.cun.auge.station.service.LevelExamManageService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = com.taobao.cun.auge.Application.class)

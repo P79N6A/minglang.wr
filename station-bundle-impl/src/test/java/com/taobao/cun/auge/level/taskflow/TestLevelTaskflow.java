@@ -1,15 +1,14 @@
 package com.taobao.cun.auge.level.taskflow;
 
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
+import com.taobao.cun.auge.station.service.ProcessService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.station.dto.PartnerInstanceLevelProcessDto;
-import com.taobao.cun.auge.station.service.ProcessService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = com.taobao.cun.auge.Application.class)

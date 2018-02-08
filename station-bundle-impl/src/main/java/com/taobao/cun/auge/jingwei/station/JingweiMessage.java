@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.dal.domain.SyncLog;
 
 public class JingweiMessage {

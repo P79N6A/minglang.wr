@@ -3,11 +3,6 @@ package com.taobao.cun.auge.payment.protocol.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
@@ -38,6 +33,10 @@ import com.taobao.payment.common.enums.ChannelEnum;
 import com.taobao.uic.common.domain.BasePaymentAccountDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("alipayAgreementService")
 @HSFProvider(serviceInterface = AlipayAgreementService.class)

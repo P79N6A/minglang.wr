@@ -8,25 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import com.ali.com.google.common.collect.Maps;
-
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 
-import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
-import com.taobao.cun.auge.station.enums.StationModeEnum;
-import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
+import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -41,7 +29,6 @@ import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.PartnerInstanceLevelChangeEvent;
@@ -134,10 +121,12 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleGoodsReceiptEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleItemCheckResultEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecyclePositionConfirmEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleQuitProtocolEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
@@ -148,8 +137,8 @@ import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
-import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationNumConfigTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -173,6 +162,14 @@ import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 /**
  * 合伙人实例服务接口
@@ -362,63 +359,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                     partnerProtocolRelBO.addPartnerProtocolRel(fixPro);
                 }
             }
-        }
-    }
-
-    private String getErrorMessage(String methodName, String param, String error) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PartnerInstanceService-Error|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
-                .append(error);
-        return sb.toString();
-    }
-
-    private String getAugeExceptionErrorMessage(String methodName, String param, String error) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("PartnerInstanceService|").append(methodName).append("(.param=").append(param).append(").").append("errorMessage:")
-                .append(error);
-        return sb.toString();
-    }
-
-
-    private void validateSettlable(PartnerInstanceDto partnerInstanceDto){
-        ValidateUtils.notNull(partnerInstanceDto);
-        StationDto stationDto = partnerInstanceDto.getStationDto();
-        PartnerDto partnerDto = partnerInstanceDto.getPartnerDto();
-        ValidateUtils.notNull(stationDto);
-        StationValidator.validateStationInfo(stationDto);
-        PartnerValidator.validatePartnerInfo(partnerDto);
-
-        OperatorDto operator = new OperatorDto();
-        operator.copyOperatorDto(partnerInstanceDto);
-        PaymentAccountDto paDto = paymentAccountQueryAdapter.queryPaymentAccountByNick(partnerDto.getTaobaoNick(), operator);
-        if (!partnerDto.getAlipayAccount().equals(paDto.getAlipayId())) {
-            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"您录入的支付宝账号与淘宝绑定的不一致，请联系申请人核对:"+partnerDto.getAlipayAccount()+";"+paDto.getAlipayId());
-        }
-        if (!partnerDto.getName().equals(paDto.getFullName()) || !partnerDto.getIdenNum().equals(paDto.getIdCardNumber())) {
-            throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"目前支付宝认证的归属人，与您提交的申请人信息不符，请联系申请人核对");
-        }
-
-        // 判断淘宝账号是否使用中
-        PartnerStationRel existPartnerInstance = partnerInstanceBO.getActivePartnerInstance(paDto.getTaobaoUserId());
-        if (null != existPartnerInstance) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该账号已经入驻农村淘宝，请核实！");
-        }
-        //判断手机号是否已经被使用
-        //逻辑变更只判断入驻中、装修中、服务中，退出中用户
-        if (!partnerInstanceBO.judgeMobileUseble(partnerDto.getTaobaoUserId(), null, partnerDto.getMobile())) {
-            throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"该手机号已被使用");
-        }
-        // 入驻老村点，村点状态为已停业
-        Long stationId = stationDto.getId();
-        if (stationId != null) {
-            Station station = stationBO.getStationById(stationId);
-            if (station != null && !StationStatusEnum.CLOSED.getCode().equals(station.getStatus())) {
-                throw new AugeBusinessException(AugeErrorCodes.STATION_BUSINESS_CHECK_ERROR_CODE,"被入驻的村点状态必须为已停业");
-            }
-			/*PartnerStationRel currentRel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			if (currentRel != null && !PartnerInstanceStateEnum.CLOSED.getCode().equals(currentRel.getState())) {
-				throw new AugeServiceException(PartnerInstanceExceptionEnum.PARTNER_INSTANCE_MUST_BE_CLOSED);
-			}*/
         }
     }
 

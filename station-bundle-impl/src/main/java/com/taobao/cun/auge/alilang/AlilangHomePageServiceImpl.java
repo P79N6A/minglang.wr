@@ -3,16 +3,8 @@ package com.taobao.cun.auge.alilang;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.alilang.dto.AlilangForceInstallConfigDto;
 import com.taobao.cun.auge.alilang.dto.AlilangProfileDto;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -30,6 +22,14 @@ import com.taobao.cun.crius.exam.dto.UserExamCalDto;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 
 @Service("alilangHomePageService")

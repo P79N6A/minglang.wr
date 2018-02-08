@@ -2,13 +2,8 @@ package com.taobao.cun.auge.event.listener;
 
 import java.util.Date;
 
-import com.taobao.cun.auge.event.ChangeTPEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.ar.model.StationLocation;
 import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnDegradeCallbackParam;
 import com.taobao.cun.ar.scene.station.param.PartnerLifecycleOnEnterCallbackParam;
@@ -20,6 +15,7 @@ import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.event.ChangeTPEvent;
 import com.taobao.cun.auge.event.EventConstant;
 import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.PartnerInstanceTypeChangeEvent;
@@ -32,6 +28,10 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.crius.event.Event;
 import com.taobao.cun.crius.event.annotation.EventSub;
 import com.taobao.cun.crius.event.client.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("adminListener")
 @EventSub({EventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT, EventConstant.PARTNER_INSTANCE_TYPE_CHANGE_EVENT
