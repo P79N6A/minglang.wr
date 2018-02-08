@@ -362,12 +362,6 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 	}
 	
 	@Bean
-    public Searcher kfcSearchService(HsfConsumerContext context, @Value("${namelistMatchService.version}") String version) {
-        return context.hsfConsumerBuilder(Searcher.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
-                .build();
-    }
-	
-	@Bean
 	public PartnerTagService partnerTagService(HsfConsumerContext context, @Value("${ar.partner.version}") String version) {
 	        return context.hsfConsumerBuilder(PartnerTagService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
 	                .build();
