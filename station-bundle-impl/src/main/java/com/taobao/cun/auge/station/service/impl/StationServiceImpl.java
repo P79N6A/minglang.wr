@@ -230,8 +230,4 @@ public class StationServiceImpl implements StationService {
         return true;
     }
 
-    @Override
-    public boolean checkKfc(String word) {
-        return kfcServiceConfig.isProhibitedWord(word);
-    }
 }

@@ -14,7 +14,8 @@ import com.taobao.kfc.core.search.SearchResult;
 import com.taobao.kfc.core.search.SearcherService;
 import com.taobao.kfc.core.search.query.FuzzyIndexOf;
 import com.taobao.kfc.core.search.query.Query;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class KFCServiceConfig {
-    private final static Logger logger = Logger.getLogger(KFCServiceConfig.class);
+    private final static Logger logger = LoggerFactory.getLogger(KFCServiceConfig.class);
     
 //    @Autowired
 //    private Searcher kfcSearchService;

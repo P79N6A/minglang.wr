@@ -42,6 +42,4 @@ public interface StationService {
      */
     public boolean getStationInfoValidateRule(Long instanceId,StationDto station);
     
-    
-    public boolean checkKfc(String word);
 }
