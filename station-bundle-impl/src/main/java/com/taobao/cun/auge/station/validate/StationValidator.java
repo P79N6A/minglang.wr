@@ -15,7 +15,7 @@ public final class StationValidator {
 	
 	public static final String RULE_REGEX_STATIONMUN = "^[0-9A-Z]+$";
 	
-	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】‘；：”“’。，、？]";
+	public static final String RULE_REGEX_ADDRESS = "[`~!@#$%^&*+=|{}':;',\\[\\].<>/?~！@#￥%……&*——+|{}【】《》‘；：”“’。，、？]";
 	
 	/**
      * 全角对应于ASCII表的可见字符从！开始，偏移值为65281
