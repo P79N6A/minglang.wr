@@ -161,7 +161,15 @@ import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
 import com.taobao.cun.auge.user.service.UserRole;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -275,6 +283,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     
     @Autowired
     private ProcessProcessor processProcessor;
+    
+    @Autowired
+    private CuntaoNewBailService newBailService;
     
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -2258,4 +2269,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         partnerInstanceBO.updatePartnerStationRel(instance);
         
     }
+
+
+	@Override
+	public List<CuntaoBailDetailDto> queryCuntaoBail(Long taobaoUserId) {
+		CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
+		queryDto.setTaobaoUserId(taobaoUserId);
+		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+		PagedResultModel<CuntaoBailDetailReturnDto> result = newBailService.getBailDetail(queryDto);
+		if(result != null && result.getResult()!= null && result.isSuccess() && CollectionUtils.isNotEmpty(result.getResult().getCuntaoBailDetailDtos())){
+			return result.getResult().getCuntaoBailDetailDtos();
+		}
+		return null;
+	}
 }

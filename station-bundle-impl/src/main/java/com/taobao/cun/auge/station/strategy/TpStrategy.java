@@ -6,8 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -88,14 +96,11 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.PagedResultModel;
 
 @Component("tpStrategy")
 public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
@@ -158,6 +163,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Autowired
 	private PartnerQualifyApplyService partnerQualifyApplyService;
+	
+	@Autowired
+    private CuntaoNewBailService newBailService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -266,7 +274,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该合伙人下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
-		
+		CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
+		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());
+		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+		PagedResultModel<CuntaoBailDetailReturnDto> result = newBailService.getBailDetail(queryDto);
+		if(result != null && result.getResult()!= null && result.isSuccess() && CollectionUtils.isNotEmpty(result.getResult().getCuntaoBailDetailDtos())){
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"系统检测到该村小二还有铺货保证金没有解冻，请告知村小二完成保证金解冻再申请退出");
+		}
 		//如果是从装修中停业，则需要判断村点是否退出了装修
 		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
 				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());
