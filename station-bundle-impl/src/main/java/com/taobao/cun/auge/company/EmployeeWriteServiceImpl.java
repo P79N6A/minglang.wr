@@ -210,6 +210,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Override
 	public Result<Boolean> removeVendorEmployee(Long employeeId,String operator) {
 		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
 			return Result.of(employeeWriteBO.removeVendorEmployee(employeeId,operator));
 		} catch (Exception e) {
 			logger.error("removeVendorEmployee error!",e);
@@ -221,7 +223,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Override
 	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		if(storeEmployee.getId() == null){
+		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		example.createCriteria().andTaobaoNickEqualTo(storeEmployee.getTaobaoNick()).andTypeEqualTo(CuntaoEmployeeType.store.name()).andIsDeletedEqualTo("n");
+		
+		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
+		
+		if(employees == null||employees.isEmpty()){
 			errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
 			//TODO 效验规则细化
 			if(errorInfo != null){
@@ -309,6 +316,22 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 		}
 		return null;
+	}
+
+
+
+
+	@Override
+	public Result<Boolean> removeStoreEmployee(Long employeeId, String operator) {
+		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
+			return Result.of(employeeWriteBO.removeStoreEmployee(employeeId, operator));
+		} catch (Exception e) {
+			logger.error("removeStoreEmployee error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
 	}
 
 }
