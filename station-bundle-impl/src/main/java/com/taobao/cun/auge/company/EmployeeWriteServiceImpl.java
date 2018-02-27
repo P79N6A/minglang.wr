@@ -255,6 +255,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				}
 			}
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
+		}else{
+			storeEmployee.setId(employees.iterator().next().getId());
 		}
 		try {
 			return Result.of(employeeWriteBO.addStoreEmployee(stationId, storeEmployee, identifier));
