@@ -186,6 +186,17 @@ public class PartnerInstanceStateEnum  implements Serializable {
 		listValidStatus.add(PartnerInstanceStateEnum.CLOSED);
 		return listValidStatus;
 	}
+	/**
+	 *   可以编辑村点名称
+	 * @return
+	 */
+	public static List<String>  getStateForCanUpdateStationName(){
+		List<String> listValidStatus = new ArrayList<String>();
+		listValidStatus.add(PartnerInstanceStateEnum.DECORATING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.SERVICING.getCode());
+		listValidStatus.add(PartnerInstanceStateEnum.CLOSING.getCode());
+		return listValidStatus;
+	}
 	
 
 	@SuppressWarnings("unused")

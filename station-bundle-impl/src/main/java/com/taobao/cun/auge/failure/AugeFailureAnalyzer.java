@@ -3,14 +3,10 @@ package com.taobao.cun.auge.failure;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 import org.springframework.boot.diagnostics.FailureAnalyzer;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 
 public class AugeFailureAnalyzer  implements FailureAnalyzer{
 

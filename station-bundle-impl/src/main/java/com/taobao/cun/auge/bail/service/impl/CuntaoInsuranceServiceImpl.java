@@ -3,12 +3,6 @@ package com.taobao.cun.auge.bail.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alipay.baoxian.scene.facade.common.AliSceneResult;
 import com.alipay.baoxian.scene.facade.common.policy.dto.InsPolicyDTO;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
@@ -17,6 +11,11 @@ import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("cuntaoInsuranceService")
 @HSFProvider(serviceInterface = CuntaoInsuranceService.class)

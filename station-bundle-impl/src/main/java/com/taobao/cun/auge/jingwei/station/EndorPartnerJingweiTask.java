@@ -6,10 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.DeleteEvent;
@@ -17,6 +13,7 @@ import com.alibaba.middleware.jingwei.client.custom.EventMessage;
 import com.alibaba.middleware.jingwei.client.custom.InsertEvent;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
 import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
+
 import com.google.common.base.Strings;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.SyncLog;
@@ -33,6 +30,9 @@ import com.taobao.cun.endor.dto.User;
 import com.taobao.cun.endor.exception.UserNotExistRuntimeException;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Station状态为NEW的时候将他同步到ENDOR，作为一个组织

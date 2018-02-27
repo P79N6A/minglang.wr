@@ -3,9 +3,6 @@ package com.taobao.cun.auge.station.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExt;
 import com.taobao.cun.auge.dal.domain.PartnerProtocolRelExtExample;
@@ -18,6 +15,8 @@ import com.taobao.cun.auge.station.enums.ProtocolStateEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerProtocolQueryService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 @Service("partnerProtocolQueryService")
 @HSFProvider(serviceInterface = PartnerProtocolQueryService.class)
 public class PartnerProtocolQueryServiceImpl implements PartnerProtocolQueryService{

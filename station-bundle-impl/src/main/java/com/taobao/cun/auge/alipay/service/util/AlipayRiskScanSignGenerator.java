@@ -1,9 +1,8 @@
 package com.taobao.cun.auge.alipay.service.util;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
-
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;

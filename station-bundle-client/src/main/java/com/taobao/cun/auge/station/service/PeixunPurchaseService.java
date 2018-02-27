@@ -1,11 +1,11 @@
 package com.taobao.cun.auge.station.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.station.condition.PeixunPuchaseQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerPeixunSupplierDto;
 import com.taobao.cun.auge.station.dto.PeixunPurchaseDto;
-
-import java.util.List;
 
 /**
  * 培训集采表

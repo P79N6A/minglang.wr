@@ -2,11 +2,6 @@ package com.taobao.cun.auge.tag.service;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
@@ -14,6 +9,10 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userdata.client.UicTagServiceClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service("userTagService")
 @HSFProvider(serviceInterface = UserTagService.class)

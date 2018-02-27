@@ -3,12 +3,6 @@ package com.taobao.cun.auge.station.handler;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDeleteDto;
@@ -22,6 +16,11 @@ import com.taobao.cun.auge.station.strategy.TpStrategy;
 import com.taobao.cun.auge.station.strategy.TpaStrategy;
 import com.taobao.cun.auge.station.strategy.TptStrategy;
 import com.taobao.cun.auge.station.strategy.TpvStrategy;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("partnerInstanceHandler")
 public class PartnerInstanceHandler implements InitializingBean{

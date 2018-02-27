@@ -3,13 +3,6 @@ package com.taobao.cun.auge.company;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.PageDto;
@@ -31,8 +24,13 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserRoleDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
 import jersey.repackaged.com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 @Service("employeeReadServiceImpl")
 @HSFProvider(serviceInterface = EmployeeReadService.class)

@@ -1,5 +1,9 @@
 package com.taobao.cun.auge.notify;
 
+import com.alibaba.fastjson.JSON;
+
+import com.taobao.notify.message.StringMessage;
+import com.taobao.notify.remotingclient.NotifyManagerBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,13 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
-
-import com.alibaba.fastjson.JSON;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
-import com.taobao.cun.auge.station.exception.AugeSystemException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.notify.message.StringMessage;
-import com.taobao.notify.remotingclient.NotifyManagerBean;
 
 @Component("defaultNotifyPublish")
 public class DefaultNotifyPublishImpl implements DefaultNotifyPublish{

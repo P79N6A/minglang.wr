@@ -1,11 +1,14 @@
 package com.taobao.cun.auge.bail;
 
-import com.taobao.cun.settle.bail.dto.*;
+import java.util.Map;
+
+import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailForPunishDto;
+import com.taobao.cun.settle.bail.dto.CuntaoUnFreezeBailDto;
 import com.taobao.cun.settle.bail.enums.BailChannelEnum;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.common.model.ResultModel;
-
-import java.util.Map;
 
 /**
  * Created by xujianhui on 16/12/27.

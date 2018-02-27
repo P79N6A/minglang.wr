@@ -1,14 +1,15 @@
 package com.taobao.cun.auge.configuration;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.stereotype.Component;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by xiao on 16/11/30.
@@ -93,6 +94,11 @@ public class DiamondConfiguredProperties {
     @Value("#{'${ignoreSupplyStoreTownList.whitelist}'.split(',')}")
     private List<Long> ignoreSupplyStoreTownList;
     
+    @Value("#{ T(com.alibaba.fastjson.JSON).parseObject('${station.name.map}')}")
+    private Map<String, String> stationNameMap;
+    
+    @Value("#{'${stationNameSuffix}'.split(',')}")
+    private List<String> stationNameSuffix;
     
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
@@ -228,4 +234,20 @@ public class DiamondConfiguredProperties {
 	public void setIgnoreSupplyStoreTownList(List<Long> ignoreSupplyStoreTownList) {
 		this.ignoreSupplyStoreTownList = ignoreSupplyStoreTownList;
 	}
+
+    public Map<String, String> getStationNameMap() {
+        return stationNameMap;
+    }
+
+    public void setStationNameMap(Map<String, String> stationNameMap) {
+        this.stationNameMap = stationNameMap;
+    }
+
+    public List<String> getStationNameSuffix() {
+        return stationNameSuffix;
+    }
+
+    public void setStationNameSuffix(List<String> stationNameSuffix) {
+        this.stationNameSuffix = stationNameSuffix;
+    }
 }

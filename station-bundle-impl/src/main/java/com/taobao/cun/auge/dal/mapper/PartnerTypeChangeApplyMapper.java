@@ -1,8 +1,9 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.PartnerTypeChangeApply;
 import com.taobao.cun.auge.dal.domain.PartnerTypeChangeApplyExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface PartnerTypeChangeApplyMapper {

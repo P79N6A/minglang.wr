@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.bo;
 
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
-import com.taobao.cun.auge.qualification.service.Qualification;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
 
 

@@ -1,9 +1,10 @@
 package com.taobao.cun.auge.evaluate.dto;
 
-import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
+import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+
+import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
 
 /**
  * 评级任务节点的业务数据

@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.evaluate.service;
 
+import java.util.List;
+
 import com.taobao.cun.auge.evaluate.dto.PartnerLevelTaskBusinessDataDTO;
 import com.taobao.cun.auge.evaluate.enums.LevelTaskDataTypeEnum;
-
-import java.util.List;
 
 /**
  * 晋升任务业务数据表

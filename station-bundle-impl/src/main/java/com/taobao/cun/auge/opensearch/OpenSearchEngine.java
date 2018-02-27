@@ -1,8 +1,7 @@
 package com.taobao.cun.auge.opensearch;
 
-import org.apache.log4j.Logger;
-
 import com.opensearch.javasdk.CloudsearchSearch;
+import org.apache.log4j.Logger;
 
 public class OpenSearchEngine {
     private static final Logger log                          = Logger.getLogger(OpenSearchEngine.class);

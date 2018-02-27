@@ -5,7 +5,6 @@ import java.util.Date;
 import com.taobao.cun.auge.station.dto.PartnerDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerDto;
 import com.taobao.cun.auge.station.dto.PartnerFlowerNameApplyDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerService {
 	/**

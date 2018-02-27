@@ -19,4 +19,5 @@ public interface AssetSynBO {
 	public void checkAssetToAmpForBcp(Long assetId);
 	
 	public Boolean changeOwner(List<Long> assetId);
+	
 }

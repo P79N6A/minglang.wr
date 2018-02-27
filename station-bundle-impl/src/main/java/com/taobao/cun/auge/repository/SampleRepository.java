@@ -1,8 +1,7 @@
 package com.taobao.cun.auge.repository;
 
-import org.springframework.stereotype.Repository;
-
 import com.taobao.cun.auge.dal.domain.Sample;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SampleRepository {

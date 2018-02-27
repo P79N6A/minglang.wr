@@ -3,9 +3,6 @@ package com.taobao.cun.auge.dingding.service.impl;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.taobao.cun.auge.dal.domain.DingtalkUser;
 import com.taobao.cun.auge.dal.domain.DingtalkUserExample;
 import com.taobao.cun.auge.dal.domain.DingtalkUserExample.Criteria;
@@ -14,6 +11,8 @@ import com.taobao.cun.auge.dingding.DingDingService;
 import com.taobao.cun.auge.dingding.convert.DingTalkUserConverter;
 import com.taobao.cun.auge.dingding.dto.DingTalkUserDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @HSFProvider(serviceInterface = DingDingService.class)
 public class DingDingServiceImpl implements DingDingService {

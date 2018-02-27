@@ -2,9 +2,8 @@ package com.taobao.cun.auge.station.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
-
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 
 /**
  * 冻结保证金dto

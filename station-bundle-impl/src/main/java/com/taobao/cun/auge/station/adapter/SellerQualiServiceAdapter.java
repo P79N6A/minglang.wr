@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
 import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 
 public interface SellerQualiServiceAdapter {

@@ -8,16 +8,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.buc.api.exception.BucException;
 import com.alibaba.buc.api.model.enhanced.EnhancedUser;
-import com.alibaba.cainiao.cuntaonetwork.constants.station.FromCuntaoGpsStatus;
 import com.alibaba.cainiao.cuntaonetwork.dto.foundation.FeatureDTO;
 import com.alibaba.cainiao.cuntaonetwork.dto.warehouse.WarehouseDTO;
 import com.alibaba.cainiao.cuntaonetwork.param.Modifier;
@@ -25,7 +18,6 @@ import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.AddStationUserRelParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.BindAdminParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UnBindAdminParam;
-import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateLngLatInfoParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationInfoParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationParam;
 import com.alibaba.cainiao.cuntaonetwork.param.station.UpdateStationUserRelParam;
@@ -41,6 +33,7 @@ import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseReadService;
 import com.alibaba.cainiao.cuntaonetwork.service.warehouse.WarehouseWriteService;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.PositionUtil;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -49,6 +42,11 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import com.taobao.cun.auge.station.dto.CaiNiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("caiNiaoAdapter")
 public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {

@@ -1,6 +1,5 @@
 package com.taobao.cun.auge.common.utils;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import org.apache.commons.lang.StringUtils;

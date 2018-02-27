@@ -16,12 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
-
-import com.taobao.cun.auge.dal.domain.PartnerApply;
-import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
-import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
-
-import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -32,6 +26,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.TpaGmvCheckConfiguration;
 import com.taobao.cun.auge.dal.domain.Partner;
+import com.taobao.cun.auge.dal.domain.PartnerApply;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -93,14 +88,19 @@ import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.PartnerExceptionEnum;
-import com.taobao.cun.auge.station.exception.enums.StationExceptionEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
+import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
+import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.PagedResultModel;
 
 @Component("tpStrategy")
 public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
@@ -163,6 +163,9 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Autowired
 	private PartnerQualifyApplyService partnerQualifyApplyService;
+	
+	@Autowired
+    private CuntaoNewBailService newBailService;
 	
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
@@ -271,7 +274,13 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该合伙人下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
-		
+		CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
+		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());
+		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+		PagedResultModel<CuntaoBailDetailReturnDto> result = newBailService.getBailDetail(queryDto);
+		if(result != null && result.getResult()!= null && result.isSuccess() && CollectionUtils.isNotEmpty(result.getResult().getCuntaoBailDetailDtos())){
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"系统检测到该村小二还有铺货保证金没有解冻，请告知村小二完成保证金解冻再申请退出");
+		}
 		//如果是从装修中停业，则需要判断村点是否退出了装修
 		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
 				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());

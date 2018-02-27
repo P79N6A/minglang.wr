@@ -3,6 +3,9 @@ package com.taobao.cun.auge.common.utils;
 import java.util.Collections;
 import java.util.Map;
 
+import com.alibaba.common.lang.StringUtil;
+import com.alibaba.fastjson.JSON;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,9 +14,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.alibaba.common.lang.StringUtil;
-import com.alibaba.fastjson.JSON;
 
 public final class LatitudeUtil {
 

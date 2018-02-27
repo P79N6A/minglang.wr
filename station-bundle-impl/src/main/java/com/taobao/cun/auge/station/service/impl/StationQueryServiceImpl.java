@@ -4,9 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.github.pagehelper.Page;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
@@ -14,7 +11,6 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.dal.domain.StationNumConfig;
 import com.taobao.cun.auge.station.bo.ShutDownStationApplyBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationNumConfigBO;

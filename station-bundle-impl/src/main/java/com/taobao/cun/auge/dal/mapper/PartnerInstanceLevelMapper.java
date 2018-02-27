@@ -1,8 +1,9 @@
 package com.taobao.cun.auge.dal.mapper;
 
+import java.util.List;
+
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevelExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface PartnerInstanceLevelMapper {

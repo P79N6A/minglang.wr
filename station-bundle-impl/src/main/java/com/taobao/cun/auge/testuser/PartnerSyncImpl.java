@@ -4,10 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.dal.domain.SyncLog;
 import com.taobao.cun.auge.dal.mapper.PartnerMapper;
 import com.taobao.cun.auge.log.bo.SyncLogBo;
@@ -16,6 +14,8 @@ import com.taobao.cun.endor.dto.User;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @HSFProvider(serviceInterface = PartnerSync.class)
 public class PartnerSyncImpl implements PartnerSync {

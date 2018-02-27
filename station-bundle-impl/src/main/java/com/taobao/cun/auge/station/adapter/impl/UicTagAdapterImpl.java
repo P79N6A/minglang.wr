@@ -2,11 +2,8 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSON;
+
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.UicTagAdapter;
 import com.taobao.cun.auge.station.dto.UserTagDto;
@@ -20,6 +17,9 @@ import com.taobao.uic.common.domain.ExtraUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Component("uicTagAdapter")
 public class UicTagAdapterImpl implements UicTagAdapter {

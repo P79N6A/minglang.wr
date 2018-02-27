@@ -1,10 +1,9 @@
 package com.taobao.cun.auge.testuser;
 
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
  * Created by zhenhuan.zhangzh on 17/2/28.

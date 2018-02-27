@@ -1,15 +1,14 @@
 package com.taobao.cun.auge.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.endor.service.AppService;
 import com.taobao.cun.endor.service.OrgService;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EndorConfiguration {

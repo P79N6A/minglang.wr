@@ -1,22 +1,11 @@
 package com.taobao.cun.auge.station.bo.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ali.com.google.common.collect.Lists;
-import com.alibaba.common.lang.StringUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -38,7 +27,14 @@ import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.util.CollectionUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component("stationBO")
 public class StationBOImpl implements StationBO {
@@ -193,4 +189,16 @@ public class StationBOImpl implements StationBO {
 		PageHelper.startPage(stationCondition.getPageStart(), stationCondition.getPageSize());
 		return (Page<Station>) stationExtMapper.selectByExample(stationExtExample);
 	}
+
+    public int getSameNameInProvinceCnt(String stationName, String province) {
+        ValidateUtils.notNull(stationName);
+        ValidateUtils.notNull(province);
+        StationExample example = new StationExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andNameEqualTo(stationName);
+        criteria.andProvinceEqualTo(province);
+        criteria.andStatusNotIn(Lists.newArrayList(StationStatusEnum.QUIT.getCode(),StationStatusEnum.INVALID.getCode()));
+        return ResultUtils.selectCount(stationMapper.selectByExample(example));
+    }
 }

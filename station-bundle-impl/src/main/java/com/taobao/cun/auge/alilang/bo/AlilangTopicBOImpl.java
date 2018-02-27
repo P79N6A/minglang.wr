@@ -4,15 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
 import com.alibaba.fastjson.JSON;
+
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.alilang.AlilangTopicBO;
 import com.taobao.cun.auge.alilang.AlilangTopicDto;
@@ -20,6 +13,13 @@ import com.taobao.cun.auge.dal.domain.AlilangTopic;
 import com.taobao.cun.auge.dal.domain.AlilangTopicExample;
 import com.taobao.cun.auge.dal.mapper.AlilangTopicMapper;
 import com.taobao.diamond.client.Diamond;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 @Component("alilangTopicBO")
 public class AlilangTopicBOImpl implements AlilangTopicBO {

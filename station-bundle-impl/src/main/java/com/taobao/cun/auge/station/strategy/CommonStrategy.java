@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.station.strategy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -9,6 +7,7 @@ import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	

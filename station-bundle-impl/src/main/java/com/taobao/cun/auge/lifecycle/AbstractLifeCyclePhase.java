@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -17,6 +14,7 @@ import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.lifecycle.validator.LifeCycleValidator;
 import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
@@ -36,9 +34,10 @@ import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
 import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
-import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -63,6 +62,8 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	
 	@Autowired
 	private StationApplySyncBO syncStationApplyBO;
+	@Autowired
+	private LifeCycleValidator lifeCycleValidator;
 	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
 		StationDto stationDto = partnerInstanceDto.getStationDto();
 		stationDto.setState(StationStateEnum.INVALID);
@@ -79,6 +80,9 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		// 判断服务站编号是否使用中
 		Long stationId = partnerInstanceDto.getStationId();
 		checkStationNumDuplicate(stationId, stationDto.getStationNum());
+		// 判断同一省不能重复村站名
+		String nameSuffix = stationDto.getNameSuffix()==null?"":stationDto.getNameSuffix();
+		lifeCycleValidator.checkStationNameDuplicate(stationId,stationDto.getName()+nameSuffix,stationDto.getAddress().getProvince());
 		stationId = stationBO.addStation(stationDto);
 		partnerInstanceDto.setStationId(stationId);
 		if (partnerInstanceDto.getParentStationId() == null) {
@@ -170,7 +174,6 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
         Long stationId = stationDto.getId();
         // 判断服务站编号是否使用中
         checkStationNumDuplicate(stationId, stationDto.getStationNum());
-
         stationBO.updateStation(stationDto);
         saveStationFixProtocol(stationDto, stationId);
         criusAttachmentService.modifyAttachementBatch(stationDto.getAttachments(), stationId, AttachmentBizTypeEnum.CRIUS_STATION, OperatorConverter.convert(stationDto));

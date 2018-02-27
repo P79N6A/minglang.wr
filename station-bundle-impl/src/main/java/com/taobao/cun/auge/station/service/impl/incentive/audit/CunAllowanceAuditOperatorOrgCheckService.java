@@ -2,15 +2,14 @@ package com.taobao.cun.auge.station.service.impl.incentive.audit;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.incentive.dto.IncentiveAreaDto;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.org.service.OrgRangeType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Created by xujianhui on 17/2/23.

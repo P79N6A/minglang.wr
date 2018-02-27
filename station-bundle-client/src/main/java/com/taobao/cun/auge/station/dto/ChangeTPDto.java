@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.station.dto;
 
-import com.taobao.cun.auge.common.OperatorDto;
-
 import java.io.Serializable;
+
+import com.taobao.cun.auge.common.OperatorDto;
 
 /**
  * Created by xiao on 16/8/25.

@@ -20,9 +20,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
-import com.taobao.cun.settle.cae.dto.AccountCaeSignDto;
 import com.taobao.cun.settle.cae.service.SellerSignService;
-import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.payment.account.dto.CreateAccountDTO;
 import com.taobao.payment.account.dto.QueryAccountDTO;
@@ -253,7 +251,7 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 	
 	@Override
 	public Result<Boolean> caeSign(Long taobaoUserId) {
-		Result<Boolean> result = null;
+		/**Result<Boolean> result = null;
 		AccountBO account;
 		try {
 			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
@@ -293,7 +291,8 @@ public class AlipayAgreementServiceImpl implements AlipayAgreementService {
 			result = Result.of(ErrorInfo.of("SYSTEM_ERROR", null, "协议支付回调异常"));
 			logger.error("caeSign_error",e);
 			return result;
-		}
+		}**/
+		return null;
 		
 	}
 

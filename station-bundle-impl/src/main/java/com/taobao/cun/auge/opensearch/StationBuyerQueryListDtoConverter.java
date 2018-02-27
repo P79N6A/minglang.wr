@@ -1,12 +1,11 @@
 package com.taobao.cun.auge.opensearch;
 
-import com.taobao.cun.auge.station.dto.StationOpenSearchDto;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.taobao.cun.auge.station.dto.StationOpenSearchDto;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 public class StationBuyerQueryListDtoConverter {
 	private static final String TPName = "村小二";

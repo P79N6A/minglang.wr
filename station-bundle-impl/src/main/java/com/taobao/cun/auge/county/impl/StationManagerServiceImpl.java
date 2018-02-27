@@ -6,12 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import com.taobao.cun.auge.county.StationManagerService;
 import com.taobao.cun.auge.county.dto.CountyDto;
 import com.taobao.cun.auge.county.dto.StationManagerDto;
@@ -20,6 +14,11 @@ import com.taobao.cun.auge.dal.domain.StationManagerExample;
 import com.taobao.cun.auge.dal.domain.StationManagerExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.StationManagerMapper;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Service("StationManagerService")
 @HSFProvider(serviceInterface = StationManagerService.class)

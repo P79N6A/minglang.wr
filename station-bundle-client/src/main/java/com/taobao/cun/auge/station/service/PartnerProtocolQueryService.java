@@ -3,7 +3,6 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 
 import com.taobao.cun.auge.station.dto.PartnerProtocolDto;
-import com.taobao.cun.auge.station.exception.AugeServiceException;
 
 public interface PartnerProtocolQueryService {
 	

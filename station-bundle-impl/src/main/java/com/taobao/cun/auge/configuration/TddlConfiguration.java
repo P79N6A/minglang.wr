@@ -3,12 +3,11 @@ package com.taobao.cun.auge.configuration;
 
 import javax.sql.DataSource;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 import com.taobao.tddl.client.sequence.SequenceDao;
 import com.taobao.tddl.client.sequence.impl.DefaultSequenceDao;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TddlConfiguration {
