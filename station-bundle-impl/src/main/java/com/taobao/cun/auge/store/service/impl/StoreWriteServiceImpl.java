@@ -4,7 +4,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.taobao.cun.auge.store.bo.StoreWriteBO;
+import com.taobao.cun.auge.store.bo.impl.StoreWriteBOImpl;
 import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreCreateDto;
 import com.taobao.cun.auge.store.service.StoreException;
@@ -16,6 +20,8 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Resource
 	private StoreWriteBO storeWriteBO;
 	
+	private static final Logger logger = LoggerFactory.getLogger(StoreWriteServiceImpl.class);
+
 	@Override
 	public Long create(StoreCreateDto dto) throws StoreException{
 		return storeWriteBO.create(dto);
@@ -64,5 +70,18 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	@Override
 	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds) {
 		return storeWriteBO.batchRemoveCainiaoFeature(stationIds);
+	}
+
+	@Override
+	public Boolean batchInitStoreWarehouse(List<Long> stationIds) {
+			for(Long stationId : stationIds){
+				try {
+					storeWriteBO.initStoreWarehouse(stationId);
+				} catch (Exception e) {
+					logger.error("batchInitStoreWarehouse error["+stationId+"]", e);
+				}
+			}
+			return true;
+		
 	}
 }
