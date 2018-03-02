@@ -54,6 +54,9 @@ public interface StoreWriteService {
 	 */
 	public Boolean initStoreWarehouse(Long stationId);
 	
+	
+	public Boolean batchInitStoreWarehouse(List<Long> stationIds);
+	
 	/**
 	 * 批量初始化补货村点门店
 	 * @param stationIds

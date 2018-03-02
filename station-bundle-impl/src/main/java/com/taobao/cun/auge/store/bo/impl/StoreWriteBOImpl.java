@@ -558,6 +558,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			features.put("goodsSupply", "y");
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
 		}*/
+		initStoreWarehouse(station.getId());
 		return true;
 	}
 
