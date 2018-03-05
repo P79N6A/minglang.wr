@@ -925,73 +925,143 @@ public class CuntaoQualificationHistoryExample {
             return (Criteria) this;
         }
 
-        public Criteria andMobileIsNull() {
-            addCriterion("mobile is null");
+        public Criteria andBizScopeIsNull() {
+            addCriterion("biz_scope is null");
             return (Criteria) this;
         }
 
-        public Criteria andMobileIsNotNull() {
-            addCriterion("mobile is not null");
+        public Criteria andBizScopeIsNotNull() {
+            addCriterion("biz_scope is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMobileEqualTo(String value) {
-            addCriterion("mobile =", value, "mobile");
+        public Criteria andBizScopeEqualTo(String value) {
+            addCriterion("biz_scope =", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileNotEqualTo(String value) {
-            addCriterion("mobile <>", value, "mobile");
+        public Criteria andBizScopeNotEqualTo(String value) {
+            addCriterion("biz_scope <>", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileGreaterThan(String value) {
-            addCriterion("mobile >", value, "mobile");
+        public Criteria andBizScopeGreaterThan(String value) {
+            addCriterion("biz_scope >", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileGreaterThanOrEqualTo(String value) {
-            addCriterion("mobile >=", value, "mobile");
+        public Criteria andBizScopeGreaterThanOrEqualTo(String value) {
+            addCriterion("biz_scope >=", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileLessThan(String value) {
-            addCriterion("mobile <", value, "mobile");
+        public Criteria andBizScopeLessThan(String value) {
+            addCriterion("biz_scope <", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileLessThanOrEqualTo(String value) {
-            addCriterion("mobile <=", value, "mobile");
+        public Criteria andBizScopeLessThanOrEqualTo(String value) {
+            addCriterion("biz_scope <=", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileLike(String value) {
-            addCriterion("mobile like", value, "mobile");
+        public Criteria andBizScopeLike(String value) {
+            addCriterion("biz_scope like", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileNotLike(String value) {
-            addCriterion("mobile not like", value, "mobile");
+        public Criteria andBizScopeNotLike(String value) {
+            addCriterion("biz_scope not like", value, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileIn(List<String> values) {
-            addCriterion("mobile in", values, "mobile");
+        public Criteria andBizScopeIn(List<String> values) {
+            addCriterion("biz_scope in", values, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileNotIn(List<String> values) {
-            addCriterion("mobile not in", values, "mobile");
+        public Criteria andBizScopeNotIn(List<String> values) {
+            addCriterion("biz_scope not in", values, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileBetween(String value1, String value2) {
-            addCriterion("mobile between", value1, value2, "mobile");
+        public Criteria andBizScopeBetween(String value1, String value2) {
+            addCriterion("biz_scope between", value1, value2, "bizScope");
             return (Criteria) this;
         }
 
-        public Criteria andMobileNotBetween(String value1, String value2) {
-            addCriterion("mobile not between", value1, value2, "mobile");
+        public Criteria andBizScopeNotBetween(String value1, String value2) {
+            addCriterion("biz_scope not between", value1, value2, "bizScope");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicIsNull() {
+            addCriterion("quali_pic is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicIsNotNull() {
+            addCriterion("quali_pic is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicEqualTo(String value) {
+            addCriterion("quali_pic =", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicNotEqualTo(String value) {
+            addCriterion("quali_pic <>", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicGreaterThan(String value) {
+            addCriterion("quali_pic >", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicGreaterThanOrEqualTo(String value) {
+            addCriterion("quali_pic >=", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicLessThan(String value) {
+            addCriterion("quali_pic <", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicLessThanOrEqualTo(String value) {
+            addCriterion("quali_pic <=", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicLike(String value) {
+            addCriterion("quali_pic like", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicNotLike(String value) {
+            addCriterion("quali_pic not like", value, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicIn(List<String> values) {
+            addCriterion("quali_pic in", values, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicNotIn(List<String> values) {
+            addCriterion("quali_pic not in", values, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicBetween(String value1, String value2) {
+            addCriterion("quali_pic between", value1, value2, "qualiPic");
+            return (Criteria) this;
+        }
+
+        public Criteria andQualiPicNotBetween(String value1, String value2) {
+            addCriterion("quali_pic not between", value1, value2, "qualiPic");
             return (Criteria) this;
         }
     }

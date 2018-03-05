@@ -343,4 +343,10 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		 }
 		 
 	 }
+
+	@Override
+	public boolean reSubmitLocalQualification(Qualification qualification) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
