@@ -273,20 +273,24 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			addOrg(cuntaoStore);
         }
 		initStoreWarehouse(station.getId());
-		PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(station.getId());
+		initStoreEmployees(station.getId());
+		
+		return result.getResult();
+	}
+
+	private void initStoreEmployees(Long  stationId) {
+		PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(partnerInstance != null && partnerInstance.getPartnerDto() != null){
 			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
 			employee.setName(partnerInstance.getPartnerDto().getName());
 			employee.setMobile(partnerInstance.getPartnerDto().getMobile());
 			employee.setOperator("system");
 			employee.setTaobaoNick(partnerInstance.getPartnerDto().getTaobaoNick());
-			employeeWriteService.addStoreEmployee(station.getId(), employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
-			employeeWriteService.addStoreEmployee(station.getId(), employee, CuntaoEmployeeIdentifier.STORE_PICKER);
+			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
+			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
 		}else{
-			logger.error("add storeEmployee error! can not find PartnerInstance By stationId["+station.getId()+"]");
+			logger.error("add storeEmployee error! can not find PartnerInstance By stationId["+stationId+"]");
 		}
-		
-		return result.getResult();
 	}
 
 	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId,String areaId) throws StoreException {
