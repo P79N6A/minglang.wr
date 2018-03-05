@@ -19,6 +19,8 @@ import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.UserAddDto;
 import com.taobao.cun.endor.base.dto.UserRoleAddDto;
@@ -245,7 +247,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(example);
 		if(stores == null || stores.isEmpty()){
 			logger.error("store not exists stationId["+stationId+"]");
-			return;
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "门店不存在");
 		}
 		UserAddDto userAddDto = new UserAddDto();
 		userAddDto.setCreator(employee.getCreator());
