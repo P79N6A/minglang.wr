@@ -1794,6 +1794,76 @@ public class PartnerStationRelExample {
             addCriterion("seller_id not between", value1, value2, "sellerId");
             return (Criteria) this;
         }
+
+        public Criteria andTransStatusIsNull() {
+            addCriterion("trans_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusIsNotNull() {
+            addCriterion("trans_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusEqualTo(String value) {
+            addCriterion("trans_status =", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusNotEqualTo(String value) {
+            addCriterion("trans_status <>", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusGreaterThan(String value) {
+            addCriterion("trans_status >", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("trans_status >=", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusLessThan(String value) {
+            addCriterion("trans_status <", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusLessThanOrEqualTo(String value) {
+            addCriterion("trans_status <=", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusLike(String value) {
+            addCriterion("trans_status like", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusNotLike(String value) {
+            addCriterion("trans_status not like", value, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusIn(List<String> values) {
+            addCriterion("trans_status in", values, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusNotIn(List<String> values) {
+            addCriterion("trans_status not in", values, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusBetween(String value1, String value2) {
+            addCriterion("trans_status between", value1, value2, "transStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransStatusNotBetween(String value1, String value2) {
+            addCriterion("trans_status not between", value1, value2, "transStatus");
+            return (Criteria) this;
+        }
     }
 
     /**
