@@ -7,6 +7,8 @@ import java.util.List;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSONObject;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.utils.FeatureUtil;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -102,6 +104,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setStationId(instance.getStationId());
 		instanceDto.setPartnerId(instance.getPartnerId());
 		instanceDto.setSellerId(instance.getSellerId());
+		instanceDto.setTransStatusEnum(PartnerInstanceTransStatusEnum.valueof(instance.getTransStatus()));
 		instanceDto.setStationDto(convertStationDto(instance));
 		instanceDto.setPartnerDto(convertPartnerDto(instance));
 		
@@ -185,6 +188,7 @@ public final class PartnerInstanceConverter {
 		instanceDto.setVersion(psRel.getVersion());
 		instanceDto.setSellerId(psRel.getSellerId());
 		instanceDto.setMode(psRel.getMode());
+		instanceDto.setTransStatusEnum(PartnerInstanceTransStatusEnum.valueof(psRel.getTransStatus()));
 		return instanceDto;
 	}
 
@@ -317,6 +321,7 @@ public final class PartnerInstanceConverter {
 		rel.setPartnerId(partnerInstanceDto.getPartnerId());
 		rel.setVersion(partnerInstanceDto.getVersion());
 		rel.setSellerId(partnerInstanceDto.getSellerId());
+		rel.setTransStatus(partnerInstanceDto.getTransStatusEnum() == null? null:partnerInstanceDto.getTransStatusEnum().getCode());
 		return rel;
 	}
 

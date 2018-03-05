@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
@@ -320,4 +322,10 @@ public interface PartnerInstanceService {
 	
 	
 	public List<CuntaoBailDetailDto> queryCuntaoBail(Long taobaoUserId);
+	
+	/**
+	 * 提交村小二转型
+	 * @param transDto
+	 */
+	public void commitTrans(PartnerInstanceTransDto transDto);
 }

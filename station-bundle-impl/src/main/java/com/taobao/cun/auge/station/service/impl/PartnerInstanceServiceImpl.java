@@ -14,6 +14,11 @@ import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
+import com.taobao.cun.auge.common.Address;
+import com.taobao.cun.auge.station.enums.StationType;
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -168,7 +173,6 @@ import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.PagedResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -2281,5 +2285,44 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			return result.getResult().getCuntaoBailDetailDtos();
 		}
 		return null;
+	}
+
+
+	@Override
+	public void commitTrans(PartnerInstanceTransDto transDto) {
+		 PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(transDto.getInstanceId());
+		 if (rel == null) {
+			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"rel is null");
+		 }
+		 
+		Station station = stationBO.getStationById(rel.getStationId());
+	    //村名基础校验
+        StationValidator.nameFormatCheck(transDto.getStationDto().getName());
+        String stationNum = stationNumConfigBO.createStationNum(station.getProvince(), StationNumConfigTypeEnum.C,0);
+       
+        
+        //更新村点信息
+		StationDto stationDto = new StationDto();
+		stationDto.setName(transDto.getStationDto().getName());
+		Address  address  = new  Address();
+		if (transDto.getStationDto().getAddress().getAddressDetail() != null) {
+			address.setAddressDetail(transDto.getStationDto().getAddress().getAddressDetail());
+		}
+		if (transDto.getStationDto().getAddress().getVillage() != null && transDto.getStationDto().getAddress().getVillageDetail() != null) {
+			address.setVillage(transDto.getStationDto().getAddress().getVillage());
+			address.setVillageDetail(transDto.getStationDto().getAddress().getVillageDetail());
+		}
+		stationDto.setAddress(address);
+		stationDto.setStationNum(stationNum);
+		stationDto.setId(rel.getStationId());
+		stationDto.copyOperatorDto(transDto);
+		stationBO.updateStation(stationDto);
+		
+		//同步菜鸟
+	    generalTaskSubmitService.submitUpdateCainiaoStation(transDto.getInstanceId(), transDto.getOperator());
+	    //更新实例为待转型
+	    partnerInstanceBO.updateTransStatusByInstanceId(transDto.getInstanceId(), PartnerInstanceTransStatusEnum.WAIT_TRANS, transDto.getOperator());
+        stationNumConfigBO.updateSeqNumByStationNum(station.getProvince(), StationNumConfigTypeEnum.C, stationNum);
+       
 	}
 }
