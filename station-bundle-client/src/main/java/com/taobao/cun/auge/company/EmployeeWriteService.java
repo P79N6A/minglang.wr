@@ -61,5 +61,13 @@ public interface EmployeeWriteService{
 	 * @return
 	 */
 	Result<Boolean> removeStoreEmployee(Long employeeId,String operator);
+	
+	/**
+	 * 删除门店员工
+	 * @param employeeId
+	 * @param operator
+	 * @return
+	 */
+	Result<Boolean> removeStoreEmployeeRole(Long employeeId,String operator,CuntaoEmployeeIdentifier type);
 
 }

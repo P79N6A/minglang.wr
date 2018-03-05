@@ -335,4 +335,21 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
+
+
+
+	@Override
+	public Result<Boolean> removeStoreEmployeeRole(Long employeeId, String operator, CuntaoEmployeeIdentifier cuntaoEmployeeIdentifier) {
+		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
+			Assert.notNull(cuntaoEmployeeIdentifier, "操作角色不能为空");
+			return Result.of(employeeWriteBO.removeStoreEmployeeRole(employeeId, operator,cuntaoEmployeeIdentifier));
+		} catch (Exception e) {
+			logger.error("removeStoreEmployeeRole error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
 }

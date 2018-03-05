@@ -46,6 +46,20 @@ public interface EmployeeWriteBO {
 	 */
 	Long addStoreEmployee(Long stationId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier type);
 	
-	
+	/**
+	 * 删除门店员工
+	 * @param employeeId
+	 * @param operator
+	 * @return
+	 */
 	Boolean removeStoreEmployee(Long employeeId,String operator);
+
+	/**
+	 * 删除门店员工角色
+	 * @param employeeId
+	 * @param operator
+	 * @param cuntaoEmployeeIdentifier
+	 * @return
+	 */
+	Boolean removeStoreEmployeeRole(Long employeeId, String operator, CuntaoEmployeeIdentifier cuntaoEmployeeIdentifier);
 }

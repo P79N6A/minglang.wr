@@ -281,4 +281,19 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		}
 		return true;
 	}
+
+	@Override
+	public Boolean removeStoreEmployeeRole(Long employeeId, String operator,
+			CuntaoEmployeeIdentifier cuntaoEmployeeIdentifier) {
+		CuntaoEmployee employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
+		List<UserRoleDto> userRoles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(employee.getTaobaoUserId()+"");
+		if(userRoles != null){
+			for(UserRoleDto useRole : userRoles){
+				if(cuntaoEmployeeIdentifier.name().equals(useRole.getRoleName())){
+					storeEndorApiClient.getUserRoleServiceClient().deleteUserRole(useRole.getId(), null);
+				}
+			}
+		}
+		return true;
+	}
 }
