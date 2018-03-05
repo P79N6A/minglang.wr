@@ -28,6 +28,7 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
@@ -35,25 +36,25 @@ import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service("stationDecorateService")
 @HSFProvider(serviceInterface = StationDecorateService.class)
 public class StationDecorateServiceImpl implements StationDecorateService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(StationDecorateService.class);
 	
 	@Autowired
 	StationDecorateBO stationDecorateBO;
@@ -101,6 +102,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	OrgStructWriteService orgStructWriteService;
 	@Autowired
 	MemberReadService memberReadService;
+	@Autowired
+	ProcessService processService;
 
 	@Value("${cbu.market.parent_code}")
 	private Long parentId;
@@ -111,10 +114,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateAuditDto);
-		if (!stationDecorateAuditDto.getIsAgree()) {
-			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,error);
-		}
+//		if (!stationDecorateAuditDto.getIsAgree()) {
+//			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
+//			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,error);
+//		}
 			Long sdId = stationDecorateAuditDto.getId();
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(sdId);
 			if (sd == null) {
@@ -144,7 +147,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		}
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
-		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+		if(stationDecorateAuditDto.getIsAgree()){
+		    partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+        }else{
+            partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
+        }
 		partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
@@ -154,7 +161,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		StationDecorateDto sdDto =new StationDecorateDto();
 		sdDto.setId(stationDecorateAuditDto.getId());
 		sdDto.setAuditOpinion(stationDecorateAuditDto.getAuditOpinion() == null ? "" : stationDecorateAuditDto.getAuditOpinion());
-		sdDto.setStatus(StationDecorateStatusEnum.DONE);
+		if(stationDecorateAuditDto.getIsAgree()){
+		    sdDto.setStatus(StationDecorateStatusEnum.DONE);
+		}else{
+		    sdDto.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS);
+		}
 		sdDto.copyOperatorDto(stationDecorateAuditDto);
 		stationDecorateBO.updateStationDecorate(sdDto);
 	}
@@ -190,7 +201,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			}
 	}
 	
-	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateReflectDto);
@@ -209,6 +220,14 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 //			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
+			
+			StartProcessDto startProcessDto =new StartProcessDto();
+            startProcessDto.setBusiness(ProcessBusinessEnum.reflectStationDecorate);
+            startProcessDto.setBusinessId(sd.getId());
+            startProcessDto.setBusinessName("装修反馈审核");
+            startProcessDto.setBusinessOrgId(stationDecorateReflectDto.getOperatorOrgId());
+            startProcessDto.copyOperatorDto(stationDecorateReflectDto);
+            processService.startApproveProcess(startProcessDto);
 	}
 
 	private StationDecorateDto buildStationDecorateDtoForReflect(
