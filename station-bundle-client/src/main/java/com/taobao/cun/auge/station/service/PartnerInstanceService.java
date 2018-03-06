@@ -320,4 +320,12 @@ public interface PartnerInstanceService {
 	
 	
 	public List<CuntaoBailDetailDto> queryCuntaoBail(Long taobaoUserId);
+	
+    /**
+     * 冻结铺货保证金（新接口）
+     * 
+     * @param freezeBondDto
+     * @return boolean
+     */
+    public boolean freezeRePublishBond(FreezeBondDto freezeBondDto);
 }
