@@ -2295,6 +2295,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"rel is null");
 		 }
 		 
+		 if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
+			 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站是天猫优品，不需要转型");
+		 }
+		 
 		Station station = stationBO.getStationById(rel.getStationId());
 	    //村名基础校验
         StationValidator.nameFormatCheck(transDto.getStationDto().getName());
@@ -2315,6 +2319,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		stationDto.setAddress(address);
 		stationDto.setStationNum(stationNum);
 		stationDto.setId(rel.getStationId());
+		stationDto.setPartnerInstanceIsOnTown(transDto.getStationDto().getPartnerInstanceIsOnTown());
 		stationDto.copyOperatorDto(transDto);
 		stationBO.updateStation(stationDto);
 		
