@@ -346,7 +346,18 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 
 	@Override
 	public boolean reSubmitLocalQualification(Qualification qualification) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
+			if(cuntaoQulification == null){
+				logger.error("reSubmitLocalQualification error！qualification not exists by tabaoUserId["+qualification.getTaobaoUserId()+"]");
+				return false;
+			}
+			cuntaoQualificationCopier.copy(qualification, cuntaoQulification, null);
+			cuntaoQualificationBO.reSubmitLocalQualification(cuntaoQulification);
+		} catch (Exception e) {
+			logger.error("submitLocalQualification error！tabaoUserId["+qualification.getTaobaoUserId()+"]",e);
+			return false;
+		}
+			return true;
 	}
 }
