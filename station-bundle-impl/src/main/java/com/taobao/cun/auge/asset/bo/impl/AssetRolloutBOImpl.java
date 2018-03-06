@@ -173,6 +173,15 @@ public class AssetRolloutBOImpl implements AssetRolloutBO {
 					assetFlowService.cancelTransferFlow(detail.getRolloutId(), cancelDto.getOperator());
 				}
 			}
+		}else if (detailList.stream().noneMatch(asset -> AssetRolloutIncomeDetailStatusEnum.WAIT_SIGN.getCode().equals(asset.getStatus()))) {
+			AssetRollout record = new AssetRollout();
+			record.setId(detail.getRolloutId());
+			record.setStatus(AssetRolloutStatusEnum.ROLLOUT_DONE.getCode());
+			DomainUtils.beforeUpdate(record, cancelDto.getOperator());
+			assetRolloutMapper.updateByPrimaryKeySelective(record);
+			if (detail.getIncomeId() != null) {
+				assetIncomeBO.updateStatus(detail.getIncomeId(), AssetIncomeStatusEnum.DONE, cancelDto.getOperator());
+			}
 		}
 	}
 
