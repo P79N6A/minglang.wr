@@ -40,6 +40,7 @@ import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -51,6 +52,7 @@ import com.taobao.cun.auge.station.enums.ProcessMsgTypeEnum;
 import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
+import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
@@ -128,6 +130,9 @@ public class ProcessProcessor {
 
 	@Autowired
 	AssetService assetService;
+	
+	@Autowired
+	StationDecorateService stationDecorateService;
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -193,6 +198,16 @@ public class ProcessProcessor {
 				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
 					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
 				}
+			}else if (ProcessBusinessEnum.reflectStationDecorate.getCode().equals(businessCode)){
+			    StationDecorateAuditDto stationDecorateAuditDto = new StationDecorateAuditDto();
+			    if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+			        stationDecorateAuditDto.setIsAgree(true);
+                }else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+                    stationDecorateAuditDto.setIsAgree(false);
+                }
+			    stationDecorateAuditDto.setId(businessId);
+			    stationDecorateAuditDto.copyOperatorDto(OperatorDto.defaultOperator());
+			    stationDecorateService.audit(stationDecorateAuditDto);
 			}
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
