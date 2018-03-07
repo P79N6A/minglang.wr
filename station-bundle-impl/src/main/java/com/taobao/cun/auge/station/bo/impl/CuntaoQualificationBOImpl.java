@@ -131,6 +131,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			record.setModifier("system");
 			cuntaoQualificationMapper.updateByPrimaryKeySelective(deletedQuali);
 		}
+		qualification.setId(null);
 		this.submitLocalQualification(qualification);
 		
 	}
