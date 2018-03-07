@@ -30,7 +30,7 @@ public interface VendorWriteService {
 	 * @param serviceVendorId
 	 * @return
 	 */
-	Result<Boolean> removeVendor(Long companyId);
+	Result<Boolean> removeVendor(Long companyId,String operator);
 	
 	/**
 	 * 确认服务商协议

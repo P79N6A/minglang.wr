@@ -1,6 +1,14 @@
 package com.taobao.cun.auge.company.bo;
 
 import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.cun.auge.company.ServiceVendorAndManagerInfo;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
@@ -10,10 +18,13 @@ import com.taobao.cun.auge.company.dto.CuntaoVendorEmployeeState;
 import com.taobao.cun.auge.company.dto.CuntaoVendorState;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployee;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
+import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
+import com.taobao.cun.auge.dal.domain.CuntaoServiceVendorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
 import com.taobao.cun.endor.base.dto.UserAddDto;
@@ -24,12 +35,6 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class VendorWriteBOImpl implements VendorWriteBO{
@@ -57,6 +62,9 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	@Autowired
 	@Qualifier("storeEndorOrgIdSequence")
 	private GroupSequence groupSequence;
+	
+	@Autowired
+	private EmployeeWriteBO employeeWriteBO;
 	
 	@Override
 	 @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -177,9 +185,38 @@ public class VendorWriteBOImpl implements VendorWriteBO{
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
-	public Boolean removeVendor(Long companyId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean removeVendor(Long companyId,String operator) {
+		//TODO 
+		CuntaoServiceVendorExample vendorExample = new CuntaoServiceVendorExample();
+		vendorExample.createCriteria().andIdEqualTo(companyId).andIsDeletedEqualTo("n");
+		List<CuntaoServiceVendor> vendors = cuntaoServiceVendorMapper.selectByExample(vendorExample);
+		if(vendors == null || vendors.isEmpty()){
+			throw new AugeBusinessException("NOT_FIND_VENDOR","服务商["+companyId+"]不存在");
+		}
+		
+		
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(companyId).andTypeEqualTo(CuntaoEmployeeType.vendor.name());
+		List<CuntaoEmployeeRel>  rels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(rels != null){
+			for(CuntaoEmployeeRel rel : rels){
+				if(rel != null){
+					employeeWriteBO.removeVendorEmployee(rel.getEmployeeId(),operator);
+				}
+			}
+		}
+		
+		
+		CuntaoServiceVendor record = new CuntaoServiceVendor();
+		record.setId(companyId);
+		record.setGmtModified(new Date());
+		record.setModifier(operator);
+		record.setIsDeleted("y");
+		cuntaoServiceVendorMapper.updateByPrimaryKeySelective(record);
+		
+		//TODO删除组织
+		storeEndorApiClient.getOrgServiceClient().delete(vendors.iterator().next().getEndorOrgId());
+		return true;
 	}
 
 }
