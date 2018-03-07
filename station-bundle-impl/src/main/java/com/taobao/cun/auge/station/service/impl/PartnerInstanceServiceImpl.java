@@ -2282,4 +2282,29 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		}
 		return null;
 	}
+	
+	/**
+     * 冻结铺货保证金（新接口）
+     * 
+     * @param freezeBondDto
+     * @return boolean
+     */
+    public boolean freezeRePublishBond(FreezeBondDto freezeBondDto) {
+        ValidateUtils.validateParam(freezeBondDto);
+        Long taobaoUserId = freezeBondDto.getTaobaoUserId();
+        String accountNo = freezeBondDto.getAccountNo();
+        String alipayAccount = freezeBondDto.getAlipayAccount();
+        Double money = freezeBondDto.getMoney();
+
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        
+        if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
+                return frozenReplenishMoneyForDecorate(taobaoUserId, accountNo, alipayAccount,
+                        instance,money);
+        }else if ( PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
+               return frozenReplenishMoneyForService(taobaoUserId, accountNo, alipayAccount,
+                    instance,money);
+        }
+        return true;
+    }
 }
