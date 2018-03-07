@@ -24,4 +24,8 @@ public interface C2BSettlingService{
 	 
 	  C2BSignSettleProtocolResponse signC2BSettleProtocol(C2BSignSettleProtocolRequest newSettleProtocolRequest);
 	  
+	  public boolean hasNewSignProcotol(Long taobaoUserId);
+	  
+	  public C2BSignSettleProtocolResponse signNewSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest); 
+	  
 }

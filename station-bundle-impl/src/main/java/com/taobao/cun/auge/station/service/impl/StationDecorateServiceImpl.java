@@ -149,11 +149,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		partnerLifecycleDto.setLifecycleId(items.getId());
 		if(stationDecorateAuditDto.getIsAgree()){
 		    partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
-        }else{
-            partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
+		    partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
+		    partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
         }
-		partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
-		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
 	}
 
 	private void auditStationDecorate(

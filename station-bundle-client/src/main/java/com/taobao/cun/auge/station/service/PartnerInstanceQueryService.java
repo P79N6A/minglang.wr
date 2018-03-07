@@ -343,4 +343,10 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public ReplenishDto getReplenishDtoByTaobaoUserId(Long taobaoUserId);
+    /**
+     * 获得转型服务站待缴纳基础保证金金额
+     * @param taobaoUserId
+     * @return
+     */
+    public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
 }

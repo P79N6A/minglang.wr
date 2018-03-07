@@ -172,6 +172,17 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	}
 	
 	/**
+     * 是否签约4.0入住协议
+     * @param taobaoUserId
+     * @return
+     */
+    public boolean hasNewSignProcotol(Long taobaoUserId){
+        PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,13L);
+        return Optional.ofNullable(settleNewProtocol).isPresent();
+    }
+	
+	/**
 	 * 是否冻结保证金
 	 * @param parnterInstanceId
 	 * @return
@@ -213,6 +224,27 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			return response;
 	}
 
+	//签订4.0新的入驻协议
+    public C2BSignSettleProtocolResponse signNewSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
+        C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
+        try {
+            PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
+            PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,13L);
+            if(settleNewProtocol != null){
+                response.setSuccessful(true);
+                return response;
+            }
+            partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
+                    PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+        } catch (Exception e) {
+            logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);
+            response.setErrorMessage("系统异常");
+            response.setSuccessful(false);
+        }
+            return response;
+    }
+	
+	
 	public SettlingStepsProperties getSettlingStepsProperties() {
 		return settlingStepsProperties;
 	}
