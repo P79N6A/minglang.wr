@@ -328,4 +328,10 @@ public interface PartnerInstanceService {
 	 * @param transDto
 	 */
 	public void commitTrans(PartnerInstanceTransDto transDto);
+	/**
+	 * 转型  补交基础保证金后，业务接口
+	 * @param freezeBondDto
+	 * @return
+	 */
+	public boolean freezeBondForTrans(FreezeBondDto freezeBondDto);
 }

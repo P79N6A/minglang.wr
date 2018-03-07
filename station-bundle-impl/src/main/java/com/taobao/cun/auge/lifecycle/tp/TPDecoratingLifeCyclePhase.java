@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -127,6 +129,9 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(partnerInstanceDto.getState().getCode())){
 			partnerInstanceBO.changeState(partnerInstanceDto.getId(), partnerInstanceDto.getState(), PartnerInstanceStateEnum.DECORATING,partnerInstanceDto.getOperator());
+		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstanceDto.getState().getCode()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(partnerInstanceDto.getTransStatusEnum())){
+			//服务站转型，主状态是服务中，  转型状态 已经 在关系更新的时候变为转型中
+			setPartnerInstanceToDecoratingForTrans(partnerInstanceDto,partnerInstanceDto,null);
 		}else{
 			setPartnerInstanceToDecorating(partnerInstanceDto,partnerInstanceDto,null);
 		}
@@ -195,6 +200,9 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		Long instanceId =partnerInstanceDto.getId();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceDto);
+		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.TRANS_ING.equals(partnerInstanceDto.getTransStatusEnum())){
+			//服务站转型，主状态是服务中，  转型状态 已经 在关系更新的时候变为转型中
+			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.TRANS_DECORATING, partnerInstanceDto);
 		}else{
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.START_DECORATING, partnerInstanceDto);
 			dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
@@ -307,6 +315,28 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			}
 		}
 		return true;
+	}
+	
+	private void setPartnerInstanceToDecoratingForTrans(PartnerInstanceDto rel, OperatorDto operatorDto, Long changePartnerId) {
+//		Calendar now = Calendar.getInstance();// 得到一个Calendar的实例
+//		Date serviceBeginTime = now.getTime();
+//		now.add(Calendar.YEAR, 1);
+//		Date serviceEndTime = now.getTime();
+
+		PartnerInstanceDto piDto = new PartnerInstanceDto();
+//		piDto.setServiceBeginTime(serviceBeginTime);
+//		piDto.setServiceEndTime(serviceEndTime);
+		piDto.setId(rel.getId());
+		piDto.setState(PartnerInstanceStateEnum.DECORATING);
+		piDto.setVersion(rel.getVersion());
+		piDto.setParentStationId(rel.getStationId());
+		piDto.setTransStatusEnum(PartnerInstanceTransStatusEnum.TRANS_ING);
+		piDto.setMode(StationModeEnum.V4.getCode());
+		piDto.copyOperatorDto(operatorDto);
+		if (changePartnerId != null) {
+			piDto.setPartnerId(changePartnerId);
+		}
+		partnerInstanceBO.updatePartnerStationRel(piDto);
 	}
 	
 	/**

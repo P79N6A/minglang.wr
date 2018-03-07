@@ -2336,4 +2336,48 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         stationNumConfigBO.updateSeqNumByStationNum(station.getProvince(), StationNumConfigTypeEnum.C, stationNum);
        
 	}
+
+
+	@Override
+	public boolean freezeBondForTrans(FreezeBondDto freezeBondDto) {
+		  ValidateUtils.validateParam(freezeBondDto);
+        Long taobaoUserId = freezeBondDto.getTaobaoUserId();
+        String accountNo = freezeBondDto.getAccountNo();
+        String alipayAccount = freezeBondDto.getAlipayAccount();
+        Double money = freezeBondDto.getMoney();
+
+        PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        
+        if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
+            AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                    AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+            if  (bondMoney == null || !PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(instance.getTransStatus())) {
+                throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"数据异常，不能操作");
+            }
+            String operator = String.valueOf(taobaoUserId);
+
+            // 修改保证金冻结状态
+            AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
+            accountMoneyUpdateDto.setObjectId(bondMoney.getObjectId());
+            accountMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+            accountMoneyUpdateDto.setType(AccountMoneyTypeEnum.PARTNER_BOND);
+            accountMoneyUpdateDto.setFrozenTime(new Date());
+            accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+            accountMoneyUpdateDto.setAlipayAccount(alipayAccount);
+            accountMoneyUpdateDto.setAccountNo(accountNo);
+            accountMoneyUpdateDto.setOperator(operator);
+            accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
+            accountMoneyUpdateDto.setMoney(BigDecimal.valueOf(money));
+            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+            
+        	PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instance.getId());
+        	partnerInstanceDto.copyOperatorDto(freezeBondDto);
+        	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.DECORATING_EVENT);
+    		stateMachineService.executePhase(phaseEvent);
+    		
+            // 同步station_apply
+            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instance.getId());
+        }
+        return true;
+	}
 }
