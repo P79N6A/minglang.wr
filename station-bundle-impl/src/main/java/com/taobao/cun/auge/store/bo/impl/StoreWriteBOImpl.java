@@ -112,7 +112,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	
 	@Autowired
 	private DefaultDivisionAdapterManager defaultDivisionAdapterManager;
-	
+	 
 	@Autowired
 	private EmployeeWriteService employeeWriteService;
 	@Autowired
