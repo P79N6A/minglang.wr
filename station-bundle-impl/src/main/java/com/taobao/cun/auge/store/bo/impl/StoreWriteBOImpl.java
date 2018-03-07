@@ -1,16 +1,27 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.ali.com.google.common.collect.Sets;
 import com.google.common.base.Strings;
 import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.utils.POIUtils;
+import com.taobao.cun.auge.company.EmployeeWriteService;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
+import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
@@ -55,14 +66,6 @@ import com.taobao.place.client.service.StoreCreateService;
 import com.taobao.place.client.service.StoreUpdateService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.tddl.client.sequence.impl.GroupSequence;
-import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class StoreWriteBOImpl implements StoreWriteBO {
@@ -110,6 +113,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Autowired
 	private DefaultDivisionAdapterManager defaultDivisionAdapterManager;
 	
+	@Autowired
+	private EmployeeWriteService employeeWriteService;
 	@Autowired
 	private StandardAreaService standardAreaService;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
@@ -268,7 +273,24 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			addOrg(cuntaoStore);
         }
 		initStoreWarehouse(station.getId());
+		initStoreEmployees(station.getId());
+		
 		return result.getResult();
+	}
+
+	private void initStoreEmployees(Long  stationId) {
+		PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
+		if(partnerInstance != null && partnerInstance.getPartnerDto() != null){
+			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();
+			employee.setName(partnerInstance.getPartnerDto().getName());
+			employee.setMobile(partnerInstance.getPartnerDto().getMobile());
+			employee.setOperator("system");
+			employee.setTaobaoNick(partnerInstance.getPartnerDto().getTaobaoNick());
+			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_MANAGER);
+			employeeWriteService.addStoreEmployee(stationId, employee, CuntaoEmployeeIdentifier.STORE_PICKER);
+		}else{
+			logger.error("add storeEmployee error! can not find PartnerInstance By stationId["+stationId+"]");
+		}
 	}
 
 	private String createInventoryStore(StoreCreateDto storeCreateDto, Long userId,String areaId) throws StoreException {

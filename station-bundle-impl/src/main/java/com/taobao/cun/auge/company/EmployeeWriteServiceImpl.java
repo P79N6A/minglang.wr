@@ -1,7 +1,16 @@
 package com.taobao.cun.auge.company;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
@@ -14,21 +23,20 @@ import com.taobao.cun.auge.dal.domain.CuntaoEmployeeExample;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRel;
 import com.taobao.cun.auge.dal.domain.CuntaoEmployeeRelExample;
 import com.taobao.cun.auge.dal.domain.CuntaoServiceVendor;
+import com.taobao.cun.auge.dal.domain.CuntaoStore;
+import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoEmployeeRelMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoServiceVendorMapper;
+import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.validator.BeanValidator;
+import com.taobao.cun.endor.base.client.EndorApiClient;
+import com.taobao.cun.endor.base.dto.UserRoleDto;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Service("employeeWriteService")
 @HSFProvider(serviceInterface = EmployeeWriteService.class)
@@ -50,8 +58,19 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 
 	@Autowired
 	private EmployeeWriteBO employeeWriteBO;
+	
+	
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeWriteServiceImpl.class);
  
+	@Autowired
+	@Qualifier("storeEndorApiClient")
+	private EndorApiClient storeEndorApiClient;
+	
+	@Autowired
+	private CuntaoStoreMapper cuntaoStoreMapper;
+	
+	@Autowired
+	private EmployeeReadService employeeReadService;
 	@Override
 	
 	public Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
@@ -207,20 +226,61 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 
 	@Override
-	public Result<Boolean> removeVendorEmployee(Long employeeId) {
-		//CuntaoEmployee employee = new CuntaoEmployee();
-		//employee.setId(employeeId);
-		//employee.setGmtCreate(new Date());
-		//employee.setModifier(modifier);
-		//employee.setIsDeleted("y");
-		//cuntaoEmployeeMapper.updateByPrimaryKeySelective(employee);
-		return null;
+	public Result<Boolean> removeVendorEmployee(Long employeeId,Long taobaoUserId,String operator) {
+		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
+			
+			List<UserRoleDto> roles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(taobaoUserId+"");
+			
+			CuntaoServiceVendor cuntaoServiceVendor = getVendorByEmployeeId(employeeId);
+			
+			if(cuntaoServiceVendor == null){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该员工不属于任何供应商");
+				return Result.of(errorInfo);
+			}
+			
+			
+			Optional<UserRoleDto> userRole = roles.stream().filter(role -> CuntaoEmployeeIdentifier.VENDOR_MANAGER.name().equals(role.getRoleName()))
+					.filter(role -> role.getOrgId().equals(cuntaoServiceVendor.getEndorOrgId()))
+					.findFirst();
+			if(userRole.isPresent()){
+				return Result.of(employeeWriteBO.removeVendorEmployee(employeeId,operator));
+			}
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该用户没有权限删除");
+			return Result.of(errorInfo);
+		} catch (Exception e) {
+			logger.error("removeVendorEmployee error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+
+
+
+	private CuntaoServiceVendor getVendorByEmployeeId(Long employeeId) {
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId);
+		List<CuntaoEmployeeRel> employeeRels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(employeeRels == null || employeeRels.isEmpty()){
+			return null;
+		}
+		CuntaoEmployeeRel rel = employeeRels.iterator().next();
+		
+		CuntaoServiceVendor cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(rel.getOwnerId());
+		return cuntaoServiceVendor;
 	}
 
 	@Override
 	public Result<Long> addStoreEmployee(Long stationId, CuntaoEmployeeDto storeEmployee, CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		if(storeEmployee.getId() == null){
+		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		example.createCriteria().andTaobaoNickEqualTo(storeEmployee.getTaobaoNick()).andTypeEqualTo(CuntaoEmployeeType.store.name()).andIsDeletedEqualTo("n");
+		
+		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
+		
+		if(employees == null||employees.isEmpty()){
 			errorInfo = checkAddEmployee(stationId,storeEmployee,identifier);
 			//TODO 效验规则细化
 			if(errorInfo != null){
@@ -247,6 +307,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				}
 			}
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
+		}else{
+			storeEmployee.setId(employees.iterator().next().getId());
 		}
 		try {
 			return Result.of(employeeWriteBO.addStoreEmployee(stationId, storeEmployee, identifier));
@@ -308,6 +370,88 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 		}
 		return null;
+	}
+
+
+
+
+	@Override
+	public Result<Boolean> removeStoreEmployee(Long employeeId,Long taobaoUserId, String operator) {
+		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
+			List<UserRoleDto> roles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(taobaoUserId+"");
+			CuntaoStore store = getStoreByEmployeeId(employeeId);
+			if(store == null){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该员工没有门店");
+				return Result.of(errorInfo);
+			}
+			Optional<UserRoleDto> userRole = roles.stream().filter(role -> CuntaoEmployeeIdentifier.STORE_MANAGER.name().equals(role.getRoleName()))
+					.filter(role -> role.getOrgId().equals(store.getEndorOrgId()))
+					.findFirst();
+			if(userRole.isPresent()){
+				return Result.of(employeeWriteBO.removeStoreEmployee(employeeId, operator));
+			}
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该用户没有权限删除");
+			return Result.of(errorInfo);
+		} catch (Exception e) {
+			logger.error("removeStoreEmployee error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+
+
+
+	@Override
+	public Result<Boolean> removeStoreEmployeeRole(Long employeeId,Long taobaoUserId, String operator, CuntaoEmployeeIdentifier cuntaoEmployeeIdentifier) {
+		try {
+			Assert.notNull(employeeId, "员工ID不能为空");
+			Assert.notNull(operator, "操作人不能为空");
+			Assert.notNull(cuntaoEmployeeIdentifier, "操作角色不能为空");
+			
+			List<UserRoleDto> roles = storeEndorApiClient.getUserRoleServiceClient().getUserRoles(taobaoUserId+"");
+			CuntaoStore store = getStoreByEmployeeId(employeeId);
+			if(store == null){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该员工没有门店");
+				return Result.of(errorInfo);
+			}
+			Optional<UserRoleDto> userRole = roles.stream().filter(role -> CuntaoEmployeeIdentifier.STORE_MANAGER.name().equals(role.getRoleName()))
+					.filter(role -> role.getOrgId().equals(store.getEndorOrgId()))
+					.findFirst();
+			if(userRole.isPresent()){
+				return Result.of(employeeWriteBO.removeStoreEmployeeRole(employeeId, operator,cuntaoEmployeeIdentifier));
+			}
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "该用户没有权限删除");
+			return Result.of(errorInfo);
+		} catch (Exception e) {
+			logger.error("removeStoreEmployeeRole error!",e);
+			ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
+			return Result.of(errorInfo);
+		}
+	}
+
+
+
+
+	private CuntaoStore getStoreByEmployeeId(Long employeeId) {
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId);
+		List<CuntaoEmployeeRel> employeeRels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(employeeRels == null || employeeRels.isEmpty()){
+			return null;
+		}
+		CuntaoEmployeeRel rel = employeeRels.iterator().next();
+		
+		CuntaoStoreExample storeExample = new CuntaoStoreExample();
+		storeExample.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(rel.getOwnerId());
+		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(storeExample);
+		if(stores == null || stores.isEmpty()){
+			return null;
+		}
+		CuntaoStore store = stores.iterator().next();
+		return store;
 	}
 
 }
