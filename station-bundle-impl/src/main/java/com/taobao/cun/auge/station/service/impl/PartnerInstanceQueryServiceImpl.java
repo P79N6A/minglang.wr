@@ -886,6 +886,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         if (null == instance || null == bondMoney) {
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "PARTNER_BOND not exist");
         }
+        PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
+                instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+        if (settleProtocol != null) {
+            info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
+        }
         info.setPartnerInstance(instance);
         //基础保证金额度-已经缴纳=剩余4.0需要代缴。目前基础额度是10000
         BigDecimal backBailMoney = new BigDecimal(0.0);

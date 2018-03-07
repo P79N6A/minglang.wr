@@ -16,9 +16,12 @@ import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -26,6 +29,8 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -73,6 +78,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	StationBO stationBO;
+	
+    @Autowired
+    AttachmentService criusAttachmentService;
 	
 	/**
 	 * 淘宝商品图片
@@ -414,4 +422,19 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
 	}
+
+    public StationDecorateDto getInfoById(Long Id) {
+        ValidateUtils.notNull(Id);
+        StationDecorate sd = stationDecorateBO.getStationDecorateById(Id);
+        StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
+      //添加附件
+        sdDto.setAttachments(criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        if (sdDto.getStationId() != null) {
+            Station s = stationBO.getStationById(sd.getStationId());
+            if (s != null) {
+                sdDto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return sdDto;
+    }
 }
