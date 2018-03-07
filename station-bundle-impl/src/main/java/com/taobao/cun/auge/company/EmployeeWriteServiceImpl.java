@@ -447,6 +447,9 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		CuntaoStoreExample storeExample = new CuntaoStoreExample();
 		storeExample.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(rel.getOwnerId());
 		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(storeExample);
+		if(stores == null || stores.isEmpty()){
+			return null;
+		}
 		CuntaoStore store = stores.iterator().next();
 		return store;
 	}
