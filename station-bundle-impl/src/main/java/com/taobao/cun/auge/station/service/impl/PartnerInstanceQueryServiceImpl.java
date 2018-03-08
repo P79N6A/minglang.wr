@@ -361,13 +361,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                                  break;
                              }
                          }
-                         if(isRule){
-                             instance.getStationDto().setInvalidNameMsg("");
-                         }else{
-                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
-                            if(StationValidator.nameFormatCheck(checkName)){
+                         if(isRule && StationValidator.nameFormatCheck(checkName)){
+                             if((instance.getMode().equals(StationModeEnum.V4.getCode()) && checkName.lastIndexOf("天猫优品服务站") >=0)||
+                                     (!StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("农村淘宝服务站") >=0)){
                                  instance.getStationDto().setInvalidNameMsg("");
                              }
+                         }else{
+                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
+                             instance.getStationDto().setInvalidNameMsg("not rule name");
                         }
                     } catch (AugeBusinessException e) {
                         instance.getStationDto().setInvalidNameMsg(e.getMessage());;
