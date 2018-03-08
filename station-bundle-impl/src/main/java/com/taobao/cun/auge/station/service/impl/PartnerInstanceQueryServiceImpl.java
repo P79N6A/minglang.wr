@@ -355,13 +355,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                     	 }
                          //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
                          String checkName = instance.getStationDto().getName();
+                         String headName = "";
                          for(String rs : stationNameSuffix){
                              if(checkName.lastIndexOf(rs) >= 0){
                                  isRule = true;
+                                 headName = checkName.replaceAll(rs, "");
                                  break;
                              }
                          }
-                         if(isRule && StationValidator.nameFormatCheck(checkName)){
+                         if(isRule && StationValidator.nameFormatCheck(headName)){
                              if((instance.getMode().equals(StationModeEnum.V4.getCode()) && checkName.lastIndexOf("天猫优品服务站") >=0)||
                                      (!StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("农村淘宝服务站") >=0)){
                                  instance.getStationDto().setInvalidNameMsg("");
