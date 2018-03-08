@@ -359,7 +359,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                          for(String rs : stationNameSuffix){
                              if(checkName.lastIndexOf(rs) >= 0){
                                  isRule = true;
-                                 headName = checkName.replaceAll(rs, "");
+                                 headName = checkName.substring(0, checkName.lastIndexOf(rs));
                                  break;
                              }
                          }
