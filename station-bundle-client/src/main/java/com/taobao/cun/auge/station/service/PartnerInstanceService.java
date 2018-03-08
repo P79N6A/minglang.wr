@@ -323,15 +323,22 @@ public interface PartnerInstanceService {
 	
 	public List<CuntaoBailDetailDto> queryCuntaoBail(Long taobaoUserId);
 	
-	/**
-	 * 提交村小二转型
-	 * @param transDto
-	 */
-	public void commitTrans(PartnerInstanceTransDto transDto);
-	/**
-	 * 转型  补交基础保证金后，业务接口
-	 * @param freezeBondDto
-	 * @return
-	 */
-	public boolean freezeBondForTrans(FreezeBondDto freezeBondDto);
+    /**
+     * 冻结铺货保证金（新接口）
+     * 
+     * @param freezeBondDto
+     * @return boolean
+     */
+    public boolean freezeRePublishBond(FreezeBondDto freezeBondDto);
+    /**
+     * 提交村小二转型
+     * @param transDto
+     */
+    public void commitTrans(PartnerInstanceTransDto transDto);
+    /**
+     * 转型  补交基础保证金后，业务接口
+     * @param freezeBondDto
+     * @return
+     */
+    public boolean freezeBondForTrans(FreezeBondDto freezeBondDto);
 }

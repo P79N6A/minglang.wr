@@ -23,5 +23,5 @@ public interface VendorWriteBO {
 	 * @param serviceVendorId
 	 * @return
 	 */
-	Boolean removeVendor(Long companyId);
+	Boolean removeVendor(Long companyId,String operator);
 }

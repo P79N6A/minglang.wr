@@ -42,7 +42,7 @@ public interface EmployeeWriteService{
 	 * @param employeeId
 	 * @return
 	 */
-	Result<Boolean> removeVendorEmployee(Long employeeId);
+	Result<Boolean> removeVendorEmployee(Long employeeId,Long taobaoUserId,String operator);
 	
 	
 	/**
@@ -53,4 +53,21 @@ public interface EmployeeWriteService{
 	 * @return
 	 */
 	Result<Long> addStoreEmployee(Long stationId,CuntaoEmployeeDto employee,CuntaoEmployeeIdentifier type);
+
+	/**
+	 * 删除门店员工
+	 * @param employeeId
+	 * @param operator
+	 * @return
+	 */
+	Result<Boolean> removeStoreEmployee(Long employeeId,Long taobaoUserId,String operator);
+	
+	/**
+	 * 删除门店员工
+	 * @param employeeId
+	 * @param operator
+	 * @return
+	 */
+	Result<Boolean> removeStoreEmployeeRole(Long employeeId,Long taobaoUserId,String operator,CuntaoEmployeeIdentifier type);
+
 }
