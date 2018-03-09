@@ -198,7 +198,7 @@ public class ProcessProcessor {
 				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
 					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_NOT_PASS);
 				}
-			}else if (ProcessBusinessEnum.reflectStationDecorate.getCode().equals(businessCode)){
+			}else if (ProcessBusinessEnum.decorationFeedback.getCode().equals(businessCode)){
 			    StationDecorateAuditDto stationDecorateAuditDto = new StationDecorateAuditDto();
 			    if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
 			        stationDecorateAuditDto.setIsAgree(true);
