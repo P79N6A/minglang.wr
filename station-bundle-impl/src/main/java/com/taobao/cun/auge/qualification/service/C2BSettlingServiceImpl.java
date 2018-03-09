@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service("settlingService")
-@HSFProvider(serviceInterface= C2BSettlingService.class)
+@HSFProvider(serviceInterface= C2BSettlingService.class,serviceVersion="1.0.0.daily.trans")
 @EnableConfigurationProperties({SettlingStepsProperties.class})
 public class C2BSettlingServiceImpl implements C2BSettlingService {
 
