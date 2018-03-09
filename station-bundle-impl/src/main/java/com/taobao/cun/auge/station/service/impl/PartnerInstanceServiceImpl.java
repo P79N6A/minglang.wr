@@ -2330,11 +2330,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		 }
 		 
 		Station station = stationBO.getStationById(rel.getStationId());
-	    //村名基础校验
-        StationValidator.nameFormatCheck(transDto.getStationDto().getName());
+	  
         String stationNum = stationNumConfigBO.createStationNum(station.getProvince(), StationNumConfigTypeEnum.C,0);
        
-        
         //更新村点信息
 		StationDto stationDto = new StationDto();
 		stationDto.setName(transDto.getStationDto().getName());
