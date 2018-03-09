@@ -100,6 +100,9 @@ public class DiamondConfiguredProperties {
     @Value("#{'${stationNameSuffix}'.split(',')}")
     private List<String> stationNameSuffix;
     
+    @Value("#{'${can.confirm.stationOpeningProtocolList}'.split(',')}")
+    private List<Long> canConfirmStationOpeningProtocolList;
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -250,4 +253,12 @@ public class DiamondConfiguredProperties {
     public void setStationNameSuffix(List<String> stationNameSuffix) {
         this.stationNameSuffix = stationNameSuffix;
     }
+
+	public List<Long> getCanConfirmStationOpeningProtocolList() {
+		return canConfirmStationOpeningProtocolList;
+	}
+
+	public void setCanConfirmStationOpeningProtocolList(List<Long> canConfirmStationOpeningProtocolList) {
+		this.canConfirmStationOpeningProtocolList = canConfirmStationOpeningProtocolList;
+	}
 }
