@@ -2373,7 +2373,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if(PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())) {
             AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
                     AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
-            if  (bondMoney == null || !PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(instance.getTransStatus())) {
+            if  (bondMoney == null || !PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(instance.getTransStatus())) {
                 throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"数据异常，不能操作");
             }
             String operator = String.valueOf(taobaoUserId);
