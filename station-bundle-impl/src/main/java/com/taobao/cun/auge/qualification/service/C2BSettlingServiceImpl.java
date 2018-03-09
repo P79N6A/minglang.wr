@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -58,6 +59,9 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	ProtocolBO protocolBO;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -178,7 +182,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
      */
     public boolean hasNewSignProcotol(Long taobaoUserId){
         PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
-        PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,13L);
+        Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
+        PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
         return Optional.ofNullable(settleNewProtocol).isPresent();
     }
 	
@@ -229,7 +234,8 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
         C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
         try {
             PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
-            PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,13L);
+            Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
+            PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
             if(settleNewProtocol != null){
                 response.setSuccessful(true);
                 return response;
