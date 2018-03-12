@@ -242,6 +242,7 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
             }
             partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
                     PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+            response.setSuccessful(true);
         } catch (Exception e) {
             logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);
             response.setErrorMessage("系统异常");
