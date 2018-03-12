@@ -228,7 +228,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			stationDecorateBO.updateStationDecorate(sdDto);
 			
 			StartProcessDto startProcessDto =new StartProcessDto();
-            startProcessDto.setBusiness(ProcessBusinessEnum.reflectStationDecorate);
+            startProcessDto.setBusiness(ProcessBusinessEnum.decorationFeedback);
             startProcessDto.setBusinessId(sd.getId());
             startProcessDto.setBusinessName("装修反馈审核");
             startProcessDto.setBusinessOrgId(stationDecorateReflectDto.getOperatorOrgId());
