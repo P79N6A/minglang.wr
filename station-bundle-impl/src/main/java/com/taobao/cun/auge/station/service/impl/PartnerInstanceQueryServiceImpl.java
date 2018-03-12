@@ -364,7 +364,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
                              }
                          }
                          if(isRule && StationValidator.nameFormatCheck(headName)){
-                             if((instance.getMode().equals(StationModeEnum.V4.getCode()) && checkName.lastIndexOf("天猫优品服务站") >=0)||
+                             if((StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("天猫优品服务站") >=0)||
                                      (!StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("农村淘宝服务站") >=0)){
                                  instance.getStationDto().setInvalidNameMsg("");
                              }
