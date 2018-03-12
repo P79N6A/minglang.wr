@@ -1921,6 +1921,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             stationDto.setState(StationStateEnum.INVALID);
             stationDto.setStatus(StationStatusEnum.NEW);
             stationDto.copyOperatorDto(upgradeDto);
+            //村名基础校验
+            StationValidator.nameFormatCheck(stationDto.getName());
             StationValidator.validateStationInfo(stationDto);
             PartnerInstanceDto pid = new PartnerInstanceDto();
             pid.setStationDto(stationDto);
