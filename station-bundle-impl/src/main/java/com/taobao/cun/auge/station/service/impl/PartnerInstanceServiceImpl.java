@@ -1907,6 +1907,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
         Long partnerId = partnerDto.getId();
         ValidateUtils.notNull(partnerId);
+        Partner pr = partnerBO.getPartnerById(partnerId);
+        if(pr != null){
+            partnerDto.setName(pr.getName());
+        }
             //村点信息备份
             Map<String, String> feature = partnerTypeChangeApplyBO.backupStationInfo(stationId);
             // 更新村点信息
