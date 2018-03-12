@@ -80,4 +80,11 @@ public interface StoreWriteService {
 	 * @return
 	 */
 	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds);
+	
+	/**
+	 * 同步村点Endor组织
+	 * @param station
+	 * @return
+	 */
+	public Boolean initEndorOrg(Long station);
 }
