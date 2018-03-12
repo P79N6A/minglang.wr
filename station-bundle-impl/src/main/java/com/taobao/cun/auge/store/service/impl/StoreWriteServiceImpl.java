@@ -82,12 +82,14 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 				}
 			}
 			return true;
-		
 	}
 
 	@Override
 	public Boolean initEndorOrg(Long stationId) {
-		// TODO Auto-generated method stub
-		return null;
+		return storeWriteBO.initStoreEndorOrg(stationId);
+	}
+	
+	public void batchInitStoreEndorOrg(){
+		storeWriteBO.batchInitStoreEndorOrg();
 	}
 }
