@@ -344,25 +344,28 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              for (PartnerInstanceDto instance : partnerInstances) {
                  boolean isRule = false;
                      try {
-                    	 if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState().getCode())) {
-                    		 instance.getStationDto().setInvalidNameMsg("");
-                    		 continue;
-                    	 }
+                         if (!PartnerInstanceStateEnum.getStateForCanUpdateStationName().contains(instance.getState().getCode())) {
+                             instance.getStationDto().setInvalidNameMsg("");
+                             continue;
+                         }
                          //如果名称已经正确了。后缀带有标准的字样，就不带后缀校验
                          String checkName = instance.getStationDto().getName();
+                         String headName = "";
                          for(String rs : stationNameSuffix){
                              if(checkName.lastIndexOf(rs) >= 0){
                                  isRule = true;
+                                 headName = checkName.substring(0, checkName.lastIndexOf(rs));
                                  break;
                              }
                          }
-                         if(isRule){
-                             instance.getStationDto().setInvalidNameMsg("");
-                         }else{
-                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
-                            if(StationValidator.nameFormatCheck(checkName)){
+                         if(isRule && StationValidator.nameFormatCheck(headName)){
+                             if((StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("天猫优品服务站") >=0)||
+                                     (!StationModeEnum.V4.getCode().equals(instance.getMode()) && checkName.lastIndexOf("农村淘宝服务站") >=0)){
                                  instance.getStationDto().setInvalidNameMsg("");
                              }
+                         }else{
+                            //符合规格的没有异常标识，否则信息塞入DTO供前台使用
+                             instance.getStationDto().setInvalidNameMsg("not rule name");
                         }
                     } catch (AugeBusinessException e) {
                         instance.getStationDto().setInvalidNameMsg(e.getMessage());;

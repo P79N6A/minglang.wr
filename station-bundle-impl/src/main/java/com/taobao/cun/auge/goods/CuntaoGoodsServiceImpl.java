@@ -1,21 +1,25 @@
 package com.taobao.cun.auge.goods;
 
-import com.taobao.cun.auge.common.result.ErrorInfo;
-import com.taobao.cun.auge.common.result.Result;
-import com.taobao.cun.auge.failure.AugeErrorCodes;
-import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
-import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
-import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
-import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
-import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import com.taobao.cun.auge.common.result.ErrorInfo;
+import com.taobao.cun.auge.common.result.Result;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
+import com.taobao.cun.auge.station.enums.StationModeEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 @Service("cuntaoGoodsService")
 @HSFProvider(serviceInterface = CuntaoGoodsService.class)
@@ -27,6 +31,9 @@ public class CuntaoGoodsServiceImpl implements CuntaoGoodsService {
 	@Autowired
 	private PartnerInstanceQueryService partnerInstanceQueryService;
 
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
+	
 	private static final Logger logger = LoggerFactory.getLogger(CuntaoGoodsServiceImpl.class);
 	@Override
 	public Result<Boolean> confirmSampleGoodsProtocol(Long taobaoUserId) {
@@ -178,6 +185,43 @@ public class CuntaoGoodsServiceImpl implements CuntaoGoodsService {
 			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
 		}
 	}
-	
+
+	@Override
+	public Result<Boolean> isSupportGoodsSupply(Long taobaoUserId) {
+		try {
+			Result<Boolean> result = Result.of(true);
+			boolean isConfirmed = isConfirmProtocol(taobaoUserId,ProtocolTypeEnum.STATION_OPENING_AGREEMENT);
+			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			if(isConfirmed || (partnerInstance != null && StationModeEnum.V4.getCode().equals(partnerInstance.getMode()) && PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType().getCode()) )){
+				result.setModule(true);
+				return result;
+			}
+			result.setModule(false);
+			return result;
+		} catch (Exception e) {
+			logger.error("isSupportGoodsSupply[" + taobaoUserId + "]", e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+	@Override
+	public Result<Boolean> needConfirmStationOpeningProtocol(Long taobaoUserId) {
+		try {
+			Result<Boolean> result = Result.of(true);
+			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			if(partnerInstance != null){
+				boolean needConfirmed = this.diamondConfiguredProperties.getCanConfirmStationOpeningProtocolList().contains(partnerInstance.getStationId());
+				if(needConfirmed || (StationModeEnum.V4.getCode().equals(partnerInstance.getMode()) && PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType().getCode()) )){
+					result.setModule(true);
+					return result;
+				}
+			}
+			result.setModule(false);
+			return result;
+		} catch (Exception e) {
+			logger.error("needConfirmStationOpeningProtocol[" + taobaoUserId + "]", e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
 
 }
