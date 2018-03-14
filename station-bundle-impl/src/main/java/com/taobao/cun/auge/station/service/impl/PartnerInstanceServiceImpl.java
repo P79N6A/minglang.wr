@@ -661,7 +661,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         Long taobaoUserId = freezeBondDto.getTaobaoUserId();
         String accountNo = freezeBondDto.getAccountNo();
         String alipayAccount = freezeBondDto.getAlipayAccount();
-        Double money = freezeBondDto.getMoney();
 
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         
@@ -702,12 +701,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
             Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
             generalTaskSubmitService.submitSettlingSysProcessTasks(PartnerInstanceConverter.convert(instance, null, partner), operator);
-        }else if (PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
-        		return frozenReplenishMoneyForDecorate(taobaoUserId, accountNo, alipayAccount,
-    					instance,money);
-        }else if ( PartnerInstanceStateEnum.SERVICING.getCode().equals(instance.getState())&& StationModeEnum.V4.getCode().equals(instance.getMode())) {
-        	   return frozenReplenishMoneyForService(taobaoUserId, accountNo, alipayAccount,
-					instance,money);
         }
         // 流转日志, 合伙人入驻
         // bulidRecordEventForPartnerEnter(stationApplyDetailDto);
