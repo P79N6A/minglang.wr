@@ -267,24 +267,22 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 		
 		//装修
-		boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
-		if (hasDecorateDone) {
-			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+		if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(rel.getTransStatusEnum())){
+			// 生成装修记录
+			StationDecorateDto stationDecorateDto = new StationDecorateDto();
+			stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+			stationDecorateDto.setStationId(rel.getStationId());
+			stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
+			stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+			stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
+			stationDecorateBO.addStationDecorate(stationDecorateDto);
 		}else {
-			//TODO:初始化
-			if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(rel.getTransStatusEnum())){
-				if (stationDecorateBO.getStationDecorateByStationId(rel.getStationId())==null) {
-					// 生成装修记录
-					StationDecorateDto stationDecorateDto = new StationDecorateDto();
-					stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
-					stationDecorateDto.setStationId(rel.getStationId());
-					stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
-					stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
-					stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
-					stationDecorateBO.addStationDecorate(stationDecorateDto);
-				}
+			boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
+			if (hasDecorateDone) {
+				partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+			}else {
+				partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 			}
-			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}
 		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
