@@ -387,7 +387,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		}
 		
 		User user = new User();
-		user.setUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+		user.setUserId(String.valueOf(cuntaoUserOrgVO.getLoginId()));
 		user.setUserName(cuntaoUserOrgVO.getUserName());
 		user.setCreator(cuntaoUserOrgVO.getCreator());
 		user.setModifier(cuntaoUserOrgVO.getModifier());
@@ -395,7 +395,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		userService.save("cuntaobops", user);
 		BizUserRole bizUserRole = new BizUserRole();
 		bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
-		bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+		bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getLoginId()));
 		bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
 		bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
 		bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
