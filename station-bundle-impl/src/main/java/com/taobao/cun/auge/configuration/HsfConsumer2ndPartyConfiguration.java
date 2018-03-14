@@ -3,6 +3,16 @@ package com.taobao.cun.auge.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
+import org.esb.finance.service.contract.EsbFinanceContractAdapter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.ali.dowjones.service.portal.OrderPortalService;
+import com.ali.dowjones.service.portal.ProductService;
+import com.ali.dowjones.service.portal.ShoppingCartPortalService;
+import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.alibaba.buc.acl.api.service.AccessControlService;
 import com.alibaba.buc.api.EnhancedUserQueryService;
 import com.alibaba.cainiao.cuntaonetwork.service.station.StationReadService;
@@ -29,11 +39,6 @@ import com.alibaba.pm.sc.portal.api.ScPortalService;
 import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.tax.api.service.ArInvoiceService;
-
-import com.ali.dowjones.service.portal.OrderPortalService;
-import com.ali.dowjones.service.portal.ProductService;
-import com.ali.dowjones.service.portal.ShoppingCartPortalService;
-import com.ali.martini.biz.order.interfaces.orderitem.facade.OrderItemFacade;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
@@ -51,11 +56,11 @@ import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
-import com.taobao.kfc.core.search.Searcher;
 import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
 import com.taobao.payment.account.service.query.AccountQueryService;
+import com.taobao.place.client.service.StoreService;
 import com.taobao.place.client.service.area.StandardAreaService;
 import com.taobao.refundplatform.client.read.RefundReadService;
 import com.taobao.tc.service.TcBaseService;
@@ -74,11 +79,6 @@ import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
-import org.esb.finance.service.audit.EsbFinanceAuditAdapter;
-import org.esb.finance.service.contract.EsbFinanceContractAdapter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
 
@@ -458,6 +458,13 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     @Bean
     public StandardAreaService standardAreaService(HsfConsumerContext context, @Value("${standardAreaService.version}") String version) {
            return context.hsfConsumerBuilder(StandardAreaService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+
+    @Bean
+    public StoreService storeService(HsfConsumerContext context, @Value("${storeService.version}") String version) {
+           return context.hsfConsumerBuilder(StoreService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     
