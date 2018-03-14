@@ -58,7 +58,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service("stationDecorateService")
-@HSFProvider(serviceInterface = StationDecorateService.class)
+@HSFProvider(serviceInterface = StationDecorateService.class, clientTimeout = 8000)
 public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
