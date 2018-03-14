@@ -39,7 +39,9 @@ import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.BeanCopy;
 import com.taobao.cun.endor.dto.BizUserRole;
+import com.taobao.cun.endor.dto.User;
 import com.taobao.cun.endor.service.UserRoleService;
+import com.taobao.cun.endor.service.UserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
 
@@ -58,6 +60,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Resource
 	UserRoleService userRoleService;
+	
+	@Resource
+	UserService userService;
 	
 	@Override
     public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
@@ -368,6 +373,14 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setFeatureCc(0);
 			cuntaoUserOrg.setStatus("VALID");
 			cuntaoUserOrgMapper.insert(cuntaoUserOrg);
+			
+			User user = new User();
+			user.setUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+			user.setUserName(cuntaoUserOrgVO.getUserName());
+			user.setCreator(cuntaoUserOrgVO.getCreator());
+			user.setModifier(cuntaoUserOrgVO.getModifier());
+			user.setState("NORMAL");
+			userService.save("cuntaobops", user);
 			BizUserRole bizUserRole = new BizUserRole();
 			bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
 			bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
