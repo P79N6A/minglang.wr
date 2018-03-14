@@ -154,6 +154,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				partnerLifecycle.setRoleApprove(PartnerLifecycleRoleApproveEnum.AUDIT_NOPASS);
 			}
 	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
+		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(partnerInstanceDto.getTransStatusEnum())){
+			initPartnerLifeCycleForDecorating(partnerInstanceDto);
 		}else{
 			Long instanceId =partnerInstanceDto.getId();
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
@@ -200,7 +202,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		Long instanceId =partnerInstanceDto.getId();
 		if(PartnerInstanceStateEnum.CLOSING.getCode().equals(context.getSourceState())){
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.CLOSING_REFUSED, partnerInstanceDto);
-		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.TRANS_ING.equals(partnerInstanceDto.getTransStatusEnum())){
+		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(partnerInstanceDto.getTransStatusEnum())){
 			//服务站转型，主状态是服务中，  转型状态 已经 在关系更新的时候变为转型中
 			sendPartnerInstanceStateChangeEvent(instanceId, PartnerInstanceStateChangeEnum.TRANS_DECORATING, partnerInstanceDto);
 		}else{
@@ -337,6 +339,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			piDto.setPartnerId(changePartnerId);
 		}
 		partnerInstanceBO.updatePartnerStationRel(piDto);
+		//上下文需要
+		rel.setMode(StationModeEnum.V4.getCode());
 	}
 	
 	/**
