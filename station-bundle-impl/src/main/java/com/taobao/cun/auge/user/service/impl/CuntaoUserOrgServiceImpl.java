@@ -10,6 +10,10 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -33,11 +37,10 @@ import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.BeanCopy;
+import com.taobao.cun.endor.dto.BizUserRole;
+import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service("CuntaoUserOrgService")
 @HSFProvider(serviceInterface = CuntaoUserOrgService.class)
@@ -51,6 +54,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Resource
 	CuntaoUserRoleLogMapper cuntaoUserRoleLogMapper;
+	
+	@Resource
+	UserRoleService userRoleService;
 	
 	@Override
     public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
@@ -355,12 +361,19 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setOrgId(cuntaoUserOrgVO.getOrgId());
 			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 			cuntaoUserOrg.setLoginId(cuntaoUserOrgVO.getLoginId());
-			cuntaoUserOrg.setUserName(cuntaoUserOrgVO.getUserName());
+			cuntaoUserOrg.setUserName(cuntaoUserOrgVO.getUserName()); 
 			cuntaoUserOrg.setUserType(cuntaoUserOrgVO.getUserType());
 			cuntaoUserOrg.setStartTime(new Date());
 			cuntaoUserOrg.setFeatureCc(0);
 			cuntaoUserOrg.setStatus("VALID");
 			cuntaoUserOrgMapper.insert(cuntaoUserOrg);
+			BizUserRole bizUserRole = new BizUserRole();
+			bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
+			bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+			bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
+			bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
+			bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
+			userRoleService.addBizUserRole("cuntaobops", bizUserRole);
 		}else{
 			CuntaoUserOrg cuntaoUserOrg = cuntaoUserOrgs.get(0);
 			//如果角色没有发生变化，那么直接返回
@@ -381,6 +394,18 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		userRoleLog.setModifier(cuntaoUserOrgVO.getModifier());
 		userRoleLog.setNewRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 		cuntaoUserRoleLogMapper.insert(userRoleLog);
+	}
+	
+	private String getRole(String userRole) {
+		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode())) {
+			return "SPECIAL_TEAM_LEADER";
+		}
+		
+		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode())) {
+			return "PROVINCE_LEADER";
+		}
+		
+		return "COUNTY_ADMIN";
 	}
 	
 	private void unassignLeader(Long orgId, String loginId, String leaderType, String modifier) {
@@ -410,6 +435,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			userRoleLog.setLoginId(cuntaoUserOrg.getLoginId());
 			userRoleLog.setOrgId(cuntaoUserOrg.getOrgId());
 			cuntaoUserRoleLogMapper.insert(userRoleLog);
+			userRoleService.deleteBizUserRole("cuntaobops", loginId, orgId, getRole(leaderType));
 		}
 	}
 
