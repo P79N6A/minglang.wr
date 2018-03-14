@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -373,6 +374,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
 			bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
 			bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
+			bizUserRole.setEndTime(DateUtils.addMonths(new Date(), 3));
 			userRoleService.addBizUserRole("cuntaobops", bizUserRole);
 		}else{
 			CuntaoUserOrg cuntaoUserOrg = cuntaoUserOrgs.get(0);
