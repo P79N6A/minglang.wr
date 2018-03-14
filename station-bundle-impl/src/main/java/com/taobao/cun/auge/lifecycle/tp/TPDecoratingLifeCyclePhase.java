@@ -7,8 +7,12 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
+import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import org.apache.commons.collections.CollectionUtils;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.OperatorDto;
@@ -155,7 +159,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			}
 	        partnerLifecycleBO.updateLifecycle(partnerLifecycle);
 		}else if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(partnerInstanceDto.getTransStatusEnum())){
-			initPartnerLifeCycleForDecorating(partnerInstanceDto);
+			initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 		}else{
 			Long instanceId =partnerInstanceDto.getId();
 			PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.SETTLING,
@@ -168,7 +172,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 				param.copyOperatorDto(partnerInstanceDto);
 				partnerLifecycleBO.updateLifecycle(param);
 			}
-			initPartnerLifeCycleForDecorating(partnerInstanceDto);
+			initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 		}
 	}
 
@@ -246,7 +250,7 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	 *
 	 * @param rel
 	 */
-	private void initPartnerLifeCycleForDecorating(PartnerInstanceDto rel) {
+	private void initPartnerLifeCycleForDecorating(LifeCyclePhaseContext context,PartnerInstanceDto rel) {
 		
 		Station s = stationBO.getStationById(rel.getStationId());
 		if(containCountyOrgId(s.getApplyOrg())) {
@@ -267,6 +271,19 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		if (hasDecorateDone) {
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
 		}else {
+			//TODO:初始化
+			if (PartnerInstanceStateEnum.SERVICING.getCode().equals(context.getSourceState()) && PartnerInstanceTransStatusEnum.WAIT_TRANS.equals(rel.getTransStatusEnum())){
+				if (stationDecorateBO.getStationDecorateByStationId(rel.getStationId())==null) {
+					// 生成装修记录
+					StationDecorateDto stationDecorateDto = new StationDecorateDto();
+					stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+					stationDecorateDto.setStationId(rel.getStationId());
+					stationDecorateDto.setPartnerUserId(rel.getTaobaoUserId());
+					stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+					stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
+					stationDecorateBO.addStationDecorate(stationDecorateDto);
+				}
+			}
 			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}
 		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
