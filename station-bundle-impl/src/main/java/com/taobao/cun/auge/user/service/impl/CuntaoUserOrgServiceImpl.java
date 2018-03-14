@@ -373,22 +373,6 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setFeatureCc(0);
 			cuntaoUserOrg.setStatus("VALID");
 			cuntaoUserOrgMapper.insert(cuntaoUserOrg);
-			
-			User user = new User();
-			user.setUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
-			user.setUserName(cuntaoUserOrgVO.getUserName());
-			user.setCreator(cuntaoUserOrgVO.getCreator());
-			user.setModifier(cuntaoUserOrgVO.getModifier());
-			user.setState("NORMAL");
-			userService.save("cuntaobops", user);
-			BizUserRole bizUserRole = new BizUserRole();
-			bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
-			bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
-			bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
-			bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
-			bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
-			bizUserRole.setEndTime(DateUtils.addMonths(new Date(), 3));
-			userRoleService.addBizUserRole("cuntaobops", bizUserRole);
 		}else{
 			CuntaoUserOrg cuntaoUserOrg = cuntaoUserOrgs.get(0);
 			//如果角色没有发生变化，那么直接返回
@@ -401,6 +385,23 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 			cuntaoUserOrgMapper.updateByPrimaryKey(cuntaoUserOrg);
 		}
+		
+		User user = new User();
+		user.setUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+		user.setUserName(cuntaoUserOrgVO.getUserName());
+		user.setCreator(cuntaoUserOrgVO.getCreator());
+		user.setModifier(cuntaoUserOrgVO.getModifier());
+		user.setState("NORMAL");
+		userService.save("cuntaobops", user);
+		BizUserRole bizUserRole = new BizUserRole();
+		bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
+		bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getUserId()));
+		bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
+		bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
+		bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
+		bizUserRole.setEndTime(DateUtils.addMonths(new Date(), 3));
+		userRoleService.addBizUserRole("cuntaobops", bizUserRole);
+		
 		userRoleLog.setLoginId(cuntaoUserOrgVO.getLoginId());
 		userRoleLog.setOrgId(cuntaoUserOrgVO.getOrgId());
 		userRoleLog.setGmtCreate(new Date());
