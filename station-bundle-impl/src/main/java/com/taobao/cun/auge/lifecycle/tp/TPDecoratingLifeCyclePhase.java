@@ -276,6 +276,8 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
 			stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
 			stationDecorateBO.addStationDecorate(stationDecorateDto);
+			
+			partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
 		}else {
 			boolean hasDecorateDone = stationDecorateBO.handleAcessDecorating(rel.getStationId());
 			if (hasDecorateDone) {
