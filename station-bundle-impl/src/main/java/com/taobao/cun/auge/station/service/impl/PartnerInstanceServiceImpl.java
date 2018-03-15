@@ -14,6 +14,7 @@ import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -2355,8 +2356,21 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	    //更新实例为待转型
 	    partnerInstanceBO.updateTransStatusByInstanceId(transDto.getInstanceId(), PartnerInstanceTransStatusEnum.WAIT_TRANS, transDto.getOperator());
         stationNumConfigBO.updateSeqNumByStationNum(station.getProvince(), StationNumConfigTypeEnum.C, stationNum);
+        
+        //记录日志
+		CuntaoFlowRecord cuntaoFlowRecord = new CuntaoFlowRecord();
+		String buildOperatorName = buildOperatorName(transDto);
+		cuntaoFlowRecord.setTargetId(rel.getStationId());
+		cuntaoFlowRecord.setTargetType(CuntaoFlowRecordTargetTypeEnum.STATION.getCode());
+		cuntaoFlowRecord.setNodeTitle("发起转型");
+		cuntaoFlowRecord.setOperatorName(buildOperatorName);
+		cuntaoFlowRecord.setOperatorWorkid(transDto.getOperator());
+		cuntaoFlowRecord.setOperateTime(new Date());
+		//cuntaoFlowRecord.setRemarks(buildRecordContent(stateChangeEvent));
+		cuntaoFlowRecordBO.addRecord(cuntaoFlowRecord);
        
 	}
+	
 
 
 	@Override
