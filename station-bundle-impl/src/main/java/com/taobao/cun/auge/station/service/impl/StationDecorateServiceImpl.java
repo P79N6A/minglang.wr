@@ -220,7 +220,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
-//			Station station=stationBO.getStationById(sd.getStationId());
+			
 //			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
 //				throw new AugeServiceException("当前村点非装修状态");
 //			}
@@ -231,7 +231,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             startProcessDto.setBusiness(ProcessBusinessEnum.decorationFeedback);
             startProcessDto.setBusinessId(sd.getId());
             startProcessDto.setBusinessName("装修反馈审核");
-            startProcessDto.setBusinessOrgId(stationDecorateReflectDto.getOperatorOrgId());
+            Station station=stationBO.getStationById(sd.getStationId());
+            startProcessDto.setBusinessOrgId(station.getApplyOrg());
             startProcessDto.copyOperatorDto(stationDecorateReflectDto);
             processService.startApproveProcess(startProcessDto);
 	}
