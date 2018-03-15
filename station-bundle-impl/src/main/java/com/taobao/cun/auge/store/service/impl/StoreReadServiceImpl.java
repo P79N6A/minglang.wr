@@ -90,6 +90,10 @@ public class StoreReadServiceImpl implements StoreReadService {
 
 	@Override
 	public StoreDto getStoreByStoreEmployeeTaobaoUserId(Long employeeTaobaoUserId) {
+		StoreDto store = this.getStoreByTaobaoUserId(employeeTaobaoUserId);
+		if(store != null){
+			return store;
+		}
 		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
 		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(employeeTaobaoUserId).andTypeEqualTo(CuntaoEmployeeType.store.name());
 		List<CuntaoEmployee> employees = cuntaoEmployeeMapper.selectByExample(example);
@@ -105,10 +109,6 @@ public class StoreReadServiceImpl implements StoreReadService {
 				 return this.getStoreByStationId(stationId);
 				 
 			 }
-		}
-		StoreDto store = this.getStoreByTaobaoUserId(employeeTaobaoUserId);
-		if(store != null){
-			return store;
 		}
 		return null;
 	}
