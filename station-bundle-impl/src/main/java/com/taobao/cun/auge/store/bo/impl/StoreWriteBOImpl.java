@@ -50,6 +50,7 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
+import com.taobao.cun.endor.base.dto.OrgDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.mdjxc.common.result.DataResult;
@@ -573,7 +574,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setScmCode("");
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 		cuntaoStoreMapper.insert(cuntaoStore);
-
+		addOrg(cuntaoStore);
 		/*Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
 		if (cainiaoStationId != null) {
 			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
@@ -718,5 +719,34 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		logger.info("finish create supply store!");
 		return true;
+	}
+
+	@Override
+	public Boolean initStoreEndorOrg(Long stationId) {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(example);
+		
+		if(stores != null && !stores.isEmpty()){
+			CuntaoStore store = stores.iterator().next();
+			try {
+				this.addOrg(store);
+			} catch (Exception e) {
+				logger.error("initStoreEndorOrg error[" + stationId + "]", e);
+				return false;
+			}
+			
+			return true;
+		}
+		return false;
+	}
+	
+	public void batchInitStoreEndorOrg(){
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStoreCategoryEqualTo("FMCG");
+		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(example);
+		for(CuntaoStore store :stores){
+			initStoreEndorOrg(store.getStationId());
+		}
 	}
 }
