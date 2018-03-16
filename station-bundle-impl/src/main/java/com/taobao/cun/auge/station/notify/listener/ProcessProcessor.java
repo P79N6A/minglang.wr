@@ -41,6 +41,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
+import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -231,6 +232,13 @@ public class ProcessProcessor {
 				String auditName = ob.getString("approverName");
 				String desc = ob.getString("taskRemark");
 				handlePeixunPurchase(objectId, audit, auditName, desc, resultCode);
+			}else if(ProcessBusinessEnum.decorationFeedback.getCode().equals(businessCode)){
+			    String auditOpinion = ob.getString("taskRemark");
+			    StationDecorateDto sdd = new StationDecorateDto();
+			    sdd.setAuditOpinion(auditOpinion);
+			    sdd.setId(businessId);
+			    sdd.copyOperatorDto(OperatorDto.defaultOperator());
+			    stationDecorateService.updateStationDecorate(sdd);
 			}
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
