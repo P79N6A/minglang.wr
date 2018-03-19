@@ -40,6 +40,7 @@ import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.BeanCopy;
 import com.taobao.cun.endor.dto.BizUserRole;
 import com.taobao.cun.endor.dto.User;
+import com.taobao.cun.endor.service.UserGroupService;
 import com.taobao.cun.endor.service.UserRoleService;
 import com.taobao.cun.endor.service.UserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
@@ -63,6 +64,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Resource
 	UserService userService;
+	
+	@Resource
+	UserGroupService userGroupService;
 	
 	@Override
     public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
@@ -400,7 +404,9 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
 		bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
 		bizUserRole.setEndTime(DateUtils.addMonths(new Date(), 3));
-		userRoleService.addBizUserRole("cuntaobops", bizUserRole);
+		long urid = userRoleService.addBizUserRole("cuntaobops", bizUserRole);
+		
+		userGroupService.addUserRole("cuntaobops", getUserGroupId(cuntaoUserOrgVO.getUserRoleEnum().getCode()), urid, DateUtils.addMonths(new Date(), 3), cuntaoUserOrgVO.getCreator());
 		
 		userRoleLog.setLoginId(cuntaoUserOrgVO.getLoginId());
 		userRoleLog.setOrgId(cuntaoUserOrgVO.getOrgId());
@@ -422,6 +428,18 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		}
 		
 		return "COUNTY_ADMIN";
+	}
+	
+	private long getUserGroupId(String userRole) {
+		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode())) {
+			return 11;
+		}
+		
+		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode())) {
+			return 12;
+		}
+		
+		return 10;
 	}
 	
 	private void unassignLeader(Long orgId, String loginId, String leaderType, String modifier) {
