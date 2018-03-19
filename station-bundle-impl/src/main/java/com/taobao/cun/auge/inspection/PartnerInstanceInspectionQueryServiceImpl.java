@@ -42,6 +42,7 @@ public class PartnerInstanceInspectionQueryServiceImpl implements PartnerInstanc
 		example.setStoreCategory(condition.getStoreCategory());
 		example.setMode(condition.getMode());
 		example.setType(condition.getType());
+		example.setInspectionState(condition.getInspectionState());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		Page<PartnerInstanceInspection> inspections = partnerInstanceInspectionMapper.selectPartnerInstanceInspectionByExample(example);
 		PageDto<PartnerInstanceInspectionDto> success = PageDtoUtil.success(inspections, convert(inspections));

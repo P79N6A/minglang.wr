@@ -40,7 +40,11 @@ public class PartnerInstanceInspectionPagedCondition  extends PageQuery implemen
 	 */
 	private String storeCategory;
 	
-
+	/**
+	 * 巡检状态
+	 */
+	private String inspectionState;
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -84,5 +88,13 @@ public class PartnerInstanceInspectionPagedCondition  extends PageQuery implemen
 	
 	public String getMode(){
 		return PartnerInstanceInspectionTypes.getVersion(this.getType());
+	}
+
+	public String getInspectionState() {
+		return inspectionState;
+	}
+
+	public void setInspectionState(String inspectionState) {
+		this.inspectionState = inspectionState;
 	}
 }

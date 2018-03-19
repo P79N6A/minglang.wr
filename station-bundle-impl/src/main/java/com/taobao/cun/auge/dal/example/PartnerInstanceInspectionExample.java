@@ -41,6 +41,11 @@ public class PartnerInstanceInspectionExample implements Serializable {
 	 */
 	private String mode;
 	
+	/**
+	 * 巡检状态
+	 */
+	private String inspectionState;
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -87,6 +92,14 @@ public class PartnerInstanceInspectionExample implements Serializable {
 
 	public void setMode(String mode) {
 		this.mode = mode;
+	}
+
+	public String getInspectionState() {
+		return inspectionState;
+	}
+
+	public void setInspectionState(String inspectionState) {
+		this.inspectionState = inspectionState;
 	}
 
 }
