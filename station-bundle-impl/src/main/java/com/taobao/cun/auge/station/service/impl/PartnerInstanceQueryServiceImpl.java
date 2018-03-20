@@ -566,9 +566,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
              } else {
                  throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
              }
-        }else if ((PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) ) {//补货金冻结金额
-	       	 getReplenishMoney(taobaoUserId, info, rel);
         }
+        //else if ((PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) ) {//补货金冻结金额
+	       	// getReplenishMoney(taobaoUserId, info, rel);
+      //  }
        
         return info;
     }

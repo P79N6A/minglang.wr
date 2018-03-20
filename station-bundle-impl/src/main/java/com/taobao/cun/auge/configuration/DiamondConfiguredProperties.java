@@ -103,6 +103,10 @@ public class DiamondConfiguredProperties {
     @Value("#{'${can.confirm.stationOpeningProtocolList}'.split(',')}")
     private List<Long> canConfirmStationOpeningProtocolList;
     
+    @Value("${storeImagePerfix}")
+    private String storeImagePerfix;
+    
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -260,5 +264,13 @@ public class DiamondConfiguredProperties {
 
 	public void setCanConfirmStationOpeningProtocolList(List<Long> canConfirmStationOpeningProtocolList) {
 		this.canConfirmStationOpeningProtocolList = canConfirmStationOpeningProtocolList;
+	}
+
+	public String getStoreImagePerfix() {
+		return storeImagePerfix;
+	}
+
+	public void setStoreImagePerfix(String storeImagePerfix) {
+		this.storeImagePerfix = storeImagePerfix;
 	}
 }
