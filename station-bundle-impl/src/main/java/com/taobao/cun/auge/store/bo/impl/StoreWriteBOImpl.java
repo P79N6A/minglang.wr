@@ -617,6 +617,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		 * features); }
 		 */
 		initStoreWarehouse(station.getId());
+		initStoreEmployees(station.getId());
 		return true;
 	}
 
