@@ -92,4 +92,6 @@ public interface StoreWriteService {
 	 * 批量同步门店组织
 	 */
 	public void batchInitStoreEndorOrg();
+	
+	public void initStoreEmployees(Long  stationId);
 }

@@ -279,7 +279,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		return result.getResult();
 	}
 
-	private void initStoreEmployees(Long  stationId) {
+	public void initStoreEmployees(Long  stationId) {
 		PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getCurrentPartnerInstanceByStationId(stationId);
 		if(partnerInstance != null && partnerInstance.getPartnerDto() != null){
 			CuntaoEmployeeDto employee = new CuntaoEmployeeDto();

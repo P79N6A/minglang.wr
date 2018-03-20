@@ -30,4 +30,6 @@ public interface StoreWriteBO {
 	public Boolean initStoreEndorOrg(Long stationId);
 	
 	public void batchInitStoreEndorOrg();
+	
+	public void initStoreEmployees(Long  stationId);
 }
