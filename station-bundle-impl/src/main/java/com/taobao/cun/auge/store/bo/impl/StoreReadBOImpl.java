@@ -5,12 +5,17 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.POIUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CuntaoStore;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample;
 import com.taobao.cun.auge.dal.domain.CuntaoStoreExample.Criteria;
@@ -28,10 +33,9 @@ import com.taobao.cun.auge.store.dto.StoreCategory;
 import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.auge.store.dto.StoreQueryPageCondition;
 import com.taobao.cun.auge.store.dto.StoreStatus;
+import com.taobao.place.client.domain.dataobject.StoreDO;
+import com.taobao.place.client.service.StoreService;
 import com.taobao.place.util.DistanceUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 @Component
 public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
@@ -46,6 +50,11 @@ public class StoreReadBOImpl implements StoreReadBO {
 	@Resource
     private PartnerInstanceBO partnerInstanceBO;
 	
+	@Resource
+	private StoreService StoreService;
+	
+	@Resource
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	@Override
 	public StoreDto getStoreDtoByStationId(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
@@ -91,6 +100,10 @@ public class StoreReadBOImpl implements StoreReadBO {
 		PartnerStationRel partnerStationRel = partnerInstanceBO.getActivePartnerInstance(station.getTaobaoUserId());
 		if(partnerStationRel != null) {
 			storeDto.setSellerId(partnerStationRel.getSellerId());
+		}
+		StoreDO storeDO = StoreService.getStoreById(cuntaoStore.getShareStoreId());
+		if(storeDO != null){
+			storeDto.setImage(diamondConfiguredProperties.getStoreImagePerfix()+storeDO.getPic());
 		}
 		return storeDto;
 	}

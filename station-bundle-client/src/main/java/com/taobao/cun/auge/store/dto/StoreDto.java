@@ -82,6 +82,11 @@ public class StoreDto implements Serializable{
 	 */
 	private String partnerName;
 	
+	/**
+	 * 门店主图
+	 */
+	private String image;
+	
 	public Long getId() {
 		return id;
 	}
@@ -202,6 +207,14 @@ public class StoreDto implements Serializable{
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }
