@@ -3,7 +3,7 @@ package com.taobao.cun.auge.inspection.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class PartnerInstanceInspectionDto implements Serializable{
+public class InspectionStationDto implements Serializable{
 
 	/**
 	 * 

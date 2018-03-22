@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.inspection.condition;
 
-public class PartnerInstanceInspectionStatus {
+public class InspectionStationStatus {
 
 	public static final String SETTLING = "SETTLING"; //入驻中
 	
@@ -15,4 +15,5 @@ public class PartnerInstanceInspectionStatus {
 	public static final String QUITING = "QUITING"; //退出中
 	
 	public static final String QUIT = "QUIT"; //已退出
+	
 }

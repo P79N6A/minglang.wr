@@ -1,15 +1,19 @@
-package com.taobao.cun.auge.dal.example;
+package com.taobao.cun.auge.inspection.condition;
 
 import java.io.Serializable;
-
 /**
- * 合伙人巡检查询Example
+ * 
  * @author zhenhuan.zhangzh
  *
  */
-public class PartnerInstanceInspectionExample implements Serializable {
 
-	private static final long serialVersionUID = 1232528817432543217L;
+import com.taobao.cun.auge.common.PageQuery;
+public class InspectionPagedCondition  extends PageQuery implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6045390093424191902L;
 
 	/**
 	 * 组织ID路径
@@ -35,11 +39,6 @@ public class PartnerInstanceInspectionExample implements Serializable {
 	 * 门店类型
 	 */
 	private String storeCategory;
-
-	/**
-	 * 服务站模式
-	 */
-	private String mode;
 	
 	/**
 	 * 巡检状态
@@ -55,19 +54,11 @@ public class PartnerInstanceInspectionExample implements Serializable {
 	}
 
 	public String getType() {
-		return type;
+		return InspectionStationTypes.getType(this.type);
 	}
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
 	}
 
 	public String getStationName() {
@@ -86,12 +77,17 @@ public class PartnerInstanceInspectionExample implements Serializable {
 		this.storeCategory = storeCategory;
 	}
 
-	public String getMode() {
-		return mode;
+	public String getState() {
+		return state;
 	}
 
-	public void setMode(String mode) {
-		this.mode = mode;
+	public void setState(String state) {
+		this.state = state;
+	}
+	
+	
+	public String getMode(){
+		return InspectionStationTypes.getVersion(this.getType());
 	}
 
 	public String getInspectionState() {
@@ -101,5 +97,4 @@ public class PartnerInstanceInspectionExample implements Serializable {
 	public void setInspectionState(String inspectionState) {
 		this.inspectionState = inspectionState;
 	}
-
 }

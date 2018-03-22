@@ -2,7 +2,7 @@ package com.taobao.cun.auge.dal.domain;
 
 import javax.persistence.Column;
 
-public class PartnerInstanceInspection {
+public class InspectionStation {
 
 	/**
 	 * 村服务站id

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerInstanceInspectionMapper">
-  <resultMap id="PartnerInstanceInspectionMap" type="com.taobao.cun.auge.dal.domain.PartnerInstanceInspection">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.InspectionStationMapper">
+  <resultMap id="InspectionStationMap" type="com.taobao.cun.auge.dal.domain.InspectionStation">
     <!--
       WARNING - @mbggenerated
     -->
@@ -42,7 +42,7 @@
     <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
   </resultMap>
   
-  <select id="selectPartnerInstanceInspectionByExample" resultMap="PartnerInstanceInspectionMap" parameterType="com.taobao.cun.auge.dal.example.PartnerInstanceInspectionExample" >
+  <select id="selectInspectionStationByExample" resultMap="InspectionStationMap" parameterType="com.taobao.cun.auge.dal.example.InspectionStationExample" >
 		select 
 		
 		instance.*,
@@ -73,10 +73,11 @@
 		s.area_type,
 		org.name as county_station_name
 		from partner_station_rel instance
-		,partner p,station s,cuntao_org org,cuntao_store store
+		,partner p,station s,cuntao_org org,cuntao_store store,partner_station_tag tag
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
-		and instance.is_current = 'y' and s.id=store.station_id and store.is_deleted = 'n'
+		and instance.is_current = 'y' and s.id=store.station_id and store.is_deleted = 'n' and tag.station_id = s.id and tag.is_deleted ='n'
+		and tag.tag_type='INSPECTION'
 		<include refid="partner_station_query_condition" />
 		order by instance.gmt_modified desc
   </select>
@@ -97,12 +98,30 @@
 		<if test="mode != null and mode != ''" >
 			and instance.mode = #{mode,jdbcType=VARCHAR}
 		</if>
-		<if test="storeCategory != null and storeCategory != ''" >
-			and store.store_category = #{storeCategory,jdbcType=VARCHAR}
+		<if test="inspectionState != null and inspectionState != ''" >
+			and tag.inspectionState = #{inspectionState,jdbcType=VARCHAR}
 		</if>
    </sql>
    
+    <resultMap id="InspectionStatusSummary" type="com.taobao.cun.auge.dal.domain.InspectionStatusSummary">
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="count" jdbcType="INTEGER" property="count" />
+	</resultMap>
    
+    <select id="countInspectionSummaryByExample" resultMap="InspectionStatusSummary" parameterType="com.taobao.cun.auge.dal.example.InspectionStationExample" >
+		select 
+		tag.tag as status,
+		count(1) as count
+		from partner_station_rel instance
+		,partner p,station s,cuntao_org org,cuntao_store store,partner_station_tag tag
+		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
+		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
+		and instance.is_current = 'y' and s.id=store.station_id and store.is_deleted = 'n' and tag.station_id = s.id and tag.is_deleted ='n'
+		and tag.tag_type='INSPECTION'
+		<include refid="partner_station_query_condition" />
+		group by tag.tag
+  </select>
+  
    
   
 </mapper>

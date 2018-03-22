@@ -1,6 +1,6 @@
 package com.taobao.cun.auge.inspection.condition;
 
-public class PartnerInstanceInspectionTypes {
+public class InspectionStationTypes {
 
 	public static final String TPS = "TPS"; //镇店
 	
