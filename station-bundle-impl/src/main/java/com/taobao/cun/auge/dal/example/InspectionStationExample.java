@@ -46,6 +46,9 @@ public class InspectionStationExample implements Serializable {
 	 */
 	private String inspectionState;
 	
+	
+	private String  level;
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -100,6 +103,14 @@ public class InspectionStationExample implements Serializable {
 
 	public void setInspectionState(String inspectionState) {
 		this.inspectionState = inspectionState;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
 	}
 
 }

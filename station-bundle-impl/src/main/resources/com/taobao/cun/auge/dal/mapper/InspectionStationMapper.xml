@@ -73,11 +73,17 @@
 		s.area_type,
 		org.name as county_station_name
 		from partner_station_rel instance
-		,partner p,station s,cuntao_org org,cuntao_store store,partner_station_tag tag
+		<if test="type == 'TP' or type == 'tp' " >
+			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			left join cuntao_store store on store.station_id=instance.station_id and store.is_deleted='n'
+		</if>
+		left join partner_station_tag tag on tag.station_id=tag.station_id and tag.is_deleted='n' and tag.tag_type='INSPECTION'
+		,partner p,station s,cuntao_org org
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
-		and instance.is_current = 'y' and s.id=store.station_id and store.is_deleted = 'n' and tag.station_id = s.id and tag.is_deleted ='n'
-		and tag.tag_type='INSPECTION'
+		and instance.is_current = 'y'
 		<include refid="partner_station_query_condition" />
 		order by instance.gmt_modified desc
   </select>
@@ -99,7 +105,20 @@
 			and instance.mode = #{mode,jdbcType=VARCHAR}
 		</if>
 		<if test="inspectionState != null and inspectionState != ''" >
-			and tag.inspectionState = #{inspectionState,jdbcType=VARCHAR}
+			and tag.tag = #{inspectionState,jdbcType=VARCHAR}
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			<if test="storeCategory != null and storeCategory != ''" >
+				and store.store_category = #{storeCategory,jdbcType=VARCHAR}
+			</if>
+		</if>
+		<if test="type == 'TP' or type == 'tp' " >
+			<if test="level != null and  level=='SP'">
+			   	 and level.expected_level is not null
+				</if>
+				<if test="level != null and level''  and  level!='SP'">
+			   	 and level.current_level = #{level,jdbcType=VARCHAR}
+			</if>
 		</if>
    </sql>
    
@@ -113,11 +132,30 @@
 		tag.tag as status,
 		count(1) as count
 		from partner_station_rel instance
-		,partner p,station s,cuntao_org org,cuntao_store store,partner_station_tag tag
+		<if test="type == 'TP' or type == 'tp' " >
+			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			left join cuntao_store store on store.station_id=instance.station_id and store.is_deleted='n'
+		</if>
+		left join partner_station_tag tag on tag.station_id=tag.station_id and tag.is_deleted='n' and tag.tag_type='INSPECTION'
+		
+		,partner p,station s,cuntao_org org
 		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
 		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
-		and instance.is_current = 'y' and s.id=store.station_id and store.is_deleted = 'n' and tag.station_id = s.id and tag.is_deleted ='n'
+		and instance.is_current = 'y' and tag.station_id = s.id and tag.is_deleted ='n'
 		and tag.tag_type='INSPECTION'
+		<if test="type == 'TPS' or type == 'tps' " >
+			and s.id=store.station_id and store.is_deleted = 'n' 
+		</if>
+		<if test="type == 'TP' or type == 'tp' " >
+			<if test="level != null and  level=='SP'">
+			   	 and level.expected_level is not null
+				</if>
+				<if test="level != null and level''  and  level!='SP'">
+			   	 and level.current_level = #{level,jdbcType=VARCHAR}
+			</if>
+		</if>
 		<include refid="partner_station_query_condition" />
 		group by tag.tag
   </select>

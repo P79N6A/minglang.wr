@@ -45,6 +45,11 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 	 */
 	private String inspectionState;
 	
+	/**
+	 * 层级
+	 */
+	private String level;
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -96,5 +101,13 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 
 	public void setInspectionState(String inspectionState) {
 		this.inspectionState = inspectionState;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
 	}
 }
