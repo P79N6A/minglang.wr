@@ -104,6 +104,9 @@
 		<if test="mode != null and mode != ''" >
 			and instance.mode = #{mode,jdbcType=VARCHAR}
 		</if>
+		<if test="mode == null and mode == ''" >
+			and instance.mode <> 'v4'
+		</if>
 		<if test="inspectionState != null and inspectionState != ''" >
 			and tag.tag = #{inspectionState,jdbcType=VARCHAR}
 		</if>
