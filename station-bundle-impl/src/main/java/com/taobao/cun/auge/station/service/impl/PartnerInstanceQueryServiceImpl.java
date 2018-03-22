@@ -897,8 +897,8 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
         info.setPartnerInstance(instance);
         //基础保证金额度-已经缴纳=剩余4.0需要代缴。目前基础额度是10000
-        BigDecimal backBailMoney = new BigDecimal(0.0);
-        BigDecimal baseMoney = new BigDecimal(frozenMoneyConfig.getTPFrozenMoneyAmount());
+        BigDecimal backBailMoney = new BigDecimal(Double.toString(0.0));
+        BigDecimal baseMoney = new BigDecimal(Double.toString(frozenMoneyConfig.getTPFrozenMoneyAmount()));
         backBailMoney = baseMoney.subtract(bondMoney.getMoney());
         bondMoney.setMoney(backBailMoney);
         info.setAcountMoney(bondMoney);
