@@ -80,6 +80,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setStoreCategory(condition.getStoreCategory());
 		example.setMode(condition.getMode());
 		example.setType(condition.getType());
+		example.setLevel(condition.getLevel());
 		example.setInspectionState(condition.getInspectionState());
 		List<InspectionStatusSummary> summary = partnerInstanceInspectionMapper.countInspectionSummaryByExample(example);
 		InspectionStatusSummaryDto result = new InspectionStatusSummaryDto();
