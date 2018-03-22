@@ -14,7 +14,6 @@ import com.alibaba.buc.api.model.enhanced.EnhancedUser;
 import com.alibaba.common.lang.StringUtil;
 import com.alibaba.fastjson.JSON;
 
-import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.ali.com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
@@ -27,6 +26,7 @@ import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
+import com.taobao.cun.auge.dal.domain.CuntaoFlowRecord;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -2379,7 +2379,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         Long taobaoUserId = freezeBondDto.getTaobaoUserId();
         String accountNo = freezeBondDto.getAccountNo();
         String alipayAccount = freezeBondDto.getAlipayAccount();
-        Double money = freezeBondDto.getMoney();
+        //补缴最后都得补缴到基础保证金金额，不由外部透传
+        Double money = frozenMoneyConfig.getTPFrozenMoneyAmount();
 
         PartnerStationRel instance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
         
