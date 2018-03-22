@@ -158,6 +158,11 @@ public class InspectionStationDto implements Serializable{
 	private List<String> leaders;
 	
 	/**
+	 * 状态描述
+	 */
+	private String stateDesc;
+	
+	/**
 	 * 获取村服务站id
 	 *
 	 * @return station_id - 村服务站id
@@ -677,6 +682,14 @@ public class InspectionStationDto implements Serializable{
 
 	public void setLeaders(List<String> leaders) {
 		this.leaders = leaders;
+	}
+
+	public String getStateDesc() {
+		return stateDesc;
+	}
+
+	public void setStateDesc(String stateDesc) {
+		this.stateDesc = stateDesc;
 	}
 
     

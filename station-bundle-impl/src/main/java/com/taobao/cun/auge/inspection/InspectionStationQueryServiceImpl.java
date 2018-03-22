@@ -21,6 +21,7 @@ import com.taobao.cun.auge.inspection.condition.InspectionStationTypes;
 import com.taobao.cun.auge.inspection.condition.InspectionStatus;
 import com.taobao.cun.auge.inspection.dto.InspectionStationDto;
 import com.taobao.cun.auge.inspection.dto.InspectionStatusSummaryDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.user.dto.CuntaoUserOrgVO;
 import com.taobao.cun.auge.user.dto.UserRoleEnum;
 import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
@@ -60,6 +61,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		for(InspectionStation inspection : inspections){
 			InspectionStationDto dto = new InspectionStationDto();
 			partnerInstanceInspectionCopier.copy(inspection, dto, null);
+			dto.setStateDesc(PartnerInstanceStateEnum.valueof(dto.getState()).getDesc());
 			List<CuntaoUserOrgVO> userOrg = cuntaoUserOrgService.getCuntaoOrgUsers( Lists.newArrayList(dto.getApplyOrg()),  Lists.newArrayList(UserRoleEnum.COUNTY_LEADER.getCode()));
 			if(userOrg != null){
 				List<String> leaders = userOrg.stream().map(user -> user.getUserName()).collect(Collectors.toList());
