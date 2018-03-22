@@ -116,7 +116,7 @@
 			<if test="level != null and  level=='SP'">
 			   	 and level.expected_level is not null
 				</if>
-				<if test="level != null and level''  and  level!='SP'">
+				<if test="level != null and level !=''  and  level!='SP'">
 			   	 and level.current_level = #{level,jdbcType=VARCHAR}
 			</if>
 		</if>
@@ -152,7 +152,7 @@
 			<if test="level != null and  level=='SP'">
 			   	 and level.expected_level is not null
 				</if>
-				<if test="level != null and level''  and  level!='SP'">
+				<if test="level != null and level !=''  and  level!='SP'">
 			   	 and level.current_level = #{level,jdbcType=VARCHAR}
 			</if>
 		</if>

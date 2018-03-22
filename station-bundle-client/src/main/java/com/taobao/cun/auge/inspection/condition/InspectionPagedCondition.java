@@ -59,7 +59,7 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 	}
 
 	public String getType() {
-		return InspectionStationTypes.getType(this.type);
+		return this.type;
 	}
 
 	public void setType(String type) {
@@ -90,10 +90,6 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 		this.state = state;
 	}
 	
-	
-	public String getMode(){
-		return InspectionStationTypes.getVersion(this.getType());
-	}
 
 	public String getInspectionState() {
 		return inspectionState;

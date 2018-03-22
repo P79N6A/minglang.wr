@@ -17,6 +17,7 @@ import com.taobao.cun.auge.dal.domain.InspectionStation;
 import com.taobao.cun.auge.dal.example.InspectionStationExample;
 import com.taobao.cun.auge.dal.mapper.InspectionStationMapper;
 import com.taobao.cun.auge.inspection.condition.InspectionPagedCondition;
+import com.taobao.cun.auge.inspection.condition.InspectionStationTypes;
 import com.taobao.cun.auge.inspection.condition.InspectionStatus;
 import com.taobao.cun.auge.inspection.dto.InspectionStationDto;
 import com.taobao.cun.auge.inspection.dto.InspectionStatusSummaryDto;
@@ -43,8 +44,8 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setState(condition.getState());
 		example.setStationName(condition.getStationName());
 		example.setStoreCategory(condition.getStoreCategory());
-		example.setMode(condition.getMode());
-		example.setType(condition.getType());
+		example.setMode(getVersion(condition.getType()));
+		example.setType(getType(condition.getType()));
 		example.setLevel(condition.getLevel());
 		example.setInspectionState(condition.getInspectionState());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
@@ -78,8 +79,8 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setState(condition.getState());
 		example.setStationName(condition.getStationName());
 		example.setStoreCategory(condition.getStoreCategory());
-		example.setMode(condition.getMode());
-		example.setType(condition.getType());
+		example.setMode(getVersion(condition.getType()));
+		example.setType(getType(condition.getType()));
 		example.setLevel(condition.getLevel());
 		example.setInspectionState(condition.getInspectionState());
 		List<InspectionStatusSummary> summary = partnerInstanceInspectionMapper.countInspectionSummaryByExample(example);
@@ -104,4 +105,18 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		return 0;
 	}
 	
+	
+	public static String getVersion(String type){
+		if(InspectionStationTypes.TP_V4.equals(type)){
+			return "v4";
+		}
+		return null;
+	}
+	
+	public static String getType(String type){
+		if(InspectionStationTypes.TP_V4.equals(type)){
+			return "TP";
+		}
+		return type;
+	}
 }

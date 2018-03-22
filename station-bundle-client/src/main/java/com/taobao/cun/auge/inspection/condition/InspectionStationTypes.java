@@ -8,17 +8,5 @@ public class InspectionStationTypes {
 	
 	public static final String TP = "TP";//村点
 	
-	public static String getVersion(String type){
-		if(TP_V4.equals(type)){
-			return "v4";
-		}
-		return null;
-	}
 	
-	public static String getType(String type){
-		if(TP_V4.equals(type)){
-			return "TP";
-		}
-		return type;
-	}
 }
