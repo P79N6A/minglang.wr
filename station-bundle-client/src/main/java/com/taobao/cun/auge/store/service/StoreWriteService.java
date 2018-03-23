@@ -92,4 +92,10 @@ public interface StoreWriteService {
 	 * 批量同步门店组织
 	 */
 	public void batchInitStoreEndorOrg();
+	
+	/**
+	 * 初始化菜鸟自提标
+	 * @param stationId
+	 */
+	public void initGoodSupplyFeature(Long stationId);
 }
