@@ -92,4 +92,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public void batchInitStoreEndorOrg(){
 		storeWriteBO.batchInitStoreEndorOrg();
 	}
+
+	@Override
+	public void initGoodSupplyFeature(Long stationId) {
+		storeWriteBO.initGoodSupplyFeature(stationId);
+	}
 }
