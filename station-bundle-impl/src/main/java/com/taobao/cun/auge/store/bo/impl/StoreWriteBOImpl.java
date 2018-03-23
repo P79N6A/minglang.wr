@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -50,7 +51,6 @@ import com.taobao.cun.auge.tag.UserTag;
 import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.endor.base.client.EndorApiClient;
 import com.taobao.cun.endor.base.dto.OrgAddDto;
-import com.taobao.cun.endor.base.dto.OrgDto;
 import com.taobao.cun.endor.base.dto.OrgUpdateDto;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.mdjxc.common.result.DataResult;
@@ -575,14 +575,18 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		cuntaoStore.setEndorOrgId(groupSequence.nextValue());
 		cuntaoStoreMapper.insert(cuntaoStore);
 		addOrg(cuntaoStore);
-		/*Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(station.getId());
+		initGoodSupplyFeature(station.getId());
+		initStoreWarehouse(station.getId());
+		return true;
+	}
+
+	public void initGoodSupplyFeature(Long stationId) {
+		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
 		if (cainiaoStationId != null) {
 			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
 			features.put("goodsSupply", "y");
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
-		}*/
-		initStoreWarehouse(station.getId());
-		return true;
+		}
 	}
 
 	private void fixStoreCreateError(Long stationId) {
