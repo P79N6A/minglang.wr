@@ -11,6 +11,7 @@ import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
+import com.taobao.cun.auge.station.bo.ProtocolBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
@@ -58,6 +59,9 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
+	
+	@Autowired
+	ProtocolBO protocolBO;
 	
 	@Override
 	public C2BSettlingResponse settlingStep(C2BSettlingRequest settlingStepRequest) {
@@ -172,6 +176,18 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 	}
 	
 	/**
+     * 是否签约4.0入住协议
+     * @param taobaoUserId
+     * @return
+     */
+    public boolean hasNewSignProcotol(Long taobaoUserId){
+        PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
+        PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
+        return Optional.ofNullable(settleNewProtocol).isPresent();
+    }
+	
+	/**
 	 * 是否冻结保证金
 	 * @param parnterInstanceId
 	 * @return
@@ -213,6 +229,29 @@ public class C2BSettlingServiceImpl implements C2BSettlingService {
 			return response;
 	}
 
+	//签订4.0新的入驻协议
+    public C2BSignSettleProtocolResponse signNewSettleProtocol(C2BSignSettleProtocolRequest c2bSignSettleProtocolRequest) {
+        C2BSignSettleProtocolResponse response = new C2BSignSettleProtocolResponse();
+        try {
+            PartnerStationRel parnterInstance = partnerInstanceBO.getActivePartnerInstance(c2bSignSettleProtocolRequest.getTaobaoUserId());
+            Long protocolId = protocolBO.getValidProtocol(ProtocolTypeEnum.C2B_SETTLE_PRO).getId();
+            PartnerProtocolRelDto settleNewProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(parnterInstance.getId(),PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE,protocolId);
+            if(settleNewProtocol != null){
+                response.setSuccessful(true);
+                return response;
+            }
+            partnerProtocolRelBO.signProtocol(c2bSignSettleProtocolRequest.getTaobaoUserId(), ProtocolTypeEnum.C2B_SETTLE_PRO, parnterInstance.getId(),
+                    PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+            response.setSuccessful(true);
+        } catch (Exception e) {
+            logger.error("signNewSettleProtocol error!taobaoUserId["+c2bSignSettleProtocolRequest.getTaobaoUserId()+"]",e);
+            response.setErrorMessage("系统异常");
+            response.setSuccessful(false);
+        }
+            return response;
+    }
+	
+	
 	public SettlingStepsProperties getSettlingStepsProperties() {
 		return settlingStepsProperties;
 	}

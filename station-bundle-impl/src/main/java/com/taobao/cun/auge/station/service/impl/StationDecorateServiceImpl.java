@@ -16,9 +16,12 @@ import com.alibaba.organization.api.orgstruct.service.OrgStructWriteService;
 
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
+import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
+import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -26,8 +29,11 @@ import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
+import com.taobao.cun.auge.station.convert.StationConverter;
+import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.StartProcessDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
@@ -35,25 +41,25 @@ import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service("stationDecorateService")
-@HSFProvider(serviceInterface = StationDecorateService.class)
+@HSFProvider(serviceInterface = StationDecorateService.class, clientTimeout = 8000)
 public class StationDecorateServiceImpl implements StationDecorateService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(StationDecorateService.class);
 	
 	@Autowired
 	StationDecorateBO stationDecorateBO;
@@ -72,6 +78,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
 	@Autowired
 	StationBO stationBO;
+	
+    @Autowired
+    AttachmentService criusAttachmentService;
 	
 	/**
 	 * 淘宝商品图片
@@ -101,6 +110,8 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	OrgStructWriteService orgStructWriteService;
 	@Autowired
 	MemberReadService memberReadService;
+	@Autowired
+	ProcessService processService;
 
 	@Value("${cbu.market.parent_code}")
 	private Long parentId;
@@ -111,10 +122,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	public void audit(StationDecorateAuditDto stationDecorateAuditDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateAuditDto);
-		if (!stationDecorateAuditDto.getIsAgree()) {
-			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,error);
-		}
+//		if (!stationDecorateAuditDto.getIsAgree()) {
+//			String error = getErrorMessage("audit",JSONObject.toJSONString(stationDecorateAuditDto), "is agree is false");
+//			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,error);
+//		}
 			Long sdId = stationDecorateAuditDto.getId();
 			StationDecorate sd = stationDecorateBO.getStationDecorateById(sdId);
 			if (sd == null) {
@@ -144,9 +155,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		}
 		PartnerLifecycleDto partnerLifecycleDto = new PartnerLifecycleDto();
 		partnerLifecycleDto.setLifecycleId(items.getId());
-		partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
-		partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
-		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
+		if(stationDecorateAuditDto.getIsAgree()){
+		    partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.Y);
+		    partnerLifecycleDto.copyOperatorDto(stationDecorateAuditDto);
+		    partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
+        }
 	}
 
 	private void auditStationDecorate(
@@ -154,7 +167,11 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 		StationDecorateDto sdDto =new StationDecorateDto();
 		sdDto.setId(stationDecorateAuditDto.getId());
 		sdDto.setAuditOpinion(stationDecorateAuditDto.getAuditOpinion() == null ? "" : stationDecorateAuditDto.getAuditOpinion());
-		sdDto.setStatus(StationDecorateStatusEnum.DONE);
+		if(stationDecorateAuditDto.getIsAgree()){
+		    sdDto.setStatus(StationDecorateStatusEnum.DONE);
+		}else{
+		    sdDto.setStatus(StationDecorateStatusEnum.AUDIT_NOT_PASS);
+		}
 		sdDto.copyOperatorDto(stationDecorateAuditDto);
 		stationDecorateBO.updateStationDecorate(sdDto);
 	}
@@ -190,7 +207,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			}
 	}
 	
-	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void reflectStationDecorate(StationDecorateReflectDto stationDecorateReflectDto){
 		// 参数校验
 		BeanValidator.validateWithThrowable(stationDecorateReflectDto);
@@ -203,12 +220,21 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"当前状态不能提交反馈");
 			}
 			//判断村点是否装修中状态，非装修中状态 不允许反馈
-//			Station station=stationBO.getStationById(sd.getStationId());
+			
 //			if(!StationStatusEnum.DECORATING.getCode().equals(station.getStatus())){
 //				throw new AugeServiceException("当前村点非装修状态");
 //			}
 			StationDecorateDto sdDto = buildStationDecorateDtoForReflect(stationDecorateReflectDto);
 			stationDecorateBO.updateStationDecorate(sdDto);
+			
+			StartProcessDto startProcessDto =new StartProcessDto();
+            startProcessDto.setBusiness(ProcessBusinessEnum.decorationFeedback);
+            startProcessDto.setBusinessId(sd.getId());
+            startProcessDto.setBusinessName("装修反馈审核");
+            Station station=stationBO.getStationById(sd.getStationId());
+            startProcessDto.setBusinessOrgId(station.getApplyOrg());
+            startProcessDto.copyOperatorDto(stationDecorateReflectDto);
+            processService.startApproveProcess(startProcessDto);
 	}
 
 	private StationDecorateDto buildStationDecorateDtoForReflect(
@@ -397,4 +423,19 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 					"1688商城授权失败"+partnerInstanceDto.getPartnerDto().getTaobaoNick());
 		}
 	}
+
+    public StationDecorateDto getInfoById(Long Id) {
+        ValidateUtils.notNull(Id);
+        StationDecorate sd = stationDecorateBO.getStationDecorateById(Id);
+        StationDecorateDto sdDto = StationDecorateConverter.toStationDecorateDto(sd);
+      //添加附件
+        sdDto.setAttachments(criusAttachmentService.getAttachmentList(sd.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        if (sdDto.getStationId() != null) {
+            Station s = stationBO.getStationById(sd.getStationId());
+            if (s != null) {
+                sdDto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return sdDto;
+    }
 }

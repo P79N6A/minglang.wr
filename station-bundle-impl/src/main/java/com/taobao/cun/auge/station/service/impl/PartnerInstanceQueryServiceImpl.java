@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,6 +19,7 @@ import com.taobao.cun.auge.common.utils.IdCardUtil;
 import com.taobao.cun.auge.common.utils.PageDtoUtil;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerInstance;
@@ -175,6 +177,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    
+    @Autowired
+    private FrozenMoneyAmountConfig frozenMoneyConfig;
     
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
@@ -866,4 +871,44 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	  }
 		return rDto;
 	}
+
+    //获取升级4.0村站待补交基础保证金金额
+    public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId) {
+        BondFreezingInfoDto info = new BondFreezingInfoDto();
+        PartnerStationRel rel = partnerInstanceBO.getActivePartnerInstance(taobaoUserId);
+        if (null == rel ) {
+            logger.info("no active partner instance for user : {}", taobaoUserId);
+            return null;
+        }
+        PartnerInstanceCondition condition = new PartnerInstanceCondition(true, true, false);
+        condition.setInstanceId(rel.getId());
+        condition.setOperator(String.valueOf(taobaoUserId));
+        condition.setOperatorType(OperatorTypeEnum.HAVANA);
+        PartnerInstanceDto instance = queryInfo(condition);
+        AccountMoneyDto bondMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instance.getId());
+        if (null == instance || null == bondMoney) {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "PARTNER_BOND not exist");
+        }
+        PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getPartnerProtocolRelDto(ProtocolTypeEnum.C2B_SETTLE_PRO,
+                instance.getId(), PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+        if (settleProtocol != null) {
+            info.setProtocolConfirmTime(settleProtocol.getConfirmTime());
+        }
+        info.setPartnerInstance(instance);
+        //基础保证金额度-已经缴纳=剩余4.0需要代缴。目前基础额度是10000
+        BigDecimal backBailMoney = new BigDecimal(Double.toString(0.0));
+        BigDecimal baseMoney = new BigDecimal(Double.toString(frozenMoneyConfig.getTPFrozenMoneyAmount()));
+        backBailMoney = baseMoney.subtract(bondMoney.getMoney());
+        bondMoney.setMoney(backBailMoney);
+        info.setAcountMoney(bondMoney);
+        if (AccountMoneyStateEnum.WAIT_FROZEN.equals(bondMoney.getState())) {
+            info.setHasFrozen(false);
+        } else if (AccountMoneyStateEnum.HAS_FROZEN.equals(bondMoney.getState())) {
+            info.setHasFrozen(true);
+        } else {
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
+        }
+        return info;
+    }
 }

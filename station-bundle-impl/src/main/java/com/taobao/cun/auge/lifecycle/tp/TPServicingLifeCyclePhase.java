@@ -3,6 +3,8 @@ package com.taobao.cun.auge.lifecycle.tp;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
 import com.taobao.cun.auge.asset.bo.AssetBO;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.dal.domain.Partner;
@@ -129,6 +131,12 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
         	Date openDate = partnerInstanceDto.getOpenDate();
             // 更新开业时间
             partnerInstanceBO.updateOpenDate(partnerInstanceDto.getId(), openDate,partnerInstanceDto.getOperator());
+            
+            //如果转型状态为转型中，更新为已转型
+            if(PartnerInstanceTransStatusEnum.TRANS_ING.equals(partnerInstanceDto.getTransStatusEnum())) {
+            	 partnerInstanceBO.updateTransStatusByInstanceId(partnerInstanceDto.getId(), PartnerInstanceTransStatusEnum.TRANS_DONE, partnerInstanceDto.getOperator());
+            }
+           
         }
       
 	}
