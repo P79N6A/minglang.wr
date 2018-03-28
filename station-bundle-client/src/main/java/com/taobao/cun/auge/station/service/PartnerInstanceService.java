@@ -2,6 +2,8 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
@@ -328,4 +330,15 @@ public interface PartnerInstanceService {
      * @return boolean
      */
     public boolean freezeRePublishBond(FreezeBondDto freezeBondDto);
+    /**
+     * 提交村小二转型
+     * @param transDto
+     */
+    public void commitTrans(PartnerInstanceTransDto transDto);
+    /**
+     * 转型  补交基础保证金后，业务接口
+     * @param freezeBondDto
+     * @return
+     */
+    public boolean freezeBondForTrans(FreezeBondDto freezeBondDto);
 }
