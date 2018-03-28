@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
+
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.ali.com.google.common.base.Function;
 import com.ali.com.google.common.collect.Lists;
 import com.ali.com.google.common.collect.Sets;
@@ -865,4 +868,20 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         }
         return partnerBO.getPartnerById(rel.getPartnerId());
     }
+
+	@Override
+	public void updateTransStatusByInstanceId(Long instanceId,
+			PartnerInstanceTransStatusEnum transStatus, String operator) {
+		ValidateUtils.notNull(instanceId);
+		ValidateUtils.notNull(transStatus);
+		ValidateUtils.notNull(operator);
+        PartnerStationRel updateInstance = new PartnerStationRel();
+        updateInstance.setId(instanceId);
+        updateInstance.setTransStatus(transStatus.getCode());
+
+        DomainUtils.beforeUpdate(updateInstance, operator);
+
+        partnerStationRelMapper.updateByPrimaryKeySelective(updateInstance);
+		
+	}
 }

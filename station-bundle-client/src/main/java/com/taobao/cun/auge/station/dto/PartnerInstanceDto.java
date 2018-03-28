@@ -3,6 +3,8 @@ package com.taobao.cun.auge.station.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceCloseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
@@ -144,6 +146,8 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private String mode;
 	
 	private Long sellerId;
+	
+	private PartnerInstanceTransStatusEnum transStatusEnum;
 	
 	public Long getId() {
 		return id;
@@ -361,4 +365,11 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
         this.sellerId = sellerId;
     }
 
+	public PartnerInstanceTransStatusEnum getTransStatusEnum() {
+		return transStatusEnum;
+	}
+
+	public void setTransStatusEnum(PartnerInstanceTransStatusEnum transStatusEnum) {
+		this.transStatusEnum = transStatusEnum;
+	}
 }

@@ -112,4 +112,12 @@ public interface StationDecorateService {
 	 * 开通1688采购商城权限
 	 */
 	public void openAccessCbuMarket(Long taobaoUserId);
+	
+	/**
+     * 查询装修记录
+     * @param Id
+     * @return
+     * @
+     */
+    public StationDecorateDto getInfoById(Long Id);
 }
