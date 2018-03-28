@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.store.bo.impl;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -616,6 +617,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		 * "y"); caiNiaoAdapter.updateStationFeatures(cainiaoStationId,
 		 * features); }
 		 */
+		initGoodSupplyFeature(station.getId());
 		initStoreWarehouse(station.getId());
 		initStoreEmployees(station.getId());
 		return true;
@@ -785,6 +787,16 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(example);
 		for (CuntaoStore store : stores) {
 			initStoreEndorOrg(store.getStationId());
+		}
+	}
+
+	@Override
+	public void initGoodSupplyFeature(Long stationId) {
+		Long cainiaoStationId = cuntaoCainiaoStationRelBO.getCainiaoStationId(stationId);
+		if (cainiaoStationId != null) {
+			LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+			features.put("goodsSupply", "y");
+			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
 		}
 	}
 }
