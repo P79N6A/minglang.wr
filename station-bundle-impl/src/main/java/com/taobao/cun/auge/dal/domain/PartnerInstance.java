@@ -425,6 +425,8 @@ public class PartnerInstance {
 	@Column(name = "seller_id")
 	private Long sellerId;
 	
+	private String transStatus;
+	
 	public String getFlowerName() {
 		return flowerName;
 	}
@@ -1672,4 +1674,12 @@ public class PartnerInstance {
     public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
     }
+
+	public String getTransStatus() {
+		return transStatus;
+	}
+
+	public void setTransStatus(String transStatus) {
+		this.transStatus = transStatus;
+	}
 }

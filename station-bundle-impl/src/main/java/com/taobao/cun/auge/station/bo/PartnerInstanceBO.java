@@ -7,8 +7,10 @@ import com.taobao.cun.auge.alilang.UserProfile;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 
 public interface PartnerInstanceBO {
 
@@ -321,4 +323,9 @@ public interface PartnerInstanceBO {
 
 
 	public List<PartnerStationRel> queryTpaPartnerInstances(Long parentStationId,PartnerInstanceStateEnum state);
+	/**
+	 * 村小二转型升级状态更新
+	 */
+	public void updateTransStatusByInstanceId(Long instanceId, PartnerInstanceTransStatusEnum transStatus, String operator);
+	
 }

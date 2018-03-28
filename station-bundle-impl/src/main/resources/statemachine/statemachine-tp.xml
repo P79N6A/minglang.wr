@@ -45,6 +45,9 @@
         <transition event="CLOSING_EVENT" target="CLOSING">
             <log expr="'SERVCIING-》CLOSING'" />
         </transition>
+        <transition event="DECORATING_EVENT" target="DECORATING">
+            <log expr="'SERVCIING-》DECORATING'" />
+        </transition>
     </state>
 
     <state id="CLOSING">

@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
+
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
+
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -267,12 +270,17 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	
 	@Override
 	public void validateClosePreCondition(PartnerStationRel partnerStationRel) {
+		//判断是不是待转型，或者转型中
+		if (PartnerInstanceTransStatusEnum.WAIT_TRANS.getCode().equals(partnerStationRel.getTransStatus())
+				||PartnerInstanceTransStatusEnum.TRANS_ING.getCode().equals(partnerStationRel.getTransStatus())) {
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二正在转型中，不能申请停业");
+		}
 		List<PartnerInstanceStateEnum> states = PartnerInstanceStateEnum.getPartnerStatusForValidateClose();
 		List<PartnerStationRel> children = partnerInstanceBO.findChildPartners(partnerStationRel.getId(), states);
-
+		
 		if (CollectionUtils.isNotEmpty(children)) {
 			logger.warn("合伙人存在淘帮手");
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该合伙人下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
+			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
 		CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
 		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());

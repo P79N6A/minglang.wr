@@ -15,6 +15,7 @@ public class StationDecorateStatusEnum  implements Serializable {
 	public static final StationDecorateStatusEnum UNDECORATE  = new StationDecorateStatusEnum("UNDECORATE", "未装修");
 	public static final StationDecorateStatusEnum DECORATING = new StationDecorateStatusEnum("DECORATING", "装修中");
 	public static final StationDecorateStatusEnum WAIT_AUDIT = new StationDecorateStatusEnum("WAIT_AUDIT", "装修反馈待审核");
+	public static final StationDecorateStatusEnum AUDIT_NOT_PASS = new StationDecorateStatusEnum("AUDIT_NOT_PASS", "装修反馈审核不通过");
 	public static final StationDecorateStatusEnum DONE = new StationDecorateStatusEnum("DONE", "已装修");
 	public static final StationDecorateStatusEnum INVALID = new StationDecorateStatusEnum("INVALID", "作废");
 
@@ -32,6 +33,7 @@ public class StationDecorateStatusEnum  implements Serializable {
 		mappings.put("INVALID", INVALID);
 		mappings.put("NO_ORDER", NO_ORDER);
 		mappings.put("WAIT_PAY", WAIT_PAY);
+		mappings.put("AUDIT_NOT_PASS", AUDIT_NOT_PASS);
 	}
 
 	private String code;
