@@ -97,4 +97,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public void initStoreEmployees(Long stationId) {
 		storeWriteBO.initStoreEmployees(stationId);
 	}
+
+	@Override
+	public void initGoodSupplyFeature(Long stationId) {
+		storeWriteBO.initGoodSupplyFeature(stationId);
+	}
 }

@@ -94,4 +94,10 @@ public interface StoreWriteService {
 	public void batchInitStoreEndorOrg();
 	
 	public void initStoreEmployees(Long  stationId);
+	
+	/**
+	 * 初始化菜鸟自提标
+	 * @param stationId
+	 */
+	public void initGoodSupplyFeature(Long stationId);
 }

@@ -32,4 +32,6 @@ public interface StoreWriteBO {
 	public void batchInitStoreEndorOrg();
 	
 	public void initStoreEmployees(Long  stationId);
+	
+	public void initGoodSupplyFeature(Long stationId);
 }
