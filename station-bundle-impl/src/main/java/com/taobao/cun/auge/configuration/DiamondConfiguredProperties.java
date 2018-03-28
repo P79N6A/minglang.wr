@@ -100,6 +100,13 @@ public class DiamondConfiguredProperties {
     @Value("#{'${stationNameSuffix}'.split(',')}")
     private List<String> stationNameSuffix;
     
+    @Value("#{'${can.confirm.stationOpeningProtocolList}'.split(',')}")
+    private List<Long> canConfirmStationOpeningProtocolList;
+    
+    @Value("${storeImagePerfix}")
+    private String storeImagePerfix;
+    
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -250,4 +257,20 @@ public class DiamondConfiguredProperties {
     public void setStationNameSuffix(List<String> stationNameSuffix) {
         this.stationNameSuffix = stationNameSuffix;
     }
+
+	public List<Long> getCanConfirmStationOpeningProtocolList() {
+		return canConfirmStationOpeningProtocolList;
+	}
+
+	public void setCanConfirmStationOpeningProtocolList(List<Long> canConfirmStationOpeningProtocolList) {
+		this.canConfirmStationOpeningProtocolList = canConfirmStationOpeningProtocolList;
+	}
+
+	public String getStoreImagePerfix() {
+		return storeImagePerfix;
+	}
+
+	public void setStoreImagePerfix(String storeImagePerfix) {
+		this.storeImagePerfix = storeImagePerfix;
+	}
 }

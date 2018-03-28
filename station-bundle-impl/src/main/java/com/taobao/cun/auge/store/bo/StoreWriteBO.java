@@ -26,4 +26,10 @@ public interface StoreWriteBO {
 	public Boolean batchUpdateStore(List<Long> sharedStoreIds);
 	
 	public Boolean batchRemoveCainiaoFeature(List<Long> stationIds);
+	
+	public Boolean initStoreEndorOrg(Long stationId);
+	
+	public void batchInitStoreEndorOrg();
+	
+	public void initGoodSupplyFeature(Long stationId);
 }

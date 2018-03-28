@@ -10,6 +10,11 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.github.pagehelper.PageHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -33,11 +38,13 @@ import com.taobao.cun.auge.user.service.CuntaoUserOrgService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.common.exception.ParamException;
 import com.taobao.cun.common.util.BeanCopy;
+import com.taobao.cun.endor.dto.BizUserRole;
+import com.taobao.cun.endor.dto.User;
+import com.taobao.cun.endor.service.UserGroupService;
+import com.taobao.cun.endor.service.UserRoleService;
+import com.taobao.cun.endor.service.UserService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.util.CollectionUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service("CuntaoUserOrgService")
 @HSFProvider(serviceInterface = CuntaoUserOrgService.class)
@@ -51,6 +58,15 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 	
 	@Resource
 	CuntaoUserRoleLogMapper cuntaoUserRoleLogMapper;
+	
+	@Resource
+	UserRoleService userRoleService;
+	
+	@Resource
+	UserService userService;
+	
+	@Resource
+	UserGroupService userGroupService;
 	
 	@Override
     public Boolean checkOrg(String empId, String cuntaoFullIdPath) {
@@ -355,7 +371,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setOrgId(cuntaoUserOrgVO.getOrgId());
 			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 			cuntaoUserOrg.setLoginId(cuntaoUserOrgVO.getLoginId());
-			cuntaoUserOrg.setUserName(cuntaoUserOrgVO.getUserName());
+			cuntaoUserOrg.setUserName(cuntaoUserOrgVO.getUserName()); 
 			cuntaoUserOrg.setUserType(cuntaoUserOrgVO.getUserType());
 			cuntaoUserOrg.setStartTime(new Date());
 			cuntaoUserOrg.setFeatureCc(0);
@@ -373,6 +389,25 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			cuntaoUserOrg.setRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 			cuntaoUserOrgMapper.updateByPrimaryKey(cuntaoUserOrg);
 		}
+		
+		User user = new User();
+		user.setUserId(String.valueOf(cuntaoUserOrgVO.getLoginId()));
+		user.setUserName(cuntaoUserOrgVO.getUserName());
+		user.setCreator(cuntaoUserOrgVO.getCreator());
+		user.setModifier(cuntaoUserOrgVO.getModifier());
+		user.setState("NORMAL");
+		userService.save("cuntaobops", user);
+		BizUserRole bizUserRole = new BizUserRole();
+		bizUserRole.setBizOrgId(cuntaoUserOrgVO.getOrgId());
+		bizUserRole.setBizUserId(String.valueOf(cuntaoUserOrgVO.getLoginId()));
+		bizUserRole.setCreator(cuntaoUserOrgVO.getCreator());
+		bizUserRole.setModifier(cuntaoUserOrgVO.getModifier());
+		bizUserRole.setRoleName(getRole(cuntaoUserOrgVO.getUserRoleEnum().getCode()));
+		bizUserRole.setEndTime(DateUtils.addMonths(new Date(), 3));
+		long urid = userRoleService.addBizUserRole("cuntaobops", bizUserRole);
+		
+		userGroupService.addUserRole("cuntaobops", getUserGroupId(cuntaoUserOrgVO.getUserRoleEnum().getCode()), urid, DateUtils.addMonths(new Date(), 3), cuntaoUserOrgVO.getCreator());
+		
 		userRoleLog.setLoginId(cuntaoUserOrgVO.getLoginId());
 		userRoleLog.setOrgId(cuntaoUserOrgVO.getOrgId());
 		userRoleLog.setGmtCreate(new Date());
@@ -381,6 +416,30 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 		userRoleLog.setModifier(cuntaoUserOrgVO.getModifier());
 		userRoleLog.setNewRole(cuntaoUserOrgVO.getUserRoleEnum().getCode());
 		cuntaoUserRoleLogMapper.insert(userRoleLog);
+	}
+	
+	private String getRole(String userRole) {
+		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode())) {
+			return "SPECIAL_TEAM_LEADER";
+		}
+		
+		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode())) {
+			return "PROVINCE_LEADER";
+		}
+		
+		return "COUNTY_ADMIN";
+	}
+	
+	private long getUserGroupId(String userRole) {
+		if(userRole.equals(UserRoleEnum.TEAM_LEADER.getCode())) {
+			return 11;
+		}
+		
+		if(userRole.equals(UserRoleEnum.PROVINCE_LEADER.getCode())) {
+			return 12;
+		}
+		
+		return 10;
 	}
 	
 	private void unassignLeader(Long orgId, String loginId, String leaderType, String modifier) {
@@ -410,6 +469,7 @@ public class CuntaoUserOrgServiceImpl implements CuntaoUserOrgService{
 			userRoleLog.setLoginId(cuntaoUserOrg.getLoginId());
 			userRoleLog.setOrgId(cuntaoUserOrg.getOrgId());
 			cuntaoUserRoleLogMapper.insert(userRoleLog);
+			userRoleService.deleteBizUserRole("cuntaobops", loginId, orgId, getRole(leaderType));
 		}
 	}
 

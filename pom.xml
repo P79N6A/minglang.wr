@@ -667,7 +667,7 @@
 			<dependency>
 				<groupId>com.taobao.cun.endor</groupId>
 				<artifactId>endor-client</artifactId>
-				<version>1.1.0</version>
+				<version>1.1.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.search.engine</groupId>
@@ -717,7 +717,7 @@
 			<dependency>
 				<groupId>com.taobao.cun.endor</groupId>
 				<artifactId>endor-base</artifactId>
-				<version>1.0.7</version>
+				<version>1.0.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.cun</groupId>
