@@ -1,7 +1,13 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -9,20 +15,21 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
+import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistory;
+import com.taobao.cun.auge.dal.mapper.CuntaoQualificationHistoryMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
 import com.taobao.cun.auge.station.condition.CuntaoQualificationPageCondition;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 @Component("cuntaoQualificationBO")
 public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Autowired
 	private CuntaoQualificationMapper cuntaoQualificationMapper;
+	
+	@Autowired
+	private CuntaoQualificationHistoryMapper cuntaoQualificationHistoryMapper;
 	
 	@Autowired
 	private SellerQualiServiceAdapter sellerQualiServiceAdapter;
@@ -95,6 +102,38 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			sellerQualiServiceAdapter.insertQualiRecord(cuntaoQualification);
 			cuntaoQualificationMapper.updateByPrimaryKeySelective(cuntaoQualification);
 		}
+	}
+
+	@Override
+	public void reSubmitLocalQualification(CuntaoQualification qualification) {
+		CuntaoQualification  invalidQuali = this.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
+		if(invalidQuali != null){
+			CuntaoQualificationHistory record = new CuntaoQualificationHistory();
+			record.setTaobaoUserId(invalidQuali.getTaobaoUserId());
+			record.setCreator("system");
+			record.setGmtCreate(new Date());
+			record.setGmtModified(new Date());
+			record.setModifier("system");
+			record.setIsDeleted("n");
+			record.setCompanyName(invalidQuali.getCompanyName());
+			record.setBizScope(invalidQuali.getBizScope());
+			record.setRegsiterAddress(invalidQuali.getAgencies());
+			record.setLegalPerson(invalidQuali.getLegalPerson());
+			record.setQualiNo(invalidQuali.getQualiNo());
+			record.setQualiPic(invalidQuali.getQualiPic());
+			record.setRegsiterAddress(invalidQuali.getRegsiterAddress());
+			cuntaoQualificationHistoryMapper.insertSelective(record);
+			
+			CuntaoQualification deletedQuali = new CuntaoQualification();
+			deletedQuali.setIsDeleted("y");
+			deletedQuali.setId(invalidQuali.getId());
+			record.setGmtModified(new Date());
+			record.setModifier("system");
+			cuntaoQualificationMapper.updateByPrimaryKeySelective(deletedQuali);
+		}
+		qualification.setId(null);
+		this.submitLocalQualification(qualification);
+		
 	}
 
 }
