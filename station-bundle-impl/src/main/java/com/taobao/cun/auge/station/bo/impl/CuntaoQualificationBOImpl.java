@@ -107,7 +107,7 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 	@Override
 	public void reSubmitLocalQualification(CuntaoQualification qualification) {
 		CuntaoQualification  invalidQuali = this.getCuntaoQualificationByTaobaoUserId(qualification.getTaobaoUserId());
-		if(invalidQuali != null){
+		if(invalidQuali != null && "1".equals(invalidQuali.getUpdateFlag())){
 			CuntaoQualificationHistory record = new CuntaoQualificationHistory();
 			record.setTaobaoUserId(invalidQuali.getTaobaoUserId());
 			record.setCreator("system");
@@ -130,10 +130,9 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			record.setGmtModified(new Date());
 			record.setModifier("system");
 			cuntaoQualificationMapper.updateByPrimaryKeySelective(deletedQuali);
+			qualification.setId(null);
 		}
-		qualification.setId(null);
 		this.submitLocalQualification(qualification);
-		
 	}
 
 }
