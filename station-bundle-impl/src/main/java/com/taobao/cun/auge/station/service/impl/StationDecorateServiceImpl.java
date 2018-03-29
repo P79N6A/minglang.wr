@@ -166,7 +166,6 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			StationDecorateAuditDto stationDecorateAuditDto) {
 		StationDecorateDto sdDto =new StationDecorateDto();
 		sdDto.setId(stationDecorateAuditDto.getId());
-		sdDto.setAuditOpinion(stationDecorateAuditDto.getAuditOpinion() == null ? "" : stationDecorateAuditDto.getAuditOpinion());
 		if(stationDecorateAuditDto.getIsAgree()){
 		    sdDto.setStatus(StationDecorateStatusEnum.DONE);
 		}else{
