@@ -15,10 +15,12 @@ public interface CuntaoQualificationBO {
 	
 	public Page<CuntaoQualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	
-	 public void deletedQualificationById(Long id);
+	public void deletedQualificationById(Long id);
 	 
-	 public void submitLocalQualification(CuntaoQualification qualification);
+	public void submitLocalQualification(CuntaoQualification qualification);
 	 
-	 public void submitHavanaQualification(Long taobaoUserId);
+	public void reSubmitLocalQualification(CuntaoQualification qualification);
+	 
+	public void submitHavanaQualification(Long taobaoUserId);
 
 }

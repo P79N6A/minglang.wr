@@ -18,6 +18,8 @@ public interface CuntaoQualificationService {
 	
 	void submitHavanaQualification(Long taobaoUserId);
 	
+	boolean reSubmitLocalQualification(Qualification qualification);
+	
 	public PageDto<Qualification> queryQualificationsByCondition(CuntaoQualificationPageCondition condition);
 	
 	C2BSettleInfo queryC2BSettleInfo(Long taobaoUserId);
