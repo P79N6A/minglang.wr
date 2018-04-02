@@ -484,4 +484,24 @@ public class StationDecorateServiceImpl implements StationDecorateService {
     public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
         decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        ValidateUtils.notNull(decorationInfoDecisionDto.getStationId());
+        DecorationInfoDecision rm = decorationInfoDecisionBO.queryWaitAuditDecorationInfo(decorationInfoDecisionDto);
+        if(rm != null){
+            //同一个村点待审核的装修图纸记录只能有一条
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"同一个村点待审核的装修图纸记录只能唯一");
+        }
+       Long id =  decorationInfoDecisionBO.addDecorationInfoDecision(decorationInfoDecisionDto);
+       
+       StartProcessDto startProcessDto =new StartProcessDto();
+       startProcessDto.setBusiness(ProcessBusinessEnum.decorationInfoDecision);
+       startProcessDto.setBusinessId(id);
+       Station station=stationBO.getStationById(decorationInfoDecisionDto.getStationId());
+       startProcessDto.setBusinessName(station.getName()+station.getStationNum());
+       startProcessDto.setBusinessOrgId(station.getApplyOrg());
+       startProcessDto.copyOperatorDto(decorationInfoDecisionDto);
+       processService.startApproveProcess(startProcessDto);
+    }
 }

@@ -136,4 +136,9 @@ public interface StationDecorateService {
      * 更新装修图纸信息
      */
     public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto);
+    
+    /**
+     *提交装修图纸信息
+     */
+    public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto);
 }

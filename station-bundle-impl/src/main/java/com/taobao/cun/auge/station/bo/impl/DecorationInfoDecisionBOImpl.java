@@ -1,17 +1,23 @@
 package com.taobao.cun.auge.station.bo.impl;
 
+import java.util.List;
+
 import com.github.pagehelper.Page;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.DomainUtils;
+import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
+import com.taobao.cun.auge.dal.domain.DecorationInfoDecisionExample;
+import com.taobao.cun.auge.dal.domain.DecorationInfoDecisionExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.DecorationInfoDecisionMapper;
 import com.taobao.cun.auge.station.bo.DecorationInfoDecisionBO;
 import com.taobao.cun.auge.station.condition.DecorationInfoPageCondition;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
+import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -61,21 +67,26 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
 
     @Override
     public DecorationInfoDecision queryDecorationInfoById(Long id) {
-        // TODO Auto-generated method stub
-        return null;
+        return decorationInfoDecisionMapper.selectByPrimaryKey(id);
     }
 
-    @Override
-    public DecorationInfoDecision queryDecorationInfo(DecorationInfoDecisionDto decorationInfoDto) {
-        // TODO Auto-generated method stub
-        return null;
-    }
     
     private void validateDecorationInfo(DecorationInfoDecisionDto decorateInfoDto){
         ValidateUtils.notNull(decorateInfoDto);
         Long stationId = decorateInfoDto.getStationId();
         ValidateUtils.notNull(stationId);
         ValidateUtils.notNull(decorateInfoDto.getStatus());
+    }
+
+    public DecorationInfoDecision queryWaitAuditDecorationInfo(DecorationInfoDecisionDto decorateInfoDto) {
+        validateDecorationInfo(decorateInfoDto);
+        DecorationInfoDecisionExample example = new DecorationInfoDecisionExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo("n");
+        criteria.andStationIdEqualTo(decorateInfoDto.getStationId());
+        criteria.andStatusEqualTo(DecorationInfoDecisionStatusEnum.WAIT_AUDIT.getCode());
+        List<DecorationInfoDecision> resList = decorationInfoDecisionMapper.selectByExample(example);
+        return ResultUtils.selectOne(resList);
     }
 
 }

@@ -975,6 +975,76 @@ public class DecorationInfoDecisionExample {
             addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
+
+        public Criteria andAuditOpinionIsNull() {
+            addCriterion("audit_opinion is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionIsNotNull() {
+            addCriterion("audit_opinion is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionEqualTo(String value) {
+            addCriterion("audit_opinion =", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionNotEqualTo(String value) {
+            addCriterion("audit_opinion <>", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionGreaterThan(String value) {
+            addCriterion("audit_opinion >", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionGreaterThanOrEqualTo(String value) {
+            addCriterion("audit_opinion >=", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionLessThan(String value) {
+            addCriterion("audit_opinion <", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionLessThanOrEqualTo(String value) {
+            addCriterion("audit_opinion <=", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionLike(String value) {
+            addCriterion("audit_opinion like", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionNotLike(String value) {
+            addCriterion("audit_opinion not like", value, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionIn(List<String> values) {
+            addCriterion("audit_opinion in", values, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionNotIn(List<String> values) {
+            addCriterion("audit_opinion not in", values, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionBetween(String value1, String value2) {
+            addCriterion("audit_opinion between", value1, value2, "auditOpinion");
+            return (Criteria) this;
+        }
+
+        public Criteria andAuditOpinionNotBetween(String value1, String value2) {
+            addCriterion("audit_opinion not between", value1, value2, "auditOpinion");
+            return (Criteria) this;
+        }
     }
 
     /**

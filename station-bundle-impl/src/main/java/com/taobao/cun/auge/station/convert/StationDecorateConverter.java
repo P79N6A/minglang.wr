@@ -118,7 +118,7 @@ public class StationDecorateConverter {
         decorationInfoDto.setShopArea(decorationInfo.getShopArea());
         decorationInfoDto.setStatus(DecorationInfoDecisionStatusEnum.valueof(decorationInfo.getStatus()));
         decorationInfoDto.setWarehouseArea(decorationInfo.getWarehouseArea());
-        
+        decorationInfoDto.setAuditOpinion(decorationInfo.getAuditOpinion());
         return decorationInfoDto;
     }
 
@@ -132,7 +132,7 @@ public class StationDecorateConverter {
         decorationInfo.setDecorateMoney(decorationInfoDto.getDecorateMoney());
         decorationInfo.setStatus(decorationInfoDto.getStatus()==null?null:decorationInfoDto.getStatus().getCode());
         decorationInfo.setWarehouseArea(decorationInfoDto.getWarehouseArea());
-        
+        decorationInfo.setAuditOpinion(decorationInfoDto.getAuditOpinion());
         return decorationInfo;
     }
 }
