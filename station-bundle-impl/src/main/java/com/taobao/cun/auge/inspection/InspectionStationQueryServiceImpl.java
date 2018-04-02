@@ -62,11 +62,11 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 			InspectionStationDto dto = new InspectionStationDto();
 			partnerInstanceInspectionCopier.copy(inspection, dto, null);
 			dto.setStateDesc(PartnerInstanceStateEnum.valueof(dto.getState()).getDesc());
-			List<CuntaoUserOrgVO> userOrg = cuntaoUserOrgService.getCuntaoOrgUsers( Lists.newArrayList(dto.getApplyOrg()),  Lists.newArrayList(UserRoleEnum.COUNTY_LEADER.getCode()));
+			/*List<CuntaoUserOrgVO> userOrg = cuntaoUserOrgService.getCuntaoOrgUsers( Lists.newArrayList(dto.getApplyOrg()),  Lists.newArrayList(UserRoleEnum.COUNTY_LEADER.getCode()));
 			if(userOrg != null){
 				List<String> leaders = userOrg.stream().map(user -> user.getUserName()).collect(Collectors.toList());
 				dto.setLeaders(leaders);
-			}
+			}*/
 			results.add(dto);
 		}
 		return results;
