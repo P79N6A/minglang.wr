@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.taobao.cun.auge.dal.mapper.InspectionStationMapper">
+  <resultMap id="InspectionStationMap" type="com.taobao.cun.auge.dal.domain.InspectionStation">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="partner_id" jdbcType="BIGINT" property="partnerId" />
+    
+    
+    <!-- pepole -->
+    <result column="partner_name" jdbcType="VARCHAR" property="partnerName" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    
+    
+    <!-- station -->
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="county" jdbcType="VARCHAR" property="county" />
+    <result column="town" jdbcType="VARCHAR" property="town" />
+    <result column="province_detail" jdbcType="VARCHAR" property="provinceDetail" />
+    <result column="city_detail" jdbcType="VARCHAR" property="cityDetail" />
+    <result column="county_detail" jdbcType="VARCHAR" property="countyDetail" />
+    <result column="town_detail" jdbcType="VARCHAR" property="townDetail" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="apply_org" jdbcType="BIGINT" property="applyOrg" />
+    <result column="station_num" jdbcType="VARCHAR" property="stationNum" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="village" jdbcType="VARCHAR" property="village" />
+    <result column="village_detail" jdbcType="VARCHAR" property="villageDetail" />
+    <result column="covered" jdbcType="VARCHAR" property="covered" />
+    <result column="products" jdbcType="VARCHAR" property="products" />
+    <result column="logistics_state" jdbcType="VARCHAR" property="logisticsState" />
+    <result column="format" jdbcType="VARCHAR" property="format" />
+    <!-- 县服务中心-->
+    <result column="county_station_name" jdbcType="VARCHAR" property="countyStationName" />
+  </resultMap>
+  
+  <select id="selectInspectionStationByExample" resultMap="InspectionStationMap" parameterType="com.taobao.cun.auge.dal.example.InspectionStationExample" >
+		select 
+		
+		instance.*,
+		
+		p.name as partner_name,
+		p.mobile,
+		
+		s.name as station_name,
+		s.province,
+		s.city,
+		s.county,
+		s.town,
+		s.province_detail,
+		s.city_detail,
+		s.county_detail,
+		s.town_detail,
+		s.address,
+		s.apply_org,
+		s.station_num,
+		s.lng,
+		s.lat,
+		s.village,
+		s.village_detail,
+		s.covered,
+		s.products,
+		s.logistics_state,
+		s.format,
+		s.area_type,
+		org.name as county_station_name
+		from partner_station_rel instance
+		<if test="type == 'TP' or type == 'tp' " >
+			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			left join cuntao_store store on store.station_id=instance.station_id and store.is_deleted='n'
+		</if>
+		left join partner_station_tag tag on tag.station_id=tag.station_id and tag.is_deleted='n' and tag.tag_type='INSPECTION'
+		,partner p,station s,cuntao_org org
+		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
+		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
+		and instance.is_current = 'y'
+		<include refid="partner_station_query_condition" />
+		order by instance.gmt_modified desc
+  </select>
+  
+   <sql id="partner_station_query_condition" >
+		<if test="orgIdPath != null and orgIdPath != ''" >
+			and concat(org.temp_full_id_path, '/') like concat(#{orgIdPath,jdbcType=VARCHAR}, '/%')
+		</if>
+		<if test="stationName != null and stationName != ''" >
+			and s.name like concat('%', #{stationName,jdbcType=VARCHAR}, '%')
+		</if>
+		<if test="type != null and type != ''" >
+			and instance.type = #{type,jdbcType=VARCHAR}
+		</if>
+		<if test="state != null and state != ''" >
+			and instance.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="mode != null and mode != ''" >
+			and instance.mode = #{mode,jdbcType=VARCHAR}
+		</if>
+		<if test="mode == null or mode == ''" >
+			and instance.mode is null
+		</if>
+		<if test="inspectionState != null and inspectionState != ''" >
+			and tag.tag = #{inspectionState,jdbcType=VARCHAR}
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			<if test="storeCategory != null and storeCategory != ''" >
+				and store.store_category = #{storeCategory,jdbcType=VARCHAR}
+			</if>
+		</if>
+		<if test="type == 'TP' or type == 'tp' " >
+			<if test="level != null and  level=='SP'">
+			   	 and level.expected_level is not null
+				</if>
+				<if test="level != null and level !=''  and  level!='SP'">
+			   	 and level.current_level = #{level,jdbcType=VARCHAR}
+			</if>
+		</if>
+   </sql>
+   
+    <resultMap id="InspectionStatusSummary" type="com.taobao.cun.auge.dal.domain.InspectionStatusSummary">
+		<result column="status" jdbcType="VARCHAR" property="status" />
+		<result column="count" jdbcType="INTEGER" property="count" />
+	</resultMap>
+   
+    <select id="countInspectionSummaryByExample" resultMap="InspectionStatusSummary" parameterType="com.taobao.cun.auge.dal.example.InspectionStationExample" >
+		select 
+		tag.tag as status,
+		count(1) as count
+		from partner_station_rel instance
+		<if test="type == 'TP' or type == 'tp' " >
+			left join partner_instance_level level on level.partner_instance_id=instance.id and level.is_valid='y' and level.is_deleted='n'
+		</if>
+		<if test="type == 'TPS' or type == 'tps' " >
+			left join cuntao_store store on store.station_id=instance.station_id and store.is_deleted='n'
+		</if>
+		left join partner_station_tag tag on tag.station_id=tag.station_id and tag.is_deleted='n' and tag.tag_type='INSPECTION'
+		
+		,partner p,station s,cuntao_org org
+		where instance.partner_id = p.id and instance.station_id=s.id and s.apply_org = org.id
+		and instance.is_deleted = 'n' and s.is_deleted='n' and p.is_deleted='n' and org.is_deleted='n'
+		and instance.is_current = 'y' and tag.station_id = s.id and tag.is_deleted ='n'
+		and tag.tag_type='INSPECTION'
+		<if test="type == 'TPS' or type == 'tps' " >
+			and s.id=store.station_id and store.is_deleted = 'n' 
+		</if>
+		<if test="type == 'TP' or type == 'tp' " >
+			<if test="level != null and  level=='SP'">
+			   	 and level.expected_level is not null
+				</if>
+				<if test="level != null and level !=''  and  level!='SP'">
+			   	 and level.current_level = #{level,jdbcType=VARCHAR}
+			</if>
+		</if>
+		<include refid="partner_station_query_condition" />
+		group by tag.tag
+  </select>
+  
+   
+  
+</mapper>
