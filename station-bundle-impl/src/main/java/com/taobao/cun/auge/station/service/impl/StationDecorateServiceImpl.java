@@ -19,11 +19,13 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.DecorationInfoDecisionBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -31,6 +33,7 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
+import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -38,6 +41,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
@@ -81,6 +85,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
     @Autowired
     AttachmentService criusAttachmentService;
+    
+    @Autowired
+    DecorationInfoDecisionBO decorationInfoDecisionBO;
 	
 	/**
 	 * 淘宝商品图片
@@ -436,5 +443,45 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             }
         }
         return sdDto;
+    }
+
+    public DecorationInfoDecisionDto getDecorationDecisionById(Long id) {
+        ValidateUtils.notNull(id);
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
+        DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
+        //toDOxxxxxxxxxx 待新的文件类型添加后 设置附件
+        //dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        if (info.getStationId() != null) {
+            Station s = stationBO.getStationById(info.getStationId());
+            if (s != null) {
+                dto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return dto;
+    }
+
+    public void auditDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        // 参数校验
+        BeanValidator.validateWithThrowable(decorationInfoDecisionDto);
+        Long id = decorationInfoDecisionDto.getId();
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
+        if (info == null) {
+            String error = getErrorMessage("audit",JSONObject.toJSONString(decorationInfoDecisionDto), "decorationInfoDecision is null");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
+        }
+        //审批装修图纸信息
+        DecorationInfoDecisionDto dto =new DecorationInfoDecisionDto();
+        dto.setId(decorationInfoDecisionDto.getId());
+        if(decorationInfoDecisionDto.getIsAgree()){
+            dto.setStatus(DecorationInfoDecisionStatusEnum.AUDIT_PASS);
+        }else{
+            dto.setStatus(DecorationInfoDecisionStatusEnum.AUDIT_NOT_PASS);
+        }
+        dto.copyOperatorDto(decorationInfoDecisionDto);
+        decorationInfoDecisionBO.updateDecorationInfo(dto);;
+    }
+
+    public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
     }
 }

@@ -37,6 +37,7 @@ import com.taobao.cun.auge.station.bo.StationModifyApplyBO;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
 import com.taobao.cun.auge.station.convert.PartnerInstanceEventConverter;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
+import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
@@ -209,7 +210,17 @@ public class ProcessProcessor {
 			    stationDecorateAuditDto.setId(businessId);
 			    stationDecorateAuditDto.copyOperatorDto(OperatorDto.defaultOperator());
 			    stationDecorateService.audit(stationDecorateAuditDto);
-			}
+			}else if (ProcessBusinessEnum.decorationInfoDecision.getCode().equals(businessCode)){
+                DecorationInfoDecisionDto dto = new DecorationInfoDecisionDto();
+                if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+                    dto.setIsAgree(true);
+                }else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+                    dto.setIsAgree(false);
+                }
+                dto.setId(businessId);
+                dto.copyOperatorDto(OperatorDto.defaultOperator());
+                stationDecorateService.auditDecorationDecision(dto);
+            }
 			// 节点被激活
 		} else if (ProcessMsgTypeEnum.ACT_INST_START.getCode().equals(msgType)) {
 			// 任务被激活
@@ -239,7 +250,14 @@ public class ProcessProcessor {
 			    sdd.setId(businessId);
 			    sdd.copyOperatorDto(OperatorDto.defaultOperator());
 			    stationDecorateService.updateStationDecorate(sdd);
-			}
+			}else if(ProcessBusinessEnum.decorationInfoDecision.getCode().equals(businessCode)){
+                String auditOpinion = ob.getString("taskRemark");
+                DecorationInfoDecisionDto sdd = new DecorationInfoDecisionDto();
+                sdd.setAuditOpinion(auditOpinion);
+                sdd.setId(businessId);
+                sdd.copyOperatorDto(OperatorDto.defaultOperator());
+                stationDecorateService.updateDecorationDecision(sdd);
+            }
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
 				levelAuditFlowService.afterStartApproveProcessSuccess(ob);

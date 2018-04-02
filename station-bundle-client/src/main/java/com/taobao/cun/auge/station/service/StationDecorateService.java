@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.service;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
@@ -120,4 +121,19 @@ public interface StationDecorateService {
      * @
      */
     public StationDecorateDto getInfoById(Long Id);
+    
+    /**
+     * 查询装修图纸
+     */
+    public DecorationInfoDecisionDto getDecorationDecisionById(Long id);
+    
+    /**
+     * 装修图纸信息审核
+     */
+    public void auditDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto);
+    
+    /**
+     * 更新装修图纸信息
+     */
+    public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto);
 }
