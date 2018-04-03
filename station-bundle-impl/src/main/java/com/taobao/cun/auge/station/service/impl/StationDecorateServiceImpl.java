@@ -478,7 +478,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             dto.setStatus(DecorationInfoDecisionStatusEnum.AUDIT_NOT_PASS);
         }
         dto.copyOperatorDto(decorationInfoDecisionDto);
-        decorationInfoDecisionBO.updateDecorationInfo(dto);;
+        decorationInfoDecisionBO.updateDecorationInfo(dto);
     }
 
     public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
@@ -488,12 +488,17 @@ public class StationDecorateServiceImpl implements StationDecorateService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
         ValidateUtils.notNull(decorationInfoDecisionDto.getStationId());
-        DecorationInfoDecision rm = decorationInfoDecisionBO.queryWaitAuditDecorationInfo(decorationInfoDecisionDto);
-        if(rm != null){
+        decorationInfoDecisionDto.setStatus(DecorationInfoDecisionStatusEnum.WAIT_AUDIT);
+        DecorationInfoDecision rm = decorationInfoDecisionBO.queryDecorationInfoByStationId(decorationInfoDecisionDto.getStationId());
+        Long id = null;
+        if(rm == null){
+            id =  decorationInfoDecisionBO.addDecorationInfoDecision(decorationInfoDecisionDto);
+        }else if(rm.getStatus().equals(DecorationInfoDecisionStatusEnum.WAIT_AUDIT.getCode())){
             //同一个村点待审核的装修图纸记录只能有一条
-            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"同一个村点待审核的装修图纸记录只能唯一");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修图纸待审核状态，请勿重复提交");
+        }else if(rm.getStatus().equals(DecorationInfoDecisionStatusEnum.AUDIT_NOT_PASS.getCode())){
+            decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
         }
-       Long id =  decorationInfoDecisionBO.addDecorationInfoDecision(decorationInfoDecisionDto);
        
        StartProcessDto startProcessDto =new StartProcessDto();
        startProcessDto.setBusiness(ProcessBusinessEnum.decorationInfoDecision);
@@ -503,5 +508,20 @@ public class StationDecorateServiceImpl implements StationDecorateService {
        startProcessDto.setBusinessOrgId(station.getApplyOrg());
        startProcessDto.copyOperatorDto(decorationInfoDecisionDto);
        processService.startApproveProcess(startProcessDto);
+    }
+
+    public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId) {
+        ValidateUtils.notNull(stationId);
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoByStationId(stationId);
+        DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
+        //toDOxxxxxxxxxx 待新的文件类型添加后 设置附件
+        //dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        if (info.getStationId() != null) {
+            Station s = stationBO.getStationById(info.getStationId());
+            if (s != null) {
+                dto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return dto;
     }
 }

@@ -17,7 +17,6 @@ import com.taobao.cun.auge.station.condition.DecorationInfoPageCondition;
 import com.taobao.cun.auge.station.convert.OperatorConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
 import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
-import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -78,13 +77,12 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
         ValidateUtils.notNull(decorateInfoDto.getStatus());
     }
 
-    public DecorationInfoDecision queryWaitAuditDecorationInfo(DecorationInfoDecisionDto decorateInfoDto) {
-        validateDecorationInfo(decorateInfoDto);
+    public DecorationInfoDecision queryDecorationInfoByStationId(Long stationId) {
+        ValidateUtils.notNull(stationId);
         DecorationInfoDecisionExample example = new DecorationInfoDecisionExample();
         Criteria criteria = example.createCriteria();
         criteria.andIsDeletedEqualTo("n");
-        criteria.andStationIdEqualTo(decorateInfoDto.getStationId());
-        criteria.andStatusEqualTo(DecorationInfoDecisionStatusEnum.WAIT_AUDIT.getCode());
+        criteria.andStationIdEqualTo(stationId);
         List<DecorationInfoDecision> resList = decorationInfoDecisionMapper.selectByExample(example);
         return ResultUtils.selectOne(resList);
     }

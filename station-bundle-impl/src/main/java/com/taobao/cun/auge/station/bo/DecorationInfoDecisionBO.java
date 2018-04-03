@@ -20,5 +20,5 @@ public interface DecorationInfoDecisionBO {
     
     public DecorationInfoDecision queryDecorationInfoById(Long id);
     
-    public DecorationInfoDecision queryWaitAuditDecorationInfo(DecorationInfoDecisionDto decorationInfoDto);
+    public DecorationInfoDecision queryDecorationInfoByStationId(Long stationId);
 }

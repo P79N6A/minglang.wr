@@ -141,4 +141,12 @@ public interface StationDecorateService {
      *提交装修图纸信息
      */
     public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto);
+    
+    /**
+     * 查询装修图纸信息
+     * @param stationId
+     * @return
+     * @
+     */
+    public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId);
 }
