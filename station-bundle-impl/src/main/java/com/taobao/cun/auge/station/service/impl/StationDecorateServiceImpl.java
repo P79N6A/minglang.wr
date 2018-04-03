@@ -449,8 +449,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
         ValidateUtils.notNull(id);
         DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
         DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
-        //toDOxxxxxxxxxx 待新的文件类型添加后 设置附件
-        //dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION));
         if (info.getStationId() != null) {
             Station s = stationBO.getStationById(info.getStationId());
             if (s != null) {
@@ -514,8 +513,7 @@ public class StationDecorateServiceImpl implements StationDecorateService {
         ValidateUtils.notNull(stationId);
         DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoByStationId(stationId);
         DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
-        //toDOxxxxxxxxxx 待新的文件类型添加后 设置附件
-        //dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.STATION_DECORATE));
+        dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION));
         if (info.getStationId() != null) {
             Station s = stationBO.getStationById(info.getStationId());
             if (s != null) {
