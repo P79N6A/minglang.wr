@@ -42,12 +42,14 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
 import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
@@ -240,6 +242,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             startProcessDto.setBusinessName(station.getName()+station.getStationNum());
             startProcessDto.setBusinessOrgId(station.getApplyOrg());
             startProcessDto.copyOperatorDto(stationDecorateReflectDto);
+            
+            PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(sd.getStationId());
+            String stationType = "stationType:"+rel.getType();
+            startProcessDto.setJsonParams(stationType);
             processService.startApproveProcess(startProcessDto);
 	}
 
@@ -295,8 +301,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			if (sdDto == null) {
 				return null;
 			}
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 			if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-					sdDto.getPaymentType().getCode())){
+					sdDto.getPaymentType().getCode()) || PartnerInstanceTypeEnum.TPS.getCode().equals(rel.getType())){
 				return sdDto;
 			}
 			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
