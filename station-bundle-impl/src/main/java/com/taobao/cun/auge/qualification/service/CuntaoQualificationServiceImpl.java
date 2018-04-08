@@ -360,4 +360,16 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}
 			return true;
 	}
+
+	@Override
+	public Qualification queryLocalQualification(Long taobaoUserId) {
+		CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if(cuntaoQulification == null){
+			return null;
+		}
+		Qualification qualification = new Qualification();
+		cuntaoQualificationReverseCopier.copy(cuntaoQulification, qualification, null);
+		
+		return qualification;
+	}
 }
