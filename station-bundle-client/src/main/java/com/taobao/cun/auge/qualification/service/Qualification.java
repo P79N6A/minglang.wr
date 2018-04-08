@@ -102,6 +102,19 @@ public class Qualification implements Serializable{
 		
 		private String updateDate;
 		
+		/**
+		 * 插入数据来源，
+		 */
+		private String source;
+		
+		public String getSource() {
+			return source;
+		}
+
+		public void setSource(String source) {
+			this.source = source;
+		}
+
 		public String getUpdateDate() {
 			return updateDate;
 		}
