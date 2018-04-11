@@ -209,6 +209,16 @@
     <artifactId>mmp-client-core</artifactId>
     <version>3.2.39</version> 
 </dependency>
+<dependency> 
+      <groupId>com.taobao.mmp</groupId>  
+      <artifactId>mmp-common</artifactId>  
+      <version>3.2.39</version>
+</dependency> 
+<dependency> 
+      <groupId>com.taobao.mmp</groupId>  
+      <artifactId>mmp-box</artifactId>  
+      <version>3.2.39</version> 
+    </dependency>  
 <dependency>
   <groupId>com.alibaba.middleware</groupId>
   <artifactId>sdk</artifactId>
