@@ -64,7 +64,8 @@ public interface PartnerProtocolRelBO {
 	
 	public PartnerProtocolRelDto  getLastPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId,ProtocolTypeEnum type,PartnerProtocolRelTargetTypeEnum targetType)  ;
 
-			
+	PartnerProtocolRelDto getOldestPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId, ProtocolTypeEnum type,PartnerProtocolRelTargetTypeEnum targetType);
+	
 	public void signProtocol(Long objectId, Long taobaoUserId, ProtocolTypeEnum type, Date confirmTime, Date startTime, Date endTime,
 			String operator, PartnerProtocolRelTargetTypeEnum targetType);
 }

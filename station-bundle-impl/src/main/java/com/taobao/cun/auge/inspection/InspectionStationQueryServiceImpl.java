@@ -93,7 +93,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		PageDto<InspectionStationDto> page = queryByPage(condition);
 		result.setHasInspectionNum(hasInspection);
 		result.setPlanInspectionNum(planInspection);
-		result.setPlanInspectionNum(unInspection);
+		result.setUnInspectionNum(unInspection);
 		result.setTotalInspectionNum(Integer.parseInt(page.getTotal()+""));
 		return result;
 	}
