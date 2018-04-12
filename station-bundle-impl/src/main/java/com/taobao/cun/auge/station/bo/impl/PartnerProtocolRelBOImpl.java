@@ -215,4 +215,33 @@ public class PartnerProtocolRelBOImpl implements PartnerProtocolRelBO {
 		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
 		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
 	}
+	
+	
+	@Override
+	public PartnerProtocolRelDto getOldestPartnerProtocolRelDtoByTaobaoUserId(Long taobaoUserId, ProtocolTypeEnum type,
+			PartnerProtocolRelTargetTypeEnum targetType)  {
+		ValidateUtils.notNull(type);
+		ValidateUtils.notNull(taobaoUserId);
+		ValidateUtils.notNull(targetType);
+		
+		List<ProtocolTypeEnum> types = new ArrayList<ProtocolTypeEnum>();
+		types.add(type);
+		List<Long>  protocolIds = protocolBO.getAllProtocolId(types);
+		if (protocolIds == null) {
+			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"protocolBO.getAllProtocolId is null");
+		}
+		
+		PartnerProtocolRelExample example = new PartnerProtocolRelExample();
+		
+		Criteria criteria = example.createCriteria();
+
+		criteria.andTaobaoUserIdEqualTo(taobaoUserId);
+		criteria.andTargetTypeEqualTo(targetType.getCode());
+		criteria.andProtocolIdIn(protocolIds);
+		criteria.andIsDeletedEqualTo("n");
+		example.setOrderByClause("id ASC");
+		
+		List<PartnerProtocolRel> res = partnerProtocolRelMapper.selectByExample(example);
+		return PartnerProtocolRelConverter.toPartnerProtocolRelDto(ResultUtils.selectOne(res));
+	}
 }
