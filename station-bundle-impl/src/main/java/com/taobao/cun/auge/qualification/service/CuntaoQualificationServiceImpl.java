@@ -276,7 +276,7 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 			c2bSettleInfo.setPartnerInstanceStatus(PartnerInstanceStateEnum.QUIT.getCode());
 		}
 		PartnerProtocolRelDto settleProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
-		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getLastPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+		PartnerProtocolRelDto settleC2BProtocol = partnerProtocolRelBO.getOldestPartnerProtocolRelDtoByTaobaoUserId(taobaoUserId,ProtocolTypeEnum.C2B_SETTLE_PRO,PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
 		if(settleC2BProtocol!=null){
 			c2bSettleInfo.setSignC2BTime(settleC2BProtocol.getConfirmTime());
 		}
