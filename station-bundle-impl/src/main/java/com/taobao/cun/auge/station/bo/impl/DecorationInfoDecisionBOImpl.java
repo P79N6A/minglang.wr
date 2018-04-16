@@ -39,8 +39,11 @@ public class DecorationInfoDecisionBOImpl implements DecorationInfoDecisionBO{
     public Long addDecorationInfoDecision(DecorationInfoDecisionDto decorationInfoDto) {
         validateDecorationInfo(decorationInfoDto);
         DecorationInfoDecision record = StationDecorateConverter.toDecorationInfoDecision(decorationInfoDto);
-        DomainUtils.beforeUpdate(record, decorationInfoDto.getOperator());
+        DomainUtils.beforeInsert(record, decorationInfoDto.getOperator());
         decorationInfoDecisionMapper.insert(record);
+        if(decorationInfoDto.getAttachments() != null){
+            criusAttachmentService.addAttachmentBatch(decorationInfoDto.getAttachments(), record.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION, OperatorConverter.convert(decorationInfoDto));
+        }
         return record.getId();
     }
 
