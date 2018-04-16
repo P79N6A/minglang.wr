@@ -19,7 +19,9 @@ import com.taobao.cun.chronus.service.TaskSubmitService;
 import com.taobao.cun.crius.bpm.service.CuntaoWorkFlowService;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
+import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+import com.taobao.cun.recruit.partner.service.ServiceAbilityDecisionService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -160,6 +162,20 @@ public class HsfConsumerConfiguration extends HsfConsumerAutoConfiguration {
     public HSFSpringConsumerBean partnerQualifyApplyService(
             @Value("${hsf.consumer.version.auge.partnerQualifyApplyService}") String version) {
         return getConsumerBean(PartnerQualifyApplyService.class, HSFGroup.HSF,
+                version, 5000);
+    }
+	
+	@Bean(initMethod = "init")
+    public HSFSpringConsumerBean serviceAbilityDecisionService(
+            @Value("${hsf.consumer.version.auge.serviceAbilityDecisionService}") String version) {
+        return getConsumerBean(ServiceAbilityDecisionService.class, HSFGroup.HSF,
+                version, 5000);
+    }
+	
+	@Bean(initMethod = "init")
+    public HSFSpringConsumerBean addressInfoDecisionService(
+            @Value("${hsf.consumer.version.auge.addressInfoDecisionService}") String version) {
+        return getConsumerBean(AddressInfoDecisionService.class, HSFGroup.HSF,
                 version, 5000);
     }
 

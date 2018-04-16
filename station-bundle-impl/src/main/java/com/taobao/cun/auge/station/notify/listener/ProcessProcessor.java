@@ -58,9 +58,15 @@ import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
+import com.taobao.cun.recruit.partner.dto.ServiceAbilityDecisionAuditDto;
+import com.taobao.cun.recruit.partner.enums.AddressInfoDecisionStatusEnum;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
+import com.taobao.cun.recruit.partner.enums.ServiceAbilityDecisionStatusEnum;
+import com.taobao.cun.recruit.partner.service.AddressInfoDecisionService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
+import com.taobao.cun.recruit.partner.service.ServiceAbilityDecisionService;
 import com.taobao.notify.message.StringMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +141,12 @@ public class ProcessProcessor {
 	
 	@Autowired
 	StationDecorateService stationDecorateService;
+	
+	@Autowired
+	private ServiceAbilityDecisionService serviceAbilityDecisionService;
+	@Autowired
+	private AddressInfoDecisionService addressInfoDecisionService;
+	
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void handleProcessMsg(StringMessage strMessage, JSONObject ob) throws Exception {
@@ -194,6 +206,26 @@ public class ProcessProcessor {
 				pqaDto.setId(businessId);
 				pqaDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
 				partnerQualifyApplyService.auditPartnerQualifyApply(pqaDto);
+			}else if (ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode)) {
+				ServiceAbilityDecisionAuditDto sddDto =new ServiceAbilityDecisionAuditDto();
+				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+					sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_PASS);
+				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					sddDto.setStatus(ServiceAbilityDecisionStatusEnum.AUDIT_NOT_PASS);
+				}
+				sddDto.setId(businessId);
+				sddDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+				serviceAbilityDecisionService.audit(sddDto);
+			}else if (ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)) {
+				AddressInfoDecisionAuditDto aidDto =new AddressInfoDecisionAuditDto();
+				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
+					aidDto.setStatus(AddressInfoDecisionStatusEnum.AUDIT_PASS);
+				}else if (ProcessApproveResultEnum.APPROVE_REFUSE.getCode().equals(resultCode)){
+					aidDto.setStatus(AddressInfoDecisionStatusEnum.AUDIT_NOT_PASS);
+				}
+				aidDto.setId(businessId);
+				aidDto.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+				addressInfoDecisionService.audit(aidDto);
 			}else if (ProcessBusinessEnum.stationInfoApply.getCode().equals(businessCode)) {
 				if (ProcessApproveResultEnum.APPROVE_PASS.getCode().equals(resultCode)) {
 					stationModifyApplyBO.auditForNameAndAddress(businessId, StationModifyApplyStatusEnum.AUDIT_PASS);
