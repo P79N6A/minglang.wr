@@ -6,6 +6,7 @@ import java.io.Serializable;
  * @author zhenhuan.zhangzh
  *
  */
+import java.util.Date;
 
 import com.taobao.cun.auge.common.PageQuery;
 public class InspectionPagedCondition  extends PageQuery implements Serializable{
@@ -49,6 +50,11 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 	 * 层级
 	 */
 	private String level;
+	
+	/**
+	 * 服务开始时间
+	 */
+	private Date serviceBeginDate;
 	
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -105,5 +111,13 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 
 	public void setLevel(String level) {
 		this.level = level;
+	}
+
+	public Date getServiceBeginDate() {
+		return serviceBeginDate;
+	}
+
+	public void setServiceBeginDate(Date serviceBeginDate) {
+		this.serviceBeginDate = serviceBeginDate;
 	}
 }

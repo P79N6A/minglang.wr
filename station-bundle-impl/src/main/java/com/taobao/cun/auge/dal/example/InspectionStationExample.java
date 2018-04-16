@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.dal.example;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 合伙人巡检查询Example
@@ -48,6 +49,11 @@ public class InspectionStationExample implements Serializable {
 	
 	
 	private String  level;
+	
+	/**
+	 * 服务开始时间
+	 */
+	private Date serviceBeginDate;
 	
 	public String getOrgIdPath() {
 		return orgIdPath;
@@ -111,6 +117,14 @@ public class InspectionStationExample implements Serializable {
 
 	public void setLevel(String level) {
 		this.level = level;
+	}
+
+	public Date getServiceBeginDate() {
+		return serviceBeginDate;
+	}
+
+	public void setServiceBeginDate(Date serviceBeginDate) {
+		this.serviceBeginDate = serviceBeginDate;
 	}
 
 }
