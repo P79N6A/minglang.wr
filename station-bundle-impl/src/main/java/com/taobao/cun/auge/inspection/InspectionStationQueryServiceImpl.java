@@ -48,6 +48,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setMode(getVersion(condition.getType()));
 		example.setType(getType(condition.getType()));
 		example.setLevel(condition.getLevel());
+		example.setServiceBeginDate(condition.getServiceBeginDate());
 		example.setInspectionState(condition.getInspectionState());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
 		Page<InspectionStation> inspections = partnerInstanceInspectionMapper.selectInspectionStationByExample(example);

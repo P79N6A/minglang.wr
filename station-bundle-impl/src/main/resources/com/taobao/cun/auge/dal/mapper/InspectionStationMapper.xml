@@ -115,6 +115,11 @@
 				and store.store_category = #{storeCategory,jdbcType=VARCHAR}
 			</if>
 		</if>
+		<if test="serviceBeginDate != null">
+			<![CDATA[
+        	and instance.service_begin_time >= #{serviceBeginDate,jdbcType=TIMESTAMP}
+        	]]>
+      	</if>
 		<if test="type == 'TP' or type == 'tp' " >
 			<if test="level != null and  level=='SP'">
 			   	 and level.expected_level is not null
