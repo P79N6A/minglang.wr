@@ -57,6 +57,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 	}
 
 	
+	
 	private List<InspectionStationDto> convert(List<InspectionStation> inspections){
 		List<InspectionStationDto> results = Lists.newArrayList();
 		for(InspectionStation inspection : inspections){
