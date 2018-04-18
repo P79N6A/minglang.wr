@@ -50,12 +50,13 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setLevel(condition.getLevel());
 		example.setServiceBeginDate(condition.getServiceBeginDate());
 		example.setInspectionState(condition.getInspectionState());
-		PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+		PageHelper.startPage(condition.getPageNum(), condition.getPageSize(),true,false);
 		Page<InspectionStation> inspections = partnerInstanceInspectionMapper.selectInspectionStationByExample(example);
 		PageDto<InspectionStationDto> success = PageDtoUtil.success(inspections, convert(inspections));
 		return success;
 	}
 
+	
 	
 	private List<InspectionStationDto> convert(List<InspectionStation> inspections){
 		List<InspectionStationDto> results = Lists.newArrayList();
