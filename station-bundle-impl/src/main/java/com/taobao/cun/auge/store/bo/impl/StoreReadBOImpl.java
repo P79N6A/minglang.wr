@@ -276,4 +276,20 @@ public class StoreReadBOImpl implements StoreReadBO {
 		return stores;
 	}
 
+	@Override
+	public List<StoreDto> getStoreBySellerShareStoreIds(List<Long> sellerShareStoreId) {
+		List<StoreDto> stores = Lists.newArrayList();
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andSellerShareStoreIdIn(sellerShareStoreId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		for(CuntaoStore store :cuntaoStores){
+			Station station = stationBO.getStationById(store.getStationId());
+			StationDto stationDto = StationConverter.toStationDto(station);
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
+			StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
+			stores.add(storeDto);
+		}
+		return stores;
+	}
+
 }
