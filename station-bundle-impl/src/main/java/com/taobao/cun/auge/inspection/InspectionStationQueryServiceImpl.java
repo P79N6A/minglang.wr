@@ -48,6 +48,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		example.setMode(getVersion(condition.getType()));
 		example.setType(getType(condition.getType()));
 		example.setLevel(condition.getLevel());
+		example.setStates(condition.getStates());
 		example.setServiceBeginDate(condition.getServiceBeginDate());
 		example.setInspectionState(condition.getInspectionState());
 		PageHelper.startPage(condition.getPageNum(), condition.getPageSize(),true,false);
@@ -81,6 +82,7 @@ public class InspectionStationQueryServiceImpl implements InspectionStationQuery
 		InspectionStationExample example = new InspectionStationExample();
 		example.setOrgIdPath(condition.getOrgIdPath());
 		example.setState(condition.getState());
+		example.setStates(condition.getStates());
 		example.setStationName(condition.getStationName());
 		example.setStoreCategory(condition.getStoreCategory());
 		example.setMode(getVersion(condition.getType()));
