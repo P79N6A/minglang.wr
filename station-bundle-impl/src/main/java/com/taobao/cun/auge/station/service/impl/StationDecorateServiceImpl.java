@@ -307,8 +307,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 				return sdDto;
 			}
 			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
-			if ((StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) || StationDecorateStatusEnum.DECORATING
-					.equals(sdDto.getStatus()))) {
+			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) || StationDecorateStatusEnum.DECORATING
+					.equals(sdDto.getStatus()) || StationDecorateStatusEnum.AUDIT_NOT_PASS.equals(sdDto.getStatus())
+					|| StationDecorateStatusEnum.WAIT_AUDIT.equals(sdDto.getStatus())) {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 			}
