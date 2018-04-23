@@ -113,4 +113,9 @@ public class StoreReadServiceImpl implements StoreReadService {
 		return null;
 	}
 
+	@Override
+	public List<StoreDto> getStoreBySellerShareStoreIds(List<Long> sellerShareStoreId) {
+		return storeReadBO.getStoreBySellerShareStoreIds(sellerShareStoreId);
+	}
+
 }
