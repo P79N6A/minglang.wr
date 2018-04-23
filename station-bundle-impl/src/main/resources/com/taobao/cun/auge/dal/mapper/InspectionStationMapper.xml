@@ -101,6 +101,12 @@
 		<if test="state != null and state != ''" >
 			and instance.state = #{state,jdbcType=VARCHAR}
 		</if>
+		<if test="states != null" >
+			and instance.state in
+			<foreach item="item" collection="states" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		<if test="mode != null and mode != ''" >
 			and instance.mode = #{mode,jdbcType=VARCHAR}
 		</if>

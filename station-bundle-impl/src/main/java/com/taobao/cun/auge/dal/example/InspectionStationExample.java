@@ -2,6 +2,7 @@ package com.taobao.cun.auge.dal.example;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 合伙人巡检查询Example
@@ -26,6 +27,11 @@ public class InspectionStationExample implements Serializable {
 	 * 服务站入驻状态
 	 */
 	private String state;
+	
+	/**
+	 * 服务站入驻状态
+	 */
+	private List<String> states;
 	
 	/**
 	 * 村点名称
@@ -125,6 +131,14 @@ public class InspectionStationExample implements Serializable {
 
 	public void setServiceBeginDate(Date serviceBeginDate) {
 		this.serviceBeginDate = serviceBeginDate;
+	}
+
+	public List<String> getStates() {
+		return states;
+	}
+
+	public void setStates(List<String> states) {
+		this.states = states;
 	}
 
 }
