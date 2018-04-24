@@ -75,40 +75,49 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	public Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
 		ErrorInfo errorInfo = null;
-		errorInfo = checkAddEmployee(vendorId,employeeDto,identifier);
-		//TODO 效验规则细化
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
-		if(cuntaoServiceVendor == null){
-			errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
-			return Result.of(errorInfo);
-		}
+		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		example.createCriteria().andTaobaoNickEqualTo(employeeDto.getTaobaoNick()).andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIsDeletedEqualTo("n");
 		
-		ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(employeeDto.getTaobaoNick());
-		errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		
-		errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		
-		errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),identifier,"员工淘宝账号已存在");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
-		if(StringUtils.isNotEmpty(employeeDto.getMobile())){
-			errorInfo =  checkMobileExists(employeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
+		List<CuntaoEmployee>  employees = cuntaoEmployeeMapper.selectByExample(example);
+	
+		if(employees == null||employees.isEmpty()){
+			errorInfo = checkAddEmployee(vendorId,employeeDto,identifier);
+			//TODO 效验规则细化
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
+			CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
+			if(cuntaoServiceVendor == null){
+				errorInfo = ErrorInfo.of(AugeErrorCodes.COMPANY_DATA_NOT_EXISTS_ERROR_CODE, null, "公司不存在");
+				return Result.of(errorInfo);
+			}
+			
+			ResultDO<BaseUserDO> employeeUserDOresult = uicReadServiceClient.getBaseUserByNick(employeeDto.getTaobaoNick());
+			errorInfo = checkTaobaoNick(employeeUserDOresult,"员工淘宝账号不存在或状态异常!");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			
+			errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			
+			errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),identifier,"员工淘宝账号已存在");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			if(StringUtils.isNotEmpty(employeeDto.getMobile())){
+				errorInfo =  checkMobileExists(employeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
+				if(errorInfo != null){
+					return Result.of(errorInfo);
+				}
+			}
+			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
+		}else{
+			employeeDto.setId(employees.iterator().next().getId());
 		}
 		try {
-			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 			return Result.of(employeeWriteBO.addVendorEmployee(vendorId,employeeDto,identifier));
 		} catch (Exception e) {
 			logger.error("addCompanyEmployee company error!",e);
@@ -117,7 +126,22 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	
+	@Override
+	public Result<Long> addVendorEmployeeWithIdentifers(Long vendorId, CuntaoEmployeeDto employeeDto,
+			List<CuntaoEmployeeIdentifier> identifiers) {
+		Result<Long> result = null;
+		if(identifiers!= null &&  !identifiers.isEmpty()){
+			CuntaoEmployeeIdentifier identifier = identifiers.iterator().next();
+			result = this.addVendorEmployee(vendorId, employeeDto, identifier);
+			Long employeeId = result.getModule();
+			identifiers.remove(identifier);
+			for(CuntaoEmployeeIdentifier ident : identifiers){
+				this.addVendorEmployeeByEmployeeId(vendorId, employeeId, ident);
+			}
+		}
+		return result;
+	}
+
 	
 	
 	private ErrorInfo checkTaobaoNick(ResultDO<BaseUserDO> baseUserDOresult,String errorMessage){
@@ -454,4 +478,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return store;
 	}
 
+
+
+
+	
 }
