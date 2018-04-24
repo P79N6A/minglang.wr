@@ -35,4 +35,6 @@ public interface CuntaoQualificationService {
     public void recoverQualification(Long taobaoUserId);
     
     public Qualification querEnterpriceC2BQualification(Long taobaoUserId);
+    
+    List<Qualification> queryHistoryQualification(Long taobaoUserId);
 }

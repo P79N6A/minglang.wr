@@ -87,6 +87,10 @@ public class StoreDto implements Serializable{
 	 */
 	private String image;
 	
+	/**
+	 * taobaoNick
+	 */
+	private String taobaoNick;
 	public Long getId() {
 		return id;
 	}
@@ -215,6 +219,14 @@ public class StoreDto implements Serializable{
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public String getTaobaoNick() {
+		return taobaoNick;
+	}
+
+	public void setTaobaoNick(String taobaoNick) {
+		this.taobaoNick = taobaoNick;
 	}
 
 }

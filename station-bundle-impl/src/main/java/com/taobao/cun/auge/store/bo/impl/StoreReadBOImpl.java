@@ -92,6 +92,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setCategory(cuntaoStore.getStoreCategory());
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
 		storeDto.setStatus(cuntaoStore.getStatus());
+		storeDto.setTaobaoNick(partner.getTaobaoNick());
 		if(partner !=null){
 			storeDto.setMobile(partner.getMobile());
 			storeDto.setPartnerName(partner.getName());
