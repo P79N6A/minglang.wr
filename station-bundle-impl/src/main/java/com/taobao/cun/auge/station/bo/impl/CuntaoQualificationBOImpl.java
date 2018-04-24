@@ -3,6 +3,7 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,11 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ResultUtils;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationExample;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistory;
+import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistoryExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationHistoryMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
@@ -117,7 +120,6 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			record.setIsDeleted("n");
 			record.setCompanyName(invalidQuali.getCompanyName());
 			record.setBizScope(invalidQuali.getBizScope());
-			record.setRegsiterAddress(invalidQuali.getAgencies());
 			record.setLegalPerson(invalidQuali.getLegalPerson());
 			record.setQualiNo(invalidQuali.getQualiNo());
 			record.setQualiPic(invalidQuali.getQualiPic());
@@ -133,6 +135,34 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 			qualification.setId(null);
 		}
 		this.submitLocalQualification(qualification);
+	}
+
+	@Override
+	public List<CuntaoQualification> queryHistoriesByTaobaoUserId(Long taobaoUserId) {
+		CuntaoQualificationHistoryExample example = new CuntaoQualificationHistoryExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId);
+		List<CuntaoQualificationHistory> histories = cuntaoQualificationHistoryMapper.selectByExample(example);
+		if(histories !=null){
+			List<CuntaoQualification>	qualis = histories.stream().map(history -> {
+				CuntaoQualification record = new CuntaoQualification();
+				record.setTaobaoUserId(history.getTaobaoUserId());
+				record.setCreator("system");
+				record.setGmtCreate(new Date());
+				record.setGmtModified(new Date());
+				record.setModifier("system");
+				record.setIsDeleted("n");
+				record.setCompanyName(history.getCompanyName());
+				record.setBizScope(history.getBizScope());
+				record.setLegalPerson(history.getLegalPerson());
+				record.setQualiNo(history.getQualiNo());
+				record.setQualiPic(history.getQualiPic());
+				record.setRegsiterAddress(history.getRegsiterAddress());
+				return record;
+			}).collect(Collectors.toList());
+			return qualis;
+		}
+		
+		return Lists.newArrayList();
 	}
 
 }
