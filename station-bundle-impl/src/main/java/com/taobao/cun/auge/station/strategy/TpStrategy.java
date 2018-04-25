@@ -16,9 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
-
-import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
-
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.dto.AttachmentDto;
@@ -71,6 +68,7 @@ import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerApplyStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceIsCurrentEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBondEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
@@ -96,6 +94,7 @@ import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
+import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
@@ -170,6 +169,8 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 	@Autowired
     private CuntaoNewBailService newBailService;
 	
+	@Autowired
+	private TestUserService testUserService;
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public void applySettle(PartnerInstanceDto partnerInstanceDto) {
@@ -287,7 +288,10 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
 		PagedResultModel<CuntaoBailDetailReturnDto> result = newBailService.getBailDetail(queryDto);
 		if(result != null && result.getResult()!= null && result.isSuccess() && CollectionUtils.isNotEmpty(result.getResult().getCuntaoBailDetailDtos())){
-			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"系统检测到该村小二还有铺货保证金没有解冻，请告知村小二完成保证金解冻再申请退出");
+			//如果不在停业白名单中就不让退出
+			if(!testUserService.isTestUser(partnerStationRel.getTaobaoUserId(), "closeWhiteList", true)){
+				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"系统检测到该村小二还有铺货保证金没有解冻，请告知村小二完成保证金解冻再申请退出");
+			}
 		}
 		//如果是从装修中停业，则需要判断村点是否退出了装修
 		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {

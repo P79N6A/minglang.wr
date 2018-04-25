@@ -93,6 +93,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		storeDto.setStoreStatus(StoreStatus.valueOf(cuntaoStore.getStatus()));
 		storeDto.setStatus(cuntaoStore.getStatus());
 		if(partner !=null){
+			storeDto.setTaobaoNick(partner.getTaobaoNick());
 			storeDto.setMobile(partner.getMobile());
 			storeDto.setPartnerName(partner.getName());
 		}
@@ -265,6 +266,22 @@ public class StoreReadBOImpl implements StoreReadBO {
 		List<StoreDto> stores = Lists.newArrayList();
 		CuntaoStoreExample example = new CuntaoStoreExample();
 		example.createCriteria().andShareStoreIdIn(sharedStoreIds).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
+		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
+		for(CuntaoStore store :cuntaoStores){
+			Station station = stationBO.getStationById(store.getStationId());
+			StationDto stationDto = StationConverter.toStationDto(station);
+			Partner partner = partnerBO.getNormalPartnerByTaobaoUserId(store.getTaobaoUserId());
+			StoreDto storeDto = toStoreDto(station, stationDto, store,partner);
+			stores.add(storeDto);
+		}
+		return stores;
+	}
+
+	@Override
+	public List<StoreDto> getStoreBySellerShareStoreIds(List<Long> sellerShareStoreId) {
+		List<StoreDto> stores = Lists.newArrayList();
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andSellerShareStoreIdIn(sellerShareStoreId).andIsDeletedEqualTo("n").andStatusEqualTo(StoreStatus.NORMAL.getStatus());
 		List<CuntaoStore> cuntaoStores = cuntaoStoreMapper.selectByExample(example);
 		for(CuntaoStore store :cuntaoStores){
 			Station station = stationBO.getStationById(store.getStationId());

@@ -36,5 +36,9 @@ public interface CuntaoQualificationService {
     
     public Qualification querEnterpriceC2BQualification(Long taobaoUserId);
     
+
     public Qualification queryLocalQualification(Long taobaoUserId);
+
+    List<Qualification> queryHistoryQualification(Long taobaoUserId);
+
 }

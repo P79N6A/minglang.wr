@@ -206,7 +206,7 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public Integer getBit() {
 		return bit;
-	}
+	}  
 
 	public void setBit(Integer bit) {
 		this.bit = bit;

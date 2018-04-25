@@ -64,22 +64,28 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long addVendorEmployee(Long vendorId, CuntaoEmployeeDto employeeDto, CuntaoEmployeeIdentifier identifier) {
-		CuntaoEmployeeExample example = new CuntaoEmployeeExample();
-		example.createCriteria().andTaobaoNickEqualTo(employeeDto.getTaobaoNick()).andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIsDeletedEqualTo("n");
-		CuntaoEmployee	employee = new CuntaoEmployee();
-		employee.setCreator(employeeDto.getOperator());
-		employee.setGmtCreate(new Date());
-		employee.setModifier(employeeDto.getOperator());
-		employee.setGmtModified(new Date());
-		employee.setMobile(employeeDto.getMobile());
-		employee.setIsDeleted("n");
-		employee.setName(employeeDto.getName());
-		employee.setTaobaoNick(employeeDto.getTaobaoNick());
-		employee.setTaobaoUserId(employeeDto.getTaobaoUserId());
-		employee.setType(CuntaoEmployeeType.vendor.name());
-		cuntaoEmployeeMapper.insertSelective(employee);
-		
-		Long employeeId = employee.getId();
+		//CuntaoEmployeeExample example = new CuntaoEmployeeExample();
+		//example.createCriteria().andTaobaoNickEqualTo(employeeDto.getTaobaoNick()).andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIsDeletedEqualTo("n");
+		Long employeeId = null;
+		CuntaoEmployee employee=null;
+		if(employeeDto.getId() == null){
+			employee = new CuntaoEmployee();
+			employee.setCreator(employeeDto.getOperator());
+			employee.setGmtCreate(new Date());
+			employee.setModifier(employeeDto.getOperator());
+			employee.setGmtModified(new Date());
+			employee.setMobile(employeeDto.getMobile());
+			employee.setIsDeleted("n");
+			employee.setName(employeeDto.getName());
+			employee.setTaobaoNick(employeeDto.getTaobaoNick());
+			employee.setTaobaoUserId(employeeDto.getTaobaoUserId());
+			employee.setType(CuntaoEmployeeType.vendor.name());
+			cuntaoEmployeeMapper.insertSelective(employee);
+			employeeId = employee.getId();
+		}else{
+			employeeId = employeeDto.getId();
+			employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
+		}
 		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 		cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
 		cuntaoVendorEmployee.setGmtCreate(new Date());
