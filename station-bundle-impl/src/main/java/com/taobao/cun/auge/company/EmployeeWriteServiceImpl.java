@@ -2,7 +2,6 @@ package com.taobao.cun.auge.company;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,8 +68,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	@Autowired
 	private CuntaoStoreMapper cuntaoStoreMapper;
 	
-	@Autowired
-	private EmployeeReadService employeeReadService;
 	@Override
 	
 	public Result<Long> addVendorEmployee(Long vendorId,CuntaoEmployeeDto employeeDto,CuntaoEmployeeIdentifier identifier) {
@@ -99,11 +96,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 			
 			errorInfo =  checkPromotedType(employeeUserDOresult.getModule().getPromotedType(),"员工淘宝账号绑定支付宝未做个人实名认证");
-			if(errorInfo != null){
-				return Result.of(errorInfo);
-			}
-			
-			errorInfo = checkTaobaoNickExists(vendorId,employeeDto.getTaobaoNick(),CuntaoEmployeeType.vendor.name(),identifier,"员工淘宝账号已存在");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
@@ -370,10 +362,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			return Result.of(errorInfo);
 		}
 		
-		errorInfo = checkEmployeeExists(vendorId,employeeId,CuntaoEmployeeType.vendor.name(),identifier,"员工已存在");
-		if(errorInfo != null){
-			return Result.of(errorInfo);
-		}
 		try {
 			return Result.of(employeeWriteBO.addVendorEmployeeByEmployeeId(vendorId,employeeId,identifier));
 		} catch (Exception e) {
@@ -383,18 +371,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private ErrorInfo checkEmployeeExists(Long vendorId,Long employeeId,String type,CuntaoEmployeeIdentifier identifier,String errorMessage){
-		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId).andTypeEqualTo(type).andIdentifierEqualTo(identifier.name());
-		List<CuntaoEmployeeRel> cuntaoCompanyEmployees = cuntaoEmployeeRelMapper.selectByExample(example);
-		if(cuntaoCompanyEmployees != null  && !cuntaoCompanyEmployees.isEmpty()){
-			List<Long>  employeeIds = cuntaoCompanyEmployees.stream().map(employee -> employee.getEmployeeId()).collect(Collectors.toList());
-			if(employeeIds.contains(employeeId)){
-				return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
-			}
-		}
-		return null;
-	}
+	
 
 
 

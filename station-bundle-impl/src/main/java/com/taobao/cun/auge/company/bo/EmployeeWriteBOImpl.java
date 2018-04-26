@@ -29,6 +29,8 @@ import com.taobao.cun.endor.base.dto.UserUpdateDto;
 import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,39 +88,53 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 			employeeId = employeeDto.getId();
 			employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
 		}
-		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
-		cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
-		cuntaoVendorEmployee.setGmtCreate(new Date());
-		cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
-		cuntaoVendorEmployee.setGmtModified(new Date());
-		cuntaoVendorEmployee.setIsDeleted("n");
-		cuntaoVendorEmployee.setOwnerId(vendorId);
-		cuntaoVendorEmployee.setEmployeeId(employeeId);
-		cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-		cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
-		cuntaoVendorEmployee.setIdentifier(identifier.name());
-		cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
-		
-		createVendorEndorUser(vendorId,employee,identifier);
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId)
+		.andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIdentifierEqualTo(identifier.name())
+		.andEmployeeIdEqualTo(employeeId);
+		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(rels)){
+			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
+			cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
+			cuntaoVendorEmployee.setGmtCreate(new Date());
+			cuntaoVendorEmployee.setModifier(employeeDto.getOperator());
+			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setIsDeleted("n");
+			cuntaoVendorEmployee.setOwnerId(vendorId);
+			cuntaoVendorEmployee.setEmployeeId(employeeId);
+			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
+			cuntaoVendorEmployee.setIdentifier(identifier.name());
+			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
+			createVendorEndorUser(vendorId,employee,identifier);
+		}
 		return employeeId;
 	}
 
 	public Long addVendorEmployee(Long vendorId, CuntaoEmployee employee, CuntaoEmployeeIdentifier identifier) {
 		Long employeeId = employee.getId();
-		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
-		cuntaoVendorEmployee.setCreator(employee.getCreator());
-		cuntaoVendorEmployee.setGmtCreate(new Date());
-		cuntaoVendorEmployee.setModifier(employee.getModifier());
-		cuntaoVendorEmployee.setGmtModified(new Date());
-		cuntaoVendorEmployee.setIsDeleted("n");
-		cuntaoVendorEmployee.setOwnerId(vendorId);
-		cuntaoVendorEmployee.setEmployeeId(employeeId);
-		cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-		cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
-		cuntaoVendorEmployee.setIdentifier(identifier.name());
-		cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(vendorId)
+		.andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIdentifierEqualTo(identifier.name())
+		.andEmployeeIdEqualTo(employeeId);
+		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(rels)){
+			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
+			cuntaoVendorEmployee.setCreator(employee.getCreator());
+			cuntaoVendorEmployee.setGmtCreate(new Date());
+			cuntaoVendorEmployee.setModifier(employee.getModifier());
+			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setIsDeleted("n");
+			cuntaoVendorEmployee.setOwnerId(vendorId);
+			cuntaoVendorEmployee.setEmployeeId(employeeId);
+			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeType.vendor.name());
+			cuntaoVendorEmployee.setIdentifier(identifier.name());
+			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
+			
+			createVendorEndorUser(vendorId,employee,identifier);
+		}
 		
-		createVendorEndorUser(vendorId,employee,identifier);
 		return employeeId;
 	}
 
@@ -230,20 +246,27 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 			employeeId = storeEmployee.getId();
 			employee = cuntaoEmployeeMapper.selectByPrimaryKey(employeeId);
 		}
-		CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
-		cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
-		cuntaoVendorEmployee.setGmtCreate(new Date());
-		cuntaoVendorEmployee.setModifier(storeEmployee.getOperator());
-		cuntaoVendorEmployee.setGmtModified(new Date());
-		cuntaoVendorEmployee.setIsDeleted("n");
-		cuntaoVendorEmployee.setOwnerId(stationId);
-		cuntaoVendorEmployee.setEmployeeId(employeeId);
-		cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
-		cuntaoVendorEmployee.setType(CuntaoEmployeeType.store.name());
-		cuntaoVendorEmployee.setIdentifier(identifier.name());
-		cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
-		
-		createStoreEndorUser(stationId,employee,identifier);
+		CuntaoEmployeeRelExample example = new CuntaoEmployeeRelExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andOwnerIdEqualTo(stationId)
+		.andTypeEqualTo(CuntaoEmployeeType.store.name()).andIdentifierEqualTo(identifier.name())
+		.andEmployeeIdEqualTo(employeeId);
+		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(rels)){
+			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
+			cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
+			cuntaoVendorEmployee.setGmtCreate(new Date());
+			cuntaoVendorEmployee.setModifier(storeEmployee.getOperator());
+			cuntaoVendorEmployee.setGmtModified(new Date());
+			cuntaoVendorEmployee.setIsDeleted("n");
+			cuntaoVendorEmployee.setOwnerId(stationId);
+			cuntaoVendorEmployee.setEmployeeId(employeeId);
+			cuntaoVendorEmployee.setState(CuntaoVendorEmployeeState.SERVICING.name());
+			cuntaoVendorEmployee.setType(CuntaoEmployeeType.store.name());
+			cuntaoVendorEmployee.setIdentifier(identifier.name());
+			cuntaoEmployeeRelMapper.insertSelective(cuntaoVendorEmployee);
+			
+			createStoreEndorUser(stationId,employee,identifier);
+		}
 		return employeeId;
 	}
 
