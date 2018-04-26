@@ -21,6 +21,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistory;
 import com.taobao.cun.auge.dal.domain.CuntaoQualificationHistoryExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationHistoryMapper;
 import com.taobao.cun.auge.dal.mapper.CuntaoQualificationMapper;
+import com.taobao.cun.auge.qualification.service.QualificationBuilder;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
 import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoQualificationBO;
@@ -139,30 +140,13 @@ public class CuntaoQualificationBOImpl implements CuntaoQualificationBO {
 
 	@Override
 	public List<CuntaoQualification> queryHistoriesByTaobaoUserId(Long taobaoUserId) {
-		CuntaoQualificationHistoryExample example = new CuntaoQualificationHistoryExample();
-		example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(taobaoUserId);
-		List<CuntaoQualificationHistory> histories = cuntaoQualificationHistoryMapper.selectByExample(example);
-		if(histories !=null){
-			List<CuntaoQualification>	qualis = histories.stream().map(history -> {
-				CuntaoQualification record = new CuntaoQualification();
-				record.setTaobaoUserId(history.getTaobaoUserId());
-				record.setCreator("system");
-				record.setGmtCreate(new Date());
-				record.setGmtModified(new Date());
-				record.setModifier("system");
-				record.setIsDeleted("n");
-				record.setCompanyName(history.getCompanyName());
-				record.setBizScope(history.getBizScope());
-				record.setLegalPerson(history.getLegalPerson());
-				record.setQualiNo(history.getQualiNo());
-				record.setQualiPic(history.getQualiPic());
-				record.setRegsiterAddress(history.getRegsiterAddress());
-				return record;
-			}).collect(Collectors.toList());
-			return qualis;
-		}
-		
-		return Lists.newArrayList();
+		CuntaoQualificationExample example = new CuntaoQualificationExample();
+		example.setOrderByClause("id desc");
+		example.createCriteria().andIsDeletedEqualTo("y")
+		.andEnterpriceTypeIn(Lists.newArrayList(QualificationBuilder.BIG_BUSINESS,QualificationBuilder.SMALL_BUSINESS))
+		.andTaobaoUserIdEqualTo(taobaoUserId);
+		List<CuntaoQualification> qualifications = cuntaoQualificationMapper.selectByExample(example);
+		return qualifications;
 	}
 
 }
