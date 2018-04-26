@@ -59,8 +59,10 @@ import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
+import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
 import com.taobao.cun.recruit.partner.dto.ServiceAbilityDecisionAuditDto;
+import com.taobao.cun.recruit.partner.dto.ServiceAbilityDecisionDto;
 import com.taobao.cun.recruit.partner.enums.AddressInfoDecisionStatusEnum;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.enums.ServiceAbilityDecisionStatusEnum;
@@ -289,6 +291,20 @@ public class ProcessProcessor {
                 sdd.setId(businessId);
                 sdd.copyOperatorDto(OperatorDto.defaultOperator());
                 stationDecorateService.updateDecorationDecision(sdd);
+            }else if(ProcessBusinessEnum.addressInfoDecision.getCode().equals(businessCode)){
+                String auditOpinion = ob.getString("taskRemark");
+                AddressInfoDecisionDto sdd = new AddressInfoDecisionDto();
+                sdd.setMemo(auditOpinion);
+                sdd.setId(businessId);
+                sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+                addressInfoDecisionService.updateAddressInfoMemo(sdd);
+            }else if(ProcessBusinessEnum.serviceAbilityDecision.getCode().equals(businessCode)){
+                String auditOpinion = ob.getString("taskRemark");
+                ServiceAbilityDecisionDto sdd = new ServiceAbilityDecisionDto();
+                sdd.setMemo(auditOpinion);
+                sdd.setId(businessId);
+                sdd.copyOperatorDto(com.taobao.cun.common.operator.OperatorDto.defaultOperator());
+                serviceAbilityDecisionService.updateServiceAbilityMemo(sdd);
             }
 		} else if (ProcessMsgTypeEnum.PROC_INST_START.getCode().equals(msgType)) {
 			if (ProcessBusinessEnum.partnerInstanceLevelAudit.getCode().equals(businessCode)) {
