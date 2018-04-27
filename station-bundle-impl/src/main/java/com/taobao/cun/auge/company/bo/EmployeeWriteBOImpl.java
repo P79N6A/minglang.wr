@@ -93,7 +93,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		.andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIdentifierEqualTo(identifier.name())
 		.andEmployeeIdEqualTo(employeeId);
 		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
-		if(CollectionUtils.isNotEmpty(rels)){
+		if(!CollectionUtils.isNotEmpty(rels)){
 			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 			cuntaoVendorEmployee.setCreator(employeeDto.getOperator());
 			cuntaoVendorEmployee.setGmtCreate(new Date());
@@ -118,7 +118,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		.andTypeEqualTo(CuntaoEmployeeType.vendor.name()).andIdentifierEqualTo(identifier.name())
 		.andEmployeeIdEqualTo(employeeId);
 		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
-		if(CollectionUtils.isNotEmpty(rels)){
+		if(!CollectionUtils.isNotEmpty(rels)){
 			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 			cuntaoVendorEmployee.setCreator(employee.getCreator());
 			cuntaoVendorEmployee.setGmtCreate(new Date());
@@ -251,7 +251,7 @@ public class EmployeeWriteBOImpl implements EmployeeWriteBO{
 		.andTypeEqualTo(CuntaoEmployeeType.store.name()).andIdentifierEqualTo(identifier.name())
 		.andEmployeeIdEqualTo(employeeId);
 		List<CuntaoEmployeeRel> rels = cuntaoEmployeeRelMapper.selectByExample(example);
-		if(CollectionUtils.isNotEmpty(rels)){
+		if(!CollectionUtils.isNotEmpty(rels)){
 			CuntaoEmployeeRel cuntaoVendorEmployee = new CuntaoEmployeeRel();
 			cuntaoVendorEmployee.setCreator(storeEmployee.getOperator());
 			cuntaoVendorEmployee.setGmtCreate(new Date());
