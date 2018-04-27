@@ -7,6 +7,7 @@ import java.io.Serializable;
  *
  */
 import java.util.Date;
+import java.util.List;
 
 import com.taobao.cun.auge.common.PageQuery;
 public class InspectionPagedCondition  extends PageQuery implements Serializable{
@@ -30,6 +31,11 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 	 * 服务站入驻状态
 	 */
 	private String state;
+	
+	/**
+	 * 服务站入驻状态
+	 */
+	private List<String> states;
 	
 	/**
 	 * 村点名称
@@ -119,5 +125,13 @@ public class InspectionPagedCondition  extends PageQuery implements Serializable
 
 	public void setServiceBeginDate(Date serviceBeginDate) {
 		this.serviceBeginDate = serviceBeginDate;
+	}
+
+	public List<String> getStates() {
+		return states;
+	}
+
+	public void setStates(List<String> states) {
+		this.states = states;
 	}
 }

@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.company;
 
+import java.util.List;
+
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
@@ -30,6 +32,14 @@ public interface EmployeeWriteService{
 	Result<Long> addVendorEmployeeByEmployeeId(Long vendorId,Long employeeId,CuntaoEmployeeIdentifier identifier);
 	
 	
+	/**
+	 *  新增公司员工 ,多身份
+	 * @param vendorId
+	 * @param employeeDto
+	 * @param identifiers
+	 * @return
+	 */
+	public Result<Long> addVendorEmployeeWithIdentifers(Long vendorId,CuntaoEmployeeDto employeeDto,List<CuntaoEmployeeIdentifier> identifiers);
 	/**
 	 * 更新员工信息
 	 * @param employee

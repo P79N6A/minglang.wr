@@ -360,4 +360,10 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 		}
 			return true;
 	}
+
+	@Override
+	public List<Qualification> queryHistoryQualification(Long taobaoUserId) {
+		List<CuntaoQualification> qualis = cuntaoQualificationBO.queryHistoriesByTaobaoUserId(taobaoUserId);
+		return qualis.stream().map(q -> buildQulification(q)).collect(Collectors.toList());
+	}
 }

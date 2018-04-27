@@ -55,7 +55,7 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 	 */
 	
 	/**
-	 * 创建生命周期极端DSL
+	 * 创建生命周期极业务流程
 	 * @param context
 	 * @return
 	 */
