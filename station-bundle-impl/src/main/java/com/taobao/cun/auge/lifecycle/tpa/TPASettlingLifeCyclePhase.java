@@ -30,7 +30,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 淘帮手入驻中
- * @author zhenhuan.zhangzh
  *
  */
 @Component

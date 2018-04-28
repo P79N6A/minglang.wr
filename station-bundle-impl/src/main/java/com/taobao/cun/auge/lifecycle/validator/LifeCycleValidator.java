@@ -22,11 +22,7 @@ import com.taobao.cun.auge.station.validate.StationValidator;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
+
 @Component
 public class LifeCycleValidator {
 	@Autowired
@@ -40,7 +36,8 @@ public class LifeCycleValidator {
 	
 	@Autowired
 	private KFCServiceConfig kfcServiceConfig;
-	
+
+
 	public void validateSettling(PartnerInstanceDto partnerInstanceDto) throws AugeBusinessException {
 		ValidateUtils.validateParam(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getStationDto());

@@ -39,11 +39,7 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
+
 public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	@Autowired
 	private StationBO stationBO;

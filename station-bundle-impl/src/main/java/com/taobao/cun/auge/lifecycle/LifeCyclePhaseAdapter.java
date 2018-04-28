@@ -3,11 +3,6 @@ package com.taobao.cun.auge.lifecycle;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
 public abstract class LifeCyclePhaseAdapter implements LifeCyclePhase {
 
 	private LifeCyclePhaseDSL dsl;

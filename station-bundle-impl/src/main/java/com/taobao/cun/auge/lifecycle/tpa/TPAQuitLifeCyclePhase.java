@@ -48,7 +48,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 淘帮手已退出阶段组件
- * @author zhenhuan.zhangzh
  *
  */
 @Component

@@ -23,7 +23,7 @@
         </property>
     </bean>
     
-    <!-- 镇小二状态机配置 -->
+    <!-- 镇小二状态机配置 已废弃 -->
     <bean id="TPTStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
         <property name="path" value="statemachine/statemachine-tpt.xml"/>
         <property name="listener">
@@ -31,7 +31,7 @@
         </property>
     </bean>
     
-      <!-- 门店状态机配置 -->
+      <!-- 镇体验店状态机配置 -->
     <bean id="TPSStateMachine" class="com.alibaba.shared.xfsm.support.spring.factory.SCXMLSpringFactoryBean">
         <property name="path" value="statemachine/statemachine-tps.xml"/>
         <property name="listener">

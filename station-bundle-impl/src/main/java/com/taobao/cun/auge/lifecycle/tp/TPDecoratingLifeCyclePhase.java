@@ -70,7 +70,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 村小二装修中阶段组件
- * @author zhenhuan.zhangzh
  *
  */
 @Component

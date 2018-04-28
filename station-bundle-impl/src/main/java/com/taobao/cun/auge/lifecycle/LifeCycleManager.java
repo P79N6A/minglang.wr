@@ -1,10 +1,5 @@
 package com.taobao.cun.auge.lifecycle;
 
-/**
- * 人村生命周期管理接口，结合状态机使用
- * @author zhenhuan.zhangzh
- *
- */
 public interface LifeCycleManager {
 
 	/**

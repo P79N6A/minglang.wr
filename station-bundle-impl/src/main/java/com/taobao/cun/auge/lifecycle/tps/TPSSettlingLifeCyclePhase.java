@@ -34,7 +34,6 @@ import org.springframework.util.Assert;
 
 /**
  * 村小二入驻中阶段组件
- * @author zhenhuan.zhangzh
  *
  */
 @Component

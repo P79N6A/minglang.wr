@@ -1,10 +1,6 @@
 package com.taobao.cun.auge.lifecycle;
 
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
+
 public class PhaseKey {
 
 	private static final String SPLIT = "_";

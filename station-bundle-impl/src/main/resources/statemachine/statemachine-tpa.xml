@@ -8,7 +8,7 @@
 
     <state id="NEW">
         <onentry>
-            <log expr="'准备入驻'" />
+            <log expr="'初始状态'" />
         </onentry>
         <transition event="SETTLING_EVENT" target="SETTLING">
         </transition>
