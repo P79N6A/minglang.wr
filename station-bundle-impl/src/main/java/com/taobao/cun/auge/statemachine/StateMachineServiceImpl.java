@@ -19,37 +19,37 @@ import org.springframework.stereotype.Service;
 @HSFProvider(serviceInterface = StateMachineService.class)
 public class StateMachineServiceImpl implements StateMachineService {
 
-	Timer timer = MetricManager.getTimer("stateMachine", MetricName.build("stateMachine.create").level(MetricLevel.CRITICAL));
+    Timer timer = MetricManager.getTimer("stateMachine", MetricName.build("stateMachine.create").level(MetricLevel.CRITICAL));
 
-	@Autowired
-	private  XFSMEngine xfsm;
-	
-	@Override
-	public void executePhase(LifeCyclePhaseEvent phaseEvent) {
-		  RequestContext ctx = createRequestContext(phaseEvent);
-		  Timer.Context context = timer.time();
-	        try {
-				xfsm.go(ctx);
-			} catch (AugeBusinessException e){
-				throw e;
-			}catch(Exception e) {
-				throw new AugeSystemException("executeLifeCyclePhase error!",e);
-			}finally{
-				context.stop();
-			}
-	}
+    @Autowired
+    private XFSMEngine xfsm;
 
-	private RequestContext createRequestContext(LifeCyclePhaseEvent phaseEvent) {
-		 RequestContext ctx = new RequestContext(phaseEvent.getStateMachine());
-		  ctx.setContext( phaseEvent.getExtensionInfo());
-		 if(phaseEvent.getCurrentState()!=null){
-			ctx.setCurrentState(phaseEvent.getCurrentState());
-		  }
-		  ctx.set("event", phaseEvent.getEvent().getEvent());
-		  ctx.set("payload", phaseEvent.getPayload());
-	      ctx.events(new XFSMEvent(phaseEvent.getEvent().getEvent(),phaseEvent.getPayload()));
-	    
-		return ctx;
-	}
+    @Override
+    public void executePhase(LifeCyclePhaseEvent phaseEvent) {
+        RequestContext ctx = createRequestContext(phaseEvent);
+        Timer.Context context = timer.time();
+        try {
+            xfsm.go(ctx);
+        } catch (AugeBusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AugeSystemException("executeLifeCyclePhase error!", e);
+        } finally {
+            context.stop();
+        }
+    }
+
+    private RequestContext createRequestContext(LifeCyclePhaseEvent phaseEvent) {
+        RequestContext ctx = new RequestContext(phaseEvent.getStateMachine());
+        ctx.setContext(phaseEvent.getExtensionInfo());
+        if (phaseEvent.getCurrentState() != null) {
+            ctx.setCurrentState(phaseEvent.getCurrentState());
+        }
+        ctx.set("event", phaseEvent.getEvent().getEvent());
+        ctx.set("payload", phaseEvent.getPayload());
+        ctx.events(new XFSMEvent(phaseEvent.getEvent().getEvent(), phaseEvent.getPayload()));
+
+        return ctx;
+    }
 
 }

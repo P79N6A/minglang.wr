@@ -10,16 +10,10 @@ import io.advantageous.reakt.promise.Promises;
 
 import static io.advantageous.reakt.promise.Promises.invokablePromise;
 
-/**
- * 生命周期DSL定义，通过DSL来编排业务流程
- * @author zhenhuan.zhangzh
- *
- */
+
 public class LifeCyclePhaseDSL {
 
 	 private List<Consumer<LifeCyclePhaseContext>> consumers= Lists.newArrayList();
-	 
-	 
 	 
 	 Promise<LifeCyclePhaseContext> createPromise(LifeCyclePhaseContext context) {
          return invokablePromise(promise -> {
@@ -30,8 +24,7 @@ public class LifeCyclePhaseDSL {
              }
          });
      }
-	 
-	 
+
 	public LifeCyclePhaseDSL then(Consumer<LifeCyclePhaseContext> consumer){
 		consumers.add(consumer);
 		return this;

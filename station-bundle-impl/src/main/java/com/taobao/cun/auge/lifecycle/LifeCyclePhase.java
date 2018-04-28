@@ -9,7 +9,6 @@ package com.taobao.cun.auge.lifecycle;
  *  新增或修扩展业务
  *  发送状态变更事件
  *  同步老模型
- * @author zhenhuan.zhangzh
  *
  */
 public interface LifeCyclePhase extends LifeCyclePhaseComponent{

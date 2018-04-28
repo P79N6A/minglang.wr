@@ -4,11 +4,11 @@
        xsi:schemaLocation="http://www.w3.org/2005/07/scxml http://www.w3.org/2011/04/SCXML/scxml.xsd"
        version="1.0" initial="NEW">
 
-    <!--村小二入驻 流程 -->
+    <!--镇店入驻 流程 已废弃 -->
 
     <state id="NEW">
         <onentry>
-            <log expr="'准备入驻'" />
+            <log expr="'初始状态'" />
         </onentry>
         <transition event="SETTLING_EVENT" target="SETTLING">
         </transition>
@@ -30,7 +30,7 @@
             <cs:stateMachineComponent method="decorating"/> 
         </onentry>
         <transition event="SERVICING_EVENT" target="SERVICING">
-            <log expr="'DECORATING-》SERVCIING'" />
+            <log expr="'DECORATING-》SERVICING'" />
         </transition>
          <transition event="CLOSING_EVENT" target="CLOSING">
             <log expr="'DECORATING-》CLOSING'" />
@@ -43,7 +43,7 @@
              <cs:stateMachineComponent method="servicing"/> 
         </onentry>
         <transition event="CLOSING_EVENT" target="CLOSING">
-            <log expr="'SERVCIING-》CLOSING'" />
+            <log expr="'SERVICING-》CLOSING'" />
         </transition>
     </state>
 

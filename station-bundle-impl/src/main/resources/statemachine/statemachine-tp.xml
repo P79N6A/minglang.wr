@@ -8,7 +8,7 @@
 
     <state id="NEW">
         <onentry>
-            <log expr="'准备入驻'" />
+            <log expr="'初始状态'"/>
         </onentry>
         <transition event="SETTLING_EVENT" target="SETTLING">
         </transition>
@@ -16,44 +16,44 @@
 
     <state id="SETTLING">
         <onentry>
-            <log expr="'入驻中'" />
-            <cs:stateMachineComponent method="settling"/> 
+            <log expr="'入驻中'"/>
+            <cs:stateMachineComponent method="settling"/>
         </onentry>
         <transition event="DECORATING_EVENT" target="DECORATING">
-            <log expr="'SETTLING-》DECORATING'" />
+            <log expr="'SETTLING-》DECORATING'"/>
         </transition>
     </state>
 
     <state id="DECORATING">
         <onentry>
-            <log expr="'装修中'" />
-            <cs:stateMachineComponent method="decorating"/> 
+            <log expr="'装修中'"/>
+            <cs:stateMachineComponent method="decorating"/>
         </onentry>
         <transition event="SERVICING_EVENT" target="SERVICING">
-            <log expr="'DECORATING-》SERVCIING'" />
+            <log expr="'DECORATING-》SERVCIING'"/>
         </transition>
-         <transition event="CLOSING_EVENT" target="CLOSING">
-            <log expr="'DECORATING-》CLOSING'" />
+        <transition event="CLOSING_EVENT" target="CLOSING">
+            <log expr="'DECORATING-》CLOSING'"/>
         </transition>
     </state>
 
     <state id="SERVICING">
         <onentry>
-            <log expr="'服务中'" />
-             <cs:stateMachineComponent method="servicing"/> 
+            <log expr="'服务中'"/>
+            <cs:stateMachineComponent method="servicing"/>
         </onentry>
         <transition event="CLOSING_EVENT" target="CLOSING">
-            <log expr="'SERVCIING-》CLOSING'" />
+            <log expr="'SERVICING-》CLOSING'"/>
         </transition>
         <transition event="DECORATING_EVENT" target="DECORATING">
-            <log expr="'SERVCIING-》DECORATING'" />
+            <log expr="'SERVICING-》DECORATING'"/>
         </transition>
     </state>
 
     <state id="CLOSING">
         <onentry>
-            <log expr="'停业中'" />
-            <cs:stateMachineComponent method="closing"/> 
+            <log expr="'停业中'"/>
+            <cs:stateMachineComponent method="closing"/>
         </onentry>
         <transition event="CLOSED_EVENT" target="CLOSED"/>
         <transition event="SERVICING_EVENT" target="SERVICING"/>
@@ -62,29 +62,29 @@
 
     <state id="CLOSED">
         <onentry>
-            <log expr="'已停业'" />
-            <cs:stateMachineComponent method="closed"/> 
+            <log expr="'已停业'"/>
+            <cs:stateMachineComponent method="closed"/>
         </onentry>
         <transition event="QUITING_EVENT" target="QUITING"/>
         <transition event="SERVICING_EVENT" target="SERVICING"/>
     </state>
-    
-   <state id="QUITING">
+
+    <state id="QUITING">
         <onentry>
-            <log expr="'退出中'" />
-            <cs:stateMachineComponent method="quiting"/> 
+            <log expr="'退出中'"/>
+            <cs:stateMachineComponent method="quiting"/>
         </onentry>
         <transition event="QUIT_EVENT" target="QUIT"/>
         <transition event="CLOSED_EVENT" target="CLOSED"/>
     </state>
-     <state id="QUIT">
+    <state id="QUIT">
         <onentry>
-            <log expr="'已退出'" />
-            <cs:stateMachineComponent method="quit"/> 
+            <log expr="'已退出'"/>
+            <cs:stateMachineComponent method="quit"/>
         </onentry>
         <transition target="end"/>
     </state>
-    <final id="end" />
+    <final id="end"/>
 
 </scxml>
 

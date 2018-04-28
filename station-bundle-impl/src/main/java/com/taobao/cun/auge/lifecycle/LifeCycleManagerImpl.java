@@ -20,11 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
 @Component
 public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 

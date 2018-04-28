@@ -9,11 +9,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import org.springframework.core.annotation.AnnotationUtils;
 
-/***
- * 运行期元数据采集类
- * @author zhenhuan.zhangzh
- *
- */
+
 public class RuntimeMetaInfoCollector {
 
 	
