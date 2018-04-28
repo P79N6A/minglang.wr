@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * 镇小二退出中阶段组件
- * @author zhenhuan.zhangzh
  *
  */
 @Component
