@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 @Import(StateMachineConfiguration.class)
 @Component
 public @interface StateMachineComponent {
-
     String actionKey();
-    
     String[] stateMachine();
 }
