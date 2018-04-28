@@ -20,7 +20,7 @@ public class StateMachineComponentImpl {
         LifeCyclePhaseContext context = new LifeCyclePhaseContext();
         context.setPartnerInstance(partnerInstanceDto);
         context.setEvent(ctx.get("event"));
-        ;
+
         context.setSourceState(partnerInstanceDto.getState() != null ? partnerInstanceDto.getState().getCode() : "NEW");
         context.setTargetState(StateMachineEvent.valueOfEvent(context.getEvent()).getState());
         context.setUserType(partnerInstanceDto.getType().getCode());
