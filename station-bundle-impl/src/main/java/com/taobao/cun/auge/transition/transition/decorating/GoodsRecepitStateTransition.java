@@ -35,7 +35,7 @@ public class GoodsRecepitStateTransition extends SubStateTransitionProcessor{
 	public BiPredicate<Map<String, Serializable>,Map<String, Serializable>> getStatePredicate() {
 		return (row,modifiedRow) -> {
 			if(modifiedRow != null){
-				return modifiedRow.containsKey("goods_recepit");
+				return modifiedRow.containsKey("goods_receipt");
 			}else{
 				return "DECORATING".equals(row.get("business_type"));
 			}
@@ -51,8 +51,8 @@ public class GoodsRecepitStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState("NEW");
 				transition.setParentState("DECORATING");
 			}else if(tuple.isUpdate()){
-				String newSubState = (String)tuple.getNewValue("goods_recepit");
-				String oldSubState = (String)tuple.getValue("goods_recepit");
+				String newSubState = (String)tuple.getNewValue("goods_receipt");
+				String oldSubState = (String)tuple.getValue("goods_receipt");
 				transition.setNewState(newSubState);
 				transition.setOldState(oldSubState);
 				transition.setParentState("DECORATING");
