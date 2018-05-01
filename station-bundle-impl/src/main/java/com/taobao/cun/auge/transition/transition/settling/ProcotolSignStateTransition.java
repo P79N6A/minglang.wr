@@ -57,7 +57,7 @@ public class ProcotolSignStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldSubState);
 				transition.setParentState("SETTLING");
 			}
-			transition.setSubBizType("PROTOCOL");
+			transition.setSubBizType("PROTOCOL_SIGN");
 		};
 	}
 

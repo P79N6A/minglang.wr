@@ -58,7 +58,7 @@ public class BondFrozenStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldSubState);
 				transition.setParentState("SETTLING");
 			}
-			transition.setSubBizType("BOND");
+			transition.setSubBizType("BOND_FROZEN");
 		};
 	}
 

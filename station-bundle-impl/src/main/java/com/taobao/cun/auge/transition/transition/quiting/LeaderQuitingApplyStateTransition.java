@@ -45,7 +45,7 @@ public class LeaderQuitingApplyStateTransition extends SubStateTransitionProcess
 				transition.setOldState(oldState);
 			}
 			transition.setParentState("QUITING");
-			transition.setSubBizType("QUIT_AUDIT");
+			transition.setSubBizType("LEADER_QUIT_AUDIT");
 		};
 	}
 

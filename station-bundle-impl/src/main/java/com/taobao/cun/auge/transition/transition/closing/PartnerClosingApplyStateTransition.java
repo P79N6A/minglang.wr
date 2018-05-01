@@ -45,7 +45,7 @@ public class PartnerClosingApplyStateTransition extends SubStateTransitionProces
 				transition.setOldState(oldState);
 			}
 			transition.setParentState("CLOSING");
-			transition.setSubBizType("CLOSE_AUDIT");
+			transition.setSubBizType("LEADER_CLOSE_AUDIT");
 		};
 	}
 

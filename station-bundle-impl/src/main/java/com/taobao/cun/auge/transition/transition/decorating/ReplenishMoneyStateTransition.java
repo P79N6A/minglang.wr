@@ -58,7 +58,7 @@ public class ReplenishMoneyStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldSubState);
 				transition.setParentState("DECORATING");
 			}
-			transition.setSubBizType("replenishMoney");
+			transition.setSubBizType("REPLENISH_MONEY");
 		};
 	}
 

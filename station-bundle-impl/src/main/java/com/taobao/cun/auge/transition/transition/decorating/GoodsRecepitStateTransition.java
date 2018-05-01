@@ -57,7 +57,7 @@ public class GoodsRecepitStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldSubState);
 				transition.setParentState("DECORATING");
 			}
-			transition.setSubBizType("goodsReceipt");
+			transition.setSubBizType("GOODS_RECEIPT");
 		};
 	}
 

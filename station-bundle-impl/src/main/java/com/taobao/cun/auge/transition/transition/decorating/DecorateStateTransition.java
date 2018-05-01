@@ -56,7 +56,7 @@ public class DecorateStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldState);
 			}
 			transition.setParentState("DECORATING");
-			transition.setSubBizType("DECORATE");
+			transition.setSubBizType("STATION_DECORATE");
 		};
 	}
 

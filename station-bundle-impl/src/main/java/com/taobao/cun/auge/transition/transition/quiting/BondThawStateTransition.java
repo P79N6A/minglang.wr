@@ -53,7 +53,7 @@ public class BondThawStateTransition extends SubStateTransitionProcessor{
 				transition.setOldState(oldSubState);
 				transition.setParentState("QUITING");
 			}
-			transition.setSubBizType("BOND");
+			transition.setSubBizType("BOND_THAW");
 		};
 	}
 
