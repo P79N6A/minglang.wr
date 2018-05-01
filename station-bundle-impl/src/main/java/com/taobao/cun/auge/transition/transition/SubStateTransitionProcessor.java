@@ -55,7 +55,6 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 	
 	
 	
-	@Autowired
 	public List<StateTransitionTuple> mapTuple(EventMessage event) {
 		List<StateTransitionTuple> tuples = Lists.newArrayList();
 		if (!isMatched(event.getAction().name(), event.getTableName())) {
