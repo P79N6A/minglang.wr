@@ -163,6 +163,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 		//如果是插入说明是初始状态返回耗时0
 		if(tuple.isInsert()){
 			transition.setSpendTime(0l);
+			return;
 		}else if(tuple.isUpdate()){
 			String oldState = transition.getOldState();
 			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
@@ -174,6 +175,7 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 				Date date = new Date();
 				Long spendTime = date.getTime()-lastTranstion.iterator().next().getChangeTime().getTime();
 				transition.setSpendTime(spendTime/1000);
+				return;
 			}
 			transition.setSpendTime(0l);
 		}
