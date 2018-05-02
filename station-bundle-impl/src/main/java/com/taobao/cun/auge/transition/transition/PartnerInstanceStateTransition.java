@@ -1,6 +1,8 @@
 package com.taobao.cun.auge.transition.transition;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
@@ -9,6 +11,7 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.CuntaoLifecycleTransition;
+import com.taobao.cun.auge.dal.domain.CuntaoLifecycleTransitionExample;
 
 /**
  * 合伙人生命周期主状态变更记录处理器
@@ -58,6 +61,27 @@ public class PartnerInstanceStateTransition extends MainStateTransitionProcessor
 	@Override
 	public Function<StateTransitionTuple, BaseTransitionInfo> getBaseTransitionInfoProvider() {
 		return this.providerByPartnerInstanceIdKey("id");
+	}
+
+	@Override
+	public void calcSpendTime(StateTransitionTuple tuple, CuntaoLifecycleTransition transition) {
+		if(tuple.isInsert()){
+			//如果招募环节最后一个主状态时间作为上一个状态的变更时间
+			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
+			example.setOrderByClause("change_time desc");
+			example.createCriteria().andIsDeletedEqualTo("n").andTaobaoUserIdEqualTo(transition.getTaobaoUserId()).andBizTypeEqualTo("PARTNER_APPLY_LIFECYCLE").andIsMainStateTransitionEqualTo("y");
+			List<CuntaoLifecycleTransition> lastTranstion = cuntaoLifecycleTransitionMapper.selectByExample(example);
+			if(lastTranstion != null && !lastTranstion.isEmpty()){
+				Date date = new Date();
+				Long spendTime = date.getTime()-lastTranstion.iterator().next().getChangeTime().getTime();
+				transition.setSpendTime(spendTime/1000);
+				return;
+			}
+			transition.setSpendTime(0l);
+		}else{
+			super.calcSpendTime(tuple, transition);
+		}
+		
 	}
 
 	
