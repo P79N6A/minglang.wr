@@ -186,6 +186,10 @@ public abstract class MainStateTransitionProcessor implements StateTransitionEve
 			return;
 		}else if(tuple.isUpdate()){
 			String oldState = transition.getOldState();
+			if(StringUtils.isEmpty(oldState)){
+				transition.setSpendTime(0l);
+				return;
+			}
 			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
 			example.setOrderByClause("id desc");
 			example.createCriteria().andIsDeletedEqualTo("n").andBizPrimaryKeyEqualTo(transition.getBizPrimaryKey()).andBizTypeEqualTo(bizType())
