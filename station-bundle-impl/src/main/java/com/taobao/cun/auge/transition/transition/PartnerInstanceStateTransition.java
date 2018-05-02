@@ -6,6 +6,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import org.springframework.stereotype.Component;
+
 import com.taobao.cun.auge.dal.domain.CuntaoLifecycleTransition;
 
 /**
@@ -13,6 +15,7 @@ import com.taobao.cun.auge.dal.domain.CuntaoLifecycleTransition;
  * @author zhenhuan.zhangzh
  *
  */
+@Component
 public class PartnerInstanceStateTransition extends MainStateTransitionProcessor{
 
 	@Override
