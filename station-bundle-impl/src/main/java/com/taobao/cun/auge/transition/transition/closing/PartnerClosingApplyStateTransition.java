@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.CuntaoLifecycleTransition;
@@ -55,7 +56,7 @@ public class PartnerClosingApplyStateTransition extends SubStateTransitionProces
 			if(modifiedRow != null){
 				return "CLOSING".equals(row.get("business_type")) && modifiedRow.containsKey("confirm");
 			}else{
-				return "CLOSING".equals(row.get("business_type")) &&  row.containsKey("confirm");
+				return "CLOSING".equals(row.get("business_type")) &&  StringUtils.isNotEmpty((String)row.get("confirm"));
 			}
 		};
 	}
