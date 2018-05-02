@@ -4,10 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,8 @@ import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.CuntaoLifecycleTransitionMapper;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.recruit.partner.dto.PartnerApplyDto;
+import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 
 /**
  * 子节点状态变更转换器
@@ -36,6 +36,9 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 	
 	@Autowired
 	protected CuntaoLifecycleTransitionMapper cuntaoLifecycleTransitionMapper;
+	
+	@Autowired
+	protected PartnerApplyService partnerApplyService;
 	
 	/**
 	 * 设置基本信息
@@ -163,6 +166,20 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 		};
 	}
 	
+	
+	protected Function<StateTransitionTuple, BaseTransitionInfo> providerByTaobaoUserIdKey(String taobaoUserIdKey) {
+		return (tuple) ->{
+			BaseTransitionInfo baseInfo = new BaseTransitionInfo();
+			Long taobaoUserId = (Long)tuple.getValue(taobaoUserIdKey);
+			PartnerApplyDto partnerApply  = this.partnerApplyService.getPartnerApplyByTaobaoUserId(taobaoUserId);
+			baseInfo.setBizPrimaryKey(partnerApply.getId());
+			baseInfo.setTaobaoUserId(partnerApply.getTaobaoUserId());
+			if(partnerApply.getPartnerType() !=null){
+				baseInfo.setUserType(partnerApply.getPartnerType().toUpperCase());
+			}
+			return baseInfo;
+		};
+	}
 	
 	public void calcSpendTime(StateTransitionTuple tuple,CuntaoLifecycleTransition transition){
 		//如果是插入说明是初始状态返回耗时0
