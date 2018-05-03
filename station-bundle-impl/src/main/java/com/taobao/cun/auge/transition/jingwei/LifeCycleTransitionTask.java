@@ -1,11 +1,11 @@
 package com.taobao.cun.auge.transition.jingwei;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,9 +13,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.middleware.jingwei.client.Client;
 import com.alibaba.middleware.jingwei.client.ClientFactory;
 import com.alibaba.middleware.jingwei.client.custom.EventMessage;
-import com.alibaba.middleware.jingwei.client.custom.InsertEvent;
 import com.alibaba.middleware.jingwei.client.custom.SimpleMessageListener;
-import com.alibaba.middleware.jingwei.client.custom.UpdateEvent;
 import com.taobao.cun.auge.transition.record.LifecycleTransitionRecorder;
 
 @Component
@@ -29,6 +27,7 @@ public class LifeCycleTransitionTask {
 	@Autowired
 	private LifecycleTransitionRecorder lifecycleTransitionRecorder;
 	
+	private static final Logger logger = LoggerFactory.getLogger(LifeCycleTransitionTask.class);
 	@PostConstruct
 	public void start() {
 		client = ClientFactory.create(taskId);
@@ -36,7 +35,12 @@ public class LifeCycleTransitionTask {
             @Override
             public Result onReceiveMessage(List<EventMessage> messages) {
             	for(EventMessage msg : messages){
-            		lifecycleTransitionRecorder.record(msg);
+            		try {
+            			lifecycleTransitionRecorder.record(msg);
+					} catch (Exception e) {
+						logger.error("lifecycleTransitionRecorder error!["+msg.toJsonString()+"]",e);
+					}
+            		
             	}
                 return Result.ACK_AND_NEXT;
             }
