@@ -158,10 +158,12 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 			BaseTransitionInfo baseInfo = new BaseTransitionInfo();
 			Long stationId = (Long)tuple.getValue(stationIdKey);
 			PartnerStationRel partnerInstance = this.partnerInstanceBO.findPartnerInstanceByStationId(stationId);
-			baseInfo.setBizPrimaryKey(partnerInstance.getId());
-			baseInfo.setTaobaoUserId(partnerInstance.getTaobaoUserId());
-			baseInfo.setStationId(partnerInstance.getStationId());
-			baseInfo.setUserType(partnerInstance.getType());
+			if(partnerInstance != null){
+				baseInfo.setBizPrimaryKey(partnerInstance.getId());
+				baseInfo.setTaobaoUserId(partnerInstance.getTaobaoUserId());
+				baseInfo.setUserType(partnerInstance.getType());
+			}
+			baseInfo.setStationId(stationId);
 			return baseInfo;
 		};
 	}
