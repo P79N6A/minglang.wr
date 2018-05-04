@@ -194,6 +194,10 @@ public abstract class SubStateTransitionProcessor implements StateTransitionEven
 				transition.setSpendTime(0l);
 				return;
 			}
+			if(transition.getBizPrimaryKey() == null){
+				transition.setSpendTime(0l);
+				return;
+			}
 			CuntaoLifecycleTransitionExample example = new CuntaoLifecycleTransitionExample();
 			example.setOrderByClause("id desc");
 			example.createCriteria().andIsDeletedEqualTo("n").andBizPrimaryKeyEqualTo(transition.getBizPrimaryKey()).andBizTypeEqualTo(bizType())
