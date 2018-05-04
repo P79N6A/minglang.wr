@@ -34,4 +34,6 @@ public interface StoreWriteBO {
 	public void initStoreEmployees(Long  stationId);
 	
 	public void initGoodSupplyFeature(Long stationId);
+	
+	public Integer getCountyCode(String countyCode,String countyDetail,String cityCode);
 }

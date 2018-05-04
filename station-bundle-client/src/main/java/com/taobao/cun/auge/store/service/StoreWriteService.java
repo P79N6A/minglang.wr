@@ -100,4 +100,7 @@ public interface StoreWriteService {
 	 * @param stationId
 	 */
 	public void initGoodSupplyFeature(Long stationId);
+	
+	public Integer getCountyCode(String countyCode,String countyDetail,String cityCode);
+
 }
