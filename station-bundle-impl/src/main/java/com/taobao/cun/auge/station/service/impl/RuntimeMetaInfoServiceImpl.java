@@ -57,10 +57,12 @@ public class RuntimeMetaInfoServiceImpl implements RuntimeMetaInfoService {
                         String event = transition.getEvent();
                         TransitionTarget target = transition.getTargets().iterator().next();
                         String targetId = target.getId();
-                        map.put(event, targetId);
-                        list.add(map);
+                        if (null != event) {
+                            map.put(event, targetId);
+                            list.add(map);
+                        }
                     });
-                    result.put(id,list);
+                    result.put(id, list);
                 }
             });
         } catch (Exception e) {
