@@ -17,8 +17,7 @@ public interface LifeCycleManager {
 	 
 	 /**
 	  * 生命周期服务编排
-	  * @param promise
-	  * @param phase
+	  * @param dsl
 	  */
      default void executeDSL(LifeCyclePhaseDSL dsl){
     	 dsl.invoke();
