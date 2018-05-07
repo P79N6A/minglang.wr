@@ -186,19 +186,17 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		// 区/县
 		if (!Strings.isNullOrEmpty(station.getCounty())) {
-			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
-			if (gbCode != null) {
-				storeDTO.setDistrict(gbCode.intValue());
-			} else {
-				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
-			}
+			Integer district = getCountyCode(station.getCounty(),station.getCountyDetail(),station.getCity());
+			storeDTO.setDistrict(district);
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if (!Strings.isNullOrEmpty(station.getTown())
-				&& !diamondConfiguredProperties.getIgnoreSupplyStoreTownList().contains(station.getId())) {
-			storeDTO.setTown(Integer.parseInt(station.getTown()));
-			storeDTO.setTownName(station.getTownDetail());
+		if (!Strings.isNullOrEmpty(station.getTown())) {
+			StandardAreaDO area = this.standardAreaService.getStandardAreaDOById(Long.parseLong(station.getTown()));
+			if(area != null){
+				storeDTO.setTown(Integer.parseInt(station.getTown()));
+				storeDTO.setTownName(station.getTownDetail());
+			}
 			areaId = station.getTown();
 		}
 
@@ -435,19 +433,17 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		// 区/县
 		// 区/县
 		if (!Strings.isNullOrEmpty(station.getCounty())) {
-			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
-			if (gbCode != null) {
-				storeDTO.setDistrict(gbCode.intValue());
-			} else {
-				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
-			}
+			Integer district = getCountyCode(station.getCounty(),station.getCountyDetail(),station.getCity());
+			storeDTO.setDistrict(district);
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if (!Strings.isNullOrEmpty(station.getTown())
-				&& !diamondConfiguredProperties.getIgnoreSupplyStoreTownList().contains(stationId)) {
-			storeDTO.setTown(Integer.parseInt(station.getTown()));
-			storeDTO.setTownName(station.getTownDetail());
+		if (!Strings.isNullOrEmpty(station.getTown())) {
+			StandardAreaDO area = this.standardAreaService.getStandardAreaDOById(Long.parseLong(station.getTown()));
+			if(area != null){
+				storeDTO.setTown(Integer.parseInt(station.getTown()));
+				storeDTO.setTownName(station.getTownDetail());
+			}
 			areaId = station.getTown();
 		}
 
@@ -550,19 +546,17 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		// 区/县
 		// 区/县
 		if (!Strings.isNullOrEmpty(station.getCounty())) {
-			Long gbCode = tb2gbCode(Long.parseLong(station.getCounty()));
-			if (gbCode != null) {
-				storeDTO.setDistrict(gbCode.intValue());
-			} else {
-				storeDTO.setDistrict(Integer.parseInt(station.getCounty()));
-			}
+			Integer district = getCountyCode(station.getCounty(),station.getCountyDetail(),station.getCity());
+			storeDTO.setDistrict(district);
 			storeDTO.setDistrictName(station.getCountyDetail());
 			areaId = station.getCounty();
 		}
-		if (!Strings.isNullOrEmpty(station.getTown())
-				&& !diamondConfiguredProperties.getIgnoreSupplyStoreTownList().contains(stationId)) {
-			storeDTO.setTown(Integer.parseInt(station.getTown()));
-			storeDTO.setTownName(station.getTownDetail());
+		if (!Strings.isNullOrEmpty(station.getTown())) {
+			StandardAreaDO area = this.standardAreaService.getStandardAreaDOById(Long.parseLong(station.getTown()));
+			if(area != null){
+				storeDTO.setTown(Integer.parseInt(station.getTown()));
+				storeDTO.setTownName(station.getTownDetail());
+			}
 			areaId = station.getTown();
 		}
 
@@ -798,5 +792,30 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			features.put("goodsSupply", "y");
 			caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
 		}
+	}
+	
+	public Integer getCountyCode(String countyCode,String countyDetail,String cityCode){
+		Long gbCode = tb2gbCode(Long.parseLong(countyCode));
+		if (gbCode == null) {
+			gbCode = Long.parseLong(countyCode);
+		} 
+		StandardAreaDO area = standardAreaService.getStandardAreaDOById(gbCode);
+		if(area != null){
+			return area.getAreaCode().intValue();
+		}else{
+			if(cityCode == null){
+				return Integer.parseInt(countyCode);
+			}
+			List<StandardAreaDO> areaList = standardAreaService.getChildrenByCityId(Long.parseLong(cityCode));
+			if(CollectionUtils.isEmpty(areaList)){
+				return Integer.parseInt(countyCode);
+			}
+			StandardAreaDO areaDO = areaList.stream().filter(ar -> ar.getAreaName().startsWith(countyDetail)).findFirst().get();
+			if(areaDO != null){
+				return areaDO.getAreaCode().intValue();
+			}
+			return Integer.parseInt(countyCode);
+		}
+	
 	}
 }
