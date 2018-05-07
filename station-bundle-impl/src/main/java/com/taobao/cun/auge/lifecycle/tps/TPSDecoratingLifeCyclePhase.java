@@ -237,8 +237,8 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
         partnerLifecycleDto.setCurrentStep(PartnerLifecycleCurrentStepEnum.PROCESSING);
         partnerLifecycleDto.setPartnerInstanceId(rel.getId());
         partnerLifecycleDto.setDecorateStatus(PartnerLifecycleDecorateStatusEnum.N);
-        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
-        partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
+        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
+        partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
         partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
         
         // 生成装修记录
@@ -250,9 +250,9 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
         stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
         stationDecorateBO.addStationDecorate(stationDecorateDto);
         
-        //增加补货金，开业包货品收货状态 初始化
-        Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-        addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney);
+//        //张振环确认门店没有铺货保证金概念
+//        Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+//        addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney);
     }
     
     private void addWaitFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
