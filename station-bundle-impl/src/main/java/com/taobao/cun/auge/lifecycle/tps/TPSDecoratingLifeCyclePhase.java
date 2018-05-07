@@ -134,7 +134,7 @@ public class TPSDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			param.copyOperatorDto(partnerInstanceDto);
 			partnerLifecycleBO.updateLifecycle(param);
 		}
-		initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
+		//initPartnerLifeCycleForDecorating(context,partnerInstanceDto);
 	}
 
 	@Override
