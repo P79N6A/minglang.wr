@@ -29,7 +29,7 @@ public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 	private List<LifeCyclePhase> lifeCyclePhases;
 	
 	public LifeCyclePhase getLifeCyclePhase(String componentIndentity){
-		Assert.notNull(lifeCycleComponents.get(componentIndentity));
+		Assert.notNull(lifeCycleComponents.get(componentIndentity),"componentIndentity can not be null");
 		return lifeCycleComponents.get(componentIndentity);
 	}
 	

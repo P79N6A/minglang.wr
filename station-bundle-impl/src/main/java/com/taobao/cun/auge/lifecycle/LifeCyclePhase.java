@@ -47,15 +47,10 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 	 * 同步历史模型，业务迁移完毕后下线
 	 */
 	void syncStationApply(LifeCyclePhaseContext context);
-	
-	/**
-	 * 获取生命周期编排DSL
-	 * @return
-	 */
+
 	
 	/**
 	 * 创建生命周期极业务流程
-	 * @param context
 	 * @return
 	 */
 	default LifeCyclePhaseDSL createPhaseDSL(){
