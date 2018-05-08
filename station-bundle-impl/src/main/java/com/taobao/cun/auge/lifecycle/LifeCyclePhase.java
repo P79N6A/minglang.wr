@@ -9,7 +9,6 @@ package com.taobao.cun.auge.lifecycle;
  *  新增或修扩展业务
  *  发送状态变更事件
  *  同步老模型
- * @author zhenhuan.zhangzh
  *
  */
 public interface LifeCyclePhase extends LifeCyclePhaseComponent{
@@ -48,15 +47,10 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 	 * 同步历史模型，业务迁移完毕后下线
 	 */
 	void syncStationApply(LifeCyclePhaseContext context);
-	
-	/**
-	 * 获取生命周期编排DSL
-	 * @return
-	 */
+
 	
 	/**
 	 * 创建生命周期极业务流程
-	 * @param context
 	 * @return
 	 */
 	default LifeCyclePhaseDSL createPhaseDSL(){

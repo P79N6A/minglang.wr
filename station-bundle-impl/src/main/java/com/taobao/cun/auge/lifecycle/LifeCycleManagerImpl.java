@@ -20,11 +20,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-/**
- * 
- * @author zhenhuan.zhangzh
- *
- */
 @Component
 public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 
@@ -34,7 +29,7 @@ public class LifeCycleManagerImpl implements LifeCycleManager,InitializingBean{
 	private List<LifeCyclePhase> lifeCyclePhases;
 	
 	public LifeCyclePhase getLifeCyclePhase(String componentIndentity){
-		Assert.notNull(lifeCycleComponents.get(componentIndentity));
+		Assert.notNull(lifeCycleComponents.get(componentIndentity),"componentIndentity can not be null");
 		return lifeCycleComponents.get(componentIndentity);
 	}
 	

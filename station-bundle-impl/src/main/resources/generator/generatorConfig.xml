@@ -127,7 +127,13 @@
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
+<<<<<<< HEAD
 
+=======
+		<table tableName="cuntao_lifecycle_transition" enableCountByExample="true" enableUpdateByExample="true"
+			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true"/>
+		
+>>>>>>> refs/remotes/origin/master
 		
 	</context>
 </generatorConfiguration>

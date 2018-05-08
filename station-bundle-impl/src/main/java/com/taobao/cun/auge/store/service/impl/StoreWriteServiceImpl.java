@@ -102,4 +102,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public void initGoodSupplyFeature(Long stationId) {
 		storeWriteBO.initGoodSupplyFeature(stationId);
 	}
+
+	@Override
+	public Integer getCountyCode(String countyCode, String countyDetail, String cityCode) {
+		return storeWriteBO.getCountyCode(countyCode, countyDetail, cityCode);
+	}
 }

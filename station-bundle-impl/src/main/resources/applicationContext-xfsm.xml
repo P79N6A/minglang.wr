@@ -9,7 +9,7 @@
         <!-- 设置一些全局变量 (所有流程共享)-->
         <property name="globals">
             <map>
-                <entry key="xxx" value="12345" />
+                <entry key="key" value="value" />
             </map>
         </property>
     </bean>

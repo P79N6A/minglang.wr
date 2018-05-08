@@ -4,11 +4,6 @@ import java.util.stream.Stream;
 
 import org.springframework.util.Assert;
 
-/**
- * 状态机事件
- * @author zhenhuan.zhangzh
- *
- */
 public enum StateMachineEvent {
 
 	SETTLING_EVENT("SETTLING_EVENT","SETTLING"),
@@ -18,6 +13,7 @@ public enum StateMachineEvent {
 	CLOSED_EVENT("CLOSED_EVENT","CLOSED"),
 	QUITING_EVENT("QUITING_EVENT","QUITING"),
 	QUIT_EVENT("QUIT_EVENT","QUIT");
+
 	private String event;
 	private String state;
 	

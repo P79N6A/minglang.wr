@@ -125,7 +125,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"非法的村点对象!");
 		}
 		
-		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.LARGE_AREA);
+		CuntaoOrgDto coDto = cuntaoOrgServiceClient.getAncestor(station.getApplyOrg(), OrgRangeType.PROVINCE);
 		AppResourceDto 	resource = appResourceService.queryAppResource("decorate_Selller", String.valueOf(coDto.getId()));
 		if (resource == null || StringUtils.isEmpty(resource.getValue())) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"找不到装修卖家信息,station org:" + station.getApplyOrg());

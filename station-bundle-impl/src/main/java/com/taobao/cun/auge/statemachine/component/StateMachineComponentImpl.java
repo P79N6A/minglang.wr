@@ -10,59 +10,58 @@ import com.taobao.cun.auge.statemachine.StateMachineEvent;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StateMachineComponent(stateMachine={"TPStateMachine","TPAStateMachine","TPTStateMachine","TPSStateMachine"},actionKey="stateMachineComponent")
+@StateMachineComponent(stateMachine = {"TPStateMachine", "TPAStateMachine", "TPTStateMachine", "TPSStateMachine"}, actionKey = "stateMachineComponent")
 public class StateMachineComponentImpl {
 
-	@Autowired
-	private LifeCycleManager lifeCycleManager;
-	
-	private LifeCyclePhaseContext createContext(PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
-		LifeCyclePhaseContext context = new LifeCyclePhaseContext();
-		context.setPartnerInstance(partnerInstanceDto);
-		context.setEvent(ctx.get("event"));;
-		context.setSourceState(partnerInstanceDto.getState() != null ? partnerInstanceDto.getState().getCode() : "NEW");
-		context.setTargetState(StateMachineEvent.valueOfEvent(context.getEvent()).getState());
-		context.setUserType(partnerInstanceDto.getType().getCode());
-		context.setExtensionInfos(ctx.context());
-		return context;
-	}
-	
-	public void settling(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
+    @Autowired
+    private LifeCycleManager lifeCycleManager;
 
-	
-	
-	public void decorating(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
-	
-	
-	public void servicing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
-	
-	
-	public void closing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
-	
-	public void closed(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
-	
-	public void quiting(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
-	
-	public void quit(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx){
-		LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
-		lifeCycleManager.execute(context);
-	}
+    private LifeCyclePhaseContext createContext(PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = new LifeCyclePhaseContext();
+        context.setPartnerInstance(partnerInstanceDto);
+        context.setEvent(ctx.get("event"));
+
+        context.setSourceState(partnerInstanceDto.getState() != null ? partnerInstanceDto.getState().getCode() : "NEW");
+        context.setTargetState(StateMachineEvent.valueOfEvent(context.getEvent()).getState());
+        context.setUserType(partnerInstanceDto.getType().getCode());
+        context.setExtensionInfos(ctx.context());
+        return context;
+    }
+
+    public void settling(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+    public void decorating(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+
+    public void servicing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+
+    public void closing(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+    public void closed(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+    public void quiting(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
+
+    public void quit(@Inject("payload") PartnerInstanceDto partnerInstanceDto, RequestContext ctx) {
+        LifeCyclePhaseContext context = createContext(partnerInstanceDto, ctx);
+        lifeCycleManager.execute(context);
+    }
 }
