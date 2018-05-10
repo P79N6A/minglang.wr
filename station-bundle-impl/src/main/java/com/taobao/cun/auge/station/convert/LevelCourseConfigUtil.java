@@ -7,13 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.ali.com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.taobao.cun.appResource.dto.AppResourceDto;
-import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.taobao.cun.appResource.dto.AppResourceDto;
+import com.taobao.cun.auge.station.enums.LevelCourseTypeEnum;
 
 /**
  * 类LevelCourseConfigUtil.java的实现描述：层级课程配置相关工具方法

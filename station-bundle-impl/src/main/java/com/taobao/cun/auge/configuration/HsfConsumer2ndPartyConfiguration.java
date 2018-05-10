@@ -40,7 +40,6 @@ import com.alibaba.pm.sc.portal.api.quali.QLCAccessService;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
-import com.aliexpress.boot.hsf.HsfConsumerAutoConfiguration;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
@@ -55,7 +54,7 @@ import com.taobao.cun.endor.base.client.impl.EndorApiClientImpl;
 import com.taobao.cun.mdjxc.api.CtMdJxcWarehouseApi;
 import com.taobao.cun.recruit.partner.service.PartnerApplyService;
 import com.taobao.cun.settle.cae.service.SellerSignService;
-import com.taobao.hsf.app.spring.util.HSFSpringConsumerBean;
+import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
 import com.taobao.mmp.client.permission.service.MmpAuthReadService;
 import com.taobao.namelist.service.NamelistMatchService;
 import com.taobao.payment.account.service.AccountManageService;
@@ -79,131 +78,217 @@ import com.taobao.uic.common.service.userinfo.client.UicExtraReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicPaymentAccountReadServiceClient;
 import com.taobao.uic.common.service.userinfo.client.UicTagWriteServiceClient;
 import com.taobao.uic.common.util.ClientInfo;
+import com.taobao.wws.hsf2icesrv;
 @Configuration
-public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfiguration {
+public class HsfConsumer2ndPartyConfiguration  {
 
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.employeeService}",serviceGroup="HSF")
+	private Employee360Service employee360Service;
+	
 	// hr相关的第二方服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean employee360Service(@Value("${hsf.consumer.version.employeeService}") String version) {
-		return getConsumerBean(Employee360Service.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean employee360Service(@Value("${hsf.consumer.version.employeeService}") String version) {
+	//	return getConsumerBean(Employee360Service.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.hsf2icesrv}",serviceGroup="HSF")
+	private hsf2icesrv hsf2icesrv;
 	
 	//旺旺
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean hsf2icesrv(@Value("${hsf.consumer.version.hsf2icesrv}") String version) {
-		return getConsumerBean(com.taobao.wws.hsf2icesrv.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean hsf2icesrv(@Value("${hsf.consumer.version.hsf2icesrv}") String version) {
+	//	return getConsumerBean(com.taobao.wws.hsf2icesrv.class, HSFGroup.HSF, version, 3000);
+	//}
 
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.countyDomainWriteService}",serviceGroup="HSF")
+	private CountyDomainWriteService countyDomainWriteService;
 	// 菜鸟服务
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean countyDomainWriteService(@Value("${hsf.consumer.version.cainiao.countyDomainWriteService}") String version) {
-		return getConsumerBean(CountyDomainWriteService.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean countyDomainWriteService(@Value("${hsf.consumer.version.cainiao.countyDomainWriteService}") String version) {
+	//	return getConsumerBean(CountyDomainWriteService.class, HSFGroup.HSF, version, 3000);
+	//}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean stationWriteService(@Value("${hsf.consumer.version.cainiao.stationWriteService}") String version) {
-		return getConsumerBean(StationWriteService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationWriteService}",serviceGroup="HSF")
+	private StationWriteService stationWriteService;
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean stationWriteService(@Value("${hsf.consumer.version.cainiao.stationWriteService}") String version) {
+	//	return getConsumerBean(StationWriteService.class, HSFGroup.HSF, version, 3000);
+	//}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean stationUserWriteService(@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
-		return getConsumerBean(StationUserWriteService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationUserWriteService}",serviceGroup="HSF")
+	private StationUserWriteService stationUserWriteService;
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean stationUserWriteService(@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
+	//	return getConsumerBean(StationUserWriteService.class, HSFGroup.HSF, version, 3000);
+	//}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean trainingRecordServiceFacade(@Value("${partner.peixun.service.version}") String version) {
-		return getConsumerBean(TrainingRecordServiceFacade.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${partner.peixun.service.version}",serviceGroup="HSF")
+	private TrainingRecordServiceFacade trainingRecordServiceFacade;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean courseServiceFacade(@Value("${partner.peixun.service.version}") String version) {
-		return getConsumerBean(CourseServiceFacade.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean trainingRecordServiceFacade(@Value("${partner.peixun.service.version}") String version) {
+	//	return getConsumerBean(TrainingRecordServiceFacade.class, HSFGroup.HSF, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean trainingTicketServiceFacade(@Value("${partner.peixun.service.version}") String version) {
-		return getConsumerBean(TrainingTicketServiceFacade.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${partner.peixun.service.version}",serviceGroup="HSF")
+	private CourseServiceFacade courseServiceFacade;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean tcBaseService (@Value("${tcBaseService.service.version}") String version) {
-		return getConsumerBean(TcBaseService.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean courseServiceFacade(@Value("${partner.peixun.service.version}") String version) {
+	//	return getConsumerBean(CourseServiceFacade.class, HSFGroup.HSF, version, 3000);
+	//}
 	
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean accessControlService(@Value("${accessControlService.service.version}") String version) {
-		return getConsumerBean(AccessControlService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${partner.peixun.service.version}",serviceGroup="HSF")
+	private TrainingTicketServiceFacade trainingTicketServiceFacade;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean productService(@Value("${dowjonesProductService.service.version}") String version) {
-		return getConsumerBean(ProductService.class, HSFGroup.DUBBO, version, 3000);
-	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesOrderService.service.portal.version}") String version) {
-		return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean trainingTicketServiceFacade(@Value("${partner.peixun.service.version}") String version) {
+	//	return getConsumerBean(TrainingTicketServiceFacade.class, HSFGroup.HSF, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean shoppingCartPortalService(@Value("${dowjonesProductService.service.version}") String version) {
-		return getConsumerBean(ShoppingCartPortalService.class, HSFGroup.DUBBO, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${tcBaseService.service.version}",serviceGroup="HSF")
+	private TcBaseService tcBaseService;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean orderItemFacade(@Value("${crm.order.service.version}") String version) {
-		return getConsumerBean(OrderItemFacade.class, HSFGroup.DUBBO, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean tcBaseService (@Value("${tcBaseService.service.version}") String version) {
+	//	return getConsumerBean(TcBaseService.class, HSFGroup.HSF, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean esbFinanceAuditAdapter(@Value("${crm.finance.service.version}") String version) {
-		return getConsumerBean(EsbFinanceAuditAdapter.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${accessControlService.service.version}",serviceGroup="HSF")
+	private AccessControlService accessControlService;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean esbFinanceContractAdapter(@Value("${crm.finance.service.version}") String version) {
-		return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
-	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean prService(@Value("${alibaba.ceres.version}") String version) {
-		return getConsumerBean(PrService.class, HSFGroup.HSF, version, 30000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean accessControlService(@Value("${accessControlService.service.version}") String version) {
+	//	return getConsumerBean(AccessControlService.class, HSFGroup.HSF, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean ceresProductService(@Value("${alibaba.ceres.version}") String version) {
-		return getConsumerBean(com.alibaba.ceres.service.catalog.ProductService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${dowjonesProductService.service.version}",serviceGroup="DUBBO")
+	private ProductService productService;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean ceresCategoryService(@Value("${alibaba.ceres.version}") String version) {
-		return getConsumerBean(CategoryService.class, HSFGroup.HSF, version, 3000);
-	}
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean stationReadService(@Value("${hsf.consumer.version.cainiao.stationReadService}") String version) {
-		return getConsumerBean(StationReadService.class, HSFGroup.HSF, version, 3000);
-	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean tagRecordReadService(@Value("${taobao.uic.version}") String version) {
-		return getConsumerBean(TagRecordReadService.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean productService(@Value("${dowjonesProductService.service.version}") String version) {
+	//	return getConsumerBean(ProductService.class, HSFGroup.DUBBO, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean tagRecordWriteService(@Value("${taobao.uic.version}") String version) {
-		return getConsumerBean(TagRecordWriteService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${dowjonesOrderService.service.portal.version}",serviceGroup="DUBBO")
+	private OrderPortalService orderPortalService;
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean uicDataReadService(@Value("${taobao.uic.version}") String version) {
-		return getConsumerBean(UicDataReadService.class, HSFGroup.HSF, version, 3000);
-	}
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean orderPortalService(@Value("${dowjonesOrderService.service.portal.version}") String version) {
+	//	return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
+	//}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean uicDataWriteService(@Value("${taobao.uic.version}") String version) {
-		return getConsumerBean(UicDataWriteService.class, HSFGroup.HSF, version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${dowjonesProductService.service.version}",serviceGroup="HSF")
+	private ShoppingCartPortalService shoppingCartPortalService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean shoppingCartPortalService(@Value("${dowjonesProductService.service.version}") String version) {
+	//	return getConsumerBean(ShoppingCartPortalService.class, HSFGroup.DUBBO, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${crm.order.service.version}",serviceGroup="DUBBO")
+	private OrderItemFacade orderItemFacade;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean orderItemFacade(@Value("${crm.order.service.version}") String version) {
+	//	return getConsumerBean(OrderItemFacade.class, HSFGroup.DUBBO, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${crm.finance.service.version}",serviceGroup="HSF")
+	private EsbFinanceAuditAdapter esbFinanceAuditAdapter;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean esbFinanceAuditAdapter(@Value("${crm.finance.service.version}") String version) {
+	//	return getConsumerBean(EsbFinanceAuditAdapter.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${crm.finance.service.version}",serviceGroup="HSF")
+	private EsbFinanceContractAdapter esbFinanceContractAdapter;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean esbFinanceContractAdapter(@Value("${crm.finance.service.version}") String version) {
+	//	return getConsumerBean(EsbFinanceContractAdapter.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${alibaba.ceres.version}",serviceGroup="HSF")
+	private PrService prService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean prService(@Value("${alibaba.ceres.version}") String version) {
+	//	return getConsumerBean(PrService.class, HSFGroup.HSF, version, 30000);
+	//}
+	
+
+	@HSFConsumer(serviceVersion="${alibaba.ceres.version}",serviceGroup="HSF")
+	private com.alibaba.ceres.service.catalog.ProductService productService2;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean ceresProductService(@Value("${alibaba.ceres.version}") String version) {
+	//	return getConsumerBean(com.alibaba.ceres.service.catalog.ProductService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${alibaba.ceres.version}",serviceGroup="HSF")
+	private CategoryService categoryService;
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean ceresCategoryService(@Value("${alibaba.ceres.version}") String version) {
+	//	return getConsumerBean(CategoryService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationReadService}",serviceGroup="HSF")
+	private StationReadService stationReadService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean stationReadService(@Value("${hsf.consumer.version.cainiao.stationReadService}") String version) {
+	//	return getConsumerBean(StationReadService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
+	private TagRecordReadService tagRecordReadService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean tagRecordReadService(@Value("${taobao.uic.version}") String version) {
+	//	return getConsumerBean(TagRecordReadService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
+	private TagRecordWriteService tagRecordWriteService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean tagRecordWriteService(@Value("${taobao.uic.version}") String version) {
+	//	return getConsumerBean(TagRecordWriteService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
+	private UicDataReadService uicDataReadService;
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean uicDataReadService(@Value("${taobao.uic.version}") String version) {
+	//	return getConsumerBean(UicDataReadService.class, HSFGroup.HSF, version, 3000);
+	//}
+	
+	@HSFConsumer(serviceVersion="${taobao.uic.version}",serviceGroup="HSF")
+	private UicDataWriteService uicDataWriteService;
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean uicDataWriteService(@Value("${taobao.uic.version}") String version) {
+	//	return getConsumerBean(UicDataWriteService.class, HSFGroup.HSF, version, 3000);
+	//}
 	
 	 @Bean
 	  public TcBaseService archiveTcBaseService(HsfConsumerContext context,@Value("${archiveTcBaseService.version}") String version) {
@@ -247,49 +332,77 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
 		return uicTagServiceClient;
 	}
 	
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
-		return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
-	}
+	
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.enhancedUserQueryService}",serviceGroup="HSF")
+	private EnhancedUserQueryService enhancedUserQueryService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean enhancedUserQueryService(@Value("${hsf.consumer.version.enhancedUserQueryService}") String version) {
+	//	return getConsumerBean(EnhancedUserQueryService.class, HSFGroup.HSF, version, 3000);
+	//}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean incentiveProgramQueryService(@Value("${hsf.consumer.version.incentiveProgramQueryService}") String version) {
-		return getConsumerBean(IncentiveProgramQueryService.class, HSFGroup.HSF, version, 8000);
-	}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean incentiveProgramService(@Value("${hsf.consumer.version.incentiveProgramQueryService}") String version) {
-		return getConsumerBean(IncentiveProgramService.class, HSFGroup.HSF, version, 8000);
-	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.incentiveProgramQueryService}",serviceGroup="HSF")
+	private IncentiveProgramQueryService incentiveProgramQueryService;
+	
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean incentiveProgramQueryService(@Value("${hsf.consumer.version.incentiveProgramQueryService}") String version) {
+	//	return getConsumerBean(IncentiveProgramQueryService.class, HSFGroup.HSF, version, 8000);
+	//}
+
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.incentiveProgramQueryService}",serviceGroup="HSF")
+	private IncentiveProgramService incentiveProgramService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean incentiveProgramService(@Value("${hsf.consumer.version.incentiveProgramQueryService}") String version) {
+	//	return getConsumerBean(IncentiveProgramService.class, HSFGroup.HSF, version, 8000);
+	//}
 
 	@Bean
 	  public SellerQualiService sellerQualiService(HsfConsumerContext context,@Value("${sellerQualiService.version}") String version) {
 	      return context.hsfConsumerBuilder(SellerQualiService.class,HSFGroup.HSF.name(),version).clientTimeout(5000).build();
 	  }
 	 
-	@Bean(initMethod = "init")
-	  public HSFSpringConsumerBean mmpAuthReadService(@Value("1.0.0") String version) {
-	    return getConsumerBean(MmpAuthReadService.class, HSFGroup.HSF, version, 3000);
-	  }
+	@HSFConsumer(serviceVersion="1.0.0",serviceGroup="HSF")
+	private MmpAuthReadService mmpAuthReadService;
+	
+	
+	//@Bean(initMethod = "init")
+	 // public HSFSpringConsumerBean mmpAuthReadService(@Value("1.0.0") String version) {
+	//    return getConsumerBean(MmpAuthReadService.class, HSFGroup.HSF, version, 3000);
+	//  }
 	
 	 @Bean
 	  public QualiAccessService qualiAccessService(HsfConsumerContext context,@Value("${sellerQualiService.version}") String version) {
 	      return context.hsfConsumerBuilder(QualiAccessService.class,HSFGroup.HSF.name(),version).clientTimeout(15000).build();
 	  }
 	 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean warehouseReadService(
-			@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
-		return getConsumerBean(WarehouseReadService.class, HSFGroup.HSF,
-				version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationUserWriteService}",serviceGroup="HSF")
+	private WarehouseReadService warehouseReadService;
+		
+	 
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean warehouseReadService(
+	//		@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
+	//	return getConsumerBean(WarehouseReadService.class, HSFGroup.HSF,
+	//			version, 3000);
+	//}
 
-	@Bean(initMethod = "init")
-	public HSFSpringConsumerBean warehouseWriteService(
-			@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
-		return getConsumerBean(WarehouseWriteService.class, HSFGroup.HSF,
-				version, 3000);
-	}
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.cainiao.stationUserWriteService}",serviceGroup="HSF")
+	private WarehouseWriteService warehouseWriteService;
+	
+	
+	//@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean warehouseWriteService(
+		//	@Value("${hsf.consumer.version.cainiao.stationUserWriteService}") String version) {
+	//	return getConsumerBean(WarehouseWriteService.class, HSFGroup.HSF,
+		//		version, 3000);
+	//}
+	
 	@Bean
 	public MessageService messageService(HsfConsumerContext context, @Value("${messageService.version}") String version) {
 		return context.hsfConsumerBuilder(MessageService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
@@ -428,25 +541,42 @@ public class HsfConsumer2ndPartyConfiguration extends HsfConsumerAutoConfigurati
     	return openSearchManager;
 	}
     
-    @Bean(initMethod = "init")
-	public HSFSpringConsumerBean poQueryService(@Value("${alibaba.ceres.version}") String version) {
-		return getConsumerBean(PoQueryService.class, HSFGroup.HSF, version, 30000);
-	}
+    @HSFConsumer(serviceVersion="${alibaba.ceres.version}",serviceGroup="HSF")
+	private PoQueryService poQueryService;
+	
     
-    @Bean(initMethod = "init")
-   	public HSFSpringConsumerBean orgStructWriteService(@Value("${cbu.org.struct.version}") String version) {
-   		return getConsumerBean(OrgStructWriteService.class, HSFGroup.DUBBO, version, 30000);
-   	}
-    @Bean(initMethod = "init")
-   	public HSFSpringConsumerBean orgStructReadService(@Value("${cbu.org.struct.version}") String version) {
-   		return getConsumerBean(OrgStructReadService.class, HSFGroup.DUBBO, version, 30000);
-   	}
+    //@Bean(initMethod = "init")
+	//public HSFSpringConsumerBean poQueryService(@Value("${alibaba.ceres.version}") String version) {
+	//	return getConsumerBean(PoQueryService.class, HSFGroup.HSF, version, 30000);
+	//}
+    
+    @HSFConsumer(serviceVersion="${cbu.org.struct.version}",serviceGroup="DUBBO")
+   	private OrgStructWriteService orgStructWriteService;
+   	
+    
+    //@Bean(initMethod = "init")
+   //	public HSFSpringConsumerBean orgStructWriteService(@Value("${cbu.org.struct.version}") String version) {
+   	//	return getConsumerBean(OrgStructWriteService.class, HSFGroup.DUBBO, version, 30000);
+   //	}
+    
+    @HSFConsumer(serviceVersion="${cbu.org.struct.version}",serviceGroup="DUBBO")
+   	private OrgStructReadService orgStructReadService;
+   
+    
+   // @Bean(initMethod = "init")
+   //	public HSFSpringConsumerBean orgStructReadService(@Value("${cbu.org.struct.version}") String version) {
+   //		return getConsumerBean(OrgStructReadService.class, HSFGroup.DUBBO, version, 30000);
+   //	}
+    
+    @HSFConsumer(serviceVersion="${cbu.member.service.version}",serviceGroup="DUBBO")
+   	private MemberReadService memberReadService;
+   
     
     
-    @Bean(initMethod = "init")
-   	public HSFSpringConsumerBean memberReadService(@Value("${cbu.member.service.version}") String version) {
-   		return getConsumerBean(MemberReadService.class, HSFGroup.DUBBO, version, 30000);
-   	}
+   // @Bean(initMethod = "init")
+   //	public HSFSpringConsumerBean memberReadService(@Value("${cbu.member.service.version}") String version) {
+   //		return getConsumerBean(MemberReadService.class, HSFGroup.DUBBO, version, 30000);
+   //	}
 
     
     @Bean

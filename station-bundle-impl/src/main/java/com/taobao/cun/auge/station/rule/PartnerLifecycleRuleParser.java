@@ -7,10 +7,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-
-import com.ali.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
@@ -25,10 +29,6 @@ import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 /**
  * 映射规则解析器

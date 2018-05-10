@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ali.com.google.common.collect.Sets;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.POIUtils;

@@ -3,7 +3,7 @@ package com.taobao.cun.auge.lifecycle;
 import java.util.Map;
 import java.util.Optional;
 
-import com.ali.com.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 
 
