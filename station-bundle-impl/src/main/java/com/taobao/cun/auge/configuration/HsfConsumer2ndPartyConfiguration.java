@@ -184,7 +184,7 @@ public class HsfConsumer2ndPartyConfiguration  {
 	//	return getConsumerBean(OrderPortalService.class, HSFGroup.DUBBO, version, 3000);
 	//}
 	
-	@HSFConsumer(serviceVersion="${dowjonesProductService.service.version}",serviceGroup="HSF")
+	@HSFConsumer(serviceVersion="${dowjonesProductService.service.version}",serviceGroup="DUBBO")
 	private ShoppingCartPortalService shoppingCartPortalService;
 	
 	
