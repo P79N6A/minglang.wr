@@ -1,8 +1,11 @@
 package com.taobao.cun.auge.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.aliexpress.boot.hsf.HSFGroup;
+import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.ar.scene.station.service.PartnerLifecycleCallbackService;
 import com.taobao.cun.ar.scene.station.service.StationLifecycleCallbackService;
@@ -23,6 +26,7 @@ import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.hsf.app.spring.util.annotation.HSFConsumer;
+import com.taobao.trade.platform.api.query.BuyerQueryService;
 
 @Configuration
 public class HsfConsumerConfiguration  {
@@ -115,8 +119,8 @@ public class HsfConsumerConfiguration  {
 	//			HSFGroup.HSF, version, 3000);
 	//}
 
-	@HSFConsumer(serviceVersion="${hsf.consumer.version.auge.cuntaoOrgService}",serviceGroup="HSF")
-	private CuntaoOrgService cuntaoOrgService;
+	//@HSFConsumer(serviceVersion="${hsf.consumer.version.auge.cuntaoOrgService}",serviceGroup="HSF")
+	//private CuntaoOrgService cuntaoOrgService;
 	
 	
 	//@Bean(initMethod = "init")
@@ -126,8 +130,8 @@ public class HsfConsumerConfiguration  {
 	//			3000);
 	//}
 
-	@HSFConsumer(serviceVersion="${hsf.consumer.version.auge.cuntaoOrgService}",serviceGroup="HSF")
-	private CuntaoUserService augeCuntaoUserService;
+	//@HSFConsumer(serviceVersion="${hsf.consumer.version.auge.cuntaoOrgService}",serviceGroup="HSF")
+//	private CuntaoUserService augeCuntaoUserService;
 	
 	//@Bean(initMethod = "init")
 	//public HSFSpringConsumerBean augeCuntaoUserService(
@@ -136,6 +140,18 @@ public class HsfConsumerConfiguration  {
 	//			3000);
 	//}
 
+	@Bean
+	public CuntaoUserService augeCuntaoUserService(HsfConsumerContext context, @Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
+		return context.hsfConsumerBuilder(CuntaoUserService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
+	@Bean
+	public CuntaoOrgService augeCuntaoOrgService(HsfConsumerContext context, @Value("${hsf.consumer.version.auge.cuntaoOrgService}") String version) {
+		return context.hsfConsumerBuilder(CuntaoOrgService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+				.build();
+	}
+	
 	@Bean(initMethod = "init")
 	public CuntaoOrgServiceClient cuntaoOrgServiceClient(
 			CuntaoUserService augeCuntaoUserService,
