@@ -6,6 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.pm.sc.api.Result;
 import com.alibaba.pm.sc.api.quali.SellerQualiService;
@@ -15,8 +22,7 @@ import com.alibaba.pm.sc.api.quali.dto.ListHidByEidAndEidTypeResponse;
 import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
 import com.alibaba.pm.sc.portal.api.quali.QualiAccessService;
 import com.alibaba.pm.sc.portal.api.quali.dto.QualiAddRequest;
-
-import com.ali.com.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.CuntaoQualification;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.qualification.service.QualificationStatus;
@@ -24,12 +30,6 @@ import com.taobao.cun.auge.station.adapter.SellerQualiServiceAdapter;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.vipserver.client.utils.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Component("sellerQualiServiceAdapter")
 public class SellerQualiServiceAdapterImpl implements SellerQualiServiceAdapter{

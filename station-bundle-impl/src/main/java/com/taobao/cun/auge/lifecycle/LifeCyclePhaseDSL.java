@@ -1,14 +1,15 @@
 package com.taobao.cun.auge.lifecycle;
 
+import static io.advantageous.reakt.promise.Promises.invokablePromise;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.ali.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
+
 import io.advantageous.reakt.promise.Promise;
 import io.advantageous.reakt.promise.Promises;
-
-import static io.advantageous.reakt.promise.Promises.invokablePromise;
 
 
 public class LifeCyclePhaseDSL {
