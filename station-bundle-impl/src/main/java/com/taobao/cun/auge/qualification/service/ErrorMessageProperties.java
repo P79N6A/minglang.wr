@@ -2,8 +2,9 @@ package com.taobao.cun.auge.qualification.service;
 
 import java.util.Map;
 
-import com.ali.com.google.common.collect.HashBiMap;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.google.common.collect.HashBiMap;
 
 
 @ConfigurationProperties(prefix = "c2berror")
