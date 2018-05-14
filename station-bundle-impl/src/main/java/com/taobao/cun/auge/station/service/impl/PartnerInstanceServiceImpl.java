@@ -520,7 +520,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             }
             partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
             // 同步删除
-            syncStationApplyBO.deleteStationApply(rel.getId());
+            syncStationApply(SyncStationApplyEnum.DELETE,  instanceId);
     }
 
     private void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version, ProtocolTypeEnum protocolTypeEnum, boolean needFrozenMoney) {
