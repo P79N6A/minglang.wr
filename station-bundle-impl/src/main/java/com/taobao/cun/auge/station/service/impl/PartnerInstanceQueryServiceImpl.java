@@ -759,6 +759,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Override
     public Long findStationApplyIdByStationId(Long stationId) {
+        logRefactorMethod();
         ValidateUtils.notNull(stationId);
         return partnerInstanceBO.findStationApplyIdByStationId(stationId);
     }

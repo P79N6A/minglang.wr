@@ -154,7 +154,6 @@ public interface PartnerInstanceQueryService {
 	 */
 	public Long getPartnerInstanceIdByStationId(Long stationId);
 
-
 	/**
 	 * 
 	 * @param partnerInstanceId
@@ -280,16 +279,7 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
-    
-    /**
-     * 重构过度使用
-     * 
-     * @param stationId
-     * @return
-     */
-    public Long findStationApplyIdByStationId(Long stationId);
 
-    
      /**
      * 根据淘宝userId，查询当前所在的村点id
      * 
@@ -325,6 +315,8 @@ public interface PartnerInstanceQueryService {
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
 
 
+    //=================以下为重构接口，业务不可调用，否则后果自负=====================
+
 	/**
 	 * 重构过度使用
 	 * @param stationApplyId
@@ -357,6 +349,15 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds);
+
+
+	/**
+	 * 重构过度使用
+	 *
+	 * @param stationId
+	 * @return
+	 */
+	public Long findStationApplyIdByStationId(Long stationId);
 }
 
 
