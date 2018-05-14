@@ -3,14 +3,14 @@ package com.taobao.cun.auge.qualification.service;
 import java.util.Map;
 import java.util.Optional;
 
-import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
-import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
-import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
-
-import com.ali.com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
+
+import com.alibaba.pm.sc.api.quali.constants.UserQualiRecordStatus;
+import com.alibaba.pm.sc.api.quali.dto.EntityQuali;
+import com.alibaba.pm.sc.api.quali.dto.UserQualiRecord;
+import com.google.common.collect.Maps;
 
 @RefreshScope
 @Component

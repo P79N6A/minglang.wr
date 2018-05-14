@@ -10,7 +10,7 @@
 
 	<bean id="jmonitor-interceptor" class="com.alibaba.alimonitor.jmonitor.plugin.spring.JMonitorMethodInterceptor" />
 
-	<bean id="jmonitor-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
+	 <bean id="jmonitor-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
 		<property name="patterns">
 			<list>
 				<value>com.taobao.cun.auge.*</value>

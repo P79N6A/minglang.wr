@@ -2,10 +2,6 @@ package com.taobao.cun.auge.level.exam;
 
 import java.util.List;
 
-import com.ali.com.google.common.collect.Lists;
-import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
-import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
-import com.taobao.cun.auge.station.service.LevelCourseManageService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import com.google.common.collect.Lists;
+import com.taobao.cun.auge.station.condition.LevelCourseManageCondition;
+import com.taobao.cun.auge.station.dto.LevelCourseEditDto;
+import com.taobao.cun.auge.station.service.LevelCourseManageService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
