@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.taobao.hsf.util.RequestCtxUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -411,6 +412,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Override
     public Long getPartnerInstanceId(Long stationApplyId) {
+        logRefactorMethod();
         ValidateUtils.notNull(stationApplyId);
         return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
     }
@@ -599,6 +601,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Override
     public Long getStationApplyId(Long instanceId) {
+        logRefactorMethod();
         ValidateUtils.notNull(instanceId);
         return partnerInstanceBO.findStationApplyId(instanceId);
     }
@@ -762,12 +765,14 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 
     @Override
     public Long findStationIdByStationApplyId(Long stationApplyId) {
+        logRefactorMethod();
         ValidateUtils.notNull(stationApplyId);
         return partnerInstanceBO.findStationIdByStationApplyId(stationApplyId);
     }
 
     @Override
     public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds) {
+        logRefactorMethod();
         if (CollectionUtils.isEmpty(stationApplyIds)) {
             return Collections.<PartnerInstanceDto>emptyList();
         }
@@ -910,5 +915,9 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, "invalid account_money state");
         }
         return info;
+    }
+
+    private void logRefactorMethod(){
+       logger.error("应用名为："+RequestCtxUtil.getAppNameOfClient()+" 调用了重构过渡接口");
     }
 }
