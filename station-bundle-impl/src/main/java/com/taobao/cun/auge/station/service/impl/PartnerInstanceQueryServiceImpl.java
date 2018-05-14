@@ -919,6 +919,10 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     }
 
     private void logRefactorMethod(){
-       logger.error("应用名为："+RequestCtxUtil.getAppNameOfClient()+" 调用了重构过渡接口");
+        try{
+            logger.error("应用名为："+RequestCtxUtil.getAppNameOfClient()+" 调用了重构过渡接口");
+        }catch (Exception e){
+            logger.error("重构过渡接口被调用");
+        }
     }
 }
