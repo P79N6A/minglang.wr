@@ -62,6 +62,13 @@ import com.taobao.cun.auge.station.enums.StationModeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.store.service.StoreWriteService;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBizQueryDto;
+import com.taobao.cun.settle.bail.dto.CuntaoBailSignAccountDto;
+import com.taobao.cun.settle.bail.enums.BailBizSceneEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +111,9 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	
 	@Autowired
 	private CloseStationApplyBO closeStationApplyBO;
+	
+    @Autowired
+    private CuntaoNewBailService cuntaoNewBailService;
     
     private static Logger logger = LoggerFactory.getLogger(TPDecoratingLifeCyclePhase.class);
 
@@ -287,18 +297,18 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 		//如果是4.0的村点，增加补货金，开业包货品收货状态 初始化
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
-			partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
-			partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
-			Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
-			addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney);
+		    if(!hasRepublishBonds(rel.getTaobaoUserId(),rel,partnerLifecycleDto)){
+		        partnerLifecycleDto.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.N);
+	            partnerLifecycleDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.WAIT_FROZEN);
+	            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+	            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,null,null);
+		    }
 		}
-		
 		partnerLifecycleBO.addLifecycle(partnerLifecycleDto);
-		
 		
 	}
 	
-	 private void addWaitFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney) {
+	 private void addWaitFrozenReplienishMoney(Long instanceId, Long taobaoUserId, Double waitFrozenMoney, String accountNo, String alipayId) {
 	        ValidateUtils.notNull(instanceId);
 	        AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
 	        accountMoneyDto.setMoney(BigDecimal.valueOf(waitFrozenMoney));
@@ -309,7 +319,12 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 	        accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
 	        accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
 	        accountMoneyDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
-
+	        if(!StringUtils.isEmpty(accountNo)){
+	            accountMoneyDto.setAlipayAccount(accountNo);
+	        }
+	        if(!StringUtils.isEmpty(alipayId)){
+                accountMoneyDto.setAccountNo(alipayId);
+            }
 	        AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
 	                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
 	        if (dupRecord != null) {
@@ -380,5 +395,37 @@ public class TPDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 			piDto.setPartnerId(changePartnerId);
 		}
 		partnerInstanceBO.updatePartnerStationRel(piDto);
+	}
+	
+	private boolean hasRepublishBonds(Long taobaoUserId,PartnerInstanceDto rel,PartnerLifecycleDto lifecycle){
+	    /** 查询铺货保证金是否缴纳 */
+        CuntaoBailBizQueryDto queryDto = new CuntaoBailBizQueryDto();
+        queryDto.setTaobaoUserId(taobaoUserId);
+        queryDto.setUserTypeEnum(UserTypeEnum.STORE);
+        queryDto.setBailBizSceneEnum(BailBizSceneEnum.PARTNER_KAIYEBAO);
+        
+        CuntaoBailBaseQueryDto baseQuery = new CuntaoBailBizQueryDto();
+        baseQuery.setTaobaoUserId(taobaoUserId);
+        baseQuery.setUserTypeEnum(UserTypeEnum.STORE);
+        ResultModel<CuntaoBailSignAccountDto> acc = cuntaoNewBailService.querySignAccount(baseQuery);
+        if (acc != null && !acc.isSuccess()) {
+            logger.info("querySignAccount", queryDto.getTaobaoUserId(), "", acc.getMessage());
+        }
+        String alipayId = acc.getResult().getAlipayId();
+        String alipayAccount = acc.getResult().getAlipayAccount();
+        queryDto.setAlipayId(alipayId);
+        ResultModel<Long> rm = cuntaoNewBailService.queryUserAvailableAmount(queryDto);
+        if (rm != null && !rm.isSuccess()) {
+            logger.info("queryUserAvailableAmount", queryDto.getTaobaoUserId(), "", acc.getMessage());
+            return false;
+        }
+        if(rm.getResult() > 0){
+            lifecycle.setGoodsReceipt(PartnerLifecycleGoodsReceiptEnum.Y);
+            lifecycle.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
+            Double waitFrozenMoney = this.frozenMoneyConfig.getTPReplenishMoneyAmount();
+            addWaitFrozenReplienishMoney(rel.getId(), rel.getTaobaoUserId(), waitFrozenMoney,alipayAccount,alipayId);
+            return true;
+        }
+        return false;
 	}
 }

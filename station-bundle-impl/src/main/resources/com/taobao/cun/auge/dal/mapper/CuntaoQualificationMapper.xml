@@ -41,6 +41,7 @@
     <result column="update_reason" jdbcType="VARCHAR" property="updateReason" />
     <result column="update_desc" jdbcType="VARCHAR" property="updateDesc" />
     <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -117,7 +118,8 @@
     legal_person, enterprice_type_desc, quali_start_time, quali_end_time, enterprice_type, 
     regsiter_address, biz_scope, operation_status, agencies, quali_pic, status, invalid_time, 
     quali_info_id, quali_id, eid_type, eid, submit_time, audit_time, is_deleted, bigBusiness_time, 
-    quali_oss, error_message, error_code, update_flag, update_reason, update_desc, update_date
+    quali_oss, error_message, error_code, update_flag, update_reason, update_desc, update_date, 
+    source
   </sql>
   <select id="selectByExample" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualificationExample" resultMap="BaseResultMap">
     <!--
@@ -185,7 +187,7 @@
       audit_time, is_deleted, bigBusiness_time, 
       quali_oss, error_message, error_code, 
       update_flag, update_reason, update_desc, 
-      update_date)
+      update_date, source)
     values (#{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR}, 
       #{modifier,jdbcType=VARCHAR}, #{taobaoUserId,jdbcType=BIGINT}, #{qualiNo,jdbcType=VARCHAR}, 
       #{companyName,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR}, #{enterpriceTypeDesc,jdbcType=VARCHAR}, 
@@ -197,7 +199,7 @@
       #{auditTime,jdbcType=TIMESTAMP}, #{isDeleted,jdbcType=VARCHAR}, #{bigbusinessTime,jdbcType=TIMESTAMP}, 
       #{qualiOss,jdbcType=VARCHAR}, #{errorMessage,jdbcType=VARCHAR}, #{errorCode,jdbcType=VARCHAR}, 
       #{updateFlag,jdbcType=VARCHAR}, #{updateReason,jdbcType=VARCHAR}, #{updateDesc,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=VARCHAR})
+      #{updateDate,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.CuntaoQualification">
     <!--
@@ -311,6 +313,9 @@
       <if test="updateDate != null">
         update_date,
       </if>
+      <if test="source != null">
+        source,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="gmtCreate != null">
@@ -414,6 +419,9 @@
       </if>
       <if test="updateDate != null">
         #{updateDate,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -539,6 +547,9 @@
       <if test="record.updateDate != null">
         update_date = #{record.updateDate,jdbcType=VARCHAR},
       </if>
+      <if test="record.source != null">
+        source = #{record.source,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -584,7 +595,8 @@
       update_flag = #{record.updateFlag,jdbcType=VARCHAR},
       update_reason = #{record.updateReason,jdbcType=VARCHAR},
       update_desc = #{record.updateDesc,jdbcType=VARCHAR},
-      update_date = #{record.updateDate,jdbcType=VARCHAR}
+      update_date = #{record.updateDate,jdbcType=VARCHAR},
+      source = #{record.source,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -698,6 +710,9 @@
       <if test="updateDate != null">
         update_date = #{updateDate,jdbcType=VARCHAR},
       </if>
+      <if test="source != null">
+        source = #{source,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -740,7 +755,8 @@
       update_flag = #{updateFlag,jdbcType=VARCHAR},
       update_reason = #{updateReason,jdbcType=VARCHAR},
       update_desc = #{updateDesc,jdbcType=VARCHAR},
-      update_date = #{updateDate,jdbcType=VARCHAR}
+      update_date = #{updateDate,jdbcType=VARCHAR},
+      source = #{source,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

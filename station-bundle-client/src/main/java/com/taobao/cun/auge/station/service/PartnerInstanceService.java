@@ -2,8 +2,6 @@ package com.taobao.cun.auge.station.service;
 
 import java.util.List;
 
-import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
-
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.station.dto.AuditSettleDto;
 import com.taobao.cun.auge.station.dto.CancelUpgradePartnerInstance;
@@ -20,6 +18,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceLevelDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceQuitDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceSettleSuccessDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceThrawSuccessDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
