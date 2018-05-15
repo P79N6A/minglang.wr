@@ -314,4 +314,15 @@ public class PartnerBOImpl implements PartnerBO {
 		Partner partner=getNormalPartnerByTaobaoUserId(dto.getTaobaoUserId());
 		dto.setName(partner.getName());
 	}
+
+    @Override
+    public List<Partner> getPartnerByIdnum(String idnum) {
+        ValidateUtils.notNull(idnum);
+        PartnerExample example = new PartnerExample();
+        example.createCriteria()
+                .andIdenNumEqualTo(idnum)
+                .andStateEqualTo(PartnerStateEnum.NORMAL.getCode())
+                .andIsDeletedEqualTo("n");
+        return exPartnerMapper.selectByExample(example); 
+    }
 }

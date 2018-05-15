@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
+import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
+import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
@@ -102,4 +105,34 @@ public class StationDecorateConverter {
 
 		return list;
 	}
+	
+	public static DecorationInfoDecisionDto toDecorationInfoDecisionDto(DecorationInfoDecision decorationInfo) {
+        if (null == decorationInfo) {
+            return null;
+        }
+        DecorationInfoDecisionDto decorationInfoDto = new DecorationInfoDecisionDto();
+        decorationInfoDto.setId(decorationInfo.getId());
+        decorationInfoDto.setStationId(decorationInfo.getStationId());
+        decorationInfoDto.setOrgId(decorationInfo.getOrgId());
+        decorationInfoDto.setDecorateMoney(decorationInfo.getDecorateMoney());
+        decorationInfoDto.setShopArea(decorationInfo.getShopArea());
+        decorationInfoDto.setStatus(DecorationInfoDecisionStatusEnum.valueof(decorationInfo.getStatus()));
+        decorationInfoDto.setWarehouseArea(decorationInfo.getWarehouseArea());
+        decorationInfoDto.setAuditOpinion(decorationInfo.getAuditOpinion());
+        return decorationInfoDto;
+    }
+
+    public static DecorationInfoDecision toDecorationInfoDecision(DecorationInfoDecisionDto decorationInfoDto) {
+        DecorationInfoDecision decorationInfo = new DecorationInfoDecision();
+
+        decorationInfo.setId(decorationInfoDto.getId());
+        decorationInfo.setStationId(decorationInfoDto.getStationId());
+        decorationInfo.setOrgId(decorationInfoDto.getOrgId());
+        decorationInfo.setShopArea(decorationInfoDto.getShopArea());
+        decorationInfo.setDecorateMoney(decorationInfoDto.getDecorateMoney());
+        decorationInfo.setStatus(decorationInfoDto.getStatus()==null?null:decorationInfoDto.getStatus().getCode());
+        decorationInfo.setWarehouseArea(decorationInfoDto.getWarehouseArea());
+        decorationInfo.setAuditOpinion(decorationInfoDto.getAuditOpinion());
+        return decorationInfo;
+    }
 }

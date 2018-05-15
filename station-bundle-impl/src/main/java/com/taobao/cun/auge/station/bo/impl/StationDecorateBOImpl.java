@@ -228,7 +228,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 		StationDecorateDto updateDto = new StationDecorateDto();
 		updateDto.copyOperatorDto(OperatorDto.defaultOperator());
 		updateDto.setId(stationDecorateDto.getId());
-		if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode())){
+		if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode()) ||
+		        StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(stationDecorateDto.getStatus().getCode()) ||
+                StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode().equals(stationDecorateDto.getStatus().getCode())){
 			StationDecorateOrderDto decorateOrder = null;
 //			if(StringUtils.isNotEmpty(stationDecorateDto.getTaobaoOrderNum())){
 //				decorateOrder =	stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(stationDecorateDto.getTaobaoOrderNum())).orElse(null);
@@ -237,7 +239,11 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 //			}
 			 if(decorateOrder != null){
 				if(decorateOrder.isPaid()){
-					updateDto.setStatus(StationDecorateStatusEnum.DECORATING);
+				    if(StationDecorateStatusEnum.UNDECORATE.getCode().equals(stationDecorateDto.getStatus().getCode())){
+				        updateDto.setStatus(StationDecorateStatusEnum.DECORATING);
+				    }else{
+				        updateDto.setStatus(stationDecorateDto.getStatus());
+				    }
 					updateDto.setTaobaoOrderNum(decorateOrder.getBizOrderId()+"");
 					updateStationDecorate(updateDto);
 				}else{
@@ -251,7 +257,9 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 					}
 				}
 			}	
-		}if(StationDecorateStatusEnum.DECORATING.getCode().equals(stationDecorateDto.getStatus().getCode())){
+		}if(StationDecorateStatusEnum.DECORATING.getCode().equals(stationDecorateDto.getStatus().getCode()) ||
+		        StationDecorateStatusEnum.WAIT_AUDIT.getCode().equals(stationDecorateDto.getStatus().getCode()) ||
+		        StationDecorateStatusEnum.AUDIT_NOT_PASS.getCode().equals(stationDecorateDto.getStatus().getCode())){
 			StationDecorateOrderDto decorateOrder =	stationDecorateOrderBO.getDecorateOrderById(Long.parseLong(stationDecorateDto.getTaobaoOrderNum())).orElse(null);
 			if(decorateOrder != null)  {
 				if(decorateOrder.isRefund()){

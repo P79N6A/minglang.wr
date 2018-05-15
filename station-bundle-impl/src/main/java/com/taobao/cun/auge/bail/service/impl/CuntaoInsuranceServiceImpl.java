@@ -9,7 +9,9 @@ import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.insurance.CuntaoInsuranceService;
+import com.taobao.cun.auge.station.bo.PartnerBO;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -30,6 +32,8 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
     private PolicyQueryService policyQueryService;
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
+    @Autowired
+    private PartnerBO partnerBO;
 
     private static final Logger logger = LoggerFactory
             .getLogger(CuntaoInsuranceServiceImpl.class);
@@ -43,6 +47,9 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
             Integer identy = partnerTagService.getPartnerType(taobaoUserId);
             // 如果是合伙人要判断是否买过保险，淘帮手是不用强制买保险
             if (identy != null && identy.intValue() == 1) {
+                if(idenNumDupliInsure(taobaoUserId)){
+                    return true;
+                }
                 AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService
                         .queryPolicyByInsured(String.valueOf(taobaoUserId),
                                 SP_TYPE, SP_NO);
@@ -114,5 +121,23 @@ public class CuntaoInsuranceServiceImpl implements CuntaoInsuranceService{
         return diamondConfiguredProperties.getInsureWhiteListConfig().contains(taobaoId);
     }
 
+    private boolean idenNumDupliInsure(Long taobaoUserId){
+        Partner partner =  partnerBO.getNormalPartnerByTaobaoUserId(taobaoUserId);
+        if(partner != null){
+            List<Partner> partners =  partnerBO.getPartnerByIdnum(partner.getIdenNum());
+            if(partners != null && partners.size() > 1){
+                for(Partner p : partners){
+                    AliSceneResult<List<InsPolicyDTO>> insure = policyQueryService
+                            .queryPolicyByInsured(String.valueOf(p.getTaobaoUserId()),
+                                    SP_TYPE, SP_NO);
+                    if (insure.isSuccess() && insure.getModel() != null
+                            && insure.getModel().size() > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
 }

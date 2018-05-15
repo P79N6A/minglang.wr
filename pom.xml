@@ -28,7 +28,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
-		<ague.station.client.version>3.8.13</ague.station.client.version>
+		<ague.station.client.version>3.8.14</ague.station.client.version>
 		<alibaba-spring-boot.version>1.4.7.9</alibaba-spring-boot.version>
 	</properties>
 
@@ -521,7 +521,7 @@
 			<dependency>
 				<groupId>com.taobao.crius</groupId>
 				<artifactId>attachement-client</artifactId>
-				<version>1.2.4</version>
+				<version>1.2.9</version>
 			</dependency>
 			<dependency>
 				<groupId>com.taobao.tair</groupId>
@@ -536,7 +536,7 @@
 			<dependency>
 				<groupId>com.taobao.cun.module</groupId>
 				<artifactId>recruit-bundle-client</artifactId>
-				<version>2.2.3</version>
+				<version>2.2.6</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba.crm</groupId>

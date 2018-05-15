@@ -362,8 +362,20 @@ public class CuntaoQualificationServiceImpl implements CuntaoQualificationServic
 	}
 
 	@Override
+
+	public Qualification queryLocalQualification(Long taobaoUserId) {
+		CuntaoQualification cuntaoQulification = this.cuntaoQualificationBO.getCuntaoQualificationByTaobaoUserId(taobaoUserId);
+		if(cuntaoQulification == null){
+			return null;
+		}
+		Qualification qualification = new Qualification();
+		cuntaoQualificationReverseCopier.copy(cuntaoQulification, qualification, null);
+		
+		return qualification;
+	}
 	public List<Qualification> queryHistoryQualification(Long taobaoUserId) {
 		List<CuntaoQualification> qualis = cuntaoQualificationBO.queryHistoriesByTaobaoUserId(taobaoUserId);
 		return qualis.stream().map(q -> buildQulification(q)).collect(Collectors.toList());
+
 	}
 }
