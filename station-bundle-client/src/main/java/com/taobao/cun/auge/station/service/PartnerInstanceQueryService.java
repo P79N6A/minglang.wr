@@ -99,13 +99,7 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public PageDto<PartnerInstanceDto> queryByPage(PartnerInstancePageCondition pageCondition);
-	
-	/**
-	 * 重构过度使用，请正常业务不要使用
-	 * 
-	 * @return
-	 */
-	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds);
+
 	
 	/**
 	 * 根据合伙人实例id，批量查询合伙人实例
@@ -151,13 +145,6 @@ public interface PartnerInstanceQueryService {
 	 */
 	public AccountMoneyDto getAccountMoney(Long taobaoUserId, AccountMoneyTypeEnum type);
 
-	/**
-	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
-	 * 
-	 * @param stationApplyId
-	 * @return
-	 */
-	public Long getPartnerInstanceId(Long stationApplyId);
 	
 	/**
 	 * 根据stationId查询，当前村上的实例id
@@ -166,14 +153,6 @@ public interface PartnerInstanceQueryService {
 	 * @return
 	 */
 	public Long getPartnerInstanceIdByStationId(Long stationId);
-	
-	/**
-	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
-	 * 
-	 * @param instanceId
-	 * @return
-	 */
-	public Long getStationApplyId(Long instanceId);
 
 	/**
 	 * 
@@ -300,22 +279,7 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate);
-    
-    /**
-     * 重构过度使用
-     * 
-     * @param stationId
-     * @return
-     */
-    public Long findStationApplyIdByStationId(Long stationId);
-    
-    /**
-     * 重构过度使用
-     * @param stationApplyId
-     * @return
-     */
-    public Long findStationIdByStationApplyId(Long stationApplyId);
-    
+
      /**
      * 根据淘宝userId，查询当前所在的村点id
      * 
@@ -349,4 +313,51 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
+
+
+    //=================以下为重构接口，业务不可调用，否则后果自负=====================
+
+	/**
+	 * 重构过度使用
+	 * @param stationApplyId
+	 * @return
+	 */
+	public Long findStationIdByStationApplyId(Long stationApplyId);
+
+
+	/**
+	 * 根据stationapplyId查询合伙人实例id[过渡阶段使用，即将废弃]
+	 *
+	 * @param stationApplyId
+	 * @return
+	 */
+	public Long getPartnerInstanceId(Long stationApplyId);
+
+
+	/**
+	 * 根据instanceId查询stationApplyId[过渡阶段使用，即将废弃]
+	 *
+	 * @param instanceId
+	 * @return
+	 */
+	public Long getStationApplyId(Long instanceId);
+
+
+	/**
+	 * 重构过度使用，请正常业务不要使用
+	 *
+	 * @return
+	 */
+	public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds);
+
+
+	/**
+	 * 重构过度使用
+	 *
+	 * @param stationId
+	 * @return
+	 */
+	public Long findStationApplyIdByStationId(Long stationId);
 }
+
+

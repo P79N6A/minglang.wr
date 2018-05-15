@@ -101,8 +101,8 @@ public class ProcessProcessor {
 	@Autowired
 	PartnerLifecycleBO partnerLifecycleBO;
 
-	@Autowired
-	StationApplySyncBO stationApplySyncBO;
+//	@Autowired
+//	StationApplySyncBO stationApplySyncBO;
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
