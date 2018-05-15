@@ -106,6 +106,8 @@ public class DiamondConfiguredProperties {
     @Value("${storeImagePerfix}")
     private String storeImagePerfix;
     
+    @Value("${checkOrderFinish}")
+    private boolean checkOrderFinish;
     
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
@@ -272,5 +274,13 @@ public class DiamondConfiguredProperties {
 
 	public void setStoreImagePerfix(String storeImagePerfix) {
 		this.storeImagePerfix = storeImagePerfix;
+	}
+
+	public boolean isCheckOrderFinish() {
+		return checkOrderFinish;
+	}
+
+	public void setCheckOrderFinish(boolean checkOrderFinish) {
+		this.checkOrderFinish = checkOrderFinish;
 	}
 }
