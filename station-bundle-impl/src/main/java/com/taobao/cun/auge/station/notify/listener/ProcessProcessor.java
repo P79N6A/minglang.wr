@@ -350,18 +350,6 @@ public class ProcessProcessor {
 
 	}
 
-	/**
-	 * 处理停业审批结果
-	 *
-	 * @param stationApplyId
-	 * @param approveResult
-	 * @throws Exception
-	 */
-	public void monitorCloseApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		closeApprove(partnerStationRel.getId(), approveResult);
-	}
-
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public void closeApprove(Long instanceId, ProcessApproveResultEnum approveResult) throws Exception {
 		try {
@@ -473,18 +461,6 @@ public class ProcessProcessor {
 		partnerLifecycleDto.setLifecycleId(items.getId());
 
 		partnerLifecycleBO.updateLifecycle(partnerLifecycleDto);
-	}
-
-	/**
-	 * 处理退出审批结果
-	 *
-	 * @param stationApplyId
-	 * @param approveResult
-	 * @throws Exception
-	 */
-	public void monitorQuitApprove(Long stationApplyId, ProcessApproveResultEnum approveResult) throws Exception {
-		PartnerStationRel partnerStationRel = partnerInstanceBO.getPartnerStationRelByStationApplyId(stationApplyId);
-		quitApprove(partnerStationRel.getId(), approveResult);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
