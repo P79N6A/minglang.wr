@@ -23,7 +23,7 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 
 	@Override
 	public Boolean isMatched(String action, String tableName) {
-		return ("INSERT".equals(action)||"UPDATE".equals(action)) && "exam_instance".equals(tableName);
+		return ("INSERT".equals(action)||"UPDATE".equals(action)) && "partner_apply".equals(tableName);
 	}
 
 	@Override
@@ -35,12 +35,12 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 	public BiConsumer<StateTransitionTuple, CuntaoLifecycleTransition> getStateComsumer() {
 		return (tuple,transition) ->{
 			if(tuple.isInsert()){
-				String newState = (String)tuple.getValue("status");
+				String newState = (String)tuple.getValue("apply_exam_status");
 				transition.setNewState(newState);
 				transition.setOldState("NEW");
 			}else if(tuple.isUpdate()){
-				String oldState = (String)tuple.getValue("status");
-				String newState = (String)tuple.getNewValue("status");
+				String oldState = (String)tuple.getValue("apply_exam_status");
+				String newState = (String)tuple.getNewValue("apply_exam_status");
 				transition.setNewState(newState);
 				transition.setOldState(oldState);
 			}
@@ -53,16 +53,16 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 	public BiPredicate<Map<String, Serializable>, Map<String, Serializable>> getStatePredicate() {
 		return (row,modifiedRow)->{
 			if(modifiedRow != null){
-				return modifiedRow.containsKey("status");
+				return modifiedRow.containsKey("apply_exam_status");
 			}else{
-				return row.containsKey("status");
+				return row.containsKey("apply_exam_status");
 			}
 		};
 	}
 
 	@Override
 	public Function<StateTransitionTuple, BaseTransitionInfo> getBaseTransitionInfoProvider() {
-		return this.providerByTaobaoUserIdKey("user_id");
+		return this.providerByTaobaoUserIdKey("taobao_user_id");
 	}
 
 }
