@@ -19,11 +19,13 @@ import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.domain.StationDecorate;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
+import com.taobao.cun.auge.station.bo.DecorationInfoDecisionBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -31,6 +33,7 @@ import com.taobao.cun.auge.station.bo.StationDecorateBO;
 import com.taobao.cun.auge.station.bo.StationDecorateOrderBO;
 import com.taobao.cun.auge.station.convert.StationConverter;
 import com.taobao.cun.auge.station.convert.StationDecorateConverter;
+import com.taobao.cun.auge.station.dto.DecorationInfoDecisionDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.dto.StartProcessDto;
@@ -38,12 +41,15 @@ import com.taobao.cun.auge.station.dto.StationDecorateAuditDto;
 import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDecorateOrderDto;
 import com.taobao.cun.auge.station.dto.StationDecorateReflectDto;
+import com.taobao.cun.auge.station.enums.DecorationInfoDecisionStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
@@ -81,6 +87,9 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 	
     @Autowired
     AttachmentService criusAttachmentService;
+    
+    @Autowired
+    DecorationInfoDecisionBO decorationInfoDecisionBO;
 	
 	/**
 	 * 淘宝商品图片
@@ -233,6 +242,10 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             startProcessDto.setBusinessName(station.getName()+station.getStationNum());
             startProcessDto.setBusinessOrgId(station.getApplyOrg());
             startProcessDto.copyOperatorDto(stationDecorateReflectDto);
+            
+            PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(sd.getStationId());
+            String stationType = "stationType:"+rel.getType();
+            startProcessDto.setJsonParams(stationType);
             processService.startApproveProcess(startProcessDto);
 	}
 
@@ -288,13 +301,15 @@ public class StationDecorateServiceImpl implements StationDecorateService {
 			if (sdDto == null) {
 				return null;
 			}
+			PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceByStationId(stationId);
 			if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-					sdDto.getPaymentType().getCode())){
+					sdDto.getPaymentType().getCode()) || PartnerInstanceTypeEnum.TPS.getCode().equals(rel.getType())){
 				return sdDto;
 			}
 			//容错，因为定时钟更新装修记录有时间差，防止数据不准确，调淘宝接口，更新数据并返回
-			if ((StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) || StationDecorateStatusEnum.DECORATING
-					.equals(sdDto.getStatus()))) {
+			if (StationDecorateStatusEnum.UNDECORATE.equals(sdDto.getStatus()) || StationDecorateStatusEnum.DECORATING
+					.equals(sdDto.getStatus()) || StationDecorateStatusEnum.AUDIT_NOT_PASS.equals(sdDto.getStatus())
+					|| StationDecorateStatusEnum.WAIT_AUDIT.equals(sdDto.getStatus())) {
 				stationDecorateBO.syncStationDecorateFromTaobao(sdDto);
 				sdDto = stationDecorateBO.getStationDecorateDtoByStationId(stationId);
 			}
@@ -436,5 +451,83 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             }
         }
         return sdDto;
+    }
+
+    public DecorationInfoDecisionDto getDecorationDecisionById(Long id) {
+        ValidateUtils.notNull(id);
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
+        DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
+        dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION));
+        if (info.getStationId() != null) {
+            Station s = stationBO.getStationById(info.getStationId());
+            if (s != null) {
+                dto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return dto;
+    }
+
+    public void auditDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        // 参数校验
+        BeanValidator.validateWithThrowable(decorationInfoDecisionDto);
+        Long id = decorationInfoDecisionDto.getId();
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoById(id);
+        if (info == null) {
+            String error = getErrorMessage("audit",JSONObject.toJSONString(decorationInfoDecisionDto), "decorationInfoDecision is null");
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,error);
+        }
+        //审批装修图纸信息
+        DecorationInfoDecisionDto dto =new DecorationInfoDecisionDto();
+        dto.setId(decorationInfoDecisionDto.getId());
+        if(decorationInfoDecisionDto.getIsAgree()){
+            dto.setStatus(DecorationInfoDecisionStatusEnum.AUDIT_PASS);
+        }else{
+            dto.setStatus(DecorationInfoDecisionStatusEnum.AUDIT_NOT_PASS);
+        }
+        dto.copyOperatorDto(decorationInfoDecisionDto);
+        decorationInfoDecisionBO.updateDecorationInfo(dto);
+    }
+
+    public void updateDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
+    public void submitDecorationDecision(DecorationInfoDecisionDto decorationInfoDecisionDto) {
+        ValidateUtils.notNull(decorationInfoDecisionDto.getStationId());
+        decorationInfoDecisionDto.setStatus(DecorationInfoDecisionStatusEnum.WAIT_AUDIT);
+        DecorationInfoDecision rm = decorationInfoDecisionBO.queryDecorationInfoByStationId(decorationInfoDecisionDto.getStationId());
+        Long id = null;
+        if(rm == null){
+            id =  decorationInfoDecisionBO.addDecorationInfoDecision(decorationInfoDecisionDto);
+        }else if(rm.getStatus().equals(DecorationInfoDecisionStatusEnum.WAIT_AUDIT.getCode())){
+            //同一个村点待审核的装修图纸记录只能有一条
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"装修图纸待审核状态，请勿重复提交");
+        }else if(rm.getStatus().equals(DecorationInfoDecisionStatusEnum.AUDIT_NOT_PASS.getCode())){
+            decorationInfoDecisionBO.updateDecorationInfo(decorationInfoDecisionDto);
+        }
+       
+       StartProcessDto startProcessDto =new StartProcessDto();
+       startProcessDto.setBusiness(ProcessBusinessEnum.decorationInfoDecision);
+       startProcessDto.setBusinessId(id);
+       Station station=stationBO.getStationById(decorationInfoDecisionDto.getStationId());
+       startProcessDto.setBusinessName(station.getName()+station.getStationNum());
+       startProcessDto.setBusinessOrgId(station.getApplyOrg());
+       startProcessDto.copyOperatorDto(decorationInfoDecisionDto);
+       processService.startApproveProcess(startProcessDto);
+    }
+
+    public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId) {
+        ValidateUtils.notNull(stationId);
+        DecorationInfoDecision info = decorationInfoDecisionBO.queryDecorationInfoByStationId(stationId);
+        DecorationInfoDecisionDto dto = StationDecorateConverter.toDecorationInfoDecisionDto(info);
+        dto.setAttachments(criusAttachmentService.getAttachmentList(info.getId(), AttachmentBizTypeEnum.DECORATION_INFO_DECISION));
+        if (info.getStationId() != null) {
+            Station s = stationBO.getStationById(info.getStationId());
+            if (s != null) {
+                dto.setStationDto(StationConverter.toStationDto(s));
+            }
+        }
+        return dto;
     }
 }

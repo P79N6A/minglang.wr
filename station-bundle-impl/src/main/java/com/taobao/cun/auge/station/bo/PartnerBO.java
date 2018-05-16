@@ -72,6 +72,14 @@ public interface PartnerBO {
 	 */
 	public List<Partner> getPartnerByMobile(String mobile) ;
 	
+	   /**
+     * 根据身份证获取合伙人
+     * @param idnum
+     * @return
+     * @
+     */
+    public List<Partner> getPartnerByIdnum(String idnum) ;
+	
 	public void applyFlowName(PartnerFlowerNameApplyDto dto);
 	
 	public PartnerFlowerNameApplyDto getFlowerNameApplyDetail(Long taobaoUserId);
