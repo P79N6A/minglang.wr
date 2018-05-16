@@ -411,13 +411,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     }
 
     @Override
-    public Long getPartnerInstanceId(Long stationApplyId) {
-        logRefactorMethod();
-        ValidateUtils.notNull(stationApplyId);
-        return partnerInstanceBO.getInstanceIdByStationApplyId(stationApplyId);
-    }
-
-    @Override
     public Long getPartnerInstanceIdByStationId(Long stationId) {
         ValidateUtils.notNull(stationId);
         return partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
@@ -600,13 +593,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
 	}
 
     @Override
-    public Long getStationApplyId(Long instanceId) {
-        logRefactorMethod();
-        ValidateUtils.notNull(instanceId);
-        return partnerInstanceBO.findStationApplyId(instanceId);
-    }
-
-    @Override
     public PartnerProtocolRelDto getProtocolRel(Long objectId, PartnerProtocolRelTargetTypeEnum targetType, ProtocolTypeEnum type) {
         return partnerProtocolRelBO.getPartnerProtocolRelDto(type, objectId, targetType);
     }
@@ -755,32 +741,6 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     @Override
     public List<PartnerInstanceLevelGrowthTrendDtoV2> getPartnerInstanceLevelGrowthTrendDataV2(Long taobaoUserId, String statDate) {
         return partnerInstanceLevelDataQueryService.getPartnerInstanceLevelGrowthTrendDataV2(taobaoUserId, statDate);
-    }
-
-    @Override
-    public Long findStationApplyIdByStationId(Long stationId) {
-        logRefactorMethod();
-        ValidateUtils.notNull(stationId);
-        return partnerInstanceBO.findStationApplyIdByStationId(stationId);
-    }
-
-    @Override
-    public Long findStationIdByStationApplyId(Long stationApplyId) {
-        logRefactorMethod();
-        ValidateUtils.notNull(stationApplyId);
-        return partnerInstanceBO.findStationIdByStationApplyId(stationApplyId);
-    }
-
-    @Override
-    public List<PartnerInstanceDto> queryByStationApplyIds(List<Long> stationApplyIds) {
-        logRefactorMethod();
-        if (CollectionUtils.isEmpty(stationApplyIds)) {
-            return Collections.<PartnerInstanceDto>emptyList();
-        }
-        List<PartnerInstance> instances = partnerStationRelExtMapper.selectPartnerInstancesByStationApplyIds(stationApplyIds);
-
-        List<PartnerInstanceDto> success = PartnerInstanceConverter.convert(instances);
-        return success;
     }
 
     @Override

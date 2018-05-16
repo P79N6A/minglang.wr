@@ -284,12 +284,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     }
 
     @Override
-    public Long findStationApplyId(Long instanceId) {
-        PartnerStationRel partnerInstance = partnerStationRelMapper.selectByPrimaryKey(instanceId);
-        return partnerInstance.getStationApplyId();
-    }
-
-    @Override
     public PartnerInstanceDto getPartnerInstanceById(Long instanceId) {
         PartnerStationRel psRel = findPartnerInstanceById(instanceId);
         Partner partner = partnerBO.getPartnerById(psRel.getPartnerId());
@@ -311,15 +305,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
         partnerStationRel.setOpenDate(openDate);
         DomainUtils.beforeUpdate(partnerStationRel, operator);
         partnerStationRelMapper.updateByPrimaryKeySelective(partnerStationRel);
-    }
-
-    @Override
-    public Long findStationApplyIdByStationId(Long stationId) {
-        PartnerStationRel partnerStationRel = findPartnerInstanceByStationId(stationId);
-        if (partnerStationRel != null) {
-            return partnerStationRel.getStationApplyId();
-        }
-        return null;
     }
 
     @Override
