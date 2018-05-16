@@ -35,12 +35,12 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 	public BiConsumer<StateTransitionTuple, CuntaoLifecycleTransition> getStateComsumer() {
 		return (tuple,transition) ->{
 			if(tuple.isInsert()){
-				String newState = (String)tuple.getValue("status");
+				String newState = (String)tuple.getValue("apply_exam_status");
 				transition.setNewState(newState);
 				transition.setOldState("NEW");
 			}else if(tuple.isUpdate()){
-				String oldState = (String)tuple.getValue("status");
-				String newState = (String)tuple.getNewValue("status");
+				String oldState = (String)tuple.getValue("apply_exam_status");
+				String newState = (String)tuple.getNewValue("apply_exam_status");
 				transition.setNewState(newState);
 				transition.setOldState(oldState);
 			}
