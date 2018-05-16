@@ -23,7 +23,7 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 
 	@Override
 	public Boolean isMatched(String action, String tableName) {
-		return ("INSERT".equals(action)||"UPDATE".equals(action)) && "exam_instance".equals(tableName);
+		return ("INSERT".equals(action)||"UPDATE".equals(action)) && "partner_apply".equals(tableName);
 	}
 
 	@Override
@@ -53,16 +53,16 @@ public class ExamStateTransition extends SubStateTransitionProcessor{
 	public BiPredicate<Map<String, Serializable>, Map<String, Serializable>> getStatePredicate() {
 		return (row,modifiedRow)->{
 			if(modifiedRow != null){
-				return modifiedRow.containsKey("status");
+				return modifiedRow.containsKey("apply_exam_status");
 			}else{
-				return row.containsKey("status");
+				return row.containsKey("apply_exam_status");
 			}
 		};
 	}
 
 	@Override
 	public Function<StateTransitionTuple, BaseTransitionInfo> getBaseTransitionInfoProvider() {
-		return this.providerByTaobaoUserIdKey("user_id");
+		return this.providerByTaobaoUserIdKey("taobao_user_id");
 	}
 
 }
