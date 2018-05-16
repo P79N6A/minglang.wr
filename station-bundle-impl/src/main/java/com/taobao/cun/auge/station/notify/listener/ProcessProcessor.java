@@ -143,7 +143,7 @@ public class ProcessProcessor {
 	
 	@Autowired
 	StationDecorateService stationDecorateService;
-	
+
 	@Autowired
 	private ServiceAbilityDecisionService serviceAbilityDecisionService;
 	@Autowired
