@@ -45,4 +45,7 @@ public interface DataTransferService {
 	 * 用于初始化站点和村小二的模式版本
 	 */
 	public Boolean initSatationAndPartnerMod();
+	
+	//618优品售卖范围扩大项目
+	public boolean initStationFeatureToCainiao();
 }
