@@ -55,15 +55,15 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 		    option.setShowMemo(true);
 			SingleQueryResultDO queryResultDO = tcBaseService.getCachedBizOrderById(bizOrderId, option);
 			if(queryResultDO == null){
-				return Optional.empty();
-			}
-			/*if(queryResultDO == null || queryResultDO.getBizOrder() == null){
-				queryResultDO = archiveTcBaseService.querySingle(bizOrderId, null, option);
-				logger.info("query archiveOrder:"+queryResultDO);
-				if(queryResultDO == null){
-					return Optional.empty();
+				if(queryResultDO == null || queryResultDO.getBizOrder() == null){
+					queryResultDO = archiveTcBaseService.querySingle(bizOrderId, null, option);
+					logger.info("query archiveOrder:"+queryResultDO);
+					if(queryResultDO == null){
+						return Optional.empty();
+					}
 				}
-			}*/
+			}
+			
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
