@@ -100,7 +100,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service("dataTransferService")
-@HSFProvider(serviceInterface = DataTransferService.class)
+@HSFProvider(serviceInterface = DataTransferService.class, clientTimeout = 800000)
 public class DataTransferServiceImpl implements DataTransferService{
 
 	@Autowired
