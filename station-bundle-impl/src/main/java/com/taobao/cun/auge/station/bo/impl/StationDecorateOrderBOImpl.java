@@ -63,6 +63,7 @@ public class StationDecorateOrderBOImpl implements StationDecorateOrderBO {
 					}
 				}
 			}
+			
 			StationDecorateOrderDto orderDto = getStationDecorateOrder(queryResultDO.getBizOrder());
 			return Optional.ofNullable(orderDto);
 		} catch (Exception e) {
