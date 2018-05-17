@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.strategy;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
@@ -22,8 +23,14 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	@Autowired
 	StationApplySyncBO stationApplySyncBO;
 
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
+
 	public void syncStationApply(Long partnerInstanceId,SyncStationApplyEnum type){
-		stationApplySyncBO.updateStationApply(partnerInstanceId, type);
+		String isSync = diamondConfiguredProperties.getIsSync();
+		if("y".equals(isSync)){
+			stationApplySyncBO.updateStationApply(partnerInstanceId, type);
+		}
 	}
 
 	public String findCloseReason(Long instanceId) {

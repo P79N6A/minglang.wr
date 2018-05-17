@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -48,6 +49,9 @@ public class PartnerServiceImpl implements PartnerService {
 	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
 	
 	@Override
 	public void updateById(PartnerDto partnerDto) {
@@ -140,8 +144,11 @@ public class PartnerServiceImpl implements PartnerService {
         dto.setBirthday(birthday);
         dto.setId(rel.getPartnerId());
         partnerBO.updatePartner(dto);
-        //同步stationApply;
-        syncStationApplyBO.updateStationApply(rel.getId(), SyncStationApplyEnum.UPDATE_BASE);
+		String isSync = diamondConfiguredProperties.getIsSync();
+		if("y".equals(isSync)) {
+			//同步stationApply;
+			syncStationApplyBO.updateStationApply(rel.getId(), SyncStationApplyEnum.UPDATE_BASE);
+		}
         //同步菜鸟
         if (isNeedToUpdateCainiaoStation(rel.getState())) {
 			generalTaskSubmitService.submitUpdateCainiaoStation(rel.getId(),String.valueOf(taobaoUserId));
