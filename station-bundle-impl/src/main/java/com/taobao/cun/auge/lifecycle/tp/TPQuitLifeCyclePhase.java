@@ -223,6 +223,17 @@ public class TPQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 			accountMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
 			accountMoneyUpdateDto.copyOperatorDto(operatorDto);
 			accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
+			
+			//解冻铺货金保证金
+			AccountMoneyDto replenishMoneyUpdateDto = new AccountMoneyDto();
+			replenishMoneyUpdateDto.setObjectId(instanceId);
+			replenishMoneyUpdateDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+			replenishMoneyUpdateDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+			replenishMoneyUpdateDto.setThawTime(new Date());
+			replenishMoneyUpdateDto.setState(AccountMoneyStateEnum.HAS_THAW);
+			replenishMoneyUpdateDto.copyOperatorDto(operatorDto);
+			accountMoneyBO.updateAccountMoneyByObjectId(replenishMoneyUpdateDto);
+			
 		}
 	
 }

@@ -2,17 +2,6 @@ package com.taobao.cun.auge.bail.service.impl;
 
 import java.util.Map;
 
-import com.taobao.cun.auge.bail.BailService;
-import com.taobao.cun.settle.bail.dto.CuntaoBailSignDto;
-import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
-import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
-import com.taobao.cun.settle.bail.dto.CuntaoTransferBailForPunishDto;
-import com.taobao.cun.settle.bail.dto.CuntaoUnFreezeBailDto;
-import com.taobao.cun.settle.bail.enums.BailChannelEnum;
-import com.taobao.cun.settle.bail.enums.UserTypeEnum;
-import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
-import com.taobao.cun.settle.common.model.ResultModel;
-import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -20,6 +9,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.station.bo.AccountMoneyBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.dto.AccountMoneyDto;
+import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
+import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.settle.bail.dto.CuntaoBailSignDto;
+import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
+import com.taobao.cun.settle.bail.dto.CuntaoTransferBailForPunishDto;
+import com.taobao.cun.settle.bail.dto.CuntaoUnFreezeBailDto;
+import com.taobao.cun.settle.bail.enums.BailBizSceneEnum;
+import com.taobao.cun.settle.bail.enums.BailChannelEnum;
+import com.taobao.cun.settle.bail.enums.BailOperateTypeEnum;
+import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
+import com.taobao.cun.settle.common.model.ResultModel;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
 /**
  * Created by xujianhui on 16/12/27.
@@ -33,6 +43,11 @@ public class BailServiceImpl implements BailService {
     @Autowired
     private CuntaoNewBailService cuntaoNewBailService;
 
+    @Autowired
+    private AccountMoneyBO accountMoneyBO;
+    
+    @Autowired
+    private PartnerInstanceBO partnerInstanceBO;
     @Override
     public ResultModel<Boolean> isUserSignBail(Long taobaoUserId, String alipayId, UserTypeEnum userTypeEnum) {
         Assert.notNull(taobaoUserId);
@@ -166,4 +181,57 @@ public class BailServiceImpl implements BailService {
                 new Object[] {operation, taobaoUserId, alipayId, msg});
         }
     }
+
+	@Override
+	public ResultModel<Boolean> unfreezeUserReplenishBail(Long partnerInstanceId) {
+		ResultModel<Boolean> resultModel = new ResultModel<>();
+		PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
+		if (instance == null || accountMoney == null
+				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
+			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
+			resultModel.setSuccess(true);
+			resultModel.setResult(Boolean.FALSE);
+			resultModel.setMessage("铺货保证金不存在或者已经解冻或者合伙人实例不存在");
+			return resultModel;
+		} else {
+			Long taobaoUserId = instance.getId();
+			try {
+				ResultModel<String> freezeAmount = queryUserFreezeAmount(taobaoUserId, UserTypeEnum.STORE);
+				if (resultModel != null && resultModel.isSuccess() && freezeAmount.getResult() != null) {
+					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
+					if (amount > 0l) {
+						CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto = new CuntaoUnFreezeBailDto();
+						cuntaoUnFreezeBailDto.setTaobaoUserId(taobaoUserId);
+						cuntaoUnFreezeBailDto.setAmount(amount);
+						cuntaoUnFreezeBailDto.setBailBizSceneEnum(BailBizSceneEnum.PARTNER_KAIYEBAO);
+						cuntaoUnFreezeBailDto.setReason("村点退出解冻铺货金");
+						cuntaoUnFreezeBailDto.setBailOperateTypeEnum(BailOperateTypeEnum.QUIT_UNFREEZE);
+						cuntaoUnFreezeBailDto.setSource("auge");
+						cuntaoUnFreezeBailDto.setOutOrderId("CT_REPLENISH_" + partnerInstanceId + "_UNFREEZE");
+						cuntaoUnFreezeBailDto.setUserTypeEnum(UserTypeEnum.STORE);
+						return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
+					}
+				}
+			} catch (Exception e) {
+				logger.error("unfreezeUserReplenishBail error instanceId:{}",
+						new Object[] { partnerInstanceId }, e);
+			}
+		}
+		return resultModel;
+	}
+
+	private Long getReplenishAmount(Long partnerInstanceId, ResultModel<Boolean> resultModel,
+			ResultModel<String> freezeAmount) {
+		Long amount = 0l;
+		try {
+			amount = Long.parseLong(freezeAmount.getResult());
+		} catch (Exception e) {
+			logger.error("unfreezeUserReplenishBail error instanceId:{}",
+					new Object[] { partnerInstanceId }, e);
+			return amount;
+		}
+		return amount;
+	}
 }

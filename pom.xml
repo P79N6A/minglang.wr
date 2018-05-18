@@ -749,6 +749,11 @@
 			    <artifactId>kfc-client</artifactId>
 			    <version>1.7.8-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				    <groupId>com.taobao.cun</groupId>
+				    <artifactId>order-fulfillment-client</artifactId>
+				    <version>1.0.6</version>
+				</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

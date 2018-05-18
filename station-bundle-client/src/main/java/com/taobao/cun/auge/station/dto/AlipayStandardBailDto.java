@@ -11,6 +11,8 @@ public class AlipayStandardBailDto implements Serializable {
 	public static final String ALIPAY_OP_TYPE_FREEZE = "0001";//冻结
 	public static final String ALIPAY_OP_TYPE_UNFREEZE = "0002";//解冻
 	public static final String ALIPAY_OP_TYPE_TRANSFER = "0003";//转移
+	public static final String ALIPAY_OP_TYPE_UNFREEZE_REPLENISH = "0004";//解冻铺货金
+
 
 	private static final long serialVersionUID = 1L;
 	

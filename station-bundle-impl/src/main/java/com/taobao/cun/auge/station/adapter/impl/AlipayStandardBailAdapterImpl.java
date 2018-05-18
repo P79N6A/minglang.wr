@@ -40,6 +40,8 @@ public class AlipayStandardBailAdapterImpl implements AlipayStandardBailAdapter 
 				resultModel = bailService.freezeUserBail(BaiDtoBuilder.buildFreezeBailDtoFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
 			}else if(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE.equals(alipayStandardBailDto.getOpType())) {
 				resultModel = bailService.unfreezeUserBail(BaiDtoBuilder.buildFrom(rel.getTaobaoUserId(), alipayStandardBailDto));
+			}else if(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE_REPLENISH.equals(alipayStandardBailDto.getOpType())) {
+				resultModel = bailService.unfreezeUserReplenishBail(rel.getId());
 			}else if (AlipayStandardBailDto.ALIPAY_OP_TYPE_TRANSFER.equals(alipayStandardBailDto.getOpType())) {
 				throw new AugeBusinessException(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE,"Not Support Operation Exception!");
 			}

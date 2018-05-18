@@ -13,6 +13,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.ProtocolTypeEnum;
@@ -192,6 +193,11 @@ public class CuntaoGoodsServiceImpl implements CuntaoGoodsService {
 			Result<Boolean> result = Result.of(true);
 			boolean isConfirmed = isConfirmProtocol(taobaoUserId,ProtocolTypeEnum.STATION_OPENING_AGREEMENT);
 			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			if(!PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerInstance.getState().getCode())||
+			   !PartnerInstanceStateEnum.SERVICING.getCode().equals(partnerInstance.getState().getCode())){
+				result.setModule(false);
+				return result;
+			}
 			if(isConfirmed || (partnerInstance != null && StationModeEnum.V4.getCode().equals(partnerInstance.getMode()) && PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType().getCode()) )){
 				result.setModule(true);
 				return result;
