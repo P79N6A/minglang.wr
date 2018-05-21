@@ -18,6 +18,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailSignDto;
 import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
 import com.taobao.cun.settle.bail.dto.CuntaoTransferBailDto;
@@ -192,13 +193,13 @@ public class BailServiceImpl implements BailService {
 				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
 			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
 			resultModel.setSuccess(true);
-			resultModel.setResult(Boolean.FALSE);
-			resultModel.setMessage("铺货保证金不存在或者已经解冻或者合伙人实例不存在");
+			resultModel.setResult(Boolean.TRUE);
+			resultModel.setMessage("铺货保证金已解冻或铺货金未冻结");
 			return resultModel;
 		} else {
 			Long taobaoUserId = instance.getId();
 			try {
-				ResultModel<String> freezeAmount = queryUserFreezeAmount(taobaoUserId, UserTypeEnum.STORE);
+				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
 				if (resultModel != null && resultModel.isSuccess() && freezeAmount.getResult() != null) {
 					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
 					if (amount > 0l) {
@@ -213,6 +214,9 @@ public class BailServiceImpl implements BailService {
 						cuntaoUnFreezeBailDto.setUserTypeEnum(UserTypeEnum.STORE);
 						return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
 					}
+				}else{
+					logger.warn("unfreezeUserReplenishBail warn instanceId:{}, amountResult:{}",
+							new Object[] { partnerInstanceId ,freezeAmount.getResult()});
 				}
 			} catch (Exception e) {
 				logger.error("unfreezeUserReplenishBail error instanceId:{}",
@@ -222,13 +226,22 @@ public class BailServiceImpl implements BailService {
 		return resultModel;
 	}
 
+	    public ResultModel<Long> queryUserFreezeAmountNew(Long taobaoUserId, UserTypeEnum userTypeEnum) {
+	        Assert.notNull(taobaoUserId);
+	        Assert.notNull(userTypeEnum);
+	        CuntaoBailBaseQueryDto queryDto =new CuntaoBailBaseQueryDto();
+	        queryDto.setTaobaoUserId(taobaoUserId);
+	        queryDto.setUserTypeEnum(userTypeEnum);
+	        return cuntaoNewBailService.queryUserFreezeAmountNew(queryDto);
+	    }
+	 
 	private Long getReplenishAmount(Long partnerInstanceId, ResultModel<Boolean> resultModel,
-			ResultModel<String> freezeAmount) {
+			ResultModel<Long> freezeAmount) {
 		Long amount = 0l;
 		try {
-			amount = Long.parseLong(freezeAmount.getResult());
+			amount = freezeAmount.getResult();
 		} catch (Exception e) {
-			logger.error("unfreezeUserReplenishBail error instanceId:{}",
+			logger.error("unfreezeUserReplenishBail getReplenishAmount error instanceId:{}",
 					new Object[] { partnerInstanceId }, e);
 			return amount;
 		}
