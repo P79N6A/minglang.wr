@@ -18,6 +18,9 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 public class DiamondConfiguredProperties {
 
+    @Value("${refactor.sync.station.apply.key}")
+    private String isSync;
+
     @Value("${wisdom.audit.apply}")
     private String apply;
 
@@ -283,4 +286,11 @@ public class DiamondConfiguredProperties {
 	public void setCheckOrderFinish(boolean checkOrderFinish) {
 		this.checkOrderFinish = checkOrderFinish;
 	}
+    public String getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(String isSync) {
+        this.isSync = isSync;
+    }
 }

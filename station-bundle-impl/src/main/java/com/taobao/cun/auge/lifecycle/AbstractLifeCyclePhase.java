@@ -7,6 +7,7 @@ import java.util.List;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.event.EventDispatcherUtil;
@@ -58,6 +59,10 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	
 	@Autowired
 	private StationApplySyncBO syncStationApplyBO;
+
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
+
 	@Autowired
 	private LifeCycleValidator lifeCycleValidator;
 	public Long addStation(PartnerInstanceDto partnerInstanceDto,int stationType) {
@@ -208,6 +213,10 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
      * @param instanceId
      */
     public void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
+        String isSync = diamondConfiguredProperties.getIsSync();
+        if(!"y".equals(isSync)){
+            return;
+        }
         switch (type) {
             case ADD:
                 syncStationApplyBO.addStationApply(instanceId);

@@ -1,12 +1,15 @@
 package com.taobao.cun.auge.station.strategy;
 
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
+import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.station.dto.CloseStationApplyDto;
 import com.taobao.cun.auge.station.dto.QuitStationApplyDto;
 import com.taobao.cun.auge.station.enums.CloseStationApplyCloseReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
+import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class CommonStrategy implements PartnerInstanceStrategy{
@@ -16,6 +19,19 @@ public abstract class CommonStrategy implements PartnerInstanceStrategy{
 	
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
+
+	@Autowired
+	StationApplySyncBO stationApplySyncBO;
+
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
+
+	public void syncStationApply(Long partnerInstanceId,SyncStationApplyEnum type){
+		String isSync = diamondConfiguredProperties.getIsSync();
+		if("y".equals(isSync)){
+			stationApplySyncBO.updateStationApply(partnerInstanceId, type);
+		}
+	}
 
 	public String findCloseReason(Long instanceId) {
 		// 获取停业原因

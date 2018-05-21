@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -292,6 +293,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     
     @Autowired
     LifeCycleValidator lifeCycleValidator;
+
+    @Autowired
+    private DiamondConfiguredProperties diamondConfiguredProperties;
     
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
@@ -1417,6 +1421,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     }
 
     private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
+        String isSync = diamondConfiguredProperties.getIsSync();
+        if(!"y".equals(isSync)){
+            return;
+        }
         switch (type) {
             case ADD:
                 syncStationApplyBO.addStationApply(instanceId);
