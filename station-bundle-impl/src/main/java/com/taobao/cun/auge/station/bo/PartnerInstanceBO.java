@@ -15,22 +15,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTransStatusEnum;
 public interface PartnerInstanceBO {
 
     /**
-     * 根据实例id，查询stationApplyid
-     *
-     * @param instanceId
-     * @return
-     */
-    public Long findStationApplyId(Long instanceId);
-
-    /**
-     * 根据stationId查询stationAPPLYid
-     *
-     * @param stationId
-     * @return
-     */
-    public Long findStationApplyIdByStationId(Long stationId);
-
-    /**
      * @param stationId
      * @return
      */
