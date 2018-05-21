@@ -115,9 +115,9 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 
 	@Autowired
 	GeneralTaskSubmitService generalTaskSubmitService;
-
-	@Autowired
-	StationApplySyncBO stationApplySyncBO;
+//
+//	@Autowired
+//	StationApplySyncBO stationApplySyncBO;
 
 	@Autowired
 	AccountMoneyBO accountMoneyBO;
@@ -375,7 +375,8 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		partnerLifecycleBO.updateLifecycle(param);
 
 		// 同步station_apply
-		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
+//		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
+		syncStationApply(partnerInstanceId,SyncStationApplyEnum.UPDATE_STATE);
 
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();

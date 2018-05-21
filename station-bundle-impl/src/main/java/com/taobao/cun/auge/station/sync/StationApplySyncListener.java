@@ -2,6 +2,7 @@ package com.taobao.cun.auge.station.sync;
 
 import com.alibaba.fastjson.JSON;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.event.StationApplySyncEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.crius.event.Event;
@@ -20,8 +21,15 @@ public class StationApplySyncListener implements EventListener {
 	@Autowired
 	private StationApplySyncBO syncStationApplyBO;
 
+	@Autowired
+	private DiamondConfiguredProperties diamondConfiguredProperties;
+
 	@Override
 	public void onMessage(Event event) {
+		String isSync = diamondConfiguredProperties.getIsSync();
+		if(!"y".equals(isSync)){
+			return;
+		}
 		
 		StationApplySyncEvent syncEvent = (StationApplySyncEvent) event.getValue();
 		logger.info("sync back to station_apply: {}", JSON.toJSONString(syncEvent));
