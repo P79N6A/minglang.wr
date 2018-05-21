@@ -202,7 +202,7 @@ public class BailServiceImpl implements BailService {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
 				if (resultModel != null && resultModel.isSuccess() && freezeAmount.getResult() != null) {
 					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
-					if (amount > 0l) {
+					if (amount > 0L) {
 						CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto = new CuntaoUnFreezeBailDto();
 						cuntaoUnFreezeBailDto.setTaobaoUserId(taobaoUserId);
 						cuntaoUnFreezeBailDto.setAmount(amount);
@@ -237,7 +237,7 @@ public class BailServiceImpl implements BailService {
 	 
 	private Long getReplenishAmount(Long partnerInstanceId, ResultModel<Boolean> resultModel,
 			ResultModel<Long> freezeAmount) {
-		Long amount = 0l;
+		Long amount = 0L;
 		try {
 			amount = freezeAmount.getResult();
 		} catch (Exception e) {
