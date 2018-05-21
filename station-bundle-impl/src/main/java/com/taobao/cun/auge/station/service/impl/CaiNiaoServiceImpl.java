@@ -39,9 +39,11 @@ import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
 import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
+import com.taobao.cun.auge.station.enums.StationFeatureOpModeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -606,4 +608,19 @@ public class CaiNiaoServiceImpl implements CaiNiaoService {
 			caiNiaoAdapter.removeStationFeatures(cainiaoStationId, featureKey);
 		}
 	}
+
+	//无县仓的村点feature同步菜鸟服务,opMode:y新增 n删除
+    public void synNoWarehouseStationFeature(Long cainiaoStationId,StationFeatureOpModeEnum opMode) {
+        if(cainiaoStationId == null || opMode == null){
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"param check is null"); 
+        }
+        try {
+            LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+            features.put("noWarehouseSta",opMode.getDesc());
+            caiNiaoAdapter.updateStationFeatures(cainiaoStationId, features);
+        } catch (Exception e) {
+            logger.error("synNoWarehouseStationFeature get error:" + e.getMessage());
+            throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"get result has error"); 
+        }
+    }
 }

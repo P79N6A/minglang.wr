@@ -10,11 +10,13 @@ public class CountyStationManageModelEnum  implements Serializable{
 
 	public static final CountyStationManageModelEnum SELF = new CountyStationManageModelEnum("SELF", "自营");
 	public static final CountyStationManageModelEnum THIRD_PARTY = new CountyStationManageModelEnum("THIRD_PARTY","第三方");
-
+	public static final CountyStationManageModelEnum NO_WAREHOUSE = new CountyStationManageModelEnum("NO_WAREHOUSE","无县仓");
+	
 	private static final Map<String, CountyStationManageModelEnum> mappings = new HashMap<String, CountyStationManageModelEnum>();
 	static {
 		mappings.put("SELF", SELF);
 		mappings.put("THIRD_PARTY", THIRD_PARTY);
+		mappings.put("NO_WAREHOUSE", NO_WAREHOUSE);
 	}
 
 	private String code;

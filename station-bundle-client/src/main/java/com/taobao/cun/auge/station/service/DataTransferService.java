@@ -47,5 +47,5 @@ public interface DataTransferService {
 	public Boolean initSatationAndPartnerMod();
 	
 	//618优品售卖范围扩大项目
-	public boolean initStationFeatureToCainiao();
+	public boolean initStationFeatureToCainiao(String key,String value);
 }

@@ -10,6 +10,7 @@ import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.dto.SyncTPDegreeCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncUpgradeToTPForTpaDto;
+import com.taobao.cun.auge.station.enums.StationFeatureOpModeEnum;
 
 /**
  * 菜鸟交互业务服务接口
@@ -105,4 +106,6 @@ public interface CaiNiaoService {
 	public void modifyLngLatToCainiao(SyncModifyLngLatDto  syncModifyLngLatDto);
 	
 	public void updateCainiaoStationFeature(List<Long> cainiaoStationId);
+	
+	public void synNoWarehouseStationFeature(Long cainiaoStationId,StationFeatureOpModeEnum opMode);
 }

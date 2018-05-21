@@ -2,7 +2,6 @@ package com.taobao.cun.auge.station.service.impl;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +69,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.diamond.client.Diamond;
@@ -100,7 +100,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service("dataTransferService")
-@HSFProvider(serviceInterface = DataTransferService.class, clientTimeout = 800000)
+@HSFProvider(serviceInterface = DataTransferService.class, clientTimeout = 30000)
 public class DataTransferServiceImpl implements DataTransferService{
 
 	@Autowired
@@ -159,6 +159,9 @@ public class DataTransferServiceImpl implements DataTransferService{
     
     @Autowired
     CaiNiaoAdapter caiNiaoAdapter;
+    
+    @Autowired
+    CaiNiaoService caiNiaoService;
     
     private static Logger logger = LoggerFactory.getLogger(AlipayAgreementServiceImpl.class);
     
@@ -628,16 +631,23 @@ public class DataTransferServiceImpl implements DataTransferService{
 		return mode;
 	}
 
-    public boolean initStationFeatureToCainiao() {
+	/** 同步菜鸟feature临时预发接口，线上业务不要使用 
+	 *  @param key:youpinSta 优品售卖范围业务   noWarehouseSta 无县仓业务
+	 *  @param value:y 或 n
+	 */
+    public boolean initStationFeatureToCainiao(String key,String value) {
         try {
+            if(StringUtils.isEmpty(value) || StringUtils.isEmpty(key)){
+                throw new IllegalStateException("参数不为空");
+            } 
             String rm = Diamond.getConfig("com.taobao.cun:stationFeatureBy618.json", "DEFAULT_GROUP", 3000);
             String[] cainiaoIds = rm.split(",");
             LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
-            features.put("youpinSta", "y");
+            features.put(key, value);
             for(String cainiaoStationId: cainiaoIds){
                 caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
