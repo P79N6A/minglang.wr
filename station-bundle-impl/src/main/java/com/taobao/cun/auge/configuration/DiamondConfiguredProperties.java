@@ -18,6 +18,9 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 public class DiamondConfiguredProperties {
 
+    @Value("${refactor.sync.station.apply.key}")
+    private String isSync;
+
     @Value("${wisdom.audit.apply}")
     private String apply;
 
@@ -273,4 +276,12 @@ public class DiamondConfiguredProperties {
 	public void setStoreImagePerfix(String storeImagePerfix) {
 		this.storeImagePerfix = storeImagePerfix;
 	}
+
+    public String getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(String isSync) {
+        this.isSync = isSync;
+    }
 }
