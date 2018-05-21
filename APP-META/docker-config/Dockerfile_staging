@@ -25,6 +25,6 @@ ADD setenv.sh /home/admin/${MS_APP_NAME}/bin/setenv.sh
 ADD update_setenv.sh /home/admin/${MS_APP_NAME}/bin/update_setenv.sh
 ADD start.sh /home/admin/start.sh
 RUN chmod u+x /home/admin/health.sh /home/admin/start.sh /home/admin/stop.sh && \
-sed -i '$i\sed -i "s\/180\/360\/g" /home/admin/${APP_NAME}/bin/preload.sh' /home/admin/start.sh
+sed -i '$i\sed -i "s\/180\/720\/g" /home/admin/${APP_NAME}/bin/preload.sh' /home/admin/start.sh
 
 ENTRYPOINT ["/home/admin/start.sh"]
