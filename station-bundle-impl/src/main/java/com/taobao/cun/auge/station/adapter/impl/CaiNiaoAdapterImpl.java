@@ -445,7 +445,7 @@ public class CaiNiaoAdapterImpl implements CaiNiaoAdapter {
 	}
 
 	@Override
-	public boolean updateStationFeatures(Long stationId,
+    public boolean updateStationFeatures(Long stationId,
 			LinkedHashMap<String, String> features)  {
 		if (stationId == null) {
 			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_PARAM_ERROR_CODE,"CaiNiaoAdapterBO.updateStationFeature.param.error:stationId is null!");

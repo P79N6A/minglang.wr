@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +59,7 @@ import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.payment.protocol.impl.AlipayAgreementServiceImpl;
+import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.dto.PartnerCourseRecordDto;
@@ -67,8 +69,10 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
+import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.DataTransferService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
+import com.taobao.diamond.client.Diamond;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import com.taobao.notify.remotingclient.NotifyManagerBean;
 import org.apache.commons.collections.CollectionUtils;
@@ -96,7 +100,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service("dataTransferService")
-@HSFProvider(serviceInterface = DataTransferService.class)
+@HSFProvider(serviceInterface = DataTransferService.class, clientTimeout = 30000)
 public class DataTransferServiceImpl implements DataTransferService{
 
 	@Autowired
@@ -152,6 +156,12 @@ public class DataTransferServiceImpl implements DataTransferService{
     
     @Autowired
     StationMapper stationMapper;
+    
+    @Autowired
+    CaiNiaoAdapter caiNiaoAdapter;
+    
+    @Autowired
+    CaiNiaoService caiNiaoService;
     
     private static Logger logger = LoggerFactory.getLogger(AlipayAgreementServiceImpl.class);
     
@@ -620,4 +630,26 @@ public class DataTransferServiceImpl implements DataTransferService{
 		
 		return mode;
 	}
+
+	/** 同步菜鸟feature临时预发接口，线上业务不要使用 
+	 *  @param key:youpinSta 优品售卖范围业务   noWarehouseSta 无县仓业务
+	 *  @param value:y 或 n
+	 */
+    public boolean initStationFeatureToCainiao(String key,String value) {
+        try {
+            if(StringUtils.isEmpty(value) || StringUtils.isEmpty(key)){
+                throw new IllegalStateException("参数不为空");
+            } 
+            String rm = Diamond.getConfig("com.taobao.cun:stationFeatureBy618.json", "DEFAULT_GROUP", 3000);
+            String[] cainiaoIds = rm.split(",");
+            LinkedHashMap<String, String> features = new LinkedHashMap<String, String>();
+            features.put(key, value);
+            for(String cainiaoStationId: cainiaoIds){
+                caiNiaoAdapter.updateStationFeatures(Long.valueOf(cainiaoStationId), features);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
