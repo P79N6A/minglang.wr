@@ -197,7 +197,7 @@ public class BailServiceImpl implements BailService {
 			resultModel.setMessage("铺货保证金已解冻或铺货金未冻结");
 			return resultModel;
 		} else {
-			Long taobaoUserId = instance.getId();
+			Long taobaoUserId = instance.getTaobaoUserId();
 			try {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
 				if (resultModel != null && resultModel.isSuccess() && freezeAmount.getResult() != null) {
