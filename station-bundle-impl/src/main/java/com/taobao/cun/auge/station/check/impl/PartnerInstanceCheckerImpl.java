@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.Partner;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.domain.QuitStationApply;
@@ -16,10 +17,6 @@ import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.QuitStationApplyBO;
 import com.taobao.cun.auge.station.check.PartnerInstanceChecker;
 import com.taobao.cun.auge.station.convert.PartnerInstanceConverter;
-import com.taobao.cun.auge.station.dto.AccountMoneyDto;
-import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
-import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.handler.PartnerInstanceHandler;
@@ -28,7 +25,6 @@ import com.taobao.cun.auge.store.dto.StoreDto;
 import com.taobao.cun.order.fulfillment.api.CtFulFillStockService;
 import com.taobao.cun.order.fulfillment.common.Result;
 import com.taobao.cun.order.fulfillment.result.CtFulFillStockDTO;
-import com.taobao.tddl.dbsync.monitor.MonitorImpl.Summary;
 
 @Component("partnerInstanceChecker")
 public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
@@ -55,6 +51,8 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 	CtFulFillStockService ctFulFillStockService;
 	
 	@Autowired
+	DiamondConfiguredProperties diamondConfiguredProperties;
+	@Autowired
 	StoreReadBO storeReadBO;
 	@Override
 	public void checkCloseApply(Long instanceId) {
@@ -80,7 +78,7 @@ public class PartnerInstanceCheckerImpl implements PartnerInstanceChecker {
 			throw new AugeBusinessException(AugeErrorCodes.DATA_EXISTS_ERROR_CODE,"您已经提交了退出申请");
 		}
 		StoreDto store = storeReadBO.getStoreDtoByStationId(instance.getStationId());
-		if(store != null){
+		if(store != null && diamondConfiguredProperties.isCheckStoreStock()){
 			 Result<List<CtFulFillStockDTO>> stockResult = ctFulFillStockService.listStockByStoreId(store.getShareStoreId()+"");
 			 if(stockResult != null && stockResult.getData() != null){
 				 for(CtFulFillStockDTO stock : stockResult.getData()){

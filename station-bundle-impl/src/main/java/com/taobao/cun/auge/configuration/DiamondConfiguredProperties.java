@@ -112,6 +112,9 @@ public class DiamondConfiguredProperties {
     @Value("${checkOrderFinish}")
     private boolean checkOrderFinish;
     
+    @Value("${checkStoreStock}")
+    private boolean checkStoreStock;
+    
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
 	}
@@ -293,4 +296,12 @@ public class DiamondConfiguredProperties {
     public void setIsSync(String isSync) {
         this.isSync = isSync;
     }
+
+	public boolean isCheckStoreStock() {
+		return checkStoreStock;
+	}
+
+	public void setCheckStoreStock(boolean checkStoreStock) {
+		this.checkStoreStock = checkStoreStock;
+	}
 }
