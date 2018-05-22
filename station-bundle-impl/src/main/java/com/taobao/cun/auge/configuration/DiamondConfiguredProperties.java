@@ -109,6 +109,11 @@ public class DiamondConfiguredProperties {
     @Value("${storeImagePerfix}")
     private String storeImagePerfix;
     
+    @Value("${checkOrderFinish}")
+    private boolean checkOrderFinish;
+    
+    @Value("${checkStoreStock}")
+    private boolean checkStoreStock;
     
     public String getReplenishFrozenUrl() {
 		return replenishFrozenUrl;
@@ -277,6 +282,13 @@ public class DiamondConfiguredProperties {
 		this.storeImagePerfix = storeImagePerfix;
 	}
 
+	public boolean isCheckOrderFinish() {
+		return checkOrderFinish;
+	}
+
+	public void setCheckOrderFinish(boolean checkOrderFinish) {
+		this.checkOrderFinish = checkOrderFinish;
+	}
     public String getIsSync() {
         return isSync;
     }
@@ -284,4 +296,12 @@ public class DiamondConfiguredProperties {
     public void setIsSync(String isSync) {
         this.isSync = isSync;
     }
+
+	public boolean isCheckStoreStock() {
+		return checkStoreStock;
+	}
+
+	public void setCheckStoreStock(boolean checkStoreStock) {
+		this.checkStoreStock = checkStoreStock;
+	}
 }

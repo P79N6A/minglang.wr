@@ -562,13 +562,15 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 			GeneralTaskDto dealStanderBailTaskVo = buildDealStanderBailTaskVo(instanceId, accountNo, frozenMoney,
 					operatorDto);
 			taskLists.add(dealStanderBailTaskVo);
-
+			
+			GeneralTaskDto dealReplenishBailTaskVo = buildDealReplenishBailTaskVo(instanceId, accountNo, frozenMoney,operatorDto);
+			taskLists.add(dealReplenishBailTaskVo);
 			// 正式撤点
 			GeneralTaskDto quitTaskVo = new GeneralTaskDto();
 			quitTaskVo.setBusinessNo(String.valueOf(instanceId));
 			quitTaskVo.setBeanName("partnerInstanceService");
 			quitTaskVo.setMethodName("quitPartnerInstance");
-			quitTaskVo.setBusinessStepNo(2L);
+			quitTaskVo.setBusinessStepNo(3L);
 			quitTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
 			quitTaskVo.setBusinessStepDesc("quitPartnerInstance");
 			quitTaskVo.setOperator(operatorDto.getOperator());
@@ -602,6 +604,27 @@ public class GeneralTaskSubmitServiceImpl implements GeneralTaskSubmitService {
 		alipayStandardBailDto.setTransferMemo("村淘保证金解冻");
 		alipayStandardBailDto.setTypeCode(standerBailTypeCode);
 		alipayStandardBailDto.setUserAccount(accountNo);
+		dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
+		dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
+		return dealStanderBailTaskVo;
+	}
+	
+	private GeneralTaskDto buildDealReplenishBailTaskVo(Long instanceId, String accountNo, String frozenMoney,
+			OperatorDto operatorDto) {
+		GeneralTaskDto dealStanderBailTaskVo = new GeneralTaskDto();
+		dealStanderBailTaskVo.setBusinessNo(String.valueOf(instanceId));
+		dealStanderBailTaskVo.setBeanName("alipayStandardBailAdapter");
+		dealStanderBailTaskVo.setMethodName("dealStandardBail");
+		dealStanderBailTaskVo.setBusinessStepNo(2L);
+		dealStanderBailTaskVo.setBusinessType(TaskBusinessTypeEnum.PARTNER_INSTANCE_QUIT.getCode());
+		dealStanderBailTaskVo.setBusinessStepDesc("dealStandardBail");
+		dealStanderBailTaskVo.setOperator(operatorDto.getOperator());
+
+		AlipayStandardBailDto alipayStandardBailDto = new AlipayStandardBailDto();
+		alipayStandardBailDto.setAmount(frozenMoney);
+		alipayStandardBailDto.setOpType(AlipayStandardBailDto.ALIPAY_OP_TYPE_UNFREEZE_REPLENISH);
+		alipayStandardBailDto.setOutOrderNo(OUT_ORDER_NO_PRE + instanceId);
+		alipayStandardBailDto.setTransferMemo("村淘铺货保证金解冻");
 		dealStanderBailTaskVo.setParameterType(AlipayStandardBailDto.class.getName());
 		dealStanderBailTaskVo.setParameter(JSON.toJSONString(alipayStandardBailDto));
 		return dealStanderBailTaskVo;

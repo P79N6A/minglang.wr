@@ -283,7 +283,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			logger.warn("合伙人存在淘帮手");
 			throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"该村小二下存在未停业的淘帮手，请先将其淘帮手停业后，才可以停业合伙人");
 		}
-		CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
+		/**CuntaoBailDetailQueryDto queryDto = new CuntaoBailDetailQueryDto();
 		queryDto.setTaobaoUserId(partnerStationRel.getTaobaoUserId());
 		queryDto.setUserTypeEnum(UserTypeEnum.STORE);
 		PagedResultModel<CuntaoBailDetailReturnDto> result = newBailService.getBailDetail(queryDto);
@@ -292,7 +292,7 @@ public class TpStrategy extends CommonStrategy implements PartnerInstanceStrateg
 			if(!testUserService.isTestUser(partnerStationRel.getTaobaoUserId(), "closeWhiteList", true)){
 				throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"系统检测到该村小二还有铺货保证金没有解冻，请告知村小二完成保证金解冻再申请退出");
 			}
-		}
+		}**/
 		//如果是从装修中停业，则需要判断村点是否退出了装修
 		if (PartnerInstanceStateEnum.DECORATING.getCode().equals(partnerStationRel.getState())) {
 				stationDecorateService.judgeDecorateQuit(partnerStationRel.getStationId());

@@ -29,7 +29,7 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 
-		<ague.station.client.version>3.8.16</ague.station.client.version>
+		<ague.station.client.version>3.8.17</ague.station.client.version>
 
 		<alibaba-spring-boot.version>1.4.7.9</alibaba-spring-boot.version>
 	</properties>
@@ -751,6 +751,11 @@
 			    <artifactId>kfc-client</artifactId>
 			    <version>1.7.8-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				    <groupId>com.taobao.cun</groupId>
+				    <artifactId>order-fulfillment-client</artifactId>
+				    <version>1.0.6</version>
+				</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
