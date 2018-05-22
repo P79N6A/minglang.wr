@@ -2,6 +2,12 @@ package com.taobao.cun.auge.station.adapter.impl;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.adapter.TradeAdapter;
 import com.taobao.cun.auge.station.bo.TaobaoTradeBO;
@@ -10,10 +16,6 @@ import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.trade.dto.TaobaoNoEndTradeDto;
 import com.taobao.tc.domain.dataobject.OrderInfoTO;
 import com.taobao.tc.refund.domain.RefundDO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component("tradeAdapter")
 public class TradeAdapterImpl implements TradeAdapter {
@@ -23,8 +25,14 @@ public class TradeAdapterImpl implements TradeAdapter {
 	@Autowired
 	TaobaoTradeBO taobaoTradeBO;
 
+	@Autowired
+	DiamondConfiguredProperties diamondConfiguredProperties;
+	
 	@Override
 	public void validateNoEndTradeOrders(Long taobaoUserId, Date endDate) throws AugeBusinessException,AugeSystemException{
+		if(!diamondConfiguredProperties.isCheckOrderFinish()){
+			return;
+		}
 		TaobaoNoEndTradeDto taobaoNoEndTradeDto = taobaoTradeBO.findNoEndTradeOrders(taobaoUserId,endDate);
 
 		if (taobaoNoEndTradeDto.isExistsNoEndOrder()) {

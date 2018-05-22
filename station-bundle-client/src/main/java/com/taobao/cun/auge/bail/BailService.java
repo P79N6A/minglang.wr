@@ -81,4 +81,12 @@ public interface BailService {
      * @return
      */
     public ResultModel<String> queryUserFreezeAmount(Long taobaoUserId,UserTypeEnum userTypeEnum);
+    
+    /**
+     * 解冻铺货保证金
+     * @param cuntaoUnFreezeBailDto
+     * @return
+     */
+    public ResultModel<Boolean> unfreezeUserReplenishBail(Long partnerInstanceId);
+
 }
