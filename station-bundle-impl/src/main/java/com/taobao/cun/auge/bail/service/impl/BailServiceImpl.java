@@ -200,7 +200,7 @@ public class BailServiceImpl implements BailService {
 			Long taobaoUserId = instance.getTaobaoUserId();
 			try {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
-				if (resultModel != null && resultModel.isSuccess() && freezeAmount.getResult() != null) {
+				if (freezeAmount != null && freezeAmount.isSuccess() && freezeAmount.getResult() != null) {
 					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
 					if (amount > 0L) {
 						CuntaoUnFreezeBailDto cuntaoUnFreezeBailDto = new CuntaoUnFreezeBailDto();
