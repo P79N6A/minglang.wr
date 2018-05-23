@@ -37,6 +37,8 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
+import jersey.repackaged.com.google.common.collect.Lists;
+
 @Service("employeeWriteService")
 @HSFProvider(serviceInterface = EmployeeWriteService.class)
 public class EmployeeWriteServiceImpl implements EmployeeWriteService{
@@ -108,7 +110,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
 			Long employeeId = employees.iterator().next().getId();
-			errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"指定角色员工已绑定供应商");
+			errorInfo=  checkEmployeeRel(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商且角色不能重复");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
@@ -123,15 +125,31 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private ErrorInfo checkEmployeeRelExists(Long employeeId,String identifier,String type,String errorMessage){
+	private ErrorInfo checkEmployeeRel(Long ownerId,Long employeeId,String identifier,String type,String errorMessage){
 		CuntaoEmployeeRelExample cuntaoEmployeeRelExample = new CuntaoEmployeeRelExample();
-		cuntaoEmployeeRelExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId).andIdentifierEqualTo(identifier).andTypeEqualTo(type);
+		cuntaoEmployeeRelExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId).andTypeEqualTo(type);
 		List<CuntaoEmployeeRel> cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(cuntaoEmployeeRelExample);
-		if(cuntaoEmployeeRels != null && !cuntaoEmployeeRels.isEmpty()){
-			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
+		if(cuntaoEmployeeRels == null || cuntaoEmployeeRels.isEmpty()){
+			return null;
+		}else{
+			//员工只能归属于一个服务商
+			if(!cuntaoEmployeeRels.stream().allMatch(rel ->ownerId.equals(rel.getOwnerId()))){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
+				return errorInfo;
+			}
+			//且角色不能重复
+			if(cuntaoEmployeeRels.stream().anyMatch(rel ->identifier.equals(rel.getIdentifier()))){
+				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
+				return errorInfo;
+			}
 		}
 		return null;
 	}
+	
+	
+	
+	
+	
 	
 	@Override
 	public Result<Long> addVendorEmployeeWithIdentifers(Long vendorId, CuntaoEmployeeDto employeeDto,
@@ -340,7 +358,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
 			Long employeeId = employees.iterator().next().getId();
-			errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"指定角色员工已绑定门店");
+			errorInfo=  checkEmployeeRel(stationId,employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"员工只能归属一个门店且角色不能重复");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
@@ -376,7 +394,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"指定角色员工已绑定供应商");
+		errorInfo=  checkEmployeeRel(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商且角色不能重复");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
