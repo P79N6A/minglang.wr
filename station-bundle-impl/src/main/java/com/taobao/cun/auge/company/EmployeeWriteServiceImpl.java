@@ -107,6 +107,11 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
+			Long employeeId = employees.iterator().next().getId();
+			errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"指定角色员工已绑定供应商");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
 			employeeDto.setId(employees.iterator().next().getId());
 		}
 		try {
@@ -118,6 +123,16 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
+	private ErrorInfo checkEmployeeRelExists(Long employeeId,String identifier,String type,String errorMessage){
+		CuntaoEmployeeRelExample cuntaoEmployeeRelExample = new CuntaoEmployeeRelExample();
+		cuntaoEmployeeRelExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId).andIdentifierEqualTo(identifier).andTypeEqualTo(type);
+		List<CuntaoEmployeeRel> cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(cuntaoEmployeeRelExample);
+		if(cuntaoEmployeeRels != null && !cuntaoEmployeeRels.isEmpty()){
+			return ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
+		}
+		return null;
+	}
+	
 	@Override
 	public Result<Long> addVendorEmployeeWithIdentifers(Long vendorId, CuntaoEmployeeDto employeeDto,
 			List<CuntaoEmployeeIdentifier> identifiers) {
@@ -324,12 +339,17 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			}
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
-			storeEmployee.setId(employees.iterator().next().getId());
+			Long employeeId = employees.iterator().next().getId();
+			errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"指定角色员工已绑定门店");
+			if(errorInfo != null){
+				return Result.of(errorInfo);
+			}
+			storeEmployee.setId(employeeId);
 		}
 		try {
 			return Result.of(employeeWriteBO.addStoreEmployee(stationId, storeEmployee, identifier));
 		} catch (Exception e) {
-			logger.error("addCompanyEmployee company error!",e);
+			logger.error("addStoreEmployee  error!",e);
 			errorInfo = ErrorInfo.of(AugeErrorCodes.SYSTEM_ERROR_CODE, null, "系统异常");
 			return Result.of(errorInfo);
 		}
@@ -353,6 +373,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		ErrorInfo errorInfo = null;
 		errorInfo = checkAddEmployeeByEmployeeId(vendorId,employeeId,identifier);
 		//TODO 效验规则细化
+		if(errorInfo != null){
+			return Result.of(errorInfo);
+		}
+		errorInfo=  checkEmployeeRelExists(employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"指定角色员工已绑定供应商");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
