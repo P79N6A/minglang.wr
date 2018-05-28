@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.bail.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,13 +13,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
+import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
+import com.taobao.cun.auge.station.bo.PartnerLifecycleBO;
 import com.taobao.cun.auge.station.dto.AccountMoneyDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTypeEnum;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleBusinessTypeEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleCurrentStepEnum;
+import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
+import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
 import com.taobao.cun.settle.bail.dto.CuntaoBailSignDto;
 import com.taobao.cun.settle.bail.dto.CuntaoFreezeBailDto;
@@ -38,6 +51,7 @@ import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 @Service("bailService")
 @HSFProvider(serviceInterface = BailService.class, clientTimeout = 15000)
 public class BailServiceImpl implements BailService {
+	
 
     private static final Logger logger = LoggerFactory.getLogger(BailServiceImpl.class);
 
@@ -49,6 +63,9 @@ public class BailServiceImpl implements BailService {
     
     @Autowired
     private PartnerInstanceBO partnerInstanceBO;
+    
+    @Autowired
+    private PartnerLifecycleBO partnerLifecycleBO;
     @Override
     public ResultModel<Boolean> isUserSignBail(Long taobaoUserId, String alipayId, UserTypeEnum userTypeEnum) {
         Assert.notNull(taobaoUserId);
@@ -247,4 +264,72 @@ public class BailServiceImpl implements BailService {
 		}
 		return amount;
 	}
+
+	@Override
+	public Boolean freezeUserReplenishBail(Long partnerInstanceId) {
+		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
+		if (accountMoney != null && AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(accountMoney.getState().getCode())) {
+			return Boolean.TRUE;
+		}
+		PartnerInstanceDto instance = partnerInstanceBO.getPartnerInstanceById(partnerInstanceId);
+		ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(instance.getTaobaoUserId(), UserTypeEnum.STORE);
+		if (freezeAmount != null && freezeAmount.isSuccess() && freezeAmount.getResult() != null) {
+			if (freezeAmount.getResult()>=300000) {
+				if (instance == null || !PartnerInstanceStateEnum.DECORATING.getCode().equals(instance.getState().getCode())) {
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"当前服务站必须装修中");
+				}
+				
+				AccountMoneyDto baseMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND,
+						AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
+				if (baseMoney == null && ! AccountMoneyStateEnum.HAS_FROZEN.getCode().equals(accountMoney.getState().getCode())) {
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"基础保证金未冻结");
+				}
+				PartnerLifecycleItems decoItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
+				        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
+				// 修改生命周期表
+				if (null == decoItems){
+					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"装修中数据缺失");
+				}
+				updateRelenishMoneyIsHasFrozen(instance.getTaobaoUserId().toString(), decoItems);
+				addHasFrozenReplienishMoney(instance.getId(),instance.getTaobaoUserId(),baseMoney.getAlipayAccount(),baseMoney.getAccountNo());
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	private void updateRelenishMoneyIsHasFrozen(String operator,
+			PartnerLifecycleItems decoItems) {
+		PartnerLifecycleDto lifecycleUpdateDto = new PartnerLifecycleDto();
+		lifecycleUpdateDto.setLifecycleId(decoItems.getId());
+		lifecycleUpdateDto.setReplenishMoney(PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN);
+		lifecycleUpdateDto.setOperator(operator);
+		lifecycleUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
+		partnerLifecycleBO.updateLifecycle(lifecycleUpdateDto);
+	}
+	
+	 private void addHasFrozenReplienishMoney(Long instanceId, Long taobaoUserId, String alipayAccount,String accountNo) {
+	        ValidateUtils.notNull(instanceId);
+	        AccountMoneyDto accountMoneyDto = new AccountMoneyDto();
+	        accountMoneyDto.setMoney(new BigDecimal("3000.00"));
+	        accountMoneyDto.setOperator(String.valueOf(taobaoUserId));
+	        accountMoneyDto.setOperatorType(OperatorTypeEnum.HAVANA);
+	        accountMoneyDto.setObjectId(instanceId);
+	        accountMoneyDto.setState(AccountMoneyStateEnum.HAS_FROZEN);
+	        accountMoneyDto.setTaobaoUserId(String.valueOf(taobaoUserId));
+	        accountMoneyDto.setTargetType(AccountMoneyTargetTypeEnum.PARTNER_INSTANCE);
+	        accountMoneyDto.setType(AccountMoneyTypeEnum.REPLENISH_MONEY);
+	        accountMoneyDto.setFrozenTime(new Date());
+	        accountMoneyDto.setAlipayAccount(alipayAccount);
+	        accountMoneyDto.setAccountNo(accountNo);
+	        
+	        AccountMoneyDto dupRecord = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
+	                AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+	        if (dupRecord != null) {
+	            accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyDto);
+	        } else {
+	            accountMoneyBO.addAccountMoney(accountMoneyDto);
+	        }
+	    }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,11 +27,13 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
@@ -293,6 +294,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     
     @Autowired
     LifeCycleValidator lifeCycleValidator;
+    @Autowired
+    BailService bailService;
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -899,6 +902,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      */
     private void checkPartnerLifecycleForOpenStation(Long instanceId){
         ValidateUtils.notNull(instanceId);
+        //容错，调用结算，更新铺货金冻结状态
+        bailService.freezeUserReplenishBail(instanceId);
         PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
                 PartnerLifecycleCurrentStepEnum.PROCESSING);
         if (items == null) {

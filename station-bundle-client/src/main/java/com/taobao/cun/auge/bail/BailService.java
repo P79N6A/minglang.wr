@@ -88,5 +88,12 @@ public interface BailService {
      * @return
      */
     public ResultModel<Boolean> unfreezeUserReplenishBail(Long partnerInstanceId);
+    
+    /**
+     * 冻结铺货金
+     * @param partnerInstanceId
+     * @return
+     */
+    public Boolean freezeUserReplenishBail(Long partnerInstanceId);
 
 }
