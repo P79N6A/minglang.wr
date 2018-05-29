@@ -8,22 +8,41 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import com.alibaba.fastjson.JSON;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.ali.dowjones.service.constants.OrderItemBizStatus;
+import com.alibaba.fastjson.JSON;
 import com.taobao.common.category.util.StringUtil;
 import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
+import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
 import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
+import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
+import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
 import com.taobao.cun.auge.fuwu.FuwuProductService;
 import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
+import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
@@ -40,24 +59,13 @@ import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.PartnerInstanceQueryService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.crius.common.resultmodel.ResultModel;
+import com.taobao.cun.crius.exam.dto.ExamDispatchDto;
 import com.taobao.cun.crius.exam.dto.ExamInstanceDto;
 import com.taobao.cun.crius.exam.dto.UserDispatchDto;
 import com.taobao.cun.crius.exam.enums.ExamInstanceStatusEnum;
 import com.taobao.cun.crius.exam.service.ExamInstanceService;
 import com.taobao.cun.crius.exam.service.ExamUserDispatchService;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 /**
  * 
@@ -90,6 +98,12 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	PartnerInstanceQueryService partnerInstanceQueryService;
 	@Autowired
 	PartnerCourseScheduleBO partnerCourseScheduleBO;
+	
+	 @Autowired
+	private UicReadAdapter uicReadAdapter;
+	 
+	@Autowired
+	PartnerCourseRecordMapper partnerCourseRecordMapper;
 	
 	@Value("${partner.peixun.sign.url}")
 	private String peixunSignUrl;
@@ -386,6 +400,78 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		}
 		return null;
 	}
+	
+	
+	@Override
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTP(Long userId,PartnerPeixunCourseTypeEnum courseType) {
+		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
+		String examId=appResourceService.queryAppResourceValue(courseType.getCode(), "EXAM_ID");
+		String onlineCourseUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL");//固定的首页
+		String examUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "OPENSTATION_EXAM_URL");
+		
+		PartnerOnlinePeixunDto result=new PartnerOnlinePeixunDto();
+		result.setCourseUrl(onlineCourseUrl);
+		result.setTaobaoUserId(userId);
+		result.setCourseCode(code);
+		result.setExamUrl(examUrl+examId);
+		PartnerCourseRecord dto = partnerPeixunBO.queryOfflinePeixunRecord(userId, courseType, code);
+		if (dto == null) {//未培训
+			result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_PEIXUN);
+			return result;
+		}
+		if (PartnerPeixunStatusEnum.DONE.getCode().equals(dto.getStatus())) {//待考试
+			// 查询考试成绩
+			ResultModel<ExamInstanceDto> examResult = examInstanceService
+					.queryValidInstance(userId, new Long(examId));
+			if (examResult.isSuccess() && examResult.getResult() != null
+					&& ExamInstanceStatusEnum.PASS.getCode().equals(examResult.getResult().getStatus().getCode())) {
+				result.setStatus(PartnerOnlinePeixunStatusEnum.DONE);
+			} else {
+				result.setStatus(PartnerOnlinePeixunStatusEnum.WAIT_EXAM);
+				//分发试卷
+				ResultModel<UserDispatchDto> dp=examUserDispatchService.queryExamUserDispatch(new Long(examId), userId);
+				if(dp.isSuccess()&&dp.getResult()==null){
+					ExamDispatchDto edd =  new ExamDispatchDto();
+			        edd.setUserId(userId);
+			        edd.setTaobaoNick(uicReadAdapter.getTaobaoNickByTaobaoUserId(userId));
+			        edd.setPaperId(Long.parseLong(examId));
+			        edd.setDispatcher("openStation");
+		            ResultModel<Boolean> result1 = examUserDispatchService.dispatchExam(edd);
+		            if (result1 == null || !result1.isSuccess() || Objects.equals(result1.getResult(), Boolean.FALSE)) {
+		                logger.error("queryOnlinePeixunProcessForTP taobaoUserId:{}, dispatch paper:{}",userId, examId);
+		                throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"开业任务，线上试卷分发失败");
+		            }
+				}
+		       
+			}
+		}
+		return result;
+	}
 
-
+	@Override
+	public void completePeixun(Long userId, PartnerPeixunCourseTypeEnum courseType) {
+		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
+		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andIsDeletedEqualTo("n");
+		criteria.andPartnerUserIdEqualTo(userId);
+		criteria.andCourseTypeEqualTo(courseType.getCode());
+		criteria.andCourseCodeEqualTo(code);
+		List<PartnerCourseRecord> records=partnerCourseRecordMapper.selectByExample(example);
+		if (CollectionUtils.isNotEmpty(records)) {
+			PartnerCourseRecord record=records.get(0);
+			 record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
+	        record.setGmtDone(new Date());
+	        DomainUtils.beforeUpdate(record, String.valueOf(userId));
+	        partnerCourseRecordMapper.updateByPrimaryKey(record);
+		}else {
+			PartnerCourseRecord record=new PartnerCourseRecord();
+			record.setCourseType(courseType.getCode());
+			record.setPartnerUserId(userId);
+			record.setStatus(PartnerPeixunStatusEnum.DONE.getCode());
+			record.setCourseCode(code);
+			DomainUtils.beforeInsert(record, String.valueOf(userId));
+			partnerCourseRecordMapper.insert(record);
+		}
+	}
 }

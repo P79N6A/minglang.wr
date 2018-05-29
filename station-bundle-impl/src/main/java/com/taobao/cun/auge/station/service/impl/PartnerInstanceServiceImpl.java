@@ -111,6 +111,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
@@ -145,6 +146,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
+import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -167,6 +170,7 @@ import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
@@ -295,7 +299,9 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Autowired
     LifeCycleValidator lifeCycleValidator;
     @Autowired
-    BailService bailService;
+    private BailService bailService;
+    @Autowired
+    private PartnerPeixunService partnerPeixunService;
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -919,6 +925,14 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		/*	if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}*/
+			
+			//开业任务 村小二增加 开业考试校验
+	        if(PartnerInstanceTypeEnum.TP.getCode().equals(rel.getType())) {
+	        	PartnerOnlinePeixunDto peixun= partnerPeixunService.queryOnlinePeixunProcessForTP(rel.getTaobaoUserId(), PartnerPeixunCourseTypeEnum.ONLINE_OPENSTATION);
+	        	if (peixun == null || !PartnerOnlinePeixunStatusEnum.DONE.getCode().equals(peixun.getStatus().getCode())) {
+	        		throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.OPENSTATION_ONLINE_PEIXUN_NOT_DONE.getDesc());
+	        	}
+	        }
 		}
 //		
 //		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());

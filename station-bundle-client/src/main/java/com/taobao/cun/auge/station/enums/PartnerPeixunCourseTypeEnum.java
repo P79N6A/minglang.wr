@@ -10,11 +10,14 @@ public class PartnerPeixunCourseTypeEnum implements Serializable{
 
 	public static final PartnerPeixunCourseTypeEnum APPLY_IN = new PartnerPeixunCourseTypeEnum("APPLY_IN", "启航班");
 	public static final PartnerPeixunCourseTypeEnum UPGRADE = new PartnerPeixunCourseTypeEnum("UPGRADE", "橙长营");
+	
+	public static final PartnerPeixunCourseTypeEnum ONLINE_OPENSTATION = new PartnerPeixunCourseTypeEnum("ONLINE_OPENSTATION", "线上培训开业");
 
 	private static final Map<String, PartnerPeixunCourseTypeEnum> mappings = new HashMap<String, PartnerPeixunCourseTypeEnum>();
 	static {
 		mappings.put("APPLY_IN", APPLY_IN);
 		mappings.put("UPGRADE", UPGRADE);
+		mappings.put("ONLINE_OPENSTATION", ONLINE_OPENSTATION);
 	}
 
 	private String code;
