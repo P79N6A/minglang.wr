@@ -408,7 +408,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
 		String examId=appResourceService.queryAppResourceValue(courseType.getCode(), "EXAM_ID");
 		String onlineCourseUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL");//固定的首页
-		String examUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "OPENSTATION_EXAM_URL");
+		String examUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "EXAM_URL");
 		
 		PartnerOnlinePeixunDto result=new PartnerOnlinePeixunDto();
 		result.setCourseUrl(onlineCourseUrl);
