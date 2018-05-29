@@ -403,7 +403,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	
 	@Override
-	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTP(Long userId,PartnerPeixunCourseTypeEnum courseType) {
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTPToOpen(Long userId) {
+		PartnerPeixunCourseTypeEnum courseType = PartnerPeixunCourseTypeEnum.ONLINE_OPENSTATION;
 		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
 		String examId=appResourceService.queryAppResourceValue(courseType.getCode(), "EXAM_ID");
 		String onlineCourseUrl=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL");//固定的首页
@@ -449,7 +450,8 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	}
 
 	@Override
-	public void completePeixun(Long userId, PartnerPeixunCourseTypeEnum courseType) {
+	public void completePeixunForTPToOpen(Long userId) {
+		PartnerPeixunCourseTypeEnum courseType = PartnerPeixunCourseTypeEnum.ONLINE_OPENSTATION;
 		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
 		PartnerCourseRecordExample example = new PartnerCourseRecordExample();
 		Criteria criteria = example.createCriteria();

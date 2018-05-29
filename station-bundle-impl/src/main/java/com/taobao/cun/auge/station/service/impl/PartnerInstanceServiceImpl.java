@@ -917,6 +917,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             return;
         }
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+        
+        
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {

@@ -72,13 +72,13 @@ public interface PartnerPeixunService {
 	 * @param userId
 	 * @return
 	 */
-	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTP(Long userId,PartnerPeixunCourseTypeEnum courseType);
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTPToOpen(Long userId);
 	
 	/**
 	 * 查询线上培训完成  开业任务
 	 * @param userId
 	 * @return
 	 */
-	public void completePeixun(Long userId,PartnerPeixunCourseTypeEnum courseType);
+	public void completePeixunForTPToOpen(Long userId);
 	
 }
