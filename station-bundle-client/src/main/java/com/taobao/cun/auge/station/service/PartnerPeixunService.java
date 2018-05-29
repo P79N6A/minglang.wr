@@ -75,7 +75,7 @@ public interface PartnerPeixunService {
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTPToOpen(Long userId);
 	
 	/**
-	 * 查询线上培训完成  开业任务
+	 * 完成培训  开业任务
 	 * @param userId
 	 * @return
 	 */
