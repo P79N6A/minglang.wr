@@ -102,7 +102,7 @@ public class StoreReadBOImpl implements StoreReadBO {
 		if(partnerStationRel != null) {
 			storeDto.setSellerId(partnerStationRel.getSellerId());
 		}
-		StoreDO storeDO = StoreService.getStoreById(cuntaoStore.getShareStoreId());
+		StoreDO storeDO = StoreService.getStoreByIdWithCache(cuntaoStore.getShareStoreId());
 		if(storeDO != null){
 			storeDto.setImage(diamondConfiguredProperties.getStoreImagePerfix()+storeDO.getPic());
 		}
