@@ -357,12 +357,14 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		// StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
-		storeDTO.setUserId(diamondConfiguredProperties.getStoreMainUserId());
+		//storeDTO.setUserId("");
 		// storeDTO.setAuthenStatus(StoreAuthenStatus.PASS.getValue());
-		// storeDTO.addTag(3300);
+		 storeDTO.addTag(3302);
+		 //storeDTO.removeTag(3303);
+		 storeDTO.removeTag(3304);
 		// storeDTO.addTag(3000);
 		ResultDO<Boolean> updateResult = storeUpdateService.update(storeDTO,
-				diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+				3405569954L, StoreBizType.STORE_ITEM_BIZ.getValue());
 		if (!updateResult.isSuccess()) {
 			logger.error("updateStore error " + updateResult.getErrorMsg());
 		}
