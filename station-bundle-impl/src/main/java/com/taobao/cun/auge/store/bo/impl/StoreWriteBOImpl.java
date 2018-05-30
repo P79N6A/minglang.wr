@@ -355,6 +355,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public Boolean updateStoreTag(Long shareStoreId, StoreCategory category) {
 		// StoreDto store = storeReadBO.getStoreBySharedStoreId(shareStoreId);
+		
 		StoreDTO storeDTO = new StoreDTO();
 		storeDTO.setStoreId(shareStoreId);
 		//storeDTO.setUserId("");
