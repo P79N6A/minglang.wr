@@ -31,7 +31,7 @@
 
 		<ague.station.client.version>3.8.17</ague.station.client.version>
 
-		<alibaba-spring-boot.version>1.4.7.9</alibaba-spring-boot.version>
+		<alibaba-spring-boot.version>1.4.7.12</alibaba-spring-boot.version>
 	</properties>
 
 	<dependencyManagement>
