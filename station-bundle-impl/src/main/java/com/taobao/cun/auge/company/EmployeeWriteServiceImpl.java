@@ -101,12 +101,12 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
-			if(StringUtils.isNotEmpty(employeeDto.getMobile())){
+			/**if(StringUtils.isNotEmpty(employeeDto.getMobile())){
 				errorInfo =  checkMobileExists(employeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
 				if(errorInfo != null){
 					return Result.of(errorInfo);
 				}
-			}
+			}**/
 			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
 			Long employeeId = employees.iterator().next().getId();
