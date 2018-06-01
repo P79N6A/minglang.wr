@@ -37,8 +37,6 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
-import jersey.repackaged.com.google.common.collect.Lists;
-
 @Service("employeeWriteService")
 @HSFProvider(serviceInterface = EmployeeWriteService.class)
 public class EmployeeWriteServiceImpl implements EmployeeWriteService{
@@ -350,10 +348,10 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				return Result.of(errorInfo);
 			}
 			if(StringUtils.isNotEmpty(storeEmployee.getMobile())){
-				errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
-				if(errorInfo != null){
-					return Result.of(errorInfo);
-				}
+				//errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
+				//if(errorInfo != null){
+				//	return Result.of(errorInfo);
+			//}
 			}
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
