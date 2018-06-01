@@ -114,4 +114,12 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 			storeWriteBO.initStoreEmployees(stationId);
 		}
 	}
+
+	@Override
+	public void batchInitStoreEndorOrg(List<Long> stationIds) {
+		for(Long stationId:stationIds){
+			storeWriteBO.initStoreEndorOrg(stationId);
+		}
+		
+	}
 }

@@ -97,6 +97,7 @@ public interface StoreWriteService {
 	
 	public void batchInitStoreEmployees(List<Long>  stationId);
 	
+	public void batchInitStoreEndorOrg(List<Long>  stationId);
 	/**
 	 * 初始化菜鸟自提标
 	 * @param stationId
