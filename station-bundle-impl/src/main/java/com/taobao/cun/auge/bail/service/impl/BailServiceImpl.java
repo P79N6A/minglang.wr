@@ -288,10 +288,9 @@ public class BailServiceImpl implements BailService {
 				PartnerLifecycleItems decoItems = partnerLifecycleBO.getLifecycleItems(instance.getId(),
 				        PartnerLifecycleBusinessTypeEnum.DECORATING, PartnerLifecycleCurrentStepEnum.PROCESSING);
 				// 修改生命周期表
-				if (null == decoItems){
-					throw new AugeBusinessException(AugeErrorCodes.PARTNER_INSTANCE_BUSINESS_CHECK_ERROR_CODE,"装修中数据缺失");
+				if (null != decoItems){
+					updateRelenishMoneyIsHasFrozen(instance.getTaobaoUserId().toString(), decoItems);
 				}
-				updateRelenishMoneyIsHasFrozen(instance.getTaobaoUserId().toString(), decoItems);
 				addHasFrozenReplienishMoney(instance.getId(),instance.getTaobaoUserId(),baseMoney.getAlipayAccount(),baseMoney.getAccountNo());
 				return Boolean.TRUE;
 			}
