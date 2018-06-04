@@ -34,8 +34,9 @@ import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecord;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample;
-import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
 import com.taobao.cun.auge.dal.domain.PartnerCourseRecordExample.Criteria;
+import com.taobao.cun.auge.dal.domain.PartnerCourseSchedule;
+import com.taobao.cun.auge.dal.domain.PartnerStationRel;
 import com.taobao.cun.auge.dal.mapper.PartnerCourseRecordMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.fuwu.FuwuOrderService;
@@ -44,6 +45,7 @@ import com.taobao.cun.auge.fuwu.dto.FuwuOrderDto;
 import com.taobao.cun.auge.fuwu.dto.FuwuProductDto;
 import com.taobao.cun.auge.station.adapter.UicReadAdapter;
 import com.taobao.cun.auge.station.bo.PartnerCourseScheduleBO;
+import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
 import com.taobao.cun.auge.station.bo.PartnerPeixunBO;
 import com.taobao.cun.auge.station.condition.PartnerPeixunQueryCondition;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
@@ -51,6 +53,8 @@ import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunListDetailDto;
 import com.taobao.cun.auge.station.dto.PartnerPeixunStatusCountDto;
+import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
+import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerPeixunRefundStatusEnum;
@@ -104,6 +108,9 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	 
 	@Autowired
 	PartnerCourseRecordMapper partnerCourseRecordMapper;
+	
+	@Autowired
+	PartnerInstanceBO partnerInstanceBO;
 	
 	@Value("${partner.peixun.sign.url}")
 	private String peixunSignUrl;
@@ -404,6 +411,17 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 	
 	@Override
 	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTPToOpen(Long userId) {
+		if(userId== null){
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"taobaoUserId不能为空");
+		}
+		PartnerStationRel rel  = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(userId);
+		if (rel == null || !PartnerInstanceTypeEnum.TP.getCode().equals(rel.getType())){
+			return null;
+		}
+		if (!PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
+			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"开业培训，必须是装修中");
+		}
+			
 		PartnerPeixunCourseTypeEnum courseType = PartnerPeixunCourseTypeEnum.ONLINE_OPENSTATION;
 		String code=appResourceService.queryAppResourceValue(courseType.getCode(), "COURSE_CODE");
 		String examId=appResourceService.queryAppResourceValue(courseType.getCode(), "EXAM_ID");
