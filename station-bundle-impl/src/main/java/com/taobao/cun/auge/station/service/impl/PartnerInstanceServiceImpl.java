@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,11 +27,13 @@ import com.google.common.collect.Maps;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.bail.BailService;
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DateUtil;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.configuration.FrozenMoneyAmountConfig;
 import com.taobao.cun.auge.configuration.MailConfiguredProperties;
 import com.taobao.cun.auge.dal.domain.CountyStation;
@@ -110,6 +111,7 @@ import com.taobao.cun.auge.station.dto.PartnerInstanceTransDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.PartnerInstanceUpgradeDto;
 import com.taobao.cun.auge.station.dto.PartnerLifecycleDto;
+import com.taobao.cun.auge.station.dto.PartnerOnlinePeixunDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
 import com.taobao.cun.auge.station.dto.PartnerTypeChangeApplyDto;
@@ -144,6 +146,8 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleReplenishMoneyEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
+import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
+import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -166,6 +170,7 @@ import com.taobao.cun.auge.station.service.CaiNiaoService;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.auge.station.service.PartnerPeixunService;
 import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
@@ -293,6 +298,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     
     @Autowired
     LifeCycleValidator lifeCycleValidator;
+    @Autowired
+    private BailService bailService;
+    @Autowired
+    private PartnerPeixunService partnerPeixunService;
 
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
@@ -899,6 +908,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
      */
     private void checkPartnerLifecycleForOpenStation(Long instanceId){
         ValidateUtils.notNull(instanceId);
+        //容错，调用结算，更新铺货金冻结状态
+        bailService.freezeUserReplenishBail(instanceId);
         PartnerLifecycleItems items = partnerLifecycleBO.getLifecycleItems(instanceId, PartnerLifecycleBusinessTypeEnum.DECORATING,
                 PartnerLifecycleCurrentStepEnum.PROCESSING);
         if (items == null) {
@@ -906,6 +917,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             return;
         }
         PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(instanceId);
+        
+        
 		//4.0 检查补货金和 开业包收货状态
 		if(StationModeEnum.V4.getCode().equals(rel.getMode())) {
 			if (!PartnerLifecycleReplenishMoneyEnum.HAS_FROZEN.getCode().equals(items.getReplenishMoney())) {
@@ -914,6 +927,17 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		/*	if (!PartnerLifecycleGoodsReceiptEnum.Y.getCode().equals(items.getGoodsReceipt())) {
 				 throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.GOODSRECEIPT_NOT_DONE.getDesc());
 			}*/
+			
+			//开业任务 村小二增加 开业考试校验
+	        if(PartnerInstanceTypeEnum.TP.getCode().equals(rel.getType())) {
+	        	String s=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL_SWITCH");
+				if (s !=null && "y".equals(s)){
+		        	PartnerOnlinePeixunDto peixun= partnerPeixunService.queryOnlinePeixunProcessForTPToOpen(rel.getTaobaoUserId());
+		        	if (peixun == null || !PartnerOnlinePeixunStatusEnum.DONE.getCode().equals(peixun.getStatus().getCode())) {
+		        		throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.OPENSTATION_ONLINE_PEIXUN_NOT_DONE.getDesc());
+		        	}
+				}
+	        }
 		}
 //		
 //		StationDecorate decorate=stationDecorateBO.getStationDecorateByStationId(rel.getStationId());

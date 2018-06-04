@@ -59,6 +59,9 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 	public static final PartnerExceptionEnum GOODSRECEIPT_NOT_DONE = new PartnerExceptionEnum(
 			"GOODSRECEIPT_NOT_DONE", "开业包货品收货未完成");
 	
+	public static final PartnerExceptionEnum OPENSTATION_ONLINE_PEIXUN_NOT_DONE = new PartnerExceptionEnum(
+			"OPENSTATION_ONLINE_PEIXUN_NOT_DONE", "没有完成新手开业学习和通过考试，将无法点击开业，请让村小二尽早完成！");
+	
 	static {
 		mappings.put("NO_RECORD", NO_RECORD);
 		mappings.put("ID_IS_NULL", ID_IS_NULL);
@@ -79,6 +82,8 @@ public class PartnerExceptionEnum extends CommonExceptionEnum {
 		mappings.put("MOBILE_HAS_USED", MOBILE_HAS_USED);
 		mappings.put("REPLENISHMONEY_NOT_FROZEN", REPLENISHMONEY_NOT_FROZEN);
 		mappings.put("GOODSRECEIPT_NOT_DONE", GOODSRECEIPT_NOT_DONE);
+		
+		mappings.put("OPENSTATION_ONLINE_PEIXUN_NOT_DONE", OPENSTATION_ONLINE_PEIXUN_NOT_DONE);
 
 	}
 

@@ -67,4 +67,18 @@ public interface PartnerPeixunService {
 	 */
 	public void sign(String ticketNo,String courseType,Long loginUserId,String poNo);
 	
+	/**
+	 * 查询线上培训考试状态 开业任务
+	 * @param userId
+	 * @return
+	 */
+	public PartnerOnlinePeixunDto queryOnlinePeixunProcessForTPToOpen(Long userId);
+	
+	/**
+	 * 完成培训  开业任务
+	 * @param userId
+	 * @return
+	 */
+	public void completePeixunForTPToOpen(Long userId);
+	
 }
