@@ -107,4 +107,19 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public Integer getCountyCode(String countyCode, String countyDetail, String cityCode) {
 		return storeWriteBO.getCountyCode(countyCode, countyDetail, cityCode);
 	}
+
+	@Override
+	public void batchInitStoreEmployees(List<Long> stationIds) {
+		for(Long stationId:stationIds){
+			storeWriteBO.initStoreEmployees(stationId);
+		}
+	}
+
+	@Override
+	public void batchInitStoreEndorOrg(List<Long> stationIds) {
+		for(Long stationId:stationIds){
+			storeWriteBO.initStoreEndorOrg(stationId);
+		}
+		
+	}
 }
