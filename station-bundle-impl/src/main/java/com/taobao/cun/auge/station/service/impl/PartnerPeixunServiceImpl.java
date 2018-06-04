@@ -414,6 +414,10 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 		if(userId== null){
 			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"taobaoUserId不能为空");
 		}
+		String s=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL_SWITCH");
+		if (s == null||"n".equals(s) ){
+			return null;
+		}
 		PartnerStationRel rel  = partnerInstanceBO.getCurrentPartnerInstanceByTaobaoUserId(userId);
 		if (rel == null || !PartnerInstanceTypeEnum.TP.getCode().equals(rel.getType())){
 			return null;

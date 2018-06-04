@@ -930,10 +930,13 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 			
 			//开业任务 村小二增加 开业考试校验
 	        if(PartnerInstanceTypeEnum.TP.getCode().equals(rel.getType())) {
-	        	PartnerOnlinePeixunDto peixun= partnerPeixunService.queryOnlinePeixunProcessForTPToOpen(rel.getTaobaoUserId());
-	        	if (peixun == null || !PartnerOnlinePeixunStatusEnum.DONE.getCode().equals(peixun.getStatus().getCode())) {
-	        		throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.OPENSTATION_ONLINE_PEIXUN_NOT_DONE.getDesc());
-	        	}
+	        	String s=appResourceService.queryAppResourceValue("PARTNER_PEIXUN", "ONLINE_OPENSTATION_COURSE_URL_SWITCH");
+				if (s !=null && "y".equals(s)){
+		        	PartnerOnlinePeixunDto peixun= partnerPeixunService.queryOnlinePeixunProcessForTPToOpen(rel.getTaobaoUserId());
+		        	if (peixun == null || !PartnerOnlinePeixunStatusEnum.DONE.getCode().equals(peixun.getStatus().getCode())) {
+		        		throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,PartnerExceptionEnum.OPENSTATION_ONLINE_PEIXUN_NOT_DONE.getDesc());
+		        	}
+				}
 	        }
 		}
 //		
