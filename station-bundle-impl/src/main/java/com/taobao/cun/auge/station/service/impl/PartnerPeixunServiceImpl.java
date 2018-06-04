@@ -419,7 +419,7 @@ public class PartnerPeixunServiceImpl implements PartnerPeixunService{
 			return null;
 		}
 		if (!PartnerInstanceStateEnum.DECORATING.getCode().equals(rel.getState())) {
-			throw new AugeBusinessException(AugeErrorCodes.PEIXUN_ILLIGAL_BUSINESS_CHECK_ERROR_CODE,"开业培训，必须是装修中");
+			return null;
 		}
 			
 		PartnerPeixunCourseTypeEnum courseType = PartnerPeixunCourseTypeEnum.ONLINE_OPENSTATION;
