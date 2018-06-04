@@ -37,8 +37,6 @@ import com.taobao.uic.common.domain.BaseUserDO;
 import com.taobao.uic.common.domain.ResultDO;
 import com.taobao.uic.common.service.userinfo.client.UicReadServiceClient;
 
-import jersey.repackaged.com.google.common.collect.Lists;
-
 @Service("employeeWriteService")
 @HSFProvider(serviceInterface = EmployeeWriteService.class)
 public class EmployeeWriteServiceImpl implements EmployeeWriteService{
@@ -101,18 +99,24 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 			if(errorInfo != null){
 				return Result.of(errorInfo);
 			}
-			if(StringUtils.isNotEmpty(employeeDto.getMobile())){
+			/**if(StringUtils.isNotEmpty(employeeDto.getMobile())){
 				errorInfo =  checkMobileExists(employeeDto.getMobile(),CuntaoEmployeeType.vendor.name(),"员工手机号已存在!");
 				if(errorInfo != null){
 					return Result.of(errorInfo);
 				}
-			}
+			}**/
 			employeeDto.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
 			Long employeeId = employees.iterator().next().getId();
-			errorInfo=  checkEmployeeRel(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商且角色不能重复");
+			errorInfo=  checkEmployeeRelBelong(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
+			}
+			errorInfo=  checkEmployeeRelIdentifier(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"");
+			if(errorInfo != null){
+				Result<Long> result = Result.of(true);
+				result.setModule(employeeId);
+				return result;
 			}
 			employeeDto.setId(employees.iterator().next().getId());
 		}
@@ -125,7 +129,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 	}
 
-	private ErrorInfo checkEmployeeRel(Long ownerId,Long employeeId,String identifier,String type,String errorMessage){
+	private ErrorInfo checkEmployeeRelBelong(Long ownerId,Long employeeId,String identifier,String type,String errorMessage){
 		CuntaoEmployeeRelExample cuntaoEmployeeRelExample = new CuntaoEmployeeRelExample();
 		cuntaoEmployeeRelExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId).andTypeEqualTo(type);
 		List<CuntaoEmployeeRel> cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(cuntaoEmployeeRelExample);
@@ -137,6 +141,17 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
 				return errorInfo;
 			}
+		}
+		return null;
+	}
+	
+	private ErrorInfo checkEmployeeRelIdentifier(Long ownerId,Long employeeId,String identifier,String type,String errorMessage){
+		CuntaoEmployeeRelExample cuntaoEmployeeRelExample = new CuntaoEmployeeRelExample();
+		cuntaoEmployeeRelExample.createCriteria().andIsDeletedEqualTo("n").andEmployeeIdEqualTo(employeeId).andTypeEqualTo(type);
+		List<CuntaoEmployeeRel> cuntaoEmployeeRels = cuntaoEmployeeRelMapper.selectByExample(cuntaoEmployeeRelExample);
+		if(cuntaoEmployeeRels == null || cuntaoEmployeeRels.isEmpty()){
+			return null;
+		}else{
 			//且角色不能重复
 			if(cuntaoEmployeeRels.stream().anyMatch(rel ->identifier.equals(rel.getIdentifier()))){
 				ErrorInfo errorInfo = ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, errorMessage);
@@ -145,7 +160,6 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		}
 		return null;
 	}
-	
 	
 	
 	
@@ -350,17 +364,23 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 				return Result.of(errorInfo);
 			}
 			if(StringUtils.isNotEmpty(storeEmployee.getMobile())){
-				errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
-				if(errorInfo != null){
-					return Result.of(errorInfo);
-				}
+				//errorInfo =  checkMobileExists(storeEmployee.getMobile(),CuntaoEmployeeType.store.name(),"员工手机号已存在!");
+				//if(errorInfo != null){
+				//	return Result.of(errorInfo);
+			//}
 			}
 			storeEmployee.setTaobaoUserId(employeeUserDOresult.getModule().getUserId());
 		}else{
 			Long employeeId = employees.iterator().next().getId();
-			errorInfo=  checkEmployeeRel(stationId,employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"员工只能归属一个门店且角色不能重复");
+			errorInfo=  checkEmployeeRelBelong(stationId,employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"员工只能归属一个门店");
 			if(errorInfo != null){
 				return Result.of(errorInfo);
+			}
+			errorInfo=  checkEmployeeRelIdentifier(stationId,employeeId,identifier.name(),CuntaoEmployeeType.store.name(),"");
+			if(errorInfo != null){
+				Result<Long> result = Result.of(true);
+				result.setModule(employeeId);
+				return result;
 			}
 			storeEmployee.setId(employeeId);
 		}
@@ -394,9 +414,15 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		if(errorInfo != null){
 			return Result.of(errorInfo);
 		}
-		errorInfo=  checkEmployeeRel(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商且角色不能重复");
+		errorInfo=  checkEmployeeRelBelong(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"员工只能归属一个服务商");
 		if(errorInfo != null){
 			return Result.of(errorInfo);
+		}
+		errorInfo=  checkEmployeeRelIdentifier(vendorId,employeeId,identifier.name(),CuntaoEmployeeType.vendor.name(),"");
+		if(errorInfo != null){
+			Result<Long> result = Result.of(true);
+			result.setModule(employeeId);
+			return result;
 		}
 		CuntaoServiceVendor  cuntaoServiceVendor = cuntaoServiceVendorMapper.selectByPrimaryKey(vendorId);
 		if(cuntaoServiceVendor == null){

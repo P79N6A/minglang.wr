@@ -249,6 +249,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             PartnerInstanceLevelDto partnerInstanceLevelDto = PartnerInstanceLevelConverter.toPartnerInstanceLevelDto(level);
             insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
         }
+        buildStoreInfo(insDto);
         return insDto;
     }
 
@@ -343,6 +344,15 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         	 }
     	}
     }
+    
+	private void buildStoreInfo(PartnerInstanceDto partnerInstance) {
+		if (partnerInstance != null && partnerInstance.getStationId() != null) {
+			StoreDto storeDto = storeReadBO.getStoreDtoByStationId(partnerInstance.getStationId());
+			if (storeDto != null) {
+				partnerInstance.getStationDto().setStoreDto(storeDto);
+			}
+		}
+	}
     
     private void buildNameRuleFlag(List<PartnerInstanceDto> partnerInstances){
         if(CollectionUtils.isNotEmpty(partnerInstances)){
