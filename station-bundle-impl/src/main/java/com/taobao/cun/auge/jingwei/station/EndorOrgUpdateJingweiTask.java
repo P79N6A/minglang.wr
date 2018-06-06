@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class EndorOrgUpdateJingweiTask implements InitializingBean{
 	@Value("${jingwei.taskid.endor.org}")
 	private String taskId;
