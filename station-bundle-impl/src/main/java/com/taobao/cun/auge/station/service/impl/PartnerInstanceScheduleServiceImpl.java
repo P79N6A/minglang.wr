@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.github.pagehelper.PageHelper;
 import com.taobao.cun.auge.bail.BailService;
+import com.taobao.cun.auge.bail.dto.BaiDtoBuilder;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.AccountMoney;
@@ -31,7 +32,9 @@ import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceScheduleService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
+import com.taobao.cun.settle.bail.dto.CuntaoBailBaseQueryDto;
 import com.taobao.cun.settle.bail.enums.UserTypeEnum;
+import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
 import com.taobao.cun.settle.common.model.ResultModel;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -69,6 +72,9 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 
 	@Autowired
 	BailService bailService;
+	
+	@Autowired
+	private CuntaoNewBailService cuntaoNewBailService;
 
 	@Override
 	public List<Long> getWaitOpenStationList(int fetchNum){
@@ -102,9 +108,12 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		if (rel == null) {
 			return Boolean.TRUE;
 		}
-		// 获得冻结的金额
-		String balanceFrozenMoney = getfreezedMoneyOfCNY(rel.getTaobaoUserId());
+		
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.PARTNER_BOND, AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, instanceId);
+		
+		// 获得冻结的金额
+		Long  balanceFrozenMoney = getfreezedMoneyOfCNYNew(rel.getTaobaoUserId(),accountMoney.getAccountNo());
+		
 		String accountNo = getAccountNo(accountMoney.getAccountNo(), rel);
 		String unfrozeMoney = getUnfrozenMoney(balanceFrozenMoney, accountMoney.getMoney());
 		OperatorDto operatorDto = new OperatorDto(DomainUtils.DEFAULT_OPERATOR, OperatorTypeEnum.SYSTEM, 0L);
@@ -120,12 +129,12 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 	 * @param initFrozedMoney 最初冻结的保证金
 	 * @return
 	 */
-	private String getUnfrozenMoney(String balanceFrozedMoney,  BigDecimal initFrozedMoney) {
+	private String getUnfrozenMoney(Long balanceFrozedMoney,  BigDecimal initFrozedMoney) {
 		if (new BigDecimal(balanceFrozedMoney).compareTo(initFrozedMoney) > 0) {
 			logger.warn("unfroze balance money:{}, great than init frozen monery:{}", balanceFrozedMoney, initFrozedMoney);
 			return initFrozedMoney.toString();
 		}
-		return balanceFrozedMoney;
+		return String.valueOf(balanceFrozedMoney);
 	}
 
 	private String getAccountNo(String accountNo, PartnerStationRel rel) {
@@ -141,12 +150,31 @@ public class PartnerInstanceScheduleServiceImpl implements PartnerInstanceSchedu
 		return accountDto.getAccountNo();
 	}
 
-	private String getfreezedMoneyOfCNY(Long taobaoUserId) {
-		ResultModel<String> resultModel = bailService.queryUserFreezeAmount(taobaoUserId, UserTypeEnum.PARTNER);
-		if (resultModel!=null && resultModel.isSuccess()) {
-			return resultModel.getResult();
-		}
-		throw new AugeSystemException("BailService|query freezed monery error");
+//	private String getfreezedMoneyOfCNY(Long taobaoUserId) {
+//		ResultModel<String> resultModel = bailService.queryUserFreezeAmount(taobaoUserId, UserTypeEnum.PARTNER);
+//		if (resultModel!=null && resultModel.isSuccess()) {
+//			return resultModel.getResult();
+//		}
+//		throw new AugeSystemException("BailService|query freezed monery error");
+//		
+//	}
+	/**
+	 * 查寻基础保证金，返回只 是元
+	 * @param taobaoUserId
+	 * @param accountNo
+	 * @return
+	 */
+	private Long  getfreezedMoneyOfCNYNew(Long taobaoUserId,String accountNo) {
+	 CuntaoBailBaseQueryDto queryDto =new CuntaoBailBaseQueryDto();
+        queryDto.setTaobaoUserId(taobaoUserId);
+        queryDto.setUserTypeEnum(UserTypeEnum.PARTNER);
+        queryDto.setAlipayId(accountNo);
+        ResultModel<Long> freezeAmount = cuntaoNewBailService.queryUserFreezeAmountNew(queryDto);
+       
+       if (freezeAmount != null && freezeAmount.isSuccess()) {
+    	   return new BigDecimal(freezeAmount.getResult()).divide(BaiDtoBuilder.ONE_HUNDRED).longValue();
+       }
+       throw new AugeBusinessException(AugeErrorCodes.DECORATE_BUSINESS_CHECK_ERROR_CODE,"queryUserFreezeAmountNew ERROR");
 	}
 
 
