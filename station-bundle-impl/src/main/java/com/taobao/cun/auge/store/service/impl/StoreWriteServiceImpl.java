@@ -122,4 +122,9 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 		}
 		
 	}
+
+	@Override
+	public void batchInitStoreEmployee() {
+		storeWriteBO.batchInitStoreEmployee();
+	}
 }

@@ -20,8 +20,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.taobao.biz.common.division.impl.DefaultDivisionAdapterManager;
 import com.taobao.cun.auge.common.OperatorDto;
+import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
+import com.taobao.cun.auge.company.EmployeeReadService;
 import com.taobao.cun.auge.company.EmployeeWriteService;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeDto;
 import com.taobao.cun.auge.company.dto.CuntaoEmployeeIdentifier;
@@ -121,6 +123,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 
 	@Autowired
 	private EmployeeWriteService employeeWriteService;
+	
+	@Autowired
+	private EmployeeReadService employeeReadService;
 
 	@Autowired
 	private StandardAreaService standardAreaService;
@@ -208,7 +213,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
 		if (!Strings.isNullOrEmpty(station.getLng())) {
-			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+			storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
 		}
 		switch (storeCreateDto.getStoreCategory()) {
 		case FMCG:
@@ -459,7 +464,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
 		if (!Strings.isNullOrEmpty(station.getLng())) {
-			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+			storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
 		}
 
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
@@ -572,7 +577,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
 		}
 		if (!Strings.isNullOrEmpty(station.getLng())) {
-			storeDTO.setPosx(POIUtils.toStanardPOI(station.getLng()));
+			storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
 		}
 
 		storeDTO.addTag(diamondConfiguredProperties.getStoreTag());
@@ -821,4 +826,33 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 	
 	}
+	
+	public static String fixLng(String lng){
+		if(lng !=null && lng.length() == 8 && lng.endsWith("0")){
+			return lng.substring(0, lng.length()-1);
+		}
+		return lng;
+	}
+
+	@Override
+	public void batchInitStoreEmployee() {
+		CuntaoStoreExample example = new CuntaoStoreExample();
+		example.createCriteria().andIsDeletedEqualTo("n").andStoreCategoryEqualTo("FMCG");
+		List<CuntaoStore> stores = cuntaoStoreMapper.selectByExample(example);
+		for (CuntaoStore store : stores) {
+			try {
+				Result<List<CuntaoEmployeeDto>> result = employeeReadService.queryStoreEmployeeByIdentifier(store.getStationId(), CuntaoEmployeeIdentifier.STORE_MANAGER);
+				if(result.isSuccess() && result.getModule() == null){
+					this.initStoreEndorOrg(store.getStationId());
+					this.initStoreEmployees(store.getStationId());
+					logger.info("initStoreEmployee stationId["+store.getStationId()+"]");
+				}
+			} catch (Exception e) {
+				logger.error("batchInitStoreEmployee error["+store.getStationId()+"]",e);
+			}
+		}
+		logger.info("finish batchInitStoreEmployee");
+	}
+	
+	
 }
