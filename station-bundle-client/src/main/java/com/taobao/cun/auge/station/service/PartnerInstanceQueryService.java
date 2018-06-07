@@ -313,6 +313,8 @@ public interface PartnerInstanceQueryService {
      * @return
      */
     public BondFreezingInfoDto getBondFreezingInfoForTrans(Long taobaoUserId);
+    
+    public void addTPTag();
 }
 
 

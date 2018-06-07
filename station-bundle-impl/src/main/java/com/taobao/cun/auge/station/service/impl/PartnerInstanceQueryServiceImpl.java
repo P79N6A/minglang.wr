@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.taobao.hsf.util.RequestCtxUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -34,11 +33,13 @@ import com.taobao.cun.auge.dal.domain.PartnerInstance;
 import com.taobao.cun.auge.dal.domain.PartnerInstanceLevel;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
+import com.taobao.cun.auge.dal.domain.PartnerStationRelExample;
 import com.taobao.cun.auge.dal.domain.ProcessedStationStatus;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.PartnerInstanceExample;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.dal.mapper.PartnerStationRelExtMapper;
+import com.taobao.cun.auge.dal.mapper.PartnerStationRelMapper;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
 import com.taobao.cun.auge.station.bo.CloseStationApplyBO;
@@ -107,9 +108,12 @@ import com.taobao.cun.auge.station.util.PartnerInstanceTypeEnumUtil;
 import com.taobao.cun.auge.station.validate.StationValidator;
 import com.taobao.cun.auge.store.bo.StoreReadBO;
 import com.taobao.cun.auge.store.dto.StoreDto;
+import com.taobao.cun.auge.tag.UserTag;
+import com.taobao.cun.auge.tag.service.UserTagService;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.validator.BeanValidator;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
+import com.taobao.hsf.util.RequestCtxUtil;
 import com.taobao.security.util.SensitiveDataUtil;
 import com.taobao.util.RandomUtil;
 
@@ -182,6 +186,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     @Autowired
     private FrozenMoneyAmountConfig frozenMoneyConfig;
     
+    @Autowired
+    private PartnerStationRelMapper partnerStationRelMapper;
+    
+    @Autowired
+    private UserTagService userTagService;
     private boolean isC2BTestUser(Long taobaoUserId) {
         return testUserService.isTestUser(taobaoUserId, "c2b", true);
     }
@@ -895,4 +904,18 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             logger.error("重构过渡接口被调用");
         }
     }
+    
+    public void addTPTag(){
+    	PartnerStationRelExample example = new PartnerStationRelExample();
+    	example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo("TP").andIsCurrentEqualTo("y").andStateIn(Lists.newArrayList("SERVICING","DECORATING","CLOSING"));
+    	List<PartnerStationRel>  rels = partnerStationRelMapper.selectByExample(example);
+    	for(PartnerStationRel rel : rels){
+    		if(!userTagService.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag())){
+        		userTagService.addTag(rel.getTaobaoUserId(),UserTag.TP_USER_TAG2.getTag());
+        		logger.info("add TP tag["+rel.getTaobaoUserId()+"]");
+        	}
+    	}
+    	logger.info("finish add TP tag");
+    }
+    
 }
