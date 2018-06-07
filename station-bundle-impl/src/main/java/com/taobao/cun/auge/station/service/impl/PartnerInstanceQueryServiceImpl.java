@@ -905,17 +905,4 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
         }
     }
     
-    public void addTPTag(){
-    	PartnerStationRelExample example = new PartnerStationRelExample();
-    	example.createCriteria().andIsDeletedEqualTo("n").andTypeEqualTo("TP").andIsCurrentEqualTo("y").andStateIn(Lists.newArrayList("SERVICING","DECORATING","CLOSING"));
-    	List<PartnerStationRel>  rels = partnerStationRelMapper.selectByExample(example);
-    	for(PartnerStationRel rel : rels){
-    		if(!userTagService.hasTag(rel.getTaobaoUserId(), UserTag.TP_USER_TAG2.getTag())){
-        		userTagService.addTag(rel.getTaobaoUserId(),UserTag.TP_USER_TAG2.getTag());
-        		logger.info("add TP tag["+rel.getTaobaoUserId()+"]");
-        	}
-    	}
-    	logger.info("finish add TP tag");
-    }
-    
 }

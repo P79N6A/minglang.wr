@@ -91,6 +91,12 @@ public class StoreDto implements Serializable{
 	 * taobaoNick
 	 */
 	private String taobaoNick;
+	
+	/**
+	 * endor组织ID
+	 */
+	Long endorOrgId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -227,6 +233,14 @@ public class StoreDto implements Serializable{
 
 	public void setTaobaoNick(String taobaoNick) {
 		this.taobaoNick = taobaoNick;
+	}
+
+	public Long getEndorOrgId() {
+		return endorOrgId;
+	}
+
+	public void setEndorOrgId(Long endorOrgId) {
+		this.endorOrgId = endorOrgId;
 	}
 
 }
