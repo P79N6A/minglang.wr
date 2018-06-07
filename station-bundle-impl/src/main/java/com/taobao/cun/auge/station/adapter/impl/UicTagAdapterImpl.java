@@ -142,7 +142,7 @@ public class UicTagAdapterImpl implements UicTagAdapter {
     }
 
     private void addTpUserTag2(Long taobaoUserId){
-    	if(userTagService.hasTag(taobaoUserId, UserTag.TP_USER_TAG2.getTag())){
+    	if(!userTagService.hasTag(taobaoUserId, UserTag.TP_USER_TAG2.getTag())){
     		userTagService.addTag(taobaoUserId,UserTag.TP_USER_TAG2.getTag());
     	}
     }
