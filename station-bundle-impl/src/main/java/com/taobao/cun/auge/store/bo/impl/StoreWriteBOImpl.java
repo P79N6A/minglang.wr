@@ -828,7 +828,7 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	}
 	
 	public static String fixLng(String lng){
-		if(lng !=null && lng.length() == 8 && lng.endsWith("0")){
+		if(lng !=null && lng.length() == 8 && lng.endsWith("0") && lng.startsWith("9")){
 			return lng.substring(0, lng.length()-1);
 		}
 		return lng;
