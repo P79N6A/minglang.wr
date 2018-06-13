@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
 import com.taobao.cun.auge.cache.TairCache;
+import com.taobao.cun.auge.client.operator.DefaultOperatorEnum;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.common.utils.IdCardUtil;
@@ -272,6 +273,7 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
     	InspectionInsPageCondition condition = new InspectionInsPageCondition();
     	condition.setStationId(insDto.getStationId());
     	condition.setInspectorType("HAVANA");
+    	condition.setOperatorType(DefaultOperatorEnum.BUC);
     	condition.setStates(Lists.newArrayList(InspectionStateEnum.TO_AUDIT));
     	try {
     		com.taobao.cun.auge.common.dto.PageDto<InspectionInsPageDto> result = inspectionService.getInspectionInstances(condition);
