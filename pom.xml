@@ -755,7 +755,12 @@
 				    <groupId>com.taobao.cun</groupId>
 				    <artifactId>order-fulfillment-client</artifactId>
 				    <version>1.0.6</version>
-				</dependency>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.union</groupId>
+				<artifactId>union-api-client</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
