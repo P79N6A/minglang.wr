@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.station.service;
 
+import com.taobao.cun.auge.station.dto.PartnerAdzoneInfoDto;
+
 public interface PartnerAdzoneService {
     /**
      * 创建阿里妈妈拉新PID
@@ -17,4 +19,13 @@ public interface PartnerAdzoneService {
      * @return
      */
     public String getUnionPid(Long taobaoUserId, Long stationId);
+
+    /**
+     * 根据阿里妈妈PID获取村淘信息
+     *
+     * @param pid
+     * @return
+     */
+    public PartnerAdzoneInfoDto getPartnerAdzoneInfoByPid(String pid);
+
 }
