@@ -36,6 +36,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
     private String appKey;
     @Value("${taobao.union.site.id}")
     private String siteId;
+    @Value("${taobao.union.tb.num}")
+    private Long tbNumId;
     private static final String CREATE_ADZONE_QUERY_ID = "adzone.create";
 
     @Override
@@ -59,6 +61,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         Map<String, Object> variables = Maps.newHashMap();
         variables.put("appkey", appKey);
         variables.put("siteId", siteId);
+        variables.put("tbNumId", tbNumId);
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
