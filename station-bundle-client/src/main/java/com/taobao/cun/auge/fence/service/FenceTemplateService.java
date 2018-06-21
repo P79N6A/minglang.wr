@@ -1,14 +1,62 @@
 package com.taobao.cun.auge.fence.service;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.fence.dto.FenceTemplateDetailDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
+import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 
 /**
  * Created by xiao on 18/6/15.
  */
 public interface FenceTemplateService {
 
+    /**
+     * 新增一个电子围栏模板
+     * @param detailDto
+     * @return
+     */
+    Long addFenceTemplate(FenceTemplateDetailDto detailDto);
+
+    /**
+     * 更新模板
+     * @param detailDto
+     */
+    void updateFenceTemplate(FenceTemplateDetailDto detailDto);
+
+    /**
+     * 查询列表
+     * @param condition
+     * @return
+     */
     PageDto<FenceTemplateListDto> getFenceTemplateList(FenceTemplateQueryCondition condition);
+
+    /**
+     * 查询详情
+     * @param id
+     * @return
+     */
+    FenceTemplateDetailDto getTemplateDetail(Long id);
+
+    /**
+     * 查询模板应用的村点列表
+     * @param condition
+     * @return
+     */
+    PageDto<FenceTemplateStation> getFenceTemplateStationList(FenceTemplateQueryCondition condition);
+
+    /**
+     * 启用模板
+     * @param id
+     * @param operator
+     */
+    void enableFenceTemplate(Long id, String operator);
+
+    /**
+     * 禁用模板
+     * @param id
+     * @param operator
+     */
+    void disableFenceTemplate(Long id, String operator);
 
 }

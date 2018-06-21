@@ -123,4 +123,13 @@
 	      and LOCATE(#{name,jdbcType=VARCHAR},s.name)>0
 	    </if>
 	</select>
+
+    <select id="getFenceTemplateStation" parameterType="java.lang.Long" resultType="com.taobao.cun.auge.fence.dto.FenceTemplateStation">
+        select
+        s.id,
+        s.name
+        from station s, fence_entity f
+        where s.id = f.station_id
+        and f.template_id = #{templateId}
+    </select>
 </mapper>

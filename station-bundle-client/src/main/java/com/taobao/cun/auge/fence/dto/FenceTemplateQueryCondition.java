@@ -9,6 +9,8 @@ public class FenceTemplateQueryCondition extends PageQuery {
 
     private static final long serialVersionUID = -4255912219469186362L;
 
+    private Long templateId;
+
     private String name;
 
     private String type;
@@ -16,6 +18,14 @@ public class FenceTemplateQueryCondition extends PageQuery {
     private String limitCommodity;
 
     private String status;
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
 
     public String getName() {
         return name;

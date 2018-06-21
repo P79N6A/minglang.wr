@@ -4,10 +4,8 @@ import java.util.List;
 
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.StationExtExample;
+import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 
-/**
- * Created by xiao on 16/8/26.
- */
 public interface StationExtMapper {
 
     /**
@@ -19,5 +17,7 @@ public interface StationExtMapper {
     
     
     List<Station> selectByExample(StationExtExample stationExtExample);
+
+    List<FenceTemplateStation> getFenceTemplateStation(Long templateId);
     
 }
