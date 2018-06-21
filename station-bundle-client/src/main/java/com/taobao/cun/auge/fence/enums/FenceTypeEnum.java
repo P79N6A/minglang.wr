@@ -1,7 +1,9 @@
 package com.taobao.cun.auge.fence.enums;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,15 @@ public class FenceTypeEnum implements Serializable{
     public FenceTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public static List<FenceTypeEnum> enums() {
+        List<FenceTypeEnum> enumList = new ArrayList<FenceTypeEnum>();
+        enumList.add(SERVICE);
+        enumList.add(LOGISTICS);
+        enumList.add(DEAL);
+        enumList.add(CHARGE);
+        return enumList;
     }
 
     public String getCode() {
