@@ -69,7 +69,8 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
             logger.error("create adzone erroor: {}, {}", JSON.toJSONString(variables), result.toString());
             throw new AugeSystemException(result.toString());
         }
-        String pid = (String) result.getData();
+        Map data = (Map) result.getData();
+        String pid = (String) data.get("pid");
         partnerAdzoneBO.addAdzone(taobaoUserId, stationId, pid);
         return pid;
     }
