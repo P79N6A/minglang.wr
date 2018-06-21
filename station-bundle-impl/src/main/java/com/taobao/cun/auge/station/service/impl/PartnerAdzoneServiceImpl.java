@@ -1,5 +1,6 @@
 package com.taobao.cun.auge.station.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.common.exception.AugeSystemException;
 import com.taobao.cun.auge.dal.domain.PartnerStationRel;
@@ -65,6 +66,7 @@ public class PartnerAdzoneServiceImpl implements PartnerAdzoneService {
         variables.put("adzoneName", taobaoUserId);
         RpcResult<Object> result = entryService.get(CREATE_ADZONE_QUERY_ID, variables);
         if (!result.isSuccess()) {
+            logger.error("create adzone erroor: {}, {}", JSON.toJSONString(variables), result.toString());
             throw new AugeSystemException(result.toString());
         }
         String pid = (String) result.getData();
