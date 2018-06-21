@@ -28,7 +28,7 @@ public class FenceTemplateListDto implements Serializable {
 
     private Date gmtModified;
 
-    private String status;
+    private String state;
 
     public Long getId() {
         return id;
@@ -94,11 +94,11 @@ public class FenceTemplateListDto implements Serializable {
         this.gmtModified = gmtModified;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 }

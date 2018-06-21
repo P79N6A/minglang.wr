@@ -73,8 +73,8 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
         if (!StringUtils.isEmpty(condition.getLimitCommodity())) {
             criteria.andLimitCommodityEqualTo(condition.getLimitCommodity());
         }
-        if (!StringUtils.isEmpty(condition.getStatus())) {
-            criteria.andStatusEqualTo(condition.getStatus());
+        if (!StringUtils.isEmpty(condition.getState())) {
+            criteria.andStateEqualTo(condition.getState());
         }
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
         List<FenceTemplate> templateList = templateMapper.selectByExample(example);
@@ -101,7 +101,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     @Override
     public void enableFenceTemplate(Long id, String operator) {
         FenceTemplate fenceTemplate = templateMapper.selectByPrimaryKey(id);
-        fenceTemplate.setStatus(FenceConstants.ENABLE);
+        fenceTemplate.setState(FenceConstants.ENABLE);
         DomainUtils.beforeUpdate(fenceTemplate, operator);
         templateMapper.updateByPrimaryKey(fenceTemplate);
     }
@@ -109,7 +109,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     @Override
     public void disableFenceTemplate(Long id, String operator) {
         FenceTemplate fenceTemplate = templateMapper.selectByPrimaryKey(id);
-        fenceTemplate.setStatus(FenceConstants.DISABLE);
+        fenceTemplate.setState(FenceConstants.DISABLE);
         DomainUtils.beforeUpdate(fenceTemplate, operator);
         templateMapper.updateByPrimaryKey(fenceTemplate);
     }

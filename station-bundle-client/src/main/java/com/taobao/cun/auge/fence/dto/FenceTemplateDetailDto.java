@@ -37,7 +37,7 @@ public class FenceTemplateDetailDto extends OperatorDto {
 
     private String rangeRule;
 
-    private String status;
+    private String state;
 
     public Long getId() {
         return id;
@@ -143,11 +143,11 @@ public class FenceTemplateDetailDto extends OperatorDto {
         this.rangeRule = rangeRule;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 }

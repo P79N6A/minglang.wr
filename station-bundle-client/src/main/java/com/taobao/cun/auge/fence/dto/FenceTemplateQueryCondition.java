@@ -17,7 +17,7 @@ public class FenceTemplateQueryCondition extends PageQuery {
 
     private String limitCommodity;
 
-    private String status;
+    private String state;
 
     public Long getTemplateId() {
         return templateId;
@@ -51,11 +51,11 @@ public class FenceTemplateQueryCondition extends PageQuery {
         this.limitCommodity = limitCommodity;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
     }
 }

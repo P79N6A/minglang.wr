@@ -23,7 +23,7 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andTemplateIdEqualTo(templateId);
         FenceEntity fenceEntity = new FenceEntity();
-        fenceEntity.setStatus(FenceConstants.ENABLE);
+        fenceEntity.setState(FenceConstants.ENABLE);
         DomainUtils.beforeUpdate(fenceEntity, operator);
         entityMapper.updateByExampleSelective(fenceEntity, example);
     }
@@ -33,7 +33,7 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andTemplateIdEqualTo(templateId);
         FenceEntity fenceEntity = new FenceEntity();
-        fenceEntity.setStatus(FenceConstants.DISABLE);
+        fenceEntity.setState(FenceConstants.DISABLE);
         DomainUtils.beforeUpdate(fenceEntity, operator);
         entityMapper.updateByExampleSelective(fenceEntity, example);
     }
