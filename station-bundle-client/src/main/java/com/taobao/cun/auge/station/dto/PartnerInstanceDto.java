@@ -148,6 +148,10 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	
 	private PartnerInstanceTransStatusEnum transStatusEnum;
 	
+	/**
+	 * 是否有巡检记录
+	 */
+	private boolean hasInspectionRecord;
 	public Long getId() {
 		return id;
 	}
@@ -370,5 +374,13 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setTransStatusEnum(PartnerInstanceTransStatusEnum transStatusEnum) {
 		this.transStatusEnum = transStatusEnum;
+	}
+
+	public boolean isHasInspectionRecord() {
+		return hasInspectionRecord;
+	}
+
+	public void setHasInspectionRecord(boolean hasInspectionRecord) {
+		this.hasInspectionRecord = hasInspectionRecord;
 	}
 }

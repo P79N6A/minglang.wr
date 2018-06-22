@@ -6,13 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.common.result.ErrorInfo;
 import com.taobao.cun.auge.common.result.Result;
 import com.taobao.cun.auge.configuration.DiamondConfiguredProperties;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.station.bo.PartnerProtocolRelBO;
 import com.taobao.cun.auge.station.dto.PartnerInstanceDto;
+import com.taobao.cun.auge.station.dto.PartnerProtocolRelDeleteDto;
 import com.taobao.cun.auge.station.dto.PartnerProtocolRelDto;
+import com.taobao.cun.auge.station.enums.OperatorTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
@@ -228,6 +231,53 @@ public class CuntaoGoodsServiceImpl implements CuntaoGoodsService {
 			logger.error("needConfirmStationOpeningProtocol[" + taobaoUserId + "]", e);
 			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
 		}
+	}
+
+	@Override
+	public Result<Boolean> canCancelStationOpeningProtocol(Long taobaoUserId) {
+		try {
+			Result<Boolean> result = Result.of(true);
+			PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+			if(partnerInstance != null){
+				//3.0用户并且签署过开业包协议的可以取消协议
+				boolean isConfirmed = isConfirmProtocol(taobaoUserId,ProtocolTypeEnum.STATION_OPENING_AGREEMENT);
+				if((!StationModeEnum.V4.getCode().equals(partnerInstance.getMode()) && 
+						PartnerInstanceTypeEnum.TP.getCode().equals(partnerInstance.getType().getCode()) && 
+						isConfirmed)){
+					result.setModule(true);
+					return result;
+				}
+			}
+			result.setModule(false);
+			return result;
+		} catch (Exception e) {
+			logger.error("canCancelStationOpeningProtocol[" + taobaoUserId + "] error", e);
+			return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+		}
+	}
+
+	@Override
+	public Result<Boolean> cancelStationOpeningProtocol(Long taobaoUserId) {
+			try {
+				Result<Boolean> result = Result.of(true);
+				if(canCancelStationOpeningProtocol(taobaoUserId).getModule()){
+					PartnerInstanceDto partnerInstance = partnerInstanceQueryService.getActivePartnerInstance(taobaoUserId);
+					PartnerProtocolRelDeleteDto partnerProtocolRelDeleteDto = new PartnerProtocolRelDeleteDto();
+					partnerProtocolRelDeleteDto.setObjectId(partnerInstance.getId());
+					partnerProtocolRelDeleteDto.setOperator(taobaoUserId+"");
+					partnerProtocolRelDeleteDto.setProtocolTypeList(Lists.newArrayList(ProtocolTypeEnum.STATION_OPENING_AGREEMENT));
+					partnerProtocolRelDeleteDto.setOperatorType(OperatorTypeEnum.HAVANA);
+					partnerProtocolRelDeleteDto.setTargetType(PartnerProtocolRelTargetTypeEnum.PARTNER_INSTANCE);
+					partnerProtocolRelBO.deletePartnerProtocolRel(partnerProtocolRelDeleteDto);
+					return result;
+				}
+				result.setModule(false);
+				return result;
+			} catch (Exception e) {
+				logger.error("cancelStationOpeningProtocol[" + taobaoUserId + "] error", e);
+				return Result.of(ErrorInfo.of(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE, null, "系统异常"));
+			}
+		
 	}
 
 }
