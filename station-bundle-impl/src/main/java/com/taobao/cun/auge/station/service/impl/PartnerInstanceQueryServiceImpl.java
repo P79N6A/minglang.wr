@@ -265,28 +265,11 @@ public class PartnerInstanceQueryServiceImpl implements PartnerInstanceQueryServ
             insDto.setPartnerInstanceLevel(partnerInstanceLevelDto);
         }
         buildStoreInfo(insDto);
-        buildInspectionInfo(insDto);
+        //buildInspectionInfo(insDto);
         return insDto;
     }
 
-    private void buildInspectionInfo(PartnerInstanceDto insDto) {
-    	InspectionInsPageCondition condition = new InspectionInsPageCondition();
-    	condition.setStationId(insDto.getStationId());
-    	condition.setInspectorType("HAVANA");
-    	condition.setOperatorType(DefaultOperatorEnum.BUC);
-    	condition.setStates(Lists.newArrayList(InspectionStateEnum.TO_AUDIT));
-    	try {
-    		com.taobao.cun.auge.common.dto.PageDto<InspectionInsPageDto> result = inspectionService.getInspectionInstances(condition);
-    		if(!CollectionUtils.isEmpty(result.getItems())){
-    			insDto.setHasInspectionRecord(true);
-    		}else{
-    			insDto.setHasInspectionRecord(false);
-    		}
-		} catch (Exception e) {
-			logger.error("getInspectionInstances error!stationId["+insDto.getStationId()+"]",e);
-		}
-    	
-	}
+   
 
 	@Override
     public List<PartnerInstanceDto> queryPartnerInstances(Long stationId) {
