@@ -38,4 +38,11 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         entityMapper.updateByExampleSelective(fenceEntity, example);
     }
 
+    @Override
+    public Integer getFenceEntityCountByTemplateId(Long templateId) {
+        FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andTemplateIdEqualTo(templateId);
+        return entityMapper.countByExample(example);
+    }
+
 }

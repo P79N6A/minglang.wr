@@ -30,6 +30,11 @@ public class FenceTemplateListDto implements Serializable {
 
     private String state;
 
+    /**
+     * 应用实体数量
+     */
+    private Integer entityCount;
+
     public Long getId() {
         return id;
     }
@@ -100,5 +105,13 @@ public class FenceTemplateListDto implements Serializable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public Integer getEntityCount() {
+        return entityCount;
+    }
+
+    public void setEntityCount(Integer entityCount) {
+        this.entityCount = entityCount;
     }
 }

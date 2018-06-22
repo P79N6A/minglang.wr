@@ -19,6 +19,8 @@ public class FenceTemplateQueryCondition extends PageQuery {
 
     private String state;
 
+    private String stationName;
+
     public Long getTemplateId() {
         return templateId;
     }
@@ -57,5 +59,13 @@ public class FenceTemplateQueryCondition extends PageQuery {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getStationName() {
+        return stationName;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
     }
 }

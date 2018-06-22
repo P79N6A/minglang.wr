@@ -5,6 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.dal.example.StationExtExample;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
+import org.apache.ibatis.annotations.Param;
 
 public interface StationExtMapper {
 
@@ -18,6 +19,6 @@ public interface StationExtMapper {
     
     List<Station> selectByExample(StationExtExample stationExtExample);
 
-    List<FenceTemplateStation> getFenceTemplateStation(Long templateId);
+    List<FenceTemplateStation> getFenceTemplateStation(@Param("templateId") Long templateId, @Param("stationName") String stationName);
     
 }

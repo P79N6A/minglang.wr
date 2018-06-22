@@ -124,12 +124,15 @@
 	    </if>
 	</select>
 
-    <select id="getFenceTemplateStation" parameterType="java.lang.Long" resultType="com.taobao.cun.auge.fence.dto.FenceTemplateStation">
+    <select id="getFenceTemplateStation" resultType="com.taobao.cun.auge.fence.dto.FenceTemplateStation">
         select
         s.id,
         s.name
         from station s, fence_entity f
         where s.id = f.station_id
         and f.template_id = #{templateId}
+        <if test="stationName != null and stationName != ''" >
+            and s.name like concat('%', #{stationName,jdbcType=VARCHAR}, '%')
+        </if>
     </select>
 </mapper>

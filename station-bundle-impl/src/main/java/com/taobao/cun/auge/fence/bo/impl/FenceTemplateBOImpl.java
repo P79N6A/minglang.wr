@@ -13,6 +13,7 @@ import com.taobao.cun.auge.dal.domain.FenceTemplateExample;
 import com.taobao.cun.auge.dal.domain.FenceTemplateExample.Criteria;
 import com.taobao.cun.auge.dal.mapper.FenceTemplateMapper;
 import com.taobao.cun.auge.dal.mapper.StationExtMapper;
+import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDetailDto;
@@ -24,6 +25,7 @@ import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import com.github.pagehelper.Page;
 
@@ -41,6 +43,9 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
 
     @Autowired
     private StationExtMapper stationExtMapper;
+
+    @Autowired
+    private FenceEntityBO fenceEntityBO;
 
     @Override
     public Long addFenceTemplate(FenceTemplateDetailDto detailDto) {
@@ -85,7 +90,14 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
             listDto.setModifierName(emp360Adapter.getName(template.getModifier()));
             return listDto;
         }).collect(Collectors.toList());
+        fillEntityCount(dtoList);
         return PageDtoUtil.success((Page<FenceTemplate>)templateList, dtoList);
+    }
+
+    private void fillEntityCount(List<FenceTemplateListDto> dtoList) {
+        if (!CollectionUtils.isEmpty(dtoList)) {
+            dtoList.forEach(dto -> dto.setEntityCount(fenceEntityBO.getFenceEntityCountByTemplateId(dto.getId())));
+        }
     }
 
     @Override
@@ -118,7 +130,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     public PageDto<FenceTemplateStation> getFenceTemplateStationList(FenceTemplateQueryCondition condition) {
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
         Page<FenceTemplateStation> templateStationList = (Page<FenceTemplateStation>)stationExtMapper.getFenceTemplateStation(
-            condition.getTemplateId());
+            condition.getTemplateId(), condition.getStationName());
         return PageDtoUtil.success(templateStationList, templateStationList);
     }
 
