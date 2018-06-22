@@ -134,5 +134,7 @@
         <if test="stationName != null and stationName != ''" >
             and s.name like concat('%', #{stationName,jdbcType=VARCHAR}, '%')
         </if>
+        and s.is_deleted = 'n'
+        and f.is_deleted = 'n'
     </select>
 </mapper>
