@@ -79,4 +79,18 @@ public interface CuntaoGoodsService {
 	 * @return
 	 */
 	public Result<Boolean> needConfirmStationOpeningProtocol(Long taobaoUserId);
+	
+	/**
+	 * 判断用户是否能取消开业包协议
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Result<Boolean> canCancelStationOpeningProtocol(Long taobaoUserId);
+	
+	/**
+	 * 取消开业包协议
+	 * @param taobaoUserId
+	 * @return
+	 */
+	public Result<Boolean> cancelStationOpeningProtocol(Long taobaoUserId);
 }
