@@ -6,4 +6,8 @@
   	county_name=#{countyName}
   	and town_name=#{townName}
   </select>
+  
+  <insert id="insertInBlacknamePartnerApply" parameterType="long">
+  insert into town_blackname_apply(gmt_create,gmt_modified,partner_apply_id)values(NOW(),NOW(),#{partnerApplyId})
+  </insert>
 </mapper>
