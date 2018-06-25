@@ -29,7 +29,7 @@
 		<tomcat.version>7.0.64</tomcat.version>
 		<cuntaocenter.client.version>2.7.8</cuntaocenter.client.version>
 
-		<ague.station.client.version>3.9.6</ague.station.client.version>
+		<ague.station.client.version>3.9.8</ague.station.client.version>
 
 		<alibaba-spring-boot.version>1.4.7.12</alibaba-spring-boot.version>
 	</properties>
@@ -755,7 +755,12 @@
 				    <groupId>com.taobao.cun</groupId>
 				    <artifactId>order-fulfillment-client</artifactId>
 				    <version>1.0.6</version>
-				</dependency>
+			</dependency>
+			<dependency>
+				<groupId>com.taobao.union</groupId>
+				<artifactId>union-api-client</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>
