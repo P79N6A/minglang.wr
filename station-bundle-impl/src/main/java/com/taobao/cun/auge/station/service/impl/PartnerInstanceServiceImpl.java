@@ -2448,4 +2448,19 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         }
         return true;
 	}
+
+
+	@Override
+	public boolean updateStationCategory(Long stationId,String category) {
+		  StationDto stationDto = new StationDto();
+		  stationDto.setId(stationId);
+		  stationDto.setCategory(category);
+		  try {
+			  stationBO.updateStation(stationDto);
+		} catch (Exception e) {
+			logger.error("updateStationCategory error["+stationId+"]",e);
+			return false;
+		}
+		  return true;
+	}
 }
