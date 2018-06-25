@@ -17,11 +17,11 @@ import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDetailDto;
+import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 import com.taobao.cun.auge.fence.enums.FenceTypeEnum;
-import com.taobao.cun.auge.station.adapter.Emp360Adapter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,9 +37,6 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
 
     @Autowired
     private FenceTemplateMapper templateMapper;
-
-    @Autowired
-    private Emp360Adapter emp360Adapter;
 
     @Autowired
     private StationExtMapper stationExtMapper;
@@ -87,7 +84,6 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
             FenceTemplateListDto listDto = new FenceTemplateListDto();
             BeanUtils.copyProperties(template, listDto);
             listDto.setTypeEnum(FenceTypeEnum.valueOf(template.getType()));
-            listDto.setModifierName(emp360Adapter.getName(template.getModifier()));
             return listDto;
         }).collect(Collectors.toList());
         fillEntityCount(dtoList);
@@ -132,6 +128,19 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
         Page<FenceTemplateStation> templateStationList = (Page<FenceTemplateStation>)stationExtMapper.getFenceTemplateStation(
             condition.getTemplateId(), condition.getStationName());
         return PageDtoUtil.success(templateStationList, templateStationList);
+    }
+
+    @Override
+    public List<FenceTemplateDto> getFenceTemplateListByIdList(List<Long> idList) {
+        FenceTemplateExample example = new FenceTemplateExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
+        List<FenceTemplate> templateList = templateMapper.selectByExample(example);
+        return templateList.stream().map(template -> {
+            FenceTemplateDto dto = new FenceTemplateDto();
+            BeanUtils.copyProperties(template, dto);
+            dto.setTypeEnum(FenceTypeEnum.valueOf(template.getType()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

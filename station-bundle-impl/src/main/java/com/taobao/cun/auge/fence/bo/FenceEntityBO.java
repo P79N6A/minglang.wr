@@ -19,4 +19,9 @@ public interface FenceEntityBO {
      */
     Integer getFenceEntityCountByTemplateId(Long templateId);
 
+    /**
+     * 获得站点关联的模板id列表
+     */
+    List<Long> getTemplateIdListByStationId(Long stationId);
+
 }

@@ -1,5 +1,8 @@
 package com.taobao.cun.auge.fence.bo.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.FenceEntityExample;
@@ -43,6 +46,14 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andTemplateIdEqualTo(templateId);
         return entityMapper.countByExample(example);
+    }
+
+    @Override
+    public List<Long> getTemplateIdListByStationId(Long stationId) {
+        FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+        List<FenceEntity> entityList = entityMapper.selectByExample(example);
+        return entityList.stream().map(FenceEntity::getTemplateId).collect(Collectors.toList());
     }
 
 }
