@@ -29,4 +29,13 @@ public class TownBlacknameServiceImpl implements TownBlacknameService {
 		return townBlacknameMapper.countBlackname(countyName, townName) > 0;
 	}
 
+	@Override
+	public void recordPartnerApplyBlackname(Long partnerApplyId) {
+		try {
+			townBlacknameMapper.insertInBlacknamePartnerApply(partnerApplyId);
+		}catch(Throwable e) {
+			//捕获所有异常
+		}
+	}
+
 }

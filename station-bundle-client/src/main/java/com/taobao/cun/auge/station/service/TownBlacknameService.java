@@ -13,4 +13,10 @@ public interface TownBlacknameService {
 	 * @return
 	 */
 	boolean isBlackname(String countyName, String townName);
+	
+	/**
+	 * 记录黑名单
+	 * @param partnerApplyId
+	 */
+	void recordPartnerApplyBlackname(Long partnerApplyId);
 }
