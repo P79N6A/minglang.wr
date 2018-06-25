@@ -116,6 +116,7 @@ public class StationConverter {
 		station.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null
 				: stationDto.getPartnerInstanceIsOnTown().getCode());
 		station.setStationType(stationDto.getStationType());
+		station.setCategory(stationDto.getCategory());
 		return station;
 	}
 
