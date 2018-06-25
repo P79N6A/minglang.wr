@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.taobao.cun.auge.fence.enums.FenceTypeEnum;
+import com.taobao.cun.auge.fence.enums.FenceUserTypeEnum;
 
 /**
  * Created by xiao on 18/6/22.
@@ -18,13 +19,27 @@ public class FenceTemplateDto implements Serializable {
 
     private FenceTypeEnum typeEnum;
 
-    private String userType;
+    private FenceUserTypeEnum userTypeEnum;
 
     private String limitCommodity;
 
     private Date gmtModified;
 
+    private Date gmtCreate;
+
     private String state;
+
+    private String creator;
+
+    private String modifier;
+
+    private String defaultCheck;
+
+    private String commodityRule;
+
+    private String rangeEnable;
+
+    private String rangeRule;
 
     public Long getId() {
         return id;
@@ -50,12 +65,12 @@ public class FenceTemplateDto implements Serializable {
         this.typeEnum = typeEnum;
     }
 
-    public String getUserType() {
-        return userType;
+    public FenceUserTypeEnum getUserTypeEnum() {
+        return userTypeEnum;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setUserTypeEnum(FenceUserTypeEnum userTypeEnum) {
+        this.userTypeEnum = userTypeEnum;
     }
 
     public String getLimitCommodity() {
@@ -74,11 +89,67 @@ public class FenceTemplateDto implements Serializable {
         this.gmtModified = gmtModified;
     }
 
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
     public String getState() {
         return state;
     }
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public String getDefaultCheck() {
+        return defaultCheck;
+    }
+
+    public void setDefaultCheck(String defaultCheck) {
+        this.defaultCheck = defaultCheck;
+    }
+
+    public String getCommodityRule() {
+        return commodityRule;
+    }
+
+    public void setCommodityRule(String commodityRule) {
+        this.commodityRule = commodityRule;
+    }
+
+    public String getRangeEnable() {
+        return rangeEnable;
+    }
+
+    public void setRangeEnable(String rangeEnable) {
+        this.rangeEnable = rangeEnable;
+    }
+
+    public String getRangeRule() {
+        return rangeRule;
+    }
+
+    public void setRangeRule(String rangeRule) {
+        this.rangeRule = rangeRule;
     }
 }

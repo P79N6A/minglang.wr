@@ -5,7 +5,7 @@ import java.util.List;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
-import com.taobao.cun.auge.fence.dto.FenceTemplateDetailDto;
+import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
@@ -26,12 +26,12 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     private FenceEntityBO fenceEntityBO;
 
     @Override
-    public Long addFenceTemplate(FenceTemplateDetailDto detailDto) {
+    public Long addFenceTemplate(FenceTemplateEditDto detailDto) {
         return fenceTemplateBO.addFenceTemplate(detailDto);
     }
 
     @Override
-    public void updateFenceTemplate(FenceTemplateDetailDto detailDto) {
+    public void updateFenceTemplate(FenceTemplateEditDto detailDto) {
         fenceTemplateBO.updateFenceTemplate(detailDto);
     }
 
@@ -41,7 +41,7 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     }
 
     @Override
-    public FenceTemplateDetailDto getTemplateDetail(Long id) {
+    public FenceTemplateDto getTemplateDetail(Long id) {
         return fenceTemplateBO.getFenceTemplateById(id);
     }
 

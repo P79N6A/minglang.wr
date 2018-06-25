@@ -16,12 +16,14 @@ import com.taobao.cun.auge.dal.mapper.StationExtMapper;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
-import com.taobao.cun.auge.fence.dto.FenceTemplateDetailDto;
+import com.taobao.cun.auge.fence.convert.FenceTemplateConvertor;
+import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 import com.taobao.cun.auge.fence.enums.FenceTypeEnum;
+import com.taobao.cun.auge.fence.enums.FenceUserTypeEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,7 +47,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     private FenceEntityBO fenceEntityBO;
 
     @Override
-    public Long addFenceTemplate(FenceTemplateDetailDto detailDto) {
+    public Long addFenceTemplate(FenceTemplateEditDto detailDto) {
         FenceTemplate fenceTemplate = new FenceTemplate();
         BeanUtils.copyProperties(detailDto, fenceTemplate);
         DomainUtils.beforeInsert(fenceTemplate, detailDto.getOperator());
@@ -54,7 +56,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     }
 
     @Override
-    public void updateFenceTemplate(FenceTemplateDetailDto detailDto) {
+    public void updateFenceTemplate(FenceTemplateEditDto detailDto) {
         FenceTemplate fenceTemplate = new FenceTemplate();
         BeanUtils.copyProperties(detailDto, fenceTemplate);
         DomainUtils.beforeUpdate(fenceTemplate, detailDto.getOperator());
@@ -84,6 +86,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
             FenceTemplateListDto listDto = new FenceTemplateListDto();
             BeanUtils.copyProperties(template, listDto);
             listDto.setTypeEnum(FenceTypeEnum.valueOf(template.getType()));
+            listDto.setUserTypeEnum(FenceUserTypeEnum.valueOf(template.getUserType()));
             return listDto;
         }).collect(Collectors.toList());
         fillEntityCount(dtoList);
@@ -97,13 +100,9 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
     }
 
     @Override
-    public FenceTemplateDetailDto getFenceTemplateById(Long id) {
+    public FenceTemplateDto getFenceTemplateById(Long id) {
         FenceTemplate fenceTemplate = templateMapper.selectByPrimaryKey(id);
-        return Optional.ofNullable(fenceTemplate).map(template -> {
-            FenceTemplateDetailDto detailDto = new FenceTemplateDetailDto();
-            BeanUtils.copyProperties(fenceTemplate, detailDto);
-            return detailDto;
-        }).orElse(null);
+        return Optional.ofNullable(fenceTemplate).map(FenceTemplateConvertor::convertToDto).orElse(null);
     }
 
     @Override
@@ -135,12 +134,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
         FenceTemplateExample example = new FenceTemplateExample();
         example.createCriteria().andIsDeletedEqualTo("n").andIdIn(idList);
         List<FenceTemplate> templateList = templateMapper.selectByExample(example);
-        return templateList.stream().map(template -> {
-            FenceTemplateDto dto = new FenceTemplateDto();
-            BeanUtils.copyProperties(template, dto);
-            dto.setTypeEnum(FenceTypeEnum.valueOf(template.getType()));
-            return dto;
-        }).collect(Collectors.toList());
+        return templateList.stream().map(FenceTemplateConvertor::convertToDto).collect(Collectors.toList());
     }
 
 }

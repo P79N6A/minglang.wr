@@ -7,7 +7,7 @@ import com.taobao.cun.auge.common.OperatorDto;
 /**
  * Created by xiao on 18/6/17.
  */
-public class FenceTemplateDetailDto extends OperatorDto {
+public class FenceTemplateEditDto extends OperatorDto {
 
     private static final long serialVersionUID = 7077517442731365091L;
 
