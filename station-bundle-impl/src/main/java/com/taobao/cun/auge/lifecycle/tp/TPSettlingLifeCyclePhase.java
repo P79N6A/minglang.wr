@@ -67,9 +67,11 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
               //村名基础校验
-        	  String stationCategory= partnerInstanceDto.getStationDto().getFeature().get("stationCategory");
-        	  if(StringUtils.isNotEmpty(stationCategory)){
-        		  partnerInstanceDto.getStationDto().setCategory(stationCategory);
+        	  if(partnerInstanceDto.getStationDto().getFeature() != null){
+        		  String stationCategory= partnerInstanceDto.getStationDto().getFeature().get("stationCategory");
+            	  if(StringUtils.isNotEmpty(stationCategory)){
+            		  partnerInstanceDto.getStationDto().setCategory(stationCategory);
+            	  }
         	  }
               StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
               String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
