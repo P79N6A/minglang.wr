@@ -34,6 +34,8 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.validate.StationValidator;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -65,6 +67,10 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		  Long stationId = partnerInstanceDto.getStationId();
           if (stationId == null) {
               //村名基础校验
+        	  String stationCategory= partnerInstanceDto.getStationDto().getFeature().get("stationCategory");
+        	  if(StringUtils.isNotEmpty(stationCategory)){
+        		  partnerInstanceDto.getStationDto().setCategory(stationCategory);
+        	  }
               StationValidator.nameFormatCheck(partnerInstanceDto.getStationDto().getName());
               String stationNum = stationNumConfigBO.createStationNum(partnerInstanceDto.getStationDto().getAddress().getProvince(), StationNumConfigTypeEnum.C,0);
               partnerInstanceDto.getStationDto().setStationNum(stationNum);

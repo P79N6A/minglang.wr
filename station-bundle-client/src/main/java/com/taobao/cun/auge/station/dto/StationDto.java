@@ -143,6 +143,7 @@ public class StationDto extends OperatorDto implements Serializable{
 	
 	private String invalidNameMsg;
 	
+	private String category;
 	public Long getId() {
 		return id;
 	}
@@ -381,4 +382,12 @@ public class StationDto extends OperatorDto implements Serializable{
     public void setInvalidNameMsg(String invalidNameMsg) {
         this.invalidNameMsg = invalidNameMsg;
     }
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
 }
