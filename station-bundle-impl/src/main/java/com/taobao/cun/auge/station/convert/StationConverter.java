@@ -69,6 +69,7 @@ public class StationConverter {
 		stationDto.setFeature(FeatureUtil.toMap(station.getFeature()));
 		stationDto.setPartnerInstanceIsOnTown(PartnerInstanceIsOnTown.valueof(station.getIsOnTown()));
 		stationDto.setTaobaoUserId(station.getTaobaoUserId());
+		stationDto.setCategory(station.getCategory());
 		return stationDto;
 	}
 
@@ -116,6 +117,7 @@ public class StationConverter {
 		station.setIsOnTown(stationDto.getPartnerInstanceIsOnTown() == null ? null
 				: stationDto.getPartnerInstanceIsOnTown().getCode());
 		station.setStationType(stationDto.getStationType());
+		station.setCategory(stationDto.getCategory());
 		return station;
 	}
 
