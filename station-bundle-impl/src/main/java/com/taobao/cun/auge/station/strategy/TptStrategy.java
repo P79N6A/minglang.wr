@@ -374,10 +374,6 @@ public class TptStrategy extends CommonStrategy implements PartnerInstanceStrate
 		param.setLifecycleId(items.getId());
 		partnerLifecycleBO.updateLifecycle(param);
 
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(partnerInstanceId,SyncStationApplyEnum.UPDATE_STATE);
-
 		PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 		PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
 		partnerApplyDto.setTaobaoUserId(instance.getTaobaoUserId());

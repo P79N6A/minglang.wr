@@ -224,10 +224,6 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		operator.setOperator(DomainUtils.DEFAULT_OPERATOR);
 		operator.setOperatorType(OperatorTypeEnum.SYSTEM);
 
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(instanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(instanceId,SyncStationApplyEnum.UPDATE_STATE);
-
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 				PartnerInstanceEventConverter.convertStateChangeEvent(PartnerInstanceStateChangeEnum.QUIT,
 						partnerInstanceBO.getPartnerInstanceById(instanceId), operator));

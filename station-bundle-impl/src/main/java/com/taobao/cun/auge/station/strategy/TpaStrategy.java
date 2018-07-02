@@ -283,9 +283,6 @@ public class TpaStrategy extends CommonStrategy implements PartnerInstanceStrate
 		param.setLifecycleId(items.getId());
 		partnerLifecycleBO.updateLifecycle(param);
 
-		// 同步station_apply
-//		stationApplySyncBO.updateStationApply(partnerInstanceId, SyncStationApplyEnum.UPDATE_STATE);
-		syncStationApply(partnerInstanceId,SyncStationApplyEnum.UPDATE_STATE);
 		try{
 			PartnerStationRel instance = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
 			PartnerApplyDto partnerApplyDto = new PartnerApplyDto();
