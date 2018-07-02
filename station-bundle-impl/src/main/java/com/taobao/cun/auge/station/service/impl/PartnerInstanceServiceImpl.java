@@ -171,7 +171,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.PartnerInstanceExtService;
 import com.taobao.cun.auge.station.service.PartnerInstanceService;
 import com.taobao.cun.auge.station.service.PartnerPeixunService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
@@ -233,8 +232,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     GeneralTaskSubmitService generalTaskSubmitService;
     @Autowired
     AppResourceService appResourceService;
-    @Autowired
-    StationApplySyncBO syncStationApplyBO;
 
     @Autowired
     PartnerInstanceExtService partnerInstanceExtService;
@@ -455,9 +452,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         if (partnerInstanceUpdateServicingDto.getStationDto() != null) {
             updateStationForServicing(partnerInstanceUpdateServicingDto, stationId);
         }
-        // 同步station_apply
-        syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceId);
-
         if (isNeedToUpdateCainiaoStation(rel.getState())) {
             generalTaskSubmitService.submitUpdateCainiaoStation(partnerInstanceId, partnerInstanceUpdateServicingDto.getOperator());
         }
@@ -532,8 +526,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 throw new NullPointerException("partner instance not exists");
             }
             partnerInstanceHandler.handleDelete(partnerInstanceDeleteDto, rel);
-            // 同步删除
-            syncStationApply(SyncStationApplyEnum.DELETE,  instanceId);
     }
 
     private void signSettledProtocol(Long taobaoUserId, Double waitFrozenMoney, Long version, ProtocolTypeEnum protocolTypeEnum, boolean needFrozenMoney) {
@@ -573,9 +565,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             instance.setOperator(String.valueOf(taobaoUserId));
             instance.setOperatorType(OperatorTypeEnum.HAVANA);
             partnerInstanceBO.updatePartnerStationRel(instance);
-
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instanceId);
     }
 
     @Override
@@ -652,9 +641,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             instance.setOperator(String.valueOf(taobaoUserId));
             instance.setOperatorType(OperatorTypeEnum.HAVANA);
             partnerInstanceBO.updatePartnerStationRel(instance);
-
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerStationRel.getId());
     }
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
@@ -709,9 +695,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             accountMoneyUpdateDto.setOperator(operator);
             accountMoneyUpdateDto.setOperatorType(OperatorTypeEnum.HAVANA);
             accountMoneyBO.updateAccountMoneyByObjectId(accountMoneyUpdateDto);
-
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instance.getId());
 
             Partner partner = partnerBO.getPartnerById(instance.getPartnerId());
             generalTaskSubmitService.submitSettlingSysProcessTasks(PartnerInstanceConverter.convert(instance, null, partner), operator);
@@ -871,8 +854,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		} else {// 定时开业
 			partnerInstanceBO.updateOpenDate(openStationDto.getPartnerInstanceId(), openStationDto.getOpenDate(),
 					openStationDto.getOperator());
-			// 同步station_apply
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, openStationDto.getPartnerInstanceId());
 		}
 		return true;
 	}
@@ -1444,24 +1425,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         return stationId;
     }
 
-    private void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
-        String isSync = diamondConfiguredProperties.getIsSync();
-        if(!"y".equals(isSync)){
-            return;
-        }
-        switch (type) {
-            case ADD:
-                syncStationApplyBO.addStationApply(instanceId);
-                break;
-            case DELETE:
-                syncStationApplyBO.deleteStationApply(instanceId);
-            default:
-                syncStationApplyBO.updateStationApply(instanceId, type);
-                break;
-        }
-
-    }
-
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public void quitPartnerInstance(PartnerInstanceQuitDto partnerInstanceQuitDto){
@@ -1604,10 +1567,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
             updatePartner(partnerDto);
             partnerInstanceBO.updatePartnerStationRel(partnerInstanceDto);
-
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, rel.getId());
-
     }
 
     private void updatePartner(PartnerDto partnerDto) {
@@ -1663,8 +1622,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 PartnerStationRel rel = partnerInstanceBO.findPartnerInstanceById(partnerInstanceId);
                 stationBO.changeState(rel.getStationId(), StationStatusEnum.NEW, StationStatusEnum.INVALID, auditSettleDto.getOperator());
             }
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
     }
 
     @Override
@@ -1717,9 +1674,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             stationDto.setId(rel.getStationId());
             stationDto.copyOperatorDto(degradePartnerInstanceSuccessDto);
             stationBO.updateStation(stationDto);
-
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
 
             // 发送降级成功事件
             PartnerInstanceTypeChangeEvent event = new PartnerInstanceTypeChangeEvent();
@@ -1779,7 +1733,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             belongTp.setPartnerInstanceId(partnerInstanceId);
             belongTp.copyOperatorDto(changeTPDto);
             caiNiaoService.updateBelongTPForTpa(belongTp);
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceId);
             EventDispatcherUtil.dispatch(StationBundleEventConstant.CHANGE_TP_EVENT, buildChangeTPEvent(changeTPDto, oldParentStationId, stationId));
     }
 
@@ -1980,11 +1933,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             applyDto.copyOperatorDto(upgradeDto);
             partnerTypeChangeApplyBO.addPartnerTypeChangeApply(applyDto);
 
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.ADD, nextInstanceId);
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstance.getId());
-
             // 发出升级事件
             PartnerInstanceEventUtil.dispatchUpgradeEvent(tpaInstance, upgradeDto);
     }
@@ -2121,11 +2069,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             //删除升级申请单
             partnerTypeChangeApplyBO.deletePartnerTypeChangeApply(applyDto.getId(), cancelDto.getOperator());
 
-            // 同步tp station_apply
-            syncStationApply(SyncStationApplyEnum.DELETE, instanceId);
-            // 同步tpa station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_STATE, tpaInstanceId);
-
             //发出撤销升级事件
             PartnerInstanceEventUtil.dispatchCancelUpgradeEvent(tpaInstanceId, fillStationDto.getId(), cancelDto);
     }
@@ -2152,8 +2095,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             if (isNeedToUpdateCainiaoStation(instance.getState().getCode())) {
                 generalTaskSubmitService.submitUpdateCainiaoStation(instanceId, String.valueOf(taobaoUserId));
             }
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
             // 日志
             CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
             record.setTargetId(oldStation.getId());
@@ -2239,8 +2180,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
                 newStation.setOperatorType(OperatorTypeEnum.BUC);
             }
             stationBO.updateStation(newStation);
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
             // 日志
             CuntaoFlowRecordDto record = new CuntaoFlowRecordDto();
             record.setTargetId(oldStation.getId());
@@ -2442,9 +2381,6 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
         	partnerInstanceDto.copyOperatorDto(freezeBondDto);
         	LifeCyclePhaseEvent phaseEvent = LifeCyclePhaseEventBuilder.build(partnerInstanceDto,StateMachineEvent.DECORATING_EVENT);
     		stateMachineService.executePhase(phaseEvent);
-    		
-            // 同步station_apply
-            syncStationApply(SyncStationApplyEnum.UPDATE_ALL, instance.getId());
         }
         return true;
 	}
