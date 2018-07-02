@@ -118,13 +118,6 @@ public class TPQuitingLifeCyclePhase extends AbstractLifeCyclePhase{
 		dispatchInstStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_QUITTING, partnerInstanceDto);
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_ALL, partnerInstanceDto.getId());
-	}
-
 	private void dispatchInstStateChangeEvent(Long instanceId, PartnerInstanceStateChangeEnum stateChange, OperatorDto operator) {
 	        PartnerInstanceDto partnerInstanceDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 	        PartnerInstanceStateChangeEvent event = PartnerInstanceEventConverter.convertStateChangeEvent(stateChange, partnerInstanceDto,

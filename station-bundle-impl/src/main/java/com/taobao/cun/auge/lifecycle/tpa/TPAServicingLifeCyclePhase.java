@@ -131,14 +131,6 @@ public class TPAServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 	}
 
-	@Override
-	@PhaseStepMeta
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId = partnerInstanceDto.getId();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-	}
-
 	/**
 	 * 设置关系表为服务中
 	 */

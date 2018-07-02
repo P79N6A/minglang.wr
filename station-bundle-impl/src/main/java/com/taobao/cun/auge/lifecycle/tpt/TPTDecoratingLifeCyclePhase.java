@@ -128,16 +128,6 @@ public class TPTDecoratingLifeCyclePhase extends AbstractLifeCyclePhase{
 		dispacthEvent(partnerInstanceDto, PartnerInstanceStateEnum.DECORATING.getCode());
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Long instanceId =partnerInstanceDto.getId();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, instanceId);
-	}
-
-
-	
 	/**
 	 * 发送装修中事件 给手机端使用
 	 * 

@@ -154,13 +154,6 @@ public class TPTSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		this.sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());
-	}
-
 	private void validateDecorateAndPaymentType(PartnerInstanceDto partnerInstanceDto) {
 		ValidateUtils.notNull(partnerInstanceDto);
 		ValidateUtils.notNull(partnerInstanceDto.getId());

@@ -119,13 +119,4 @@ public class TPASettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
 		sendPartnerInstanceStateChangeEvent(partnerInstanceDto.getId(), PartnerInstanceStateChangeEnum.START_SETTLING, partnerInstanceDto);
 	}
-
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.ADD, partnerInstanceDto.getId());
-	}
-
-	 
 }

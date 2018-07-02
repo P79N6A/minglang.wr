@@ -207,14 +207,6 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 		
 	}
 
-	@Override
-	@PhaseStepMeta
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-	}
-
-	
 	private void dispachToServiceEvent(PartnerInstanceDto partnerInstanceDto, Long instanceId) {
         PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
         PartnerInstanceStateChangeEvent partnerInstanceEvent = new PartnerInstanceStateChangeEvent();
