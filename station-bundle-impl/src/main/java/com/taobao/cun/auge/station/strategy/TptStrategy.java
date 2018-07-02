@@ -24,7 +24,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;

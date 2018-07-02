@@ -35,7 +35,6 @@ import com.taobao.cun.auge.event.EventDispatcherUtil;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.domain.PartnerStationStateChangeEvent;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
-import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
 import com.taobao.cun.auge.failure.AugeErrorCodes;
 import com.taobao.cun.auge.partner.service.PartnerAssetService;
 import com.taobao.cun.auge.station.bo.AccountMoneyBO;
@@ -98,11 +97,7 @@ import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyDto;
 import com.taobao.cun.recruit.partner.enums.PartnerQualifyApplyStatus;
 import com.taobao.cun.recruit.partner.service.PartnerQualifyApplyService;
-import com.taobao.cun.settle.bail.dto.CuntaoBailDetailQueryDto;
-import com.taobao.cun.settle.bail.dto.CuntaoBailDetailReturnDto;
-import com.taobao.cun.settle.bail.enums.UserTypeEnum;
 import com.taobao.cun.settle.bail.service.CuntaoNewBailService;
-import com.taobao.cun.settle.common.model.PagedResultModel;
 
 @Component("tpStrategy")
 public class TpStrategy extends CommonStrategy implements PartnerInstanceStrategy {
