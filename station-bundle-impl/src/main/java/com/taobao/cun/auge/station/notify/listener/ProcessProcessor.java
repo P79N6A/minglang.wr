@@ -63,7 +63,6 @@ import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.StationDecorateService;
 import com.taobao.cun.auge.station.service.StationService;
 import com.taobao.cun.auge.station.service.interfaces.LevelAuditFlowService;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionAuditDto;
 import com.taobao.cun.recruit.partner.dto.AddressInfoDecisionDto;
 import com.taobao.cun.recruit.partner.dto.PartnerQualifyApplyAuditDto;
