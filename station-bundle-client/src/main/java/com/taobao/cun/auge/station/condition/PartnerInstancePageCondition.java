@@ -7,6 +7,7 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceLevelEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 import com.taobao.cun.auge.station.enums.PartnerInstanceTypeEnum;
 import com.taobao.cun.auge.station.enums.StationApplyStateEnum;
+import com.taobao.cun.auge.station.enums.TPCategoryEnum;
 
 public class PartnerInstancePageCondition extends PageQuery{
 
@@ -59,6 +60,8 @@ public class PartnerInstancePageCondition extends PageQuery{
 	//是否是当前人
 	private Boolean isCurrent;
 
+	private TPCategoryEnum tpCategoryEnum;
+	
 	public String getOrgIdPath() {
 		return orgIdPath;
 	}
@@ -177,5 +180,13 @@ public class PartnerInstancePageCondition extends PageQuery{
 
 	public void setFullIdPath(String fullIdPath) {
 		this.fullIdPath = fullIdPath;
+	}
+
+	public TPCategoryEnum getTpCategoryEnum() {
+		return tpCategoryEnum;
+	}
+
+	public void setTpCategoryEnum(TPCategoryEnum tpCategoryEnum) {
+		this.tpCategoryEnum = tpCategoryEnum;
 	}
 }
