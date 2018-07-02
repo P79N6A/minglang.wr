@@ -3,6 +3,8 @@ package com.taobao.cun.auge.fence.bo;
 import java.util.List;
 import java.util.Map;
 
+import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
+
 /**
  * Created by xiao on 18/6/20.
  */
@@ -23,5 +25,11 @@ public interface FenceEntityBO {
      * 获得站点关联的模板id列表
      */
     List<Long> getTemplateIdListByStationId(Long stationId);
+
+    /**
+     * 删除单个站点关联的电子围栏
+     * @param fenceTemplateStation
+     */
+    void deleteStationFenceTemplate(FenceTemplateStation fenceTemplateStation);
 
 }

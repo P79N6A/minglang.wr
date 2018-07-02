@@ -68,4 +68,9 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
         return fenceTemplateBO.getFenceTemplateListByIdList(templateIdList);
     }
 
+    @Override
+    public void deleteStationFenceTemplate(FenceTemplateStation fenceTemplateStation) {
+
+    }
+
 }

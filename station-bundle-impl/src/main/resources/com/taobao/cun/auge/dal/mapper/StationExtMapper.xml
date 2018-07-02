@@ -126,8 +126,9 @@
 
     <select id="getFenceTemplateStation" resultType="com.taobao.cun.auge.fence.dto.FenceTemplateStation">
         select
-        s.id,
-        s.name
+        s.id as stationId,
+        f.template_id as templateId,
+        s.name as name
         from station s, fence_entity f
         where s.id = f.station_id
         and f.template_id = #{templateId}
