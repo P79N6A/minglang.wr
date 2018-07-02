@@ -36,7 +36,6 @@ import com.taobao.cun.auge.station.enums.StationAreaTypeEnum;
 import com.taobao.cun.auge.station.enums.StationStateEnum;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
-import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,9 +56,6 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 	@Autowired
     private PartnerInstanceBO partnerInstanceBO;
 	
-	@Autowired
-	private StationApplySyncBO syncStationApplyBO;
-
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
 
@@ -205,28 +201,5 @@ public abstract class AbstractLifeCyclePhase extends LifeCyclePhaseAdapter {
 		PartnerInstanceDto piDto = partnerInstanceBO.getPartnerInstanceById(instanceId);
 		EventDispatcherUtil.dispatch(StationBundleEventConstant.PARTNER_INSTANCE_STATE_CHANGE_EVENT,
 		PartnerInstanceEventConverter.convertStateChangeEvent(stateChangeEnum, piDto, operator));
-    }
-    
-    /**
-     * 同步老模型
-     * @param type
-     * @param instanceId
-     */
-    public void syncStationApply(SyncStationApplyEnum type, Long instanceId) {
-        String isSync = diamondConfiguredProperties.getIsSync();
-        if(!"y".equals(isSync)){
-            return;
-        }
-        switch (type) {
-            case ADD:
-                syncStationApplyBO.addStationApply(instanceId);
-                break;
-            case DELETE:
-                syncStationApplyBO.deleteStationApply(instanceId);
-            default:
-                syncStationApplyBO.updateStationApply(instanceId, type);
-                break;
-        }
-
     }
 }
