@@ -347,4 +347,6 @@ public interface PartnerInstanceService {
      * @return
      */
     public boolean updateStationCategory(List<Long> stationId,String category);
+    
+    public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix);
 }

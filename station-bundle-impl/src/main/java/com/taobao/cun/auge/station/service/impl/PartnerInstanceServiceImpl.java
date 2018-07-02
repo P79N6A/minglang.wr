@@ -2454,18 +2454,10 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 	public boolean updateStationCategory(List<Long> stationIds, String category) {
 		for (Long stationId : stationIds) {
 			try {
-				Station station = stationBO.getStationById(stationId);
 				StationDto stationDto = new StationDto();
 				stationDto.setId(stationId);
 				stationDto.setCategory(category);
-				stationDto.setName(station.getName().replaceAll("天猫优品服务站", "天猫优品电器合作店"));
 				stationBO.updateStation(stationDto);
-				Long partnerInstanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
-				SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
-				syncModifyCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
-				syncModifyCainiaoStationDto.setOperator("system");
-				syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.HAVANA);
-				caiNiaoService.updateCainiaoStation(syncModifyCainiaoStationDto);
 			} catch (Exception e) {
 				logger.error("updateStationCategory error[" + stationId + "]", e);
 			}
@@ -2473,5 +2465,26 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 		return true;
 	}
 	
+	@Override
+	public boolean updateElecStationName(List<Long> stationIds,String oldSuffix,String newSuffix) {
+		for (Long stationId : stationIds) {
+			try {
+				Station station = stationBO.getStationById(stationId);
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setName(station.getName().replaceAll(oldSuffix, newSuffix));
+				stationBO.updateStation(stationDto);
+				Long instanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+				SyncModifyCainiaoStationDto  syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+				syncModifyCainiaoStationDto.setPartnerInstanceId(instanceId);
+				syncModifyCainiaoStationDto.setOperator("system");
+				syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.SYSTEM);
+				caiNiaoService.updateCainiaoStation(syncModifyCainiaoStationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
+		}
+		return true;
+	}
 	
 }
