@@ -44,12 +44,6 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 	void triggerStateChangeEvent(LifeCyclePhaseContext context);
 	
 	/**
-	 * 同步历史模型，业务迁移完毕后下线
-	 */
-	void syncStationApply(LifeCyclePhaseContext context);
-
-	
-	/**
 	 * 创建生命周期极业务流程
 	 * @return
 	 */
@@ -61,7 +55,6 @@ public interface LifeCyclePhase extends LifeCyclePhaseComponent{
 			 dsl.then(this::createOrUpdateLifeCycleItems);
 			 dsl.then(this::createOrUpdateExtensionBusiness);
 			 dsl.then(this::triggerStateChangeEvent);
-			 dsl.then(this::syncStationApply);
 			 return dsl;
 	}
 	
