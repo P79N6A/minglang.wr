@@ -122,6 +122,7 @@ import com.taobao.cun.auge.station.dto.StationDecorateDto;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.dto.StationUpdateServicingDto;
 import com.taobao.cun.auge.station.dto.SyncModifyBelongTPForTpaDto;
+import com.taobao.cun.auge.station.dto.SyncModifyCainiaoStationDto;
 import com.taobao.cun.auge.station.dto.SyncModifyLngLatDto;
 import com.taobao.cun.auge.station.enums.AccountMoneyStateEnum;
 import com.taobao.cun.auge.station.enums.AccountMoneyTargetTypeEnum;
@@ -147,7 +148,6 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleRoleApproveEnum;
 import com.taobao.cun.auge.station.enums.PartnerLifecycleSettledProtocolEnum;
 import com.taobao.cun.auge.station.enums.PartnerMaxChildNumChangeReasonEnum;
 import com.taobao.cun.auge.station.enums.PartnerOnlinePeixunStatusEnum;
-import com.taobao.cun.auge.station.enums.PartnerPeixunCourseTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerProtocolRelTargetTypeEnum;
 import com.taobao.cun.auge.station.enums.PartnerStateEnum;
 import com.taobao.cun.auge.station.enums.ProcessApproveResultEnum;
@@ -2451,16 +2451,27 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
 
 
 	@Override
-	public boolean updateStationCategory(Long stationId,String category) {
-		  StationDto stationDto = new StationDto();
-		  stationDto.setId(stationId);
-		  stationDto.setCategory(category);
-		  try {
-			  stationBO.updateStation(stationDto);
-		} catch (Exception e) {
-			logger.error("updateStationCategory error["+stationId+"]",e);
-			return false;
+	public boolean updateStationCategory(List<Long> stationIds, String category) {
+		for (Long stationId : stationIds) {
+			try {
+				Station station = stationBO.getStationById(stationId);
+				StationDto stationDto = new StationDto();
+				stationDto.setId(stationId);
+				stationDto.setCategory(category);
+				stationDto.setName(station.getName().replaceAll("天猫优品服务站", "天猫优品电器合作店"));
+				stationBO.updateStation(stationDto);
+				Long partnerInstanceId = partnerInstanceBO.findPartnerInstanceIdByStationId(stationId);
+				SyncModifyCainiaoStationDto syncModifyCainiaoStationDto = new SyncModifyCainiaoStationDto();
+				syncModifyCainiaoStationDto.setPartnerInstanceId(partnerInstanceId);
+				syncModifyCainiaoStationDto.setOperator("system");
+				syncModifyCainiaoStationDto.setOperatorType(OperatorTypeEnum.HAVANA);
+				caiNiaoService.updateCainiaoStation(syncModifyCainiaoStationDto);
+			} catch (Exception e) {
+				logger.error("updateStationCategory error[" + stationId + "]", e);
+			}
 		}
-		  return true;
+		return true;
 	}
+	
+	
 }

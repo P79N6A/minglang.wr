@@ -346,5 +346,5 @@ public interface PartnerInstanceService {
      * @param category
      * @return
      */
-    public boolean updateStationCategory(Long stationId,String category);
+    public boolean updateStationCategory(List<Long> stationId,String category);
 }
