@@ -69,8 +69,8 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     }
 
     @Override
-    public void deleteStationFenceTemplate(FenceTemplateStation fenceTemplateStation) {
-
+    public void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation) {
+        fenceEntityBO.deleteFenceTemplateStation(fenceTemplateStation);
     }
 
 }

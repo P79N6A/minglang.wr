@@ -58,7 +58,7 @@ public class FenceEntityBOImpl implements FenceEntityBO {
     }
 
     @Override
-    public void deleteStationFenceTemplate(FenceTemplateStation fenceTemplateStation) {
+    public void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation) {
         FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(fenceTemplateStation.getStationId())
             .andTemplateIdEqualTo(fenceTemplateStation.getTemplateId());

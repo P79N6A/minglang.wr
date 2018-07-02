@@ -30,6 +30,6 @@ public interface FenceEntityBO {
      * 删除单个站点关联的电子围栏
      * @param fenceTemplateStation
      */
-    void deleteStationFenceTemplate(FenceTemplateStation fenceTemplateStation);
+    void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation);
 
 }
