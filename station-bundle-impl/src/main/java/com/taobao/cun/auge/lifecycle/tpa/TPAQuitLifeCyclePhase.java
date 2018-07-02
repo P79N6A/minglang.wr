@@ -201,25 +201,6 @@ public class TPAQuitLifeCyclePhase extends AbstractLifeCyclePhase{
 		}
 	}
 
-	@Override
-	@PhaseStepMeta(descr="同步老模型")
-	public void syncStationApply(LifeCyclePhaseContext context) {
-		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		Boolean fromThawTask = (Boolean)context.getExtensionWithDefault("fromThawTask",false);
-		if(fromThawTask){
-			syncStationApply(SyncStationApplyEnum.UPDATE_BASE, partnerInstanceDto.getId());
-		}
-		Boolean fromAuditflow = (Boolean)context.getExtensionWithDefault("fromAuditflow",false);
-		if(fromAuditflow){
-			syncStationApply(SyncStationApplyEnum.UPDATE_STATE, partnerInstanceDto.getId());
-		}
-	}
-
-	
-	
-	
-	
-
 	 private void thawMoney(OperatorDto operatorDto, Long instanceId) {
 			//解冻保证金
 			AccountMoneyDto accountMoneyUpdateDto = new AccountMoneyDto();
