@@ -15,7 +15,7 @@ import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
  * @author chengyu.zhoucy
  *
  */
-public interface FenceInstanceJob {
+public interface FenceInstanceJobService {
 	/**
 	 * 通过模板来开启围栏的任务
 	 * 
