@@ -5,12 +5,12 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
- * 删除单个站点的围栏实例
+ * 更新单个站点的围栏实例
  * 
  * @author chengyu.zhoucy
  *
  */
-public class StationDeleteFenceInstanceJobArg {
+public class StationUpdateFenceInstanceJob extends AbstractFenceInstanceJob{
 	@NotNull(message="站点ID不能为空")
 	private Long stationId;
 	

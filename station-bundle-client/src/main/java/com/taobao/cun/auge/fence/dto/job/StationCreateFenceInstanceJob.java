@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author chengyu.zhoucy
  *
  */
-public class StationCreateFenceInstanceJobArg {
+public class StationCreateFenceInstanceJob extends AbstractFenceInstanceJob{
 	@NotNull(message="站点ID不能为空")
 	private Long stationId;
 	@NotEmpty(message="关联的模板ID不能为空")

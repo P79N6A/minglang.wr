@@ -1,13 +1,13 @@
 package com.taobao.cun.auge.fence.service;
 
-import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJobArg;
-import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJobArg;
+import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 
 /**
  * 创建围栏实例的任务
@@ -19,52 +19,52 @@ public interface FenceInstanceJob {
 	/**
 	 * 通过模板来开启围栏的任务
 	 * 
-	 * @param templateOpenFenceInstanceJobArg
+	 * @param templateOpenFenceInstanceJob
 	 */
-	void createJob(TemplateOpenFenceInstanceJobArg templateOpenFenceInstanceJobArg);
+	void createJob(TemplateOpenFenceInstanceJob templateOpenFenceInstanceJob);
 	
 	/**
 	 * 通过模板来关闭围栏的任务
 	 * 
-	 * @param templateCloseFenceInstanceJobArg
+	 * @param templateCloseFenceInstanceJob
 	 */
-	void createJob(TemplateCloseFenceInstanceJobArg templateCloseFenceInstanceJobArg);
+	void createJob(TemplateCloseFenceInstanceJob templateCloseFenceInstanceJob);
 	
 	/**
 	 * 编辑模板后触发的任务
-	 * @param templateUpdateFenceInstanceJobArg
+	 * @param templateUpdateFenceInstanceJob
 	 */
-	void createJob(TemplateUpdateFenceInstanceJobArg templateUpdateFenceInstanceJobArg);
+	void createJob(TemplateUpdateFenceInstanceJob templateUpdateFenceInstanceJob);
 	
 	/**
 	 * 通过条件查询创建围栏的任务
 	 * 
-	 * @param conditionCreateFenceInstanceJobArg
+	 * @param conditionCreateFenceInstanceJob
 	 */
-	void createJob(ConditionCreateFenceInstanceJobArg conditionCreateFenceInstanceJobArg);
+	void createJob(ConditionCreateFenceInstanceJob conditionCreateFenceInstanceJob);
 	
 	/**
 	 * 通过条件查询删除围栏的任务
 	 * 
-	 * @param conditionDeleteFenceInstanceJobArg
+	 * @param conditionDeleteFenceInstanceJob
 	 */
-	void createJob(ConditionDeleteFenceInstanceJobArg conditionDeleteFenceInstanceJobArg);
+	void createJob(ConditionDeleteFenceInstanceJob conditionDeleteFenceInstanceJob);
 	
 	/**
 	 * 创建单个站点的围栏
-	 * @param stationCreateFenceInstanceJobArg
+	 * @param stationCreateFenceInstanceJob
 	 */
-	void createJob(StationCreateFenceInstanceJobArg stationCreateFenceInstanceJobArg);
+	void createJob(StationCreateFenceInstanceJob stationCreateFenceInstanceJob);
 	
 	/**
 	 * 删除单个站点的围栏
-	 * @param stationDeleteFenceInstanceJobArg
+	 * @param stationDeleteFenceInstanceJob
 	 */
-	void createJob(StationDeleteFenceInstanceJobArg stationDeleteFenceInstanceJobArg);
+	void createJob(StationDeleteFenceInstanceJob stationDeleteFenceInstanceJob);
 	
 	/**
 	 * 更新单个站点的围栏
-	 * @param stationUpdateFenceInstanceJobArg
+	 * @param stationUpdateFenceInstanceJob
 	 */
-	void createJob(StationUpdateFenceInstanceJobArg stationUpdateFenceInstanceJobArg);
+	void createJob(StationUpdateFenceInstanceJob stationUpdateFenceInstanceJob);
 }

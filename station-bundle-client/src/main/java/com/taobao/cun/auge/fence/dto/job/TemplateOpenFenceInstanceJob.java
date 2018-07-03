@@ -4,7 +4,12 @@ import java.util.List;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class TemplateOpenFenceInstanceJobArg {
+/**
+ * 通过模板开启实例（更新状态）
+ * @author chengyu.zhoucy
+ *
+ */
+public class TemplateOpenFenceInstanceJob extends AbstractFenceInstanceJob{
 	@NotEmpty(message="模板ID不能为空")
 	private List<Long> templateIds;
 

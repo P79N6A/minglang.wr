@@ -2,7 +2,13 @@ package com.taobao.cun.auge.fence.dto.job;
 
 import javax.validation.constraints.NotNull;
 
-public class TemplateUpdateFenceInstanceJobArg {
+/**
+ * 更新了模板之后重新生成实例
+ * 
+ * @author chengyu.zhoucy
+ *
+ */
+public class TemplateUpdateFenceInstanceJob extends AbstractFenceInstanceJob{
 	@NotNull(message="模板ID不能为空")
 	private Long templateId;
 
