@@ -37,14 +37,14 @@ public interface FenceInstanceJob {
 	void createJob(TemplateUpdateFenceInstanceJobArg templateUpdateFenceInstanceJobArg);
 	
 	/**
-	 * 通过条件查询开启围栏的任务
+	 * 通过条件查询创建围栏的任务
 	 * 
 	 * @param conditionCreateFenceInstanceJobArg
 	 */
 	void createJob(ConditionCreateFenceInstanceJobArg conditionCreateFenceInstanceJobArg);
 	
 	/**
-	 * 通过条件查询关闭围栏的任务
+	 * 通过条件查询删除围栏的任务
 	 * 
 	 * @param conditionDeleteFenceInstanceJobArg
 	 */

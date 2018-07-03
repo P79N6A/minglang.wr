@@ -53,13 +53,11 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void enableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.enableFenceTemplate(id, operator);
-        fenceEntityBO.enableEntityListByTemplateId(id, operator);
     }
 
     @Override
     public void disableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.disableFenceTemplate(id, operator);
-        fenceEntityBO.disableEntityListByTemplateId(id, operator);
     }
 
     @Override
