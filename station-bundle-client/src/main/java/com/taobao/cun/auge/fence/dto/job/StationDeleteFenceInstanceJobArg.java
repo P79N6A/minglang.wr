@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 /**
- * 删除单个站点的围栏实例，如果不指定模板ID，那么删除全部
+ * 删除单个站点的围栏实例
  * 
  * @author chengyu.zhoucy
  *
