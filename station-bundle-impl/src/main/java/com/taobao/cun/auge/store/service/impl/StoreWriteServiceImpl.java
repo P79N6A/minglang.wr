@@ -127,4 +127,14 @@ public class StoreWriteServiceImpl implements StoreWriteService {
 	public void batchInitStoreEmployee() {
 		storeWriteBO.batchInitStoreEmployee();
 	}
+
+	@Override
+	public void syncStore(Long stationId) {
+		storeWriteBO.syncStore(stationId);
+	}
+
+	@Override
+	public void syncStore() {
+		storeWriteBO.syncStore();
+	}
 }

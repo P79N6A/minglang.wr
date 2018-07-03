@@ -149,4 +149,7 @@ public interface StationDecorateService {
      * @
      */
     public DecorationInfoDecisionDto getDecorationDecisionByStationId(Long stationId);
+    
+    
+    public void fixStationDecorate(List<Long> stationIds);
 }
