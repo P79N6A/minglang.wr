@@ -7,6 +7,7 @@ import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJobArg;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJobArg;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJobArg;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJobArg;
+import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJobArg;
 
 /**
  * 创建围栏实例的任务
@@ -28,6 +29,12 @@ public interface FenceInstanceJob {
 	 * @param templateCloseFenceInstanceJobArg
 	 */
 	void createJob(TemplateCloseFenceInstanceJobArg templateCloseFenceInstanceJobArg);
+	
+	/**
+	 * 编辑模板后触发的任务
+	 * @param templateUpdateFenceInstanceJobArg
+	 */
+	void createJob(TemplateUpdateFenceInstanceJobArg templateUpdateFenceInstanceJobArg);
 	
 	/**
 	 * 通过条件查询开启围栏的任务
