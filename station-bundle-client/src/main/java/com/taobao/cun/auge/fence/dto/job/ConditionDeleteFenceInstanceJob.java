@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author chengyu.zhoucy
  *
  */
-public class ConditionDeleteFenceInstanceJob extends AbstractFenceInstanceJob{
+public class ConditionDeleteFenceInstanceJob extends FenceInstanceJob{
 	/**
 	 * 条件JSON字符串
 	 */

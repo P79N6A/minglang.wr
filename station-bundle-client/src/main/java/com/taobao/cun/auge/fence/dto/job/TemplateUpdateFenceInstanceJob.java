@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
  * @author chengyu.zhoucy
  *
  */
-public class TemplateUpdateFenceInstanceJob extends AbstractFenceInstanceJob{
+public class TemplateUpdateFenceInstanceJob extends FenceInstanceJob{
 	@NotNull(message="模板ID不能为空")
 	private Long templateId;
 

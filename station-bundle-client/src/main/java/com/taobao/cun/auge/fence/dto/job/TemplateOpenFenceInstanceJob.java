@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author chengyu.zhoucy
  *
  */
-public class TemplateOpenFenceInstanceJob extends AbstractFenceInstanceJob{
+public class TemplateOpenFenceInstanceJob extends FenceInstanceJob{
 	@NotEmpty(message="模板ID不能为空")
 	private List<Long> templateIds;
 

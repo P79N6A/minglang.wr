@@ -1,9 +1,9 @@
 package com.taobao.cun.auge.fence.dto.job;
 
-public abstract class AbstractFenceInstanceJob {
+public abstract class FenceInstanceJob {
 	private String jobType;
 	
-	public AbstractFenceInstanceJob() {
+	public FenceInstanceJob() {
 		setJobType(getClass().getSimpleName());
 	}
 

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @author chengyu.zhoucy
  *
  */
-public class StationDeleteFenceInstanceJob extends AbstractFenceInstanceJob{
+public class StationDeleteFenceInstanceJob extends FenceInstanceJob{
 	@NotNull(message="站点ID不能为空")
 	private Long stationId;
 	

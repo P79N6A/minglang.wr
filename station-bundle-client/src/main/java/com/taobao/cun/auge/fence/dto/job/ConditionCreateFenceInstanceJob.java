@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * @author chengyu.zhoucy
  *
  */
-public class ConditionCreateFenceInstanceJob extends AbstractFenceInstanceJob{
+public class ConditionCreateFenceInstanceJob extends FenceInstanceJob{
 	/**新建*/
 	public static String CREATE_RULE_NEW = "NEW";
 	/**覆盖*/
