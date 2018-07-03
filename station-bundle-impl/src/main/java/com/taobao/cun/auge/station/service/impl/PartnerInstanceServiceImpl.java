@@ -175,6 +175,7 @@ import com.taobao.cun.auge.station.sync.StationApplySyncBO;
 import com.taobao.cun.auge.station.util.PartnerInstanceEventUtil;
 import com.taobao.cun.auge.station.validate.PartnerValidator;
 import com.taobao.cun.auge.station.validate.StationValidator;
+import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.auge.testuser.TestUserService;
 import com.taobao.cun.auge.user.service.CuntaoUserRoleService;
 import com.taobao.cun.auge.user.service.CuntaoUserService;
@@ -306,6 +307,8 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
     @Autowired
     private DiamondConfiguredProperties diamondConfiguredProperties;
     
+    @Autowired
+    private StoreWriteBO storeWriteBO;
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
     @Override
     public Long addTemp(PartnerInstanceDto partnerInstanceDto){
@@ -2260,6 +2263,7 @@ public class PartnerInstanceServiceImpl implements PartnerInstanceService {
             lngDto.setLng(updateStation.getAddress().getLng());
             lngDto.setLat(updateStation.getAddress().getLat());
             caiNiaoService.modifyLngLatToCainiao(lngDto);
+            storeWriteBO.syncStore(updateStation.getId());
         }
     }
 
