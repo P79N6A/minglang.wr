@@ -927,7 +927,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
 		  for(Long storeId :storeIds){
 			 StoreDto store =  storeReadBO.getStoreBySharedStoreId(storeId);
-			 this.syncStore(store.getStationId());
+			 try {
+				 this.syncStore(store.getStationId());
+			} catch (Exception e) {
+				logger.error("syncStore error["+store.getStationId()+"]",e);
+			}
+			
 		  }
 	}
 	
