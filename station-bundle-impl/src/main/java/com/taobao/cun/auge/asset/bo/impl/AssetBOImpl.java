@@ -706,7 +706,7 @@ public class AssetBOImpl implements AssetBO {
         content.setTitle(appMessageDto.getTitle());
         content.setContent(appMessageDto.getContent());
         signEvent.setContent(content);
-        EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", new ExtEvent(JSON.toJSONString(signEvent)));
+        EventDispatcherUtil.dispatch("CRM_ASSET_SIGN", JSON.toJSONString(signEvent));
     }
 
     @Override

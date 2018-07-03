@@ -18,6 +18,7 @@ import com.taobao.cun.appResource.dto.AppResourceDto;
 import com.taobao.cun.appResource.service.AppResourceService;
 import com.taobao.cun.attachment.enums.AttachmentBizTypeEnum;
 import com.taobao.cun.attachment.service.AttachmentService;
+import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.ValidateUtils;
 import com.taobao.cun.auge.dal.domain.DecorationInfoDecision;
 import com.taobao.cun.auge.dal.domain.PartnerLifecycleItems;
@@ -49,6 +50,7 @@ import com.taobao.cun.auge.station.enums.PartnerLifecycleDecorateStatusEnum;
 import com.taobao.cun.auge.station.enums.ProcessBusinessEnum;
 import com.taobao.cun.auge.station.enums.StationDecoratePaymentTypeEnum;
 import com.taobao.cun.auge.station.enums.StationDecorateStatusEnum;
+import com.taobao.cun.auge.station.enums.StationDecorateTypeEnum;
 import com.taobao.cun.auge.station.enums.StationType;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.ProcessService;
@@ -532,5 +534,19 @@ public class StationDecorateServiceImpl implements StationDecorateService {
             }
         }
         return dto;
+    }
+    
+    
+    public void fixStationDecorate(List<Long> stationIds){
+    	for(Long stationId :stationIds){
+    	    Station station=stationBO.getStationById(stationId);
+    	   	StationDecorateDto stationDecorateDto = new StationDecorateDto();
+    		stationDecorateDto.copyOperatorDto(OperatorDto.defaultOperator());
+    		stationDecorateDto.setStationId(stationId);
+    		stationDecorateDto.setPartnerUserId(station.getTaobaoUserId());
+    		stationDecorateDto.setDecorateType(StationDecorateTypeEnum.NEW);
+    		stationDecorateDto.setPaymentType(StationDecoratePaymentTypeEnum.SELF);
+    		stationDecorateBO.addStationDecorate(stationDecorateDto);
+    	}
     }
 }

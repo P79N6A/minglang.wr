@@ -114,6 +114,9 @@ public class PartnerInstanceExample implements Serializable {
 	// 课程状态
 	private String decorateStatus;
 
+	//服务站类目
+	private String category;
+	
 	public String getCourseStatus() {
 		return courseStatus;
 	}
@@ -392,6 +395,14 @@ public class PartnerInstanceExample implements Serializable {
 
 	public void setFullIdPath(String fullIdPath) {
 		this.fullIdPath = fullIdPath;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 }

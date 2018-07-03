@@ -4,7 +4,11 @@ import com.alibaba.fastjson.JSON;
 
 import com.taobao.cun.auge.station.exception.AugeSystemException;
 import com.taobao.cun.auge.station.exception.enums.CommonExceptionEnum;
+import com.taobao.cun.crius.event.ExtEvent;
 import com.taobao.cun.crius.event.client.EventDispatcher;
+
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
@@ -44,7 +48,7 @@ public class EventDispatcherUtil {
 			public void afterCommit() {
 				try {
 					logger.info("start dispatch event : eventName = {}, obj = {}", eventName, JSON.toJSONString(obj));
-					EventDispatcher.getInstance().dispatch(eventName, obj);
+					EventDispatcher.getInstance().dispatch(eventName, new ExtEvent((Serializable)obj));
 				} catch (Exception e) {
 					String msg = getErrorMessage("dispatch", JSON.toJSONString(obj), e.getMessage());
 					logger.error(msg, e);

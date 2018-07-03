@@ -1,6 +1,7 @@
 package com.taobao.cun.auge.station.enums;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,10 @@ public class TPCategoryEnum implements Serializable{
 	            return null;
 	        }
 	        return mappings.get(code);
+	    }
+	    
+	    public static Collection<TPCategoryEnum> values(){
+	    	return mappings.values();
 	    }
 
 	    @Override

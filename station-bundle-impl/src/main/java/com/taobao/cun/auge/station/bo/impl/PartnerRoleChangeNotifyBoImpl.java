@@ -55,7 +55,7 @@ public class PartnerRoleChangeNotifyBoImpl implements PartnerRoleChangeNotifyBo 
 		
 		String content = JSON.toJSONString(partnerRoleMessage);
 		try {
-			EventDispatcherUtil.dispatch(EVENT_PARTNER_ROLE_ADD, new ExtEvent(content));
+			EventDispatcherUtil.dispatch(EVENT_PARTNER_ROLE_ADD, content);
 		}catch(Exception e) {
 			addLog(content, EVENT_PARTNER_ROLE_ADD, "fail", e.getMessage());
 			return;
@@ -72,7 +72,7 @@ public class PartnerRoleChangeNotifyBoImpl implements PartnerRoleChangeNotifyBo 
 		
 		String content = JSON.toJSONString(partnerRoleMessage);
 		try {
-			EventDispatcherUtil.dispatch(EVENT_PARTNER_ROLE_REMOVE, new ExtEvent(content));
+			EventDispatcherUtil.dispatch(EVENT_PARTNER_ROLE_REMOVE, content);
 		}catch(Exception e) {
 			addLog(content, EVENT_PARTNER_ROLE_REMOVE, "fail", e.getMessage());
 			return;
