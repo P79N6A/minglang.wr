@@ -920,6 +920,12 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		if (!Strings.isNullOrEmpty(station.getLng())) {
 			storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
 		}
+		CuntaoStore cs = new CuntaoStore();
+		cs.setId(store.getId());
+		cs.setName(station.getName());
+		cs.setGmtModified(new Date());
+		cs.setModifier("system");
+		cuntaoStoreMapper.updateByPrimaryKeySelective(cs);
 		storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
 	}
 	

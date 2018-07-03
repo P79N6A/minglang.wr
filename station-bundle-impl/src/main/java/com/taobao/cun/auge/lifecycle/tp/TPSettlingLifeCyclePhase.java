@@ -133,13 +133,7 @@ public class TPSettlingLifeCyclePhase extends AbstractLifeCyclePhase{
 	@PhaseStepMeta(descr="创建培训装修记录")
 	public void createOrUpdateExtensionBusiness(LifeCyclePhaseContext context) {
 		PartnerInstanceDto partnerInstanceDto = context.getPartnerInstance();
-		 if(partnerInstanceDto.getStationDto().getFeature() != null){
-   		  String stationCategory= partnerInstanceDto.getStationDto().getFeature().get("stationCategory");
-       	  if(StringUtils.isNotEmpty(stationCategory)){
-       		  //如果电器合作店就不插入装修记录
-       		  return;
-       	  }
-   	  }
+		
 		validateDecorateAndPaymentType(partnerInstanceDto);
 	
 		// 生成装修记录
