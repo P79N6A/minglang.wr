@@ -37,4 +37,8 @@ public interface StoreWriteBO {
 	public void initGoodSupplyFeature(Long stationId);
 	
 	public Integer getCountyCode(String countyCode,String countyDetail,String cityCode);
+	
+	public void syncStore(Long stationId);
+	
+	public void syncStore();
 }

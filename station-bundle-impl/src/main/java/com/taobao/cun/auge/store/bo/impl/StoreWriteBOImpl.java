@@ -853,6 +853,82 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 		}
 		logger.info("finish batchInitStoreEmployee");
 	}
+
+	@Override
+	public void syncStore(Long stationId) {
+		Station station = stationBO.getStationById(stationId);
+		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
+		if(store == null){
+			return;
+		}
+		StoreDTO storeDTO = new StoreDTO();
+		storeDTO.setStoreId(store.getShareStoreId());
+		storeDTO.setName(station.getName());
+		storeDTO.setAddress(station.getAddress());
+		if (!Strings.isNullOrEmpty(station.getProvince())) {
+			Long cityCode = tb2gbCode(Long.parseLong(station.getCity()));
+			if (cityCode == null) {
+				cityCode = Long.parseLong(station.getCity());
+			}
+			StandardAreaDO standardAreaDO = standardAreaService.getStandardAreaDOById(cityCode);
+			if (standardAreaDO != null && standardAreaDO.getParentId() != null) {
+				storeDTO.setProv(standardAreaDO.getParentId().intValue());
+			} else {
+				storeDTO.setProv(Integer.parseInt(station.getProvince()));
+			}
+			storeDTO.setProvName(station.getProvinceDetail());
+		}
+		// 市
+		if (!Strings.isNullOrEmpty(station.getCity())) {
+			Long gbCode = tb2gbCode(Long.parseLong(station.getCity()));
+			if (gbCode != null) {
+				storeDTO.setCity(gbCode.intValue());
+			} else {
+				// 重庆市特殊处理，共享需要500200标准code
+				if ("500100".equals(station.getCity())) {
+					Long countyCode = tb2gbCode(Long.parseLong(station.getCounty()));
+					if (countyCode == null) {
+						countyCode = Long.parseLong(station.getCounty());
+					}
+					StandardAreaDO standardAreaDO = standardAreaService.getStandardAreaDOById(countyCode);
+					storeDTO.setCity(standardAreaDO.getParentId().intValue());
+				} else {
+					storeDTO.setCity(Integer.parseInt(station.getCity()));
+				}
+			}
+			storeDTO.setCityName(station.getCityDetail());
+		}
+		// 区/县
+		// 区/县
+		if (!Strings.isNullOrEmpty(station.getCounty())) {
+			Integer district = getCountyCode(station.getCounty(),station.getCountyDetail(),station.getCity());
+			storeDTO.setDistrict(district);
+			storeDTO.setDistrictName(station.getCountyDetail());
+		}
+		if (!Strings.isNullOrEmpty(station.getTown())) {
+			StandardAreaDO area = this.standardAreaService.getStandardAreaDOById(Long.parseLong(station.getTown()));
+			if(area != null){
+				storeDTO.setTown(Integer.parseInt(station.getTown()));
+				storeDTO.setTownName(station.getTownDetail());
+			}
+		}
+
+		
+		if (!Strings.isNullOrEmpty(station.getLat())) {
+			storeDTO.setPosy(POIUtils.toStanardPOI(station.getLat()));
+		}
+		if (!Strings.isNullOrEmpty(station.getLng())) {
+			storeDTO.setPosx(POIUtils.toStanardPOI(fixLng(station.getLng())));
+		}
+		storeUpdateService.update(storeDTO, diamondConfiguredProperties.getStoreMainUserId(), StoreBizType.STORE_ITEM_BIZ.getValue());
+	}
 	
+	public void syncStore(){
+		  List<Long> storeIds = storeReadBO.getAllStoreIdsByStatus(StoreStatus.NORMAL);
+		  for(Long storeId :storeIds){
+			 StoreDto store =  storeReadBO.getStoreBySharedStoreId(storeId);
+			 this.syncStore(store.getStationId());
+		  }
+	}
 	
 }
