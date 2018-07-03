@@ -11,7 +11,9 @@ import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
+import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 
+@HSFProvider(serviceInterface = FenceInstanceJobService.class)
 public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 	@Resource
 	private FenceInstanceJobBo fenceInstanceJobBo;
