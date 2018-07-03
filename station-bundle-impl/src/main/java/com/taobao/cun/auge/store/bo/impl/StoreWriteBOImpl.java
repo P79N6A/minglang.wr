@@ -35,6 +35,8 @@ import com.taobao.cun.auge.dal.domain.StoreCreateError;
 import com.taobao.cun.auge.dal.domain.StoreCreateErrorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.dal.mapper.StoreCreateErrorMapper;
+import com.taobao.cun.auge.org.service.CuntaoOrgService;
+import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
 import com.taobao.cun.auge.station.bo.PartnerInstanceBO;
@@ -134,6 +136,8 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	private PartnerInstanceBO partnerInstanceBO;
 	private static final Logger logger = LoggerFactory.getLogger(StoreWriteBOImpl.class);
 
+	 @Autowired
+	private CuntaoOrgServiceClient cuntaoOrgServiceClient;
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	public Long create(StoreCreateDto storeCreateDto) throws StoreException {
@@ -857,6 +861,10 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 	@Override
 	public void syncStore(Long stationId) {
 		Station station = stationBO.getStationById(stationId);
+		//过滤掉测试村点
+		if(cuntaoOrgServiceClient.getCuntaoOrg(station.getApplyOrg()).getFullIdPath().contains("/500004")){
+			return;
+		}
 		StoreDto store = storeReadBO.getStoreDtoByStationId(stationId);
 		if(store == null){
 			return;
