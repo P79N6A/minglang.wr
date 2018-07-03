@@ -3,6 +3,14 @@ package com.taobao.cun.auge.station.bo.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 import com.taobao.cun.auge.common.Address;
 import com.taobao.cun.auge.common.OperatorDto;
 import com.taobao.cun.auge.common.utils.DomainUtils;
@@ -25,14 +33,8 @@ import com.taobao.cun.auge.station.enums.StationModifyApplyStatusEnum;
 import com.taobao.cun.auge.station.exception.AugeBusinessException;
 import com.taobao.cun.auge.station.service.GeneralTaskSubmitService;
 import com.taobao.cun.auge.station.service.ProcessService;
+import com.taobao.cun.auge.store.bo.StoreWriteBO;
 import com.taobao.cun.common.util.ValidateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Component("stationModifyApplyBO")
 public class StationModifyApplyBOImpl implements StationModifyApplyBO {
@@ -52,7 +54,9 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 	 
     @Autowired
     private  PartnerInstanceBO partnerInstanceBO;
-	
+    
+    @Autowired
+    private StoreWriteBO storeWriteBO;
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false, rollbackFor = Exception.class)
 	@Override
 	public Long addStationModifyApply(StationModifyApplyDto dto) {
@@ -118,6 +122,12 @@ public class StationModifyApplyBOImpl implements StationModifyApplyBO {
 				if (insId != null) {
 					//同步菜鸟
 				    generalTaskSubmitService.submitUpdateCainiaoStation(insId, OperatorDto.DEFAULT_OPERATOR);
+				    try {
+				    	   storeWriteBO.syncStore(sma.getStationId());
+					} catch (Exception e) {
+						 logger.error("syncStore error!["+sma.getStationId()+"]",e);
+					}
+				 
 				}else {
 					 logger.error("StationModifyApplyBO.auditForNameAndAddress error: insId is null stationId=" + sma.getStationId());
 				}
