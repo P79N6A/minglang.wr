@@ -3,6 +3,7 @@ package com.taobao.cun.auge.fence.service;
 import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
+import com.taobao.cun.auge.fence.dto.FenceBatchOpDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
@@ -74,5 +75,11 @@ public interface FenceTemplateService {
      * @param fenceTemplateStation
      */
     void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation);
+
+    /**
+     * 批量关联站点
+     * @param opDto
+     */
+    void batchOpStation(FenceBatchOpDto opDto);
 
 }

@@ -1,7 +1,11 @@
 package com.taobao.cun.auge.fence.convert;
 
 import java.util.Collections;
+import java.util.List;
 
+import com.taobao.cun.auge.fence.dto.FenceBatchOpDto;
+import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
@@ -44,6 +48,26 @@ public class JobConvertor {
             job.setStationId(stationId);
             job.setTemplateIds(Collections.singletonList(templateId));
             return job;
+        }
+        return null;
+    }
+
+    public static FenceInstanceJob convertToConditionFenceInstanceJob(List<Long> templateIds, String condition, String opType) {
+        if (FenceBatchOpDto.BATCH_OVERRIDE.equals(opType)) {
+            ConditionCreateFenceInstanceJob createJob = new ConditionCreateFenceInstanceJob();
+            createJob.setTemplateIds(templateIds);
+            createJob.setCondition(condition);
+            createJob.setCreateRule(ConditionCreateFenceInstanceJob.CREATE_RULE_OVERRIDE);
+        } else if (FenceBatchOpDto.BATCH_NEW.equals(opType)) {
+            ConditionCreateFenceInstanceJob createJob = new ConditionCreateFenceInstanceJob();
+            createJob.setTemplateIds(templateIds);
+            createJob.setCondition(condition);
+            createJob.setCreateRule(ConditionCreateFenceInstanceJob.CREATE_RULE_NEW);
+        } else if (FenceBatchOpDto.BATCH_DELETE.equals(opType)) {
+            ConditionDeleteFenceInstanceJob deleteJob = new ConditionDeleteFenceInstanceJob();
+            deleteJob.setTemplateIds(templateIds);
+            deleteJob.setCondition(condition);
+            return deleteJob;
         }
         return null;
     }

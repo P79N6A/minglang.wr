@@ -1,15 +1,19 @@
 package com.taobao.cun.auge.fence.service;
 
 import java.util.List;
+import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.convert.JobConvertor;
+import com.taobao.cun.auge.fence.dto.FenceBatchOpDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
+import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
@@ -39,7 +43,8 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void updateFenceTemplate(FenceTemplateEditDto detailDto) {
         fenceTemplateBO.updateFenceTemplate(detailDto);
-        jobService.createJob((TemplateUpdateFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(detailDto.getId(), JobConvertor.TEMPLATE_UPDATE));
+        jobService.createJob((TemplateUpdateFenceInstanceJob)
+            JobConvertor.convertToFenceTemplateJob(detailDto.getId(), JobConvertor.TEMPLATE_UPDATE));
     }
 
     @Override
@@ -60,13 +65,15 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void enableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.enableFenceTemplate(id, operator);
-        jobService.createJob((TemplateOpenFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_OPEN));
+        jobService.createJob((TemplateOpenFenceInstanceJob)
+            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_OPEN));
     }
 
     @Override
     public void disableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.disableFenceTemplate(id, operator);
-        jobService.createJob((TemplateCloseFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_CLOSE));
+        jobService.createJob((TemplateCloseFenceInstanceJob)
+            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_CLOSE));
     }
 
     @Override
@@ -77,7 +84,20 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
 
     @Override
     public void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation) {
-        jobService.createJob((TemplateCloseFenceInstanceJob)JobConvertor.convertToFenceStationJob(fenceTemplateStation.getTemplateId(), fenceTemplateStation.getStationId(), JobConvertor.TEMPLATE_CLOSE));
+        jobService.createJob((TemplateCloseFenceInstanceJob)
+            JobConvertor.convertToFenceStationJob(fenceTemplateStation.getTemplateId(), fenceTemplateStation.getStationId(), JobConvertor.TEMPLATE_CLOSE));
+    }
+
+    @Override
+    public void batchOpStation(FenceBatchOpDto opDto) {
+        String condition = JSON.toJSONString(opDto.getCondition());
+        if (FenceBatchOpDto.BATCH_DELETE.equals(opDto.getOpType())) {
+            jobService.createJob((ConditionDeleteFenceInstanceJob)
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), condition, opDto.getOpType()));
+        } else {
+            jobService.createJob((ConditionCreateFenceInstanceJob)
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), condition, opDto.getOpType()));
+        }
     }
 
 }
