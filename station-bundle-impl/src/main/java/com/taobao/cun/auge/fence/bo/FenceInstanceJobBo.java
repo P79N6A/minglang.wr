@@ -27,8 +27,8 @@ public interface FenceInstanceJobBo {
 	void updateJob(FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto);
 	
 	/**
-	 * 获取状态为NEW的FenceInstanceJobBo
+	 * 获取状态为NEW的FenceInstanceJob
 	 * @return
 	 */
-	List<FenceInstanceJob> getNewFenceInstanceJobBos();
+	List<FenceInstanceJob> getNewFenceInstanceJobs();
 }

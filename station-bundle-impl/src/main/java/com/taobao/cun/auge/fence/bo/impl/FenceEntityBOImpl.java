@@ -68,4 +68,21 @@ public class FenceEntityBOImpl implements FenceEntityBO {
         entityMapper.updateByExampleSelective(fenceEntity, example);
     }
 
+	@Override
+	public List<FenceEntity> getFenceEntityByTemplateId(Long templateId) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andTemplateIdEqualTo(templateId);
+		return entityMapper.selectByExample(example);
+	}
+
+	@Override
+	public void addFenceEntity(FenceEntity fenceEntity) {
+		entityMapper.insert(fenceEntity);
+	}
+
+	@Override
+	public void updateFenceEntity(FenceEntity fenceEntity) {
+		entityMapper.updateByPrimaryKey(fenceEntity);
+	}
+    
 }
