@@ -36,22 +36,27 @@ public class FencenInstanceBuilder {
 	public FenceEntity build(Station station, FenceTemplateDto fenceTemplateDto) {
 		FenceEntity fenceEntity = new FenceEntity();
 		
-		CommodityRuleBuilderResult crresult = commodityRuleBuilder.build(station, createCommodityFenceRule(fenceTemplateDto));
-		UserRuleBuilderResult urresult = userRuleBuilder.build(station, createUserFenceRule(fenceTemplateDto));
-		RangeRuleBuilderResult rrresult =  rangeRuleBuilder.build(station, createRangeFenceRule(fenceTemplateDto));
-		
+		String crresult = commodityRuleBuilder.build(station, createCommodityFenceRule(fenceTemplateDto));
+		String urresult = userRuleBuilder.build(station, createUserFenceRule(fenceTemplateDto));
+		String rrresult =  rangeRuleBuilder.build(station, createRangeFenceRule(fenceTemplateDto));
+		fenceEntity.setRangeRule(rrresult);
+		fenceEntity.setUserType(urresult);
+		fenceEntity.setCommodity(crresult);
 		fenceEntity.setState(fenceTemplateDto.getState());
 		fenceEntity.setStationId(station.getId());
 		fenceEntity.setGmtCreate(new Date());
 		fenceEntity.setGmtModified(new Date());
-		fenceEntity.setCreator("sys");
-		fenceEntity.setModifier("sys");
+		fenceEntity.setCreator("job");
+		fenceEntity.setModifier("job");
 		fenceEntity.setIsDeleted("n");
 		fenceEntity.setProvince(station.getProvince());
 		fenceEntity.setCity(station.getCity());
 		fenceEntity.setCounty(station.getCounty());
+		fenceEntity.setTown(station.getTown());
 		fenceEntity.setDefaultCheck(fenceTemplateDto.getDefaultCheck());
 		fenceEntity.setTemplateId(fenceTemplateDto.getId());
+		fenceEntity.setName(fenceTemplateDto.getName());
+		fenceEntity.setType(fenceTemplateDto.getTypeEnum().getCode());
 		
 		LogisticsStationDto logisticsStationDto = logisticsStationService.findLogisticsStationByStationId(station.getId());
 		if(logisticsStationDto != null) {
