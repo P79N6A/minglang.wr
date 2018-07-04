@@ -1,7 +1,6 @@
 package com.taobao.cun.auge.fence.service;
 
 import java.util.List;
-import com.alibaba.fastjson.JSON;
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
@@ -90,13 +89,12 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
 
     @Override
     public void batchOpStation(FenceBatchOpDto opDto) {
-        String condition = JSON.toJSONString(opDto.getCondition());
         if (FenceBatchOpDto.BATCH_DELETE.equals(opDto.getOpType())) {
             jobService.createJob((ConditionDeleteFenceInstanceJob)
-                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), condition, opDto.getOpType()));
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType()));
         } else {
             jobService.createJob((ConditionCreateFenceInstanceJob)
-                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), condition, opDto.getOpType()));
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType()));
         }
     }
 
