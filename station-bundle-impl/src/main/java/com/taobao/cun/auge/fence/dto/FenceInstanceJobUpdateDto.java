@@ -13,7 +13,7 @@ public class FenceInstanceJobUpdateDto {
 	
 	private String state;
 	
-	private Integer instanceNum;
+	private Integer instanceNum = 0;
 
     private Date gmtStartTime;
 

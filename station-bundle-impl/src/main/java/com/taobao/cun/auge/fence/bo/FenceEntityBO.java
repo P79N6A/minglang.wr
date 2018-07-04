@@ -1,8 +1,8 @@
 package com.taobao.cun.auge.fence.bo;
 
 import java.util.List;
-import java.util.Map;
 
+import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 
 /**
@@ -32,4 +32,22 @@ public interface FenceEntityBO {
      */
     void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation);
 
+    /**
+     * 获取模板关联的围栏实例
+     * @param templateId
+     * @return
+     */
+    List<FenceEntity> getFenceEntityByTemplateId(Long templateId);
+    
+    /**
+     * 添加
+     * @param fenceEntity
+     */
+    void addFenceEntity(FenceEntity fenceEntity);
+
+    /**
+     * 更新
+     * @param fenceEntity
+     */
+	void updateFenceEntity(FenceEntity fenceEntity);
 }

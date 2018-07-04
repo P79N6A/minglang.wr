@@ -46,7 +46,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 	}
 
 	@Override
-	public List<FenceInstanceJob> getNewFenceInstanceJobBos() {
+	public List<FenceInstanceJob> getNewFenceInstanceJobs() {
 		FenceInstanceJobEntityExample example = new FenceInstanceJobEntityExample();
 		example.createCriteria().andStateEqualTo("NEW");
 		List<FenceInstanceJobEntity> entities = fenceInstanceJobEntityMapper.selectByExample(example);

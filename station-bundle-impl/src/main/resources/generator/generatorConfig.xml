@@ -128,7 +128,7 @@
 			<generatedKey column="ID" sqlStatement="mysql" identity="true" />
 		</table> -->
 
-		<table tableName="fence_instance_job" domainObjectName="FenceInstanceJobEntity" enableCountByExample="true" enableUpdateByExample="true"
+		<table tableName="fence_entity" domainObjectName="FenceEntity" enableCountByExample="true" enableUpdateByExample="true"
 			   enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true"/>
 		
 	</context>
