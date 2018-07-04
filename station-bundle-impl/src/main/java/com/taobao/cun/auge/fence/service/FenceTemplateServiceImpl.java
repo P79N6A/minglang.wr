@@ -1,15 +1,18 @@
 package com.taobao.cun.auge.fence.service;
 
 import java.util.List;
-
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
+import com.taobao.cun.auge.fence.convert.JobConvertor;
 import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
+import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 import com.taobao.hsf.app.spring.util.annotation.HSFProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,9 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Autowired
     private FenceEntityBO fenceEntityBO;
 
+    @Autowired
+    private FenceInstanceJobService jobService;
+
     @Override
     public Long addFenceTemplate(FenceTemplateEditDto detailDto) {
         return fenceTemplateBO.addFenceTemplate(detailDto);
@@ -33,6 +39,7 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void updateFenceTemplate(FenceTemplateEditDto detailDto) {
         fenceTemplateBO.updateFenceTemplate(detailDto);
+        jobService.createJob((TemplateUpdateFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(detailDto.getId(), JobConvertor.TEMPLATE_UPDATE));
     }
 
     @Override
@@ -53,11 +60,13 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void enableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.enableFenceTemplate(id, operator);
+        jobService.createJob((TemplateOpenFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_OPEN));
     }
 
     @Override
     public void disableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.disableFenceTemplate(id, operator);
+        jobService.createJob((TemplateCloseFenceInstanceJob)JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_CLOSE));
     }
 
     @Override
@@ -68,7 +77,7 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
 
     @Override
     public void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation) {
-        fenceEntityBO.deleteFenceTemplateStation(fenceTemplateStation);
+        jobService.createJob((TemplateCloseFenceInstanceJob)JobConvertor.convertToFenceStationJob(fenceTemplateStation.getTemplateId(), fenceTemplateStation.getStationId(), JobConvertor.TEMPLATE_CLOSE));
     }
 
 }
