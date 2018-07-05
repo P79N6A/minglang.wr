@@ -10,6 +10,8 @@ import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
 /**
  * 执行模板修改的任务
  * 
+ * 找出与该模板相关的实例，将其重新生成一遍，然后更新到菜鸟
+ * 
  * @author chengyu.zhoucy
  *
  */

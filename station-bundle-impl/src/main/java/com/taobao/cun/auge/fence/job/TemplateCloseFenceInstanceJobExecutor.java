@@ -11,6 +11,8 @@ import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 /**
  * 执行从模板批量关闭围栏的任务
  * 
+ * 将状态变更为关闭状态，并且通知到菜鸟
+ * 
  * @author chengyu.zhoucy
  *
  */

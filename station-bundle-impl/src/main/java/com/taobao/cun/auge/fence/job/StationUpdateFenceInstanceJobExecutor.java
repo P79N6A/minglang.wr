@@ -10,6 +10,8 @@ import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 /**
  * 执行站点（行政地址、地标、领用地址）变化的任务
  * 
+ * 找出该站点的围栏，将其重新生成一遍
+ * 
  * @author chengyu.zhoucy
  *
  */
