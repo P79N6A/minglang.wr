@@ -15,8 +15,6 @@ public class ConditionDeleteFenceInstanceJobExecutor extends AbstractFenceInstan
 
 	@Override
 	protected int doExecute(ConditionDeleteFenceInstanceJob fenceInstanceJob) {
-		
-		
 		return 0;
 	}
 }
