@@ -39,7 +39,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 		entity.setGmtCreate(new Date());
 		entity.setGmtModified(new Date());
 		entity.setJobArg(JSON.toJSONString(fenceInstanceJob));
-		entity.setJobType(fenceInstanceJob.getJobType());
+		entity.setJobType(fenceInstanceJob.getClass().getSimpleName());
 		entity.setInstanceNum(0);
 		entity.setState("NEW");
 		fenceInstanceJobEntityMapper.insert(entity);
