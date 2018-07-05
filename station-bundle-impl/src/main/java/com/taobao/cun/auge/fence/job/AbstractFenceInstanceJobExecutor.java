@@ -13,7 +13,6 @@ import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
-import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.instance.FencenInstanceBuilder;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -66,21 +65,6 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 	}
 	
-	protected void rebuildFenceEntity(FenceEntity fenceEntity) {
-		FenceTemplateDto fenceTemplateDto = getFenceTemplate(fenceEntity.getTemplateId());
-		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + fenceEntity.getTemplateId());
-		Station station = stationBo.getStationById(fenceEntity.getStationId());
-		Preconditions.checkNotNull(station, "station id=" + fenceEntity.getStationId());
-		
-		FenceEntity newFenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
-		newFenceEntity.setId(fenceEntity.getId());
-		newFenceEntity.setCainiaoFenceId(fenceEntity.getCainiaoFenceId());
-		newFenceEntity.setGmtCreate(fenceEntity.getGmtCreate());
-		fenceEntityBO.updateFenceEntity(newFenceEntity);
-		//调用菜鸟接口
-		updateCainiaoFence(newFenceEntity);
-	}
-	
 	protected void buildFenceEntity(Long stationId, Long templateId) {
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
@@ -89,17 +73,41 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 		FenceEntity fenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		if(fenceEntity != null) {
-			fenceEntityBO.addFenceEntity(fenceEntity);
+			//检查是否存在
+			FenceEntity old = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
+			if(old != null) {
+				fenceEntity.setId(old.getId());
+				fenceEntity.setCainiaoFenceId(old.getCainiaoFenceId());
+				fenceEntity.setGmtCreate(old.getGmtCreate());
+				fenceEntityBO.updateFenceEntity(fenceEntity);
+				updateCainiaoFence(fenceEntity);
+			}else {
+				fenceEntityBO.addFenceEntity(fenceEntity);
+				addCainiaoFence(fenceEntity);
+			}
 		}
-		//调用菜鸟接口
-		addCainiaoFence(fenceEntity);
 	}
 	
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
-		FenceTemplateStation fenceTemplateStation = new FenceTemplateStation();
-		fenceTemplateStation.setStationId(stationId);
-		fenceTemplateStation.setTemplateId(templateId);
-		fenceEntityBO.deleteFenceTemplateStation(fenceTemplateStation);
+		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
+		if(fenceEntity != null) {
+			deleteCainiaoFence(fenceEntity);
+			fenceEntityBO.deleteById(fenceEntity.getId());
+		}
+	}
+	
+	protected void overrideFenceEntity(Long stationId, Long templateId) {
+		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
+		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
+		//删除菜鸟的围栏
+		List<FenceEntity> fenceEntities = fenceEntityBO.getStationFenceEntitiesByFenceType(stationId, fenceTemplateDto.getTypeEnum().getCode());
+		for(FenceEntity fenceEntity : fenceEntities) {
+			deleteCainiaoFence(fenceEntity);
+		}
+		//删除围栏实例
+		fenceEntityBO.deleteFences(stationId, fenceTemplateDto.getTypeEnum().getCode());
+		//新建围栏
+		buildFenceEntity(stationId, templateId);
 	}
 	
 	protected void addCainiaoFence(FenceEntity fenceEntity) {

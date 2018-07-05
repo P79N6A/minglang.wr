@@ -2,6 +2,7 @@ package com.taobao.cun.auge.fence.job;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 
 /**
@@ -15,10 +16,11 @@ public class StationCreateFenceInstanceJobExecutor extends AbstractFenceInstance
 	@Override
 	protected int doExecute(StationCreateFenceInstanceJob fenceInstanceJob) {
 		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
-			fenceInstanceJob.getCreateRule().equals(StationCreateFenceInstanceJob.CREATE_RULE_OVERRIDE){
-				
+			if(fenceInstanceJob.getCreateRule().equals(FenceInstanceJob.CREATE_RULE_OVERRIDE)){
+				overrideFenceEntity(fenceInstanceJob.getStationId(), templateId);
+			}else {
+				buildFenceEntity(fenceInstanceJob.getStationId(), templateId);
 			}
-			buildFenceEntity(fenceInstanceJob.getStationId(), templateId);
 		}
 		return fenceInstanceJob.getTemplateIds().size();
 	}

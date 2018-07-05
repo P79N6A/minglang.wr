@@ -1,7 +1,12 @@
 package com.taobao.cun.auge.fence.bo.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
@@ -10,8 +15,6 @@ import com.taobao.cun.auge.dal.mapper.FenceEntityMapper;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by xiao on 18/6/20.
@@ -83,6 +86,55 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 	@Override
 	public void updateFenceEntity(FenceEntity fenceEntity) {
 		entityMapper.updateByPrimaryKey(fenceEntity);
+	}
+
+	@Override
+	public void deleteFences(Long stationId, String fenceType) {
+		 FenceEntityExample example = new FenceEntityExample();
+	        example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId)
+	            .andTypeEqualTo(fenceType);
+	        FenceEntity fenceEntity = new FenceEntity();
+	        fenceEntity.setIsDeleted("y");
+	        fenceEntity.setGmtModified(new Date());
+	        entityMapper.updateByExampleSelective(fenceEntity, example);
+	}
+
+	@Override
+	public List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, String fenceType) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId)
+            .andTypeEqualTo(fenceType);
+		return entityMapper.selectByExample(example);
+	}
+
+	@Override
+	public FenceEntity getStationFenceEntityByTemplateId(Long stationId, Long templateId) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId)
+            .andTemplateIdEqualTo(templateId);
+        List<FenceEntity> fenceEntities = entityMapper.selectByExample(example);
+		if(CollectionUtils.isNotEmpty(fenceEntities)) {
+			return fenceEntities.get(0);
+		}else {
+			return null;
+		}
+	}
+
+	@Override
+	public void deleteById(Long id) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIdEqualTo(id);
+        FenceEntity fenceEntity = new FenceEntity();
+        fenceEntity.setIsDeleted("y");
+        fenceEntity.setGmtModified(new Date());
+        entityMapper.updateByExampleSelective(fenceEntity, example);
+	}
+
+	@Override
+	public List<FenceEntity> getFenceEntitiesByStationId(Long stationId) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
+		return entityMapper.selectByExample(example);
 	}
     
 }

@@ -30,7 +30,19 @@ public interface FenceEntityBO {
      * 删除单个站点关联的电子围栏
      * @param fenceTemplateStation
      */
+    void deleteFences(Long stationId, String fenceType);
+    
+    /**
+     * 删除单个站点关联的某个类型的电子围栏
+     * @param fenceTemplateStation
+     */
     void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation);
+    
+    /**
+     * 按ID删除
+     * @param id
+     */
+    void deleteById(Long id);
 
     /**
      * 获取模板关联的围栏实例
@@ -38,6 +50,28 @@ public interface FenceEntityBO {
      * @return
      */
     List<FenceEntity> getFenceEntityByTemplateId(Long templateId);
+    
+    /**
+     * 获取站点关联的围栏实例
+     * @param templateId
+     * @return
+     */
+    List<FenceEntity> getFenceEntitiesByStationId(Long stationId);
+    
+    /**
+     * 获取村点某个类型的围栏实例
+     * @param templateId
+     * @return
+     */
+    List<FenceEntity> getStationFenceEntitiesByFenceType(Long stationId, String fenceType);
+    
+    /**
+     * 获取站点关联某个模板生成的实例
+     * @param stationId
+     * @param templateId
+     * @return
+     */
+    FenceEntity getStationFenceEntityByTemplateId(Long stationId, Long templateId);
     
     /**
      * 添加
