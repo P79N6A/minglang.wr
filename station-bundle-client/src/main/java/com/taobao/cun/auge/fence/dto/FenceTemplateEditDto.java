@@ -1,7 +1,5 @@
 package com.taobao.cun.auge.fence.dto;
 
-import java.util.Date;
-
 import com.taobao.cun.auge.common.OperatorDto;
 
 /**
@@ -12,14 +10,6 @@ public class FenceTemplateEditDto extends OperatorDto {
     private static final long serialVersionUID = 7077517442731365091L;
 
     private Long id;
-
-    private Date gmtCreate;
-
-    private Date gmtModified;
-
-    private String creator;
-
-    private String modifier;
 
     private String type;
 
@@ -37,46 +27,12 @@ public class FenceTemplateEditDto extends OperatorDto {
 
     private String rangeRule;
 
-    private String state;
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
     }
 
     public String getType() {
@@ -143,11 +99,4 @@ public class FenceTemplateEditDto extends OperatorDto {
         this.rangeRule = rangeRule;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
 }
