@@ -85,7 +85,7 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 
 	@Override
 	public void updateFenceEntity(FenceEntity fenceEntity) {
-		entityMapper.updateByPrimaryKey(fenceEntity);
+		entityMapper.updateByPrimaryKeyWithBLOBs(fenceEntity);
 	}
 
 	@Override

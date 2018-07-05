@@ -43,7 +43,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			fenceInstanceJobUpdateDto.setErrorMsg(e.getMessage());
 		}
 		
-		fenceInstanceJobUpdateDto.setGmtStartTime(new Date());
+		fenceInstanceJobUpdateDto.setGmtEndTime(new Date());
 		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 	}
 	
