@@ -18,6 +18,19 @@ public class CommodityFenceRule extends FenceRule {
 	 * 商品类目
 	 */
 	private List<String> categories;
+	
+	/**
+	 * 行业
+	 */
+	private List<String> industries;
+
+	public List<String> getIndustries() {
+		return industries;
+	}
+
+	public void setIndustries(List<String> industries) {
+		this.industries = industries;
+	}
 
 	public List<String> getTags() {
 		return tags;

@@ -12,9 +12,12 @@ import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
  */
 @Component
 public class StationDeleteFenceInstanceJobExecutor extends AbstractFenceInstanceJobExecutor<StationDeleteFenceInstanceJob> {
-
+	
 	@Override
 	protected int doExecute(StationDeleteFenceInstanceJob fenceInstanceJob) {
-		return 0;
+		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
+			deleteFenceEntity(fenceInstanceJob.getStationId(), templateId);
+		}
+		return fenceInstanceJob.getTemplateIds().size();
 	}
 }

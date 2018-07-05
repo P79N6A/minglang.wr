@@ -16,7 +16,7 @@ public class RangeFenceRule extends FenceRule {
 	/**
 	 * 文本过滤
 	 */
-	private List<String> textFilter;
+	private List<String> textFilters;
 	/**
 	 * 行政区划
 	 */
@@ -30,12 +30,12 @@ public class RangeFenceRule extends FenceRule {
 		this.distance = distance;
 	}
 
-	public List<String> getTextFilter() {
-		return textFilter;
+	public List<String> getTextFilters() {
+		return textFilters;
 	}
 
-	public void setTextFilter(List<String> textFilter) {
-		this.textFilter = textFilter;
+	public void setTextFilters(List<String> textFilters) {
+		this.textFilters = textFilters;
 	}
 
 	public String getDivision() {
