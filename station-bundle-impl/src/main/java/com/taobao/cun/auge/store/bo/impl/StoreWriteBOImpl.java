@@ -3,6 +3,7 @@ package com.taobao.cun.auge.store.bo.impl;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -35,7 +36,6 @@ import com.taobao.cun.auge.dal.domain.StoreCreateError;
 import com.taobao.cun.auge.dal.domain.StoreCreateErrorExample;
 import com.taobao.cun.auge.dal.mapper.CuntaoStoreMapper;
 import com.taobao.cun.auge.dal.mapper.StoreCreateErrorMapper;
-import com.taobao.cun.auge.org.service.CuntaoOrgService;
 import com.taobao.cun.auge.org.service.CuntaoOrgServiceClient;
 import com.taobao.cun.auge.station.adapter.CaiNiaoAdapter;
 import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
@@ -822,9 +822,9 @@ public class StoreWriteBOImpl implements StoreWriteBO {
 			if(CollectionUtils.isEmpty(areaList)){
 				return Integer.parseInt(countyCode);
 			}
-			StandardAreaDO areaDO = areaList.stream().filter(ar -> ar.getAreaName().startsWith(countyDetail)).findFirst().get();
-			if(areaDO != null){
-				return areaDO.getAreaCode().intValue();
+			Optional<StandardAreaDO> areaDO = areaList.stream().filter(ar -> ar.getAreaName().startsWith(countyDetail)).findFirst();
+			if(areaDO.isPresent()){
+				return areaDO.get().getAreaCode().intValue();
 			}
 			return Integer.parseInt(countyCode);
 		}
