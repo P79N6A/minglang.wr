@@ -26,7 +26,7 @@ public class FenceBatchOpDto extends OperatorDto {
 
     private List<Long> templateIdList;
 
-    private FenceBatchOpCondition condition;
+    private String condition;
 
     private String opType;
 
@@ -38,11 +38,11 @@ public class FenceBatchOpDto extends OperatorDto {
         this.templateIdList = templateIdList;
     }
 
-    public FenceBatchOpCondition getCondition() {
+    public String getCondition() {
         return condition;
     }
 
-    public void setCondition(FenceBatchOpCondition condition) {
+    public void setCondition(String condition) {
         this.condition = condition;
     }
 
@@ -52,89 +52,6 @@ public class FenceBatchOpDto extends OperatorDto {
 
     public void setOpType(String opType) {
         this.opType = opType;
-    }
-
-    class FenceBatchOpCondition {
-
-        private Long orgId;
-
-        private String province;
-
-        private String city;
-
-        private String county;
-
-        private String town;
-
-        private String stationType;
-
-        private String isOnTown;
-
-        private String stationStatus;
-
-        public Long getOrgId() {
-            return orgId;
-        }
-
-        public void setOrgId(Long orgId) {
-            this.orgId = orgId;
-        }
-
-        public String getProvince() {
-            return province;
-        }
-
-        public void setProvince(String province) {
-            this.province = province;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getCounty() {
-            return county;
-        }
-
-        public void setCounty(String county) {
-            this.county = county;
-        }
-
-        public String getTown() {
-            return town;
-        }
-
-        public void setTown(String town) {
-            this.town = town;
-        }
-
-        public String getStationType() {
-            return stationType;
-        }
-
-        public void setStationType(String stationType) {
-            this.stationType = stationType;
-        }
-
-        public String getIsOnTown() {
-            return isOnTown;
-        }
-
-        public void setIsOnTown(String isOnTown) {
-            this.isOnTown = isOnTown;
-        }
-
-        public String getStationStatus() {
-            return stationStatus;
-        }
-
-        public void setStationStatus(String stationStatus) {
-            this.stationStatus = stationStatus;
-        }
     }
 
 }
