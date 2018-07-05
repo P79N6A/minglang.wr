@@ -12,9 +12,14 @@ import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
  */
 @Component
 public class StationCreateFenceInstanceJobExecutor extends AbstractFenceInstanceJobExecutor<StationCreateFenceInstanceJob> {
-
 	@Override
 	protected int doExecute(StationCreateFenceInstanceJob fenceInstanceJob) {
-		return 0;
+		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
+			fenceInstanceJob.getCreateRule().equals(StationCreateFenceInstanceJob.CREATE_RULE_OVERRIDE){
+				
+			}
+			buildFenceEntity(fenceInstanceJob.getStationId(), templateId);
+		}
+		return fenceInstanceJob.getTemplateIds().size();
 	}
 }

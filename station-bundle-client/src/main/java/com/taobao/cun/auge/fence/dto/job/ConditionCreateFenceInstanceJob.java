@@ -11,11 +11,6 @@ import org.hibernate.validator.constraints.NotEmpty;
  *
  */
 public class ConditionCreateFenceInstanceJob extends FenceInstanceJob{
-	/**新建*/
-	public static String CREATE_RULE_NEW = "NEW";
-	/**覆盖*/
-	public static String CREATE_RULE_OVERRIDE = "OVERRIDE";
-	
 	/**
 	 * 条件JSON字符串
 	 */

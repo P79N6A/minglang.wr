@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.google.common.base.Preconditions;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
@@ -12,6 +13,7 @@ import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
+import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.instance.FencenInstanceBuilder;
 import com.taobao.cun.auge.station.bo.StationBO;
@@ -47,12 +49,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	/**
-	 * 
 	 * @param fenceInstanceJob
 	 * @return 返回变更的实例数量
 	 */
 	protected abstract int doExecute(F fenceInstanceJob);
-
+	
 	protected FenceTemplateDto getFenceTemplate(Long templateId) {
 		return fenceTemplateBO.getFenceTemplateById(templateId);
 	}
@@ -66,8 +67,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	protected void rebuildFenceEntity(FenceEntity fenceEntity) {
-		FenceTemplateDto fenceTemplateDto = fenceTemplateBO.getFenceTemplateById(fenceEntity.getTemplateId());
+		FenceTemplateDto fenceTemplateDto = getFenceTemplate(fenceEntity.getTemplateId());
+		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + fenceEntity.getTemplateId());
 		Station station = stationBo.getStationById(fenceEntity.getStationId());
+		Preconditions.checkNotNull(station, "station id=" + fenceEntity.getStationId());
+		
 		FenceEntity newFenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		newFenceEntity.setId(fenceEntity.getId());
 		newFenceEntity.setCainiaoFenceId(fenceEntity.getCainiaoFenceId());
@@ -78,14 +82,24 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	protected void buildFenceEntity(Long stationId, Long templateId) {
-		FenceTemplateDto fenceTemplateDto = fenceTemplateBO.getFenceTemplateById(templateId);
+		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
+		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
+		Preconditions.checkNotNull(station, "station id=" + stationId);
+		
 		FenceEntity fenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		if(fenceEntity != null) {
 			fenceEntityBO.addFenceEntity(fenceEntity);
 		}
 		//调用菜鸟接口
 		addCainiaoFence(fenceEntity);
+	}
+	
+	protected void deleteFenceEntity(Long stationId, Long templateId) {
+		FenceTemplateStation fenceTemplateStation = new FenceTemplateStation();
+		fenceTemplateStation.setStationId(stationId);
+		fenceTemplateStation.setTemplateId(templateId);
+		fenceEntityBO.deleteFenceTemplateStation(fenceTemplateStation);
 	}
 	
 	protected void addCainiaoFence(FenceEntity fenceEntity) {
@@ -97,6 +111,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	protected void updateCainiaoFence(FenceEntity fenceEntity) {
 		toCainiaoFence(fenceEntity);
 		//TODO 调用菜鸟的更新接口
+	}
+	
+	protected void deleteCainiaoFence(FenceEntity fenceEntity) {
+		toCainiaoFence(fenceEntity);
+		//TODO 调用菜鸟的删除接口
 	}
 	
 	/**

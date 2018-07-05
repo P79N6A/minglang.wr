@@ -17,7 +17,17 @@ public class StationCreateFenceInstanceJob extends FenceInstanceJob{
 	private Long stationId;
 	@NotEmpty(message="关联的模板ID不能为空")
 	private List<Long> templateIds;
+	@NotEmpty(message="覆盖规则不能为空")
+	private String createRule;
 	
+	public String getCreateRule() {
+		return createRule;
+	}
+
+	public void setCreateRule(String createRule) {
+		this.createRule = createRule;
+	}
+
 	public Long getStationId() {
 		return stationId;
 	}
