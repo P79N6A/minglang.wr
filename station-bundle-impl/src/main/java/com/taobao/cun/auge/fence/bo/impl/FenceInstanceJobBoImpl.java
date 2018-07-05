@@ -54,7 +54,10 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 		List<FenceInstanceJob> fenceInstanceJobs = Lists.newArrayList();
 		if(!CollectionUtils.isEmpty(entities)) {
 			for(FenceInstanceJobEntity entity : entities) {
-				fenceInstanceJobs.add(createFenceInstanceJob(entity));
+				FenceInstanceJob fenceInstanceJob = createFenceInstanceJob(entity);
+				fenceInstanceJob.setId(entity.getId());
+				fenceInstanceJob.setJobType(entity.getJobType());
+				fenceInstanceJobs.add(fenceInstanceJob);
 			}
 		}
 		return fenceInstanceJobs;
