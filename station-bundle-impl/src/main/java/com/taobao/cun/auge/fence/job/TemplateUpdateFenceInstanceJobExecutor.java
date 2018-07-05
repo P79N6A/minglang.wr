@@ -18,13 +18,13 @@ public class TemplateUpdateFenceInstanceJobExecutor extends AbstractFenceInstanc
 
 	@Override
 	protected int doExecute(TemplateUpdateFenceInstanceJob fenceInstanceJob) {
+		//获取与该模板相关联的全部实例
 		List<FenceEntity> fenceEntities = getFenceEntityList(fenceInstanceJob.getTemplateId());
 		
 		if(fenceEntities == null) {
 			return 0;
 		}
 		//全部重新生成一遍
-		
 		for(FenceEntity fenceEntity : fenceEntities) {
 			rebuildFenceEntity(fenceEntity);
 		}

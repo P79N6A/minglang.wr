@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.FenceEntity;
+import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 
 /**
@@ -20,17 +21,24 @@ public class TemplateOpenFenceInstanceJobExecutor extends AbstractFenceInstanceJ
 	protected int doExecute(TemplateOpenFenceInstanceJob fenceInstanceJob) {
 		int instanceNum = 0;
 		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
-			fenceEntityBO.enableEntityListByTemplateId(templateId, "job");
-			List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
-			if(fenceEntities != null) {
-				instanceNum += fenceEntities.size();
-				for(FenceEntity fenceEntity : fenceEntities) {
-					//更新菜鸟的状态
-				}
-			}
+			instanceNum += updateFenceState(templateId);
 		}
 		
 		return instanceNum;
+	}
+
+	private int updateFenceState(Long templateId) {
+		fenceEntityBO.enableEntityListByTemplateId(templateId, "job");
+		List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
+		if(fenceEntities != null) {
+			for(FenceEntity fenceEntity : fenceEntities) {
+				//更新菜鸟的状态
+				fenceEntity.setState(FenceConstants.ENABLE);
+				updateCainiaoFence(fenceEntity);
+			}
+			return fenceEntities.size();
+		}
+		return 0;
 	}
 
 }

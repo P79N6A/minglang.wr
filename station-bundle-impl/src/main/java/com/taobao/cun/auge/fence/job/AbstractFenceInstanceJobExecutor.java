@@ -70,9 +70,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		Station station = stationBo.getStationById(fenceEntity.getStationId());
 		FenceEntity newFenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		newFenceEntity.setId(fenceEntity.getId());
+		newFenceEntity.setCainiaoFenceId(fenceEntity.getCainiaoFenceId());
 		newFenceEntity.setGmtCreate(fenceEntity.getGmtCreate());
-		fenceEntityBO.updateFenceEntity(fenceEntity);
-		//通知菜鸟
+		fenceEntityBO.updateFenceEntity(newFenceEntity);
+		//调用菜鸟接口
+		updateCainiaoFence(newFenceEntity);
 	}
 	
 	protected void buildFenceEntity(Long stationId, Long templateId) {
@@ -82,6 +84,26 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		if(fenceEntity != null) {
 			fenceEntityBO.addFenceEntity(fenceEntity);
 		}
-		//通知菜鸟
+		//调用菜鸟接口
+		addCainiaoFence(fenceEntity);
+	}
+	
+	protected void addCainiaoFence(FenceEntity fenceEntity) {
+		toCainiaoFence(fenceEntity);
+		//TODO 调用菜鸟的新增接口
+		//TODO 将菜鸟的围栏ID写回到围栏实例上
+	}
+	
+	protected void updateCainiaoFence(FenceEntity fenceEntity) {
+		toCainiaoFence(fenceEntity);
+		//TODO 调用菜鸟的更新接口
+	}
+	
+	/**
+	 * 转成菜鸟的围栏对象
+	 * @param fenceEntity
+	 */
+	private void toCainiaoFence(FenceEntity fenceEntity) {
+		
 	}
 }
