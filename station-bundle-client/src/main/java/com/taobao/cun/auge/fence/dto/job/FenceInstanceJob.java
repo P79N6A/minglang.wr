@@ -8,9 +8,9 @@ public abstract class FenceInstanceJob {
 	/**覆盖*/
 	public static String CREATE_RULE_OVERRIDE = "OVERRIDE";
 	
-	@JSONField(serialize=false)
+	@JSONField(serialize=false, deserialize=false)
 	private Long id;
-	@JSONField(serialize=false)
+	@JSONField(serialize=false, deserialize=false)
 	private String jobType;
 	
 	public Long getId() {
