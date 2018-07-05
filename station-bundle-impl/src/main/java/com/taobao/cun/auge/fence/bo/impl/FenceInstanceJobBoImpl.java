@@ -49,7 +49,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 	public List<FenceInstanceJob> getNewFenceInstanceJobs() {
 		FenceInstanceJobEntityExample example = new FenceInstanceJobEntityExample();
 		example.createCriteria().andStateEqualTo("NEW");
-		List<FenceInstanceJobEntity> entities = fenceInstanceJobEntityMapper.selectByExample(example);
+		List<FenceInstanceJobEntity> entities = fenceInstanceJobEntityMapper.selectByExampleWithBLOBs(example);
 		
 		List<FenceInstanceJob> fenceInstanceJobs = Lists.newArrayList();
 		if(!CollectionUtils.isEmpty(entities)) {
