@@ -55,6 +55,7 @@ public class FencenInstanceBuilder {
 		fenceEntity.setTemplateId(fenceTemplateDto.getId());
 		fenceEntity.setName(fenceTemplateDto.getName());
 		fenceEntity.setType(fenceTemplateDto.getTypeEnum().getCode());
+		fenceEntity.setCainiaoFenceId(0L);
 		
 		CuntaoCainiaoStationRel cuntaoCainiaoStationRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(station.getId(), CuntaoCainiaoStationRelTypeEnum.STATION);
 		if(cuntaoCainiaoStationRel != null) {
