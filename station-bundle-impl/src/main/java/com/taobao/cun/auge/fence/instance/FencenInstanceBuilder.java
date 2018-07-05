@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
@@ -16,8 +17,8 @@ import com.taobao.cun.auge.fence.instance.builder.UserRuleBuilder;
 import com.taobao.cun.auge.fence.instance.rule.CommodityFenceRule;
 import com.taobao.cun.auge.fence.instance.rule.RangeFenceRule;
 import com.taobao.cun.auge.fence.instance.rule.UserFenceRule;
-import com.taobao.cun.auge.logistics.dto.LogisticsStationDto;
-import com.taobao.cun.auge.logistics.service.LogisticsStationService;
+import com.taobao.cun.auge.station.bo.CuntaoCainiaoStationRelBO;
+import com.taobao.cun.auge.station.enums.CuntaoCainiaoStationRelTypeEnum;
 
 @Component
 public class FencenInstanceBuilder {
@@ -28,7 +29,7 @@ public class FencenInstanceBuilder {
 	@Resource
 	private RangeRuleBuilder rangeRuleBuilder;
 	@Resource
-	private LogisticsStationService logisticsStationService;
+	private CuntaoCainiaoStationRelBO cuntaoCainiaoStationRelBO;
 	
 	public FenceEntity build(Station station, FenceTemplateDto fenceTemplateDto) {
 		FenceEntity fenceEntity = new FenceEntity();
@@ -55,9 +56,9 @@ public class FencenInstanceBuilder {
 		fenceEntity.setName(fenceTemplateDto.getName());
 		fenceEntity.setType(fenceTemplateDto.getTypeEnum().getCode());
 		
-		LogisticsStationDto logisticsStationDto = logisticsStationService.findLogisticsStationByStationId(station.getId());
-		if(logisticsStationDto != null) {
-			fenceEntity.setCainiaoStationId(logisticsStationDto.getCainiaoStationId());
+		CuntaoCainiaoStationRel cuntaoCainiaoStationRel = cuntaoCainiaoStationRelBO.queryCuntaoCainiaoStationRel(station.getId(), CuntaoCainiaoStationRelTypeEnum.STATION);
+		if(cuntaoCainiaoStationRel != null) {
+			fenceEntity.setCainiaoStationId(cuntaoCainiaoStationRel.getCainiaoStationId());
 		}
 		return fenceEntity;
 	}
