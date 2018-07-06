@@ -335,8 +335,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
-		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
-		
+
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}
@@ -355,8 +354,7 @@ public class TpvStrategy extends CommonStrategy implements PartnerInstanceStrate
 		processTask.copyOperatorDto(operatorDto);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("applyId", String.valueOf(applyId));
-		params.put("stationApplyId", String.valueOf(instance.getStationApplyId()));
-		
+
 		processTask.setParams(params);
 		generalTaskSubmitService.submitApproveProcessTask(processTask);
 	}

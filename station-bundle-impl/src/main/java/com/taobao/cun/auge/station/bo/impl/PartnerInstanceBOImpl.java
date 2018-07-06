@@ -116,21 +116,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     }
 
     @Override
-    public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) {
-        ValidateUtils.notNull(stationApplyId);
-        PartnerStationRelExample example = new PartnerStationRelExample();
-
-        Criteria criteria = example.createCriteria();
-
-        criteria.andStationApplyIdEqualTo(stationApplyId);
-        criteria.andIsDeletedEqualTo("n");
-
-        List<PartnerStationRel> instances = partnerStationRelMapper.selectByExample(example);
-
-        return ResultUtils.selectOne(instances);
-    }
-
-    @Override
     public int findChildPartners(Long instanceId, PartnerInstanceStateEnum state) {
         PartnerStationRel curPartnerInstance = findPartnerInstanceById(instanceId);
         Long parentStationId = curPartnerInstance.getStationId();

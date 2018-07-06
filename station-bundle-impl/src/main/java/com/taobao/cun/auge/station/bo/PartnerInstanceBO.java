@@ -42,16 +42,6 @@ public interface PartnerInstanceBO {
      */
     public List<PartnerStationRel> getPartnerStationRelByStationId(Long stationId, String isCurrent);
 
-
-
-    /**
-     * 根据stationapplyId查询实例
-     *
-     * @param stationApplyId
-     * @return
-     */
-    public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId);
-
     /**
      * 根据taobaoUserId 查询合伙人实例表主键id
      *
