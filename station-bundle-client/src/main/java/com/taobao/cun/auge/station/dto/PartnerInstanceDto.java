@@ -83,11 +83,6 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 	private PartnerInstanceCloseTypeEnum closeType;
 
 	/**
-	 * station_aply表主键，供数据迁移使用
-	 */
-	private Long stationApplyId;
-
-	/**
 	 * station_apply表的state 兼容老模型
 	 */
 	private StationApplyStateEnum stationApplyState;
@@ -230,14 +225,6 @@ public class PartnerInstanceDto extends OperatorDto implements Serializable {
 
 	public void setApplierType(String applierType) {
 		this.applierType = applierType;
-	}
-
-	public Long getStationApplyId() {
-		return stationApplyId;
-	}
-
-	public void setStationApplyId(Long stationApplyId) {
-		this.stationApplyId = stationApplyId;
 	}
 
 	public StationDto getStationDto() {
