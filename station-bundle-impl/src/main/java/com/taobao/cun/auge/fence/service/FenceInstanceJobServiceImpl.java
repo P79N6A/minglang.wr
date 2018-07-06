@@ -7,6 +7,7 @@ import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationQuitFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -56,6 +57,11 @@ public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 	@Override
 	public void createJob(StationUpdateFenceInstanceJob stationUpdateFenceInstanceJob) {
 		fenceInstanceJobBo.insertJob(stationUpdateFenceInstanceJob);
+	}
+
+	@Override
+	public void createJob(StationQuitFenceInstanceJob stationQuitFenceInstanceJob) {
+		fenceInstanceJobBo.insertJob(stationQuitFenceInstanceJob);
 	}
 
 }
