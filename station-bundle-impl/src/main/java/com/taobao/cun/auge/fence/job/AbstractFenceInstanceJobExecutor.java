@@ -18,6 +18,13 @@ import com.taobao.cun.auge.fence.instance.FencenInstanceBuilder;
 import com.taobao.cun.auge.station.bo.StationBO;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
+/**
+ * 抽象实现，对围栏实例的操作，与菜鸟的交互都在这里了
+ * 
+ * @author chengyu.zhoucy
+ *
+ * @param <F>
+ */
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
 	@Resource
 	protected FenceEntityBO fenceEntityBO;
@@ -66,6 +73,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 	}
 	
+	/**
+	 * 构建围栏实例
+	 * @param stationId
+	 * @param templateId
+	 */
 	protected void buildFenceEntity(Long stationId, Long templateId) {
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
@@ -76,7 +88,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 		FenceEntity fenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		if(fenceEntity != null) {
-			//检查是否存在
+			//检查是否存在：如果已经存在该站点跟该模板构建的实例，那么就做修改
 			FenceEntity old = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
 			if(old != null) {
 				fenceEntity.setId(old.getId());
@@ -109,11 +121,20 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		return false;
 	}
 
+	/**
+	 * 删除为了实例
+	 * @param stationId
+	 * @param templateId
+	 */
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
 		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
 		deleteFenceEntity(fenceEntity);
 	}
 	
+	/**
+	 * 删除为了实例
+	 * @param fenceEntity
+	 */
 	protected void deleteFenceEntity(FenceEntity fenceEntity) {
 		if(fenceEntity != null) {
 			deleteCainiaoFence(fenceEntity);
@@ -121,6 +142,14 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		}
 	}
 	
+	/**
+	 * 覆盖围栏
+	 * 1. 找出相同类型的围栏，将其全部删除(通知菜鸟删除，围栏实例也要删除)
+	 * 2. 重新生成一个围栏实例，并且通知到菜鸟
+	 * 为了简单起见，在删除的时候不考虑相同已存在相同模板实例的情况
+	 * @param stationId
+	 * @param templateId
+	 */
 	protected void overrideFenceEntity(Long stationId, Long templateId) {
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
