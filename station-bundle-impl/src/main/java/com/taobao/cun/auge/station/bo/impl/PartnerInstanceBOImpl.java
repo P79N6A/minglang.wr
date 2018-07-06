@@ -116,16 +116,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
     }
 
     @Override
-    public Long getInstanceIdByStationApplyId(Long stationApplyId) {
-        PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
-        if (rel == null) {
-            return null;
-        }
-        return rel.getId();
-
-    }
-
-    @Override
     public PartnerStationRel getPartnerStationRelByStationApplyId(Long stationApplyId) {
         ValidateUtils.notNull(stationApplyId);
         PartnerStationRelExample example = new PartnerStationRelExample();
@@ -756,12 +746,6 @@ public class PartnerInstanceBOImpl implements PartnerInstanceBO {
 
         return PartnerInstanceConverter
             .convert(ResultUtils.selectOne(partnerStationRelMapper.selectByExample(example)));
-    }
-
-    @Override
-    public Long findStationIdByStationApplyId(Long stationApplyId) {
-        PartnerStationRel rel = getPartnerStationRelByStationApplyId(stationApplyId);
-        return null != rel ? rel.getStationId() : null;
     }
 
     @Override
