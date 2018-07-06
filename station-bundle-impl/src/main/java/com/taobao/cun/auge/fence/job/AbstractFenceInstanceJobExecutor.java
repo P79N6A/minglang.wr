@@ -16,6 +16,7 @@ import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.instance.FencenInstanceBuilder;
 import com.taobao.cun.auge.station.bo.StationBO;
+import com.taobao.cun.auge.station.enums.StationStatusEnum;
 
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
 	@Resource
@@ -69,7 +70,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
-		Preconditions.checkNotNull(station, "station id=" + stationId);
+		if(!checkStation(station)) {
+			return;
+		}
 		
 		FenceEntity fenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		if(fenceEntity != null) {
@@ -88,6 +91,24 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		}
 	}
 	
+	/**
+	 * 检查站点状态
+	 * @param station
+	 * @return
+	 */
+	private boolean checkStation(Station station) {
+		if(station == null) {
+			return false;
+		}
+		if(station.getStatus().equals(StationStatusEnum.DECORATING.getCode()) || 
+				station.getStatus().equals(StationStatusEnum.SERVICING.getCode()) ||
+				station.getStatus().equals(StationStatusEnum.QUITING.getCode()) ||
+				station.getStatus().equals(StationStatusEnum.CLOSING.getCode())) {
+			return true;
+		}
+		return false;
+	}
+
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
 		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
 		deleteFenceEntity(fenceEntity);
