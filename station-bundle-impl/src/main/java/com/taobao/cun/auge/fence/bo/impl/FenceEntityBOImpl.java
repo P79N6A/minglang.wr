@@ -12,6 +12,7 @@ import com.taobao.cun.auge.common.utils.DomainUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.FenceEntityExample;
 import com.taobao.cun.auge.dal.mapper.FenceEntityMapper;
+import com.taobao.cun.auge.dal.mapper.ext.ExtFenceEntityMapper;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
@@ -24,6 +25,9 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 
     @Autowired
     private FenceEntityMapper entityMapper;
+    
+    @Autowired
+    private ExtFenceEntityMapper extFenceEntityMapper;
 
     @Override
     public void enableEntityListByTemplateId(Long templateId, String operator) {
@@ -135,6 +139,11 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 		FenceEntityExample example = new FenceEntityExample();
         example.createCriteria().andIsDeletedEqualTo("n").andStationIdEqualTo(stationId);
 		return entityMapper.selectByExample(example);
+	}
+
+	@Override
+	public List<FenceEntity> getStationQuitedFenceEntities() {
+		return extFenceEntityMapper.selectStationQuitedFenceEntities();
 	}
     
 }

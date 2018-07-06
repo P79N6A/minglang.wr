@@ -84,4 +84,10 @@ public interface FenceEntityBO {
      * @param fenceEntity
      */
 	void updateFenceEntity(FenceEntity fenceEntity);
+	
+	/**
+	 * 获取站点已经退出但还没有被删除的围栏实例
+	 * @return
+	 */
+	List<FenceEntity> getStationQuitedFenceEntities();
 }

@@ -9,6 +9,7 @@ import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationQuitFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -39,6 +40,9 @@ public class FenceInstanceJobExecutorFactory {
 	
 	@Resource
 	private TemplateUpdateFenceInstanceJobExecutor templateUpdateFenceInstanceJobExecutor;
+	
+	@Resource
+	private StationQuitFenceInstanceJobExecutor stationQuitFenceInstanceJobExecutor;
 	
 	@SuppressWarnings("unchecked")
 	<F extends FenceInstanceJob> FenceInstanceJobExecutor<F> getFenceInstanceJobExecutor(F fenceInstanceJob){
@@ -72,6 +76,10 @@ public class FenceInstanceJobExecutorFactory {
 		
 		if(fenceInstanceJob instanceof TemplateUpdateFenceInstanceJob) {
 			return (FenceInstanceJobExecutor<F>) templateUpdateFenceInstanceJobExecutor;
+		}
+		
+		if(fenceInstanceJob instanceof StationQuitFenceInstanceJob) {
+			return (FenceInstanceJobExecutor<F>) stationQuitFenceInstanceJobExecutor;
 		}
 		
 		return null;

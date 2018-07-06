@@ -90,6 +90,10 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
 		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
+		deleteFenceEntity(fenceEntity);
+	}
+	
+	protected void deleteFenceEntity(FenceEntity fenceEntity) {
 		if(fenceEntity != null) {
 			deleteCainiaoFence(fenceEntity);
 			fenceEntityBO.deleteById(fenceEntity.getId());
