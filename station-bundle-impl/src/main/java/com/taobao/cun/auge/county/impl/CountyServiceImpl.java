@@ -202,14 +202,6 @@ public class CountyServiceImpl implements CountyService{
 			return rst;
 	}
 
-	public boolean startOpen(Long countyStationId,String operator){
-		try {
-			return countyBO.startOpen(countyStationId,operator);
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
 	@Override
 	public CountyPOI queryCountyPOI(Long countyAreaId) {
 		CountyPOI poi = new CountyPOI();
@@ -259,11 +251,6 @@ public class CountyServiceImpl implements CountyService{
 			countyStation.setLng(PositionUtil.converUp(lng));
 			countyStationMapper.updateByPrimaryKeySelective(county);
 		}
-	}
-
-	@Override
-	public int countServicingStation(Long countyStationId) {
-		return countyStationMapper.countServicingStation(countyStationId);
 	}
 	
 

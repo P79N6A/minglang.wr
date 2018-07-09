@@ -122,8 +122,4 @@ public interface CountyService {
 	 * @return
 	 */
 	public CountyPOI queryCountyPOI(Long countyAreaId);
-	
-	public boolean startOpen(Long countyStationId,String operator);
-	
-	public int countServicingStation(Long countyStationId);
 }

@@ -101,8 +101,4 @@ public interface CountyStationMapper {
     int countCountyStation(Map<String,Object> param);
     
     List<CountyStation> queryCountyStation(Map<String,Object> param);
-    
-    int countServicingStation(Long id);
-    
-    
 }
