@@ -237,6 +237,11 @@ public class BailServiceImpl implements BailService {
 						cuntaoUnFreezeBailDto.setOutOrderId("CT_REPLENISH_" + partnerInstanceId + "_UNFREEZE");
 						cuntaoUnFreezeBailDto.setUserTypeEnum(UserTypeEnum.STORE);
 						return cuntaoNewBailService.unfreezeUserBail(cuntaoUnFreezeBailDto);
+					}else{
+						resultModel.setSuccess(true);
+						resultModel.setResult(Boolean.TRUE);
+						resultModel.setMessage("铺货金为零无需解冻");
+						return resultModel;
 					}
 				}else{
 					logger.warn("unfreezeUserReplenishBail warn instanceId:{}, amountResult:{}",
