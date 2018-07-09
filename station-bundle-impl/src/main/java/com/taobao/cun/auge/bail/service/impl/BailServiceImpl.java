@@ -207,7 +207,7 @@ public class BailServiceImpl implements BailService {
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
 		if (instance == null || accountMoney == null
-				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
+				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())|| AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(accountMoney.getState())) {
 			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
 			resultModel.setSuccess(true);
 			resultModel.setResult(Boolean.TRUE);
