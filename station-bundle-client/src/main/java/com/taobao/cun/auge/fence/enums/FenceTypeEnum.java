@@ -18,7 +18,7 @@ public class FenceTypeEnum implements Serializable{
 
     static final FenceTypeEnum SERVICE = new FenceTypeEnum("SERVICE", "服务围栏");
     static final FenceTypeEnum LOGISTICS = new FenceTypeEnum("LOGISTICS", "物流围栏");
-    static final FenceTypeEnum DEAL = new FenceTypeEnum("DEAL", "交易围栏");
+    static final FenceTypeEnum DEAL = new FenceTypeEnum("DEAL", "售卖围栏");
     static final FenceTypeEnum CHARGE = new FenceTypeEnum("CHARGE", "收费围栏");
     private static final Map<String, FenceTypeEnum> mappings = new HashMap<String, FenceTypeEnum>();
 
