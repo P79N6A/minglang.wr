@@ -20,4 +20,7 @@ public interface FenceConstants {
     //围栏范围_行政区划
     String RANGE_DIVISION = "division";
 
+    //商品类型_行业
+    String INDUSTRY = "industry";
+
 }
