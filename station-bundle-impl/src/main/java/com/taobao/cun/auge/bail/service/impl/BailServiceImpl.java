@@ -207,7 +207,7 @@ public class BailServiceImpl implements BailService {
 		AccountMoneyDto accountMoney = accountMoneyBO.getAccountMoney(AccountMoneyTypeEnum.REPLENISH_MONEY,
 				AccountMoneyTargetTypeEnum.PARTNER_INSTANCE, partnerInstanceId);
 		if (instance == null || accountMoney == null
-				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())|| AccountMoneyStateEnum.WAIT_FROZEN.getCode().equals(accountMoney.getState())) {
+				|| AccountMoneyStateEnum.HAS_THAW.getCode().equals(accountMoney.getState())) {
 			logger.warn("unfreezeUserReplenishBail instanceId:{}", new Object[] { partnerInstanceId });
 			resultModel.setSuccess(true);
 			resultModel.setResult(Boolean.TRUE);
@@ -217,6 +217,12 @@ public class BailServiceImpl implements BailService {
 			Long taobaoUserId = instance.getTaobaoUserId();
 			try {
 				ResultModel<Long> freezeAmount = queryUserFreezeAmountNew(taobaoUserId, UserTypeEnum.STORE);
+				if(freezeAmount !=null && !freezeAmount.isSuccess() && "NOT_SIGN".equals(freezeAmount.getMsgCode())){
+					resultModel.setSuccess(true);
+					resultModel.setResult(Boolean.TRUE);
+					resultModel.setMessage("铺货金未冻结");
+					return resultModel;
+				}
 				if (freezeAmount != null && freezeAmount.isSuccess() && freezeAmount.getResult() != null) {
 					Long amount = getReplenishAmount(partnerInstanceId, resultModel, freezeAmount);
 					if (amount > 0L) {
