@@ -3244,6 +3244,136 @@ public class CountyStationExample {
             addCriterion("storage_area not between", value1, value2, "storageArea");
             return (Criteria) this;
         }
+
+        public Criteria andMultiWarehouseIsNull() {
+            addCriterion("multi_warehouse is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseIsNotNull() {
+            addCriterion("multi_warehouse is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseEqualTo(String value) {
+            addCriterion("multi_warehouse =", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseNotEqualTo(String value) {
+            addCriterion("multi_warehouse <>", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseGreaterThan(String value) {
+            addCriterion("multi_warehouse >", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseGreaterThanOrEqualTo(String value) {
+            addCriterion("multi_warehouse >=", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseLessThan(String value) {
+            addCriterion("multi_warehouse <", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseLessThanOrEqualTo(String value) {
+            addCriterion("multi_warehouse <=", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseLike(String value) {
+            addCriterion("multi_warehouse like", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseNotLike(String value) {
+            addCriterion("multi_warehouse not like", value, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseIn(List<String> values) {
+            addCriterion("multi_warehouse in", values, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseNotIn(List<String> values) {
+            addCriterion("multi_warehouse not in", values, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseBetween(String value1, String value2) {
+            addCriterion("multi_warehouse between", value1, value2, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultiWarehouseNotBetween(String value1, String value2) {
+            addCriterion("multi_warehouse not between", value1, value2, "multiWarehouse");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenIsNull() {
+            addCriterion("gmt_start_open is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenIsNotNull() {
+            addCriterion("gmt_start_open is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenEqualTo(Date value) {
+            addCriterion("gmt_start_open =", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotEqualTo(Date value) {
+            addCriterion("gmt_start_open <>", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenGreaterThan(Date value) {
+            addCriterion("gmt_start_open >", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenGreaterThanOrEqualTo(Date value) {
+            addCriterion("gmt_start_open >=", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenLessThan(Date value) {
+            addCriterion("gmt_start_open <", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenLessThanOrEqualTo(Date value) {
+            addCriterion("gmt_start_open <=", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenIn(List<Date> values) {
+            addCriterion("gmt_start_open in", values, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotIn(List<Date> values) {
+            addCriterion("gmt_start_open not in", values, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenBetween(Date value1, Date value2) {
+            addCriterion("gmt_start_open between", value1, value2, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotBetween(Date value1, Date value2) {
+            addCriterion("gmt_start_open not between", value1, value2, "gmtStartOpen");
+            return (Criteria) this;
+        }
     }
 
     /**
