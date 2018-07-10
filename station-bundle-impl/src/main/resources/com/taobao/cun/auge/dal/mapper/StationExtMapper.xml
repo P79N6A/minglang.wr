@@ -154,7 +154,7 @@
 			<if test="type == 'TP'">
 				c.type='TP'
 			</if>
-			<if test="type == 'TPS'">174061.74
+			<if test="type == 'TPS'">
 				c.type='TPS'
 			</if>
 			<if test="type == 'TP_v4'">
