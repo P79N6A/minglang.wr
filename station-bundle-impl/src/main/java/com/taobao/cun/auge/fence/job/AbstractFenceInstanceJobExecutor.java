@@ -35,7 +35,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	@Resource
 	private FencenInstanceBuilder fencenInstanceBuilder;
 	@Resource
-	private StationBO stationBo;
+	protected StationBO stationBo;
 	
 	public void execute(F fenceInstanceJob) {
 		FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto = new FenceInstanceJobUpdateDto();

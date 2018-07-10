@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.instance.rule.RangeFenceRule;
 
 /**
@@ -24,25 +25,25 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 	public String build(Station station, RangeFenceRule fenceRule) {
 		Map<String, Object> result = Maps.newHashMap();
 		if(fenceRule.getDistance() != null && fenceRule.getDistance() > 0) {
-			result.put("distance", fenceRule.getDistance());
+			result.put(FenceConstants.RANGE_DISTANCE, fenceRule.getDistance());
 		}
 		
 		if(CollectionUtils.isNotEmpty(fenceRule.getTextFilters())){
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getTextFilters()) {
-				if(text.equals("belong")) {
-					textFilters.put("belong", station.getVillageDetail());
+				if(text.equals("belongVillage")) {
+					textFilters.put("belongVillage", station.getVillageDetail());
 				}
 				
 				if(text.equals("landmark")) {
 					textFilters.put("landmark", text);
 				}
 				
-				if(text.equals("receive")) {
-					textFilters.put("receive", text);
+				if(text.equals("receiveVillage")) {
+					textFilters.put("receiveVillage", text);
 				}
 			}
-			result.put("textFilters", textFilters);
+			result.put(FenceConstants.RANGE_MATCH, textFilters);
 		}
 		
 		if(Strings.isNullOrEmpty(fenceRule.getDivision())){
@@ -57,7 +58,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 				division.put("town", station.getTown());
 			}
 			
-			result.put("division", division);
+			result.put(FenceConstants.RANGE_DIVISION, division);
 		}
 		return JSON.toJSONString(result);
 	}

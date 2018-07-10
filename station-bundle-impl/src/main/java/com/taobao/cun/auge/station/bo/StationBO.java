@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.StationDto;
 import com.taobao.cun.auge.station.enums.StationStatusEnum;
@@ -108,4 +109,12 @@ public interface StationBO {
      * @
      */
     public int getSameNameInProvinceCnt(String stationName,String province);
+    
+    /**
+     * 查询围栏站点
+     * 
+     * @param fenceStationQueryCondition
+     * @return
+     */
+    List<Station> getFenceStations(FenceStationQueryCondition fenceStationQueryCondition);
 }
