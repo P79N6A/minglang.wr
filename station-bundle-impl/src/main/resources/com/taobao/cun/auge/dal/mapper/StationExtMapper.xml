@@ -161,7 +161,7 @@
 			</if>
 		</foreach>
 	</if>
-	<if test="stationStatus != null"> and c.status in
+	<if test="stationStatus != null"> and c.state in
 		<foreach collection="stationStatus" open="(" close=")" item="status" separator=","> #{status}</foreach>
 	</if>
 	<if test="stationLocations != null"> and 

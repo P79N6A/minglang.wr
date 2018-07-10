@@ -28,9 +28,9 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			result.put(FenceConstants.RANGE_DISTANCE, fenceRule.getDistance());
 		}
 		
-		if(CollectionUtils.isNotEmpty(fenceRule.getTextFilters())){
+		if(CollectionUtils.isNotEmpty(fenceRule.getMatch())){
 			Map<String, String> textFilters = Maps.newHashMap();
-			for(String text : fenceRule.getTextFilters()) {
+			for(String text : fenceRule.getMatch()) {
 				if(text.equals("belongVillage")) {
 					textFilters.put("belongVillage", station.getVillageDetail());
 				}
