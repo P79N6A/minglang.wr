@@ -142,7 +142,8 @@
     <select id="getFenceStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
     select a.* from station a, cuntao_org b,partner_station_rel c 
      where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and a.apply_org=b.id and a.id=c.station_id
-	<if test="fullIdPath != null"> and b.temp_full_id_path like concat(#{fullIdPath,jdbcType=VARCHAR}, '%')</if>
+     and a.status in('SERVICING','DECORATING','CLOSING','QUITING')
+	<if test="fullIdPath != null"> and concat(b.temp_full_id_path,'/') like concat(#{fullIdPath,jdbcType=VARCHAR}, '/%')</if>
 	<if test="province != null"> and a.province=#{province,jdbcType=VARCHAR}</if>
 	<if test="city != null"> and a.city=#{city,jdbcType=VARCHAR}</if>
 	<if test="county != null"> and a.county=#{county,jdbcType=VARCHAR}</if>
