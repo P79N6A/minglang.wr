@@ -51,6 +51,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
         FenceTemplate fenceTemplate = new FenceTemplate();
         BeanUtils.copyProperties(detailDto, fenceTemplate);
         DomainUtils.beforeInsert(fenceTemplate, detailDto.getOperator());
+        fenceTemplate.setState(FenceConstants.ENABLE);
         templateMapper.insert(fenceTemplate);
         return fenceTemplate.getId();
     }
