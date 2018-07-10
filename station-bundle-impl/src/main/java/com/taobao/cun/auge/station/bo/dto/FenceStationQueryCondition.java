@@ -26,8 +26,6 @@ public class FenceStationQueryCondition {
 	
 	private List<String> stationStatus;
 	
-	private List<String> stationLevels;
-	
 	private List<String> stationLocations;
 	
 	public List<String> getStationLocations() {
@@ -92,13 +90,5 @@ public class FenceStationQueryCondition {
 
 	public void setStationStatus(List<String> stationStatus) {
 		this.stationStatus = stationStatus;
-	}
-
-	public List<String> getStationLevels() {
-		return stationLevels;
-	}
-
-	public void setStationLevels(List<String> stationLevels) {
-		this.stationLevels = stationLevels;
 	}
 }

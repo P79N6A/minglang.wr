@@ -140,9 +140,8 @@
     </select>
     
     <select id="getFenceStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
-    select a.* from station a, cuntao_org b,partner_station_rel c ,partner_instance_level d
+    select a.* from station a, cuntao_org b,partner_station_rel c 
      where a.is_deleted='n' and b.is_deleted='n' and c.is_deleted='n' and a.apply_org=b.id and a.id=c.station_id
-     and d.is_valid='y' and d.is_deleted='n' and d.partner_instance_id=c.id
 	<if test="fullIdPath != null"> and b.temp_full_id_path like concat(#{fullIdPath,jdbcType=VARCHAR}, '%')</if>
 	<if test="province != null"> and a.province=#{province,jdbcType=VARCHAR}</if>
 	<if test="city != null"> and a.city=#{city,jdbcType=VARCHAR}</if>
@@ -165,10 +164,6 @@
 	<if test="stationStatus != null"> and c.status in
 		<foreach collection="stationStatus" open="(" close=")" item="status" separator=","> #{status}</foreach>
 	</if>
-	<if test="stationLevels != null"> and d.current_level in
-		<foreach collection="stationLevels" open="(" close=")" item="level" separator=","> #{level}</foreach>
-	</if>
-	
 	<if test="stationLocations != null"> and 
 		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
 			<if test="stationLocation == 'town'">

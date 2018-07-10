@@ -14,9 +14,6 @@ import com.taobao.cun.auge.station.enums.PartnerInstanceStateEnum;
 public abstract class AbstractConditionFenceInstanceJobExecutor<F extends FenceInstanceJob> extends AbstractFenceInstanceJobExecutor<F> {
 	protected List<Station> getFenceStations(String condition) {
 		FenceStationQueryCondition fenceStationQueryCondition = JSON.parseObject(condition, FenceStationQueryCondition.class);
-		if(CollectionUtils.isEmpty(fenceStationQueryCondition.getStationLevels())) {
-			fenceStationQueryCondition.setStationLevels(Lists.newArrayList("S4", "S5", "S6", "S7", "S8"));
-		}
 		
 		if(CollectionUtils.isEmpty(fenceStationQueryCondition.getStationTypes())) {
 			fenceStationQueryCondition.setStationTypes(Lists.newArrayList("TP", "TPS"));
