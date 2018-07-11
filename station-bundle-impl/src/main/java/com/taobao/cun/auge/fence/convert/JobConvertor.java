@@ -42,31 +42,35 @@ public class JobConvertor {
         return null;
     }
 
-    public static FenceInstanceJob convertToFenceStationJob (Long templateId, Long stationId, String type) {
+    public static FenceInstanceJob convertToFenceStationJob (Long templateId, Long stationId, String type, String creator) {
         if (STATION_DELETE.equals(type)) {
             StationDeleteFenceInstanceJob job = new StationDeleteFenceInstanceJob();
             job.setStationId(stationId);
             job.setTemplateIds(Collections.singletonList(templateId));
+            job.setCreator(creator);
             return job;
         }
         return null;
     }
 
-    public static FenceInstanceJob convertToConditionFenceInstanceJob(List<Long> templateIds, String condition, String opType) {
+    public static FenceInstanceJob convertToConditionFenceInstanceJob(List<Long> templateIds, String condition, String opType, String creator) {
         if (FenceBatchOpDto.BATCH_OVERRIDE.equals(opType)) {
             ConditionCreateFenceInstanceJob createJob = new ConditionCreateFenceInstanceJob();
             createJob.setTemplateIds(templateIds);
             createJob.setCondition(condition);
             createJob.setCreateRule(FenceInstanceJob.CREATE_RULE_OVERRIDE);
+            createJob.setCreator(creator);
         } else if (FenceBatchOpDto.BATCH_NEW.equals(opType)) {
             ConditionCreateFenceInstanceJob createJob = new ConditionCreateFenceInstanceJob();
             createJob.setTemplateIds(templateIds);
             createJob.setCondition(condition);
             createJob.setCreateRule(FenceInstanceJob.CREATE_RULE_NEW);
+            createJob.setCreator(creator);
         } else if (FenceBatchOpDto.BATCH_DELETE.equals(opType)) {
             ConditionDeleteFenceInstanceJob deleteJob = new ConditionDeleteFenceInstanceJob();
             deleteJob.setTemplateIds(templateIds);
             deleteJob.setCondition(condition);
+            deleteJob.setCreator(creator);
             return deleteJob;
         }
         return null;

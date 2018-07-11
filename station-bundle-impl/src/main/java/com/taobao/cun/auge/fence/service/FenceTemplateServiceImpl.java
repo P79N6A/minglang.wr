@@ -84,17 +84,17 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation) {
         jobService.createJob((TemplateCloseFenceInstanceJob)
-            JobConvertor.convertToFenceStationJob(fenceTemplateStation.getTemplateId(), fenceTemplateStation.getStationId(), JobConvertor.TEMPLATE_CLOSE));
+            JobConvertor.convertToFenceStationJob(fenceTemplateStation.getTemplateId(), fenceTemplateStation.getStationId(), JobConvertor.TEMPLATE_CLOSE, fenceTemplateStation.getOperator()));
     }
 
     @Override
     public void batchOpStation(FenceBatchOpDto opDto) {
         if (FenceBatchOpDto.BATCH_DELETE.equals(opDto.getOpType())) {
             jobService.createJob((ConditionDeleteFenceInstanceJob)
-                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType()));
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType(), opDto.getOperator()));
         } else {
             jobService.createJob((ConditionCreateFenceInstanceJob)
-                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType()));
+                JobConvertor.convertToConditionFenceInstanceJob(opDto.getTemplateIdList(), opDto.getCondition(), opDto.getOpType(), opDto.getOperator()));
         }
     }
 
