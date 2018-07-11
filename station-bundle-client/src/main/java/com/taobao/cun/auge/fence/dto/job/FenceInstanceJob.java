@@ -1,5 +1,7 @@
 package com.taobao.cun.auge.fence.dto.job;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.alibaba.fastjson.annotation.JSONField;
 
 public abstract class FenceInstanceJob {
@@ -12,7 +14,17 @@ public abstract class FenceInstanceJob {
 	private Long id;
 	@JSONField(serialize=false, deserialize=false)
 	private String jobType;
+	@NotEmpty(message="创建者不能为空")
+	private String creator;
 	
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
 	public Long getId() {
 		return id;
 	}
