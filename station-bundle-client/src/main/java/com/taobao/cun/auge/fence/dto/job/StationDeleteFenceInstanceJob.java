@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 /**
  * 删除单个站点的围栏实例
  * 
@@ -13,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class StationDeleteFenceInstanceJob extends FenceInstanceJob{
 	@NotNull(message="站点ID不能为空")
 	private Long stationId;
-	
+	@NotEmpty(message="关联的模板ID不能为空")
 	private List<Long> templateIds;
 	
 	public Long getStationId() {
