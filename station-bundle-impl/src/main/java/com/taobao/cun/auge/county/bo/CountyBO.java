@@ -32,4 +32,6 @@ public interface CountyBO {
 	List<CountyDto> getCountyStationByCity(String cityCode);
 
     List<CountyDto> getCountyStationByCounty(String countyCode);
+    
+    public boolean startOpen(Long countyStationId,String operator);
 }

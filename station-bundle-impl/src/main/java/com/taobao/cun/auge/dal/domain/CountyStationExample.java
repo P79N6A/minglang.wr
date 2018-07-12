@@ -3244,6 +3244,66 @@ public class CountyStationExample {
             addCriterion("storage_area not between", value1, value2, "storageArea");
             return (Criteria) this;
         }
+
+        public Criteria andGmtStartOpenIsNull() {
+            addCriterion("gmt_start_open is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenIsNotNull() {
+            addCriterion("gmt_start_open is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenEqualTo(Date value) {
+            addCriterion("gmt_start_open =", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotEqualTo(Date value) {
+            addCriterion("gmt_start_open <>", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenGreaterThan(Date value) {
+            addCriterion("gmt_start_open >", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenGreaterThanOrEqualTo(Date value) {
+            addCriterion("gmt_start_open >=", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenLessThan(Date value) {
+            addCriterion("gmt_start_open <", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenLessThanOrEqualTo(Date value) {
+            addCriterion("gmt_start_open <=", value, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenIn(List<Date> values) {
+            addCriterion("gmt_start_open in", values, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotIn(List<Date> values) {
+            addCriterion("gmt_start_open not in", values, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenBetween(Date value1, Date value2) {
+            addCriterion("gmt_start_open between", value1, value2, "gmtStartOpen");
+            return (Criteria) this;
+        }
+
+        public Criteria andGmtStartOpenNotBetween(Date value1, Date value2) {
+            addCriterion("gmt_start_open not between", value1, value2, "gmtStartOpen");
+            return (Criteria) this;
+        }
     }
 
     /**
