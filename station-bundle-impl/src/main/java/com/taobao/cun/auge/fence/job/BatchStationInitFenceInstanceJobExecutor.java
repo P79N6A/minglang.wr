@@ -9,22 +9,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import com.taobao.cun.auge.dal.domain.Station;
-import com.taobao.cun.auge.fence.dto.job.StationInitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
 import com.taobao.cun.auge.fence.job.init.InitingStation;
 import com.taobao.cun.auge.fence.job.init.InitingStationFetcher;
 
 /**
- * 初始化栏实例的任务
+ * 批量初始化站点围栏实例
  * 
  * @author chengyu.zhoucy
  *
  */
 @Component
-public class StationInitFenceInstanceJobExecutor extends AbstractFenceInstanceJobExecutor<StationInitFenceInstanceJob> implements ApplicationContextAware {
+public class BatchStationInitFenceInstanceJobExecutor extends AbstractFenceInstanceJobExecutor<BatchStationInitFenceInstanceJob> implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 	
 	@Override
-	protected int doExecute(StationInitFenceInstanceJob fenceInstanceJob) {
+	protected int doExecute(BatchStationInitFenceInstanceJob fenceInstanceJob) {
 		int instanceNum = 0;
 		Map<String, InitingStationFetcher> map = applicationContext.getBeansOfType(InitingStationFetcher.class);
 		for(InitingStationFetcher initingStationFetcher : map.values()) {

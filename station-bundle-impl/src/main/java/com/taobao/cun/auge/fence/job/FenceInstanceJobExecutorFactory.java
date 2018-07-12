@@ -9,8 +9,8 @@ import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationInitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationQuitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -43,10 +43,10 @@ public class FenceInstanceJobExecutorFactory {
 	private TemplateUpdateFenceInstanceJobExecutor templateUpdateFenceInstanceJobExecutor;
 	
 	@Resource
-	private StationQuitFenceInstanceJobExecutor stationQuitFenceInstanceJobExecutor;
+	private BatchStationQuitFenceInstanceJobExecutor batchStationQuitFenceInstanceJobExecutor;
 	
 	@Resource
-	private StationInitFenceInstanceJobExecutor stationInitFenceInstanceJobExecutor;
+	private BatchStationInitFenceInstanceJobExecutor batchStationInitFenceInstanceJobExecutor;
 	
 	@SuppressWarnings("unchecked")
 	<F extends FenceInstanceJob> FenceInstanceJobExecutor<F> getFenceInstanceJobExecutor(F fenceInstanceJob){
@@ -82,12 +82,12 @@ public class FenceInstanceJobExecutorFactory {
 			return (FenceInstanceJobExecutor<F>) templateUpdateFenceInstanceJobExecutor;
 		}
 		
-		if(fenceInstanceJob instanceof StationQuitFenceInstanceJob) {
-			return (FenceInstanceJobExecutor<F>) stationQuitFenceInstanceJobExecutor;
+		if(fenceInstanceJob instanceof BatchStationQuitFenceInstanceJob) {
+			return (FenceInstanceJobExecutor<F>) batchStationQuitFenceInstanceJobExecutor;
 		}
 		
-		if(fenceInstanceJob instanceof StationInitFenceInstanceJob) {
-			return (FenceInstanceJobExecutor<F>) stationInitFenceInstanceJobExecutor;
+		if(fenceInstanceJob instanceof BatchStationInitFenceInstanceJob) {
+			return (FenceInstanceJobExecutor<F>) batchStationInitFenceInstanceJobExecutor;
 		}
 		
 		return null;
