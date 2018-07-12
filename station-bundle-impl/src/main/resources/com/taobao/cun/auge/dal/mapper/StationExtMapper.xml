@@ -176,4 +176,35 @@
 		</foreach>
 	</if>
     </select>
+    
+    <select id="getFenceInitingStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
+    select a.* from station a,partner_station_rel b where a.id=b.station_id 
+	and a.is_deleted='n' and b.is_deleted='n'
+	and a.status in('SERVICING','DECORATING','QUITING','CLOSING')
+	and b.state in('SERVICING','DECORATING','QUITING','CLOSING')
+	<if test="stationTypes != null"> and 
+		<foreach collection="stationTypes" open="(" close=")" item="type" separator=" or ">
+			<if test="type == 'TP'">
+				b.type='TP'
+			</if>
+			<if test="type == 'TPS'">
+				b.type='TPS'
+			</if>
+			<if test="type == 'TP_v4'">
+				b.type='TP' and b.mode='v4'
+			</if>
+		</foreach>
+	</if>
+	<if test="stationLocations != null"> and 
+		<foreach collection="stationLocations" open="(" close=")" item="stationLocation" separator=" or ">
+			<if test="stationLocation == 'town'">
+			a.is_on_town = 'y'
+			</if>
+			<if test="stationLocation == 'village'">
+			(a.is_on_town = 'n' or a.is_on_town is null)
+			</if>
+		</foreach>
+	</if>
+	and not exists(select 0 from fence_entity c where c.station_id=a.id and c.is_deleted='n' and c.template_id=#{templateId})
+    </select>
 </mapper>

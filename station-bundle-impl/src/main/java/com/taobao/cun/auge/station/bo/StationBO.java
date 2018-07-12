@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.pagehelper.Page;
 import com.taobao.cun.auge.dal.domain.Station;
+import com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition;
 import com.taobao.cun.auge.station.bo.dto.FenceStationQueryCondition;
 import com.taobao.cun.auge.station.condition.StationCondition;
 import com.taobao.cun.auge.station.dto.StationDto;
@@ -117,4 +118,12 @@ public interface StationBO {
      * @return
      */
     List<Station> getFenceStations(FenceStationQueryCondition fenceStationQueryCondition);
+    
+    /**
+     * 查询待初始化围栏的站点
+     * 
+     * @param fenceStationQueryCondition
+     * @return
+     */
+    List<Station> getFenceInitingStations(FenceInitingStationQueryCondition fenceStationQueryCondition);
 }
