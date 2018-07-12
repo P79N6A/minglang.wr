@@ -25,18 +25,21 @@ public class JobConvertor {
 
     public final static String STATION_DELETE = "STATION_DELETE";
 
-    public static FenceInstanceJob convertToFenceTemplateJob (Long templateId, String type) {
+    public static FenceInstanceJob convertToFenceTemplateJob (Long templateId, String type, String creator) {
         if (TEMPLATE_UPDATE.equals(type)) {
             TemplateUpdateFenceInstanceJob updateJob = new TemplateUpdateFenceInstanceJob();
             updateJob.setTemplateId(templateId);
+            updateJob.setCreator(creator);
             return updateJob;
         } else if (TEMPLATE_OPEN.equals(type)) {
             TemplateOpenFenceInstanceJob openJob = new TemplateOpenFenceInstanceJob();
             openJob.setTemplateIds(Collections.singletonList(templateId));
+            openJob.setCreator(creator);
             return openJob;
         } else if (TEMPLATE_CLOSE.equals(type)) {
             TemplateCloseFenceInstanceJob closeJob = new TemplateCloseFenceInstanceJob();
             closeJob.setTemplateIds(Collections.singletonList(templateId));
+            closeJob.setCreator(creator);
             return closeJob;
         }
         return null;

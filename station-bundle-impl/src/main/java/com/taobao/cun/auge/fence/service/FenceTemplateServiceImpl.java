@@ -43,7 +43,7 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     public void updateFenceTemplate(FenceTemplateEditDto detailDto) {
         fenceTemplateBO.updateFenceTemplate(detailDto);
         jobService.createJob((TemplateUpdateFenceInstanceJob)
-            JobConvertor.convertToFenceTemplateJob(detailDto.getId(), JobConvertor.TEMPLATE_UPDATE));
+            JobConvertor.convertToFenceTemplateJob(detailDto.getId(), JobConvertor.TEMPLATE_UPDATE, detailDto.getOperator()));
     }
 
     @Override
@@ -65,14 +65,14 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     public void enableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.enableFenceTemplate(id, operator);
         jobService.createJob((TemplateOpenFenceInstanceJob)
-            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_OPEN));
+            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_OPEN, operator));
     }
 
     @Override
     public void disableFenceTemplate(Long id, String operator) {
         fenceTemplateBO.disableFenceTemplate(id, operator);
         jobService.createJob((TemplateCloseFenceInstanceJob)
-            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_CLOSE));
+            JobConvertor.convertToFenceTemplateJob(id, JobConvertor.TEMPLATE_CLOSE, operator));
     }
 
     @Override
