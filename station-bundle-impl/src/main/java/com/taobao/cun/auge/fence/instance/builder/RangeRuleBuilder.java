@@ -46,7 +46,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			result.put(FenceConstants.RANGE_MATCH, textFilters);
 		}
 		
-		if(Strings.isNullOrEmpty(fenceRule.getDivision())){
+		if(!Strings.isNullOrEmpty(fenceRule.getDivision())){
 			Map<String, String> division = Maps.newHashMap();
 			if(fenceRule.getDivision().equals("province")) {
 				division.put("province", station.getProvince());
