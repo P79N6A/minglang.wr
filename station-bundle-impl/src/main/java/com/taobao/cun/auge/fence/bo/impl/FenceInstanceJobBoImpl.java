@@ -42,6 +42,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 		entity.setJobType(fenceInstanceJob.getClass().getSimpleName());
 		entity.setInstanceNum(0);
 		entity.setState("NEW");
+		entity.setCreator(fenceInstanceJob.getCreator());
 		fenceInstanceJobEntityMapper.insert(entity);
 	}
 
