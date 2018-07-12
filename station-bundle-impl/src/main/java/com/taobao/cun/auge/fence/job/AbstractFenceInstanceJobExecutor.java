@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -26,6 +29,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  * @param <F>
  */
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
 	protected FenceEntityBO fenceEntityBO;
 	@Resource
@@ -47,6 +51,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			fenceInstanceJobUpdateDto.setState("SUCCESS");
 			fenceInstanceJobUpdateDto.setInstanceNum(instanceNum);
 		}catch(Exception e) {
+			logger.info(e.getMessage(), e);
 			fenceInstanceJobUpdateDto.setState("ERROR");
 			fenceInstanceJobUpdateDto.setErrorMsg(e.getMessage());
 		}
