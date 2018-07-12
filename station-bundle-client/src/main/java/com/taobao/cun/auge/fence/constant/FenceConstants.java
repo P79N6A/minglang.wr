@@ -23,4 +23,7 @@ public interface FenceConstants {
     //商品类型_行业
     String INDUSTRY = "industry";
 
+    //商品类型_按类型
+    String GOODS = "goods";
+
 }
