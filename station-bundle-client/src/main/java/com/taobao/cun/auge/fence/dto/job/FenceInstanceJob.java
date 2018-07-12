@@ -15,6 +15,7 @@ public abstract class FenceInstanceJob {
 	@JSONField(serialize=false, deserialize=false)
 	private String jobType;
 	@NotEmpty(message="创建者不能为空")
+	@JSONField(serialize=false, deserialize=false)
 	private String creator;
 	
 	public String getCreator() {
