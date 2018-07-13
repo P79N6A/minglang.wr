@@ -63,12 +63,14 @@ public class JobConvertor {
             createJob.setCondition(condition);
             createJob.setCreateRule(FenceInstanceJob.CREATE_RULE_OVERRIDE);
             createJob.setCreator(creator);
+            return createJob;
         } else if (FenceBatchOpDto.BATCH_NEW.equals(opType)) {
             ConditionCreateFenceInstanceJob createJob = new ConditionCreateFenceInstanceJob();
             createJob.setTemplateIds(templateIds);
             createJob.setCondition(condition);
             createJob.setCreateRule(FenceInstanceJob.CREATE_RULE_NEW);
             createJob.setCreator(creator);
+            return createJob;
         } else if (FenceBatchOpDto.BATCH_DELETE.equals(opType)) {
             ConditionDeleteFenceInstanceJob deleteJob = new ConditionDeleteFenceInstanceJob();
             deleteJob.setTemplateIds(templateIds);
