@@ -3,6 +3,10 @@ package com.taobao.cun.auge.fence.cainiao;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSON;
 import com.cainiao.dms.sorting.api.IRailService;
 import com.cainiao.dms.sorting.api.hsf.model.BaseResult;
@@ -20,9 +24,9 @@ import com.taobao.cun.auge.fence.constant.FenceConstants;
  * @author chengyu.zhoucy
  *
  */
-//@Component
+@Component
 public class RailServiceAdapterImpl implements RailServiceAdapter {
-	//@Resource
+	@Resource
 	private IRailService railService;
 	
 	@Override
