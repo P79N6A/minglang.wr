@@ -82,6 +82,7 @@ public class FenceTemplateBOImpl implements FenceTemplateBO {
             criteria.andStateEqualTo(condition.getState());
         }
         PageHelper.startPage(condition.getPageNum(), condition.getPageSize());
+        PageHelper.orderBy("id desc");
         List<FenceTemplate> templateList = templateMapper.selectByExample(example);
         List<FenceTemplateListDto> dtoList = templateList.stream().map(template -> {
             FenceTemplateListDto listDto = new FenceTemplateListDto();
