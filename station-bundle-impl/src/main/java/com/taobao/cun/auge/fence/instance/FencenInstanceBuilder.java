@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Strings;
 import com.taobao.cun.auge.dal.domain.CuntaoCainiaoStationRel;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
@@ -77,7 +78,7 @@ public class FencenInstanceBuilder {
 	}
 
 	private CommodityFenceRule createCommodityFenceRule(FenceTemplateDto fenceTemplateDto) {
-		if(fenceTemplateDto.getLimitCommodity().equals("Y")) {
+		if(fenceTemplateDto.getLimitCommodity().equals("Y") && !Strings.isNullOrEmpty(fenceTemplateDto.getCommodityRule())) {
 			return JSON.parseObject(fenceTemplateDto.getCommodityRule(), CommodityFenceRule.class);
 		}
 		return null;

@@ -1,14 +1,17 @@
 package com.taobao.cun.auge.fence.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
-import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -32,6 +35,15 @@ public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 
 	@Override
 	public void createJob(TemplateUpdateFenceInstanceJob templateUpdateFenceInstanceJob) {
+		List<FenceInstanceJob> fenceInstanceJobs = fenceInstanceJobBo.getNewFenceInstanceJobs();
+		for(FenceInstanceJob fenceInstanceJob : fenceInstanceJobs) {
+			if(fenceInstanceJob instanceof TemplateUpdateFenceInstanceJob) {
+				TemplateUpdateFenceInstanceJob job = (TemplateUpdateFenceInstanceJob) fenceInstanceJob;
+				if(job.getTemplateId().equals(templateUpdateFenceInstanceJob.getTemplateId())) {
+					return;
+				}
+			}
+		}
 		fenceInstanceJobBo.insertJob(templateUpdateFenceInstanceJob);
 	}
 
@@ -57,6 +69,15 @@ public class FenceInstanceJobServiceImpl implements FenceInstanceJobService {
 
 	@Override
 	public void createJob(StationUpdateFenceInstanceJob stationUpdateFenceInstanceJob) {
+		List<FenceInstanceJob> fenceInstanceJobs = fenceInstanceJobBo.getNewFenceInstanceJobs();
+		for(FenceInstanceJob fenceInstanceJob : fenceInstanceJobs) {
+			if(fenceInstanceJob instanceof StationUpdateFenceInstanceJob) {
+				StationUpdateFenceInstanceJob job = (StationUpdateFenceInstanceJob) fenceInstanceJob;
+				if(job.getStationId().equals(stationUpdateFenceInstanceJob.getStationId())) {
+					return;
+				}
+			}
+		}
 		fenceInstanceJobBo.insertJob(stationUpdateFenceInstanceJob);
 	}
 
