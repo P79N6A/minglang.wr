@@ -24,10 +24,11 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 	@Override
 	public String build(Station station, RangeFenceRule fenceRule) {
 		Map<String, Object> result = Maps.newHashMap();
+		//距离
 		if(fenceRule.getDistance() != null && fenceRule.getDistance() > 0) {
 			result.put(FenceConstants.RANGE_DISTANCE, fenceRule.getDistance());
 		}
-		
+		//文本过滤
 		if(CollectionUtils.isNotEmpty(fenceRule.getMatch())){
 			Map<String, String> textFilters = Maps.newHashMap();
 			for(String text : fenceRule.getMatch()) {
@@ -45,7 +46,7 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			}
 			result.put(FenceConstants.RANGE_MATCH, textFilters);
 		}
-		
+		//行政区划
 		if(!Strings.isNullOrEmpty(fenceRule.getDivision())){
 			Map<String, String> division = Maps.newHashMap();
 			if(fenceRule.getDivision().equals("province")) {
@@ -60,6 +61,11 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			
 			result.put(FenceConstants.RANGE_DIVISION, division);
 		}
+		//经纬度
+		Map<String, String> lnglat = Maps.newHashMap();
+		lnglat.put("lng", station.getLng());
+		lnglat.put("lat", station.getLat());
+		result.put("lnglat", lnglat);
 		return JSON.toJSONString(result);
 	}
 }
