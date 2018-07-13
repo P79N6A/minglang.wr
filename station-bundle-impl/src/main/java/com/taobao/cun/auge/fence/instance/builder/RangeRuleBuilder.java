@@ -61,11 +61,6 @@ public class RangeRuleBuilder implements RuleBuilder<RangeFenceRule> {
 			
 			result.put(FenceConstants.RANGE_DIVISION, division);
 		}
-		//经纬度
-		Map<String, String> lnglat = Maps.newHashMap();
-		lnglat.put("lng", station.getLng());
-		lnglat.put("lat", station.getLat());
-		result.put("lnglat", lnglat);
 		return JSON.toJSONString(result);
 	}
 }

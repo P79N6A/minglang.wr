@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.station.bo.StationBO;
 

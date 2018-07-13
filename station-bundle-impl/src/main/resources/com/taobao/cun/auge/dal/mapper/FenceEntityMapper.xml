@@ -26,6 +26,8 @@
     <result column="county" jdbcType="VARCHAR" property="county" />
     <result column="town" jdbcType="VARCHAR" property="town" />
     <result column="cainiao_fence_id" jdbcType="BIGINT" property="cainiaoFenceId" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -107,7 +109,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, template_id, station_id, 
     cainiao_station_id, name, type, user_type, state, default_check, commodity, province, 
-    city, county, town, cainiao_fence_id
+    city, county, town, cainiao_fence_id, lng, lat
   </sql>
   <sql id="Blob_Column_List">
     <!--
@@ -197,16 +199,16 @@
       name, type, user_type, 
       state, default_check, commodity, 
       province, city, county, 
-      town, cainiao_fence_id, range_rule
-      )
+      town, cainiao_fence_id, lng, 
+      lat, range_rule)
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, 
       #{templateId,jdbcType=BIGINT}, #{stationId,jdbcType=BIGINT}, #{cainiaoStationId,jdbcType=BIGINT}, 
       #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, 
       #{state,jdbcType=VARCHAR}, #{defaultCheck,jdbcType=CHAR}, #{commodity,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, 
-      #{town,jdbcType=VARCHAR}, #{cainiaoFenceId,jdbcType=BIGINT}, #{rangeRule,jdbcType=LONGVARCHAR}
-      )
+      #{town,jdbcType=VARCHAR}, #{cainiaoFenceId,jdbcType=BIGINT}, #{lng,jdbcType=VARCHAR}, 
+      #{lat,jdbcType=VARCHAR}, #{rangeRule,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -275,6 +277,12 @@
       <if test="cainiaoFenceId != null">
         cainiao_fence_id,
       </if>
+      <if test="lng != null">
+        lng,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
       <if test="rangeRule != null">
         range_rule,
       </if>
@@ -339,6 +347,12 @@
       </if>
       <if test="cainiaoFenceId != null">
         #{cainiaoFenceId,jdbcType=BIGINT},
+      </if>
+      <if test="lng != null">
+        #{lng,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=VARCHAR},
       </if>
       <if test="rangeRule != null">
         #{rangeRule,jdbcType=LONGVARCHAR},
@@ -422,6 +436,12 @@
       <if test="record.cainiaoFenceId != null">
         cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
       </if>
+      <if test="record.lng != null">
+        lng = #{record.lng,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lat != null">
+        lat = #{record.lat,jdbcType=VARCHAR},
+      </if>
       <if test="record.rangeRule != null">
         range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -456,6 +476,8 @@
       county = #{record.county,jdbcType=VARCHAR},
       town = #{record.town,jdbcType=VARCHAR},
       cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
+      lng = #{record.lng,jdbcType=VARCHAR},
+      lat = #{record.lat,jdbcType=VARCHAR},
       range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -486,7 +508,9 @@
       city = #{record.city,jdbcType=VARCHAR},
       county = #{record.county,jdbcType=VARCHAR},
       town = #{record.town,jdbcType=VARCHAR},
-      cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT}
+      cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
+      lng = #{record.lng,jdbcType=VARCHAR},
+      lat = #{record.lat,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -555,6 +579,12 @@
       <if test="cainiaoFenceId != null">
         cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
       </if>
+      <if test="lng != null">
+        lng = #{lng,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        lat = #{lat,jdbcType=VARCHAR},
+      </if>
       <if test="rangeRule != null">
         range_rule = #{rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -586,6 +616,8 @@
       county = #{county,jdbcType=VARCHAR},
       town = #{town,jdbcType=VARCHAR},
       cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
+      lng = #{lng,jdbcType=VARCHAR},
+      lat = #{lat,jdbcType=VARCHAR},
       range_rule = #{rangeRule,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -613,7 +645,9 @@
       city = #{city,jdbcType=VARCHAR},
       county = #{county,jdbcType=VARCHAR},
       town = #{town,jdbcType=VARCHAR},
-      cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT}
+      cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
+      lng = #{lng,jdbcType=VARCHAR},
+      lat = #{lat,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -178,8 +178,11 @@
     </select>
     
     <select id="getFenceInitingStations" parameterType="com.taobao.cun.auge.station.bo.dto.FenceInitingStationQueryCondition" resultMap="com.taobao.cun.auge.dal.mapper.StationMapper.BaseResultMap">
-    select a.* from station a,partner_station_rel b where a.id=b.station_id 
-	and a.is_deleted='n' and b.is_deleted='n'
+    select a.* from station a,partner_station_rel b,cuntao_cainiao_station_rel d where a.id=b.station_id and a.id=d.object_id and d.type='STATION'
+	and a.is_deleted='n' and b.is_deleted='n' and d.is_deleted='n'
+	<![CDATA[
+	and d.gmt_created < date_add(NOW(),INTERVAL 10 MINUTE);
+	]]>
 	and a.status in('SERVICING','DECORATING','QUITING','CLOSING')
 	and b.state in('SERVICING','DECORATING','QUITING','CLOSING')
 	<if test="stationTypes != null"> and 

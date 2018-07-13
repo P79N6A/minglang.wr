@@ -68,6 +68,8 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setProvinceId(Long.valueOf(fenceEntity.getProvince()));
 		request.setCityId(Long.valueOf(fenceEntity.getCity()));
 		request.setCountryId(Long.valueOf(fenceEntity.getCounty()));
+		request.setLongitude(fenceEntity.getLng());
+		request.setLatitude(fenceEntity.getLat());
 		if(!Strings.isNullOrEmpty(fenceEntity.getTown())) {
 			request.setAreaId(Long.valueOf(fenceEntity.getTown()));
 		}
@@ -100,11 +102,6 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 			}
 			
 			request.setKeywords(keywords);
-			
-			if(range.getLngLat() != null) {
-				request.setLongitude(range.getLngLat().lng);
-				request.setLatitude(range.getLngLat().lat);
-			}
 		}
 	}
 	
@@ -132,8 +129,6 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		
 		private Map<String, String> match;
 		
-		private LngLat lngLat;
-		
 		private String division;
 
 		public String getDivision() {
@@ -158,36 +153,6 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 
 		public void setMatch(Map<String, String> match) {
 			this.match = match;
-		}
-
-		public LngLat getLngLat() {
-			return lngLat;
-		}
-
-		public void setLngLat(LngLat lngLat) {
-			this.lngLat = lngLat;
-		}
-	}
-	
-	static class LngLat{
-		String lng;
-		
-		String lat;
-
-		public String getLng() {
-			return lng;
-		}
-
-		public void setLng(String lng) {
-			this.lng = lng;
-		}
-
-		public String getLat() {
-			return lat;
-		}
-
-		public void setLat(String lat) {
-			this.lat = lat;
 		}
 	}
 }
