@@ -24,6 +24,10 @@
 	</properties>
 	<dependencies>
 		<dependency>
+		  <groupId>dms-sorting</groupId>
+		  <artifactId>dms-sorting.api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.taobao.cun.endor</groupId>
 			<artifactId>endor-client</artifactId>
 		</dependency>

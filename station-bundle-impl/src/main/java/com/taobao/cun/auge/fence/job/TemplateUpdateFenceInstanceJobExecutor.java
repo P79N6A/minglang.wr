@@ -28,7 +28,7 @@ public class TemplateUpdateFenceInstanceJobExecutor extends AbstractFenceInstanc
 		}
 		//全部重新生成一遍
 		for(FenceEntity fenceEntity : fenceEntities) {
-			buildFenceEntity(fenceEntity.getStationId(), fenceEntity.getTemplateId());
+			updateFenceEntity(fenceEntity.getStationId(), fenceEntity.getTemplateId());
 		}
 		
 		return fenceEntities.size();

@@ -19,7 +19,7 @@ public class StationCreateFenceInstanceJobExecutor extends AbstractFenceInstance
 			if(fenceInstanceJob.getCreateRule().equals(FenceInstanceJob.CREATE_RULE_OVERRIDE)){
 				overrideFenceEntity(fenceInstanceJob.getStationId(), templateId);
 			}else {
-				buildFenceEntity(fenceInstanceJob.getStationId(), templateId);
+				newFenceEntity(fenceInstanceJob.getStationId(), templateId);
 			}
 		}
 		return fenceInstanceJob.getTemplateIds().size();

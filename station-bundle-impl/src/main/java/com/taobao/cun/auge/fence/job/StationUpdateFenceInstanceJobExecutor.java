@@ -23,7 +23,7 @@ public class StationUpdateFenceInstanceJobExecutor extends AbstractFenceInstance
 		List<FenceEntity> fenceEntities = fenceEntityBO.getFenceEntitiesByStationId(fenceInstanceJob.getStationId());
 		if(fenceEntities != null) {
 			for(FenceEntity fenceEntity : fenceEntities) {
-				buildFenceEntity(fenceEntity.getStationId(), fenceEntity.getTemplateId());
+				updateFenceEntity(fenceEntity.getStationId(), fenceEntity.getTemplateId());
 			}
 			return fenceEntities.size();
 		}

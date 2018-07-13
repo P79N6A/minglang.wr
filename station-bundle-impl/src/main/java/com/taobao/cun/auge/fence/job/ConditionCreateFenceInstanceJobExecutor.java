@@ -26,7 +26,7 @@ public class ConditionCreateFenceInstanceJobExecutor extends AbstractConditionFe
 					if(fenceInstanceJob.getCreateRule().equals(FenceInstanceJob.CREATE_RULE_OVERRIDE)){
 						overrideFenceEntity(station.getId(), templateId);
 					}else {
-						buildFenceEntity(station.getId(), templateId);
+						newFenceEntity(station.getId(), templateId);
 					}
 				}
 			}

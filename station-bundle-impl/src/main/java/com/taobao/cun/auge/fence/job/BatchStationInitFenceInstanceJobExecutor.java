@@ -31,7 +31,7 @@ public class BatchStationInitFenceInstanceJobExecutor extends AbstractFenceInsta
 			InitingStation initingStation = initingStationFetcher.getInitingStations();
 			if(CollectionUtils.isNotEmpty(initingStation.getStations())) {
 				for(Station station : initingStation.getStations()) {
-					buildFenceEntity(station.getId(), initingStation.getTemplateId());
+					newFenceEntity(station.getId(), initingStation.getTemplateId());
 				}
 				
 				instanceNum += initingStation.getStations().size();

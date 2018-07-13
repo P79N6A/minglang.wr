@@ -5,15 +5,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.dal.domain.Station;
 import com.taobao.cun.auge.fence.bo.FenceEntityBO;
 import com.taobao.cun.auge.fence.bo.FenceInstanceJobBo;
 import com.taobao.cun.auge.fence.bo.FenceTemplateBO;
+import com.taobao.cun.auge.fence.cainiao.RailServiceAdapter;
+import com.taobao.cun.auge.fence.constant.FenceConstants;
 import com.taobao.cun.auge.fence.dto.FenceInstanceJobUpdateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
@@ -29,7 +30,6 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  * @param <F>
  */
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
-	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
 	protected FenceEntityBO fenceEntityBO;
 	@Resource
@@ -40,24 +40,32 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	private FencenInstanceBuilder fencenInstanceBuilder;
 	@Resource
 	protected StationBO stationBo;
+	@Resource
+	private RailServiceAdapter railServiceAdapter;
+	
+	private static final ThreadLocal<List<ExecuteError>> threadLocal = new ThreadLocal<List<ExecuteError>>();
 	
 	public void execute(F fenceInstanceJob) {
 		FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto = new FenceInstanceJobUpdateDto();
 		fenceInstanceJobUpdateDto.setId(fenceInstanceJob.getId());
 		fenceInstanceJobUpdateDto.setGmtStartTime(new Date());
 		Integer instanceNum = null;
+		threadLocal.set(Lists.newArrayList());
 		try {
 			instanceNum = doExecute(fenceInstanceJob);
-			fenceInstanceJobUpdateDto.setState("SUCCESS");
+		}finally {
+			List<ExecuteError> list = threadLocal.get();
+			if(list.isEmpty()) {
+				fenceInstanceJobUpdateDto.setState("SUCCESS");
+			}else {
+				fenceInstanceJobUpdateDto.setState("ERROR");
+				fenceInstanceJobUpdateDto.setErrorMsg(JSON.toJSONString(list));
+			}
 			fenceInstanceJobUpdateDto.setInstanceNum(instanceNum);
-		}catch(Exception e) {
-			logger.info(e.getMessage(), e);
-			fenceInstanceJobUpdateDto.setState("ERROR");
-			fenceInstanceJobUpdateDto.setErrorMsg(e.getMessage());
+			fenceInstanceJobUpdateDto.setGmtEndTime(new Date());
+			fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
+			threadLocal.remove();
 		}
-		
-		fenceInstanceJobUpdateDto.setGmtEndTime(new Date());
-		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 	}
 	
 	/**
@@ -83,7 +91,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param stationId
 	 * @param templateId
 	 */
-	protected void buildFenceEntity(Long stationId, Long templateId) {
+	private void buildFenceEntity(Long stationId, Long templateId) {
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
@@ -127,23 +135,26 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 
 	/**
-	 * 删除为了实例
+	 * 删除围栏实例
 	 * @param stationId
 	 * @param templateId
 	 */
 	protected void deleteFenceEntity(Long stationId, Long templateId) {
-		FenceEntity fenceEntity = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
-		deleteFenceEntity(fenceEntity);
+		deleteFenceEntity(fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId));
 	}
 	
 	/**
-	 * 删除为了实例
+	 * 删除围栏实例
 	 * @param fenceEntity
 	 */
 	protected void deleteFenceEntity(FenceEntity fenceEntity) {
-		if(fenceEntity != null) {
-			deleteCainiaoFence(fenceEntity);
-			fenceEntityBO.deleteById(fenceEntity.getId());
+		try {
+			if(fenceEntity != null) {
+				deleteCainiaoFence(fenceEntity);
+				fenceEntityBO.deleteById(fenceEntity.getId());
+			}
+		}catch(Exception e) {
+			addExecuteError("delete", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e.getMessage());
 		}
 	}
 	
@@ -156,40 +167,142 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param templateId
 	 */
 	protected void overrideFenceEntity(Long stationId, Long templateId) {
-		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
-		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
-		//删除菜鸟的围栏
-		List<FenceEntity> fenceEntities = fenceEntityBO.getStationFenceEntitiesByFenceType(stationId, fenceTemplateDto.getTypeEnum().getCode());
-		for(FenceEntity fenceEntity : fenceEntities) {
-			deleteCainiaoFence(fenceEntity);
+		try {
+			FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
+			Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
+			//删除菜鸟的围栏
+			List<FenceEntity> fenceEntities = fenceEntityBO.getStationFenceEntitiesByFenceType(stationId, fenceTemplateDto.getTypeEnum().getCode());
+			for(FenceEntity fenceEntity : fenceEntities) {
+				deleteCainiaoFence(fenceEntity);
+			}
+			//删除围栏实例
+			fenceEntityBO.deleteFences(stationId, fenceTemplateDto.getTypeEnum().getCode());
+			//新建围栏
+			buildFenceEntity(stationId, templateId);
+		}catch(Exception e) {
+			addExecuteError("create:override", stationId, templateId, e.getMessage());
 		}
-		//删除围栏实例
-		fenceEntityBO.deleteFences(stationId, fenceTemplateDto.getTypeEnum().getCode());
-		//新建围栏
-		buildFenceEntity(stationId, templateId);
 	}
 	
-	protected void addCainiaoFence(FenceEntity fenceEntity) {
-		toCainiaoFence(fenceEntity);
-		//TODO 调用菜鸟的新增接口
-		//TODO 将菜鸟的围栏ID写回到围栏实例上
+	protected void newFenceEntity(Long stationId, Long templateId) {
+		try {
+			buildFenceEntity(stationId, templateId);
+		}catch(Exception e) {
+			addExecuteError("create:new", stationId, templateId, e.getMessage());
+		}
 	}
 	
-	protected void updateCainiaoFence(FenceEntity fenceEntity) {
-		toCainiaoFence(fenceEntity);
-		//TODO 调用菜鸟的更新接口
+	protected void updateFenceEntity(Long stationId, Long templateId) {
+		try {
+			buildFenceEntity(stationId, templateId);
+		}catch(Exception e) {
+			addExecuteError("update", stationId, templateId, e.getMessage());
+		}
 	}
 	
-	protected void deleteCainiaoFence(FenceEntity fenceEntity) {
-		toCainiaoFence(fenceEntity);
-		//TODO 调用菜鸟的删除接口
+	protected void updateCainiaoFenceState(FenceEntity fenceEntity, String state) {
+		fenceEntity.setState(state);
+		try {
+			updateCainiaoFence(fenceEntity);
+		}catch(Exception e) {
+			addExecuteError("updatestate", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e.getMessage());
+		}
+		
+	}
+	
+	protected int updateFenceState(Long templateId, String state) {
+		if(FenceConstants.ENABLE.equals(state)) {
+			fenceEntityBO.enableEntityListByTemplateId(templateId, "job");
+		}else {
+			fenceEntityBO.disableEntityListByTemplateId(templateId, "job");
+		}
+		List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
+		if(fenceEntities != null) {
+			for(FenceEntity fenceEntity : fenceEntities) {
+				//更新菜鸟的状态
+				updateCainiaoFenceState(fenceEntity, state);
+			}
+			return fenceEntities.size();
+		}
+		return 0;
 	}
 	
 	/**
-	 * 转成菜鸟的围栏对象
+	 * 添加菜鸟围栏
 	 * @param fenceEntity
 	 */
-	private void toCainiaoFence(FenceEntity fenceEntity) {
+	private void addCainiaoFence(FenceEntity fenceEntity) {
+		//调用菜鸟的新增接口
+		Long cainiaoFenceId = railServiceAdapter.addCainiaoFence(fenceEntity);
+		//将菜鸟的围栏ID写回到围栏实例上
+		fenceEntity.setCainiaoFenceId(cainiaoFenceId);
+		fenceEntityBO.updateFenceEntity(fenceEntity);
+	}
+	
+	/**
+	 * 更新菜鸟围栏
+	 * @param fenceEntity
+	 */
+	private void updateCainiaoFence(FenceEntity fenceEntity) {
+		railServiceAdapter.updateCainiaoFence(fenceEntity);
+	}
+	
+	/**
+	 * 删除菜鸟围栏
+	 * @param fenceEntity
+	 */
+	private void deleteCainiaoFence(FenceEntity fenceEntity) {
+		railServiceAdapter.deleteCainiaoFence(fenceEntity.getCainiaoFenceId());
+	}
+	
+	private void addExecuteError(String action, Long stationId, Long templateId, String error) {
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error));
+	}
+	
+	static class ExecuteError{
+		private String action;
 		
+		private Long stationId;
+		
+		private Long templateId;
+		
+		private String error;
+		ExecuteError(String action, Long stationId, Long templateId, String error){
+			this.action = action;
+			this.stationId = stationId;
+			this.templateId = templateId;
+			this.error = error;
+		}
+		public String getAction() {
+			return action;
+		}
+
+		public void setAction(String action) {
+			this.action = action;
+		}
+
+		public Long getStationId() {
+			return stationId;
+		}
+
+		public void setStationId(Long stationId) {
+			this.stationId = stationId;
+		}
+
+		public Long getTemplateId() {
+			return templateId;
+		}
+
+		public void setTemplateId(Long templateId) {
+			this.templateId = templateId;
+		}
+
+		public String getError() {
+			return error;
+		}
+
+		public void setError(String error) {
+			this.error = error;
+		}
 	}
 }
