@@ -15,7 +15,7 @@ import com.taobao.cun.auge.dal.domain.FenceEntity;
  * @author chengyu.zhoucy
  *
  */
-@Component
+//@Component
 public class RailServiceAdapterImpl implements RailServiceAdapter {
 	@Resource
 	private IRailService railService;
