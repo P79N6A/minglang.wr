@@ -17,7 +17,7 @@ import com.taobao.cun.auge.dal.domain.FenceEntity;
  */
 //@Component
 public class RailServiceAdapterImpl implements RailServiceAdapter {
-	@Resource
+	//@Resource
 	private IRailService railService;
 	
 	@Override
