@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -30,6 +33,7 @@ import com.taobao.cun.auge.station.enums.StationStatusEnum;
  * @param <F>
  */
 public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJob> implements FenceInstanceJobExecutor<F> {
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Resource
 	protected FenceEntityBO fenceEntityBO;
 	@Resource
@@ -154,7 +158,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceEntityBO.deleteById(fenceEntity.getId());
 			}
 		}catch(Exception e) {
-			addExecuteError("delete", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e.getMessage());
+			addExecuteError("delete", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
 		}
 	}
 	
@@ -180,7 +184,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			//新建围栏
 			buildFenceEntity(stationId, templateId);
 		}catch(Exception e) {
-			addExecuteError("create:override", stationId, templateId, e.getMessage());
+			addExecuteError("create:override", stationId, templateId, e);
 		}
 	}
 	
@@ -188,7 +192,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		try {
 			buildFenceEntity(stationId, templateId);
 		}catch(Exception e) {
-			addExecuteError("create:new", stationId, templateId, e.getMessage());
+			addExecuteError("create:new", stationId, templateId, e);
 		}
 	}
 	
@@ -196,7 +200,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		try {
 			buildFenceEntity(stationId, templateId);
 		}catch(Exception e) {
-			addExecuteError("update", stationId, templateId, e.getMessage());
+			addExecuteError("update", stationId, templateId, e);
 		}
 	}
 	
@@ -205,7 +209,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		try {
 			updateCainiaoFence(fenceEntity);
 		}catch(Exception e) {
-			addExecuteError("updatestate", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e.getMessage());
+			addExecuteError("updatestate", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
 		}
 		
 	}
@@ -255,8 +259,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		railServiceAdapter.deleteCainiaoFence(fenceEntity.getCainiaoFenceId());
 	}
 	
-	private void addExecuteError(String action, Long stationId, Long templateId, String error) {
-		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error));
+	private void addExecuteError(String action, Long stationId, Long templateId, Throwable error) {
+		logger.error("action={}, stationId={}, templateId={}", new Object[] {action, stationId, templateId}, error);
+		threadLocal.get().add(new ExecuteError(action, stationId, templateId, error.getMessage()));
 	}
 	
 	static class ExecuteError{
