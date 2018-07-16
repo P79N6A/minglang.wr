@@ -192,6 +192,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 		return null;
 	}
 	
+	
 	private ErrorInfo checkPromotedType(int promotedType,String errorMessage){
 		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)&&((promotedType & ALIPAY_ENTER_PROMOTED_TYPE) != ALIPAY_ENTER_PROMOTED_TYPE)) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
