@@ -44,6 +44,8 @@ public class ProtocolTypeEnum implements Serializable {
 
     public static final ProtocolTypeEnum RUBBING_SUPPLEMENT_AGREEMENT = new ProtocolTypeEnum("RUBBING_SUPPLEMENT_AGREEMENT", "合伙人蹭单补充协议");
 
+    public static final ProtocolTypeEnum DELIVERY_GOODS_AGREEMENT = new ProtocolTypeEnum("DELIVERY_GOODS_AGREEMENT", "送货上门协议");
+
     static {
         mappings.put("SETTLE_PRO", SETTLE_PRO);
         mappings.put("MANAGE_PRO", MANAGE_PRO);
@@ -60,6 +62,7 @@ public class ProtocolTypeEnum implements Serializable {
         mappings.put("VENDOR_DISTRIBUTE_AGREEMENT", VENDOR_DISTRIBUTE_AGREEMENT);
         mappings.put("VENDOR_INSTALLMENT_AGREEMENT", VENDOR_INSTALLMENT_AGREEMENT);
         mappings.put("RUBBING_SUPPLEMENT_AGREEMENT", RUBBING_SUPPLEMENT_AGREEMENT);
+        mappings.put("DELIVERY_GOODS_AGREEMENT", DELIVERY_GOODS_AGREEMENT);
 
     }
 
