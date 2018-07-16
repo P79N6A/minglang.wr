@@ -47,6 +47,7 @@ public class FencenInstanceBuilder {
 		fenceEntity.setGmtModified(new Date());
 		fenceEntity.setCreator("job");
 		fenceEntity.setModifier("job");
+		fenceEntity.setVersion(1);
 		fenceEntity.setIsDeleted("n");
 		fenceEntity.setProvince(station.getProvince());
 		fenceEntity.setCity(station.getCity());

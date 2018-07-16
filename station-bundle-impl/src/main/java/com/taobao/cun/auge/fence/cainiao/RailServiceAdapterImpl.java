@@ -107,6 +107,10 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	
 	private List<RailBusinessTag> buildRailBusinessTags(FenceEntity fenceEntity){
 		List<RailBusinessTag> railBusinessTags = Lists.newArrayList();
+		RailBusinessTag versionTag = new RailBusinessTag();
+		versionTag.setTagKey("version");
+		versionTag.setTagValue(String.valueOf(fenceEntity.getVersion()));
+		
 		if(!Strings.isNullOrEmpty(fenceEntity.getUserType())) {
 			RailBusinessTag tag = new RailBusinessTag();
 			tag.setTagKey("userType");

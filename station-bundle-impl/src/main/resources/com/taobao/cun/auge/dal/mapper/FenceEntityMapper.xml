@@ -28,6 +28,7 @@
     <result column="cainiao_fence_id" jdbcType="BIGINT" property="cainiaoFenceId" />
     <result column="lng" jdbcType="VARCHAR" property="lng" />
     <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="version" jdbcType="INTEGER" property="version" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -109,7 +110,7 @@
     -->
     id, gmt_create, gmt_modified, creator, modifier, is_deleted, template_id, station_id, 
     cainiao_station_id, name, type, user_type, state, default_check, commodity, province, 
-    city, county, town, cainiao_fence_id, lng, lat
+    city, county, town, cainiao_fence_id, lng, lat, version
   </sql>
   <sql id="Blob_Column_List">
     <!--
@@ -200,7 +201,8 @@
       state, default_check, commodity, 
       province, city, county, 
       town, cainiao_fence_id, lng, 
-      lat, range_rule)
+      lat, version, range_rule
+      )
     values (#{id,jdbcType=BIGINT}, #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, #{isDeleted,jdbcType=CHAR}, 
       #{templateId,jdbcType=BIGINT}, #{stationId,jdbcType=BIGINT}, #{cainiaoStationId,jdbcType=BIGINT}, 
@@ -208,7 +210,8 @@
       #{state,jdbcType=VARCHAR}, #{defaultCheck,jdbcType=CHAR}, #{commodity,jdbcType=VARCHAR}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{county,jdbcType=VARCHAR}, 
       #{town,jdbcType=VARCHAR}, #{cainiaoFenceId,jdbcType=BIGINT}, #{lng,jdbcType=VARCHAR}, 
-      #{lat,jdbcType=VARCHAR}, #{rangeRule,jdbcType=LONGVARCHAR})
+      #{lat,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}, #{rangeRule,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.taobao.cun.auge.dal.domain.FenceEntity">
     <!--
@@ -283,6 +286,9 @@
       <if test="lat != null">
         lat,
       </if>
+      <if test="version != null">
+        version,
+      </if>
       <if test="rangeRule != null">
         range_rule,
       </if>
@@ -353,6 +359,9 @@
       </if>
       <if test="lat != null">
         #{lat,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=INTEGER},
       </if>
       <if test="rangeRule != null">
         #{rangeRule,jdbcType=LONGVARCHAR},
@@ -442,6 +451,9 @@
       <if test="record.lat != null">
         lat = #{record.lat,jdbcType=VARCHAR},
       </if>
+      <if test="record.version != null">
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
       <if test="record.rangeRule != null">
         range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -478,6 +490,7 @@
       cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
       lng = #{record.lng,jdbcType=VARCHAR},
       lat = #{record.lat,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=INTEGER},
       range_rule = #{record.rangeRule,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -510,7 +523,8 @@
       town = #{record.town,jdbcType=VARCHAR},
       cainiao_fence_id = #{record.cainiaoFenceId,jdbcType=BIGINT},
       lng = #{record.lng,jdbcType=VARCHAR},
-      lat = #{record.lat,jdbcType=VARCHAR}
+      lat = #{record.lat,jdbcType=VARCHAR},
+      version = #{record.version,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -585,6 +599,9 @@
       <if test="lat != null">
         lat = #{lat,jdbcType=VARCHAR},
       </if>
+      <if test="version != null">
+        version = #{version,jdbcType=INTEGER},
+      </if>
       <if test="rangeRule != null">
         range_rule = #{rangeRule,jdbcType=LONGVARCHAR},
       </if>
@@ -618,6 +635,7 @@
       cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
       lng = #{lng,jdbcType=VARCHAR},
       lat = #{lat,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER},
       range_rule = #{rangeRule,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -647,7 +665,8 @@
       town = #{town,jdbcType=VARCHAR},
       cainiao_fence_id = #{cainiaoFenceId,jdbcType=BIGINT},
       lng = #{lng,jdbcType=VARCHAR},
-      lat = #{lat,jdbcType=VARCHAR}
+      lat = #{lat,jdbcType=VARCHAR},
+      version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

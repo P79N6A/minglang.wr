@@ -111,6 +111,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceEntity.setId(old.getId());
 				fenceEntity.setCainiaoFenceId(old.getCainiaoFenceId());
 				fenceEntity.setGmtCreate(old.getGmtCreate());
+				fenceEntity.setVersion(old.getVersion() + 1);
 				fenceEntityBO.updateFenceEntity(fenceEntity);
 				updateCainiaoFence(fenceEntity);
 			}else {
