@@ -55,6 +55,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto = new FenceInstanceJobUpdateDto();
 		fenceInstanceJobUpdateDto.setId(fenceInstanceJob.getId());
 		fenceInstanceJobUpdateDto.setGmtStartTime(new Date());
+		fenceInstanceJobUpdateDto.setState("PENDING");
+		fenceInstanceJobUpdateDto.setInstanceNum(0);
+		fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 		Integer instanceNum = null;
 		threadLocal.set(Lists.newArrayList());
 		fenceInstanceJobThreadLocal.set(fenceInstanceJob);
