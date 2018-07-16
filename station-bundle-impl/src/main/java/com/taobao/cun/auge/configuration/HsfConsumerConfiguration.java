@@ -36,7 +36,7 @@ public class HsfConsumerConfiguration  {
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.chronus.taskSubmitService}",serviceGroup="HSF")
 	private TaskSubmitService taskSubmitService;
 	
-	@HSFConsumer(serviceVersion="${hsf.consumer.version.crius.cuntaoWorkFlowService}",serviceGroup="HSF")
+	@HSFConsumer(serviceVersion="${hsf.consumer.version.crius.cuntaoWorkFlowService}",serviceGroup="HSF", clientTimeout = 10000)
 	private CuntaoWorkFlowService cuntaoWorkFlowService;
 	
 	@HSFConsumer(serviceVersion="${hsf.consumer.version.crius.appResourceService}",serviceGroup="HSF")
