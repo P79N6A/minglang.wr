@@ -57,6 +57,7 @@ public class FenceInstanceJobBoImpl implements FenceInstanceJobBo {
 			for(FenceInstanceJobEntity entity : entities) {
 				FenceInstanceJob fenceInstanceJob = createFenceInstanceJob(entity);
 				fenceInstanceJob.setId(entity.getId());
+				fenceInstanceJob.setCreator(entity.getCreator());
 				fenceInstanceJob.setJobType(entity.getJobType());
 				fenceInstanceJobs.add(fenceInstanceJob);
 			}
