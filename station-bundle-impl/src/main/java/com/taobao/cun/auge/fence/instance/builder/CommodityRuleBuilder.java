@@ -17,7 +17,11 @@ public class CommodityRuleBuilder implements RuleBuilder<CommodityFenceRule> {
 
 	@Override
 	public String build(Station station, CommodityFenceRule fenceRule) {
-		return JSON.toJSONString(fenceRule);
+		if(fenceRule != null) {
+			return JSON.toJSONString(fenceRule);
+		}else {
+			return null;
+		}
 	}
 
 }
