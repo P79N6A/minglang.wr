@@ -55,6 +55,8 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	
 	private static final int ALIPAY_PSERON_PROMOTED_TYPE = 512;
 
+	private static final int ALIPAY_ENTER_PROMOTED_TYPE = 4;
+
 	@Autowired
 	private EmployeeWriteBO employeeWriteBO;
 	
@@ -191,7 +193,7 @@ public class EmployeeWriteServiceImpl implements EmployeeWriteService{
 	}
 	
 	private ErrorInfo checkPromotedType(int promotedType,String errorMessage){
-		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)) {
+		if (((promotedType & ALIPAY_PSERON_PROMOTED_TYPE) != ALIPAY_PSERON_PROMOTED_TYPE)&&((promotedType & ALIPAY_ENTER_PROMOTED_TYPE) != ALIPAY_ENTER_PROMOTED_TYPE)) {
 			return ErrorInfo.of(AugeErrorCodes.ALIPAY_BUSINESS_CHECK_ERROR_CODE, null, errorMessage);
 		}
 		return null;
