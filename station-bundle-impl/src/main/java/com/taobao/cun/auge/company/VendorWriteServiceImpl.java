@@ -302,7 +302,8 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 		Assert.notNull(protcolType);
 		Result<CuntaoServiceVendorDto> result = vendorReadService.queryVendorByTaobaoUserID(taobaoUserId);
 		if(result.getModule() == null){
-			throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+			return false;
+			//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
 		}
 		PartnerProtocolRelDto partnerProtocolRelDto = partnerProtocolRelBO.getPartnerProtocolRelDto(protcolType, result.getModule().getId(), PartnerProtocolRelTargetTypeEnum.VENDOR);
 		if(partnerProtocolRelDto != null){
@@ -318,7 +319,8 @@ public class VendorWriteServiceImpl implements VendorWriteService {
 			Assert.notNull(protcolType);
 			Result<CuntaoServiceVendorDto> result = vendorReadService.queryVendorByTaobaoUserID(taobaoUserId);
 			if(result.getModule() == null){
-				throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
+				return false;
+				//throw new AugeBusinessException(AugeErrorCodes.ILLEGAL_RESULT_ERROR_CODE,"服务商不存在");
 			}
 			partnerProtocolRelBO.signProtocol(taobaoUserId,protcolType, result.getModule().getId(), PartnerProtocolRelTargetTypeEnum.VENDOR);
 			return true;
