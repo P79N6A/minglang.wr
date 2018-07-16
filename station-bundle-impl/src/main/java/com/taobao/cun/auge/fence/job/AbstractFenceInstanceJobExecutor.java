@@ -49,12 +49,15 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	
 	private static final ThreadLocal<List<ExecuteError>> threadLocal = new ThreadLocal<List<ExecuteError>>();
 	
+	private static final ThreadLocal<FenceInstanceJob> fenceInstanceJobThreadLocal = new ThreadLocal<FenceInstanceJob>();
+	
 	public void execute(F fenceInstanceJob) {
 		FenceInstanceJobUpdateDto fenceInstanceJobUpdateDto = new FenceInstanceJobUpdateDto();
 		fenceInstanceJobUpdateDto.setId(fenceInstanceJob.getId());
 		fenceInstanceJobUpdateDto.setGmtStartTime(new Date());
 		Integer instanceNum = null;
 		threadLocal.set(Lists.newArrayList());
+		fenceInstanceJobThreadLocal.set(fenceInstanceJob);
 		try {
 			instanceNum = doExecute(fenceInstanceJob);
 		}finally {
@@ -69,6 +72,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 			fenceInstanceJobUpdateDto.setGmtEndTime(new Date());
 			fenceInstanceJobBo.updateJob(fenceInstanceJobUpdateDto);
 			threadLocal.remove();
+			fenceInstanceJobThreadLocal.remove();
 		}
 	}
 	
@@ -105,6 +109,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 		FenceEntity fenceEntity = fencenInstanceBuilder.build(station, fenceTemplateDto);
 		if(fenceEntity != null) {
+			FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
 			//检查是否存在：如果已经存在该站点跟该模板构建的实例，那么就做修改
 			FenceEntity old = fenceEntityBO.getStationFenceEntityByTemplateId(stationId, templateId);
 			if(old != null) {
@@ -112,9 +117,13 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceEntity.setCainiaoFenceId(old.getCainiaoFenceId());
 				fenceEntity.setGmtCreate(old.getGmtCreate());
 				fenceEntity.setVersion(old.getVersion() + 1);
+				fenceEntity.setCreator(old.getCreator());
+				fenceEntity.setModifier(fenceInstanceJob.getCreator());
 				fenceEntityBO.updateFenceEntity(fenceEntity);
 				updateCainiaoFence(fenceEntity);
 			}else {
+				fenceEntity.setCreator(fenceInstanceJob.getCreator());
+				fenceEntity.setModifier(fenceInstanceJob.getCreator());
 				fenceEntityBO.addFenceEntity(fenceEntity);
 				addCainiaoFence(fenceEntity);
 			}
@@ -153,10 +162,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param fenceEntity
 	 */
 	protected void deleteFenceEntity(FenceEntity fenceEntity) {
+		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
 		try {
 			if(fenceEntity != null) {
 				deleteCainiaoFence(fenceEntity);
-				fenceEntityBO.deleteById(fenceEntity.getId());
+				fenceEntityBO.deleteById(fenceEntity.getId(), fenceInstanceJob.getCreator());
 			}
 		}catch(Exception e) {
 			addExecuteError("delete", fenceEntity.getStationId(), fenceEntity.getTemplateId(), e);
@@ -216,10 +226,11 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	}
 	
 	protected int updateFenceState(Long templateId, String state) {
+		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
 		if(FenceConstants.ENABLE.equals(state)) {
-			fenceEntityBO.enableEntityListByTemplateId(templateId, "job");
+			fenceEntityBO.enableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
 		}else {
-			fenceEntityBO.disableEntityListByTemplateId(templateId, "job");
+			fenceEntityBO.disableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
 		}
 		List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
 		if(fenceEntities != null) {
