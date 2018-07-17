@@ -10,6 +10,16 @@ public class PartnerAccessDto {
 	private int accessNum;
 	
 	private BigDecimal percentNum;
+	
+	private int stateDate;
+
+	public int getStateDate() {
+		return stateDate;
+	}
+
+	public void setStateDate(int stateDate) {
+		this.stateDate = stateDate;
+	}
 
 	public String getType() {
 		return type;

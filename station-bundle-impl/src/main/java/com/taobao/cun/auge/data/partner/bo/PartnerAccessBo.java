@@ -18,7 +18,7 @@ public class PartnerAccessBo {
 	private PartnerAccessExtMapper partnerAccessExtMapper;
 	
 	public List<PartnerAccessDto> queryPartnerAccessList(int day){
-		Date statDate = DateUtils.addDays(new Date(), day * -1);
+		Date statDate = DateUtils.addDays(new Date(), (day+1) * -1);
 		return partnerAccessExtMapper.queryPartnerAccessList(Integer.valueOf(DateFormatUtils.format(statDate, "yyyyMMdd")));
 	}
 }
