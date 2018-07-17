@@ -27,10 +27,10 @@ public class PartnerAccessBo {
 		return partnerAccessExtMapper.queryPartnerAccessList(Integer.valueOf(DateFormatUtils.format(statDate, "yyyyMMdd")));
 	}
 	
-	public PageDto<UnLoginPartnerDto> queryUnLoginPartners(int day, int pageNum) {
+	public PageDto<UnLoginPartnerDto> queryUnLoginPartners(String fullIdPath, int day, int pageNum) {
 		Date statDate = DateUtils.addDays(new Date(), (day+1) * -1);
 		PageHelper.startPage(pageNum, 15);
-        Page<UnLoginPartnerDto> page = partnerAccessExtMapper.queryUnLoginPartners(Integer.valueOf(DateFormatUtils.format(statDate, "yyyyMMdd")), day);
+        Page<UnLoginPartnerDto> page = partnerAccessExtMapper.queryUnLoginPartners(fullIdPath, Integer.valueOf(DateFormatUtils.format(statDate, "yyyyMMdd")), day);
 
         return PageDtoUtil.success(page, page.getResult());
 	}

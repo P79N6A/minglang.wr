@@ -21,7 +21,7 @@ public class PartnerAccessServiceImpl implements PartnerAccessService {
 	}
 
 	@Override
-	public PageDto<UnLoginPartnerDto> queryUnLoginPartners(int day, int pageNum){
-		return partnerAccessBo.queryUnLoginPartners(day, pageNum);
+	public PageDto<UnLoginPartnerDto> queryUnLoginPartners(String fullIdPath, int day, int pageNum){
+		return partnerAccessBo.queryUnLoginPartners(fullIdPath, day, pageNum);
 	}
 }

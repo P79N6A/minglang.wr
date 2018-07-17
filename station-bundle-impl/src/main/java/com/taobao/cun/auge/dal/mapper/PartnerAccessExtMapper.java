@@ -11,5 +11,5 @@ import com.taobao.cun.auge.data.partner.dto.UnLoginPartnerDto;
 public interface PartnerAccessExtMapper {
 	List<PartnerAccessDto> queryPartnerAccessList(@Param("statDate") int statDate);
 	
-	Page<UnLoginPartnerDto> queryUnLoginPartners(@Param("statDate") int statDate, @Param("dayNum") int dayNum);
+	Page<UnLoginPartnerDto> queryUnLoginPartners(@Param("fullIdPath")String fullIdPath, @Param("statDate") int statDate, @Param("dayNum") int dayNum);
 }

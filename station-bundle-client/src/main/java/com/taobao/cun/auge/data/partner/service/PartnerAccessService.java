@@ -16,9 +16,10 @@ public interface PartnerAccessService {
 
 	/**
 	 * 查询最近N天未访问的用户
+	 * @param fullIdPath
 	 * @param day
 	 * @param pageNum
 	 * @return
 	 */
-	PageDto<UnLoginPartnerDto> queryUnLoginPartners(int day, int pageNum);
+	PageDto<UnLoginPartnerDto> queryUnLoginPartners(String fullIdPath, int day, int pageNum);
 }
