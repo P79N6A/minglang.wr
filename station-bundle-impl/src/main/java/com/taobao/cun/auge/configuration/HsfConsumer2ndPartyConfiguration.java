@@ -42,6 +42,7 @@ import com.alibaba.tax.api.service.ArInvoiceService;
 import com.aliexpress.boot.hsf.HSFGroup;
 import com.aliexpress.boot.hsf.consumer.HsfConsumerContext;
 import com.alipay.baoxian.scene.facade.common.policy.service.PolicyQueryService;
+import com.cainiao.dms.sorting.api.IRailService;
 import com.taobao.cun.ar.scene.station.service.PartnerTagService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramQueryService;
 import com.taobao.cun.auge.incentive.service.IncentiveProgramService;
@@ -405,6 +406,12 @@ public class HsfConsumer2ndPartyConfiguration  {
     @Bean
     public StoreService storeService(HsfConsumerContext context, @Value("${storeService.version}") String version) {
            return context.hsfConsumerBuilder(StoreService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
+                   .build();
+    }
+    
+    @Bean
+    public IRailService iRailService(HsfConsumerContext context, @Value("${hsf.irailService.version}") String version) {
+           return context.hsfConsumerBuilder(IRailService.class, HSFGroup.HSF.name(), version).clientTimeout(5000)
                    .build();
     }
     
