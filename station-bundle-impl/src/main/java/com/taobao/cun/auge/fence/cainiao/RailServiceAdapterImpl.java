@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
@@ -15,6 +16,7 @@ import com.cainiao.dms.sorting.common.dataobject.rail.RailInfoRequest;
 import com.cainiao.dms.sorting.common.dataobject.rail.RailKeyword;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.taobao.cun.auge.common.utils.POIUtils;
 import com.taobao.cun.auge.dal.domain.FenceEntity;
 import com.taobao.cun.auge.fence.constant.FenceConstants;
 
@@ -26,6 +28,8 @@ import com.taobao.cun.auge.fence.constant.FenceConstants;
  */
 @Component
 public class RailServiceAdapterImpl implements RailServiceAdapter {
+	@Value("${cainiao.fence.cpcode}")
+	private String cpcode;
 	@Resource
 	private IRailService railService;
 	
@@ -68,8 +72,9 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 		request.setProvinceId(Long.valueOf(fenceEntity.getProvince()));
 		request.setCityId(Long.valueOf(fenceEntity.getCity()));
 		request.setCountryId(Long.valueOf(fenceEntity.getCounty()));
-		request.setLongitude(fenceEntity.getLng());
-		request.setLatitude(fenceEntity.getLat());
+		request.setLongitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLng())));
+		request.setLatitude(String.valueOf(POIUtils.toStanardPOI(fenceEntity.getLat())));
+		request.setCpCode(cpcode);
 		if(!Strings.isNullOrEmpty(fenceEntity.getTown())) {
 			request.setAreaId(Long.valueOf(fenceEntity.getTown()));
 		}
