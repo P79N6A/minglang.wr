@@ -7,7 +7,7 @@
 	</select>
 	
 	<select id="queryUnLoginPartners" parameterType="map" resultType="com.taobao.cun.auge.data.partner.dto.UnLoginPartnerDto">
-	select a.name as stationName,a.taobao_user_id as taobaoUserId,a.id as stationId,c.id as orgId,c.temp_full_name_path as orgFullNamePath 
+	select a.name as stationName,a.taobao_user_id as taobaoUserId,a.id as stationId,c.id as orgId,c.temp_full_name_path as orgFullNamePath,a.status as state
 	from station a,cuntao_org c,
 	(select taobao_user_id from d_cun_notlogin_partner where stat_date > #{statDate} group by taobao_user_id having(count(0) = #{dayNum}))b
 	where a.taobao_user_id=b.taobao_user_id and a.is_deleted ='n' and a.apply_org=c.id and c.is_deleted='n'
