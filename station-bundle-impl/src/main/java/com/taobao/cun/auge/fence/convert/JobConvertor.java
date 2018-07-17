@@ -7,6 +7,7 @@ import com.taobao.cun.auge.fence.dto.FenceBatchOpDto;
 import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -22,8 +23,6 @@ public class JobConvertor {
     public final static String TEMPLATE_OPEN = "TEMPLATE_OPEN";
 
     public final static String TEMPLATE_CLOSE = "TEMPLATE_CLOSE";
-
-    public final static String STATION_DELETE = "STATION_DELETE";
 
     public static FenceInstanceJob convertToFenceTemplateJob (Long templateId, String type, String creator) {
         if (TEMPLATE_UPDATE.equals(type)) {
@@ -45,11 +44,25 @@ public class JobConvertor {
         return null;
     }
 
-    public static FenceInstanceJob convertToFenceStationJob (Long templateId, Long stationId, String type, String creator) {
-        if (STATION_DELETE.equals(type)) {
+    public static FenceInstanceJob convertToFenceStationJob (List<Long> templateIdList, Long stationId, String opType, String creator) {
+        if (FenceBatchOpDto.BATCH_OVERRIDE.equals(opType)) {
+            StationCreateFenceInstanceJob job = new StationCreateFenceInstanceJob();
+            job.setStationId(stationId);
+            job.setTemplateIds(templateIdList);
+            job.setCreator(creator);
+            job.setCreateRule(FenceInstanceJob.CREATE_RULE_OVERRIDE);
+            return job;
+        } else if (FenceBatchOpDto.BATCH_NEW.equals(opType)) {
+            StationCreateFenceInstanceJob job = new StationCreateFenceInstanceJob();
+            job.setStationId(stationId);
+            job.setTemplateIds(templateIdList);
+            job.setCreator(creator);
+            job.setCreateRule(FenceInstanceJob.CREATE_RULE_NEW);
+            return job;
+        } else if (FenceBatchOpDto.BATCH_DELETE.equals(opType)) {
             StationDeleteFenceInstanceJob job = new StationDeleteFenceInstanceJob();
             job.setStationId(stationId);
-            job.setTemplateIds(Collections.singletonList(templateId));
+            job.setTemplateIds(templateIdList);
             job.setCreator(creator);
             return job;
         }

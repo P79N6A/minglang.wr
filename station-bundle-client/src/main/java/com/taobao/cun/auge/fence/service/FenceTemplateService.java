@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.cun.auge.common.PageDto;
 import com.taobao.cun.auge.fence.dto.FenceBatchOpDto;
+import com.taobao.cun.auge.fence.dto.FenceSingleOpDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateEditDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateDto;
 import com.taobao.cun.auge.fence.dto.FenceTemplateListDto;
@@ -71,10 +72,9 @@ public interface FenceTemplateService {
     List<FenceTemplateDto> getFenceTemplateListByStationId(Long stationId);
 
     /**
-     * 删除单个站点关联的电子围栏
-     * @param fenceTemplateStation
+     * 单个站点关联围栏
      */
-    void deleteFenceTemplateStation(FenceTemplateStation fenceTemplateStation);
+    void singleOpStation(FenceSingleOpDto opDto);
 
     /**
      * 批量关联站点
