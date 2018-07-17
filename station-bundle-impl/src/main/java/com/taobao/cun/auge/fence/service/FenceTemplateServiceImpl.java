@@ -14,6 +14,8 @@ import com.taobao.cun.auge.fence.dto.FenceTemplateQueryCondition;
 import com.taobao.cun.auge.fence.dto.FenceTemplateStation;
 import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateUpdateFenceInstanceJob;
@@ -85,10 +87,10 @@ public class FenceTemplateServiceImpl implements FenceTemplateService {
     @Override
     public void singleOpStation(FenceSingleOpDto opDto) {
         if (FenceBatchOpDto.BATCH_DELETE.equals(opDto.getOpType())) {
-            jobService.createJob((ConditionDeleteFenceInstanceJob)
+            jobService.createJob((StationDeleteFenceInstanceJob)
                 JobConvertor.convertToFenceStationJob(opDto.getTemplateIdList(), opDto.getStationId(), opDto.getOpType(), opDto.getOperator()));
         } else {
-            jobService.createJob((ConditionCreateFenceInstanceJob)
+            jobService.createJob((StationCreateFenceInstanceJob)
                 JobConvertor.convertToFenceStationJob(opDto.getTemplateIdList(), opDto.getStationId(), opDto.getOpType(), opDto.getOperator()));
         }
     }
