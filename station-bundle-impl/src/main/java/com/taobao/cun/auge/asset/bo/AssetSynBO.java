@@ -20,4 +20,7 @@ public interface AssetSynBO {
 	
 	public Boolean changeOwner(List<Long> assetId);
 	
+	
+	 public Boolean disAsset(String aliNo,Long userAreaId,String userName,String userId);
+	
 }

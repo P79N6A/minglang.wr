@@ -297,4 +297,9 @@ public class AssetServiceImpl implements AssetService{
 		return assetSynBO.changeOwner(assetId);
 	}
 
+	@Override
+	public Boolean disAsset(String aliNo, Long userAreaId, String userName, String userId) {
+		return assetSynBO.disAsset(aliNo, userAreaId, userName, userId);
+	}
+
 }
