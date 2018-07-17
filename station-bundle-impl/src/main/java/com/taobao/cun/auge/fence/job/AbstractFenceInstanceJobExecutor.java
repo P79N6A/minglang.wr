@@ -122,13 +122,14 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 				fenceEntity.setVersion(old.getVersion() + 1);
 				fenceEntity.setCreator(old.getCreator());
 				fenceEntity.setModifier(fenceInstanceJob.getCreator());
-				fenceEntityBO.updateFenceEntity(fenceEntity);
 				updateCainiaoFence(fenceEntity);
+				fenceEntityBO.updateFenceEntity(fenceEntity);
 			}else {
 				fenceEntity.setCreator(fenceInstanceJob.getCreator());
 				fenceEntity.setModifier(fenceInstanceJob.getCreator());
+				Long cainiaoFenceId = addCainiaoFence(fenceEntity);
+				fenceEntity.setCainiaoFenceId(cainiaoFenceId);
 				fenceEntityBO.addFenceEntity(fenceEntity);
-				addCainiaoFence(fenceEntity);
 			}
 		}
 	}
@@ -250,12 +251,9 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * 添加菜鸟围栏
 	 * @param fenceEntity
 	 */
-	private void addCainiaoFence(FenceEntity fenceEntity) {
+	private Long addCainiaoFence(FenceEntity fenceEntity) {
 		//调用菜鸟的新增接口
-		Long cainiaoFenceId = railServiceAdapter.addCainiaoFence(fenceEntity);
-		//将菜鸟的围栏ID写回到围栏实例上
-		fenceEntity.setCainiaoFenceId(cainiaoFenceId);
-		fenceEntityBO.updateFenceEntity(fenceEntity);
+		return railServiceAdapter.addCainiaoFence(fenceEntity);
 	}
 	
 	/**
