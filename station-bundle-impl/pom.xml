@@ -24,6 +24,10 @@
 	</properties>
 	<dependencies>
 		<dependency>
+				<artifactId>dms-sorting.common</artifactId>  
+		  	<groupId>dms-sorting</groupId>  
+		</dependency>
+		<dependency>
 		  <groupId>dms-sorting</groupId>
 		  <artifactId>dms-sorting.api</artifactId>
 		</dependency>
