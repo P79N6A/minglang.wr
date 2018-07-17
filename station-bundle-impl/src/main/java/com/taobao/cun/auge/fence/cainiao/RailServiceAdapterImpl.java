@@ -63,7 +63,9 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 
 	private RailInfoRequest toCainiaoFence(FenceEntity fenceEntity) {
 		RailInfoRequest request = new RailInfoRequest();
-		request.setId(fenceEntity.getCainiaoFenceId());
+		if(fenceEntity.getCainiaoFenceId() != null && fenceEntity.getCainiaoFenceId() > 0) {
+			request.setId(fenceEntity.getCainiaoFenceId());
+		}
 		request.setRailType(fenceEntity.getType());
 		request.setRailName(fenceEntity.getName());
 		request.setRailBusinessTags(buildRailBusinessTags(fenceEntity));
