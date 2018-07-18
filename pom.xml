@@ -769,8 +769,14 @@
 			</dependency>
 			<dependency>
 				<artifactId>dms-sorting.common</artifactId>  
-		  	<groupId>dms-sorting</groupId>  
-		  	<version>1.0.10-SNAPSHOT</version>
+		  		<groupId>dms-sorting</groupId>  
+		  		<version>1.0.10-SNAPSHOT</version>
+		  		<exclusions>
+		  			<exclusion>
+		  				<groupId>*</groupId>
+		  				<artifactId>*</artifactId>
+		  			</exclusion>
+		  		</exclusions>
 		  </dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -880,16 +886,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<!-- add java sources by default <plugin> <groupId>org.apache.maven.plugins</groupId> 
-				<artifactId>maven-source-plugin</artifactId> <version>2.2.1</version> <executions> 
-				<execution> <id>attach-sources</id> <goals> <goal>jar-no-fork</goal> </goals> 
-				</execution> </executions> </plugin> -->
-			<!-- generate git.properties -->
-			<!-- <plugin> <groupId>pl.project13.maven</groupId> <artifactId>git-commit-id-plugin</artifactId> 
-				<version>2.2.0</version> <executions> <execution> <goals> <goal>revision</goal> 
-				</goals> </execution> </executions> <configuration> <verbose>true</verbose> 
-				<dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat> <generateGitPropertiesFile>true</generateGitPropertiesFile> 
-				<failOnNoGitDirectory>false</failOnNoGitDirectory> </configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
