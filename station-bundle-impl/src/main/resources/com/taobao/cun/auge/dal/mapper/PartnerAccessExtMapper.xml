@@ -3,7 +3,7 @@
 <mapper namespace="com.taobao.cun.auge.dal.mapper.PartnerAccessExtMapper">
 	<select id="queryPartnerAccessList" parameterType="int" resultType="com.taobao.cun.auge.data.partner.dto.PartnerAccessDto">
 		select type,total_num as totalNum,access_num as accessNum,percent_num as percentNum,stat_date as statDate 
-		from d_cun_partner_access where stat_date > #{statDate}
+		from d_cun_partner_access where stat_date > #{statDate} order by stat_date asc
 	</select>
 	
 	<select id="queryUnLoginPartners" parameterType="map" resultType="com.taobao.cun.auge.data.partner.dto.UnLoginPartnerDto">
@@ -14,5 +14,6 @@
 	<if test="fullIdPath != null">
 	and concat(temp_full_id_path, '/') like concat(#{fullIdPath}, '/%')
 	</if>
+	order by a.id desc
 	</select>
 </mapper>

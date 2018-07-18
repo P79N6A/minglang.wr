@@ -11,14 +11,14 @@ public class PartnerAccessDto {
 	
 	private BigDecimal percentNum;
 	
-	private int stateDate;
+	private int statDate;
 
-	public int getStateDate() {
-		return stateDate;
+	public int getStatDate() {
+		return statDate;
 	}
 
 	public void setStateDate(int stateDate) {
-		this.stateDate = stateDate;
+		this.statDate = stateDate;
 	}
 
 	public String getType() {
