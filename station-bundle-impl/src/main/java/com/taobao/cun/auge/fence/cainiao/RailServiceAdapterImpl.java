@@ -55,6 +55,7 @@ public class RailServiceAdapterImpl implements RailServiceAdapter {
 	public void deleteCainiaoFence(Long cainiaoFenceId) {
 		RailInfoRequest request = new RailInfoRequest();
 		request.setId(cainiaoFenceId);
+		request.setCpCode(cpcode);
 		BaseResult<Boolean> result = railService.deleteRailById(request);
 		if(!result.isSuccess()) {
 			throw new RailException("code=" + result.getErrorCode() + ",msg=" + result.getErrorMsg());
