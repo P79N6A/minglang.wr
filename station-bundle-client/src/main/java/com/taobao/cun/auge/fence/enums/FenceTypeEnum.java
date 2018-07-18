@@ -18,14 +18,14 @@ public class FenceTypeEnum implements Serializable{
 
     static final FenceTypeEnum SERVICE = new FenceTypeEnum("SERVICE", "服务围栏");
     static final FenceTypeEnum LOGISTICS = new FenceTypeEnum("LOGISTICS", "物流围栏");
-    static final FenceTypeEnum DEAL = new FenceTypeEnum("DEAL", "售卖围栏");
+    static final FenceTypeEnum SELL = new FenceTypeEnum("SELL", "售卖围栏");
     static final FenceTypeEnum CHARGE = new FenceTypeEnum("CHARGE", "收费围栏");
     private static final Map<String, FenceTypeEnum> mappings = new HashMap<String, FenceTypeEnum>();
 
     static {
         mappings.put("SERVICE", SERVICE);
         mappings.put("LOGISTICS", LOGISTICS);
-        mappings.put("DEAL", DEAL);
+        mappings.put("SELL", SELL);
         mappings.put("CHARGE", CHARGE);
     }
 
@@ -49,7 +49,7 @@ public class FenceTypeEnum implements Serializable{
         List<FenceTypeEnum> enumList = new ArrayList<FenceTypeEnum>();
         enumList.add(SERVICE);
         enumList.add(LOGISTICS);
-        enumList.add(DEAL);
+        enumList.add(SELL);
         enumList.add(CHARGE);
         return enumList;
     }
