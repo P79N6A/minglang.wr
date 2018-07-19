@@ -224,7 +224,7 @@ public class StationDecorateBOImpl implements StationDecorateBO {
 	public void syncStationDecorateFromTaobao(
 			StationDecorateDto stationDecorateDto)  {
 		if(!StationDecoratePaymentTypeEnum.SELF.getCode().equals(
-				stationDecorateDto.getPaymentType().getCode())){
+				stationDecorateDto.getPaymentType().getCode())||stationDecorateDto.getSellerTaobaoUserId() == null){
 			return;
 		}
 		StationDecorateDto updateDto = new StationDecorateDto();
