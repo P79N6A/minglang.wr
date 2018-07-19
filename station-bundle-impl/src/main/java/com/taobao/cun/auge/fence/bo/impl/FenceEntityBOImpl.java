@@ -146,5 +146,15 @@ public class FenceEntityBOImpl implements FenceEntityBO {
 	public List<FenceEntity> getStationQuitedFenceEntities() {
 		return extFenceEntityMapper.selectStationQuitedFenceEntities();
 	}
+
+	@Override
+	public void updateEntityState(Long id, String state, String operator) {
+		FenceEntityExample example = new FenceEntityExample();
+        example.createCriteria().andIsDeletedEqualTo("n").andIdEqualTo(id);
+        FenceEntity fenceEntity = new FenceEntity();
+        fenceEntity.setState(state);
+        DomainUtils.beforeUpdate(fenceEntity, operator);
+        entityMapper.updateByExampleSelective(fenceEntity, example);
+	}
     
 }

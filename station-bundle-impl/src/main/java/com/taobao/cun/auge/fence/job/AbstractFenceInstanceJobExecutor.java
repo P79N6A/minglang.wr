@@ -106,7 +106,7 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		FenceTemplateDto fenceTemplateDto = getFenceTemplate(templateId);
 		Preconditions.checkNotNull(fenceTemplateDto, "template id=" + templateId);
 		Station station = stationBo.getStationById(stationId);
-		if(!checkStation(station)) {
+		if(!isServicing(station)) {
 			return;
 		}
 		
@@ -139,14 +139,29 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 	 * @param station
 	 * @return
 	 */
-	private boolean checkStation(Station station) {
+	private boolean isServicing(Station station) {
 		if(station == null) {
 			return false;
 		}
 		if(station.getStatus().equals(StationStatusEnum.DECORATING.getCode()) || 
-				station.getStatus().equals(StationStatusEnum.SERVICING.getCode()) ||
-				station.getStatus().equals(StationStatusEnum.QUITING.getCode()) ||
-				station.getStatus().equals(StationStatusEnum.CLOSING.getCode())) {
+				station.getStatus().equals(StationStatusEnum.SERVICING.getCode())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 检查站点状态
+	 * @param station
+	 * @return
+	 */
+	private boolean isClosed(Station station) {
+		if(station == null) {
+			return false;
+		}
+		if(station.getStatus().equals(StationStatusEnum.CLOSED.getCode()) || 
+				station.getStatus().equals(StationStatusEnum.QUITING.getCode())||
+				station.getStatus().equals(StationStatusEnum.QUIT.getCode())){
 			return true;
 		}
 		return false;
@@ -229,18 +244,43 @@ public abstract class AbstractFenceInstanceJobExecutor<F extends FenceInstanceJo
 		
 	}
 	
-	protected int updateFenceState(Long templateId, String state) {
+	protected int updateFenceStateByTemplate(Long templateId, String state) {
 		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
-		if(FenceConstants.ENABLE.equals(state)) {
-			fenceEntityBO.enableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
-		}else {
-			fenceEntityBO.disableEntityListByTemplateId(templateId, fenceInstanceJob.getCreator());
-		}
 		List<FenceEntity> fenceEntities = getFenceEntityList(templateId);
 		if(fenceEntities != null) {
 			for(FenceEntity fenceEntity : fenceEntities) {
-				//更新菜鸟的状态
-				updateCainiaoFenceState(fenceEntity, state);
+				Station station = stationBo.getStationById(fenceEntity.getStationId());
+				if(station != null) {
+					try {
+						if(!isClosed(station)) {//如果站点是CLOSED、QUITING则不处理
+							//更新菜鸟的状态
+							updateCainiaoFenceState(fenceEntity, state);
+							//更新实例状态
+							fenceEntityBO.updateEntityState(fenceEntity.getId(), state, fenceInstanceJob.getCreator());
+						}
+					}catch(Exception e) {
+						addExecuteError("update-template:state", station.getId(), templateId, e);
+					}
+				}
+			}
+			return fenceEntities.size();
+		}
+		return 0;
+	}
+	
+	protected int updateFenceStateByStation(Long stationId, String state) {
+		FenceInstanceJob fenceInstanceJob = fenceInstanceJobThreadLocal.get();
+		List<FenceEntity> fenceEntities = fenceEntityBO.getFenceEntitiesByStationId(stationId);
+		if(fenceEntities != null) {
+			for(FenceEntity fenceEntity : fenceEntities) {
+				try {
+					//更新菜鸟的状态
+					updateCainiaoFenceState(fenceEntity, state);
+					//更新实例状态
+					fenceEntityBO.updateEntityState(fenceEntity.getId(), state, fenceInstanceJob.getCreator());
+				}catch(Exception e) {
+					addExecuteError("update-station:state", stationId, 0L, e);
+				}
 			}
 			return fenceEntities.size();
 		}

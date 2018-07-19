@@ -20,7 +20,7 @@ public class TemplateCloseFenceInstanceJobExecutor extends AbstractFenceInstance
 	protected int doExecute(TemplateCloseFenceInstanceJob fenceInstanceJob) {
 		int instanceNum = 0;
 		for(Long templateId : fenceInstanceJob.getTemplateIds()) {
-			instanceNum += updateFenceState(templateId, FenceConstants.DISABLE);
+			instanceNum += updateFenceStateByTemplate(templateId, FenceConstants.DISABLE);
 		}
 		
 		return instanceNum;

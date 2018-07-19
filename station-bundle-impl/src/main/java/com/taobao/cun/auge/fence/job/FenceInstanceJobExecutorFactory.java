@@ -4,13 +4,15 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
+import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.ConditionDeleteFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.FenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationCreateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationDeleteFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.BatchStationInitFenceInstanceJob;
-import com.taobao.cun.auge.fence.dto.job.BatchStationQuitFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationStateClosedFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.StationUpdateFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateCloseFenceInstanceJob;
 import com.taobao.cun.auge.fence.dto.job.TemplateOpenFenceInstanceJob;
@@ -47,6 +49,12 @@ public class FenceInstanceJobExecutorFactory {
 	
 	@Resource
 	private BatchStationInitFenceInstanceJobExecutor batchStationInitFenceInstanceJobExecutor;
+	
+	@Resource
+	private StationStateClosedFenceInstanceJobExecutor stationStateClosedFenceInstanceJobExecutor;
+	
+	@Resource
+	private StationStateReopenFenceInstanceJobExecutor stationStateReopenFenceInstanceJobExecutor;
 	
 	@SuppressWarnings("unchecked")
 	<F extends FenceInstanceJob> FenceInstanceJobExecutor<F> getFenceInstanceJobExecutor(F fenceInstanceJob){
@@ -88,6 +96,14 @@ public class FenceInstanceJobExecutorFactory {
 		
 		if(fenceInstanceJob instanceof BatchStationInitFenceInstanceJob) {
 			return (FenceInstanceJobExecutor<F>) batchStationInitFenceInstanceJobExecutor;
+		}
+		
+		if(fenceInstanceJob instanceof StationStateClosedFenceInstanceJob) {
+			return (FenceInstanceJobExecutor<F>) stationStateClosedFenceInstanceJobExecutor;
+		}
+		
+		if(fenceInstanceJob instanceof StationStateReopenFenceInstanceJob) {
+			return (FenceInstanceJobExecutor<F>) stationStateReopenFenceInstanceJobExecutor;
 		}
 		
 		return null;

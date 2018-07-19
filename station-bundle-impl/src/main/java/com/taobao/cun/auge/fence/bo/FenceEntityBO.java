@@ -13,7 +13,8 @@ public interface FenceEntityBO {
     void enableEntityListByTemplateId(Long templateId, String operator);
 
     void disableEntityListByTemplateId(Long templateId, String operator);
-
+    
+    void updateEntityState(Long id, String state, String operator);
     /**
      * 获得模板应用的实体个数
      * @param templateId

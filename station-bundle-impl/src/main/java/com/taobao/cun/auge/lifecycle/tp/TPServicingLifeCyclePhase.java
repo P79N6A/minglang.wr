@@ -17,6 +17,8 @@ import com.taobao.cun.auge.event.PartnerInstanceStateChangeEvent;
 import com.taobao.cun.auge.event.StationBundleEventConstant;
 import com.taobao.cun.auge.event.enums.PartnerInstanceStateChangeEnum;
 import com.taobao.cun.auge.event.enums.SyncStationApplyEnum;
+import com.taobao.cun.auge.fence.dto.job.StationStateClosedFenceInstanceJob;
+import com.taobao.cun.auge.fence.dto.job.StationStateReopenFenceInstanceJob;
 import com.taobao.cun.auge.lifecycle.AbstractLifeCyclePhase;
 import com.taobao.cun.auge.lifecycle.LifeCyclePhaseContext;
 import com.taobao.cun.auge.lifecycle.Phase;
@@ -184,6 +186,12 @@ public class TPServicingLifeCyclePhase extends AbstractLifeCyclePhase{
 			
 			 closeStationApplyBO.deleteCloseStationApply(partnerInstanceDto.getId(), partnerInstanceDto.getOperator());
 			 generalTaskSubmitService.submitCloseToServiceTask(partnerInstanceDto.getId(), partnerInstanceDto.getTaobaoUserId(), partnerInstanceDto.getType(), partnerInstanceDto.getOperator());
+			 
+			//重新开业后将站点的围栏开启
+			StationStateReopenFenceInstanceJob job = new StationStateReopenFenceInstanceJob();
+			job.setStationId(partnerInstanceDto.getStationId());
+			job.setCreator(partnerInstanceDto.getOperator());
+			fenceInstanceJobService.createJob(job);
 		}
 		
 	}
